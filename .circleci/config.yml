@@ -6,38 +6,38 @@ pr_build: &pr_build
         name: cancel_previous_jobs
         filters: { branches: { ignore: [master] } }
 
-    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-    #     name: front_docker_build
-    #     ecr_repository_name_prefix: online-lpa/front
-    #     service_path: service-front
-    #     filters: { branches: { ignore: [master] } }
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: front_docker_build
+        ecr_repository_name_prefix: online-lpa/front
+        service_path: service-front
+        filters: { branches: { ignore: [master] } }
 
-    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-    #     name: admin_docker_build
-    #     ecr_repository_name_prefix: online-lpa/admin
-    #     service_path: service-admin
-    #     filters: { branches: { ignore: [master] } }
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: admin_docker_build
+        ecr_repository_name_prefix: online-lpa/admin
+        service_path: service-admin
+        filters: { branches: { ignore: [master] } }
 
-    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-    #     name: api_docker_build
-    #     ecr_repository_name_prefix: online-lpa/api
-    #     service_path: service-api
-    #     filters: { branches: { ignore: [master] } }
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: api_docker_build
+        ecr_repository_name_prefix: online-lpa/api
+        service_path: service-api
+        filters: { branches: { ignore: [master] } }
 
-    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-    #     name: pdf_docker_build
-    #     ecr_repository_name_prefix: online-lpa/pdf
-    #     service_path: service-pdf
-    #     build_web: false
-    #     filters: { branches: { ignore: [master] } }
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: pdf_docker_build
+        ecr_repository_name_prefix: online-lpa/pdf
+        service_path: service-pdf
+        build_web: false
+        filters: { branches: { ignore: [master] } }
 
-    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-    #     name: seeding_docker_build
-    #     ecr_repository_name_prefix: online-lpa/seeding
-    #     service_path: service-seeding
-    #     build_web: false
-    #     unit_test: false
-    #     filters: { branches: { ignore: [master] } }
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: seeding_docker_build
+        ecr_repository_name_prefix: online-lpa/seeding
+        service_path: service-seeding
+        build_web: false
+        unit_test: false
+        filters: { branches: { ignore: [master] } }
 
     - infrastructure_and_deployment/lint_account_terraform:
         name: lint_account_terraform_pr_build
@@ -51,16 +51,12 @@ pr_build: &pr_build
         name: dev_account_plan_check_terraform_pr_build
         workspace: development
         terraform_level: account
-        approval_step: "dev_sanity_check_terraform_apply_account_pr_build"
+        approval_step: "dev_infra_approval_terraform_apply_account_pr_build"
         filters: { branches: { ignore: [master] } }
-        requires:
-          [
-            cancel_previous_jobs,
-            lint_account_terraform_pr_build
-          ]
+        requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
 
     - hold_for_approval_tf:
-        name: dev_sanity_check_terraform_apply_account_pr_build
+        name: dev_infra_approval_terraform_apply_account_pr_build
         type: approval
         filters: { branches: { ignore: [master] } }
         requires: [lint_account_terraform_pr_build]
@@ -68,12 +64,12 @@ pr_build: &pr_build
     - infrastructure_and_deployment/plan_check_terraform:
         name: dev_environment_plan_check_terraform_pr_build
         terraform_level: environment
-        approval_step: "dev_sanity_check_terraform_apply_environment_pr_build"
+        approval_step: "dev_infra_approval_terraform_apply_environment_pr_build"
         filters: { branches: { ignore: [master] } }
         requires: [cancel_previous_jobs, lint_environment_terraform_pr_build]
 
     - hold_for_approval_tf:
-        name: dev_sanity_check_terraform_apply_environment_pr_build
+        name: dev_infra_approval_terraform_apply_environment_pr_build
         type: approval
         filters: { branches: { ignore: [master] } }
         requires: [lint_environment_terraform_pr_build]
@@ -86,57 +82,61 @@ pr_build: &pr_build
           [
             cancel_previous_jobs,
             dev_account_plan_check_terraform_pr_build,
-            dev_sanity_check_terraform_apply_account_pr_build,
+            dev_infra_approval_terraform_apply_account_pr_build,
           ]
 
-    # - infrastructure_and_deployment/apply_email_terraform:
-    #     name: email_apply_terraform
-    #     workspace: development
-    #     filters: { branches: { ignore: [master] } }
-    #     requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
-    # - infrastructure_and_deployment/apply_environment_terraform:
-    #     name: dev_environment_apply_terraform
-    #     filters: { branches: { ignore: [master] } }
-    #     requires:
-    #       [
-    #         cancel_previous_jobs,
-    #         lint_environment_terraform_pr_build,
-    #         dev_environment_plan_check_terraform_pr_build,
-    #         dev_sanity_check_terraform_apply_environment_pr_build,
-    #         dev_account_apply_terraform,
-    #         front_docker_build,
-    #         admin_docker_build,
-    #         api_docker_build,
-    #         pdf_docker_build,
-    #         seeding_docker_build,
-    #       ]
-    # - ecr_scan_results:
-    #     name: ecr_scan_results_development
-    #     filters: { branches: { ignore: [master] } }
-    #     requires:
-    #       [
-    #         front_docker_build,
-    #         admin_docker_build,
-    #         api_docker_build,
-    #         pdf_docker_build,
-    #         seeding_docker_build,
-    #       ]
-    # - infrastructure_and_deployment/seed_environment_databases:
-    #     name: dev_seed_environment_databases
-    #     filters: { branches: { ignore: [master] } }
-    #     requires: [dev_environment_apply_terraform]
-    # - infrastructure_and_deployment/run_cypress_test:
-    #     name: run_cypress_test
-    #     filters: { branches: { ignore: [master] } }
-    #     requires: [dev_seed_environment_databases]
-    # - infrastructure_and_deployment/run_functional_test:
-    #     name: run_functional_test
-    #     filters: { branches: { ignore: [master] } }
-    #     requires: [dev_seed_environment_databases]
-    # - slack_notify_domain:
-    #     name: post_environment_domains
-    #     filters: { branches: { ignore: [master] } }
-    #     requires: [run_functional_test, run_cypress_test]
+    - infrastructure_and_deployment/apply_email_terraform:
+        name: email_apply_terraform
+        workspace: development
+        filters: { branches: { ignore: [master] } }
+        requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
+    - infrastructure_and_deployment/apply_environment_terraform:
+        name: dev_environment_apply_terraform
+        filters: { branches: { ignore: [master] } }
+        requires:
+          [
+            cancel_previous_jobs,
+            lint_environment_terraform_pr_build,
+            dev_environment_plan_check_terraform_pr_build,
+            dev_infra_approval_terraform_apply_environment_pr_build,
+            dev_account_apply_terraform,
+            front_docker_build,
+            admin_docker_build,
+            api_docker_build,
+            pdf_docker_build,
+            seeding_docker_build,
+          ]
+    - ecr_scan_results:
+        name: ecr_scan_results_development
+        filters: { branches: { ignore: [master] } }
+        requires:
+          [
+            front_docker_build,
+            admin_docker_build,
+            api_docker_build,
+            pdf_docker_build,
+            seeding_docker_build,
+          ]
+
+    - infrastructure_and_deployment/seed_environment_databases:
+        name: dev_seed_environment_databases
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_environment_apply_terraform]
+
+    - infrastructure_and_deployment/run_cypress_test:
+        name: run_cypress_test
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
+
+    - infrastructure_and_deployment/run_functional_test:
+        name: run_functional_test
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
+
+    - slack_notify_domain:
+        name: post_environment_domains
+        filters: { branches: { ignore: [master] } }
+        requires: [run_functional_test, run_cypress_test]
 
 path_to_live: &path_to_live
   jobs:
@@ -173,10 +173,39 @@ path_to_live: &path_to_live
         unit_test: false
         filters: { branches: { only: [master] } }
 
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: preprod_account_plan_check_terraform_pr_build
+        workspace: preproduction
+        terraform_level: account
+        approval_step: "preprod_infra_approval_terraform_apply_account_pr_build"
+        filters: { branches: { only: [master] } }
+
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: preprod_environment_plan_check_terraform_pr_build
+        workspace: preproduction
+        terraform_level: environment
+        approval_step: "preprod_infra_approval_terraform_apply_environment_pr_build"
+        filters: { branches: { only: [master] } }
+
+    - hold_for_approval_tf:
+        name: preprod_infra_approval_terraform_apply_account_pr_build
+        type: approval
+        filters: { branches: { only: [master] } }
+
+    - hold_for_approval_tf:
+        name: preprod_infra_approval_terraform_apply_environment_pr_build
+        type: approval
+        filters: { branches: { only: [master] } }
+
     - infrastructure_and_deployment/apply_account_terraform:
         name: preprod_account_apply_terraform
         workspace: preproduction
         filters: { branches: { only: [master] } }
+        requires:
+          [
+            preprod_infra_approval_terraform_apply_account_pr_build,
+            preprod_account_plan_check_terraform_pr_build,
+          ]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: preprod_environment_apply_terraform
@@ -185,6 +214,8 @@ path_to_live: &path_to_live
         requires:
           [
             preprod_account_apply_terraform,
+            preprod_environment_plan_check_terraform_pr_build,
+            preprod_infra_approval_terraform_apply_environment_pr_build,
             front_docker_build,
             admin_docker_build,
             api_docker_build,
