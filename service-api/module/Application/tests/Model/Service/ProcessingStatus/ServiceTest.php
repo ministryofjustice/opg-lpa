@@ -34,7 +34,7 @@ class ServiceTest extends MockeryTestCase
      */
     private $awsSignature;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->httpClient = Mockery::mock(Client::class);
         $this->awsSignature = Mockery::mock(SignatureV4::class);

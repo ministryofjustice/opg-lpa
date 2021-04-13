@@ -18,7 +18,7 @@ class DataFactoryTest extends MockeryTestCase
      */
     protected $container;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->container = Mockery::mock(ContainerInterface::class);
     }
