@@ -1,9 +1,10 @@
 #!/usr/bin/env sh
-set -euox pipefail
+set -euo pipefail
 WEBHOOK=$1
 PR=$2
 STEP=$3
 BUILD_URL=$4
+APPROVAL_STEP=$5
 
 echo "notifying slack..."
 
@@ -15,18 +16,27 @@ generate_payload()
     [
         {
             "blocks" : [],
-            "title" : ":sign-warning: Approval Needed!",
-            "text": "Pipeline for $PR needs a manual approval, as some infra may be destroyed / recreated.\n Please check build step $STEP on $BUILD_URL to confirm this is what was intended and approve if ok.",
-            "color": "#ffff00",
-            "emoji": true
+            "mrkdwn_in": ["text", "pretext", "title"],
+            "pretext" : ":circleci: :sign-warning: CircleCI Pipeline Approval Needed!",
+            "title" : "Pipeline for $PR needs a manual approval.",
+            "text": "- The pipeline flagged some infrastructure that could potentially be destroyed or recreated.\n- Please check reporting step \`${STEP}\` on ${BUILD_URL} to confirm if this is as intended.\n- If it was, release the on hold step \`${APPROVAL_STEP}\` when ready.",
+            "emoji": true,
+            "color": "#ffff00"
         }
     ]
 }
 EOF
 }
+
+if [[ -z "$PR" ]]
+then
+    PR="path_to_live"
+else
+    PR="Pull request ${PR}"
+fi
 echo "$(generate_payload)"
 
-curl -0 -v POST  ${WEBHOOK}  \
+curl -X POST  ${WEBHOOK}  \
 -H "Expect:" \
 -H "Content-Type: application/json; charset=utf-8" \
 --data "$(generate_payload)"
