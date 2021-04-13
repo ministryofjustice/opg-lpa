@@ -8,7 +8,7 @@ resource "aws_ecs_service" "front" {
   desired_count    = local.account.autoscaling.front.minimum
   launch_type      = "FARGATE"
   platform_version = "1.3.0"
-  // propagate_tags   = "TASK_DEFINITION"
+  propagate_tags   = "TASK_DEFINITION"
 
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
