@@ -51,7 +51,7 @@ pr_build: &pr_build
         name: dev_account_plan_check_terraform_pr_build
         workspace: development
         terraform_level: account
-        approval_step: "sanity_check_terraform_apply_account_pr_build"
+        approval_step: "dev_sanity_check_terraform_apply_account_pr_build"
         filters: { branches: { ignore: [master] } }
         requires:
           [
@@ -68,7 +68,7 @@ pr_build: &pr_build
     - infrastructure_and_deployment/plan_check_terraform:
         name: dev_environment_plan_check_terraform_pr_build
         terraform_level: environment
-        approval_step: "sanity_check_terraform_apply_environment_pr_build"
+        approval_step: "dev_sanity_check_terraform_apply_environment_pr_build"
         filters: { branches: { ignore: [master] } }
         requires: [cancel_previous_jobs, lint_environment_terraform_pr_build]
 
