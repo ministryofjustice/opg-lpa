@@ -595,11 +595,19 @@ orbs:
                 then
                    echo terraform scan found a possible destructive change.
                    echo please review before approval.
-                   #slack message goes here.
-                   ~/project/scripts/pipeline/auto_approve_hold/slack_approval_warning.sh "${SLACK_DEV_WEBHOOK}" "${CIRCLE_PULL_REQUEST}" "${CIRCLE_JOB}" "${CIRCLE_BUILD_URL}"
+
+                   ~/project/scripts/pipeline/auto_approve_hold/slack_approval_warning.sh \
+                                        "${SLACK_DEV_WEBHOOK}" \
+                                        "${CIRCLE_PULL_REQUEST}" \
+                                        "${CIRCLE_JOB}" \
+                                        "${CIRCLE_BUILD_URL}" \
+                                        "${approval_step}"
                 else
                   echo scan found no issues. auto-approval will take place.
-                  ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" "${approval_step}" "${CIRCLECI_API_KEY}"
+                  ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh \
+                                        "${CIRCLE_WORKFLOW_ID}" \
+                                        "${approval_step}" \
+                                        "${CIRCLECI_API_KEY}"
                 fi
 
       apply_environment_terraform:
