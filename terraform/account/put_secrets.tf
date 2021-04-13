@@ -1,8 +1,8 @@
 # common
-/*resource "aws_secretsmanager_secret" "opg_lpa_common_admin_accounts" {
+resource "aws_secretsmanager_secret" "opg_lpa_common_admin_accounts" {
   name = "${local.account_name}/opg_lpa_common_admin_accounts"
   tags = merge(local.default_tags, local.admin_component_tag)
-}*/
+}
 
 resource "aws_secretsmanager_secret" "opg_lpa_common_account_cleanup_notification_recipients" {
   name = "${local.account_name}/opg_lpa_common_account_cleanup_notification_recipients"
