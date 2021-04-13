@@ -36,9 +36,14 @@ class Communication extends AbstractEmailService
             $to[] = (string) $lpa->payment->email;
         }
 
+        $amount = $lpa->payment->amount;
+        if (!is_numeric($amount)) {
+            $amount = null;
+        }
+
         $data = [
             'lpa' => $lpa,
-            'paymentAmount' => ($lpa->payment->amount > 0 ? money_format('%i', $lpa->payment->amount) : null),
+            'paymentAmount' => $amount,
             'isHealthAndWelfare' => ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW),
         ];
 

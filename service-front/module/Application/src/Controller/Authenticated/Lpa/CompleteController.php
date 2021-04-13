@@ -72,7 +72,7 @@ class CompleteController extends AbstractLpaController
         $paCount = count($lpa->document->primaryAttorneys);
         $raCount = count($lpa->document->replacementAttorneys);
         $pnCount = count($lpa->document->peopleToNotify);
-        
+
         if($paCount > 4 && $raCount > 2 && $pnCount > 4) {
             $extraBlockPeople = 'ALL_PEOPLE_OVERFLOW';
         } elseif ($paCount > 4 && $raCount > 2) {
@@ -105,8 +105,8 @@ class CompleteController extends AbstractLpaController
 
         foreach($lpa->document->replacementAttorneys as $attorney) {
             if(isset($attorney->number)) $someAttorneyIsTrustCorp = true;
-        }        
-        
+        }
+
         if($someAttorneyIsTrustCorp) {
             array_push($continuationNoteKeys, 'HAS_TRUST_CORP');
         }
@@ -130,7 +130,7 @@ class CompleteController extends AbstractLpaController
             'hasRemission'       => $lpa->isEligibleForFeeReduction(),
             'isPaymentSkipped'   => $isPaymentSkipped,
             'continuationNoteKeys'   => $continuationNoteKeys,
-        ]; 
+        ];
 
         if (count($lpa->document->peopleToNotify) > 0) {
             $viewParams['lp3Url'] = $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp3']);

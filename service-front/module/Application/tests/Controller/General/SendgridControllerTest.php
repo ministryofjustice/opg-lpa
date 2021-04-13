@@ -26,7 +26,7 @@ class SendgridControllerTest extends AbstractControllerTest
      */
     private $mailTransport;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

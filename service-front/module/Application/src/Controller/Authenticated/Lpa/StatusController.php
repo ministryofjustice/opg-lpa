@@ -45,9 +45,9 @@ class StatusController extends AbstractLpaController
         // Return either the applicationRejectedDate or the applicationRegistrationDate based on what's received from Sirius
         $metadata = $lpa->getMetadata();
 
-        if ($metadata['application-rejected-date']!= null)
+        if (isset($metadata['application-rejected-date']))
             $returnDate = $metadata['application-rejected-date'];
-        else if ($metadata['application-registration-date']!= null)
+        else if (isset($metadata['application-registration-date']))
             $returnDate = $metadata['application-registration-date'];
         else
             $returnDate = null;

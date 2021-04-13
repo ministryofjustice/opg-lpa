@@ -9,7 +9,7 @@ use Laminas\Http\Response;
 
 class SessionKeepAliveControllerTest extends AbstractControllerTest
 {
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
     }

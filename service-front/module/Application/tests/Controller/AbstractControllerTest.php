@@ -174,7 +174,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
     /**
      * Set up the services in default configuration - these can be adapted in the subclasses before getting the controller to test
      */
-    public function setUp()
+    public function setUp() : void
     {
         $this->lpa = FixturesData::getPfLpa();
 
@@ -669,7 +669,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
         return $flattenAttorneyData;
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         //Clear out Zend containers
         $preAuthRequest = new Container('PreAuthRequest');

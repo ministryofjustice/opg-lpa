@@ -22,7 +22,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
         'when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -63,10 +63,6 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set when LPA starts for id: 91333263035
-     */
     public function testIndexActionPostFailed()
     {
         /** @var WhenLpaStartsController $controller */
@@ -80,6 +76,9 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorneyDecisions->when === $this->postData['when'];
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set when LPA starts for id: 91333263035');
 
         $controller->indexAction();
     }
