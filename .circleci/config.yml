@@ -73,11 +73,12 @@ pr_build:  &pr_build
         type: approval
         filters: { branches: { ignore: [master] } }
         requires: [lint_environment_terraform_pr_build ]
-    # - infrastructure_and_deployment/apply_account_terraform:
-    #     name: dev_account_apply_terraform
-    #     workspace: development
-    #     filters: { branches: { ignore: [master] } }
-    #     requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
+
+    - infrastructure_and_deployment/apply_account_terraform:
+         name: dev_account_apply_terraform
+         workspace: development
+         filters: { branches: { ignore: [master] } }
+         requires: [cancel_previous_jobs, dev_account_plan_check_terraform_pr_build,sanity_check_terraform_apply_account_pr_build]
 
     # - infrastructure_and_deployment/apply_email_terraform:
     #     name: email_apply_terraform
