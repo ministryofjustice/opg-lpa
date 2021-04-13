@@ -103,12 +103,13 @@ class ServiceTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Application\Library\ApiProblem\ApiProblemException
      * @throws ApiProblemException
      * @throws Exception
      */
     public function testGetStatuses400()
     {
+        $this->expectException(ApiProblemException::class);
+
         $this->setUpSigning();
 
         $this->setUpRequest(400, '{}');
