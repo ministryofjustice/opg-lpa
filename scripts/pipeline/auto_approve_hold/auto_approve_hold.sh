@@ -51,7 +51,7 @@ do
     then
         #echo "found approval ID: ${APPROVAL_ID}"
         break
-    else
+    #else
         #echo "approval id not yet filled...retrying"
     fi
 done
