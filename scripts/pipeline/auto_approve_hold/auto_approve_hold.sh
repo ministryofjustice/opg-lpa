@@ -39,7 +39,7 @@ function approve_job(){
     curl \
     --header "Content-Type: application/json" \
     -X POST \
-    --header "authorization: Basic ${API_KEY}"
+    --header "authorization: Basic ${API_KEY}" \
     "https://circleci.com/api/v2/workflow/${ID}/approve/${APPROVAL_ID}"
 }
 

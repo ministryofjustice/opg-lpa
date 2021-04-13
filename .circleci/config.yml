@@ -59,7 +59,7 @@ pr_build:  &pr_build
        name:  sanity_check_terraform_apply_account_pr_build
        type: approval
        filters: { branches: { ignore: [master] } }
-       requires: [dev_account_plan_check_terraform_pr_build ]
+       requires: [lint_account_terraform_pr_build ]
 
     - infrastructure_and_deployment/plan_check_terraform:
         name: dev_environment_plan_check_terraform_pr_build
@@ -72,7 +72,7 @@ pr_build:  &pr_build
         name:  sanity_check_terraform_apply_environment_pr_build
         type: approval
         filters: { branches: { ignore: [master] } }
-        requires: [ dev_environment_plan_check_terraform_pr_build ]
+        requires: [lint_environment_terraform_pr_build ]
     # - infrastructure_and_deployment/apply_account_terraform:
     #     name: dev_account_apply_terraform
     #     workspace: development
