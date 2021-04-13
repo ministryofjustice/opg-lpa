@@ -24,7 +24,7 @@ function get_workflow_approval_by_name(){
     fi
 
     WORKFLOW=$(curl -s -X GET --header "Content-Type: application/json" "$url")
-    $NEXT_PAGE_TOKEN=(echo ${WORKFLOW} | jq -r '.next_page_token')
+    $NEXT_PAGE_TOKEN=$(echo ${WORKFLOW} | jq -r '.next_page_token')
 
     # Get approval job id
     APPROVAL_ID=$(echo "${WORKFLOW}" | jq -r --arg HOLD_JOB_NAME "${HOLD_JOB_NAME}"  '.items[] | select(.name==$HOLD_JOB_NAME) | .approval_request_id')
