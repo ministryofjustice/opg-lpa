@@ -305,7 +305,7 @@ workflows:
     <<: *path_to_live
 
 orbs:
-  slack: circleci/slack@3.3.0
+  slack: circleci/slack@4.4.0
   build_containers_and_push_to_ecr:
     orbs:
       docker: circleci/docker@1.4.0
@@ -969,11 +969,21 @@ jobs:
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
-          title: "Online LPA Development Environment Ready"
-          color: "#508c18"
-          message: "User: $CIRCLE_USERNAME\npublic facing url: https://$PUBLIC_FACING_DOMAIN/home \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
-          footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
-
+          event: pass
+          channel: C01BDFQHTRU
+          custom: |
+            {
+              "attachments":
+              [
+                {
+                  "blocks": [],
+                  "title": "Online LPA Development Environment Ready",
+                  "color": "#508c18",
+                  "message": "User: ${CIRCLE_USERNAME}\npublic facing url: https://${PUBLIC_FACING_DOMAIN}/home\nfront url: https://${FRONT_DOMAIN}/home \nadmin url: https://${ADMIN_DOMAIN}",
+                  "footer": "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
+                }
+              ]
+            }
   slack_notify_production_release:
     docker:
       - image: circleci/python
@@ -997,12 +1007,20 @@ jobs:
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
-          title: "Online LPA Production Release Successful"
-          color: "#508c18"
-          message: "By user: $CIRCLE_USERNAME \npublic facing url: https://$PUBLIC_FACING_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
-          footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
-          webhook: ${PROD_RELEASE_SLACK_WEBHOOK}
-
+          event: pass
+          channel: C01BDM8T67J
+          custom: |
+            {
+              "attachments":
+              [
+                { "blocks" : []
+                  "title": "Online LPA Production Release Successful",
+                  "color": "#508c18",
+                  "message": "By user: $CIRCLE_USERNAME \npublic facing url: https://$PUBLIC_FACING_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN",
+                  "footer": "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
+                }
+              ]
+            }
   ecr_scan_results:
     docker:
       - image: circleci/python
