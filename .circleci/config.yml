@@ -979,7 +979,7 @@ jobs:
                   "blocks": [],
                   "title": "Online LPA Development Environment Ready",
                   "color": "#508c18",
-                  "message": "User: ${CIRCLE_USERNAME}\npublic facing url: https://${PUBLIC_FACING_DOMAIN}/home\nfront url: https://${FRONT_DOMAIN}/home \nadmin url: https://${ADMIN_DOMAIN}",
+                  "text": "User: ${CIRCLE_USERNAME}\npublic facing url: https://${PUBLIC_FACING_DOMAIN}/home\nfront url: https://${FRONT_DOMAIN}/home \nadmin url: https://${ADMIN_DOMAIN}",
                   "footer": "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
                 }
               ]
@@ -1016,7 +1016,7 @@ jobs:
                 { "blocks" : []
                   "title": "Online LPA Production Release Successful",
                   "color": "#508c18",
-                  "message": "By user: $CIRCLE_USERNAME \npublic facing url: https://$PUBLIC_FACING_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN",
+                  "text": "By user: $CIRCLE_USERNAME \npublic facing url: https://$PUBLIC_FACING_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN",
                   "footer": "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
                 }
               ]
