@@ -16,10 +16,10 @@ generate_payload()
     [
         {
             "blocks" : [],
-            "mrkdwn_in": ["text", "pretext", "title"],
-            "pretext" : ":circleci: :sign-warning: CircleCI Pipeline Approval Needed!",
+            "mrkdwn_in": ["pretext"],
+            "pretext" : "<!here> :sign-warning: CircleCI Pipeline Approval Needed!",
             "title" : "Pipeline for $PR needs a manual approval.",
-            "text": "- The pipeline flagged some infrastructure that could potentially be destroyed or recreated.\n- Please check reporting step \`${STEP}\` on ${BUILD_URL} to confirm if this is as intended.\n- If it was, release the on hold step \`${APPROVAL_STEP}\` when ready.",
+            "text": "• The pipeline flagged some infrastructure that could potentially be destroyed or recreated.\n• Please check step <${BUILD_URL}|*${STEP}*> to confirm if this is as intended.\n• If it was, release the on hold step \`${APPROVAL_STEP}\` when ready.",
             "emoji": true,
             "color": "#ffff00"
         }
