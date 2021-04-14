@@ -599,19 +599,21 @@ orbs:
                 apk update && apk add curl curl-dev bash jq
                 level=<<parameters.terraform_level>>
                 approval_step=<<parameters.approval_step>>
-                echo checking "${level}" level.
+
+                echo selecting "${level}" level terraform...
                 cd ~/project/terraform/${level}
+                echo initialising...
                 terraform init -lock-timeout=300s
                 export WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-                echo $WORKSPACE
-                echo plan against preproduction to check for potential issues...
+
+                echo terraform workspace: $WORKSPACE
+                echo running plan against preproduction to check for potential issues.
                 terraform workspace select preproduction
 
                 echo plan details:
-
                 terraform plan -lock-timeout=300s -out ${WORKSPACE}.plan  2>&1 | tee  ${WORKSPACE}.log
 
-                echo summary:
+                echo summary of changes:
                 cat ${WORKSPACE}.log | grep '\.' | grep '#' || true
 
                 echo destructive changes:
@@ -622,9 +624,10 @@ orbs:
                 else
                   cat ${WORKSPACE}.log | grep -E 'aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
                 fi
+
                 if [[ "$?" -eq 0 ]]
                 then
-                   echo terraform scan found a possible destructive change.
+                   echo terraform log scan found a possible destructive change.
                    echo please review before approval.
 
                    ~/project/scripts/pipeline/auto_approve_hold/slack_approval_warning.sh \
@@ -634,7 +637,7 @@ orbs:
                                         "${CIRCLE_BUILD_URL}" \
                                         "${approval_step}"
                 else
-                  echo scan found no issues. auto-approval will take place.
+                  echo terraform log scan found no destructive changes. auto-approval will take place.
                   ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh \
                                         "${CIRCLE_WORKFLOW_ID}" \
                                         "${approval_step}" \
