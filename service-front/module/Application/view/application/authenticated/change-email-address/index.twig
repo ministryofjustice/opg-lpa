@@ -1,11 +1,10 @@
-{% extends 'layout/twig/layout.twig' %}
+{% extends 'layout/layout.twig' %}
 
 {% block errorSummary %}
     {% include 'application/authenticated/change-email-address/partials/index-error-summary.twig' %}
 {% endblock %}
 
-{% block htmlTitle %}Change your sign-in email address - {% endblock %}
-{% block pageTitle %}Change your sign-in email address{% endblock %}
+{%- set pageTitle = 'Change your sign-in email address' -%}
 
 {% block content %}
 

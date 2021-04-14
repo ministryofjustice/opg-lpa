@@ -36,7 +36,7 @@ class RegisterControllerTest extends AbstractControllerTest
         'password' => 'password'
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

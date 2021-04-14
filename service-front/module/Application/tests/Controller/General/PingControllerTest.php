@@ -6,12 +6,13 @@ use Application\Controller\General\PingController;
 use Application\Model\Service\System\Status;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class PingControllerTest extends AbstractControllerTest
+class PingControllerTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|Status
@@ -74,20 +75,21 @@ class PingControllerTest extends AbstractControllerTest
         'iterations' => 6,
     );
 
-    protected function getController(string $controllerName)
+    protected function getController()
     {
         /** @var PingController $controller */
-        $controller = parent::getController($controllerName);
+        $controller = new PingController();
 
         $this->status = Mockery::mock(Status::class);
         $controller->setStatusService($this->status);
+        $controller->setConfig(['version' => ['tag' => '1.2.3.4-test']]);
 
         return $controller;
     }
 
     public function testIndexAction()
     {
-        $controller = $this->getController(PingController::class);
+        $controller = $this->getController();
 
         $this->status->shouldReceive('check')->andReturn($this->checkResultOk)->once();
 
@@ -101,7 +103,7 @@ class PingControllerTest extends AbstractControllerTest
 
     public function testJsonAction()
     {
-        $controller = $this->getController(PingController::class);
+        $controller = $this->getController();
 
         $this->status->shouldReceive('check')->andReturn($this->checkResultOk)->once();
 
@@ -115,7 +117,7 @@ class PingControllerTest extends AbstractControllerTest
 
     public function testPingdomActionOk()
     {
-        $controller = $this->getController(PingController::class);
+        $controller = $this->getController();
 
         $this->status->shouldReceive('check')->andReturn($this->checkResultOk)->once();
 
@@ -124,12 +126,12 @@ class PingControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(200, $result->getStatusCode());
-        $this->assertContains('<pingdom_http_custom_check><status>OK</status>', $result->getContent());
+        $this->assertStringContainsString('<pingdom_http_custom_check><status>OK</status>', $result->getContent());
     }
 
     public function testPingdomActionError()
     {
-        $controller = $this->getController(PingController::class);
+        $controller = $this->getController();
 
         $checkResultError = $this->checkResultOk;
         $checkResultError['ok'] = false;
@@ -140,6 +142,6 @@ class PingControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(500, $result->getStatusCode());
-        $this->assertContains('<pingdom_http_custom_check><status>ERROR</status>', $result->getContent());
+        $this->assertStringContainsString('<pingdom_http_custom_check><status>ERROR</status>', $result->getContent());
     }
 }

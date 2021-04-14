@@ -1,9 +1,8 @@
-{% extends 'layout/twig/layout.twig' %}
+{% extends 'layout/layout.twig' %}
 
 {% import "application/macros.twig" as macros %}
 
-{% block htmlTitle %}Check signature dates - {% endblock %}
-{% block pageTitle %}Check signature dates{% endblock %}
+{%- set pageTitle = 'Check signature dates' -%}
 
 {% set errorMappings = {
     'sign-date-donor-life-sustaining': {
@@ -231,7 +230,7 @@
                     <p>This person signed section 5 of the LPA on</p>
 
                     <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates">
-                        <legend class="visually-hidden">Check signature dates for donor</legend>
+                        <legend class="visually-hidden">Check signature dates for donor who signed section 5 of the LPA</legend>
                         <div class="form-group form-group-day {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ donorLifeSustainingElementDayId }}">Day</label>
                             {{ formElement(donorLifeSustainingElementDay) }}
@@ -263,7 +262,7 @@
                 <p>This person signed section 9 of the LPA on</p>
 
                 <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
-                    <legend class="visually-hidden">Check signature dates for donor</legend>
+                    <legend class="visually-hidden">Check signature dates for donor who signed section 9 of the LPA</legend>
                     <div class="form-group form-group-day {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
                         <label class="form-label" for="{{ donorElementDayId }}">Day</label>
                         {{ formElement(donorElementDay) }}

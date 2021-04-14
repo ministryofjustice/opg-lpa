@@ -19,7 +19,7 @@ class UserTest extends TestCase
     /**
      * @throws Exception
      */
-    public function setUp()
+    public function setUp() : void
     {
         $this->user = new User('User ID', 'test token', 1, new DateTime('2019-01-02'), true);
     }

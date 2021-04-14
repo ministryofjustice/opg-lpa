@@ -1,0 +1,40 @@
+{% extends 'layout/layout.twig' %}
+
+{% block mainTitle %}
+    <h3 class="heading-xlarge" data-cy="main-title">
+        {{ defaultTitle }}
+    </h3>
+{% endblock %}
+
+{%- block accordionInstructions -%}
+    <details class="govuk-details" data-module="govuk-details" data-role="details-instructions" data-cy="details-instructions">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                How to use this service
+            </span>
+        </summary>
+        <div class="govuk-details__text text">
+            <p>We'll use your answers to the questions that follow to make a Lasting Power of Attorney (LPA) that you can save and print, get everyone to sign, then send to the Office of the Public Guardian for registration.</p>
+            <p>We'll save the LPA as you progress so you do not need to do it all in one go.</p>
+            <p>If this is the first time you’re making an LPA, you may want to look at our <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-before-you-begin" class="js-guidance" data-journey-click="page:link:help: find out more about how to prepare">Before you begin</a> help page. It explains the decisions the <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-donor" class="js-guidance" data-journey-click="page:link:help: donor">donor</a> has to make about their LPA and the information you’ll need to make an LPA.</p>
+        </div>
+    </details>
+{%- endblock -%}
+
+{% block accordionTop %}
+    {%- set route = routeName() -%}
+    <ul class="accordion" data-cy="accordion">
+        {%- set accordionTop = accordion(lpa).top() -%}
+
+        {%- include 'layout/partials/accordion/accordion.twig' with {'items': accordionTop, 'lpa': lpa} -%}
+
+        {%- if route['previous'] != 'user/about-you' and route['previous'] != 'user/dashboard' and (accordionTop|last).routeName != 'review-link' -%}
+            <li aria-hidden="true"><a id="current" class="accordion-current">{{ route['previous'] }}</a></li>
+        {%- endif -%}
+{% endblock %}
+
+{% block accordionBottom %}
+        {% set accordionBottom = accordion(lpa).bottom() %}
+        {% include 'layout/partials/accordion/accordion.twig' with {'items': accordionBottom, 'lpa': lpa} %}
+    </ul>
+{% endblock %}

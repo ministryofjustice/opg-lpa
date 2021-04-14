@@ -93,7 +93,7 @@ class HashedKeyDynamoDbSessionConnectionTest extends MockeryTestCase
         $this->assertTrue($result);
     }
 
-    public function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
+    public function errorHandler($errno, $errstr, $errfile, $errline, $errcontext = null)
     {
         $this->errors[] = compact("errno", "errstr", "errfile", "errline", "errcontext");
     }

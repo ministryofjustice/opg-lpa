@@ -1,6 +1,6 @@
 version: 2.1
 
-pr_build:  &pr_build
+pr_build: &pr_build
   jobs:
     - cancel_redundant_builds:
         name: cancel_previous_jobs
@@ -47,18 +47,49 @@ pr_build:  &pr_build
         name: lint_environment_terraform_pr_build
         filters: { branches: { ignore: [master] } }
 
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: dev_account_plan_check_terraform_pr_build
+        workspace: development
+        terraform_level: account
+        approval_step: "dev_infra_approval_terraform_apply_account_pr_build"
+        filters: { branches: { ignore: [master] } }
+        requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
+
+    - hold_for_approval_tf:
+        name: dev_infra_approval_terraform_apply_account_pr_build
+        type: approval
+        filters: { branches: { ignore: [master] } }
+        requires: [lint_account_terraform_pr_build]
+
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: dev_environment_plan_check_terraform_pr_build
+        terraform_level: environment
+        approval_step: "dev_infra_approval_terraform_apply_environment_pr_build"
+        filters: { branches: { ignore: [master] } }
+        requires: [cancel_previous_jobs, lint_environment_terraform_pr_build]
+
+    - hold_for_approval_tf:
+        name: dev_infra_approval_terraform_apply_environment_pr_build
+        type: approval
+        filters: { branches: { ignore: [master] } }
+        requires: [lint_environment_terraform_pr_build]
+
     - infrastructure_and_deployment/apply_account_terraform:
         name: dev_account_apply_terraform
         workspace: development
         filters: { branches: { ignore: [master] } }
-        requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
+        requires:
+          [
+            cancel_previous_jobs,
+            dev_account_plan_check_terraform_pr_build,
+            dev_infra_approval_terraform_apply_account_pr_build,
+          ]
 
     - infrastructure_and_deployment/apply_email_terraform:
         name: email_apply_terraform
         workspace: development
         filters: { branches: { ignore: [master] } }
         requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
-
     - infrastructure_and_deployment/apply_environment_terraform:
         name: dev_environment_apply_terraform
         filters: { branches: { ignore: [master] } }
@@ -66,6 +97,8 @@ pr_build:  &pr_build
           [
             cancel_previous_jobs,
             lint_environment_terraform_pr_build,
+            dev_environment_plan_check_terraform_pr_build,
+            dev_infra_approval_terraform_apply_environment_pr_build,
             dev_account_apply_terraform,
             front_docker_build,
             admin_docker_build,
@@ -73,7 +106,6 @@ pr_build:  &pr_build
             pdf_docker_build,
             seeding_docker_build,
           ]
-
     - ecr_scan_results:
         name: ecr_scan_results_development
         filters: { branches: { ignore: [master] } }
@@ -141,10 +173,39 @@ path_to_live: &path_to_live
         unit_test: false
         filters: { branches: { only: [master] } }
 
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: preprod_account_plan_check_terraform_pr_build
+        workspace: preproduction
+        terraform_level: account
+        approval_step: "preprod_infra_approval_terraform_apply_account_pr_build"
+        filters: { branches: { only: [master] } }
+
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: preprod_environment_plan_check_terraform_pr_build
+        workspace: preproduction
+        terraform_level: environment
+        approval_step: "preprod_infra_approval_terraform_apply_environment_pr_build"
+        filters: { branches: { only: [master] } }
+
+    - hold_for_approval_tf:
+        name: preprod_infra_approval_terraform_apply_account_pr_build
+        type: approval
+        filters: { branches: { only: [master] } }
+
+    - hold_for_approval_tf:
+        name: preprod_infra_approval_terraform_apply_environment_pr_build
+        type: approval
+        filters: { branches: { only: [master] } }
+
     - infrastructure_and_deployment/apply_account_terraform:
         name: preprod_account_apply_terraform
         workspace: preproduction
         filters: { branches: { only: [master] } }
+        requires:
+          [
+            preprod_infra_approval_terraform_apply_account_pr_build,
+            preprod_account_plan_check_terraform_pr_build,
+          ]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: preprod_environment_apply_terraform
@@ -153,10 +214,13 @@ path_to_live: &path_to_live
         requires:
           [
             preprod_account_apply_terraform,
+            preprod_environment_plan_check_terraform_pr_build,
+            preprod_infra_approval_terraform_apply_environment_pr_build,
             front_docker_build,
             admin_docker_build,
             api_docker_build,
             pdf_docker_build,
+            seeding_docker_build
           ]
 
     - ecr_scan_results:
@@ -213,16 +277,16 @@ path_to_live: &path_to_live
 
 workflows:
   workspace_cleanup:
-     triggers:
-       - schedule:
-           cron: "0 6,18 * * 0-6" # 6am and 6pm
-           filters:
-             branches:
-               only:
-                 - master
-     jobs:
-       - workspace_cleanup:
-           name: workspace_cleanup
+    triggers:
+      - schedule:
+          cron: "0 6,18 * * 0-6" # 6am and 6pm
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - workspace_cleanup:
+          name: workspace_cleanup
 
   pr_build:
     <<: *pr_build
@@ -233,11 +297,11 @@ workflows:
   weekly_refresh:
     triggers:
       - schedule:
-           cron: "0 3 * * 3" # 3 am (UTC) on wednesday
-           filters:
-             branches:
-               only:
-                 - master
+          cron: "0 3 * * 3" # 3 am (UTC) on wednesday
+          filters:
+            branches:
+              only:
+                - master
     <<: *path_to_live
 
 orbs:
@@ -254,7 +318,7 @@ orbs:
               docker-username: DOCKER_USER
       install_aws_cli:
         steps:
-         - run:
+          - run:
               name: Install AWS CLI
               command: sudo pip3 install awscli --upgrade
       ecr_login:
@@ -314,7 +378,7 @@ orbs:
           - run:
               name: Build app container
               command: |
-               docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
+                docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
           - run:
               name: Run unit tests
               command: |
@@ -398,8 +462,8 @@ orbs:
     executors:
       python:
         docker:
-         - image: circleci/python
-           auth:
+          - image: circleci/python
+            auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
@@ -419,26 +483,12 @@ orbs:
         resource_class: small
       terraform14:
         docker:
-        - image: hashicorp/terraform
-          auth:
+          - image: hashicorp/terraform:0.14.2
+            auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
     jobs:
-      #----------------------------------------------------
-      # Lambda
-      package_lambda_artifact:
-        executor: python-build
-        steps:
-          - checkout
-          - run: apk add zip
-          - run: pip3 install -r ~/project/workspace_destroyer_lambda/lambda/requirements.txt  --target ~/project/workspace_destroyer_lambda/lambda/vendor
-          - run: cd ~/project/workspace_destroyer_lambda/lambda/vendor; zip -r9 /tmp/lambda_function_payload.zip .
-          - run: cd ~/project/workspace_destroyer_lambda/lambda; zip -g /tmp/lambda_function_payload.zip service.py
-          - persist_to_workspace:
-              root: /tmp
-              paths:
-                - lambda_function_payload.zip
       #----------------------------------------------------
       # Terraform
       lint_account_terraform:
@@ -525,6 +575,75 @@ orbs:
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
+
+      plan_check_terraform:
+        # plan check - with gating check
+        executor: terraform14
+        parameters:
+          terraform_level:
+            description: choose account / enviroment for level to check
+            default: environment
+            type: enum
+            enum: ["environment", "account"]
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+          approval_step:
+            description: approval step to auto approve
+            type: string
+        steps:
+          - checkout
+          - run:
+              name: Plan Terraform against preproduction and scan for potential issues.
+              command: |
+                apk update && apk add curl curl-dev bash jq
+                level=<<parameters.terraform_level>>
+                approval_step=<<parameters.approval_step>>
+
+                echo selecting "${level}" level terraform...
+                cd ~/project/terraform/${level}
+                echo initialising...
+                terraform init -lock-timeout=300s
+                export WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+
+                echo terraform workspace: $WORKSPACE
+                echo running plan against preproduction to check for potential issues.
+                terraform workspace select preproduction
+
+                echo plan details:
+                terraform plan -lock-timeout=300s -out ${WORKSPACE}.plan  2>&1 | tee  ${WORKSPACE}.log
+
+                echo summary of changes:
+                cat ${WORKSPACE}.log | grep '\.' | grep '#' || true
+
+                echo destructive changes:
+                set +e
+                if [[ "${level}" == "account" ]]
+                then
+                  cat ${WORKSPACE}.log | grep -E 'destroyed|replaced'
+                else
+                  cat ${WORKSPACE}.log | grep -E 'aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
+                fi
+
+                if [[ "$?" -eq 0 ]]
+                then
+                   echo terraform log scan found a possible destructive change.
+                   echo please review before approval.
+
+                   ~/project/scripts/pipeline/auto_approve_hold/slack_approval_warning.sh \
+                                        "${SLACK_DEV_WEBHOOK}" \
+                                        "${CIRCLE_PULL_REQUEST}" \
+                                        "${CIRCLE_JOB}" \
+                                        "${CIRCLE_BUILD_URL}" \
+                                        "${approval_step}"
+                else
+                  echo terraform log scan found no destructive changes. auto-approval will take place.
+                  ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh \
+                                        "${CIRCLE_WORKFLOW_ID}" \
+                                        "${approval_step}" \
+                                        "${CIRCLECI_API_KEY}"
+                fi
 
       apply_environment_terraform:
         #

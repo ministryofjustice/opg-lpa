@@ -1,0 +1,86 @@
+# This workflow automates theprocess of updating and creating a PR for
+# Dependabot updates.
+
+# currently this runs against Composer and NPM.
+# please add any updates to this if you create new package files for PHP or Node based projects.
+
+name: Dependabot updates
+
+on:
+# In case we need to change, uncomment out and change name to branch you are fixing on.
+# Commits will make action trigger. 
+# Remember to comment out after work done.
+# push:
+#     branches:
+#      - dependabot-issue-npm
+ schedule:
+  - cron: '0 8 * * 1' # runs on a monday morning
+ workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      # set up php
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer:v2
+      # setup node
+      - uses: actions/setup-node@v2
+        with:
+           node-version: '15'
+      # composer
+      - name: Update outdated dependencies - composer
+        run: |
+          echo "running composer updates..."
+          cd tests
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+          cd ../service-front
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+          cd ../service-api
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+          cd ../service-admin
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+          cd ../service-pdf
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+      # npm
+      - name: Update outdated dependencies - npm
+        run: |
+          echo "running npm updates..."
+          npm update -f
+          cd service-front
+          npm update -f
+       # create a datestamp for the branch
+      - name: Get current time
+        uses: srfrnk/current-time@master
+        id: current-time
+        with:
+         format: DD-MM-YYYY
+      - name:  Check value of branch name
+        run: echo "branch name to be created $BRANCH_NAME"
+        env:
+         BRANCH_NAME: "weekly-dependabot-updates-${{ steps.current-time.outputs.formattedTime }}"
+      # create PR
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Update dependabot for composer and npm
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          branch: weekly-dependabot-updates-${{ steps.current-time.outputs.formattedTime }}
+          labels: dependabot-update
+          title: Weekly dependabot update ${{ steps.current-time.outputs.formattedTime }}
+          body:  |
+            **WEEKLY DEPENDABOT UPDATES (${{ steps.current-time.outputs.formattedTime }})**
+
+            This automated PR covers:
+            - PHP `Composer`
+            - `NPM`
+          draft: true

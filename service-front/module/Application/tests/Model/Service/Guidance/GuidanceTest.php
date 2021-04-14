@@ -28,7 +28,7 @@ class GuidanceTest extends AbstractServiceTest
         chdir(__DIR__);
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         parent::tearDown();
 

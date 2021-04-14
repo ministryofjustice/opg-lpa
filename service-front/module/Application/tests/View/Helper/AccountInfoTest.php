@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  * Created by PhpStorm.
  * User: seemamenon
  * Date: 17/02/2019
@@ -66,7 +66,7 @@ class AccountInfoTest extends MockeryTestCase
      */
     private $identity;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -238,7 +238,7 @@ class AccountInfoTest extends MockeryTestCase
         $accountInfo();
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         //  Clear the user details session
         $this->userDetailSession->getManager()->getStorage()->clear('AccountInfoTest');

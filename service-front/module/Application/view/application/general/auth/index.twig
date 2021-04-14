@@ -1,11 +1,10 @@
-{% extends 'layout/twig/layout.twig' %}
+{% extends 'layout/layout.twig' %}
 
 {% block errorSummary %}
     {% include 'application/general/auth/partials/error-summary.twig' %}
 {% endblock %}
 
-{% block htmlTitle %}Sign in - {% endblock %}
-{% block pageTitle %}Sign in{% endblock %}
+{%- set pageTitle = 'Sign in' -%}
 
 {% block content %}
 

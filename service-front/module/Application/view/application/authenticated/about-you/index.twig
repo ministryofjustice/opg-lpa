@@ -1,11 +1,10 @@
-{% extends 'layout/twig/layout.twig' %}
+{% extends 'layout/layout.twig' %}
 
 {% block errorSummary %}
     {% include 'application/authenticated/about-you/partials/form-error-summary.twig' %}
 {% endblock %}
 
-{% block htmlTitle %}Your details - {% endblock %}
-{% block pageTitle %}Your details{% endblock %}
+{%- set pageTitle = 'Your details' -%}
 
 {% block content %}
 
@@ -41,15 +40,6 @@
 {% set address2 = form.get('address-address2') %}
 {% set address3 = form.get('address-address3') %}
 {% set postcode = form.get('address-postcode') %}
-{% set titleOptions = [
-      '',
-      'Mr',
-      'Mrs',
-      'Miss',
-      'Ms',
-      'Dr',
-      'Prefer not to say',
-] | json_encode() %}
 
 {# form fields config #}
 {{ title.setAttributes({

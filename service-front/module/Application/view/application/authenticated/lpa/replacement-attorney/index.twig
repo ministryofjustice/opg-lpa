@@ -1,6 +1,6 @@
-{% extends 'layout/twig/accordion-layout.twig' %}
+{% extends 'layout/accordion-layout.twig' %}
 
-{% block htmlTitle %}Replacement attorneys - {% endblock %}
+{%- set pageTitle = 'Does the donor want any replacement attorneys?' -%}
 
 {% block content %}
 
@@ -8,7 +8,7 @@
 
 <li id="replacement-attorney-section" class="section current" data-cy="section-current">
 
-    <h2 class="heading-medium accordion-header flush--top">Does the donor want any replacement attorneys?</h2>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
@@ -20,7 +20,7 @@
                 <div class="alert" role="alert">
                     <i class="icon icon-important-small" role="presentation"></i>
                     <div class="alert-message">
-                        <h3 class="heading-small flush--top">Replacement attorneys are an important backup when attorneys are appointed to act jointly.</h3>
+                        <h2 class="heading-small flush--top">Replacement attorneys are an important backup when attorneys are appointed to act jointly.</h2>
                         <p>If the donor does not appoint any replacement attorneys and one of the original attorneys dies or can no longer act, the LPA will stop working.</p>
                         <p>If the donor does appoint replacement attorneys and one of the original attorneys dies or can no longer act:</p>
                         <ul class="list list-bullet">
@@ -38,7 +38,7 @@
                 <div class="alert" role="alert">
                     <i class="icon icon-information" role="presentation"></i>
                     <div class="alert-message">
-                        <h3 class="heading-small flush--top">The donor appointed their attorneys to act jointly for some decisions, and jointly and severally for others.</h3>
+                        <h2 class="heading-small flush--top">The donor appointed their attorneys to act jointly for some decisions, and jointly and severally for others.</h2>
                         <p>This means that if an original attorney dies or can no longer act:</p>
                         <ul class="list list-bullet">
                             <li>
@@ -61,9 +61,9 @@
     </div>
 
     {% if (attorneys) %}
-        <h3 class="heading-medium flush--top">
+        <h2 class="heading-medium flush--top">
             The replacement attorney{% if attorneys|length > 1 %}s{% endif %}
-        </h3>
+        </h2>
         <ul>
             {% for attorney in attorneys %}
                 {% include 'application/authenticated/lpa/replacement-attorney/partials/attorney.twig' with attorney %}

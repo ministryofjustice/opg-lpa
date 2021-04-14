@@ -29,7 +29,7 @@ class AbstractLpaControllerTest extends AbstractControllerTest
 
         $this->assertEquals($result, $response);
     }
-    
+
     public function testOnDispatchNoLpaException()
     {
         $this->lpa = false;
@@ -132,15 +132,14 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $this->assertEquals('Placeholder page', $result->content);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage RouteMatch must be an instance of Laminas\Router\Http\RouteMatch when using the moveToNextRoute function
-     */
     public function testMoveToNextRouteNotRouteMatch()
     {
         $controller = $this->getController(TestableAbstractLpaController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('RouteMatch must be an instance of Laminas\Router\Http\RouteMatch when using the moveToNextRoute function');
 
         $controller->testMoveToNextRoute();
     }

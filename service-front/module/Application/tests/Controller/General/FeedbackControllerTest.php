@@ -32,7 +32,7 @@ class FeedbackControllerTest extends AbstractControllerTest
      */
     private $feedbackService;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -68,10 +68,6 @@ class FeedbackControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    /**
-     * @expectedException        Exception
-     * @expectedExceptionMessage Error sending feedback email
-     */
     public function testSendFeedbackFail()
     {
         $controller = $this->getController(FeedbackController::class);
@@ -80,6 +76,9 @@ class FeedbackControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->feedbackService->shouldReceive('add')->andReturn(false)->once();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Error sending feedback email');
 
         $controller->indexAction();
     }
