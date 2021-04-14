@@ -970,7 +970,7 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
           event: pass
-          channel: C01BDFQHTRU
+          channel: C01BKBWGWTY
           custom: |
             {
               "attachments":
@@ -980,7 +980,7 @@ jobs:
                   "title": "Online LPA Development Environment Ready",
                   "color": "#508c18",
                   "text": "User: ${CIRCLE_USERNAME}\npublic facing url: https://${PUBLIC_FACING_DOMAIN}/home\nfront url: https://${FRONT_DOMAIN}/home \nadmin url: https://${ADMIN_DOMAIN}",
-                  "footer": "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
+                  "footer": "${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
                 }
               ]
             }
@@ -1008,7 +1008,7 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
           event: pass
-          channel: C01BDM8T67J
+          channel: C01BKBWGWTY,C01BDM8T67J
           custom: |
             {
               "attachments":
@@ -1017,8 +1017,8 @@ jobs:
                   "blocks" : [],
                   "title": "Online LPA Production Release Successful",
                   "color": "#508c18",
-                  "text": "By user: $CIRCLE_USERNAME \npublic facing url: https://$PUBLIC_FACING_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN",
-                  "footer": "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
+                  "text": "By user: ${CIRCLE_USERNAME} \npublic facing url: https://${PUBLIC_FACING_DOMAIN}/home \nadmin url: https://${ADMIN_DOMAIN}",
+                  "footer": "${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
                 }
               ]
             }
