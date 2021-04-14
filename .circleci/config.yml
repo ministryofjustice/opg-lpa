@@ -220,6 +220,7 @@ path_to_live: &path_to_live
             admin_docker_build,
             api_docker_build,
             pdf_docker_build,
+            seeding_docker_build
           ]
 
     - ecr_scan_results:
