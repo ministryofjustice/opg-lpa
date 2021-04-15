@@ -37,7 +37,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
      */
     private $factory;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->container = Mockery::mock(ContainerInterface::class);
 

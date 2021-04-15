@@ -9,6 +9,7 @@ use Application\Model\Service\AttorneysPrimary\Service;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use LmcRbacMvc\Exception\UnauthorizedException;
 
 class PrimaryAttorneyControllerTest extends AbstractControllerTest
 {
@@ -81,16 +82,13 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testCreateUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->create([]);
     }
 
@@ -147,16 +145,13 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testUpdateUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->update(10, []);
     }
 
@@ -211,13 +206,11 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testDeleteUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7c8377f57127d2f242fc635eb8556084",
+    "content-hash": "9491b75eecc43b864c3be0fdac70e9fb",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
@@ -63,16 +63,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.1",
+            "version": "3.178.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "45692b97e12a2eed540c0afd106f143aad15e622"
+                "reference": "ba05bc572302c124960c2b0a9813169e790fcac6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/45692b97e12a2eed540c0afd106f143aad15e622",
-                "reference": "45692b97e12a2eed540c0afd106f143aad15e622",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ba05bc572302c124960c2b0a9813169e790fcac6",
+                "reference": "ba05bc572302c124960c2b0a9813169e790fcac6",
                 "shasum": ""
             },
             "require": {
@@ -147,9 +147,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.2"
             },
-            "time": "2021-04-09T18:13:02+00:00"
+            "time": "2021-04-12T18:16:30+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -3442,21 +3442,21 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "13.7.0",
+            "version": "13.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
-                "reference": "57f4b280fe642d68803ee6477e5bb0cde70f3883"
+                "reference": "e20e0f799c88455e2af0e88f6193f1ce85e78bc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/57f4b280fe642d68803ee6477e5bb0cde70f3883",
-                "reference": "57f4b280fe642d68803ee6477e5bb0cde70f3883",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/e20e0f799c88455e2af0e88f6193f1ce85e78bc1",
+                "reference": "e20e0f799c88455e2af0e88f6193f1ce85e78bc1",
                 "shasum": ""
             },
             "require": {
                 "egulias/email-validator": "~1.2",
-                "php": "^7.1",
+                "php": "^7.1 | ^8.0",
                 "symfony/validator": "^4.2"
             },
             "require-dev": {
@@ -3472,7 +3472,7 @@
                 "MIT"
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
-            "time": "2021-03-12T10:19:48+00:00"
+            "time": "2021-04-13T12:33:09+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",

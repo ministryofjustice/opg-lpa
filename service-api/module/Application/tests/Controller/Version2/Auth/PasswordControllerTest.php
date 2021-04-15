@@ -10,7 +10,7 @@ use Mockery;
 
 class PasswordControllerTest extends AbstractAuthControllerTest
 {
-    public function setUp()
+    public function setUp() : void
     {
         $this->service = Mockery::mock(Service::class);
 
