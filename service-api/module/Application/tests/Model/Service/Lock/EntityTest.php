@@ -17,7 +17,7 @@ class EntityTest extends TestCase
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 

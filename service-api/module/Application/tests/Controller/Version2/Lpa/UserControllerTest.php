@@ -9,6 +9,7 @@ use Application\Model\Service\Users\Service;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use LmcRbacMvc\Exception\UnauthorizedException;
 
 class UserControllerTest extends AbstractControllerTest
 {
@@ -91,16 +92,13 @@ class UserControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testGetUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->get(10);
     }
 
@@ -157,16 +155,13 @@ class UserControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testUpdateUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->update(10, []);
     }
 
@@ -222,16 +217,13 @@ class UserControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testDeleteUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->delete(10);
     }
 }

@@ -33,7 +33,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private $authUserRepository;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 

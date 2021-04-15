@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Controller\Version2\Lpa;
 
+use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\AbstractService;
@@ -34,10 +35,6 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(Response::class, $result);
     }
 
-    /**
-     * @expectedException Application\Library\ApiProblem\ApiProblemException
-     * @expectedExceptionMessage User identifier missing from URL
-     */
     public function testOnDispatchNoUserId()
     {
         $routeMatch = Mockery::mock(RouteMatch::class);
@@ -45,6 +42,9 @@ class AbstractLpaControllerTest extends AbstractControllerTest
 
         $mvcEvent = Mockery::mock(MvcEvent::class);
         $mvcEvent->shouldReceive('getRouteMatch')->andReturn($routeMatch)->once();
+
+        $this->expectException(ApiProblemException::class);
+        $this->expectExceptionMessage('User identifier missing from URL');
 
         $controller = new TestableAbstractLpaController($this->authorizationService, $this->service);
         $result = $controller->onDispatch($mvcEvent);

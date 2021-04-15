@@ -24,7 +24,7 @@ class PingControllerFactoryTest extends MockeryTestCase
      */
     private $container;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->factory = new PingControllerFactory();
         $this->container = Mockery::mock(ContainerInterface::class);

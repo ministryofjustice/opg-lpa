@@ -9,6 +9,7 @@ use Application\Model\Service\Applications\Service;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use LmcRbacMvc\Exception\UnauthorizedException;
 
 class ApplicationControllerTest extends AbstractControllerTest
 {
@@ -91,16 +92,13 @@ class ApplicationControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testGetUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->get(10);
     }
 
@@ -152,16 +150,13 @@ class ApplicationControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(NoContent::class, $response);
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testGetListUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->getList();
     }
 
@@ -218,16 +213,13 @@ class ApplicationControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testCreateUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->create([]);
     }
 
@@ -284,16 +276,13 @@ class ApplicationControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testPatchUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->patch(10, []);
     }
 
@@ -349,16 +338,13 @@ class ApplicationControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testDeleteUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->delete(10);
     }
 }

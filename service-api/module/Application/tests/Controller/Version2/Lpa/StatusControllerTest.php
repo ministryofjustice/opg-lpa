@@ -5,6 +5,7 @@ namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\StatusController;
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\DateTime;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Applications\Service;
@@ -520,12 +521,11 @@ class StatusControllerTest extends AbstractControllerTest
             ]]), $result);
     }
 
-    /**
-     * @expectedException Application\Library\ApiProblem\ApiProblemException
-     * @expectedExceptionMessage User identifier missing from URL
-     */
     public function testNoUserIdPresent()
     {
+        $this->expectException(ApiProblemException::class);
+        $this->expectExceptionMessage('User identifier missing from URL');
+
         $this->statusController->get('98765');
     }
 

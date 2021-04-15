@@ -20,7 +20,7 @@ class GenerateStatsControllerTest extends MockeryTestCase
      */
     private $statsService;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->statsService = Mockery::mock(StatsService::class);
 
