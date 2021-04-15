@@ -19,8 +19,6 @@ abstract class AbstractCsrfForm extends AbstractForm
 
     public function init()
     {
-        $this->setCsrf();
-
         parent::init();
     }
 

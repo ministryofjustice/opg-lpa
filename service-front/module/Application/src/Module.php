@@ -347,9 +347,10 @@ class Module implements FormElementProviderInterface
         return [
             'initializers' => [
                 'InitCsrfForm' => function (ServiceManager $serviceManager, $form) {
-                    if ($form instanceof AbstractCsrfForm) {
+                    if (is_subclass_of($form, "Application\Form\AbstractCsrfForm")) {
                         $config = $serviceManager->get('Config');
                         $form->setConfig($config);
+                        $form->setCsrf();
                     }
                 },
             ],

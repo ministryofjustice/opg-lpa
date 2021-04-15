@@ -46,6 +46,7 @@ trait FormTestSetupTrait
         ];
 
         $form->setConfig($config);
+        $form->setCsrf();
 
         //  Pass on the set up - do this last
         $this->setUpForm($form);
