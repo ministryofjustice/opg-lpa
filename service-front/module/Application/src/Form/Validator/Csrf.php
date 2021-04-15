@@ -43,19 +43,9 @@ class Csrf extends LaminasCsrfValidator
      */
     public function isValid($value, $context = null)
     {
-        $hash = $this->getHash(true);
-
-        $this->getLogger()->err(sprintf(
-            "{isValid} Hash value (with regeneration set as true): %s",
-            $hash
-        ));
+        $hash = $this->getHash();
 
         if ($value !== $hash) {
-            $this->getLogger()->err(sprintf(
-                "Mismatched CSRF provided; expected %s received %s",
-                $value,
-                $this->getHash(),
-            ));
             $this->error(self::NOT_SAME);
             return false;
         }
@@ -66,24 +56,11 @@ class Csrf extends LaminasCsrfValidator
 
     public function getHash($regenerate = false)
     {
-        $isNull = (null === $this->hash);
-
-        $this->getLogger()->err(sprintf(
-            "{getHash} Getting hash [regenerate: %s] [hash: %s] [isNull: %s]",
-            $regenerate,
-            $this->hash,
-            $isNull
-        ));
-
-
-        if ( $isNull || $regenerate) {
-
-            $this->getLogger()->err(sprintf(
-                "{getHash} Getting hash - generating new version."
-            ));
+        if (null === $this->hash || $regenerate) {
 
             $this->generateHash();
         }
+
         return $this->hash;
     }
 
@@ -100,10 +77,6 @@ class Csrf extends LaminasCsrfValidator
      */
     protected function generateHash()
     {
-        $this->getLogger()->err(sprintf(
-            "{generateHash} Generating hash"
-        ));
-
         $salt = $this->getSalt();
 
         if ($salt == null || empty($salt)) {
@@ -113,20 +86,9 @@ class Csrf extends LaminasCsrfValidator
         $session = new Container('CsrfValidator');
 
         if (!isset($session->token)) {
-            $this->getLogger()->err(sprintf(
-                "{generateHash} Generating hash - generating new token"
-            ));
             $session->token = hash('sha512', Rand::getBytes(128, true));
         }
 
         $this->hash = hash('sha512', $this->getName() . $session->token . $salt);
-
-        $this->getLogger()->err(sprintf(
-            "{generateHash} Generated hash [salt: %s] [token: %s] [hash: %s] [name: %s]",
-            $salt,
-            $session->token,
-            $this->hash,
-            $this->getName()
-        ));
     }
 }
