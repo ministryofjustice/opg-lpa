@@ -22,7 +22,7 @@ class FormTest extends MockeryTestCase
             $className = 'Application\\Form\\Lpa\\' . $pathInfo['filename'];
             $reflectionClass = new ReflectionClass($className);
 
-            if (class_exists($className) && !$reflectionClass->isAbstract() && $reflectionClass->isSubclassOf(AbstractLpaForm::class)) {
+            if (class_exists($className) && !$reflectionClass->isAbstract() && $reflectionClass->isSubclassOf(AbstractCsrfForm::class)) {
                 //  Instantiate the form object and test
                 $form = new $className('name', [
                     'lpa' => $lpa

@@ -42,9 +42,6 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
 
     public function init()
     {
-
-        $this->setCsrf();
-
         foreach ($this->formElements as $name => $elm) {
             //  Add the element
             $this->add([

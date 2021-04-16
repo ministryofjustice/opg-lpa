@@ -4,6 +4,7 @@ namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\ApplicantForm;
 use ApplicationTest\Form\FormTestSetupTrait;
+use Laminas\Form\FormInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
@@ -57,11 +58,30 @@ class ApplicantFormTest extends MockeryTestCase
 
     public function testValidateByModelInvalid()
     {
-        $this->form->setData(array_merge([
-            'whoIsRegistering' => 'someoneelse',
-        ], $this->getCsrfData()));
+        echo "\n{NOISE0}\n";
+        print_r($this->form->getMessages());
+        echo "\n{NOISE0}\n";
+
+        $this->form->setData(
+            array_merge(
+                ['whoIsRegistering' => 'someoneelse'],
+                $this->getCsrfData()
+            )
+        );
 
         $this->assertFalse($this->form->isValid());
+
+        echo "\n{NOISE2}\n";
+        if (is_object($this->form->getData(FormInterface::VALUES_RAW))) {
+            var_dump($this->form->getData(FormInterface::VALUES_RAW));
+        } else {
+            print_r($this->form->getData(FormInterface::VALUES_RAW));
+        }
+        echo "\n{NOISE2}\n";
+
+        echo "\n{NOISE1}\n";
+        print_r($this->form->getMessages());
+        echo "\n{NOISE1}\n";
 
         $this->assertEquals([
             'whoIsRegistering' => [

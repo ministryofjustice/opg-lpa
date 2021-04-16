@@ -7,6 +7,7 @@ use Application\Form\AbstractForm;
 use Application\Form\Lpa\AbstractActorForm;
 use Application\Form\Lpa\AbstractLpaForm;
 use Application\Form\Lpa\AbstractMainFlowForm;
+use Laminas\Form\FormInterface;
 use Mockery as m;
 use Laminas\InputFilter\InputFilter;
 
@@ -20,35 +21,65 @@ trait FormTestSetupTrait
     protected $form;
 
     /**
-     * @param AbstractForm $form
+     * @param FormInterface $form
      *
      * Set up the form to test
      */
-    protected function setUpForm(AbstractForm $form)
+    protected function setUpForm(FormInterface $form)
     {
+        if ($form instanceof AbstractCsrfForm) {
+            $config = [
+                'csrf' => [
+                    'salt' => 'Rando_Calrissian'
+                ]
+            ];
+
+            $form->setConfig($config);
+            $form->setCsrf();
+        }
+
         $form->init();
 
         $this->form = $form;
     }
 
     /**
-     * @param AbstractCsrfForm $form
+     * @param FormInterface $form
      *
      * Set up the form to test
      */
-    protected function setUpCsrfForm(AbstractCsrfForm $form)
+    protected function setUpCsrfForm(FormInterface $form)
     {
-        //  Mock the form element manager and config
-        $config = [
-            'csrf' => [
-                'salt' => 'Rando_Calrissian'
-            ]
-        ];
+        $this->setUpForm($form);
+    }
 
-        $form->setConfig($config);
-        $form->setCsrf();
+    /**
+     * @param FormInterface $form
+     *
+     * Set up the form to test
+     */
+    protected function setUpLpaForm(FormInterface $form)
+    {
+        $this->setUpForm($form);
+    }
 
-        //  Pass on the set up - do this last
+    /**
+     * @param FormInterface $form
+     *
+     * Set up the form to test
+     */
+    protected function setUpActorForm(FormInterface $form)
+    {
+        $this->setUpForm($form);
+    }
+
+    /**
+     * @param FormInterface $form
+     *
+     * Set up the form to test
+     */
+    protected function setUpMainFlowForm(FormInterface $form)
+    {
         $this->setUpForm($form);
     }
 
@@ -66,44 +97,5 @@ trait FormTestSetupTrait
         }
 
         return [];
-    }
-
-    /**
-     * @param AbstractLpaForm $form
-     *
-     * Set up the form to test
-     */
-    protected function setUpLpaForm(AbstractLpaForm $form)
-    {
-        //  TODO...
-
-        //  Pass on the set up - do this last
-        $this->setUpCsrfForm($form);
-    }
-
-    /**
-     * @param AbstractActorForm $form
-     *
-     * Set up the form to test
-     */
-    protected function setUpActorForm(AbstractActorForm $form)
-    {
-        //  TODO...
-
-        //  Pass on the set up - do this last
-        $this->setUpLpaForm($form);
-    }
-
-    /**
-     * @param AbstractMainFlowForm $form
-     *
-     * Set up the form to test
-     */
-    protected function setUpMainFlowForm(AbstractMainFlowForm $form)
-    {
-        //  TODO...
-
-        //  Pass on the set up - do this last
-        $this->setUpLpaForm($form);
     }
 }
