@@ -15,7 +15,7 @@ class AboutYouTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpActorForm(new AboutYouForm());
+        $this->setUpForm(new AboutYouForm());
     }
 
     public function testNameAndInstances()
