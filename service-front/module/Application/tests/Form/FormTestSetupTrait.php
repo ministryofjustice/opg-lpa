@@ -44,16 +44,6 @@ trait FormTestSetupTrait
     }
 
     /**
-     * @param FormInterface $form
-     *
-     * Set up the form to test
-     */
-    protected function setUpCsrfForm(FormInterface $form)
-    {
-        $this->setUpForm($form);
-    }
-
-    /**
      * Function to easily enrich the form data with Csrf data
      *
      * @return array
