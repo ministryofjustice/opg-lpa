@@ -8,6 +8,7 @@ use Application\Model\Service\AttorneyDecisionsPrimary\Service;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use LmcRbacMvc\Exception\UnauthorizedException;
 
 class PrimaryAttorneyDecisionsControllerTest extends AbstractControllerTest
 {
@@ -80,16 +81,13 @@ class PrimaryAttorneyDecisionsControllerTest extends AbstractControllerTest
         ), $response->toArray());
     }
 
-    /**
-     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
     public function testUpdateUnauthorised()
     {
         $this->setAuthorised(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this service');
 
         $controller = $this->getController();
-
         $controller->update(10, []);
     }
 }
