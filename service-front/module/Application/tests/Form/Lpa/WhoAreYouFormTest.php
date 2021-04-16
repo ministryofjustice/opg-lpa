@@ -15,7 +15,7 @@ class WhoAreYouFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpMainFlowForm(new WhoAreYouForm());
+        $this->setUpForm(new WhoAreYouForm());
     }
 
     public function testNameAndInstances()

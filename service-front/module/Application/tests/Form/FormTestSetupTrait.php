@@ -27,6 +27,8 @@ trait FormTestSetupTrait
      */
     protected function setUpForm(FormInterface $form)
     {
+        $form->init();
+
         if ($form instanceof AbstractCsrfForm) {
             $config = [
                 'csrf' => [
@@ -37,8 +39,6 @@ trait FormTestSetupTrait
             $form->setConfig($config);
             $form->setCsrf();
         }
-
-        $form->init();
 
         $this->form = $form;
     }
@@ -69,16 +69,6 @@ trait FormTestSetupTrait
      * Set up the form to test
      */
     protected function setUpActorForm(FormInterface $form)
-    {
-        $this->setUpForm($form);
-    }
-
-    /**
-     * @param FormInterface $form
-     *
-     * Set up the form to test
-     */
-    protected function setUpMainFlowForm(FormInterface $form)
     {
         $this->setUpForm($form);
     }

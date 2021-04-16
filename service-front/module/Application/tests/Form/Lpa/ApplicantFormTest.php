@@ -28,7 +28,7 @@ class ApplicantFormTest extends MockeryTestCase
             'lpa' => $lpa,
         ]);
 
-        $this->setUpMainFlowForm($form);
+        $this->setUpForm($form);
     }
 
     public function testNameAndInstances()
@@ -58,10 +58,6 @@ class ApplicantFormTest extends MockeryTestCase
 
     public function testValidateByModelInvalid()
     {
-        echo "\n{NOISE0}\n";
-        print_r($this->form->getMessages());
-        echo "\n{NOISE0}\n";
-
         $this->form->setData(
             array_merge(
                 ['whoIsRegistering' => 'someoneelse'],
@@ -71,22 +67,11 @@ class ApplicantFormTest extends MockeryTestCase
 
         $this->assertFalse($this->form->isValid());
 
-        echo "\n{NOISE2}\n";
-        if (is_object($this->form->getData(FormInterface::VALUES_RAW))) {
-            var_dump($this->form->getData(FormInterface::VALUES_RAW));
-        } else {
-            print_r($this->form->getData(FormInterface::VALUES_RAW));
-        }
-        echo "\n{NOISE2}\n";
-
-        echo "\n{NOISE1}\n";
-        print_r($this->form->getMessages());
-        echo "\n{NOISE1}\n";
-
-        $this->assertEquals([
-            'whoIsRegistering' => [
-                'notInArray' => 'The input was not found in the haystack'
+        $this->assertEquals(
+            ['whoIsRegistering' =>
+                ['notInArray' => 'The input was not found in the haystack'],
             ],
-        ], $this->form->getMessages());
+            $this->form->getMessages()
+        );
     }
 }
