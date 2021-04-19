@@ -37,7 +37,7 @@ class FeedbackControllerTest extends MockeryTestCase
     private $pluginManager;
 
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->feedbackService = Mockery::mock(FeedbackService::class);
         $this->authorizationServiceService = Mockery::mock(AuthorizationService::class);

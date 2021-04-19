@@ -58,7 +58,7 @@ abstract class AbstractAuthControllerTest extends MockeryTestCase
     /**
      * Set up the services in default configuration - these can be adapted in the subclasses before getting the controller to test
      */
-    public function setUp()
+    public function setUp() : void
     {
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
 

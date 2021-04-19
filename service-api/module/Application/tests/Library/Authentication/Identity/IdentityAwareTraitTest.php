@@ -9,12 +9,11 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class IdentityAwareTraitTest extends MockeryTestCase
 {
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage No identity set
-     */
     public function testGetIdentityNotSet() : void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('No identity set');
+
         $identityAwareInstance = new TestableIdentityAwareTrait(null);
         $identityAwareInstance->getIdentity();
     }
@@ -27,7 +26,8 @@ class IdentityAwareTraitTest extends MockeryTestCase
         $this->assertEquals($identityInterface, $identityAwareInstance->getIdentity());
     }
 
-    public function testSetIdentity() {
+    public function testSetIdentity() : void
+    {
         $identityInterface = Mockery::mock(IdentityInterface::class);
 
         $identityAwareInstance = new TestableIdentityAwareTrait(null);

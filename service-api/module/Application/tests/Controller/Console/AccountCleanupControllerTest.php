@@ -20,7 +20,7 @@ class AccountCleanupControllerTest extends MockeryTestCase
      */
     private $cleanUpService;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->cleanUpService = Mockery::mock(AccountCleanupService::class);
 
