@@ -958,7 +958,7 @@ jobs:
       workspace:
         description: Terraform workspace name
         type: string
-        default: production
+        default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
     steps:
       - checkout
       - attach_workspace:
@@ -969,6 +969,8 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+            echo environment_pipeline_tasks_config.json:
+            cat /tmp/environment_pipeline_tasks_config.json
       - slack/notify:
           event: pass
           channel: 'C01BKBWGWTY'
@@ -1043,6 +1045,8 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+            echo environment_pipeline_tasks_config.json:
+            cat /tmp/environment_pipeline_tasks_config.json
       - slack/notify:
           event: pass
           channel: 'C01BKBWGWTY,C01BDM8T67J'
