@@ -962,7 +962,7 @@ jobs:
       workspace:
         description: Terraform workspace name
         type: string
-        default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        default: production
     steps:
       - checkout
       - attach_workspace:
