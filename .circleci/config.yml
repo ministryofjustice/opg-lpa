@@ -975,7 +975,7 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
           event: pass
-          channel: 'C01BKBWGWTY,C01BDM8T67J'
+          channel: 'C01BKBWGWTY'
           custom: |
             {
 
@@ -1050,7 +1050,7 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
           event: pass
-          channel: 'C01BKBWGWTY, C01BDM8T67J'
+          channel: 'C01BKBWGWTY,C01BDM8T67J'
           custom: |
             {
               "blocks": [],
