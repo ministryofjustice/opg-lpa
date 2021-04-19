@@ -974,7 +974,6 @@ jobs:
           channel: 'C01BKBWGWTY'
           custom: |
             {
-
               "blocks": [],
               "attachments": [
                 {
