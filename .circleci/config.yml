@@ -136,7 +136,12 @@ pr_build: &pr_build
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
-        #requires: [run_functional_test, run_cypress_test]
+        requires: [dev_environment_apply_terraform]
+
+    - slack_notify_production_release:
+        name: post_production_release_message_test
+        filters: { branches: { ignore: [master] } }
+        requires: [post_environment_domains]
 
 path_to_live: &path_to_live
   jobs:
@@ -970,7 +975,7 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
           event: pass
-          channel: C01BKBWGWTY,C01BDM8T67J
+          channel: 'C01BKBWGWTY, C01BDM8T67J'
           custom: |
             {
               "blocks": [],
