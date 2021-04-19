@@ -998,7 +998,6 @@ jobs:
                       "text": {
                         "type": "mrkdwn",
                         "text": "front url: <https://${FRONT_DOMAIN}>",
-                        "emoji": true
                       }
                     },
                     {
@@ -1006,7 +1005,6 @@ jobs:
                       "text": {
                         "type": "mrkdwn",
                         "text": "admin url: <https://${ADMIN_DOMAIN}>",
-                        "emoji": true
                       }
                     },
                     {
@@ -1074,7 +1072,6 @@ jobs:
                       "text": {
                         "type": "mrkdwn",
                         "text": "admin url: <https://${ADMIN_DOMAIN}>",
-                        "emoji": true
                       }
                     },
                     {
