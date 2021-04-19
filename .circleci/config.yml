@@ -66,12 +66,7 @@ pr_build: &pr_build
         terraform_level: environment
         approval_step: "dev_infra_approval_terraform_apply_environment_pr_build"
         filters: { branches: { ignore: [master] } }
-        requires:
-          [
-            cancel_previous_jobs,
-            lint_environment_terraform_pr_build,
-            dev_account_plan_check_terraform_pr_build,
-          ]
+        requires: [cancel_previous_jobs, lint_environment_terraform_pr_build]
 
     - hold_for_approval_tf:
         name: dev_infra_approval_terraform_apply_environment_pr_build
@@ -230,7 +225,7 @@ path_to_live: &path_to_live
             admin_docker_build,
             api_docker_build,
             pdf_docker_build,
-            seeding_docker_build,
+            seeding_docker_build
           ]
 
     - ecr_scan_results:
@@ -980,7 +975,7 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
           event: pass
-          channel: "C01BKBWGWTY, C01BDM8T67J"
+          channel: 'C01BKBWGWTY, C01BDM8T67J'
           custom: |
             {
               "blocks": [],
@@ -1054,7 +1049,7 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
           event: pass
-          channel: "C01BKBWGWTY, C01BDM8T67J"
+          channel: 'C01BKBWGWTY, C01BDM8T67J'
           custom: |
             {
               "blocks": [],
