@@ -973,14 +973,50 @@ jobs:
           channel: C01BKBWGWTY
           custom: |
             {
-              "attachments":
-              [
+              "blocks": [],
+              "attachments": [
                 {
-                  "blocks": [],
-                  "title": "Online LPA Development Environment Ready",
                   "color": "#508c18",
-                  "text": "User: ${CIRCLE_USERNAME}\npublic facing url: https://${PUBLIC_FACING_DOMAIN}/home\nfront url: https://${FRONT_DOMAIN}/home \nadmin url: https://${ADMIN_DOMAIN}",
-                  "footer": "${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Online LPA Development Environment Ready",
+                        "emoji": false
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "public facing url: <https://${PUBLIC_FACING_DOMAIN}/home>"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "front url: <https://${FRONT_DOMAIN}>"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "admin url: <https://${ADMIN_DOMAIN}>"
+                      }
+                    },
+                    {
+                      "type": "context",
+                      "elements": [
+                        {
+                          "type": "plain_text",
+                          "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -1011,14 +1047,43 @@ jobs:
           channel: C01BKBWGWTY,C01BDM8T67J
           custom: |
             {
-              "attachments":
-              [
+              "blocks": [],
+              "attachments": [
                 {
-                  "blocks" : [],
-                  "title": "Online LPA Production Release Successful",
                   "color": "#508c18",
-                  "text": "By user: ${CIRCLE_USERNAME} \npublic facing url: https://${PUBLIC_FACING_DOMAIN}/home \nadmin url: https://${ADMIN_DOMAIN}",
-                  "footer": "${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Production Release Successful",
+                        "emoji": false
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "public facing url: <https://${PUBLIC_FACING_DOMAIN}/home>"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "admin url: <https://${ADMIN_DOMAIN}>"
+                      }
+                    },
+                    {
+                      "type": "context",
+                      "elements": [
+                        {
+                          "type": "plain_text",
+                          "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
