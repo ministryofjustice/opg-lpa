@@ -997,14 +997,14 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "front url: <https://${FRONT_DOMAIN}>",
+                        "text": "front url: <https://${FRONT_DOMAIN}>"
                       }
                     },
                     {
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "admin url: <https://${ADMIN_DOMAIN}>",
+                        "text": "admin url: <https://${ADMIN_DOMAIN}>"
                       }
                     },
                     {
@@ -1071,14 +1071,14 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "admin url: <https://${ADMIN_DOMAIN}>",
+                        "text": "admin url: <https://${ADMIN_DOMAIN}>"
                       }
                     },
                     {
                       "type": "context",
                       "elements": [
                         {
-                          "type": "mrkdwn",
+                          "type": "plain_text",
                           "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
                         }
                       ]
