@@ -136,12 +136,8 @@ pr_build: &pr_build
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
-        requires: [dev_environment_apply_terraform]
+        requires: [run_functional_test, run_cypress_test]
 
-    - slack_notify_production_release:
-        name: post_production_release_message_test
-        filters: { branches: { ignore: [master] } }
-        requires: [post_environment_domains]
 
 path_to_live: &path_to_live
   jobs:
