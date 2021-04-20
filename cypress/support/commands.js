@@ -82,3 +82,10 @@ Cypress.Commands.add("OPGCheckA11y", () => {
         cy.runAxe(window);
     });
 });
+
+Cypress.Commands.add("OPGCheckA11yWithUrl", (url) => {
+    if (!Cypress.env("a11yCheckedPages").has(url)) {
+        cy.OPGCheckA11y();
+        Cypress.env("a11yCheckedPages").add(url);
+    }
+});
