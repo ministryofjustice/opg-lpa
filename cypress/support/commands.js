@@ -33,14 +33,6 @@ Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
 
 Cypress.Commands.add("visitWithChecks", (url) => {
     cy.visit(url);
-    cy.document().then(docStr => {
-        expect(docStr.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected");
-    });
-    cy.OPGCheckA11y();
-});
-
-Cypress.Commands.add("visitWithChecks", (url) => {
-    cy.visit(url);
     cy.document().then(doc => {
         expect(doc.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected");
 
@@ -52,7 +44,10 @@ Cypress.Commands.add("visitWithChecks", (url) => {
             expect(title.text).to.contain(heading.textContent.trim());
         }
     });
-    cy.OPGCheckA11y();
+    if (!Cypress.env("a11yCheckedPages").has(url)) {
+        cy.OPGCheckA11y();
+        Cypress.env("a11yCheckedPages").add(url);
+    }
 });
 
 // window: DOM window instance
