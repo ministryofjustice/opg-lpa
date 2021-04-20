@@ -138,6 +138,7 @@ pr_build: &pr_build
         filters: { branches: { ignore: [master] } }
         requires: [run_functional_test, run_cypress_test]
 
+
 path_to_live: &path_to_live
   jobs:
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
@@ -968,9 +969,11 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+            echo environment_pipeline_tasks_config.json:
+            cat /tmp/environment_pipeline_tasks_config.json
       - slack/notify:
           event: pass
-          channel: C01BKBWGWTY
+          channel: 'C01BKBWGWTY'
           custom: |
             {
               "blocks": [],
@@ -1042,9 +1045,11 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+            echo environment_pipeline_tasks_config.json:
+            cat /tmp/environment_pipeline_tasks_config.json
       - slack/notify:
           event: pass
-          channel: C01BKBWGWTY,C01BDM8T67J
+          channel: 'C01BKBWGWTY,C01BDM8T67J'
           custom: |
             {
               "blocks": [],
