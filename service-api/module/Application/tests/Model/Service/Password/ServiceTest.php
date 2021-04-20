@@ -25,7 +25,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private $authenticationService;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 

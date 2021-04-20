@@ -20,7 +20,7 @@
         "php": "^7.4",
         "guzzlehttp/guzzle": "^6.3",
         "aws/aws-sdk-php": "^3.91",
-        "ministryofjustice/opg-lpa-datamodels": "^13.5",
+        "ministryofjustice/opg-lpa-datamodels": "^13.8",
         "michelf/php-markdown": "^1.8",
         "alphagov/pay-integration-php": "^1.0",
         "php-http/guzzle6-adapter": "^1.1",

@@ -138,6 +138,7 @@ pr_build: &pr_build
         filters: { branches: { ignore: [master] } }
         requires: [run_functional_test, run_cypress_test]
 
+
 path_to_live: &path_to_live
   jobs:
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
@@ -220,7 +221,7 @@ path_to_live: &path_to_live
             admin_docker_build,
             api_docker_build,
             pdf_docker_build,
-            seeding_docker_build
+            seeding_docker_build,
           ]
 
     - ecr_scan_results:
@@ -305,7 +306,7 @@ workflows:
     <<: *path_to_live
 
 orbs:
-  slack: circleci/slack@3.3.0
+  slack: circleci/slack@4.4.0
   build_containers_and_push_to_ecr:
     orbs:
       docker: circleci/docker@1.4.0
@@ -968,12 +969,60 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+            echo environment_pipeline_tasks_config.json:
+            cat /tmp/environment_pipeline_tasks_config.json
       - slack/notify:
-          title: "Online LPA Development Environment Ready"
-          color: "#508c18"
-          message: "User: $CIRCLE_USERNAME\npublic facing url: https://$PUBLIC_FACING_DOMAIN/home \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
-          footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
-
+          event: pass
+          channel: 'C01BKBWGWTY'
+          custom: |
+            {
+              "blocks": [],
+              "attachments": [
+                {
+                  "color": "#508c18",
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Online LPA Development Environment Ready",
+                        "emoji": false
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "public facing url: <https://${PUBLIC_FACING_DOMAIN}/home>"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "front url: <https://${FRONT_DOMAIN}>"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "admin url: <https://${ADMIN_DOMAIN}>"
+                      }
+                    },
+                    {
+                      "type": "context",
+                      "elements": [
+                        {
+                          "type": "plain_text",
+                          "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
   slack_notify_production_release:
     docker:
       - image: circleci/python
@@ -996,13 +1045,53 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+            echo environment_pipeline_tasks_config.json:
+            cat /tmp/environment_pipeline_tasks_config.json
       - slack/notify:
-          title: "Online LPA Production Release Successful"
-          color: "#508c18"
-          message: "By user: $CIRCLE_USERNAME \npublic facing url: https://$PUBLIC_FACING_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
-          footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
-          webhook: ${PROD_RELEASE_SLACK_WEBHOOK}
-
+          event: pass
+          channel: 'C01BDM8T67J'
+          custom: |
+            {
+              "blocks": [],
+              "attachments": [
+                {
+                  "color": "#508c18",
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Production Release Successful",
+                        "emoji": false
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "public facing url: <https://${PUBLIC_FACING_DOMAIN}/home>"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "admin url: <https://${ADMIN_DOMAIN}>"
+                      }
+                    },
+                    {
+                      "type": "context",
+                      "elements": [
+                        {
+                          "type": "plain_text",
+                          "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
   ecr_scan_results:
     docker:
       - image: circleci/python
@@ -1022,7 +1111,7 @@ jobs:
 
   workspace_cleanup:
     docker:
-      - image: hashicorp/terraform
+      - image: hashicorp/terraform:0.14.2
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN

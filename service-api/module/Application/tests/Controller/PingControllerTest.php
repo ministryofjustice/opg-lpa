@@ -34,7 +34,7 @@ class PingControllerTest extends MockeryTestCase
      */
     private $logger;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->database = Mockery::mock(ZendDbAdapter::class);
 
