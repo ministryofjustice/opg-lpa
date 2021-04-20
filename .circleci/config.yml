@@ -1050,7 +1050,7 @@ jobs:
             cat /tmp/environment_pipeline_tasks_config.json
       - slack/notify:
           event: pass
-          channel: 'C01BKBWGWTY,C01BDM8T67J'
+          channel: 'C01BDM8T67J'
           custom: |
             {
               "blocks": [],
