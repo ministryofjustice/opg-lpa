@@ -221,44 +221,43 @@ path_to_live: &path_to_live
             admin_docker_build,
             api_docker_build,
             pdf_docker_build,
-            seeding_docker_build
+            seeding_docker_build,
           ]
 
-    # - ecr_scan_results:
-    #     name: ecr_scan_results_master
-    #     filters: { branches: { only: [master] } }
-    #     requires:
-    #       [
-    #         front_docker_build,
-    #         admin_docker_build,
-    #         api_docker_build,
-    #         pdf_docker_build,
-    #       ]
+    - ecr_scan_results:
+        name: ecr_scan_results_master
+        filters: { branches: { only: [master] } }
+        requires:
+          [
+            front_docker_build,
+            admin_docker_build,
+            api_docker_build,
+            pdf_docker_build,
+          ]
 
-    # - infrastructure_and_deployment/seed_environment_databases:
-    #     name: preprod_seed_environment_databases
-    #     workspace: preproduction
-    #     filters: { branches: { only: [master] } }
-    #     requires: [preprod_environment_apply_terraform]
+    - infrastructure_and_deployment/seed_environment_databases:
+        name: preprod_seed_environment_databases
+        workspace: preproduction
+        filters: { branches: { only: [master] } }
+        requires: [preprod_environment_apply_terraform]
 
-    # - infrastructure_and_deployment/run_cypress_test:
-    #     name: preprod_test_cypress
-    #     workspace: preproduction
-    #     filters: { branches: { only: [master] } }
-    #     requires: [preprod_seed_environment_databases]
+    - infrastructure_and_deployment/run_cypress_test:
+        name: preprod_test_cypress
+        workspace: preproduction
+        filters: { branches: { only: [master] } }
+        requires: [preprod_seed_environment_databases]
 
-    # - infrastructure_and_deployment/run_functional_test:
-    #     name: preprod_test_functional
-    #     workspace: preproduction
-    #     filters: { branches: { only: [master] } }
-    #     requires: [preprod_seed_environment_databases]
+    - infrastructure_and_deployment/run_functional_test:
+        name: preprod_test_functional
+        workspace: preproduction
+        filters: { branches: { only: [master] } }
+        requires: [preprod_seed_environment_databases]
 
     - infrastructure_and_deployment/apply_account_terraform:
         name: prod_account_apply_terraform
         workspace: production
         filters: { branches: { only: [master] } }
-        #requires: [preprod_test_functional, preprod_test_cypress]
-        requires: [preprod_account_apply_terraform, preprod_environment_apply_terraform]
+        requires: [preprod_test_functional, preprod_test_cypress]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: prod_environment_apply_terraform
