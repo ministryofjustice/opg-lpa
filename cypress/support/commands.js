@@ -36,7 +36,10 @@ Cypress.Commands.add("visitWithChecks", (url) => {
     cy.document().then(docStr => {
         expect(docStr.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected");
     });
-    cy.OPGCheckA11y();
+    if (!Cypress.env("a11yCheckedPages").has(url)) {
+        cy.OPGCheckA11y();
+        Cypress.env("a11yCheckedPages").add(url);
+    }
 });
 
 Cypress.Commands.add("visitWithChecks", (url) => {
