@@ -57,6 +57,7 @@ EOF
 
 generate_post_environment_domains > /tmp/post_environment_domains.json
 
+echo message sent:
 cat /tmp/post_environment_domains.json
 
 echo 'export SLACK_POST_ENVIRONMENT_DOMAIN_TEMPLATE=$(cat /tmp/post_environment_domains.json)' >> $BASH_ENV

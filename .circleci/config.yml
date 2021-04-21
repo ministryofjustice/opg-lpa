@@ -106,38 +106,37 @@ pr_build: &pr_build
             pdf_docker_build,
             seeding_docker_build,
           ]
-    # - ecr_scan_results:
-    #     name: ecr_scan_results_development
-    #     filters: { branches: { ignore: [master] } }
-    #     requires:
-    #       [
-    #         front_docker_build,
-    #         admin_docker_build,
-    #         api_docker_build,
-    #         pdf_docker_build,
-    #         seeding_docker_build,
-    #       ]
+    - ecr_scan_results:
+         name: ecr_scan_results_development
+         filters: { branches: { ignore: [master] } }
+         requires:
+           [
+             front_docker_build,
+             admin_docker_build,
+             api_docker_build,
+             pdf_docker_build,
+             seeding_docker_build,
+           ]
 
-    # - infrastructure_and_deployment/seed_environment_databases:
-    #     name: dev_seed_environment_databases
-    #     filters: { branches: { ignore: [master] } }
-    #     requires: [dev_environment_apply_terraform]
+    - infrastructure_and_deployment/seed_environment_databases:
+         name: dev_seed_environment_databases
+         filters: { branches: { ignore: [master] } }
+         requires: [dev_environment_apply_terraform]
 
-    # - infrastructure_and_deployment/run_cypress_test:
-    #     name: run_cypress_test
-    #     filters: { branches: { ignore: [master] } }
-    #     requires: [dev_seed_environment_databases]
+    - infrastructure_and_deployment/run_cypress_test:
+         name: run_cypress_test
+         filters: { branches: { ignore: [master] } }
+         requires: [dev_seed_environment_databases]
 
-    # - infrastructure_and_deployment/run_functional_test:
-    #     name: run_functional_test
-    #     filters: { branches: { ignore: [master] } }
-    #     requires: [dev_seed_environment_databases]
+    - infrastructure_and_deployment/run_functional_test:
+         name: run_functional_test
+         filters: { branches: { ignore: [master] } }
+         requires: [dev_seed_environment_databases]
 
-    - slack_notify_production_release:
+    - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
-        #requires: [run_functional_test, run_cypress_test]
-        requires: [dev_environment_apply_terraform, dev_account_apply_terraform]
+        requires: [run_functional_test, run_cypress_test]
 
 
 path_to_live: &path_to_live
@@ -970,9 +969,6 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
-            echo environment_pipeline_tasks_config.json:
-            cat /tmp/environment_pipeline_tasks_config.json
-
             ~/project/scripts/pipeline/set_environment_variables/set_slack_post_environment_domains.sh
 
       - slack/notify:
@@ -1002,8 +998,7 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
-            echo environment_pipeline_tasks_config.json:
-            cat /tmp/environment_pipeline_tasks_config.json
+
             ~/project/scripts/pipeline/set_environment_variables/set_slack_notify_production_release.sh
       - slack/notify:
           event: pass
