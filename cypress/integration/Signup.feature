@@ -3,6 +3,8 @@ Feature: Signup
 
     I want to be able to sign up
 
+    # NB these tests are order-sensitive, as some rely on the signup state
+    # being established before they run
     Background:
         Given I ignore application exceptions
 
@@ -20,6 +22,11 @@ Feature: Signup
         And I see "Account activated" in the title
         And I visit link containing "sign in"
         Then I am taken to the login page
+
+    @focus
+    Scenario: Cancel button is not shown on "Your details" the first time the user logs in (LPAL-210)
+        Given I log in as standard test user
+        Then I do not see "Cancel" in the page text
 
     @focus
     Scenario: About Me Details have Blank title, month and wrong postcode in address + long names, followed by DOB in future
@@ -70,3 +77,29 @@ Feature: Signup
         # cypress seems t choke on being redirected off our site though
         # When I logout
         #Then I am taken to the post logout url
+
+    @focus
+    # this scenario must run after the user has saved their details for the first time
+    Scenario: Cancel buttons are present on "your details" pages after user has saved their details (LPAL-210)
+        Given I log in as standard test user
+
+        When I visit link containing "Your details"
+        Then I see "Your details" in the page text
+        And I see "Cancel" in the page text
+
+        When I click element marked "Change Password"
+        Then I see "Change your password" in the page text
+        And I see "Cancel" in the page text
+
+        When I visit link containing "Cancel"
+        Then I am taken to "/user/about-you"
+
+        When I click element marked "Change Email Address"
+        Then I see "Change your sign-in email address" in the page text
+        Then I see "Cancel" in the page text
+
+        When I visit link containing "Cancel"
+        Then I am taken to "/user/about-you"
+
+        When I visit link containing "Cancel"
+        Then I am taken to the lpa type page
