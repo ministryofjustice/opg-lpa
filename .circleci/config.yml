@@ -971,58 +971,14 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
             echo environment_pipeline_tasks_config.json:
             cat /tmp/environment_pipeline_tasks_config.json
+
+            ~/project/scripts/pipeline/set_environment_variables/set_slack_post_environment_domains.sh
+
       - slack/notify:
           event: pass
           channel: 'C01BKBWGWTY'
-          custom: |
-            {
-              "blocks": [],
-              "attachments": [
-                {
-                  "color": "#508c18",
-                  "blocks": [
-                    {
-                      "type": "header",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Online LPA Development Environment Ready",
-                        "emoji": false
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "public facing url: <https://${PUBLIC_FACING_DOMAIN}/home>"
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "front url: <https://${FRONT_DOMAIN}>"
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "admin url: <https://${ADMIN_DOMAIN}>"
-                      }
-                    },
-                    {
-                      "type": "context",
-                      "elements": [
-                        {
-                          "type": "plain_text",
-                          "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
+          template: SLACK_POST_ENVIRONMENT_DOMAIN_TEMPLATE
+
   slack_notify_production_release:
     docker:
       - image: circleci/python
@@ -1047,51 +1003,11 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
             echo environment_pipeline_tasks_config.json:
             cat /tmp/environment_pipeline_tasks_config.json
+            ~/project/scripts/pipeline/set_environment_variables/set_slack_notify_production_release.sh
       - slack/notify:
           event: pass
           channel: 'C01BDM8T67J'
-          custom: |
-            {
-              "blocks": [],
-              "attachments": [
-                {
-                  "color": "#508c18",
-                  "blocks": [
-                    {
-                      "type": "header",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Production Release Successful",
-                        "emoji": false
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "public facing url: <https://${PUBLIC_FACING_DOMAIN}/home>"
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "admin url: <https://${ADMIN_DOMAIN}>"
-                      }
-                    },
-                    {
-                      "type": "context",
-                      "elements": [
-                        {
-                          "type": "plain_text",
-                          "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE}"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
+          template: SLACK_NOTIFY_PRODUCTION_RELEASE_TEMPLATE
   ecr_scan_results:
     docker:
       - image: circleci/python
