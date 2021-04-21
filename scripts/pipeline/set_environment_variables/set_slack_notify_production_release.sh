@@ -1,4 +1,9 @@
 #! /bin/bash
+    # needed as circleci did not santize the input for json properly.
+    SANITISED_COMMIT_MESSAGE=$(echo "${COMMIT_MESSAGE//$'\n'/\\\n}"  | sed 's/"/\\"/g')
+    #| sed 's/`/\\`/g | sed 's/'\''/\\'\''/g'
+    echo  SANITISED_COMMIT_MESSAGE
+    echo ${SANITISED_COMMIT_MESSAGE}
 generate_slack_notify_production_release()
 {
     cat <<EOF
@@ -40,7 +45,7 @@ generate_slack_notify_production_release()
                     "elements":
                     [
                         {
-                            "type": "plain_text",
+                            "type": "mrkdwn",
                             "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE//$'\n'/\\n}"
                         }
                     ]
