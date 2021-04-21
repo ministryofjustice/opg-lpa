@@ -133,7 +133,7 @@ pr_build: &pr_build
     #     filters: { branches: { ignore: [master] } }
     #     requires: [dev_seed_environment_databases]
 
-    - slack_notify_domain:
+    - slack_notify_production_release:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
         #requires: [run_functional_test, run_cypress_test]
