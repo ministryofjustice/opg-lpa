@@ -45,7 +45,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
         }
 
         $pageTitle = 'Change your password';
-
-        return new ViewModel(compact('form', 'error', 'pageTitle'));
+        $cancelUrl = '/user/about-you';
+        return new ViewModel(compact('form', 'error', 'pageTitle', 'cancelUrl'));
     }
 }

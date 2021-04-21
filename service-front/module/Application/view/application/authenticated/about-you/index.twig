@@ -191,6 +191,9 @@
     </fieldset>
 
     <input type="submit" name="save" id="save" data-cy="save" class="button" value="Save and continue">
+    {%- if not isNew -%}
+    <a href="{{ cancelUrl }}" class="button button-secondary js-cancel" data-cy="form-cancel">Cancel</a>
+    {%- endif -%}
 
 {{ form().closeTag|raw }}
 
