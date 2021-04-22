@@ -119,15 +119,23 @@ Then('my browser doesn\'t support details elements', () => {
  * (e.g. text with a background colour).
  */
 Then('elements on the page should have sufficient contrast', () => {
-    cy.window().then((window) => {
-        cy.runAxe(window, {
-            axeOptions: {
-                runOnly: {
-                    type: 'tag',
-                    values: ['cat.color']
-                }
-            },
-            stopOnError: true
-        });
-    });
+    const axeOptions = {
+        runOnly: {
+            type: 'tag',
+            values: ['cat.color']
+        }
+    };
+
+    const stopOnError = true;
+
+    cy.OPGCheckA11y(axeOptions, stopOnError);
+});
+
+/**
+ * pageId is an identifier tacked onto the end of the URL to identify this
+ * call to OPGCheckA11y(); this is to allow us to run this command on the same
+ * page in different UI states, e.g. with/without a popup open
+ */
+Then('accessibility checks should pass for {string}', (pageId) => {
+    cy.OPGCheckA11y({}, false, pageId);
 });
