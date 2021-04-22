@@ -44,7 +44,7 @@ generate_slack_notify_production_release()
                     [
                         {
                             "type": "mrkdwn",
-                            "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${COMMIT_MESSAGE//$'\n'/\\n}"
+                            "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${SANITISED_COMMIT_MESSAGE}"
                         }
                     ]
                 }
