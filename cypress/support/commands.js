@@ -44,42 +44,39 @@ Cypress.Commands.add("visitWithChecks", (url) => {
             expect(title.text).to.contain(heading.textContent.trim());
         }
     });
-    if (!Cypress.env("a11yCheckedPages").has(url)) {
-        cy.OPGCheckA11y();
-        Cypress.env("a11yCheckedPages").add(url);
-    }
 });
 
 // window: DOM window instance
 // options: passed directly to axe
+// url: URL to potentially check
 // stopOnError: boolean, default=false; if true, if any violations are
 //     found, an exception is thrown, stopping the test
-Cypress.Commands.add("runAxe", (window, options, stopOnError) => {
+Cypress.Commands.add("runAxe", (window, options, url, stopOnError) => {
     stopOnError = !!stopOnError;
 
     // wrap runAxe so that cypress understands the promise it returns
-    cy.wrap(axeWrapper.runAxe(window, options)).then((violations) => {
-        if (violations != null) {
-            // wrap this so that all the cy.task('log', ...) calls complete before
-            // throwing the error; without this, the error is thrown before
-            // the logging is completed
-            cy.wrap(axeWrapper.logViolations(violations, (msg) => {
-                cy.task('log', msg);
-            }))
-            .then(() => {
-                // throw an error to stop the test if configured to;
-                // otherwise we just see log messages and the test continues
-                if (stopOnError) {
-                    throw new Error('accessibility violations caused test to fail');
-                }
-            });
-        }
+    cy.wrap(axeWrapper.run(window, options, url)).then((results) => {
+        // wrap this so that all the cy.task('log', ...) calls complete before
+        // throwing the error; without this, the error is thrown before
+        // the logging is completed
+        cy.wrap(axeWrapper.logResults(results, (msg) => {
+            cy.task('log', msg);
+        }))
+        .then(() => {
+            // throw an error to stop the test if configured to;
+            // otherwise we just see log messages and the test continues
+            if (stopOnError) {
+                throw new Error('accessibility violations caused test to fail');
+            }
+        });
     });
 });
 
 Cypress.Commands.add("OPGCheckA11y", () => {
-    cy.window({ log: false }).then((window) => {
-        cy.runAxe(window);
+    cy.url().then((url) => {
+        cy.window({ log: false }).then((window) => {
+            cy.runAxe(window, {}, url, false);
+        });
     });
 });
 
