@@ -65,17 +65,32 @@ Cypress.Commands.add("runAxe", (window, options, url, stopOnError) => {
         .then(() => {
             // throw an error to stop the test if configured to;
             // otherwise we just see log messages and the test continues
-            if (stopOnError) {
+            if (stopOnError && results.violations.size > 0) {
                 throw new Error('accessibility violations caused test to fail');
             }
         });
     });
 });
 
-Cypress.Commands.add("OPGCheckA11y", () => {
+/**
+ * axeOptions: passed direct to cy.runAxe
+ * stopOnError: set to true if any accessibility violation found should
+ * result in a test failure
+ * pageId, if set, is appended to the URL passed to runAxe after replacing
+ * spaces with hyphens; this allows us to test the same URL multiple times if a
+ * page has multiple states, e.g. with/without open popup
+ */
+Cypress.Commands.add("OPGCheckA11y", (axeOptions, stopOnError, pageId) => {
+    axeOptions = axeOptions || {};
+    stopOnError = !!stopOnError;
+
     cy.url().then((url) => {
-        cy.window({ log: false }).then((window) => {
-            cy.runAxe(window, {}, url, false);
+        if (pageId !== undefined) {
+            url += ':' + pageId.replace(' ', '-');
+        }
+
+        cy.window({log: false}).then((window) => {
+            cy.runAxe(window, axeOptions, url, stopOnError);
         });
     });
 });
