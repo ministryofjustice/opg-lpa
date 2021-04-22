@@ -1,9 +1,7 @@
 #! /bin/bash
     # needed as circleci did not santize the input for json properly.
     SANITISED_COMMIT_MESSAGE=$(echo "${COMMIT_MESSAGE//$'\n'/\\\n}"  | sed 's/"/\\""/g')
-    #| sed 's/`/\\`/g | sed 's/'\''/\\'\''/g'
-    echo  SANITISED_COMMIT_MESSAGE
-    echo ${SANITISED_COMMIT_MESSAGE}
+
 generate_post_environment_domains()
 {
 
@@ -65,10 +63,6 @@ EOF
 }
 
 generate_post_environment_domains > /tmp/post_environment_domains.json
-
-
-
 echo message sent:
 cat /tmp/post_environment_domains.json
-
 echo 'export SLACK_POST_ENVIRONMENT_DOMAIN_TEMPLATE=$(cat /tmp/post_environment_domains.json)' >> $BASH_ENV
