@@ -52,7 +52,7 @@ generate_post_environment_domains()
                     [
                         {
                             "type": "mrkdwn",
-                            "text": "*"
+                            "text": "Commit Message: ${SANITISED_COMMIT_MESSAGE}"
                         }
                     ]
                 }
