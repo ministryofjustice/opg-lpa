@@ -3,12 +3,15 @@
 
     echo ${COMMIT_MESSAGE}
     # needed as circleci did not santize the input for json properly.
-    # replace * with - as well.
-    SANITISED_COMMIT_MESSAGE=$(echo "${COMMIT_MESSAGE}" | \
-     sed 's/"/\\""/g' |  \
-     sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\n /g' | \
-     sed 's/\*/-/g')
+
+    SANITISED_COMMIT_MESSAGE=echo "${COMMIT_MESSAGE}"                     |
+                             sed 's/"/\\""/g'                             | # quotes escaped
+                             sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\n/g' | # newline replaced with literal \n. see: https://stackoverflow.com/a/1252191/1249855
+                             sed 's/\*/-/g'                                 # replace * with -
+
+    echo "sanitised commit:"
     echo "${SANITISED_COMMIT_MESSAGE}"
+
 generate_post_environment_domains()
 {
     # needed as circleci did not santize the input for json properly.
