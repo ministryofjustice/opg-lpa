@@ -62,6 +62,7 @@ generate_post_environment_domains()
 EOF
 }
 
+
 generate_post_environment_domains > /tmp/post_environment_domains.json
 echo message sent:
 cat /tmp/post_environment_domains.json
