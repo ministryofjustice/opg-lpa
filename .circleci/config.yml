@@ -106,38 +106,38 @@ pr_build: &pr_build
             pdf_docker_build,
             seeding_docker_build,
           ]
+
     - ecr_scan_results:
-        name: ecr_scan_results_development
-        filters: { branches: { ignore: [master] } }
-        requires:
-          [
-            front_docker_build,
-            admin_docker_build,
-            api_docker_build,
-            pdf_docker_build,
-            seeding_docker_build,
-          ]
+         name: ecr_scan_results_development
+         filters: { branches: { ignore: [master] } }
+         requires:
+           [
+             front_docker_build,
+             admin_docker_build,
+             api_docker_build,
+             pdf_docker_build,
+             seeding_docker_build,
+           ]
 
     - infrastructure_and_deployment/seed_environment_databases:
-        name: dev_seed_environment_databases
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_environment_apply_terraform]
+         name: dev_seed_environment_databases
+         filters: { branches: { ignore: [master] } }
+         requires: [dev_environment_apply_terraform]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+         name: run_cypress_test
+         filters: { branches: { ignore: [master] } }
+         requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_functional_test:
-        name: run_functional_test
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+         name: run_functional_test
+         filters: { branches: { ignore: [master] } }
+         requires: [dev_seed_environment_databases]
 
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
         requires: [run_functional_test, run_cypress_test]
-        #requires: [dev_environment_apply_terraform, dev_account_apply_terraform]
 
 path_to_live: &path_to_live
   jobs:
@@ -1003,7 +1003,6 @@ jobs:
           event: pass
           channel: "C01BDM8T67J"
           template: SLACK_NOTIFY_PRODUCTION_RELEASE_TEMPLATE
-
   ecr_scan_results:
     docker:
       - image: circleci/python
