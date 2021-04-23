@@ -1,11 +1,18 @@
 #! /bin/bash
+    echo "COMMIT_MESSAGE:"
+
+    echo ${COMMIT_MESSAGE}
     # needed as circleci did not santize the input for json properly.
-    SANITISED_COMMIT_MESSAGE=$(echo "${COMMIT_MESSAGE//$'\n'/\\\n}"  | sed 's/"/\\""/g')
+    SANITISED_COMMIT_MESSAGE=$(echo "${COMMIT_MESSAGE}" |
+        sed 's/"/\\""/g'            |   # escape quotes
+         sed 's/*/-/g'              |   # replace asterisks with dash
+         awk '{printf "%s\\n", $0}')    # replace newlines with literals.
+
+    echo "sanitised commit:"
+    echo "${SANITISED_COMMIT_MESSAGE}"
 
 generate_post_environment_domains()
 {
-
-
     # needed as circleci did not santize the input for json properly.
     cat <<EOF
 {
@@ -61,6 +68,7 @@ generate_post_environment_domains()
 }
 EOF
 }
+
 
 generate_post_environment_domains > /tmp/post_environment_domains.json
 echo message sent:
