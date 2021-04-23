@@ -1,5 +1,6 @@
 #! /bin/bash
     echo "COMMIT_MESSAGE:"
+
     echo ${COMMIT_MESSAGE}
     # needed as circleci did not santize the input for json properly.
     SANITISED_COMMIT_MESSAGE=$(echo "${COMMIT_MESSAGE}" | sed 's/"/\\""/g')
