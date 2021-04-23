@@ -1009,7 +1009,6 @@ jobs:
           event: pass
           channel: "C01BDM8T67J"
           template: SLACK_NOTIFY_PRODUCTION_RELEASE_TEMPLATE
-
   ecr_scan_results:
     docker:
       - image: circleci/python
