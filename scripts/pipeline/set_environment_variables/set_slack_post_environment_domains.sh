@@ -3,7 +3,11 @@
 
     echo ${COMMIT_MESSAGE}
     # needed as circleci did not santize the input for json properly.
-    SANITISED_COMMIT_MESSAGE=$(echo "${COMMIT_MESSAGE}" | sed 's/"/\\""/g')
+    # replace * with - as well.
+    SANITISED_COMMIT_MESSAGE=$(echo "${COMMIT_MESSAGE}" | \
+     sed 's/"/\\""/g' |  \
+     sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\n /g' | \
+     sed 's/\*/-/g')
     echo "${SANITISED_COMMIT_MESSAGE}"
 generate_post_environment_domains()
 {
