@@ -52,7 +52,7 @@ generate_post_environment_domains()
                     [
                         {
                             "type": "mrkdwn",
-                            "text": "by user: ${CIRCLE_USERNAME} - branch: ${CIRCLE_BRANCH} - Commit Message: ${SANITISED_COMMIT_MESSAGE}"
+                            "text": "*"
                         }
                     ]
                 }
