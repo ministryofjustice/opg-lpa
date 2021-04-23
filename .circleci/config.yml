@@ -141,6 +141,7 @@ pr_build: &pr_build
         name: prod_release_test
         filters: { branches: { ignore: [master] } }
         #requires: [run_functional_test, run_cypress_test]
+
         requires: [dev_environment_apply_terraform, dev_account_apply_terraform]
 
 
