@@ -17,7 +17,7 @@ Feature: Add donor to Property and Finance LPA
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
-        And accessibility checks should pass for "donor page with popup open"
+        And accessibility checks should pass for "donorPF page with popup open"
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
         When I type "B1 1TF" into "postcode-lookup" working around cypress bug

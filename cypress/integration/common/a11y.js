@@ -132,10 +132,10 @@ Then('elements on the page should have sufficient contrast', () => {
 });
 
 /**
- * pageId is an identifier tacked onto the end of the URL to identify this
+ * pageState is an identifier tacked onto the end of the URL to identify this
  * call to OPGCheckA11y(); this is to allow us to run this command on the same
  * page in different UI states, e.g. with/without a popup open
  */
-Then('accessibility checks should pass for {string}', (pageId) => {
-    cy.OPGCheckA11y({}, false, pageId);
+Then('accessibility checks should pass for {string}', (pageState) => {
+    cy.OPGCheckA11y({}, false, pageState);
 });

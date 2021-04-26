@@ -76,17 +76,17 @@ Cypress.Commands.add("runAxe", (window, options, url, stopOnError) => {
  * axeOptions: passed direct to cy.runAxe
  * stopOnError: set to true if any accessibility violation found should
  * result in a test failure
- * pageId, if set, is appended to the URL passed to runAxe after replacing
+ * pageState, if set, is appended to the URL passed to runAxe after replacing
  * spaces with hyphens; this allows us to test the same URL multiple times if a
  * page has multiple states, e.g. with/without open popup
  */
-Cypress.Commands.add("OPGCheckA11y", (axeOptions, stopOnError, pageId) => {
+Cypress.Commands.add("OPGCheckA11y", (axeOptions, stopOnError, pageState) => {
     axeOptions = axeOptions || {};
     stopOnError = !!stopOnError;
 
     cy.url().then((url) => {
-        if (pageId !== undefined) {
-            url += ':' + pageId.replace(' ', '-');
+        if (pageState !== undefined) {
+            url += ':' + pageState.replace(' ', '-');
         }
 
         cy.window({log: false}).then((window) => {

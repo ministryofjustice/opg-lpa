@@ -17,6 +17,7 @@ Feature: Add donor to Health and Welfare LPA
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
+        And accessibility checks should pass for "donorHW page with popup open"
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
         # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
