@@ -1,12 +1,12 @@
 resource "aws_security_group" "redis_cache_service" {
   name   = "redis-cache-service"
-  vpc_id = data.aws_default_vpc.default.id
-  tags   = local.default_tags
+  vpc_id = data.aws_vpc.default.id
+  tags   = local.front_component_tag
 }
 
 resource "aws_elasticache_subnet_group" "private_subnets" {
   name       = "private-subnets"
-  subnet_ids = data.aws_subnet.private[*].id
+  subnet_ids = data.aws_subnet_ids.private[*].id
 }
 
 
