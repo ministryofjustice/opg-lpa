@@ -640,4 +640,34 @@ class StatusControllerTest extends AbstractControllerTest
                 'status' => 'Returned',
             ]]), $result);
     }
+
+    public function testGetLpaProcessingStatusNotFound()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
+            ]]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98765', '12345'])
+            ->once()
+            ->andReturn($dataModel);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => null
+            ]);
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json([
+            '98765' => [
+                'found' => false,
+            ]]), $result);
+    }
 }
