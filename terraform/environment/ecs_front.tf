@@ -46,6 +46,16 @@ resource "aws_security_group_rule" "front_ecs_service_ingress" {
   source_security_group_id = aws_security_group.front_loadbalancer.id
 }
 
+// redis caching service
+resource "aws_security_group_rule" "front_ecs_service_elasticache_ingress" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = data.aws_security_group.redis_cache.id
+  source_security_group_id = aws_security_group.front_ecs_service.id
+}
+
 // Anything out
 resource "aws_security_group_rule" "front_ecs_service_egress" {
   type              = "egress"
@@ -233,7 +243,8 @@ locals {
         { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
         { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : aws_sqs_queue.pdf_fifo_queue.id },
         { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
-        { "name" : "OPG_LPA_OS_PLACES_HUB_ENDPOINT", "value" : "https://api.os.uk/search/places/v1/postcode" }
+        { "name" : "OPG_LPA_OS_PLACES_HUB_ENDPOINT", "value" : "https://api.os.uk/search/places/v1/postcode" },
+        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value": "${data.aws_elasticache_cluster.redis_cache.cache_nodes.0.address}"}
       ]
     }
   )

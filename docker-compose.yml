@@ -101,7 +101,7 @@ services:
       AWS_SECRET_ACCESS_KEY: "-"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
-      OPG_LPA_COMMON_ELASTICACHE: tcp://redis:6379
+      OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-front-app
