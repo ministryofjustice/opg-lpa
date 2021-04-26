@@ -10,8 +10,28 @@
  * window: browser window instance, typically derived via cy.window()
  * axeOptions: object containing options to pass directly to axe.run();
  *     see axe documentation for details
+ * url: URL potentially being checked
+ *
+ * returns a structure like this:
+ * {
+ *   location: <url visited>,
+ *   skipped: true|false, // was the test skipped for this url?
+ *   violations: [<see dedupeViolations() for structure of objects in this list>, ...]
+ * }
  */
-function runAxe(window, axeOptions) {
+function run(window, axeOptions, url) {
+    // check url against env; early return if already checked this URL
+    if (Cypress.env('a11yCheckedPages').has(url)) {
+        const skipResults = {
+            location: url,
+            violations: [],
+            skipped: true
+        };
+
+        logResults(skipResults, console.log);
+        return skipResults;
+    }
+
     axeOptions = axeOptions || {};
 
     // only inject axe if <script id="axe"> isn't in the page already
@@ -24,37 +44,44 @@ function runAxe(window, axeOptions) {
     }
 
     // axe adds itself as a property on the window object
-    return window.axe.run(axeOptions).then((results) => {
-        let violations = results.violations;
+    return window.axe.run(axeOptions).then((axeResults) => {
+        // add urlStr to env
+        Cypress.env('a11yCheckedPages').add(url);
+
+        let results = {
+            location: url,
+            violations: [],
+            skipped: false
+        };
+
+        let violations = axeResults.violations;
         let location = window.location.href.replace(Cypress.config('baseUrl'), '');
 
         if (violations.length > 0) {
-            let dedupedViolations = dedupeViolations(location, violations);
+            // this will be logged by cy.task('log', ...) when returned
+            // to the calling runAxe() command
+            results.violations = dedupeViolations(violations);
 
             // log to the console inside the browser
-            logViolations(dedupedViolations, console.log);
-
-            // this will be logged by cy.task('log', ...)
-            return dedupedViolations;
+            logResults(results, console.log);
         }
 
-        return null;
+        return results;
     });
 }
 
 // Construct structured object for the violations;
 // object returned looks like:
-// { location: "<browser location where violations occurred>",
-//   reports: [
+// [
 //     { id: <id of violation>, impact: <impact of violation>,
 //       description: <long description>, snippets: [ <violating node HTML>, ... ]
-//   ] }
-function dedupeViolations(location, violations) {
+// ]
+function dedupeViolations(violations) {
     // make a set of unique violations
-    let reports = new Set();
+    let deduped = new Set();
 
     violations.forEach((violation) => {
-        reports.add({
+        deduped.add({
             id: violation.id,
             impact: violation.impact,
             description: violation.description,
@@ -62,28 +89,38 @@ function dedupeViolations(location, violations) {
         });
     });
 
-    return {
-        location: location,
-        reports: reports
-    };
+    return deduped;
 }
 
-// violations is a de-duplicated violations object, in the format
-// produced by dedupeViolations;
-// this calls logFn(string) for each string in the violations object, writing it
-// to the desired output log
-function logViolations(violations, logFn) {
-    logFn(`\n******* ACCESSIBILITY VIOLATIONS ON ${violations.location}`);
-    violations.reports.forEach((report) => {
-        logFn(`------- ID: ${report.id}`);
-        logFn(`Impact: ${report.impact}`);
-        logFn(`Description: ${report.description}`);
-        logFn('HTML elements causing violation:');
-        logFn('* ' + report.snippets.join('\n* '));
-    });
+// If skipped, this shows the skipped URL; if tested, this shows the tested URL.
+// If there were violations, this logs each object in the violations object, writing it
+// using the specified log function logFn (which takes a string and writes it
+// to a log location).
+function logResults(results, logFn) {
+    if (results.skipped) {
+        logFn(`------- SKIPPED a11y check on URL ${results.location}`);
+    }
+    else {
+        logFn(`+++++++ RAN a11y check on URL ${results.location}`);
+
+        if (results.violations.size > 0) {
+            logFn(`\n******* ACCESSIBILITY VIOLATIONS ON ${results.location}`);
+            results.violations.forEach((violation) => {
+                logFn(`------- ID: ${violation.id}`);
+                logFn(`Impact: ${violation.impact}`);
+                logFn(`Description: ${violation.description}`);
+                logFn('HTML elements causing violation:');
+                logFn('* ' + violation.snippets.join('\n* '));
+            });
+            logFn('\n');
+        }
+        else {
+            logFn(`        NO ACCESSIBILITY VIOLATIONS ON ${results.location}`);
+        }
+    }
 }
 
 module.exports = {
-    runAxe: runAxe,
-    logViolations: logViolations
+    run: run,
+    logResults: logResults
 };
