@@ -35,7 +35,12 @@ class JwtAuthenticationFactory
 
                 $jwtCookie = JWT::encode($_SESSION['jwt-payload'], $jwtConfig['secret'], $jwtConfig['algo']);
 
-                setcookie($jwtConfig['cookie'], $jwtCookie, $ttl->getTimeStamp(), '', '', true);
+                setcookie($jwtConfig['cookie'], $jwtCookie, [
+                    'expires' => $ttl->getTimeStamp(),
+                    'secure' => TRUE,
+                    'httponly' => TRUE,
+                    'samesite' => 'Strict',
+                ]);
             },
         ];
 
