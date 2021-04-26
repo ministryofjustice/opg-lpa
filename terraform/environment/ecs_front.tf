@@ -52,7 +52,7 @@ resource "aws_security_group_rule" "front_ecs_service_elasticache_ingress" {
   from_port                = 0
   to_port                  = 6379
   protocol                 = "tcp"
-  security_group_id        = data.aws_security_group.redis_cache_service.id
+  security_group_id        = aws_security_group.redis_cache_service.id
   source_security_group_id = aws_security_group.front_ecs_service.id
 }
 
