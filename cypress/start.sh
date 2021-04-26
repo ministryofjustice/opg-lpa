@@ -11,7 +11,7 @@ echo Cypress user number is $CYPRESS_userNumber
 
 echo Starting Cypress Tests
 
-if [[ "$CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
+if [[ "$CYPRESS_CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     echo "Running Cypress headless"
     # It's CI (used in CircleCI) or headless local CLI runs
     # so run the signup test first, then stitched, followed by all others
