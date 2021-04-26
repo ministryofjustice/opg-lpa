@@ -18,7 +18,7 @@ def assume_role_and_get_client():
         region_name='eu-west-1',
     )
 
-    if os.getenv('CI'):
+    if os.getenv('CYPRESS_CI'):
         print("S3Monitor starting, Assuming CI role")
         role_arn = 'arn:aws:iam::050256574573:role/opg-lpa-ci'
     else:
