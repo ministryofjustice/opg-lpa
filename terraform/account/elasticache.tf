@@ -27,4 +27,3 @@ resource "aws_elasticache_replication_group" "redis_cache" {
 
   tags = local.default_tags
 }
-s
