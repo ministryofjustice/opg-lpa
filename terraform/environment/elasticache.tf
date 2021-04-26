@@ -6,7 +6,7 @@ resource "aws_security_group" "redis_cache_service" {
 
 resource "aws_elasticache_subnet_group" "private_subnets" {
   name       = "private-subnets"
-  subnet_ids = data.aws_subnet_ids.private[*].ids
+  subnet_ids = data.aws_subnet_ids.private.ids
 }
 
 
