@@ -31,3 +31,4 @@ var adminUrl = Cypress.env("adminUrl");
 if (adminUrl === undefined) {
     Cypress.env("adminUrl","https://localhost:7003");
 }
+Cypress.env("a11yCheckedPages", new Set());
