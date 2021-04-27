@@ -18,11 +18,11 @@ if [[ "$CYPRESS_CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
     # stitch feature files and run, to simulate newly signed-up user doing all actions from start to finish
     cypress/stitch.sh 
-    cypress run --spec cypress/integration/StitchedCreatePFLpa.feature &
-    cypress run --spec cypress/integration/StitchedCreateHWLpa.feature &
+    cypress run --spec cypress/integration/StitchedCreatePFLpa.feature | xargs -L1 echo stitchedPF &
+    cypress run --spec cypress/integration/StitchedCreateHWLpa.feature | xargs -L1 echo stitchedHW &
     # run remaining feature files that haven't already been run 
     # @CreateLpa is all the files that have been stitched, and @SignUp is the SignUp feature
-    ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp and not @CreateLpa'
+    ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp and not @CreateLpa' | xargs -L1 echo non-stitched
 else
     echo "Running Cypress"
     # pass supplied args to cypress
