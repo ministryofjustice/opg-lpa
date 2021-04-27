@@ -59,19 +59,17 @@
                                 <?php } ?>
                             </li>
 
-                            <?php if (array_key_exists('activatedAt', $user)) { ?>
+                            <?php if (isset($user['activatedAt'])) { ?>
                                 <li>
                                     <strong class="bold-small">Date activated: </strong>
-                                    <span>
-                                    <?= ($user['activatedAt'] instanceof DateTime ? ($user['activatedAt'])->format('jS M Y \\a\\t g:i:s a') : 'Not activated'); ?>
-                                    </span>
+                                    <span><?= $this->dateFormat($user['activatedAt']) ?></span>
                                 </li>
                             <?php } ?>
 
                             <?php if (array_key_exists('lastLoginAt', $user)) { ?>
                                 <li>
                                     <strong class="bold-small">Last login time: </strong>
-                                    <span><?= ($user['lastLoginAt'] instanceof DateTime ? ($user['lastLoginAt'])->format('jS M Y \\a\\t g:i:s a') : 'Never logged in'); ?></span>
+                                    <span><?= $this->dateFormat($user['lastLoginAt']) ?></span>
                                 </li>
                             <?php } ?>
 
