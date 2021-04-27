@@ -3,9 +3,9 @@
     "nonGlobalStepDefinitions": true
   },
   "devDependencies": {
-    "axe-core": "^4.1.3",
-    "cypress": "^6.7.1",
-    "cypress-cucumber-preprocessor": "^4.0.1",
+    "axe-core": "^4.1.4",
+    "cypress": "^7.2.0",
+    "cypress-cucumber-preprocessor": "^4.1.0",
     "cypress-intellij-reporter": "^0.0.6",
     "cypress-plugin-tab": "^1.0.5"
   },
