@@ -31,6 +31,7 @@ class ConfigProvider
             'plates'       => [
                 'extensions' => [
                     View\ErrorMapper\ErrorMapperPlatesExtension::class,
+                    View\DateFormatter\DateFormatterPlatesExtension::class,
                 ],
             ],
         ];
