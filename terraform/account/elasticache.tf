@@ -25,5 +25,5 @@ resource "aws_elasticache_replication_group" "redis_cache" {
   subnet_group_name  = aws_elasticache_subnet_group.private_subnets.name
   security_group_ids = [aws_security_group.redis_cache_service.id]
 
-  tags = local.front_component_tag
+  tags = merge(local.default_tags, local.front_component_tag)
 }
