@@ -63,16 +63,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.9",
+            "version": "3.178.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "89710500988a8a7d77f1282fcf6a1d0ad8297eaf"
+                "reference": "ae5590158d773402f09ddc79b82e0d9243d3e990"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/89710500988a8a7d77f1282fcf6a1d0ad8297eaf",
-                "reference": "89710500988a8a7d77f1282fcf6a1d0ad8297eaf",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ae5590158d773402f09ddc79b82e0d9243d3e990",
+                "reference": "ae5590158d773402f09ddc79b82e0d9243d3e990",
                 "shasum": ""
             },
             "require": {
@@ -147,9 +147,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.11"
             },
-            "time": "2021-04-23T18:28:02+00:00"
+            "time": "2021-04-27T18:16:30+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -1664,29 +1664,25 @@
         },
         {
             "name": "laminas/laminas-i18n",
-            "version": "2.11.1",
+            "version": "2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-i18n.git",
-                "reference": "5e85a8facc5534e856cc7f5b4326533eede84b8a"
+                "reference": "48883436c6fa1f9ef001af295e3a40003c5cfbf2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-i18n/zipball/5e85a8facc5534e856cc7f5b4326533eede84b8a",
-                "reference": "5e85a8facc5534e856cc7f5b4326533eede84b8a",
+                "url": "https://api.github.com/repos/laminas/laminas-i18n/zipball/48883436c6fa1f9ef001af295e3a40003c5cfbf2",
+                "reference": "48883436c6fa1f9ef001af295e3a40003c5cfbf2",
                 "shasum": ""
             },
             "require": {
-                "ext-intl": "*",
                 "laminas/laminas-stdlib": "^2.7 || ^3.0",
                 "laminas/laminas-zendframework-bridge": "^1.0",
-                "php": "^7.3 || ~8.0.0"
-            },
-            "conflict": {
-                "phpspec/prophecy": "<1.9.0"
+                "php": "^5.6 || ^7.0"
             },
             "replace": {
-                "zendframework/zend-i18n": "^2.10.1"
+                "zendframework/zend-i18n": "self.version"
             },
             "require-dev": {
                 "laminas/laminas-cache": "^2.6.1",
@@ -1694,12 +1690,13 @@
                 "laminas/laminas-config": "^2.6",
                 "laminas/laminas-eventmanager": "^2.6.2 || ^3.0",
                 "laminas/laminas-filter": "^2.6.1",
-                "laminas/laminas-servicemanager": "^3.2.1",
+                "laminas/laminas-servicemanager": "^2.7.5 || ^3.0.3",
                 "laminas/laminas-validator": "^2.6",
                 "laminas/laminas-view": "^2.6.3",
-                "phpunit/phpunit": "^9.3"
+                "phpunit/phpunit": "^5.7.27 || ^6.5.14 || ^7.5.16"
             },
             "suggest": {
+                "ext-intl": "Required for most features of Laminas\\I18n; included in default builds of PHP",
                 "laminas/laminas-cache": "Laminas\\Cache component",
                 "laminas/laminas-config": "Laminas\\Config component",
                 "laminas/laminas-eventmanager": "You should install this package to use the events in the translator",
@@ -1711,6 +1708,10 @@
             },
             "type": "library",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "2.9.x-dev",
+                    "dev-develop": "2.10.x-dev"
+                },
                 "laminas": {
                     "component": "Laminas\\I18n",
                     "config-provider": "Laminas\\I18n\\ConfigProvider"
@@ -1739,13 +1740,7 @@
                 "rss": "https://github.com/laminas/laminas-i18n/releases.atom",
                 "source": "https://github.com/laminas/laminas-i18n"
             },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2021-04-07T21:10:50+00:00"
+            "time": "2019-12-31T17:09:58+00:00"
         },
         {
             "name": "laminas/laminas-inputfilter",
@@ -2478,47 +2473,49 @@
         },
         {
             "name": "laminas/laminas-mvc-i18n",
-            "version": "1.2.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-mvc-i18n.git",
-                "reference": "7ece491a02000a6c4ea2c4457fead3d12efc6eba"
+                "reference": "4184f6572b5244a5f5781604f1e03d7955e304a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-mvc-i18n/zipball/7ece491a02000a6c4ea2c4457fead3d12efc6eba",
-                "reference": "7ece491a02000a6c4ea2c4457fead3d12efc6eba",
+                "url": "https://api.github.com/repos/laminas/laminas-mvc-i18n/zipball/4184f6572b5244a5f5781604f1e03d7955e304a0",
+                "reference": "4184f6572b5244a5f5781604f1e03d7955e304a0",
                 "shasum": ""
             },
             "require": {
                 "container-interop/container-interop": "^1.1",
-                "laminas/laminas-i18n": "^2.11",
+                "laminas/laminas-i18n": "^2.7",
                 "laminas/laminas-router": "^3.0",
-                "laminas/laminas-servicemanager": "^3.6",
-                "laminas/laminas-stdlib": "^3.3",
-                "laminas/laminas-validator": "^2.14",
-                "laminas/laminas-zendframework-bridge": "^1.2",
-                "php": "^7.3 || ~8.0.0"
+                "laminas/laminas-servicemanager": "^2.7.10 || ^3.0.3",
+                "laminas/laminas-stdlib": "^2.7.6 || ^3.0",
+                "laminas/laminas-validator": "^2.6",
+                "laminas/laminas-zendframework-bridge": "^1.0",
+                "php": "^5.6 || ^7.0"
             },
             "conflict": {
                 "laminas/laminas-mvc": "<3.0.0",
                 "phpspec/prophecy": "<1.8.0"
             },
             "replace": {
-                "zendframework/zend-mvc-i18n": "^1.1.1"
+                "zendframework/zend-mvc-i18n": "self.version"
             },
             "require-dev": {
+                "laminas/laminas-cache": "^2.6.1",
                 "laminas/laminas-coding-standard": "~1.0.0",
-                "phpspec/prophecy-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.5",
-                "psalm/plugin-phpunit": "^0.15.1",
-                "vimeo/psalm": "^4.7"
+                "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.5"
             },
             "suggest": {
                 "laminas/laminas-cache": "To enable caching of translation strings"
             },
             "type": "library",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev",
+                    "dev-develop": "1.2.x-dev"
+                },
                 "laminas": {
                     "component": "Laminas\\Mvc\\I18n",
                     "config-provider": "Laminas\\Mvc\\I18n\\ConfigProvider"
@@ -2548,13 +2545,7 @@
                 "rss": "https://github.com/laminas/laminas-mvc-i18n/releases.atom",
                 "source": "https://github.com/laminas/laminas-mvc-i18n"
             },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2021-04-02T15:49:43+00:00"
+            "time": "2019-12-31T17:33:41+00:00"
         },
         {
             "name": "laminas/laminas-mvc-plugin-flashmessenger",
