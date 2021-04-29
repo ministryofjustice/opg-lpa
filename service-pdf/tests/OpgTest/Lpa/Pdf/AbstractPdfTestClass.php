@@ -164,7 +164,7 @@ abstract class AbstractPdfTestClass extends TestCase
     {
         $property = $this->reflectionProperties[$propertyName]->getValue($pdf);
 
-        $this->assertEquals($expectedValue, $property);
+        $this->assertEquals($expectedValue, $property, "Property $propertyName did not have the expected value");
     }
 
     protected function verifyTmpFileName(Lpa $lpa, $fileName, $templateFileName)
