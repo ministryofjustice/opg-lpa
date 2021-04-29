@@ -1,4 +1,4 @@
-<phpunit bootstrap="./tests/Bootstrap.php" colors="true" strict="false" syntaxCheck="false" verbose="false">
+<phpunit bootstrap="./tests/Bootstrap.php" colors="true" verbose="false">
     <testsuite name="OpgLpaPdf">
         <directory>./tests/OpgTest</directory>
     </testsuite>
