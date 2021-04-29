@@ -350,6 +350,7 @@ class Module implements FormElementProviderInterface
                     if ($form instanceof AbstractCsrfForm) {
                         $config = $serviceManager->get('Config');
                         $form->setConfig($config);
+                        $form->setCsrf();
                     }
                 },
             ],
