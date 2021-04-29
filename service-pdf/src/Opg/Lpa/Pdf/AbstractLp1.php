@@ -17,6 +17,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet1 as ContinuationSheet1Aggregator;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet2 as ContinuationSheet2Aggregator;
+use Opg\Lpa\Pdf\PdftkFactory;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
 use mikehaertl\pdftk\Pdf as Pdftk;
@@ -61,9 +62,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     /**
      * @param Lpa|null $lpa
      * @param array $options
+     * @param ?PdftkFactory $pdftkFactory
      * @throws Exception
      */
-    public function __construct(Lpa $lpa = null, array $options = [])
+    public function __construct(Lpa $lpa = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
     {
         //  Check that the coversheet variables have been set
         if (is_null($this->coversheetFileName)) {
@@ -75,7 +77,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             $this->lpaIsComplete = $lpa->isStateCompleted() && $lpa->getCompletedAt() instanceof DateTime;
         }
 
-        parent::__construct($lpa, $options);
+        parent::__construct($lpa, $options, $pdftkFactory);
     }
 
     /**
@@ -342,7 +344,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     {
         //  This page is repeatable so determine which PDF object to use
         //  For the first MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages we should populate the main document
-        $pdf = ($pageIteration >= self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 ? new $this() : $this);
+        $pdf = ($pageIteration >= self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 ? new $this(null, [], $this->pdftkFactory) : $this);
 
         //  Immediately get an array of all attorneys excluding trusts so we can work with it below
         $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
@@ -402,7 +404,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageSeventeen(Document $lpaDocument, $pageIteration = 0)
     {
         //  This page is repeatable so determine which PDF object to use
-        $pdf = ($pageIteration > 0 ? new $this() : $this);
+        $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
 
         $applicantType = 'donor';
         $strikeThroughIndex = 0;
@@ -563,7 +565,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageTwenty($whoIsRegistering, $pageIteration = 0)
     {
         //  This page is repeatable so determine which PDF object to use
-        $pdf = ($pageIteration > 0 ? new $this() : $this);
+        $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
 
         //  There must always be at least one signature
         $blankIndex = 1;
