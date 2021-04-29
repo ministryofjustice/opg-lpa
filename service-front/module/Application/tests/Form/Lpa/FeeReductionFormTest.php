@@ -15,7 +15,7 @@ class FeeReductionFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpMainFlowForm(new FeeReductionForm());
+        $this->setUpForm(new FeeReductionForm());
     }
 
     public function testNameAndInstances()

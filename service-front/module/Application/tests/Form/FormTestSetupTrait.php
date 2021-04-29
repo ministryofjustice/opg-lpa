@@ -28,6 +28,17 @@ trait FormTestSetupTrait
     {
         $form->init();
 
+        if ($form instanceof AbstractCsrfForm) {
+            $config = [
+                'csrf' => [
+                    'salt' => 'Rando_Calrissian'
+                ]
+            ];
+
+            $form->setConfig($config);
+            $form->setCsrf();
+        }
+
         $this->form = $form;
     }
 
