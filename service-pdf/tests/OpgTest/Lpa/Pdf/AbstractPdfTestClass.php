@@ -7,13 +7,21 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use ConfigSetUp;
 use Opg\Lpa\Pdf\Aggregator\AbstractAggregator;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\PdftkFactory;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractPdfTestClass extends TestCase
 {
     private $reflectionProperties = [];
 
-    protected function setUp()
+    /**
+     * PdftkFactory $factory Factory for creating PDF objects within tests;
+     * this allows a tester to use a different pdftk command by
+     * setting the PDFTK_COMMAND variable in the environment.
+     */
+    protected $factory;
+
+    protected function setUp() : void
     {
         ConfigSetUp::init();
 
@@ -40,6 +48,9 @@ abstract class AbstractPdfTestClass extends TestCase
                 $this->reflectionProperties[$pdfPropertyForClass] = $reflectionProperty;
             }
         }
+
+        $pdftkCommand = $_ENV['PDFTK_COMMAND'] ?? 'pdftk';
+        $this->factory = new PdftkFactory($pdftkCommand);
     }
 
     protected function getTestDirectory()
@@ -163,6 +174,6 @@ abstract class AbstractPdfTestClass extends TestCase
         $lpaId = implode('-', str_split($lpaId, 4));
         $regex = '/tmp\/\d{10}.(\d+)?-' . $lpaId . '-' . $templateFileName . '/';
 
-        $this->assertRegExp($regex, $fileName);
+        $this->assertMatchesRegularExpression($regex, $fileName);
     }
 }
