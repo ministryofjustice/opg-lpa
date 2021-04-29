@@ -155,6 +155,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
             return;
         }
 
+        // 'P' = portrait, 'pt' = use points for measurements
         $pdf = new FPDI('P', 'pt');
 
         // Turn off line at top of PDF
