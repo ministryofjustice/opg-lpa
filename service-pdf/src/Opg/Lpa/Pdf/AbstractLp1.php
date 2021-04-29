@@ -801,12 +801,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     {
         //  Create a copy of the LPA PDF with the contents of the provided PDF stamped on the specified page
         $tmpStampedPdfName = $this->getIntermediatePdfFilePath('stamp.pdf');
-        $stampedPdfAllPages = new Pdftk($this->pdfFile);
+        $stampedPdfAllPages = $this->pdftkFactory->create($this->pdfFile);
         $stampedPdfAllPages->stamp($stampPdf)
                            ->flatten()
                            ->saveAs($tmpStampedPdfName);
 
-        $newPdf = new Pdftk([
+        $newPdf = $this->pdftkFactory->create([
             'A' => $this->pdfFile,
             'B' => $tmpStampedPdfName
         ]);

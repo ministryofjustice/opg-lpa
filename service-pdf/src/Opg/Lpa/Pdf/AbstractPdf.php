@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\PdftkFactory;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Exception;
 
@@ -62,10 +63,16 @@ abstract class AbstractPdf extends PdftkPdf
      * @param Lpa|null $lpa
      * @param null $templateFileName
      * @param array $options
+     * @param ?PdftkFactory $pdftkFactory
      * @throws Exception
      */
-    public function __construct(Lpa $lpa = null, $templateFileName = null, array $options = [])
+    public function __construct(Lpa $lpa = null, $templateFileName = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
     {
+        if (is_null($pdftkFactory)) {
+            $pdftkFactory = new PdftkFactory();
+        }
+        $this->pdftkFactory = $pdftkFactory;
+
         $this->logger = Logger::getInstance();
         $this->config = Config::getInstance();
 
@@ -82,14 +89,18 @@ abstract class AbstractPdf extends PdftkPdf
             //  Determine the number of pages for the PDF template using the suggest method in...
             //  https://github.com/mikehaertl/php-pdftk/issues/56
             //  Create a new copy of the PDF for this so as not to trigger the command finally
-            $pageCountPdf = new PdftkPdf($templateFile);
+            $pageCountPdf = $this->pdftkFactory->create($templateFile);
 
             if (preg_match('/NumberOfPages: (\d+)/', $pageCountPdf->getData(), $m)) {
                 $this->numberOfPages = $m[1];
             }
         }
 
-        //  Trigger the parent constructor for any additional set up
+        // Pass the pdftk command configured for the PdftkFactory to the parent
+        // constructor, so that the parent uses the same pdftk command
+        $options['command'] = $this->pdftkFactory->getPdftkCommand();
+
+        // Trigger the parent constructor for any additional set up
         parent::__construct($templateFile, $options);
 
         //  Build up a PDF file name to use
@@ -167,7 +178,7 @@ abstract class AbstractPdf extends PdftkPdf
      */
     protected function protectPdf()
     {
-        $pdfToProtect = new PdftkPdf($this->pdfFile);
+        $pdfToProtect = $this->pdftkFactory->create($this->pdfFile);
 
         $pdfToProtect->allow('Printing CopyContents')
                      ->setPassword($this->config['pdf']['password'])

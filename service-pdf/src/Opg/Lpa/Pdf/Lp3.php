@@ -8,6 +8,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\PdftkFactory;
 
 /**
  * Class Lp3
@@ -35,12 +36,13 @@ class Lp3 extends AbstractIndividualPdf
     /**
      * @param Lpa|null $lpa
      * @param NotifiedPerson|null $personToNotify
+     * @param ?PdftkFactory $pdftkFactory
      */
-    public function __construct(Lpa $lpa = null, NotifiedPerson $personToNotify = null)
+    public function __construct(Lpa $lpa = null, NotifiedPerson $personToNotify = null, ?PdftkFactory $pdftkFactory = null)
     {
         $this->personToNotify = $personToNotify;
 
-        parent::__construct($lpa);
+        parent::__construct($lpa, [], $pdftkFactory);
     }
 
     /**
@@ -111,7 +113,7 @@ class Lp3 extends AbstractIndividualPdf
     private function populatePageThree(Lpa $lpa, $pageIteration = 0)
     {
         //  This page is repeatable so determine which PDF object to use
-        $pdf = ($pageIteration > 0 ? new $this() : $this);
+        $pdf = ($pageIteration > 0 ? new $this(null, null, $this->pdftkFactory) : $this);
 
         $primaryAttorneys = $lpa->document->primaryAttorneys;
 
