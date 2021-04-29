@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class LoggerTest extends TestCase
 {
-    public function setUp()
+    public function setUp() : void
     {
         ConfigSetUp::init();
     }
@@ -21,7 +21,7 @@ class LoggerTest extends TestCase
         $this->assertEquals(spl_object_hash($loggerObj1), spl_object_hash($loggerObj2));
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         Logger::destroy();
     }
