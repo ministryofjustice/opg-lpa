@@ -14,6 +14,11 @@ services:
       POSTGRES_USER: lpauser
       POSTGRES_PASSWORD: lpapass
 
+  redis:
+    image: library/redis:alpine
+    ports:
+      - 6379:6379
+
   dynamodb:
     image: amazon/dynamodb-local
     ports:

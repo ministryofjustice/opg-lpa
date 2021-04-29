@@ -10,12 +10,13 @@ FROM php:7-fpm-alpine3.12
 RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
+        && pecl install redis \
         && pecl install xdebug \
         && pecl clear-cache \
+        && docker-php-ext-enable redis \
         && docker-php-ext-install intl \
         && docker-php-ext-install bcmath \
         && docker-php-ext-install opcache \
-        && apk del .build-dependencies
 
 COPY service-front /app
 COPY --from=composer /app/vendor /app/vendor
