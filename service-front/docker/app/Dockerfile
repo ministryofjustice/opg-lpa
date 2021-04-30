@@ -16,7 +16,7 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
         && docker-php-ext-enable redis \
         && docker-php-ext-install intl \
         && docker-php-ext-install bcmath \
-        && docker-php-ext-install opcache \
+        && docker-php-ext-install opcache
 
 COPY service-front /app
 COPY --from=composer /app/vendor /app/vendor
