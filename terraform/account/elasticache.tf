@@ -1,5 +1,5 @@
-resource "aws_security_group" "redis_cache_service" {
-  name   = "redis-cache-service"
+resource "aws_security_group" "front_cache" {
+  name   = "front-cache"
   vpc_id = aws_default_vpc.default.id
   tags   = local.front_component_tag
 }
@@ -10,9 +10,9 @@ resource "aws_elasticache_subnet_group" "private_subnets" {
 }
 
 
-resource "aws_elasticache_replication_group" "redis_cache" {
-  replication_group_id          = "redis-cache-replication-group"
-  replication_group_description = "redis cache replication group"
+resource "aws_elasticache_replication_group" "front_cache" {
+  replication_group_id          = "front-cache-replication-group"
+  replication_group_description = "front cache replication group"
   parameter_group_name          = "default.redis5.0"
   engine                        = "redis"
   engine_version                = "5.0.6"
@@ -23,7 +23,7 @@ resource "aws_elasticache_replication_group" "redis_cache" {
   automatic_failover_enabled    = true
 
   subnet_group_name  = aws_elasticache_subnet_group.private_subnets.name
-  security_group_ids = [aws_security_group.redis_cache_service.id]
+  security_group_ids = [aws_security_group.front_cache.id]
 
   tags = merge(local.default_tags, local.front_component_tag)
 }
