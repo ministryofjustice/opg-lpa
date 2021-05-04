@@ -28,7 +28,7 @@ if [[ "$CYPRESS_CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
         ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF' 
     else
         # CYPRESS_TAGS is set so we run those specific tests
-        ./node_modules/.bin/cypress-tags run -e TAGS=$CYPRESS_TAGS
+        ./node_modules/.bin/cypress-tags run -e TAGS="$CYPRESS_TAGS"
     fi
 else
     echo "Running Cypress"
