@@ -1,6 +1,6 @@
 #!/bin/bash
 # Stitch together PF feature files 
-cp cypress/integration/LpaTypePF.feature cypress/integration/StitchedCreatePFLpa.feature 
+cat cypress/integration/LpaTypePF.feature | sed "s/@CreateLpa/@StitchedPF/" > cypress/integration/StitchedCreatePFLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/AttorneysPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ReplacementAttorneysPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
@@ -11,7 +11,7 @@ awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/inte
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ApplicantPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CorrespondentPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
 # Stitch together HW feature files 
-cp cypress/integration/LpaTypeHW.feature cypress/integration/StitchedCreateHWLpa.feature 
+cat cypress/integration/LpaTypeHW.feature | sed "s/@CreateLpa/@StitchedHW/" > cypress/integration/StitchedCreateHWLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/AttorneysHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ReplacementAttorneysHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
