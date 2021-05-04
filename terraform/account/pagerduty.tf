@@ -18,3 +18,10 @@ resource "aws_sns_topic_subscription" "cloudwatch_breakglass_alerts_sns_subscrip
   endpoint_auto_confirms = true
   endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.cloudwatch_integration.integration_key}/enqueue"
 }
+
+resource "aws_sns_topic_subscription" "cloudwatch_elasticache_alerts_sns_subscription" {
+  topic_arn              = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
+  protocol               = "https"
+  endpoint_auto_confirms = true
+  endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.cloudwatch_integration.integration_key}/enqueue"
+}
