@@ -126,6 +126,7 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/run_cypress_test:
          name: run_cypress_test
+         cypress_tags: "@Signup"
          filters: { branches: { ignore: [master] } }
          requires: [dev_seed_environment_databases]
 
@@ -243,6 +244,7 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress
+        cypress_tags: "@Signup"
         workspace: preproduction
         filters: { branches: { only: [master] } }
         requires: [preprod_seed_environment_databases]
@@ -864,11 +866,14 @@ orbs:
         # Runs cypress testing
         #
         executor: python
-        parameters:
+        parameters: 
           workspace:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+          cypress_tags:
+            description: Cypress tags to be passed in to run of cypress docker container
+            type: string
         steps:
           - checkout
           - setup_remote_docker:
