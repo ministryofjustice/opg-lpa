@@ -6,6 +6,10 @@ pr_build: &pr_build
         name: cancel_previous_jobs
         filters: { branches: { ignore: [master] } }
 
+    - infrastructure_and_deployment/create_cypress_image:
+        name: dev_generate_cypress_container
+        filters: { branches: { ignore: [master] } }
+
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
         ecr_repository_name_prefix: online-lpa/front
@@ -108,52 +112,65 @@ pr_build: &pr_build
           ]
 
     - ecr_scan_results:
-         name: ecr_scan_results_development
-         filters: { branches: { ignore: [master] } }
-         requires:
-           [
-             front_docker_build,
-             admin_docker_build,
-             api_docker_build,
-             pdf_docker_build,
-             seeding_docker_build,
-           ]
+        name: ecr_scan_results_development
+        filters: { branches: { ignore: [master] } }
+        requires:
+          [
+            front_docker_build,
+            admin_docker_build,
+            api_docker_build,
+            pdf_docker_build,
+            seeding_docker_build,
+          ]
 
     - infrastructure_and_deployment/seed_environment_databases:
-         name: dev_seed_environment_databases
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_environment_apply_terraform]
+        name: dev_seed_environment_databases
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_environment_apply_terraform]
 
     - infrastructure_and_deployment/run_cypress_test:
-         name: run_cypress_test_stitchedpf
-         cypress_tags: "@StitchedPF"
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_seed_environment_databases]
+        name: run_cypress_test_stitchedpf
+        cypress_tags: "@StitchedPF"
+        filters: { branches: { ignore: [master] } }
+        requires:
+          [dev_generate_cypress_container, dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
-         name: run_cypress_test_stitchedhw
-         cypress_tags: "@StitchedHW"
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_seed_environment_databases]
+        name: run_cypress_test_stitchedhw
+        cypress_tags: "@StitchedHW"
+        filters: { branches: { ignore: [master] } }
+        requires:
+          [dev_generate_cypress_container, dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
-         name: run_cypress_test_remaining_tests
-         cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF"
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_seed_environment_databases]
+        name: run_cypress_test_remaining_tests
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF"
+        filters: { branches: { ignore: [master] } }
+        requires:
+          [dev_generate_cypress_container, dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_functional_test:
-         name: run_functional_test
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_seed_environment_databases]
+        name: run_functional_test
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
 
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
-        requires: [run_functional_test, run_cypress_test_stitchedpf, run_cypress_test_stitchedhw, run_cypress_test_remaining_tests]
+        requires:
+          [
+            run_functional_test,
+            run_cypress_test_stitchedpf,
+            run_cypress_test_stitchedhw,
+            run_cypress_test_remaining_tests,
+          ]
 
 path_to_live: &path_to_live
   jobs:
+    - infrastructure_and_deployment/create_cypress_image:
+        name: preprod_generate_cypress_container
+        filters: { branches: { only: [master] } }
+
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
         ecr_repository_name_prefix: online-lpa/front
@@ -259,21 +276,33 @@ path_to_live: &path_to_live
         cypress_tags: "@StitchedPF"
         workspace: preproduction
         filters: { branches: { only: [master] } }
-        requires: [preprod_seed_environment_databases]
+        requires:
+          [
+            preprod_generate_cypress_container,
+            preprod_seed_environment_databases,
+          ]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_stitchedhw
         cypress_tags: "@StitchedHW"
         workspace: preproduction
         filters: { branches: { only: [master] } }
-        requires: [preprod_seed_environment_databases]
+        requires:
+          [
+            preprod_generate_cypress_container,
+            preprod_seed_environment_databases,
+          ]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_remaining_tests
         cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF"
         workspace: preproduction
         filters: { branches: { only: [master] } }
-        requires: [preprod_seed_environment_databases]
+        requires:
+          [
+            preprod_generate_cypress_container,
+            preprod_seed_environment_databases,
+          ]
 
     - infrastructure_and_deployment/run_functional_test:
         name: preprod_test_functional
@@ -285,7 +314,13 @@ path_to_live: &path_to_live
         name: prod_account_apply_terraform
         workspace: production
         filters: { branches: { only: [master] } }
-        requires: [preprod_test_functional, preprod_test_cypress_stitchedpf, preprod_test_cypress_stitchedhw, preprod_test_cypress_remaining_tests]
+        requires:
+          [
+            preprod_test_functional,
+            preprod_test_cypress_stitchedpf,
+            preprod_test_cypress_stitchedhw,
+            preprod_test_cypress_remaining_tests,
+          ]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: prod_environment_apply_terraform
@@ -818,7 +853,18 @@ orbs:
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
               when: always
-
+      create_cypress_image:
+        executor: python
+        steps:
+          - run:
+              name: Build cypress container and save
+              command: |
+                docker build -f ./cypress/Dockerfile  -t cypress:latest .
+                docker save -o /tmp/cypress_image.tar  cypress:latest
+          - persist_to_workspace:
+              root: /tmp
+              paths:
+                - cypress_image.tar
       run_functional_test:
         #
         # Runs user journey tests using casper JS
@@ -892,7 +938,7 @@ orbs:
         # Runs cypress testing
         #
         executor: python
-        parameters: 
+        parameters:
           workspace:
             description: Terraform workspace name
             type: string
@@ -911,7 +957,7 @@ orbs:
           - run:
               name: Build cypress container
               command: |
-                docker build -f ./cypress/Dockerfile  -t cypress:latest .
+                docker load -i /tmp/cypress_image.tar
                 echo 'export DOCKER_CYPRESS_REMOTE_IP="$(docker run -it --entrypoint curl cypress:latest --silent https://checkip.amazonaws.com/ | tr -d '^@')"' >> $BASH_ENV
                 echo $DOCKER_CYPRESS_REMOTE_IP
           - run:
