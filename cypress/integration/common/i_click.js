@@ -1,12 +1,12 @@
 import { Then } from "cypress-cucumber-preprocessor/steps";
  
 Then(`I click {string}`, (clickable) => {
-    cy.get("[data-cy=" + clickable + "]").click();
+    cy.get("[data-cy=" + clickable + "]").should('be.visible').click();
     cy.OPGCheckA11y();
 })
 
 Then(`I click occurrence {int} of {string}`, (number, clickable) => {
-    cy.get("[data-cy=" + clickable + "]").eq(number).click();
+    cy.get("[data-cy=" + clickable + "]").eq(number).should('be.visible').click();
     cy.OPGCheckA11y();
 })
 
@@ -16,7 +16,7 @@ Then(`I force click {string}`, (clickable) => {
 })
 
 Then(`I click element marked {string}`, (text) => {
-    cy.contains(text).click();
+    cy.contains(text).should('be.visible').click();
     cy.OPGCheckA11y();
 })
 
