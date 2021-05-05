@@ -215,26 +215,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // refreshes browser on scss, js & twig changes
-    // runs a mini-server on localhost:3000 as a proxy on docker box
-    browserSync: {
-      dev: {
-        bsFiles: {
-          src: [
-            'public/assets/v2/css/application.css',
-            'public/assets/v2/css/application.min.css',
-            'public/assets/v2/js/application.js',
-            'public/assets/v2/js/application.min.js',
-            'module/Application/view/**/*.twig'
-          ]
-        },
-        options: {
-          watchTask: true,
-          proxy: 'https://192.168.99.100/home'
-        }
-      }
-    },
-
     // compile handlebars templates
     handlebars: {
       compile: {
@@ -262,7 +242,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-browser-sync');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
