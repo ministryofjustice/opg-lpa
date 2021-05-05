@@ -23,3 +23,18 @@ Feature: Who Are You for a Health and Welfare LPA
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
         Then I am taken to the who are you page
+        And I can find "who"
+        And I can find "who-friend-or-family"
+        And I can find "who-finance-professional"
+        And I can find "who-legal-professional"
+        And I can find "who-estate-planning-professional"
+        And I can find "who-digital-partner"
+        And I can find "who-charity"
+        And I can find "who-organisation"
+        And I can find "who-other"
+        And I can find "who-notSaid"
+        When I click "save"
+        Then I see "There is a problem" in the page text
+        When I check "who"
+        And I click "save"
+        Then I am taken to the repeat application page
