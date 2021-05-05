@@ -6,6 +6,7 @@ namespace AppTest\Service\User;
 
 use App\Service\ApiClient\Client as ApiClient;
 use App\Service\User\UserService;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 
 class UserServiceTest extends TestCase
@@ -34,9 +35,9 @@ class UserServiceTest extends TestCase
         $userService = new UserService($client->reveal());
         $actual = $userService->search($email);
 
-        $this->assertEquals($actual['userId'], $id);
-        $this->assertEquals($actual['isActive'], TRUE);
-        $this->assertEquals($actual['numberOfLpas'], $numLpas);
+        $this->assertEquals($id, $actual['userId']);
+        $this->assertEquals(TRUE, $actual['isActive']);
+        $this->assertEquals($numLpas, $actual['numberOfLpas']);
     }
 
     public function testMatchUsers()
@@ -55,18 +56,23 @@ class UserServiceTest extends TestCase
             'limit' => 10,
         ];
 
-        $client->httpGet('/v2/users/match', $params)->willReturn([
+        $client->httpGet('/v2/users/match', $params)->willReturn([[
             'userId' => $id,
             'isActive' => TRUE,
             'numberOfLpas' => $numLpas,
-        ]);
+            'createdAt' => [
+                'date' => '2020-01-21T15:16:02.000000+0000',
+                'timezone' => 'Europe/London',
+            ],
+        ]]);
 
         // match method on service
         $userService = new UserService($client->reveal());
         $actual = $userService->match($params);
 
-        $this->assertEquals($actual['userId'], $id);
-        $this->assertEquals($actual['isActive'], TRUE);
-        $this->assertEquals($actual['numberOfLpas'], $numLpas);
+        $this->assertEquals($id, $actual[0]['userId']);
+        $this->assertEquals(TRUE, $actual[0]['isActive']);
+        $this->assertEquals($numLpas, $actual[0]['numberOfLpas']);
+        $this->assertInstanceOf(DateTime::class, $actual[0]['createdAt']);
     }
 }
