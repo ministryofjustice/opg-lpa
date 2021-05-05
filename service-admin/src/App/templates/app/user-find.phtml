@@ -21,7 +21,8 @@
                         'formLabel'     => 'Query',
                         'formElement'   => $form->get('query'),
                         'formType'      => 'text',
-                        'formLabelBold' => false
+                        'formLabelBold' => false,
+                        'attrs'         => ['data-cy' => 'query-input'],
                     ]) ?>
 
                     <?php $this->insert('snippet::input-hidden', [
@@ -32,7 +33,7 @@
             </fieldset>
 
             <div class="form-group">
-                <input class="button" type="submit" value="Find">
+                <input data-cy="submit-button" class="button" type="submit" value="Find">
             </div>
 
         </form>
@@ -62,7 +63,7 @@
                             <?php if (isset($user['activatedAt'])) { ?>
                                 <li>
                                     <strong class="bold-small">Date activated: </strong>
-                                    <span><?= $this->dateFormat($user['activatedAt']) ?></span>
+                                    <span data-role="user-activation-date"><?= $this->dateFormat($user['activatedAt']) ?></span>
                                 </li>
                             <?php } ?>
 

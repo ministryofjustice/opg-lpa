@@ -35,7 +35,8 @@ $this->addErrorMap([
                     'formLabel'     => 'Email address',
                     'formElement'   => $form->get('email'),
                     'formType'      => 'text',
-                    'formLabelBold' => false
+                    'formLabelBold' => false,
+                    'attrs'         => ['data-cy' => 'email-address-input'],
                 ]) ?>
 
             </fieldset>
@@ -64,7 +65,7 @@ $this->addErrorMap([
                 <?php if (isset($user['activatedAt'])) { ?>
                     <li>
                         <strong class="bold-small">Date activated: </strong>
-                        <span><?= $this->dateFormat($user['activatedAt']) ?></span>
+                        <span data-role="user-activation-date"><?= $this->dateFormat($user['activatedAt']) ?></span>
                     </li>
                 <?php } ?>
 
