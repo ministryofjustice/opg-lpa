@@ -31,22 +31,6 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
 
-    // watching sass and js (as they need post tasks)
-    watch: {
-      scss: {
-        files: 'assets/sass/**/*.scss',
-        tasks: ['sass', 'replace:image_url', 'cssmin']
-      },
-      js: {
-        files: 'assets/js/**/*.js',
-        tasks: ['concat', 'uglify']
-      },
-      templates: {
-        files: ['<%= handlebars.compile.src %>'],
-        tasks: ['handlebars']
-      }
-    },
-
     // sass files to compile
     sass: {
       dev: {
@@ -235,7 +219,6 @@ module.exports = function (grunt) {
 
   // load npm tasks
   grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-scss-lint');
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -246,9 +229,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   // define tasks
-  grunt.registerTask('default', ['watch']);
   grunt.registerTask('test', ['scsslint', 'jshint']);
-  grunt.registerTask('refresh', ['browserSync', 'watch']);
   grunt.registerTask('build_js', ['handlebars', 'concat', 'uglify']);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
