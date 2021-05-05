@@ -25,7 +25,7 @@ Feature: Add a correspondent to a Health and Welfare LPA
         # choose donor as correspondent
         When I check "reuse-details-1"
         And I click "continue"
-        Then I am taken to the correspondent page
+        Then I cannot see popup
         And I see "Mrs Nancy Garrison" in the page text
         And I click "save"
         Then I am taken to the who are you page

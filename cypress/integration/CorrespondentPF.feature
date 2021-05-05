@@ -47,13 +47,14 @@ Feature: Add a correspondent to a Property and Finance LPA
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
-        When I click "form-back"
+        # force click needed on line below as sometimes button obscured
+        When I force click "form-back"
         # we are taken back to re-use details page
         Then I see "Which details would you like to reuse?" in the page text
         # choose donor as correspondent
         When I check "reuse-details-1"
         And I click "continue"
-        Then I am taken to the correspondent page
+        Then I cannot see popup
         And I see "Mrs Nancy Garrison" in the page text
         When I uncheck "contactByEmail"
         And I click "save"
