@@ -14,6 +14,8 @@ abstract class AbstractPdfTestClass extends TestCase
 {
     private $reflectionProperties = [];
 
+    private const FIXTURES_DIR = __DIR__ . '/../../../fixtures/';
+
     /**
      * PdftkFactory $factory Factory for creating PDF objects within tests;
      * this allows a tester to use a different pdftk command by
@@ -58,10 +60,27 @@ abstract class AbstractPdfTestClass extends TestCase
         return __DIR__ . '/../../../';
     }
 
+    // returns assoc array
+    protected function getPfLpaJSON()
+    {
+        return json_decode(file_get_contents(self::FIXTURES_DIR . 'lpa-pf.json'), TRUE);
+    }
+
+    // returns assoc array
+    protected function getHwLpaJSON()
+    {
+        return json_decode(file_get_contents(self::FIXTURES_DIR . 'lpa-hw.json'), TRUE);
+    }
+
+    // load assoc array of JSON and return an LPA
+    protected function buildLpaFromJSON($data)
+    {
+        return new Lpa(json_encode($data));
+    }
+
     protected function getLpa($isPfLpa = true)
     {
-        $lpaDataFileName = __DIR__ . '/../../../fixtures/' . ($isPfLpa ? 'lpa-pf.json' : 'lpa-hw.json');
-
+        $lpaDataFileName = self::FIXTURES_DIR . ($isPfLpa ? 'lpa-pf.json' : 'lpa-hw.json');
         return new Lpa(file_get_contents($lpaDataFileName));
     }
 
@@ -160,13 +179,6 @@ abstract class AbstractPdfTestClass extends TestCase
         $this->verifyReflectionProperty('pageShift', $pdf, $expectedValue);
     }
 
-    private function verifyReflectionProperty($propertyName, AbstractIndividualPdf $pdf, $expectedValue)
-    {
-        $property = $this->reflectionProperties[$propertyName]->getValue($pdf);
-
-        $this->assertEquals($expectedValue, $property, "Property $propertyName did not have the expected value");
-    }
-
     protected function verifyTmpFileName(Lpa $lpa, $fileName, $templateFileName)
     {
         //  Construct the Regex for the expected filename for this file
@@ -175,5 +187,16 @@ abstract class AbstractPdfTestClass extends TestCase
         $regex = '/tmp\/\d{10}.(\d+)?-' . $lpaId . '-' . $templateFileName . '/';
 
         $this->assertMatchesRegularExpression($regex, $fileName);
+    }
+
+    private function verifyReflectionProperty($propertyName, AbstractIndividualPdf $pdf, $expectedValue)
+    {
+        $property = $this->getReflectionPropertyValue($propertyName, $pdf);
+        $this->assertEquals($expectedValue, $property, "Property $propertyName did not have the expected value");
+    }
+
+    protected function getReflectionPropertyValue($propertyName, AbstractIndividualPdf $pdf)
+    {
+        return $this->reflectionProperties[$propertyName]->getValue($pdf);
     }
 }
