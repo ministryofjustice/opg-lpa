@@ -10,6 +10,7 @@ awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/inte
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/SummaryPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ApplicantPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CorrespondentPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/WhoAreYouPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
 # Stitch together HW feature files 
 cat cypress/integration/LpaTypeHW.feature | sed "s/@CreateLpa/@StitchedHW/" > cypress/integration/StitchedCreateHWLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
@@ -21,3 +22,4 @@ awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/inte
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/SummaryHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ApplicantHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CorrespondentHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/WhoAreYouHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
