@@ -53,6 +53,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['donor']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who',
+                'data-cy' => 'who',
                 'value' => $who->getOptions()['value_options']['donor']['value'],
                 'checked' => (($who->getValue() == 'donor')? 'checked':null),
         ]);
@@ -63,6 +64,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['friend-or-family']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who-friend-or-family',
+                'data-cy' => 'who-friend-or-family',
                 'value' => $who->getOptions()['value_options']['friendOrFamily']['value'],
                 'checked' => (($who->getValue() == 'friendOrFamily')? 'checked':null),
         ]);
@@ -73,6 +75,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['finance-professional']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who-finance-professional',
+                'data-cy' => 'who-finance-professional',
                 'value' => $who->getOptions()['value_options']['financeProfessional']['value'],
                 'checked' => (($who->getValue() == 'financeProfessional')? 'checked':null),
         ]);
@@ -83,6 +86,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['legal-professional']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who-legal-professional',
+                'data-cy' => 'who-legal-professional',
                 'value' => $who->getOptions()['value_options']['legalProfessional']['value'],
                 'checked' => (($who->getValue() == 'legalProfessional')? 'checked':null),
         ]);
@@ -93,6 +97,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['estate-planning-professional']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who-estate-planning-professional',
+                'data-cy' => 'who-estate-planning-professional',
                 'value' => $who->getOptions()['value_options']['estatePlanningProfessional']['value'],
                 'checked' => (($who->getValue() == 'estatePlanningProfessional')? 'checked':null),
         ]);
@@ -103,6 +108,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['digital-partner']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who-digital-partner',
+                'data-cy' => 'who-digital-partner',
                 'value' => $who->getOptions()['value_options']['digitalPartner']['value'],
                 'checked' => (($who->getValue() == 'digitalPartner')? 'checked':null),
         ]);
@@ -113,6 +119,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['charity']->setAttributes([
             'type' => 'radio',
             'id' => 'who-charity',
+            'data-cy' => 'who-charity',
             'value' => $who->getOptions()['value_options']['charity']['value'],
             'checked' => (($who->getValue() == 'charity')? 'checked':null),
         ]);
@@ -123,6 +130,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['organisation']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who-organisation',
+                'data-cy' => 'who-organisation',
                 'value' => $who->getOptions()['value_options']['organisation']['value'],
                 'checked' => (($who->getValue() == 'organisation')? 'checked':null),
         ]);
@@ -133,6 +141,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['other']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who-other',
+                'data-cy' => 'who-other',
                 'value' => $who->getOptions()['value_options']['other']['value'],
                 'checked' => (($who->getValue() == 'other')? 'checked':null),
         ]);
@@ -143,6 +152,7 @@ class WhoAreYouController extends AbstractLpaController
         $whoOptions['notSaid']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who-notSaid',
+                'data-cy' => 'who-notSaid',
                 'value' => $who->getOptions()['value_options']['notSaid']['value'],
                 'checked' => (($who->getValue() == 'notSaid')? 'checked':null),
         ]);

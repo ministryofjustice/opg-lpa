@@ -23,3 +23,13 @@ Feature: Who Are You for a Property and Finance LPA
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
         Then I am taken to the who are you page
+        And I can find "who"
+        And I can find "who-friend-or-family"
+        And I can find "who-finance-professional"
+        And I can find "who-legal-professional"
+        And I can find "who-estate-planning-professional"
+        And I can find "who-digital-partner"
+        And I can find "who-charity"
+        And I can find "who-organisation"
+        And I can find "who-other"
+        And I can find "who-notSaid"
