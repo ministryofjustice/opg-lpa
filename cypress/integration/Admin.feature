@@ -1,3 +1,4 @@
+@Admin
 Feature: Admin
 
   I want to be able to visit the admin page and log in
