@@ -12,16 +12,16 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractLp1Test extends AbstractPdfTestClass
 {
-    public function testPopulatePageTwoThreeFour()
+    public function testPopulatePageTwoThreeFour_SinglePrimaryAttorney()
     {
-        // Modify LPA data so it has a single primary attorney
         $data = $this->getPfLpaJSON();
 
+        // Modify LPA data so it has a single primary attorney
         $primaryAttorneys = $data["document"]["primaryAttorneys"];
         $data["document"]["primaryAttorneys"] = array_slice($primaryAttorneys, 0, 1);
 
-        // We also need to modify who is registering, so it references the
-        // single attorney rather than all of them
+        // We also modify who is registering, so it references the single
+        // attorney rather than all of them
         $data["document"]["whoIsRegistering"] = ["1"];
 
         // Load the data to make our amended LPA
@@ -29,14 +29,49 @@ class AbstractLp1Test extends AbstractPdfTestClass
         $pdf = new Lp1f($lpa, [], $this->factory);
         $pdf->generate();
 
-        // Check the single attorney data's will be injected into the PDF
+        /* DATA */
+        // Check the single attorney's data will be injected into the PDF
+        $expectedData = [
+            'name-title' => 'Mrs',
+            'name-first' => 'Amy',
+            'name-last' => 'Wheeler',
+            'dob-date-day' => '10',
+            'dob-date-month' => '05',
+            'dob-date-year' => '1975',
+            'address-address1' => 'Brickhill Cottage',
+            'address-address2' => 'Birch Cross',
+            'address-address3' => 'Marchington, Uttoxeter, Staffordshire',
+            'address-postcode' => 'ST14 8NX',
+            'email-address' => "\nopglpademo+AmyWheeler@gmail.com"
+        ];
 
+        // Get data which will be injected into the output PDF
+        $actualData = $this->getReflectionPropertyValue('data', $pdf);
 
-        // Check that there are strikethroughs on all pages except the one
-        // showing the single attorney
+        // Stored here to prevent repetition; in the data, each of the
+        // $expectedData keys will be prefixed with this string
+        $prefix = 'lpa-document-primaryAttorneys-0-';
 
+        foreach ($expectedData as $expectedKey => $expectedValue) {
+            $expectedKey = "${prefix}${expectedKey}";
+            $this->assertEquals($actualData[$expectedKey], $expectedValue);
+        }
 
-        // TODO remove this
-        $this->assertTrue(TRUE);
+        /* STRIKETHROUGHS */
+        // Check that there is a strikethrough on the second page for
+        // attorneys (as we only have a single attorney)
+        $actualStrikeThroughs = $this->getReflectionPropertyValue('strikeThroughTargets', $pdf);
+
+        $expectedStrikeThroughs = [
+            // single strikethrough on first attorney page
+            1 => ['primaryAttorney-1-pf'],
+
+            // two strikethroughs on second attorney page
+            2 => ['primaryAttorney-2', 'primaryAttorney-3']
+        ];
+
+        foreach ($expectedStrikeThroughs as $expectedPage => $expectedAreas) {
+            $this->assertEquals($actualStrikeThroughs[$expectedPage], $expectedAreas);
+        }
     }
 }
