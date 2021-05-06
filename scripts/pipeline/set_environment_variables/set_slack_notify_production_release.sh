@@ -11,6 +11,7 @@
     echo "sanitised commit:"
     echo "${SANITISED_COMMIT_MESSAGE}"
 
+
 generate_slack_notify_production_release()
 {
     cat <<EOF
