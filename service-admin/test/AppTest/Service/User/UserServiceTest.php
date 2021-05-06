@@ -60,7 +60,7 @@ class UserServiceTest extends TestCase
             'userId' => $id,
             'isActive' => TRUE,
             'numberOfLpas' => $numLpas,
-            'createdAt' => [
+            'activatedAt' => [
                 'date' => '2020-01-21T15:16:02.000000+0000',
                 'timezone' => 'Europe/London',
             ],
@@ -73,6 +73,6 @@ class UserServiceTest extends TestCase
         $this->assertEquals($id, $actual[0]['userId']);
         $this->assertEquals(TRUE, $actual[0]['isActive']);
         $this->assertEquals($numLpas, $actual[0]['numberOfLpas']);
-        $this->assertInstanceOf(DateTime::class, $actual[0]['createdAt']);
+        $this->assertInstanceOf(DateTime::class, $actual[0]['activatedAt']);
     }
 }
