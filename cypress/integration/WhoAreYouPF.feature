@@ -7,7 +7,7 @@ Feature: Who Are You for a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant
 
-    @focus, @CleanupFixtures
+    @focus
     Scenario: Who Are You
         When I log in as appropriate test user
 
@@ -38,3 +38,11 @@ Feature: Who Are You for a Property and Finance LPA
         When I check "who"
         And I click "save"
         Then I am taken to the repeat application page
+
+
+        When I check "isRepeatApplication-is-repeat"
+        And I click "save"
+        When I click element marked "Confirm and continue"
+        Then I see in the page text
+            | There is a problem |
+            | If you are making a repeat application, you need to enter the case number given to you by the Office of the Public Guardian. | 
