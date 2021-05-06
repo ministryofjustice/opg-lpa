@@ -5,6 +5,7 @@
     # needed as circleci did not santize the input for json properly.
     SANITISED_COMMIT_MESSAGE=$(echo "$COMMIT_MESSAGE" |
         sed 's/"/\\""/g'            |   # escape quotes
+         sed 's/*/-/g'              |   # replace asterisks with dash
          awk '{printf "%s\\n", $0}')    # replace newlines with literals.
 
     echo "sanitised commit:"
