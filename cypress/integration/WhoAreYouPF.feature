@@ -33,3 +33,8 @@ Feature: Who Are You for a Property and Finance LPA
         And I can find "who-organisation"
         And I can find "who-other"
         And I can find "who-notSaid"
+        When I click "save"
+        Then I see "There is a problem" in the page text
+        When I check "who"
+        And I click "save"
+        Then I am taken to the repeat application page
