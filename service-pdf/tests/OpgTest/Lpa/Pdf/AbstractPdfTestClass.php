@@ -15,6 +15,7 @@ abstract class AbstractPdfTestClass extends TestCase
     private $reflectionProperties = [];
 
     private const FIXTURES_DIR = __DIR__ . '/../../../fixtures/';
+    private const BUILD_DIR = __DIR__ . '/../../../build/';
 
     /**
      * PdftkFactory $factory Factory for creating PDF objects within tests;
@@ -55,9 +56,30 @@ abstract class AbstractPdfTestClass extends TestCase
         $this->factory = new PdftkFactory($pdftkCommand);
     }
 
-    protected function getTestDirectory()
+    /**
+     * Get the path to the temporary build directory and make it if it doesn't exist
+     */
+    protected function getBuildDirectory()
     {
-        return __DIR__ . '/../../../';
+        if (!file_exists(self::BUILD_DIR)) {
+            mkdir(self::BUILD_DIR);
+        }
+
+        return self::BUILD_DIR;
+    }
+
+    /**
+     * Can be useful for viewing output PDFs after test runs. Although
+     * not directly used in tests (to prevent spewing PDFs everywhere), we
+     * should retain this for the occasions when we want to view output PDFs.
+     *
+     * @param string $filename Path to file to be copied
+     */
+    protected function copyFileToBuildDirectory($filename)
+    {
+        $destFilename = $this->getBuildDirectory() . basename($filename);
+        copy($filename, $destFilename);
+        return $destFilename;
     }
 
     // returns assoc array
@@ -72,7 +94,7 @@ abstract class AbstractPdfTestClass extends TestCase
         return json_decode(file_get_contents(self::FIXTURES_DIR . 'lpa-hw.json'), TRUE);
     }
 
-    // load assoc array of JSON and return an LPA
+    // load assoc array from JSON and return an LPA
     protected function buildLpaFromJSON($data)
     {
         return new Lpa(json_encode($data));
@@ -87,7 +109,6 @@ abstract class AbstractPdfTestClass extends TestCase
     protected function getFullTemplatePath($templateName)
     {
         $config = Config::getInstance();
-
         return $config['service']['assets']['template_path_on_ram_disk'] . '/' . $templateName;
     }
 
