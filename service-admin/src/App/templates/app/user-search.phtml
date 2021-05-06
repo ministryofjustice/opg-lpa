@@ -72,7 +72,7 @@ $this->addErrorMap([
                 <?php if (array_key_exists('lastLoginAt', $user)) { ?>
                     <li>
                         <strong class="bold-small">Last login time: </strong>
-                        <span><?= $this->dateFormat($user['lastLoginAt']) ?></span>
+                        <span><?= $this->dateFormat($user['lastLoginAt'], 'Never logged in') ?></span>
                     </li>
                 <?php } ?>
 
@@ -86,7 +86,7 @@ $this->addErrorMap([
                 <?php if (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
                     <li>
                         <strong class="bold-small">Deleted on: </strong>
-                        <span><?= $this->dateFormat($user['deletedAt']) ?></span>
+                        <span><?= $this->dateFormat($user['deletedAt'], 'Unknown') ?></span>
                     </li>
                     <li>
                         <strong class="bold-small">Due to: </strong>
