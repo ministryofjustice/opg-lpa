@@ -42,7 +42,7 @@ $this->addErrorMap([
             </fieldset>
 
             <div class="form-group">
-                <input class="button" type="submit" value="Search">
+                <input data-cy="submit-button" class="button" type="submit" value="Search">
             </div>
 
         </form>
@@ -86,18 +86,20 @@ $this->addErrorMap([
                 <?php if (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
                     <li>
                         <strong class="bold-small">Deleted on: </strong>
-                        <span><?= $this->dateFormat($user['deletedAt'], 'Unknown') ?></span>
+                        <span data-role="deletion-date"><?= $this->dateFormat($user['deletedAt'], 'Unknown') ?></span>
                     </li>
                     <li>
                         <strong class="bold-small">Due to: </strong>
 
+                        <span data-role="deletion-reason">
                         <?php if ($user['reason'] == 'expired') { ?>
-                            <span>Account expired</span>
+                            Account expired
                         <?php } elseif ($user['reason'] == 'unactivated') { ?>
-                            <span>User did not activate account</span>
+                            User did not activate account
                         <?php } elseif ($user['reason'] == 'user-initiated') { ?>
-                            <span>User manually deleted their account</span>
+                            User manually deleted their account
                         <?php } ?>
+                        </span>
                     </li>
                 <?php } ?>
 

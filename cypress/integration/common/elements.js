@@ -6,7 +6,8 @@ import { Then } from "cypress-cucumber-preprocessor/steps";
 const MapNumberTextToNumber = {
     'a single': 1,
     'one': 1,
-    'two': 2
+    'two': 2,
+    'ten': 10
 };
 
 // map from natural language text to HTML tag name

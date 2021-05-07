@@ -70,7 +70,7 @@
                             <?php if (array_key_exists('lastLoginAt', $user)) { ?>
                                 <li>
                                     <strong class="bold-small">Last login time: </strong>
-                                    <span><?= $this->dateFormat($user['lastLoginAt'], 'Never logged in') ?></span>
+                                    <span data-role="user-last-login-time"><?= $this->dateFormat($user['lastLoginAt'], 'Never logged in') ?></span>
                                 </li>
                             <?php } ?>
 
