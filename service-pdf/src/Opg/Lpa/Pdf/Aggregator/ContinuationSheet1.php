@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Aggregator;
 
 use Opg\Lpa\Pdf\ContinuationSheet1 as ContinuationSheet1Pdf;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\PdftkFactory;
 
 /**
  * Class ContinuationSheet1
@@ -22,7 +23,7 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
      * @param array $replacementAttorneys
      * @param array $peopleToNotify
      */
-    public function __construct(Lpa $lpa = null, array $primaryAttorneys, array $replacementAttorneys, array $peopleToNotify)
+    public function __construct(Lpa $lpa = null, array $primaryAttorneys, array $replacementAttorneys, array $peopleToNotify, ?PdftkFactory $pdftkFactory = null)
     {
         //  Set up all the additional actors for processing
         $this->actorGroups = [
@@ -31,7 +32,7 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
             'peopleToNotify'      => $peopleToNotify,
         ];
 
-        parent::__construct($lpa);
+        parent::__construct($lpa, null, [], $pdftkFactory);
     }
 
     /**
@@ -69,7 +70,7 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
 
         //  Loop through the actor packages and create the continuation sheets
         foreach ($actorsPackages as $actorsPackage) {
-            $this->addPdf(new ContinuationSheet1Pdf($lpa, $actorsPackage));
+            $this->addPdf(new ContinuationSheet1Pdf($lpa, $actorsPackage, $this->pdftkFactory));
         }
     }
 }

@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Aggregator;
 
 use Opg\Lpa\Pdf\ContinuationSheet2 as ContinuationSheet2Pdf;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\PdftkFactory;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
 
@@ -24,12 +25,12 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
      * @param Lpa|null $lpa
      * @param $csType
      */
-    public function __construct(Lpa $lpa = null, $csType)
+    public function __construct(Lpa $lpa = null, $csType, ?PdftkFactory $pdftkFactory = null)
     {
         //  Set up all the additional actors for processing
         $this->cs2Type = $csType;
 
-        parent::__construct($lpa);
+        parent::__construct($lpa, null, [], $pdftkFactory);
     }
 
     /**
@@ -79,7 +80,7 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
                     $content = $this->getContinuationSheet2Content($fullContent, $page);
                 }
 
-                $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $fullContent, $page));
+                $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $fullContent, $page, $this->pdftkFactory));
             } catch (Exception $ignore) {
                 //  We've requested a page too far so break the loop
                 $contentFullyProcessed = true;
