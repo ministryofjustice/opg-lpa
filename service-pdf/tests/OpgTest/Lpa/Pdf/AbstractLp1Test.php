@@ -70,8 +70,63 @@ class AbstractLp1Test extends AbstractPdfTestClass
             2 => ['primaryAttorney-2', 'primaryAttorney-3']
         ];
 
-        foreach ($expectedStrikeThroughs as $expectedPage => $expectedAreas) {
-            $this->assertEquals($actualStrikeThroughs[$expectedPage], $expectedAreas);
-        }
+        $this->assertArrayIsSubArrayOf($expectedStrikeThroughs, $actualStrikeThroughs);
+    }
+
+    public function testPopulatePageFive_SingleTrustCorporationReplacementAttorney()
+    {
+        $data = $this->getPfLpaJSON();
+
+        // Modify LPA data so it has a trust corporation as its single
+        // replacement attorney
+        $data["document"]["replacementAttorneys"] = json_decode('[
+            {
+                "name": "Standard Trust",
+                "number": "678437685",
+                "id": 1,
+                "address": {
+                    "address1": "1 Laburnum Place",
+                    "address2": "Sketty",
+                    "address3": "Swansea, Abertawe",
+                    "postcode": "SA2 8HT"
+                },
+                "email": {
+                    "address": "opglpademo+trustcorp@gmail.com"
+                },
+                "type": "trust"
+            }
+        ]', TRUE);
+
+        // Load the data to make our amended LPA
+        $lpa = $this->buildLpaFromJSON($data);
+        $pdf = new Lp1f($lpa, [], $this->factory);
+        $pdfPath = $pdf->generate();
+
+        /* DATA */
+        // Data we expect to see injected into the PDF
+        $expectedData = [
+            'replacement-attorney-0-is-trust-corporation' => 'On',
+            'lpa-document-replacementAttorneys-0-name-last' => 'Standard Trust',
+        ];
+
+        // Get data which will be injected into the output PDF
+        $actualData = $this->getReflectionPropertyValue('data', $pdf);
+
+        $this->assertArrayIsSubArrayOf($expectedData, $actualData);
+
+        /* STRIKETHROUGHS */
+        // Strikethroughs we expect to see applied to the PDF
+        $actualStrikeThroughs = $this->getReflectionPropertyValue('strikeThroughTargets', $pdf);
+
+        $expectedStrikeThroughs = [
+            // one strikethrough on replacement attorney page 4;
+            // NB if there are more than 2 replacement attorneys, they are
+            // added on continuation sheet 1, so we won't see strikethroughs
+            // for them in this test as we only have one replacement attorney
+            // and no continuation sheet
+            4 => ['replacementAttorney-1-pf'],
+        ];
+
+        $this->assertArrayIsSubArrayOf($expectedStrikeThroughs, $actualStrikeThroughs);
     }
 }

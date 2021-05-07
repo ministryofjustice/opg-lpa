@@ -220,4 +220,20 @@ abstract class AbstractPdfTestClass extends TestCase
     {
         return $this->reflectionProperties[$propertyName]->getValue($pdf);
     }
+
+    /**
+     * Assertion which passes if each key specified in $possibleSubset
+     * occurs in $set, and the values for the keys in the two arrays match
+     * per assertEquals().
+     *
+     * @param array $possibleSubArray Associative array - the subset of the
+     * $array to check
+     * @param array $array Associative array
+     */
+    protected function assertArrayIsSubArrayOf($possibleSubArray, $array)
+    {
+        foreach ($possibleSubArray as $subArrayKey => $subArrayValue) {
+            $this->assertEquals($array[$subArrayKey], $subArrayValue);
+        }
+    }
 }
