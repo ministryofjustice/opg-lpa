@@ -15,7 +15,7 @@ abstract class AbstractPdfTestClass extends TestCase
     private $reflectionProperties = [];
 
     private const FIXTURES_DIR = __DIR__ . '/../../../fixtures/';
-    private const BUILD_DIR = __DIR__ . '/../../../build/';
+    private const BUILD_DIR = __DIR__ . '/../../../../build/';
 
     /**
      * PdftkFactory $factory Factory for creating PDF objects within tests;
