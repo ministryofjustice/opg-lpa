@@ -57,6 +57,11 @@ abstract class AbstractPdf extends PdftkPdf
     protected $formattedLpaRef;
 
     /**
+     * Factory for creating mikehaertl\pdftk\Pdf instances
+     */
+    protected $pdftkFactory;
+
+    /**
      * Constructor can be triggered with or without an LPA object
      * If an LPA object is passed then the PDF object will execute the create function to populate the data
      *
