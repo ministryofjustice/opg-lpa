@@ -227,9 +227,55 @@ class AbstractLp1Test extends AbstractPdfTestClass
         // Get strikethroughs which will be applied on the output PDF
         $actualStrikeThroughs = $this->getReflectionPropertyValue('strikeThroughTargets', $pdf);
 
+        // Get continuation sheets added to the output PDF
+        $actualContinuationSheets = $this->getReflectionPropertyValue('constituentPdfs', $pdf);
+
         // Perform assertions
         $this->populatePageTwoThreeFour_SinglePrimaryAttorneyAssertions($actualData, $actualStrikeThroughs);
         $this->populatePageFive_SingleTrustCorporationReplacementAttorneyAssertions($actualData, $actualStrikeThroughs);
         $this->populatePageSeven_SinglePersonToNotifyAssertions($actualData, $actualStrikeThroughs);
+        $this->populatePageEight_NoPreferencesAndLongInstructionsAssertions(
+            $actualData, $actualStrikeThroughs);
+    }
+
+    // Additional tests for continuation sheets which can't be performed on the
+    // main PDF, as they contradict the data set by that test (e.g.
+    // we set empty preferences in the main testPopulatePages() but set
+    // really long preferences here to force the continuation sheet)
+    public function testAddContinuationSheets()
+    {
+        $data = $this->getPfLpaJSON();
+
+        // Amend primary attorney decisions to "depends", which adds a
+        // continuation sheet with an explanation of how the attorney decisions
+        // have to be taken; also need to set the explanation text
+        $data['document']['primaryAttorneyDecisions']['how'] =
+            PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS;
+
+        $data['document']['primaryAttorneyDecisions']['howDetails'] =
+            'Long explanation of how primary attorneys should make decisions';
+
+        // Amend the preferences to be really long - this adds a continuation
+        // sheet for preferences
+        $preferencesMaxSize = $this->getInstructionsPreferencesBoxSize();
+        $data['document']['preference'] = str_repeat('hello ', intval($preferencesMaxSize/6) + 6);
+
+        // Load the data to make our amended LPA
+        $lpa = $this->buildLpaFromJSON($data);
+        $pdf = new Lp1f($lpa, [], $this->factory);
+        $pdf->generate();
+
+        // Get data which will be injected into the output PDF
+        $actualData = $this->getReflectionPropertyValue('data', $pdf);
+
+        // Get continuation sheets which will be included with the PDF
+        $actualContinuationSheets = $this->getReflectionPropertyValue('constituentPdfs', $pdf);
+
+        // Assert that the "has more preferences" checkbox is ticked
+        $expectedData = ['has-more-preferences' => 'On'];
+        $this->assertArrayIsSubArrayOf($expectedData, $actualData);
+
+        // TODO Assert that we have continuation sheets for primary attorney
+        // decision making and preferences
     }
 }
