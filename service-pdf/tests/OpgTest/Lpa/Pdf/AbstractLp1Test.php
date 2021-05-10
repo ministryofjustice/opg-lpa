@@ -1,8 +1,10 @@
 <?php
 namespace OpgTest\Lpa\Pdf;
 
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Lp1f;
+use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use OpgTest\Lpa\Pdf\AbstractPdfTestClass;
 use PHPUnit\Framework\TestCase;
 
@@ -32,6 +34,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractLp1Test extends AbstractPdfTestClass
 {
+    use LongContentTrait;
+
     // data for testing populatePageTwoThreeFour()
     private function populatePageTwoThreeFour_singlePrimaryAttorneyData($data)
     {
@@ -143,19 +147,65 @@ class AbstractLp1Test extends AbstractPdfTestClass
     // data for testing populatePageSeven()
     private function populatePageSeven_SinglePersonToNotifyData($data)
     {
-        // TODO Set a single person to notify so we get three strikethroughs
+        // Set a single person to notify so we get three strikethroughs
         // on page 7
+        $peopleToNotify = $data['document']['peopleToNotify'];
+        $data['document']['peopleToNotify'] = array_slice($peopleToNotify, 0, 1);
+
         return $data;
     }
 
     // assertions about data and strikethroughs added by populatePageSeven()
-    private function populatePageSeven_SinglePersonToNotifyAssertions($data)
+    private function populatePageSeven_SinglePersonToNotifyAssertions($actualData, $actualStrikeThroughs)
     {
-        // TODO
-        $this->assertTrue(TRUE);
+        /* DATA */
+        $expectedData = [
+            'lpa-document-peopleToNotify-0-name-title' => 'Mr',
+            'lpa-document-peopleToNotify-0-name-first' => 'Anthony',
+            'lpa-document-peopleToNotify-0-name-last' => 'Webb',
+            'lpa-document-peopleToNotify-0-address-address1' => 'Brickhill Cottage',
+            'lpa-document-peopleToNotify-0-address-address2' => 'Birch Cross',
+            'lpa-document-peopleToNotify-0-address-address3' => 'Marchington, Uttoxeter, Staffordshire',
+            'lpa-document-peopleToNotify-0-address-postcode' => 'BS18 6PL',
+        ];
+
+        $this->assertArrayIsSubArrayOf($expectedData, $actualData);
+
+        /* STRIKETHROUGHS */
+        $expectedStrikeThroughs = [
+            6 => ['people-to-notify-1', 'people-to-notify-2', 'people-to-notify-3'],
+        ];
+
+        $this->assertArrayIsSubArrayOf($expectedStrikeThroughs, $actualStrikeThroughs);
     }
 
-    // main test function
+    private function populatePageEight_NoPreferencesAndLongInstructionsData($data)
+    {
+        // Set empty preferences
+        $data['document']['preference'] = '';
+
+        // Deliberately make instructions overflow the instructions text box
+        $instructionsMaxSize = $this->getInstructionsPreferencesBoxSize();
+        $data['document']['instruction'] = str_repeat('hi ', intval($instructionsMaxSize/3) + 3);
+
+        return $data;
+    }
+
+    private function populatePageEight_NoPreferencesAndLongInstructionsAssertions($actualData, $actualStrikeThroughs)
+    {
+        /* DATA */
+        // Should see check in "has more instructions" checkbox
+        $expectedData = ['has-more-instructions' => 'On'];
+        $this->assertArrayIsSubArrayOf($expectedData, $actualData);
+
+        /* STRIKETHROUGHS */
+        // Expect preferences field to have a strikethrough
+        $expectedStrikeThroughs = [7 => ['preference']];
+        $this->assertArrayIsSubArrayOf($expectedStrikeThroughs, $actualStrikeThroughs);
+    }
+
+    // main test function - this encapsulates most of the tests while only
+    // requiring the PDF to be generated once
     public function testPopulatePages()
     {
         $data = $this->getPfLpaJSON();
@@ -164,6 +214,7 @@ class AbstractLp1Test extends AbstractPdfTestClass
         $data = $this->populatePageTwoThreeFour_SinglePrimaryAttorneyData($data);
         $data = $this->populatePageFive_SingleTrustCorporationReplacementAttorneyData($data);
         $data = $this->populatePageSeven_SinglePersonToNotifyData($data);
+        $data = $this->populatePageEight_NoPreferencesAndLongInstructionsData($data);
 
         // Load the data to make our amended LPA
         $lpa = $this->buildLpaFromJSON($data);
