@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.179.2",
+            "version": "3.180.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "7d3490e35878d0884905fa0c1ab43ecf178c8d9b"
+                "reference": "948a4defbe2a571cc4460725015b8e98b7060f2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7d3490e35878d0884905fa0c1ab43ecf178c8d9b",
-                "reference": "7d3490e35878d0884905fa0c1ab43ecf178c8d9b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/948a4defbe2a571cc4460725015b8e98b7060f2d",
+                "reference": "948a4defbe2a571cc4460725015b8e98b7060f2d",
                 "shasum": ""
             },
             "require": {
@@ -92,9 +92,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.179.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.180.5"
             },
-            "time": "2021-04-30T19:46:52+00:00"
+            "time": "2021-05-07T18:12:43+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -747,16 +747,16 @@
         },
         {
             "name": "laminas/laminas-cache",
-            "version": "2.11.0",
+            "version": "2.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-cache.git",
-                "reference": "d789161db92a25b065f35f8c915b37d94b496270"
+                "reference": "f888588c3a40916e505658c9e8b8922166b70ec6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/d789161db92a25b065f35f8c915b37d94b496270",
-                "reference": "d789161db92a25b065f35f8c915b37d94b496270",
+                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/f888588c3a40916e505658c9e8b8922166b70ec6",
+                "reference": "f888588c3a40916e505658c9e8b8922166b70ec6",
                 "shasum": ""
             },
             "require": {
@@ -793,7 +793,7 @@
             "require-dev": {
                 "laminas/laminas-coding-standard": "~1.0.0",
                 "laminas/laminas-serializer": "^2.6",
-                "phpbench/phpbench": "^1.0.0-alpha8",
+                "phpbench/phpbench": "^1.0.0-beta2",
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "^9.5"
             },
@@ -841,7 +841,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-04-29T22:02:31+00:00"
+            "time": "2021-05-03T20:23:26+00:00"
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-apc",
@@ -907,20 +907,20 @@
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-apcu",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-cache-storage-adapter-apcu.git",
-                "reference": "1fdd7585042c1a577f6e630535df1e86e23cf5dc"
+                "reference": "e182aab739d6b03992a9915cc3c7019391a94548"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-cache-storage-adapter-apcu/zipball/1fdd7585042c1a577f6e630535df1e86e23cf5dc",
-                "reference": "1fdd7585042c1a577f6e630535df1e86e23cf5dc",
+                "url": "https://api.github.com/repos/laminas/laminas-cache-storage-adapter-apcu/zipball/e182aab739d6b03992a9915cc3c7019391a94548",
+                "reference": "e182aab739d6b03992a9915cc3c7019391a94548",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.6 || ^7.0"
+                "php": "^7.3 || ~8.0.0"
             },
             "conflict": {
                 "laminas/laminas-cache": "<2.10"
@@ -929,8 +929,9 @@
                 "laminas/laminas-cache-storage-implementation": "1.0"
             },
             "require-dev": {
-                "laminas/laminas-cache": "^2.10",
-                "laminas/laminas-cache-storage-adapter-test": "^1.0@dev",
+                "ext-apcu": "*",
+                "laminas/laminas-cache": "^2.10.1",
+                "laminas/laminas-cache-storage-adapter-test": "^1.1.1",
                 "laminas/laminas-coding-standard": "~1.0.0",
                 "squizlabs/php_codesniffer": "^2.7"
             },
@@ -965,7 +966,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2020-10-12T16:05:19+00:00"
+            "time": "2021-05-03T20:41:53+00:00"
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-blackhole",
@@ -1090,35 +1091,38 @@
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-ext-mongodb",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-cache-storage-adapter-ext-mongodb.git",
-                "reference": "011ec5a8ca721ba012d232b1a01b50a55904b99f"
+                "reference": "5810c3ffb442527b8b3429b0d29dce1ddabc92f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-cache-storage-adapter-ext-mongodb/zipball/011ec5a8ca721ba012d232b1a01b50a55904b99f",
-                "reference": "011ec5a8ca721ba012d232b1a01b50a55904b99f",
+                "url": "https://api.github.com/repos/laminas/laminas-cache-storage-adapter-ext-mongodb/zipball/5810c3ffb442527b8b3429b0d29dce1ddabc92f2",
+                "reference": "5810c3ffb442527b8b3429b0d29dce1ddabc92f2",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.6 || ^7.0"
+                "php": "^7.3 || ~8.0.0"
             },
             "conflict": {
-                "laminas/laminas-cache": "<2.10"
+                "laminas/laminas-cache": "<2.10",
+                "mongodb/mongodb": "<1.8"
             },
             "provide": {
                 "laminas/laminas-cache-storage-implementation": "1.0"
             },
             "require-dev": {
-                "laminas/laminas-cache": "^2.10",
-                "laminas/laminas-cache-storage-adapter-test": "^1.0@dev",
+                "laminas/laminas-cache": "^2.10.3",
+                "laminas/laminas-cache-storage-adapter-test": "^1.1.1",
                 "laminas/laminas-coding-standard": "~1.0.0",
+                "laminas/laminas-serializer": "^2.10.1",
+                "mongodb/mongodb": "^1.8.0",
                 "squizlabs/php_codesniffer": "^2.7"
             },
             "suggest": {
-                "ext-mongodb": "MongoDB, to use the ExtMongoDb storage adapter"
+                "mongodb/mongodb": "MongoDB, to use the ExtMongoDb storage adapter"
             },
             "type": "library",
             "autoload": {
@@ -1148,7 +1152,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2020-10-12T16:11:06+00:00"
+            "time": "2021-05-06T07:52:48+00:00"
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-filesystem",
@@ -3916,16 +3920,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.10.4",
+            "version": "v4.10.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "c6d052fc58cb876152f89f532b95a8d7907e7f0e"
+                "reference": "4432ba399e47c66624bc73c8c0f811e5c109576f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/c6d052fc58cb876152f89f532b95a8d7907e7f0e",
-                "reference": "c6d052fc58cb876152f89f532b95a8d7907e7f0e",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/4432ba399e47c66624bc73c8c0f811e5c109576f",
+                "reference": "4432ba399e47c66624bc73c8c0f811e5c109576f",
                 "shasum": ""
             },
             "require": {
@@ -3966,9 +3970,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v4.10.4"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v4.10.5"
             },
-            "time": "2020-12-20T10:01:03+00:00"
+            "time": "2021-05-03T19:11:20+00:00"
         },
         {
             "name": "php-http/guzzle6-adapter",
@@ -4529,16 +4533,16 @@
         },
         {
             "name": "psr/log",
-            "version": "1.1.3",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
-                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/d49695b909c3b7628b6289db5479a1c204601f11",
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
                 "shasum": ""
             },
             "require": {
@@ -4562,7 +4566,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for logging libraries",
@@ -4573,9 +4577,9 @@
                 "psr-3"
             ],
             "support": {
-                "source": "https://github.com/php-fig/log/tree/1.1.3"
+                "source": "https://github.com/php-fig/log/tree/1.1.4"
             },
-            "time": "2020-03-23T09:12:05+00:00"
+            "time": "2021-05-03T11:20:27+00:00"
         },
         {
             "name": "psr/simple-cache",
@@ -6904,12 +6908,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "db47aac368cb81bc9d3b09556e63b716be61cf43"
+                "reference": "07314cf15422b2e162d591fe8ef2b850612b808f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/db47aac368cb81bc9d3b09556e63b716be61cf43",
-                "reference": "db47aac368cb81bc9d3b09556e63b716be61cf43",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/07314cf15422b2e162d591fe8ef2b850612b808f",
+                "reference": "07314cf15422b2e162d591fe8ef2b850612b808f",
                 "shasum": ""
             },
             "conflict": {
@@ -6927,7 +6931,7 @@
                 "barrelstrength/sprout-forms": "<3.9",
                 "baserproject/basercms": ">=4,<=4.3.6|>=4.4,<4.4.1",
                 "bk2k/bootstrap-package": ">=7.1,<7.1.2|>=8,<8.0.8|>=9,<9.0.4|>=9.1,<9.1.3|>=10,<10.0.10|>=11,<11.0.3",
-                "bolt/bolt": "<3.7.1",
+                "bolt/bolt": "<3.7.2",
                 "bolt/core": "<4.1.13",
                 "brightlocal/phpwhois": "<=4.2.5",
                 "buddypress/buddypress": "<5.1.2",
@@ -6959,6 +6963,7 @@
                 "dompdf/dompdf": ">=0.6,<0.6.2",
                 "drupal/core": ">=7,<7.74|>=8,<8.8.11|>=8.9,<8.9.9|>=9,<9.0.8",
                 "drupal/drupal": ">=7,<7.74|>=8,<8.8.11|>=8.9,<8.9.9|>=9,<9.0.8",
+                "dweeves/magmi": "<=0.7.24",
                 "endroid/qr-code-bundle": "<3.4.2",
                 "enshrined/svg-sanitize": "<0.13.1",
                 "erusev/parsedown": "<1.7.2",
@@ -6983,7 +6988,9 @@
                 "flarum/tags": "<=0.1-beta.13",
                 "fluidtypo3/vhs": "<5.1.1",
                 "fooman/tcpdf": "<6.2.22",
+                "forkcms/forkcms": "<5.8.3",
                 "fossar/tcpdf-parser": "<6.2.22",
+                "francoisjacquet/rosariosis": "<6.5.1",
                 "friendsofsymfony/oauth2-php": "<1.3",
                 "friendsofsymfony/rest-bundle": ">=1.2,<1.2.2",
                 "friendsofsymfony/user-bundle": ">=1.2,<1.3.5",
@@ -7014,7 +7021,7 @@
                 "laravel/framework": "<6.20.26|>=7,<8.40",
                 "laravel/socialite": ">=1,<1.0.99|>=2,<2.0.10",
                 "league/commonmark": "<0.18.3",
-                "librenms/librenms": "<1.53",
+                "librenms/librenms": "<21.1",
                 "livewire/livewire": ">2.2.4,<2.2.6",
                 "magento/community-edition": ">=2,<2.2.10|>=2.3,<2.3.3",
                 "magento/magento1ce": "<1.9.4.3",
@@ -7035,11 +7042,12 @@
                 "nystudio107/craft-seomatic": "<3.3",
                 "nzo/url-encryptor-bundle": ">=4,<4.3.2|>=5,<5.0.1",
                 "october/backend": "<1.1.2",
-                "october/cms": "= 1.0.469|>=1.0.319,<1.0.469",
+                "october/cms": "= 1.1.1|= 1.0.471|= 1.0.469|>=1.0.319,<1.0.469",
                 "october/october": ">=1.0.319,<1.0.466",
                 "october/rain": "<1.0.472|>=1.1,<1.1.2",
                 "onelogin/php-saml": "<2.10.4",
                 "oneup/uploader-bundle": "<1.9.3|>=2,<2.1.5",
+                "opencart/opencart": "<=3.0.3.2",
                 "openid/php-openid": "<2.3",
                 "openmage/magento-lts": "<=19.4.12|>=20,<=20.0.8",
                 "orchid/platform": ">=9,<9.4.4",
@@ -7211,7 +7219,8 @@
                 "zetacomponents/mail": "<1.8.2",
                 "zf-commons/zfc-user": "<1.2.2",
                 "zfcampus/zf-apigility-doctrine": ">=1,<1.0.3",
-                "zfr/zfr-oauth2-server-module": "<0.1.2"
+                "zfr/zfr-oauth2-server-module": "<0.1.2",
+                "zoujingli/thinkadmin": "<6.0.22"
             },
             "type": "metapackage",
             "notification-url": "https://packagist.org/downloads/",
@@ -7245,7 +7254,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-02T09:01:19+00:00"
+            "time": "2021-05-06T19:08:33+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
