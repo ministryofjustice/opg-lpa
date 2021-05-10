@@ -238,10 +238,11 @@ class AbstractLp1Test extends AbstractPdfTestClass
             $actualData, $actualStrikeThroughs);
     }
 
-    // Additional tests for continuation sheets which can't be performed on the
-    // main PDF, as they contradict the data set by that test (e.g.
-    // we set empty preferences in the main testPopulatePages() but set
-    // really long preferences here to force the continuation sheet)
+    // Additional tests for continuation sheets which can't be performed in
+    // testPopulatePages(), as they contradict the data set for that test (e.g.
+    // we set empty preferences in the main testPopulatePages() but also need to
+    // set really long preferences to force the continuation sheet, which we do
+    // here instead)
     public function testAddContinuationSheets()
     {
         $data = $this->getPfLpaJSON();
@@ -255,8 +256,10 @@ class AbstractLp1Test extends AbstractPdfTestClass
         $data['document']['primaryAttorneyDecisions']['howDetails'] =
             'Long explanation of how primary attorneys should make decisions';
 
-        // Amend the preferences to be really long - this adds a continuation
-        // sheet for preferences
+        // Amend the preferences to be really long - this uses the continuation
+        // sheet for preferences; note that the testPopulatePages() test also
+        // has this continuation sheet, but the extended notes are in
+        // the instructions box rather than preferences
         $preferencesMaxSize = $this->getInstructionsPreferencesBoxSize();
         $data['document']['preference'] = str_repeat('hello ', intval($preferencesMaxSize/6) + 6);
 
@@ -268,14 +271,28 @@ class AbstractLp1Test extends AbstractPdfTestClass
         // Get data which will be injected into the output PDF
         $actualData = $this->getReflectionPropertyValue('data', $pdf);
 
-        // Get continuation sheets which will be included with the PDF
+        // Get continuation sheets which will be included with the PDF;
+        // we do the double json_encode/json_decode to get the JSON into a
+        // stripped down associative array format we can more easily work with
         $actualContinuationSheets = $this->getReflectionPropertyValue('constituentPdfs', $pdf);
+        $actualSheets = json_decode(json_encode($actualContinuationSheets), TRUE);
 
         // Assert that the "has more preferences" checkbox is ticked
         $expectedData = ['has-more-preferences' => 'On'];
         $this->assertArrayIsSubArrayOf($expectedData, $actualData);
 
-        // TODO Assert that we have continuation sheets for primary attorney
-        // decision making and preferences
+        // Assert that we have a continuation sheet for primary attorney
+        // decision making
+        $expectedSheet = [
+            'pdf' => [
+                'class' => 'Opg\\Lpa\\Pdf\\ContinuationSheet3'
+            ],
+            'start' => 1,
+            'pages' => 2
+        ];
+
+        // The continuation sheet should be a member of the array associated
+        // with the 15 index in the $actualSheets array
+        $this->assertContains($expectedSheet, $actualSheets[15]);
     }
 }
