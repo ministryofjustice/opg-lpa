@@ -118,6 +118,11 @@ class AbstractLp1Test extends AbstractPdfTestClass
         $expectedData = [
             'replacement-attorney-0-is-trust-corporation' => 'On',
             'lpa-document-replacementAttorneys-0-name-last' => 'Standard Trust',
+            'lpa-document-replacementAttorneys-0-address-address1' => '1 Laburnum Place',
+            'lpa-document-replacementAttorneys-0-address-address2' => 'Sketty',
+            'lpa-document-replacementAttorneys-0-address-address3' => 'Swansea, Abertawe',
+            'lpa-document-replacementAttorneys-0-address-postcode' => 'SA2 8HT',
+            'lpa-document-replacementAttorneys-0-email-address' => "\nopglpademo+trustcorp@gmail.com",
         ];
 
         $this->assertArrayIsSubArrayOf($expectedData, $actualData);
