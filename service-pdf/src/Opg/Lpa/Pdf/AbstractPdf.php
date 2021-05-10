@@ -9,12 +9,13 @@ use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\PdftkFactory;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Exception;
+use JsonSerializable;
 
 /**
  * Class AbstractPdf
  * @package Opg\Lpa\Pdf
  */
-abstract class AbstractPdf extends PdftkPdf
+abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
 {
     /**
      * Constants
@@ -58,6 +59,7 @@ abstract class AbstractPdf extends PdftkPdf
 
     /**
      * Factory for creating mikehaertl\pdftk\Pdf instances
+     * @var
      */
     protected $pdftkFactory;
 
@@ -198,5 +200,15 @@ abstract class AbstractPdf extends PdftkPdf
         if (file_exists($this->pdfFile)) {
             unlink($this->pdfFile);
         }
+    }
+
+    /**
+     * JsonSerializable implementation
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'class' => get_class($this),
+        ];
     }
 }
