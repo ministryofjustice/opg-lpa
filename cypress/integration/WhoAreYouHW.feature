@@ -38,3 +38,15 @@ Feature: Who Are You for a Health and Welfare LPA
         When I check "who"
         And I click "save"
         Then I am taken to the repeat application page
+        When I click occurrence 12 of "accordion-view-change"
+        Then I am taken to the who are you page
+        And I see "Thanks, you have already answered this question" in the page text
+        When I click "continue"
+        Then I am taken to the repeat application page
+
+        When I check "isRepeatApplication-is-repeat"
+        And I click "save"
+        When I click element marked "Confirm and continue"
+        Then I see in the page text
+            | There is a problem |
+            | If you are making a repeat application, you need to enter the case number given to you by the Office of the Public Guardian. | 
