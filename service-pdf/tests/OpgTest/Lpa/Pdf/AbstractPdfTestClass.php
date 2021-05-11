@@ -74,10 +74,16 @@ abstract class AbstractPdfTestClass extends TestCase
      * should retain this for the occasions when we want to view output PDFs.
      *
      * @param string $filename Path to file to be copied
+     * @param string $newfilename New file name for copied file; if not set,
+     * defaults to basename of $filename
+     * @return string
      */
-    protected function copyFileToBuildDirectory($filename)
+    protected function copyFileToBuildDirectory(string $filename, ?string $newfilename = null)
     {
-        $destFilename = $this->getBuildDirectory() . basename($filename);
+        if (is_null($newfilename)) {
+            $newfilename = basename($filename);
+        }
+        $destFilename = $this->getBuildDirectory() . $newfilename;
         copy($filename, $destFilename);
         return $destFilename;
     }
