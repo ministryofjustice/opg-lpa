@@ -103,7 +103,7 @@ Then(`I am taken to the fee reduction page`, () => {
  
 Then(`I am taken to the checkout page`, () => {
     checkOnPageWithPath('checkout');
-    checkAccordionHeaderContains('Final check: LPA details');
+    cy.contains('Final check: LPA details');
 });
 
 Then(`I am taken to the complete page`, () => {
