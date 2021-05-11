@@ -206,6 +206,7 @@ class AbstractLp1Test extends AbstractPdfTestClass
 
     // main test function - this encapsulates most of the tests while only
     // requiring the PDF to be generated once
+    // TODO set up as a draft so we exercise the stampPageWith() method
     public function testPopulatePages()
     {
         $data = $this->getPfLpaJSON();
@@ -243,6 +244,8 @@ class AbstractLp1Test extends AbstractPdfTestClass
     // we set empty preferences in the main testPopulatePages() but also need to
     // set really long preferences to force the continuation sheet, which we do
     // here instead)
+    // TODO exercise getTrustAttorney() missing line by removing any trust
+    // corporation attorneys
     public function testAddContinuationSheets()
     {
         $data = $this->getPfLpaJSON();
@@ -255,6 +258,22 @@ class AbstractLp1Test extends AbstractPdfTestClass
 
         $data['document']['primaryAttorneyDecisions']['howDetails'] =
             'Long explanation of how primary attorneys should make decisions';
+
+        // Remove any trust corporation attorneys; this ensures we *don't* get
+        // continuation sheet 4 (see addContinuationSheets())
+        foreach ($data['document']['primaryAttorneys'] as $i => $primaryAttorney) {
+            if ($primaryAttorney['type'] === 'trust') {
+                // remove the corresponding key from whoIsRegistering
+                $id = '' . $primaryAttorney['id'];
+                $whoIsRegisteringKey = array_search($id, $data['document']['whoIsRegistering']);
+                if ($whoIsRegisteringKey !== false) {
+                    unset($data['document']['whoIsRegistering'][$whoIsRegisteringKey]);
+                }
+
+                // remove the primary attorney itself
+                unset($data['document']['primaryAttorneys'][$i]);
+            }
+        }
 
         // Amend the preferences to be really long - this uses the continuation
         // sheet for preferences; note that the testPopulatePages() test also
@@ -293,6 +312,18 @@ class AbstractLp1Test extends AbstractPdfTestClass
 
         // The continuation sheet should be a member of the array associated
         // with the 15 index in the $actualSheets array
-        $this->assertContains($expectedSheet, $actualSheets[15]);
+        $this->assertContains($expectedSheet, $actualSheets['15']);
+
+        // Verify we don't get continuation sheet 4
+        // as we removed the trust corporation from primary attorneys
+        foreach ($actualSheets['15'] as $i => $actualSheet) {
+            if (is_array($actualSheet['pdf']) && array_key_exists('class', $actualSheet['pdf'])) {
+                $this->assertNotEquals(
+                    'Opg\\Lpa\\Pdf\\ContinuationSheet4',
+                    $actualSheet['pdf']['class']
+                );
+            }
+        }
+
     }
 }
