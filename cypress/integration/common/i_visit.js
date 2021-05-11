@@ -14,7 +14,7 @@ Then(`I visit the type page`, () => {
     cy.visitWithChecks('/lpa/type');
 })
 
-// The reason the step below exists is that a newly Signed-up user gets taken 
+// The reason the step below exists is that a newly Signed-up user gets taken
 // automatically to type page on first logon, but existing test users get taken
 // to dashboard, and we wish to cater for both
 Then(`If I am on dashboard I visit the type page`, () => {
@@ -23,10 +23,6 @@ Then(`If I am on dashboard I visit the type page`, () => {
             cy.visitWithChecks('/lpa/type');
         }
     });
-})
-
-Then(`I visit the admin sign-in page`, () => {
-    cy.visitWithChecks(Cypress.env('adminUrl') + '/sign-in');
 })
 
 Then(`I visit the donor page for the test fixture lpa`, () => {
@@ -52,15 +48,15 @@ Then(`I visit the people to notify page for the test fixture lpa`, () => {
 Then(`I visit the instructions page for the test fixture lpa`, () => {
     visitPageForTestFixture('instructions');
 });
- 
+
 Then(`I visit the applicant page for the test fixture lpa`, () => {
     visitPageForTestFixture('applicant');
 });
- 
+
 Then(`I visit the correspondent page for the test fixture lpa`, () => {
     visitPageForTestFixture('correspondent');
 });
- 
+
 Then(`I visit the summary page for the test fixture lpa`, () => {
     visitPageForTestFixture('summary');
 });
