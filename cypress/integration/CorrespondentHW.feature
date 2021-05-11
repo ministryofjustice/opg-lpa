@@ -16,6 +16,8 @@ Feature: Add a correspondent to a Health and Welfare LPA
         Then I am taken to the correspondent page
         And I can find "contactInWelsh-0"
         And I can find "contactInWelsh-1"
+        And I can find "contactByPhone"
+        And I can find "contactByPost"
         When I click "change-correspondent"
         Then I can see popup
         And I see "Which details would you like to reuse?" in the page text
