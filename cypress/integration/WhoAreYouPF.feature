@@ -58,3 +58,22 @@ Feature: Who Are You for a Property and Finance LPA
         Then I can see popup
         When I click element marked "Confirm and continue"
         Then I am taken to the fee reduction page
+        And I can find "reducedFeeReceivesBenefits"
+        And I can find "reducedFeeUniversalCredit"
+        And I can find "reducedFeeLowIncome"
+        And I can find "notApply"
+
+        When I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Select if the donor does or does not want to apply for a fee reduction |
+        When I check "reducedFeeReceivesBenefits"
+        Then I see "To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits." in the page text
+        When I check "reducedFeeUniversalCredit"
+        Then I see "To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and a copy of the donor's benefit award letter." in the page text
+        When I check "reducedFeeLowIncome"
+        Then I see "To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and documents that prove the donor has a low income." in the page text
+        When I check "notApply"
+        And I click "save"
+        Then I am taken to the checkout page
+        #Then I am taken to the complete page

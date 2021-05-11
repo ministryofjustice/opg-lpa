@@ -101,6 +101,17 @@ Then(`I am taken to the fee reduction page`, () => {
     checkAccordionHeaderContains('Does the donor want to apply to pay a reduced fee?');
 });
  
+Then(`I am taken to the checkout page`, () => {
+    checkOnPageWithPath('checkout');
+    checkAccordionHeaderContains('Final check: LPA details');
+});
+
+Then(`I am taken to the complete page`, () => {
+    checkOnPageWithPath('checkout');
+    checkAccordionHeaderContains('Last steps');
+});
+ 
+ 
 Then(`I am taken to the donor page`, () => {
     // We arrive at the donor page when we've just created an lpa through the web, so we store the lpaId for future use at this point
     cy.url().should('contain','donor').then((donorPageUrl) => { 
