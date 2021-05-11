@@ -269,7 +269,7 @@ class AbstractLp1Test extends AbstractPdfTestClass
     // contradict the data set by that test (e.g. we set empty preferences in the
     // main testPopulatePages() but also need to set really long preferences to
     // force the continuation sheet, which we do in this test instead)
-    public function testAlternatives()
+    public function testPopulatePagesAlternatives()
     {
         $data = $this->getPfLpaJSON();
 
@@ -298,8 +298,9 @@ class AbstractLp1Test extends AbstractPdfTestClass
             }
         }
 
-        // TODO make a primary attorney the correspondent; this adds a strikethrough for
+        // Make a primary attorney the correspondent; this adds a strikethrough for
         // the correspondent address (see populatePageEighteen())
+        $data['document']['correspondent']['who'] = Correspondence::WHO_ATTORNEY;
 
         // Amend the preferences to be really long - this uses the continuation
         // sheet for preferences; note that the testPopulatePages() test also
@@ -317,6 +318,9 @@ class AbstractLp1Test extends AbstractPdfTestClass
         // Get data which will be injected into the output PDF
         $actualData = $this->getReflectionPropertyValue('data', $pdf);
 
+        // Get strikethroughs which will be applied to the output PDF
+        $actualStrikeThroughs = $this->getReflectionPropertyValue('strikeThroughTargets', $pdf);
+
         // Get continuation sheets which will be included with the PDF;
         // we do the double json_encode/json_decode to get the JSON into a
         // stripped down associative array format we can more easily work with
@@ -327,7 +331,11 @@ class AbstractLp1Test extends AbstractPdfTestClass
         $expectedData = ['has-more-preferences' => 'On'];
         $this->assertArrayIsSubArrayOf($expectedData, $actualData);
 
-        // TODO assert we have a strikethrough for the correspondent address
+        // Assert we have a strikethrough for the correspondent address
+        $expectedStrikeThroughs = [
+            17 => ['correspondent-empty-address']
+        ];
+        $this->assertArrayIsSubArrayOf($expectedStrikeThroughs, $actualStrikeThroughs);
 
         // Assert that we have a continuation sheet for primary attorney
         // decision making
