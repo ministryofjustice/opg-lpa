@@ -1,6 +1,7 @@
 <?php
 namespace OpgTest\Lpa\Pdf;
 
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Lp1f;
@@ -94,6 +95,7 @@ class AbstractLp1Test extends AbstractPdfTestClass
     {
         // Modify LPA data so it has a trust corporation as its single
         // replacement attorney
+
         $data["document"]["replacementAttorneys"] = json_decode('[
             {
                 "name": "Standard Trust",
@@ -186,7 +188,7 @@ class AbstractLp1Test extends AbstractPdfTestClass
 
         // Deliberately make instructions overflow the instructions text box
         $instructionsMaxSize = $this->getInstructionsPreferencesBoxSize();
-        $data['document']['instruction'] = str_repeat('hi ', intval($instructionsMaxSize/3) + 3);
+        $data['document']['instruction'] = str_repeat('hi ', intval($instructionsMaxSize / 3) + 3);
 
         return $data;
     }
@@ -204,6 +206,32 @@ class AbstractLp1Test extends AbstractPdfTestClass
         $this->assertArrayIsSubArrayOf($expectedStrikeThroughs, $actualStrikeThroughs);
     }
 
+    private function populatePageEighteen_CertificateProviderCorrespondentData($data)
+    {
+        // Set certificate provider as correspondent
+        $data['document']['correspondent']['who'] = Correspondence::WHO_CERTIFICATE_PROVIDER;
+        $data['document']['correspondent']['company'] = 'Yay Toys';
+
+        return $data;
+    }
+
+    private function populatePageEighteen_CertificateProviderCorrespondentAssertions($actualData)
+    {
+        /* DATA */
+        $expectedData = [
+            'lpa-document-correspondent-name-title' => 'Mrs',
+            'lpa-document-correspondent-name-first' => 'Nancy',
+            'lpa-document-correspondent-name-last' => 'Garrison',
+            'lpa-document-correspondent-company' => 'Yay Toys',
+            'lpa-document-correspondent-address-address1' => 'Bank End Farm House',
+            'lpa-document-correspondent-address-address2' => 'Undercliff Drive',
+            'lpa-document-correspondent-address-address3' => 'Ventnor, Isle of Wight',
+            'lpa-document-correspondent-address-postcode' => 'PO38 1UL',
+        ];
+
+        $this->assertArrayIsSubArrayOf($expectedData, $actualData);
+    }
+
     // main test function - this encapsulates most of the tests while only
     // requiring the PDF to be generated once
     // TODO set up as a draft so we exercise the stampPageWith() method
@@ -216,6 +244,7 @@ class AbstractLp1Test extends AbstractPdfTestClass
         $data = $this->populatePageFive_SingleTrustCorporationReplacementAttorneyData($data);
         $data = $this->populatePageSeven_SinglePersonToNotifyData($data);
         $data = $this->populatePageEight_NoPreferencesAndLongInstructionsData($data);
+        $data = $this->populatePageEighteen_CertificateProviderCorrespondentData($data);
 
         // Load the data to make our amended LPA
         $lpa = $this->buildLpaFromJSON($data);
@@ -228,25 +257,19 @@ class AbstractLp1Test extends AbstractPdfTestClass
         // Get strikethroughs which will be applied on the output PDF
         $actualStrikeThroughs = $this->getReflectionPropertyValue('strikeThroughTargets', $pdf);
 
-        // Get continuation sheets added to the output PDF
-        $actualContinuationSheets = $this->getReflectionPropertyValue('constituentPdfs', $pdf);
-
         // Perform assertions
         $this->populatePageTwoThreeFour_SinglePrimaryAttorneyAssertions($actualData, $actualStrikeThroughs);
         $this->populatePageFive_SingleTrustCorporationReplacementAttorneyAssertions($actualData, $actualStrikeThroughs);
         $this->populatePageSeven_SinglePersonToNotifyAssertions($actualData, $actualStrikeThroughs);
-        $this->populatePageEight_NoPreferencesAndLongInstructionsAssertions(
-            $actualData, $actualStrikeThroughs);
+        $this->populatePageEight_NoPreferencesAndLongInstructionsAssertions($actualData, $actualStrikeThroughs);
+        $this->populatePageEighteen_CertificateProviderCorrespondentAssertions($actualData);
     }
 
-    // Additional tests for continuation sheets which can't be performed in
-    // testPopulatePages(), as they contradict the data set for that test (e.g.
-    // we set empty preferences in the main testPopulatePages() but also need to
-    // set really long preferences to force the continuation sheet, which we do
-    // here instead)
-    // TODO exercise getTrustAttorney() missing line by removing any trust
-    // corporation attorneys
-    public function testAddContinuationSheets()
+    // Additional tests which can't be performed in testPopulatePages(), as they
+    // contradict the data set by that test (e.g. we set empty preferences in the
+    // main testPopulatePages() but also need to set really long preferences to
+    // force the continuation sheet, which we do in this test instead)
+    public function testAlternatives()
     {
         $data = $this->getPfLpaJSON();
 
@@ -275,12 +298,16 @@ class AbstractLp1Test extends AbstractPdfTestClass
             }
         }
 
+        // TODO make a primary attorney the correspondent; this adds a strikethrough for
+        // the correspondent address (see populatePageEighteen())
+
         // Amend the preferences to be really long - this uses the continuation
         // sheet for preferences; note that the testPopulatePages() test also
         // has this continuation sheet, but the extended notes are in
-        // the instructions box rather than preferences
+        // the instructions box rather than preferences box
         $preferencesMaxSize = $this->getInstructionsPreferencesBoxSize();
-        $data['document']['preference'] = str_repeat('hello ', intval($preferencesMaxSize/6) + 6);
+        $data['document']['preference'] = str_repeat('hello ',
+            intval($preferencesMaxSize/6) + 6);
 
         // Load the data to make our amended LPA
         $lpa = $this->buildLpaFromJSON($data);
@@ -299,6 +326,8 @@ class AbstractLp1Test extends AbstractPdfTestClass
         // Assert that the "has more preferences" checkbox is ticked
         $expectedData = ['has-more-preferences' => 'On'];
         $this->assertArrayIsSubArrayOf($expectedData, $actualData);
+
+        // TODO assert we have a strikethrough for the correspondent address
 
         // Assert that we have a continuation sheet for primary attorney
         // decision making
