@@ -43,6 +43,8 @@ Feature: Who Are You for a Property and Finance LPA
         And I see "Thanks, you have already answered this question" in the page text
         When I click "continue"
         Then I am taken to the repeat application page
+        # repeatCaseNumber should be hidden initially
+        And I can find hidden "repeatCaseNumber"
 
         When I check "isRepeatApplication-is-repeat"
         And I click "save"
@@ -50,3 +52,9 @@ Feature: Who Are You for a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | If you are making a repeat application, you need to enter the case number given to you by the Office of the Public Guardian. | 
+        # for PF we test typing in a case number. The other scenario where this is not a repeat, is covered in HW feature
+        When I type "12345678" into "repeatCaseNumber"
+        And I click "save"
+        Then I can see popup
+        When I click element marked "Confirm and continue"
+        Then I am taken to the fee reduction page

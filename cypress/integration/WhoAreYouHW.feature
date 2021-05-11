@@ -43,6 +43,8 @@ Feature: Who Are You for a Health and Welfare LPA
         And I see "Thanks, you have already answered this question" in the page text
         When I click "continue"
         Then I am taken to the repeat application page
+        # repeatCaseNumber should be hidden initially
+        And I can find hidden "repeatCaseNumber"
 
         When I check "isRepeatApplication-is-repeat"
         And I click "save"
@@ -50,3 +52,8 @@ Feature: Who Are You for a Health and Welfare LPA
         Then I see in the page text
             | There is a problem |
             | If you are making a repeat application, you need to enter the case number given to you by the Office of the Public Guardian. | 
+
+        # for PF we test typing in a case number. The other scenario where this is not a repeat, is covered here
+        When I check "isRepeatApplication-is-new"
+        And I click "save"
+        Then I am taken to the fee reduction page
