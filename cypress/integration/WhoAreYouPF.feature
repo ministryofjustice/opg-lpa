@@ -67,13 +67,28 @@ Feature: Who Are You for a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | Select if the donor does or does not want to apply for a fee reduction |
+
         When I check "reducedFeeReceivesBenefits"
         Then I see "To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits." in the page text
+        And I should not see "Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis." in the page text
+        And I should not see "The documents must have the donor’s title, full name, address and postcode printed on them and they must be from the current tax year. Tax years run from 6 April one year to 5 April the next year." in the page text
+
         When I check "reducedFeeUniversalCredit"
-        Then I see "To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and a copy of the donor's benefit award letter." in the page text
+        Then I see "Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis." in the page text
+        And I should not see "To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits." in the page text
+        And I should not see "The documents must have the donor’s title, full name, address and postcode printed on them and they must be from the current tax year. Tax years run from 6 April one year to 5 April the next year." in the page text
+
         When I check "reducedFeeLowIncome"
-        Then I see "To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and documents that prove the donor has a low income." in the page text
+        Then I see "The documents must have the donor’s title, full name, address and postcode printed on them and they must be from the current tax year. Tax years run from 6 April one year to 5 April the next year." in the page text
+        And I should not see "Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis." in the page text
+        And I should not see "To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits." in the page text
+
+        When I click "save"
+        Then I am taken to the checkout page
+        And I see "Application fee: £20.50 as the donor has an income of less than £12,000" in the page text
+        When I click occurrence 16 of "cya-change"
         When I check "notApply"
         And I click "save"
         Then I am taken to the checkout page
+        And I see "Application fee: £41 as you are not claiming a reduction" in the page text
         #Then I am taken to the complete page
