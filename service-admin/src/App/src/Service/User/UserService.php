@@ -40,6 +40,27 @@ class UserService
         return null;
     }
 
+    // convert the date fields for a single user
+    private function convertDates($user)
+    {
+        //  Parse the datetime fields as required
+        $dateFields = [
+            'lastLoginAt',
+            'updatedAt',
+            'createdAt',
+            'activatedAt',
+            'deletedAt',
+        ];
+
+        foreach ($dateFields as $dateField) {
+            if (array_key_exists($dateField, $user) && isset($user[$dateField])) {
+                $user[$dateField] = new DateTime($user[$dateField]['date'], new DateTimeZone($user[$dateField]['timezone']));
+            }
+        }
+
+        return $user;
+    }
+
     /**
      * @param string $email
      * @return array|bool
@@ -51,20 +72,7 @@ class UserService
         ]);
 
         if (is_array($userData)) {
-            //  Parse the datetime fields as required
-            $dateFields = [
-                'lastLoginAt',
-                'updatedAt',
-                'createdAt',
-                'activatedAt',
-                'deletedAt',
-            ];
-
-            foreach ($dateFields as $dateField) {
-                if (array_key_exists($dateField, $userData) && $userData[$dateField]) {
-                    $userData[$dateField] = new DateTime($userData[$dateField]['date'], new DateTimeZone($userData[$dateField]['timezone']));
-                }
-            }
+            $userData = $this->convertDates($userData);
 
             //  If the user is active retrieve the LPA data
             if (array_key_exists('userId', $userData) && $userData['isActive'] === true) {
@@ -96,6 +104,7 @@ class UserService
      */
     public function match(array $params)
     {
-        return $this->client->httpGet('/v2/users/match', $params);
+        $users = $this->client->httpGet('/v2/users/match', $params);
+        return array_map(fn($user) => $this->convertDates($user), $users);
     }
 }
