@@ -129,4 +129,15 @@ Feature: Who Are You for a Property and Finance LPA
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
         And I see "Application fee: £41 as you are not claiming a reduction" in the page text
-        #Then I am taken to the complete page
+        And I can find "confirm-and-pay-by-card"
+        And I can find "confirm-and-pay-by-cheque"
+
+        # temporarily till make this a seperate feature, hit cheque button
+        When I click "confirm-and-pay-by-cheque"
+        Then I am taken to the complete page
+        And I can find link pointing to "/lp1"
+        And I can find link pointing to "/lp3"
+        #And I can find link pointing to "/lpa120"
+        # lines below will be uncommented once we fix issues with pdf generation unreliability
+        And I can get pdf from link containing "Download your print-ready LPA form"
+        And I can get pdf from link containing "Download the letter to send"

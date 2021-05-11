@@ -107,8 +107,8 @@ Then(`I am taken to the checkout page`, () => {
 });
 
 Then(`I am taken to the complete page`, () => {
-    checkOnPageWithPath('checkout');
-    checkAccordionHeaderContains('Last steps');
+    checkOnPageWithPath('complete');
+    cy.contains('Last steps');
 });
  
 Then(`I am taken to the donor page`, () => {
