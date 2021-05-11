@@ -51,16 +51,16 @@
                         <?php if (isset($user->name)) { ?>
                             <ul id="proposition-links">
                                 <li>
-                                    <a href="<?= $this->url('system.message') ?>" class="">System Message</a>
+                                    <a data-cy="system-message-link" href="<?= $this->url('system.message') ?>" class="">System Message</a>
                                 </li>
                                 <li>
-                                    <a href="<?= $this->url('feedback') ?>" class="">Feedback</a>
+                                    <a data-cy="feedback-link" href="<?= $this->url('feedback') ?>" class="">Feedback</a>
                                 </li>
                                 <li>
-                                    <a href="<?= $this->url('user.find') ?>" class="">Find Users</a>
+                                    <a data-cy="find-users-link" href="<?= $this->url('user.find') ?>" class="">Find Users</a>
                                 </li>
                                 <li>
-                                    <a href="<?= $this->url('user.search') ?>" class="">User Search</a>
+                                    <a data-cy="user-search-link" href="<?= $this->url('user.search') ?>" class="">User Search</a>
                                 </li>
                             </ul>
                         <?php } ?>
