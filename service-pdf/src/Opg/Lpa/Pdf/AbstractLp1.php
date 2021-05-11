@@ -99,7 +99,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         //  No content on page 9
         $this->populatePageTen($lpa->document->donor);
         $this->populatePageEleven($lpa->document->certificateProvider);
-        $this->populatePageTwelveThirteenFourteenFifthteen($lpa);
+        $this->populatePageTwelveThirteenFourteenFifteen($lpa);
         //  No content on page 16
         $this->populatePageSeventeen($lpa->document);
         $this->populatePageEighteen($lpa->document->correspondent);
@@ -340,7 +340,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      * @param Lpa $lpa
      * @param int $pageIteration
      */
-    private function populatePageTwelveThirteenFourteenFifthteen(Lpa $lpa, $pageIteration = 0)
+    private function populatePageTwelveThirteenFourteenFifteen(Lpa $lpa, $pageIteration = 0)
     {
         //  This page is repeatable so determine which PDF object to use
         //  For the first MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages we should populate the main document
@@ -393,7 +393,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $pageIteration++;
 
         if ($pageIteration < self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 || array_key_exists($pageIteration, $attorneys)) {
-            $this->populatePageTwelveThirteenFourteenFifthteen($lpa, $pageIteration);
+            $this->populatePageTwelveThirteenFourteenFifteen($lpa, $pageIteration);
         }
     }
 
