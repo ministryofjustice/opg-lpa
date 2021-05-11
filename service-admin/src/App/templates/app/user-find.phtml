@@ -21,7 +21,8 @@
                         'formLabel'     => 'Query',
                         'formElement'   => $form->get('query'),
                         'formType'      => 'text',
-                        'formLabelBold' => false
+                        'formLabelBold' => false,
+                        'attrs'         => ['data-cy' => 'query-input'],
                     ]) ?>
 
                     <?php $this->insert('snippet::input-hidden', [
@@ -32,7 +33,7 @@
             </fieldset>
 
             <div class="form-group">
-                <input class="button" type="submit" value="Find">
+                <input data-cy="submit-button" class="button" type="submit" value="Find">
             </div>
 
         </form>
@@ -59,24 +60,31 @@
                                 <?php } ?>
                             </li>
 
+                            <?php if (isset($user['activatedAt'])) { ?>
+                                <li>
+                                    <strong class="bold-small">Date activated: </strong>
+                                    <span data-role="user-activation-date"><?= $this->dateFormat($user['activatedAt']) ?></span>
+                                </li>
+                            <?php } ?>
+
                             <?php if (array_key_exists('lastLoginAt', $user)) { ?>
                                 <li>
                                     <strong class="bold-small">Last login time: </strong>
-                                    <span><?= ($user['lastLoginAt'] instanceof DateTime ? ($user['lastLoginAt'])->format('jS M Y \\a\\t g:i:s a') : 'Never logged in'); ?></span>
+                                    <span data-role="user-last-login-time"><?= $this->dateFormat($user['lastLoginAt'], 'Never logged in') ?></span>
                                 </li>
                             <?php } ?>
 
                             <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
                                 <li>
                                     <strong class="bold-small">Number of failed login attempts: </strong>
-                                    <span><?= $user['failedLoginAttempts']; ?></span>
+                                    <span><?= intval($user['failedLoginAttempts']); ?></span>
                                 </li>
                             <?php } ?>
 
                             <?php if (array_key_exists('numberOfLpas', $user)) { ?>
                                 <li>
                                     <strong class="bold-small">Number of LPAs: </strong>
-                                    <span><?= $user['numberOfLpas']; ?></span>
+                                    <span><?= intval($user['numberOfLpas']); ?></span>
                                 </li>
                             <?php } ?>
                         </ul>
