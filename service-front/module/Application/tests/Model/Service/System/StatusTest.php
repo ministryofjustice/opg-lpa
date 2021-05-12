@@ -36,13 +36,13 @@ class StatusTest extends AbstractServiceTest
         parent::setUp();
 
         $config = [
-            'session'=>[
-                'dynamodb'=>[
-                    'settings'=>[
-                        'table_name'=>"session-test-table"
-                    ]
-                ]
-            ],
+//            'session'=>[
+//                'dynamodb'=>[
+//                    'settings'=>[
+//                        'table_name'=>"session-test-table"
+//                    ]
+//                ]
+//            ],
             'cron' =>[
                 'lock' =>[
                     'dynamodb' =>[
@@ -59,9 +59,9 @@ class StatusTest extends AbstractServiceTest
         $this->service = new Status($this->authenticationService, $config);
         $this->service->setApiClient($this->apiClient);
 
-        $this->dynamoDbSessionClient = Mockery::mock(DynamoDbClient::class);
+//        $this->dynamoDbSessionClient = Mockery::mock(DynamoDbClient::class);
         $this->dynamoDbCronClient = Mockery::mock(DynamoDbClient::class);
-        $this->service->setDynamoDbSessionClient($this->dynamoDbSessionClient);
+//        $this->service->setDynamoDbSessionClient($this->dynamoDbSessionClient);
         $this->service->setDynamoDbCronClient($this->dynamoDbCronClient);
     }
 
@@ -75,11 +75,11 @@ class StatusTest extends AbstractServiceTest
                 'ok' => true,
             ]);
 
-        $this->dynamoDbSessionClient
-            ->shouldReceive('describeTable')
-            ->withArgs([['TableName' => 'session-test-table']])
-            ->times(6)
-            ->andReturn(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]);
+//        $this->dynamoDbSessionClient
+//            ->shouldReceive('describeTable')
+//            ->withArgs([['TableName' => 'session-test-table']])
+//            ->times(6)
+//            ->andReturn(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]);
 
         $this->dynamoDbCronClient
             ->shouldReceive('describeTable')
@@ -93,7 +93,7 @@ class StatusTest extends AbstractServiceTest
             'dynamo' => [
                 'ok' => true,
                 'details' => [
-                    'sessions' => true,
+//                    'sessions' => true,
                     'locks' => true
                 ]
             ],
@@ -109,50 +109,50 @@ class StatusTest extends AbstractServiceTest
         ], $result);
     }
 
-    public function testCheckInvalidSession() : void
-    {
-        $this->apiClient
-            ->shouldReceive('httpGet')
-            ->withArgs(['/ping'])
-            ->times(1)
-            ->andReturn([
-                'ok' => true,
-            ]);
-
-        $this->dynamoDbSessionClient
-            ->shouldReceive('describeTable')
-            ->withArgs([['TableName' => 'session-test-table']])
-            ->times(1)
-            ->andReturn(['@metadata' => ['statusCode' => 500]]);
-
-        $this->dynamoDbCronClient
-            ->shouldReceive('describeTable')
-            ->withArgs([['TableName' => 'cron-test-table']])
-            ->times(1)
-            ->andReturn(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]);
-
-        $result = $this->service->check();
-
-
-        $this->assertEquals([
-            'dynamo' => [
-                'ok' => false,
-                'details' => [
-                    'sessions' => false,
-                    'locks' => true
-                ]
-            ],
-            'api' => [
-                'ok' => true,
-                'details' => [
-                    200 => true,
-                    'ok' => true,
-                ]
-            ],
-            'ok' => false,
-            'iterations' => 1,
-        ], $result);
-    }
+//    public function testCheckInvalidSession() : void
+//    {
+//        $this->apiClient
+//            ->shouldReceive('httpGet')
+//            ->withArgs(['/ping'])
+//            ->times(1)
+//            ->andReturn([
+//                'ok' => true,
+//            ]);
+//
+////        $this->dynamoDbSessionClient
+////            ->shouldReceive('describeTable')
+////            ->withArgs([['TableName' => 'session-test-table']])
+////            ->times(1)
+////            ->andReturn(['@metadata' => ['statusCode' => 500]]);
+//
+//        $this->dynamoDbCronClient
+//            ->shouldReceive('describeTable')
+//            ->withArgs([['TableName' => 'cron-test-table']])
+//            ->times(1)
+//            ->andReturn(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]);
+//
+//        $result = $this->service->check();
+//
+//
+//        $this->assertEquals([
+//            'dynamo' => [
+//                'ok' => false,
+//                'details' => [
+////                    'sessions' => false,
+//                    'locks' => true
+//                ]
+//            ],
+//            'api' => [
+//                'ok' => true,
+//                'details' => [
+//                    200 => true,
+//                    'ok' => true,
+//                ]
+//            ],
+//            'ok' => false,
+//            'iterations' => 1,
+//        ], $result);
+//    }
 
     public function testCheckInvalidCron() : void
     {
@@ -164,11 +164,11 @@ class StatusTest extends AbstractServiceTest
                 'ok' => true,
             ]);
 
-        $this->dynamoDbSessionClient
-            ->shouldReceive('describeTable')
-            ->withArgs([['TableName' => 'session-test-table']])
-            ->times(1)
-            ->andReturn(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]);
+//        $this->dynamoDbSessionClient
+//            ->shouldReceive('describeTable')
+//            ->withArgs([['TableName' => 'session-test-table']])
+//            ->times(1)
+//            ->andReturn(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]);
 
         $this->dynamoDbCronClient
             ->shouldReceive('describeTable')
@@ -183,7 +183,7 @@ class StatusTest extends AbstractServiceTest
             'dynamo' => [
                 'ok' => false,
                 'details' => [
-                    'sessions' => true,
+//                    'sessions' => true,
                     'locks' => false
                 ]
             ],
@@ -209,11 +209,11 @@ class StatusTest extends AbstractServiceTest
                 'ok' => false,
             ]);
 
-        $this->dynamoDbSessionClient
-            ->shouldReceive('describeTable')
-            ->withArgs([['TableName' => 'session-test-table']])
-            ->times(1)
-            ->andReturn(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]);
+//        $this->dynamoDbSessionClient
+//            ->shouldReceive('describeTable')
+//            ->withArgs([['TableName' => 'session-test-table']])
+//            ->times(1)
+//            ->andReturn(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]);
 
         $this->dynamoDbCronClient
             ->shouldReceive('describeTable')
@@ -227,7 +227,7 @@ class StatusTest extends AbstractServiceTest
             'dynamo' => [
                 'ok' => true,
                 'details' => [
-                    'sessions' => true,
+//                    'sessions' => true,
                     'locks' => true
                 ]
             ],
