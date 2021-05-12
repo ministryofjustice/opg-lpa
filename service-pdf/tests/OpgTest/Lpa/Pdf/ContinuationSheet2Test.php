@@ -11,6 +11,33 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 {
     use LongContentTrait;
 
+    public function testConstructorExceptionContentPageLessThan1()
+    {
+        $this->expectExceptionMessage('The requested content page must be a positive integer');
+
+        $lpa = $this->getLpa();
+        $contentPage = 0;
+        new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_INSTRUCTIONS, $lpa->document->instruction, $contentPage);
+    }
+
+    public function testConstructorExceptionContentPageNonNumeric()
+    {
+        $this->expectExceptionMessage('The requested content page must be a positive integer');
+
+        $lpa = $this->getLpa();
+        $contentPage = '1';
+        new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_INSTRUCTIONS, $lpa->document->instruction, $contentPage);
+    }
+
+    public function testConstructorExceptionContentPage1()
+    {
+        $this->expectExceptionMessage('Page 1 of the preferences and instructions can not be displayed on continuation sheet 2');
+
+        $lpa = $this->getLpa();
+        $contentPage = 1;
+        new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_INSTRUCTIONS, $lpa->document->instruction, $contentPage);
+    }
+
     public function testGenerateInstructions()
     {
         $lpa = $this->getLpa();
