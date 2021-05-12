@@ -53,7 +53,9 @@ $this->addErrorMap([
                     'formElement'   => $form->get('email'),
                     'formLabel'     => 'Email address',
                     'formType'      => 'text',
-                    'formLabelBold' => false
+                    'formLabelBold' => false,
+                    'disableAutocomplete' => false,
+                    'attrs'         => ['data-cy' => 'login-email'],
                 ]) ?>
 
                 <?php $this->insert('snippet::input-text', [
@@ -61,13 +63,14 @@ $this->addErrorMap([
                     'formLabel'           => 'Password',
                     'formType'            => 'password',
                     'formLabelBold'       => false,
-                    'disableAutocomplete' => true
+                    'disableAutocomplete' => true,
+                    'attrs'               => ['data-cy' => 'login-password'],
                 ]) ?>
 
             </fieldset>
 
             <div class="form-group">
-                <input class="button" type="submit" value="Continue">
+                <input class="button" type="submit" value="Continue" data-cy="login-submit-button">
             </div>
 
         </form>
