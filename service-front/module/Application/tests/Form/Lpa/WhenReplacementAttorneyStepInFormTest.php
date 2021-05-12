@@ -15,7 +15,7 @@ class WhenReplacementAttorneyStepInFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpMainFlowForm(new WhenReplacementAttorneyStepInForm());
+        $this->setUpForm(new WhenReplacementAttorneyStepInForm());
     }
 
     public function testNameAndInstances()

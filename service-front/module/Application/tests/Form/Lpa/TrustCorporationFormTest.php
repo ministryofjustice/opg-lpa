@@ -15,7 +15,7 @@ class TrustCorporationFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpActorForm(new TrustCorporationForm());
+        $this->setUpForm(new TrustCorporationForm());
     }
 
     public function testNameAndInstances()

@@ -17,13 +17,6 @@ abstract class AbstractCsrfForm extends AbstractForm
      */
     private $csrf = null;
 
-    public function init()
-    {
-        $this->setCsrf();
-
-        parent::init();
-    }
-
     public function setConfig(array $config)
     {
         $this->config = $config;

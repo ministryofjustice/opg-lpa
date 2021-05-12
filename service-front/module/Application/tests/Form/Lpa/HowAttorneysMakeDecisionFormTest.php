@@ -15,7 +15,7 @@ class HowAttorneysMakeDecisionFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpMainFlowForm(new HowAttorneysMakeDecisionForm());
+        $this->setUpForm(new HowAttorneysMakeDecisionForm());
     }
 
     public function testNameAndInstances()
