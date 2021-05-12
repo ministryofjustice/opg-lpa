@@ -27,7 +27,7 @@ class ApplicantFormTest extends MockeryTestCase
             'lpa' => $lpa,
         ]);
 
-        $this->setUpMainFlowForm($form);
+        $this->setUpForm($form);
     }
 
     public function testNameAndInstances()
@@ -57,16 +57,20 @@ class ApplicantFormTest extends MockeryTestCase
 
     public function testValidateByModelInvalid()
     {
-        $this->form->setData(array_merge([
-            'whoIsRegistering' => 'someoneelse',
-        ], $this->getCsrfData()));
+        $this->form->setData(
+            array_merge(
+                ['whoIsRegistering' => 'someoneelse'],
+                $this->getCsrfData()
+            )
+        );
 
         $this->assertFalse($this->form->isValid());
 
-        $this->assertEquals([
-            'whoIsRegistering' => [
-                'notInArray' => 'The input was not found in the haystack'
+        $this->assertEquals(
+            ['whoIsRegistering' =>
+                ['notInArray' => 'The input was not found in the haystack'],
             ],
-        ], $this->form->getMessages());
+            $this->form->getMessages()
+        );
     }
 }

@@ -15,7 +15,7 @@ class CorrespondentFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpActorForm(new CorrespondentForm());
+        $this->setUpForm(new CorrespondentForm());
     }
 
     public function testNameAndInstances()

@@ -15,7 +15,7 @@ class CertificateProviderFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpActorForm(new CertificateProviderForm());
+        $this->setUpForm(new CertificateProviderForm());
     }
 
     public function testNameAndInstances()
