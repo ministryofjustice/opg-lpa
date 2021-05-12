@@ -76,23 +76,23 @@ class Status extends AbstractService implements ApiClientAwareInterface
     private function dynamo()
     {
         $result = array('ok' => false, 'details' => [
-            'sessions' => false,
+//            'sessions' => false,
             'locks' => false,
         ]);
 
-        //------------------
-        // Sessions
-
-        try {
-            $details = $this->dynamoDbSessionClient->describeTable([
-                'TableName' => $this->getConfig()['session']['dynamodb']['settings']['table_name']
-            ]);
-
-            if ($details['@metadata']['statusCode'] === 200 && in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])) {
-                // Table is okay
-                $result['details']['sessions'] = true;
-            }
-        } catch (Exception $e) {}
+//        //------------------
+//        // Sessions
+//
+//        try {
+//            $details = $this->dynamoDbSessionClient->describeTable([
+//                'TableName' => $this->getConfig()['session']['dynamodb']['settings']['table_name']
+//            ]);
+//
+//            if ($details['@metadata']['statusCode'] === 200 && in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])) {
+//                // Table is okay
+//                $result['details']['sessions'] = true;
+//            }
+//        } catch (Exception $e) {}
 
         //------------------
         // Locks
