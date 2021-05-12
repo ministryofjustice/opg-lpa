@@ -3,11 +3,9 @@ namespace OpgTest\Lpa\Pdf;
 
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Lp1f;
+use Opg\Lpa\Pdf\Lp1h;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
-use OpgTest\Lpa\Pdf\AbstractPdfTestClass;
-use PHPUnit\Framework\TestCase;
 
 
 /**
@@ -270,7 +268,9 @@ class AbstractLp1Test extends AbstractPdfTestClass
     // force the continuation sheet, which we do in this test instead)
     public function testPopulatePagesAlternatives()
     {
-        $data = $this->getPfLpaJSON();
+        // Make this one a Health and Welfare LPA so that we can test strikethroughs on
+        // page six
+        $data = $this->getHwLpaJSON();
 
         // Amend primary attorney decisions to "depends", which adds a
         // continuation sheet with an explanation of how the attorney decisions
@@ -280,6 +280,12 @@ class AbstractLp1Test extends AbstractPdfTestClass
 
         $data['document']['primaryAttorneyDecisions']['howDetails'] =
             'Long explanation of how primary attorneys should make decisions';
+
+        // Amend when primary attorney decisions can be made; this ensures that
+        // page six has a strike through for the "when" decision which was not chosen
+        // (i.e. "when no capacity")
+        $data['document']['primaryAttorneyDecisions']['when'] =
+            PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW;
 
         // Remove any trust corporation attorneys; this ensures we *don't* get
         // continuation sheet 4 (see addContinuationSheets())
@@ -316,7 +322,7 @@ class AbstractLp1Test extends AbstractPdfTestClass
 
         // Load the data to make our amended LPA
         $lpa = $this->buildLpaFromJSON($data);
-        $pdf = new Lp1f($lpa, [], $this->factory);
+        $pdf = new Lp1h($lpa, [], $this->factory);
         $pdf->generate();
 
         // Get data which will be injected into the output PDF
@@ -335,9 +341,11 @@ class AbstractLp1Test extends AbstractPdfTestClass
         $expectedData = ['has-more-preferences' => 'On'];
         $this->assertArrayIsSubArrayOf($expectedData, $actualData);
 
-        // Assert we have a strikethrough for the correspondent address
+        // Assert we have a strikethrough for the correspondent address on page 17
+        // and the "when no capacity" signature on page 6
         $expectedStrikeThroughs = [
-            17 => ['correspondent-empty-address']
+            '17' => ['correspondent-empty-address'],
+            '5' => ['life-sustain-B'],
         ];
         $this->assertArrayIsSubArrayOf($expectedStrikeThroughs, $actualStrikeThroughs);
 
