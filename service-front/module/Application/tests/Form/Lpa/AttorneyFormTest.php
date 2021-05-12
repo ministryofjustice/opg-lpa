@@ -15,7 +15,7 @@ class AttorneyFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpActorForm(new AttorneyForm());
+        $this->setUpForm(new AttorneyForm());
     }
 
     public function testNameAndInstances()

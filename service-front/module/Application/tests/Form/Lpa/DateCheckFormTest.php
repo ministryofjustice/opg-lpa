@@ -29,7 +29,7 @@ class DateCheckFormTest extends MockeryTestCase
             'lpa' => $lpa,
         ]);
 
-        $this->setUpCsrfForm($form);
+        $this->setUpForm($form);
     }
 
     public function testNameAndInstances()

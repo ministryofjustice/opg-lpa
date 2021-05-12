@@ -15,7 +15,7 @@ class InstructionsAndPreferencesFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpMainFlowForm(new InstructionsAndPreferencesForm());
+        $this->setUpForm(new InstructionsAndPreferencesForm());
     }
 
     public function testNameAndInstances()
