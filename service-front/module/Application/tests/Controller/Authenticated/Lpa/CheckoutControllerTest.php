@@ -438,7 +438,7 @@ class CheckoutControllerTest extends AbstractControllerTest
             ->andReturn($this->submitButton)->once();
         if ($submitButtonValue == 'Confirm and pay by card') {
             $this->submitButton->shouldReceive('setAttribute')
-                ->withArgs(['data-cy', $submitButtonValue])
+                ->withArgs(['data-cy', 'confirm-and-pay-by-card'])
                 ->andReturn($this->submitButton)->once();
         }
     }
