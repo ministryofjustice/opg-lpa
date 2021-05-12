@@ -26,7 +26,7 @@ class ChangeEmailAddressTest extends MockeryTestCase
         /** @var AuthenticationService $authenticationService */
         $form->setAuthenticationService($authenticationService);
 
-        $this->setUpCsrfForm($form);
+        $this->setUpForm($form);
     }
 
     public function testNameAndInstances()

@@ -15,7 +15,7 @@ class BlankMainFlowFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpMainFlowForm(new BlankMainFlowForm());
+        $this->setUpForm(new BlankMainFlowForm());
     }
 
     public function testNameAndInstances()
