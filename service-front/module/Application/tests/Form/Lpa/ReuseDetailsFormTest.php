@@ -15,7 +15,7 @@ class ReuseDetailsFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpLpaForm(new ReuseDetailsForm());
+        $this->setUpForm(new ReuseDetailsForm());
     }
 
     public function testNameAndInstances()

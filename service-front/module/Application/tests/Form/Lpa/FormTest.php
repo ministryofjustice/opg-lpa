@@ -29,7 +29,7 @@ class FormTest extends MockeryTestCase
                 ]);
 
                 /** @var AbstractCsrfForm $form */
-                $this->setUpCsrfForm($form);
+                $this->setUpForm($form);
 
                 $secretKeys = null;
 

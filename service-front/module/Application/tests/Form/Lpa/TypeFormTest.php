@@ -16,7 +16,7 @@ class TypeFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpMainFlowForm(new TypeForm());
+        $this->setUpForm(new TypeForm());
     }
 
     public function testNameAndInstances()

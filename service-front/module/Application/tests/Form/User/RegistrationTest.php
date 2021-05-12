@@ -15,7 +15,7 @@ class RegistrationTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpCsrfForm(new RegistrationForm());
+        $this->setUpForm(new RegistrationForm());
     }
 
     public function testNameAndInstances()

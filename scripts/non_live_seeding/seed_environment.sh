@@ -101,3 +101,7 @@ PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
 PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
   ${OPG_LPA_POSTGRES_NAME} \
   -f seed_test_applications.sql
+
+PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
+  ${OPG_LPA_POSTGRES_NAME} \
+  -f seed_test_deletion_log.sql
