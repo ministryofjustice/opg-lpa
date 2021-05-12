@@ -15,7 +15,7 @@ class PeopleToNotifyFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpActorForm(new PeopleToNotifyForm());
+        $this->setUpForm(new PeopleToNotifyForm());
     }
 
     public function testNameAndInstances()

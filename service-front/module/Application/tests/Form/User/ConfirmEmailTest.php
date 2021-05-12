@@ -15,7 +15,7 @@ class ConfirmEmailTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpCsrfForm(new ConfirmEmailForm());
+        $this->setUpForm(new ConfirmEmailForm());
     }
 
     public function testNameAndInstances()

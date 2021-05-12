@@ -15,7 +15,7 @@ class DonorFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpActorForm(new DonorForm());
+        $this->setUpForm(new DonorForm());
     }
 
     public function testNameAndInstances()

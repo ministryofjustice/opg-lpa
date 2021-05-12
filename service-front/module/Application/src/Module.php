@@ -180,13 +180,6 @@ class Module implements FormElementProviderInterface
                     return $dynamoDbAdapter;
                 },
 
-                'DynamoDbSessionClient' => function (ServiceLocatorInterface $sm) {
-
-                    $config = $sm->get('config')['session']['dynamodb']['client'];
-
-                    return new DynamoDbClient($config);
-                },
-
                 'DynamoDbCronClient' => function (ServiceLocatorInterface $sm) {
 
                     $config = $sm->get('config')['cron']['lock']['dynamodb']['client'];
@@ -350,6 +343,7 @@ class Module implements FormElementProviderInterface
                     if ($form instanceof AbstractCsrfForm) {
                         $config = $serviceManager->get('Config');
                         $form->setConfig($config);
+                        $form->setCsrf();
                     }
                 },
             ],
