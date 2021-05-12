@@ -436,8 +436,10 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->submitButton->shouldReceive('setAttribute')
             ->withArgs(['value', $submitButtonValue])
             ->andReturn($this->submitButton)->once();
-        $this->submitButton->shouldReceive('setAttribute')
-            ->withArgs(['data-cy', $submitButtonValue])
-            ->andReturn($this->submitButton)->once();
+        if ($submitButtonValue == 'Confirm and pay by card') {
+            $this->submitButton->shouldReceive('setAttribute')
+                ->withArgs(['data-cy', $submitButtonValue])
+                ->andReturn($this->submitButton)->once();
+        }
     }
 }
