@@ -15,7 +15,7 @@ class SetPasswordTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpCsrfForm(new SetPasswordForm());
+        $this->setUpForm(new SetPasswordForm());
     }
 
     public function testNameAndInstances()

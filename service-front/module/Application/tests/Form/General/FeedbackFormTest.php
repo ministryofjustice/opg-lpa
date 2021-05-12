@@ -15,7 +15,7 @@ class FeedbackFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpCsrfForm(new FeedbackForm());
+        $this->setUpForm(new FeedbackForm());
     }
 
     public function testNameAndInstances()

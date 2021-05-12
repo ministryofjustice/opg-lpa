@@ -15,7 +15,7 @@ class RepeatApplicationFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpMainFlowForm(new RepeatApplicationForm());
+        $this->setUpForm(new RepeatApplicationForm());
     }
 
     public function testNameAndInstances()

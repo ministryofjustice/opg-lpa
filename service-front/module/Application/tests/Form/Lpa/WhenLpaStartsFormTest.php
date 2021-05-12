@@ -15,7 +15,7 @@ class WhenLpaStartsFormTest extends MockeryTestCase
      */
     public function setUp() : void
     {
-        $this->setUpMainFlowForm(new WhenLpaStartsForm());
+        $this->setUpForm(new WhenLpaStartsForm());
     }
 
     public function testNameAndInstances()
