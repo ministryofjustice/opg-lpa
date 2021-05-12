@@ -234,7 +234,6 @@ class AbstractLp1Test extends AbstractPdfTestClass
 
     // main test function - this encapsulates most of the tests while only
     // requiring the PDF to be generated once
-    // TODO set up as a draft so we exercise the stampPageWith() method
     public function testPopulatePages()
     {
         $data = $this->getPfLpaJSON();
@@ -309,6 +308,11 @@ class AbstractLp1Test extends AbstractPdfTestClass
         $preferencesMaxSize = $this->getInstructionsPreferencesBoxSize();
         $data['document']['preference'] = str_repeat('hello ',
             intval($preferencesMaxSize/6) + 6);
+
+        // Remove the payment. This prevents the LPA from being treated as complete,
+        // which in turn means that generate() will create a stamped draft,
+        // exercising the AbstractLp1->stampPageWith() method.
+        unset($data['payment']);
 
         // Load the data to make our amended LPA
         $lpa = $this->buildLpaFromJSON($data);
