@@ -49,6 +49,21 @@ However, this depends on you figuring out how to install the service-api
 composer dependencies first. You should also ensure you have the right version
 of PHP installed locally (see service-api/composer.json).
 
+## Connecting to the postgres server
+
+The API app talks directly to the postgres back-end from PHP. Occasionally,
+it can be useful to manually log in to the postgres server to inspect the
+database and/or dump data from it. To do this:
+
+```
+docker exec -it lpa-api-app sh
+apk add postgresql-client
+psql -h postgres -U lpauser lpadb
+Password: <enter lpapass>
+```
+
+You should now have a psql command line on the postgres server.
+
 ## License
 
 The Lasting Power of Attorney Attorney API Service is released under the MIT license, a copy of which can be found in [LICENSE](LICENSE).
