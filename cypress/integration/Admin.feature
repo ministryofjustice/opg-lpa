@@ -25,3 +25,36 @@ Feature: Admin
     And I type "elliot@townx.org" into "email-address-input"
     And I click "submit-button"
     Then deleted user is displayed with deletion date of "5th May 2021 at 12:21:20 pm"
+
+  @focus
+  Scenario: Set and remove a system message on user facing site
+    Given I visit the admin sign-in page
+    And I log in to admin
+    And I click "system-message"
+
+    When I type "Your pizza is burning" into "message"
+    And I click "set-message"
+    And I see "System message set"
+
+    Then I visit the login page
+    And I see "Your pizza is burning"
+
+    Then I visit the admin system-message page
+    And I see "Your pizza is burning"
+    And I clear the value in "message"
+    And I click "set-message"
+    And I see "System message removed"
+    And I can not see "Your pizza is burning"
+
+  @focus
+  Scenario: Find a user with Find Users
+    Given I visit the admin sign-in page
+    And I log in to admin
+    And I click "find"
+
+    When I type "seeded_test_user@digital.justice.gov.uk" into "query"
+    And I click "find"
+    And I see "Matching users"
+    And I see "Name: seeded_test_user@digital.justice.gov.uk"
+
+  Scenario: Find a user with
