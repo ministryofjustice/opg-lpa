@@ -431,8 +431,14 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->blankMainFlowForm->shouldReceive('setAttribute')
             ->withArgs(['class', 'js-single-use'])
             ->andReturn($this->blankMainFlowForm)->once();
-        $this->blankMainFlowForm->shouldReceive('get')
-            ->withArgs(['submit'])->andReturn($this->submitButton)->once();
+        if ($submitButtonValue == 'Confirm and pay by card') {
+            $this->blankMainFlowForm->shouldReceive('get')
+                ->withArgs(['submit'])->andReturn($this->submitButton)->twice();
+        }
+        else {
+            $this->blankMainFlowForm->shouldReceive('get')
+              ->withArgs(['submit'])->andReturn($this->submitButton)->once();
+        }
         $this->submitButton->shouldReceive('setAttribute')
             ->withArgs(['value', $submitButtonValue])
             ->andReturn($this->submitButton)->once();
