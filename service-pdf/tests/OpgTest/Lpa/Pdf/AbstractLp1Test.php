@@ -7,7 +7,6 @@ use Opg\Lpa\Pdf\Lp1f;
 use Opg\Lpa\Pdf\Lp1h;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 
-
 /**
  * Tests of the AbstractLp1 test through its concrete subclasses.
  * The intention of this set of tests is to find a fast way to test the
@@ -313,7 +312,7 @@ class AbstractLp1Test extends AbstractPdfTestClass
         // the instructions box rather than preferences box
         $preferencesMaxSize = $this->getInstructionsPreferencesBoxSize();
         $data['document']['preference'] = str_repeat('hello ',
-            intval($preferencesMaxSize/6) + 6);
+            intval($preferencesMaxSize / 6) + 6);
 
         // Remove the payment. This prevents the LPA from being treated as complete,
         // which in turn means that generate() will create a stamped draft,
@@ -373,6 +372,5 @@ class AbstractLp1Test extends AbstractPdfTestClass
                 );
             }
         }
-
     }
 }
