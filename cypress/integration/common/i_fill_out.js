@@ -51,6 +51,10 @@ When("I force fill out", (dataTable) => {
             });
 });
 
+Then("I clear the value in {string}", (object) => {
+    cy.get("[data-cy="+ object +"]").clear();
+})
+
 Then("I see form prepopulated with", (dataTable) => {
     var rawTable = dataTable.rawTable;
     rawTable.forEach(row => { 
