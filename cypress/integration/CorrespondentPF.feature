@@ -11,9 +11,9 @@ Feature: Add a correspondent to a Property and Finance LPA
     Scenario: Create LPA normal path
         When I log in as appropriate test user
         And I visit the correspondent page for the test fixture lpa
+        Then I am taken to the correspondent page
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        Then I am taken to the correspondent page
         And I can find "contactInWelsh-0"
         And I can find "contactInWelsh-1"
         And I can find "contactByPost"
