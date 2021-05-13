@@ -11,9 +11,9 @@ Feature: Fee Reduction for a Property and Finance LPA
     Scenario: Fee Reduction
         When I log in as appropriate test user
         And I visit the fee reduction page for the test fixture lpa
+        Then I am taken to the fee reduction page
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        Then I am taken to the fee reduction page
         And I can find "reducedFeeReceivesBenefits"
         And I can find "reducedFeeUniversalCredit"
         And I can find "reducedFeeLowIncome"

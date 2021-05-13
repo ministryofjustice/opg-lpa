@@ -11,9 +11,9 @@ Feature: Checkout for a Health and Welfare LPA
     Scenario: Checkout
         When I log in as appropriate test user
         And I visit the checkout page for the test fixture lpa
+        Then I am taken to the checkout page
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        Then I am taken to the checkout page
         And I see "Application fee: £82 as you are not claiming a reduction" in the page text
         And I see the following summary information
             | Type | Health and welfare | |
@@ -56,7 +56,6 @@ Feature: Checkout for a Health and Welfare LPA
         And I can find "confirm-and-pay-by-card"
         And I can find "confirm-and-pay-by-cheque"
 
-        # temporarily till make this a seperate feature, hit cheque button
         When I click "confirm-and-pay-by-cheque"
         Then I am taken to the complete page
         And I can find link pointing to "/lp1"

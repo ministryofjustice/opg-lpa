@@ -11,9 +11,9 @@ Feature: Repeat Application for a Property and Finance LPA
     Scenario: Repeat Application
         When I log in as appropriate test user
         And I visit the repeat application page for the test fixture lpa
+        Then I am taken to the repeat application page
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        Then I am taken to the repeat application page
         # repeatCaseNumber should be hidden initially
         And I can find hidden "repeatCaseNumber"
 

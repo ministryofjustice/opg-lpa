@@ -11,9 +11,9 @@ Feature: Who Are You for a Property and Finance LPA
     Scenario: Who Are You
         When I log in as appropriate test user
         And I visit the who are you page for the test fixture lpa
+        Then I am taken to the who are you page
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        Then I am taken to the who are you page
         And I can find "who"
         And I can find "who-friend-or-family"
         And I can find "who-finance-professional"
