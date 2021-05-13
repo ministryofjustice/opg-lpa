@@ -112,26 +112,8 @@ class StatusController extends AbstractRestfulController
         /** @var Lpa $lpa */
         $metaData = $lpaResult->getData()->getMetaData();
 
-        $currentProcessingStatus = array_key_exists(LPA::SIRIUS_PROCESSING_STATUS, $metaData) ?
+        return array_key_exists(LPA::SIRIUS_PROCESSING_STATUS, $metaData) ?
             $metaData[LPA::SIRIUS_PROCESSING_STATUS] : null;
-
-        return $currentProcessingStatus;
-    }
-
-    public function getApplicationReturnDate($id)
-    {
-        $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
-        if ($lpaResult instanceof ApiProblem) {
-            $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
-            return $lpaResult;
-        }
-        /** @var Lpa $lpa */
-        $metaData = $lpaResult->getData()->getMetaData();
-
-        $applicationReturnDate = array_key_exists(LPA::APPLICATION_REJECTED_DATE, $metaData) ?
-            $metaData[LPA::APPLICATION_REJECTED_DATE] : $metaData[LPA::APPLICATION_REGISTRATION_DATE];
-
-        return $applicationReturnDate;
     }
 
     private function updateMetadata($lpaId, $data)
