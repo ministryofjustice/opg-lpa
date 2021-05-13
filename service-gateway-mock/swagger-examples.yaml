@@ -5,12 +5,29 @@ paths:
         '200':
           content:
             application/json:
+              schema:
+                required:
+                  - cancellationDate
+                  - invalidDate
+                  - onlineLpaId
+                  - receiptDate
+                  - registrationDate
+                  - rejectedDate
+                  - status
+                  - withdrawnDate
+                properties:
+                  dispatchDate:
+                    type: string
+                    format: date
+                    description: The date the LPA response was dispatched
+                    example: '2018-06-30'
               examples:
                 received:
                   value:
                     onlineLpaId: A47629358836
                     receiptDate: '2021-02-28'
                     rejectedDate: null
+                    dispatchDate: null
                     registrationDate: null
                     cancellationDate: null
                     invalidDate: null
@@ -21,6 +38,7 @@ paths:
                     onlineLpaId: A88668805824
                     receiptDate: '2021-02-11'
                     rejectedDate: '2021-02-14'
+                    dispatchDate: null
                     registrationDate: null
                     cancellationDate: null
                     invalidDate: null
@@ -31,7 +49,19 @@ paths:
                     onlineLpaId: A68582508781
                     receiptDate: '2021-03-01'
                     rejectedDate: null
+                    dispatchDate: null
                     registrationDate: '2021-03-04'
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: null
+                    status: Registered
+                returned_registered_and_dispatched:
+                  value:
+                    onlineLpaId: A32004638272
+                    receiptDate: '2021-05-01'
+                    rejectedDate: null
+                    dispatchDate: '2021-05-03'
+                    registrationDate: '2021-05-02'
                     cancellationDate: null
                     invalidDate: null
                     withdrawnDate: null
@@ -41,6 +71,7 @@ paths:
                     onlineLpaId: A93348314693
                     receiptDate: '2021-01-02'
                     rejectedDate: null
+                    dispatchDate: null
                     registrationDate: null
                     cancellationDate: null
                     invalidDate: '2021-01-05'
@@ -51,6 +82,7 @@ paths:
                     onlineLpaId: A43476377885
                     receiptDate: '2020-05-01'
                     rejectedDate: null
+                    dispatchDate: null
                     registrationDate: null
                     cancellationDate: null
                     invalidDate: null
@@ -61,6 +93,7 @@ paths:
                     onlineLpaId: A54171193342
                     receiptDate: '2020-11-21'
                     rejectedDate: null
+                    dispatchDate: null
                     registrationDate: null
                     cancellationDate: null
                     invalidDate: null
