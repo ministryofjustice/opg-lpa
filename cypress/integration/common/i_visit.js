@@ -65,6 +65,10 @@ Then(`I visit the who are you page for the test fixture lpa`, () => {
     visitPageForTestFixture('who-are-you');
 });
 
+Then(`I visit the repeat application page for the test fixture lpa`, () => {
+    visitPageForTestFixture('repeat-application');
+});
+
 function visitPageForTestFixture(urlPart) {
     cy.get('@lpaId').then((lpaId) => {
         cy.visitWithChecks('/lpa/' + lpaId + '/' + urlPart);
