@@ -72,6 +72,11 @@ if args.w :
     setWhoIsRegistering(lpaId)
 if args.co :
     addCorrespondent(lpaId)
+if args.y :
+    addWhoAreYou(lpaId)
+if args.ra :
+    setRepeatApplication(lpaId)
+    setRepeatCaseNumber(lpaId)
 if args.pa :
     if args.hw :
         setPaymentNormalFeeWithCheque(lpaId)
