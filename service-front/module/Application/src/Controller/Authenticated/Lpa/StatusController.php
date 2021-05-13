@@ -3,6 +3,8 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
+use DateInterval;
+use Exception;
 use Laminas\View\Model\ViewModel;
 use DateTime;
 
@@ -57,9 +59,23 @@ class StatusController extends AbstractLpaController
         else if (isset($metadata['application-registration-date']))
             $returnDate = $metadata['application-registration-date'];
 
+        // The "should receive by" date is set to a number of days after the
+        // $returnDate, defined in config
+        $shouldReceiveByDate = null;
+        if (!is_null($returnDate) && isset($this->config()['processing-status']['expected-days-before-receipt'])) {
+            $days = intval($this->config()['processing-status']['expected-days-before-receipt']);
+            $interval = new DateInterval("P${days}D");
+            try {
+                $shouldReceiveByDate = (new DateTime($returnDate))->add($interval);
+            } catch (Exception $e) {
+                $this->getLogger()->err('Error calculating expected receipt date: ' . $e->getMessage());
+            }
+        }
+
         return new ViewModel([
             'returnDate'   => $returnDate,
             'lpa'          => $lpa,
+            'shouldReceiveByDate' => $shouldReceiveByDate,
             'status'       => $lpaStatus,
             'doneStatuses' => $doneStatuses,
             'canGenerateLPA120' => $lpa->canGenerateLPA120(),
