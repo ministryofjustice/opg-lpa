@@ -136,6 +136,10 @@ class StatusController extends AbstractRestfulController
         $metaData[LPA::APPLICATION_REJECTED_DATE] = $data['rejectedDate'];
         $metaData[LPA::APPLICATION_INVALID_DATE] = $data['invalidDate'];
         $metaData[LPA::APPLICATION_WITHDRAWN_DATE] = $data['withdrawnDate'];
+
+        // TODO edit third party library
+        $metaData['application-dispatch-date'] = $data['dispatchDate'];
+
         $this->getService()->patch(['metadata' => $metaData], $lpaId, $this->routeUserId);
 
         $this->getLogger()->debug('Updated metadata for: ' . $lpaId . var_export($metaData, true));
@@ -225,6 +229,9 @@ class StatusController extends AbstractRestfulController
 
                             $data['withdrawnDate'] = isset($lpaDetail['withdrawnDate']) ?
                                 $lpaDetail['withdrawnDate'] : null;
+
+                            $data['dispatchDate'] = isset($lpaDetail['dispatchDate']) ?
+                                $lpaDetail['dispatchDate'] : null;
 
                             // If status doesn't match what we already have, update the database
                             if ($data['status'] !== $currentProcessingStatus) {

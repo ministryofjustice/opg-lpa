@@ -56,8 +56,8 @@ class StatusController extends AbstractLpaController
             $returnDate = $metadata['application-withdrawn-date'];
         else if (isset($metadata['application-invalid-date']))
             $returnDate = $metadata['application-invalid-date'];
-        else if (isset($metadata['application-registration-date']))
-            $returnDate = $metadata['application-registration-date'];
+        else if (isset($metadata['application-dispatch-date']))
+            $returnDate = $metadata['application-dispatch-date'];
 
         // The "should receive by" date is set to a number of days after the
         // $returnDate, defined in config

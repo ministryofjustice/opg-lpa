@@ -191,6 +191,9 @@ class Service extends AbstractService
         if (isset($responseBody['withdrawnDate'])){
             $return['withdrawnDate'] = $responseBody['withdrawnDate'];
         }
+        if (isset($responseBody['dispatchDate'])) {
+            $return['dispatchDate'] = $responseBody['dispatchDate'];
+        }
         if (isset($responseBody['status'])) {
             $return['status'] = self::SIRIUS_STATUS_TO_LPA[$responseBody['status']];
         }
