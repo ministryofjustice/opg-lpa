@@ -179,15 +179,12 @@ def setPayment(lpaId, amount = 82, method = None, reducedFeeReceivesBenefits = N
     putToAPI(lpaId, payment, 'payment')
 
 def setPaymentNormalFeeWithCheque(lpaId):
-    # used by HW with cheque
     setPayment(lpaId, method = "cheque")
 
 def setPaymentLowIncomeClaimingReduction(lpaId):
-    # used by PF test
     setPayment(lpaId, amount = 20.5, reducedFeeReceivesBenefits = False, reducedFeeLowIncome = True)
 
-def setPaymentLowIncomeClaimingReduction(lpaId):
-    # used by PF test
+def setPaymentLowIncomeNotClaimingReduction(lpaId):
     setPayment(lpaId, amount = 41 )
 
 def setInstruction(lpaId, instruction = "Lorem Ipsum"):
