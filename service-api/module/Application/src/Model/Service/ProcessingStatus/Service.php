@@ -196,6 +196,16 @@ class Service extends AbstractService
         }
         if (isset($responseBody['status'])) {
             $return['status'] = self::SIRIUS_STATUS_TO_LPA[$responseBody['status']];
+
+            // We change the status manually to "checking" if the LPA
+            // is registered but has no dispatch date set yet; the logic
+            // in our front end assumes a "returned" LPA will have a dispatch,
+            // rejected, invalid or withdrawn date (registration date is now
+            // ignored), so we shouldn't treat a registered LPA without one
+            // of these dates as "returned"
+            if (!isset($responseBody['dispatchDate']) && $responseBody['status'] === 'Registered') {
+                $return['status'] = Lpa::SIRIUS_PROCESSING_STATUS_CHECKING;
+            }
         }
         return $return;
 
