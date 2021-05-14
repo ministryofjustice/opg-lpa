@@ -30,31 +30,37 @@ Feature: Admin
   Scenario: Set and remove a system message on user facing site
     Given I visit the admin sign-in page
     And I log in to admin
-    And I click "system-message"
+    And I click "system-message-link"
+    Then I am taken to the system message page
 
+    # set message to display on front end
     When I type "Your pizza is burning" into "message"
     And I click "set-message"
-    And I see "System message set"
+    And I see "System message set" in the page text
 
-    Then I visit the login page
-    And I see "Your pizza is burning"
-
-    Then I visit the admin system-message page
-    And I see "Your pizza is burning"
-    And I clear the value in "message"
+    # remove message to display on front end
+    Then I clear the value in "message"
     And I click "set-message"
-    And I see "System message removed"
-    And I can not see "Your pizza is burning"
+    And I see "System message removed" in the page text
 
   @focus
-  Scenario: Find a user with Find Users
+  Scenario: View feedback sent to the service
     Given I visit the admin sign-in page
     And I log in to admin
-    And I click "find"
+    And I click "feedback-link"
+    Then I am taken to the feedback page
 
-    When I type "seeded_test_user@digital.justice.gov.uk" into "query"
-    And I click "find"
-    And I see "Matching users"
-    And I see "Name: seeded_test_user@digital.justice.gov.uk"
+    Then I fill out "#id-day-start-date" element with "11"
+    And I fill out "#id-month-start-date" element with "05"
+    And I fill out "#id-year-start-date" element with "2021"
 
-  Scenario: Find a user with
+    Then I fill out "#id-day-end-date" element with "12"
+    And I fill out "#id-month-end-date" element with "05"
+    And I fill out "#id-year-end-date" element with "2021"
+
+    Then I click "submit-button"
+    And I see in the page text
+        | Details                 |
+        | test-no-email-no-number |
+        | test-no-num             |
+        | test                    |

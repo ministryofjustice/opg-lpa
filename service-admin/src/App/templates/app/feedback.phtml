@@ -83,10 +83,11 @@ $this->addErrorMap([
                             'formLabel'     => 'End date',
                             'formElement'   => $form->get('end-date'),
                             'formLabelBold' => true,
+                            'attrs' => ['data-cy' => 'end-date']
                         ]) ?>
 
                         <div class="form-group">
-                            <input class="button" type="submit" value="Search" />
+                            <input data-cy="submit-button" class="button" type="submit" value="Search" />
                         </div>
 
                     </div>

@@ -13,6 +13,14 @@ Then("I am taken to the find users page", () => {
     cy.url().should('eq', Cypress.env('adminUrl') + '/user-find');
 });
 
+Then("I am taken to the system message page", () => {
+    cy.url().should('eq', Cypress.env('adminUrl') + '/system-message');
+});
+
+Then("I am taken to the feedback page", () => {
+    cy.url().should('eq', Cypress.env('adminUrl') + '/feedback');
+});
+
 Then("the first activation date is {string}", (dateString) => {
     const dates = findActivationDates();
     const firstDate = dates.get(0);
