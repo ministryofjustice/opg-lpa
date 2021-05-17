@@ -94,7 +94,7 @@ class StatusControllerTest extends AbstractControllerTest
 
     /**
      * Test that the return date shown on the status page for a single LPA
-     * is set by one of the dates returned by Sirius (registrationDate,
+     * is set by one of the dates returned by Sirius (dispatchDate,
      * withdrawnDate, invalidDate or rejectedDate)
      *
      * @param $metadataField Field which should be set in the metadata
@@ -160,7 +160,7 @@ class StatusControllerTest extends AbstractControllerTest
             ['application-rejected-date', '2020-03-01'],
             ['application-withdrawn-date', '2020-04-01'],
             ['application-invalid-date', '2020-05-01'],
-            ['application-registration-date', '2020-06-01'],
+            ['application-dispatch-date', '2020-06-01'],
         ];
     }
 }
