@@ -5,22 +5,6 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                required:
-                  - cancellationDate
-                  - invalidDate
-                  - onlineLpaId
-                  - receiptDate
-                  - registrationDate
-                  - rejectedDate
-                  - status
-                  - withdrawnDate
-                properties:
-                  dispatchDate:
-                    type: string
-                    format: date
-                    description: The date the LPA response was dispatched
-                    example: '2018-06-30'
               examples:
                 received:
                   value:
