@@ -35,12 +35,12 @@ Feature: Admin
 
     # set message to display on front end
     When I type "Your pizza is burning" into "message"
-    And I click "set-message"
+    And I click "submit-button"
     And I see "System message set" in the page text
 
     # remove message to display on front end
     Then I clear the value in "message"
-    And I click "set-message"
+    And I click "submit-button"
     And I see "System message removed" in the page text
 
   @focus
@@ -50,6 +50,7 @@ Feature: Admin
     And I click "feedback-link"
     Then I am taken to the feedback page
 
+    # date fields for feedback range
     Then I fill out "#id-day-start-date" element with "11"
     And I fill out "#id-month-start-date" element with "05"
     And I fill out "#id-year-start-date" element with "2021"
@@ -58,6 +59,7 @@ Feature: Admin
     And I fill out "#id-month-end-date" element with "05"
     And I fill out "#id-year-end-date" element with "2021"
 
+    # we have expected feedback displayed
     Then I click "submit-button"
     And I see in the page text
         | Details                 |
