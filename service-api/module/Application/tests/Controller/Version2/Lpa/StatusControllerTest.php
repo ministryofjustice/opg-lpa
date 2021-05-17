@@ -76,7 +76,8 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-registration-date' => null,
                         'application-rejected-date' => new DateTime('2019-02-11'),
                         'application-invalid-date' => null,
-                        'application-withdrawn-date' => null
+                        'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -121,6 +122,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -197,6 +199,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -247,6 +250,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-rejected-date' => new DateTime('2019-02-11'),
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -297,6 +301,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -458,6 +463,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -547,6 +553,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-rejected-date' => new DateTime('2019-02-11'),
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
                     ]
                 ], '98765', '12345'])->once();
 
@@ -560,6 +567,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
                     ]
                 ], '98766', '12345'])->once();
 
