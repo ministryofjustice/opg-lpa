@@ -19,19 +19,19 @@
         <ol class="progress-bar">
             <li class="progress-bar__steps {{ status == 'waiting' ? 'current-waiting' : '' }}">
                 <span class="{{ 'waiting' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
-                <span class="progress-bar__steps--text">Waiting</span>
+                <span data-cy="lpa-progress-waiting" class="progress-bar__steps--text">Waiting</span>
             </li>
             <li class="progress-bar__steps {{ status == 'received' ? 'current-received' : '' }}">
                 <span class="{{ 'received' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
-                <span class="progress-bar__steps--text">Received</span>
+                <span data-cy="lpa-progress-received" class="progress-bar__steps--text">Received</span>
             </li>
             <li class="progress-bar__steps {{ status == 'checking' ? 'current-checking' : '' }}">
                 <span class="{{ 'checking' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
-                <span class="progress-bar__steps--text">Checking</span>
+                <span data-cy="lpa-progress-checking" class="progress-bar__steps--text">Checking</span>
             </li>
             <li class="progress-bar__steps {{ status == 'returned' ? 'current-returned' : '' }}">
                 <span class="{{ 'returned' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
-                <span class="progress-bar__steps--text">Returned</span>
+                <span data-cy="lpa-progress-returned" class="progress-bar__steps--text">Returned</span>
             </li>
         </ol>
 
@@ -91,7 +91,7 @@
 
                 <p>The donor and all attorneys on the LPA will get a letter telling them the outcome.</p>
 
-                <p>If the LPA or the letters have not arrived by {{ shouldReceiveByDate|date('d/m/y') }}, please call 0300 456 0300.</p>
+                <p>If the LPA or the letters have not arrived by <span data-cy="lpa-should-receive-by-date">{{ shouldReceiveByDate|date('d/m/y') }}</span>, please call 0300 456 0300.</p>
 
                 <p>Opening times: Monday, Tuesday, Thursday, Friday 9.30am to 5pm. Wednesday 10am to 5pm.</p>
             </div>
