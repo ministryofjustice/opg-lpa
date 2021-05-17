@@ -43,6 +43,9 @@ Feature: Fee Reduction for a Property and Finance LPA
         Then I am taken to the checkout page
         And I see "Application fee: £20.50 as the donor has an income of less than £12,000" in the page text
         When I click occurrence 16 of "cya-change"
+        # undo apply fee reduction, when this should lead to a fee of £41 which we will see in stitched scenario
         When I check "notApply"
+        # because cypress can be too quick off the mark, ensure that checking NotApply has actually happened , before proceeding to hit save
+        Then "notApply" is checked
         And I click "save"
         Then I am taken to the checkout page
