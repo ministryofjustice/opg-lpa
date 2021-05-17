@@ -7,7 +7,7 @@ Given(`I visit {string}`, (url) => {
 
 Then(`I visit the login page`, () => {
     // we do not require extra checks on login page
-    cy.visit(Cypress.env('baseUrl') + '/login');
+    cy.visit('/login');
 })
 
 Then(`I visit the type page`, () => {
