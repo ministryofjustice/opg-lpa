@@ -14,11 +14,6 @@ Feature: Checkout for a Property and Finance LPA
         Then I am taken to the checkout page
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        And I see "Application fee: £20.50 as the donor has an income of less than £12,000" in the page text
-        When I click occurrence 16 of "cya-change"
-        When I check "notApply"
-        And I click "save"
-        Then I am taken to the checkout page
         And I see the following summary information
             | Type | Property and finance | |
             | Donor | | |
