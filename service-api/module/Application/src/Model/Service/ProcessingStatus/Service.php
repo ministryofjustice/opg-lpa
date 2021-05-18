@@ -18,15 +18,15 @@ use GuzzleHttp\Client as HttpClient;
 class Service extends AbstractService
 {
     private const SIRIUS_STATUS_TO_LPA = [
-            'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
-            'Perfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
-            'Imperfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
-            'Invalid' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-            'Rejected' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-            'Withdrawn' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-            'Registered' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-            'Cancelled' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-            'Revoked' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED
+        'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
+        'Perfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
+        'Imperfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
+        'Invalid' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+        'Rejected' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+        'Withdrawn' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+        'Registered' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+        'Cancelled' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+        'Revoked' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED
     ];
 
     /**
@@ -195,19 +195,27 @@ class Service extends AbstractService
             $return['dispatchDate'] = $responseBody['dispatchDate'];
         }
         if (isset($responseBody['status'])) {
-            $return['status'] = self::SIRIUS_STATUS_TO_LPA[$responseBody['status']];
+            $status = self::SIRIUS_STATUS_TO_LPA[$responseBody['status']];
 
             // We change the status manually to "checking" if the LPA
             // is registered but has no dispatch date set yet; the logic
-            // in our front end assumes a "returned" LPA will have a dispatch,
+            // in our front end assumes a "processed" LPA will have a dispatch,
             // rejected, invalid or withdrawn date (registration date is now
             // ignored), so we shouldn't treat a registered LPA without one
-            // of these dates as "returned"
+            // of these dates as "processed"
             if (!isset($responseBody['dispatchDate']) && $responseBody['status'] === 'Registered') {
-                $return['status'] = Lpa::SIRIUS_PROCESSING_STATUS_CHECKING;
+                $status = Lpa::SIRIUS_PROCESSING_STATUS_CHECKING;
             }
-        }
-        return $return;
 
+            // We manually change status to "Processed" if it is "Returned",
+            // as service-front wants "Processed" rather than "Returned" (LPAL-92)
+            if ($status === Lpa::SIRIUS_PROCESSING_STATUS_RETURNED) {
+                $status = 'Processed';
+            }
+
+            $return['status'] = $status;
+        }
+
+        return $return;
     }
 }

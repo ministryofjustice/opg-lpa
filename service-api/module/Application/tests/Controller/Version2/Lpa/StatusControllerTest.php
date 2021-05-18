@@ -64,14 +64,14 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Returned' , 'rejectedDate' => new DateTime('2019-02-11')]
+                '98765' => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11')]
             ]);
 
         $this->service->shouldReceive('patch')
             ->withArgs([
                 [
                     'metadata' => [
-                        'sirius-processing-status' => 'Returned',
+                        'sirius-processing-status' => 'Processed',
                         'application-receipt-date' => null,
                         'application-registration-date' => null,
                         'application-rejected-date' => new DateTime('2019-02-11'),
@@ -88,7 +88,7 @@ class StatusControllerTest extends AbstractControllerTest
             [
                 98765 => [
                     'found' => true,
-                    'status' => 'Returned',
+                    'status' => 'Processed',
                 ]
             ]
         ), $result);
@@ -216,7 +216,7 @@ class StatusControllerTest extends AbstractControllerTest
         ), $result);
     }
 
-    public function testGetWithUpdatesOnRejectDateForReturnedCase()
+    public function testGetWithUpdatesOnRejectDateForProcessedCase()
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
@@ -237,14 +237,14 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Returned' , 'rejectedDate' => new DateTime('2019-02-11')]
+                '98765' => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11')]
             ]);
 
         $this->service->shouldReceive('patch')
             ->withArgs([
                 [
                     'metadata' => [
-                        'sirius-processing-status' => 'Returned',
+                        'sirius-processing-status' => 'Processed',
                         'application-registration-date' => null,
                         'application-receipt-date' => null,
                         'application-rejected-date' => new DateTime('2019-02-11'),
@@ -261,19 +261,19 @@ class StatusControllerTest extends AbstractControllerTest
             [
                 98765 => [
                     'found' => true,
-                    'status' => 'Returned',
+                    'status' => 'Processed',
                 ]
             ]
         ), $result);
     }
 
-    public function testGetWithUpdatesForReturnedCase()
+    public function testGetWithUpdatesForProcessedCase()
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
             'metadata' => [
-                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
                 Lpa::APPLICATION_REJECTED_DATE => null,
                 Lpa::APPLICATION_REGISTRATION_DATE => null
             ]]);
@@ -430,13 +430,13 @@ class StatusControllerTest extends AbstractControllerTest
             ]]), $result);
     }
 
-    public function testGetLpaAlreadyReturnedWithRegistrationDateSet()
+    public function testGetLpaAlreadyProcessedWithRegistrationDateSet()
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
             'metadata' => [
-                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
                 Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')
             ]]);
 
@@ -477,13 +477,13 @@ class StatusControllerTest extends AbstractControllerTest
             ]]), $result);
     }
 
-    public function testGetLpaAlreadyReturnedWithRejectedDateSet()
+    public function testGetLpaAlreadyProcessedWithRejectedDateSet()
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
             'metadata' => [
-                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
                 Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')
             ]]);
 
@@ -497,7 +497,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Returned','rejectedDate' => new DateTime('2019-02-10')]
+                '98765' => ['status' => 'Processed','rejectedDate' => new DateTime('2019-02-10')]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -505,7 +505,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json([
             '98765' => [
                 'found' => true,
-                'status' => 'Returned',
+                'status' => 'Processed',
             ]]), $result);
     }
 
@@ -539,7 +539,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Returned', 'rejectedDate' => new DateTime('2019-02-11')],
+                '98765' => ['status' => 'Processed', 'rejectedDate' => new DateTime('2019-02-11')],
                 '98766' => ['status' => 'Received', 'receiptDate' => new DateTime('2019-02-11')]
             ]);
 
@@ -547,7 +547,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->withArgs([
                 [
                     'metadata' => [
-                        'sirius-processing-status' => 'Returned',
+                        'sirius-processing-status' => 'Processed',
                         'application-registration-date' => null,
                         'application-receipt-date' => null,
                         'application-rejected-date' => new DateTime('2019-02-11'),
@@ -576,7 +576,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json([
             98765 => [
                 'found' => true,
-                'status' => 'Returned',
+                'status' => 'Processed',
             ],
             98766 => [
                 'found' => true,
@@ -591,7 +591,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
             'metadata' => [
-                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
                 Lpa::APPLICATION_INVALID_DATE => new DateTime('2019-02-10')
             ]]);
 
@@ -605,7 +605,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Returned','invalidDate' => new DateTime('2019-02-10')]
+                '98765' => ['status' => 'Processed','invalidDate' => new DateTime('2019-02-10')]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -613,7 +613,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json([
             '98765' => [
                 'found' => true,
-                'status' => 'Returned',
+                'status' => 'Processed',
             ]]), $result);
     }
 
@@ -623,7 +623,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
             'metadata' => [
-                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
                 Lpa::APPLICATION_WITHDRAWN_DATE => new DateTime('2019-02-12')
             ]]);
 
@@ -637,7 +637,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Returned','withdrawnDate' => new DateTime('2019-02-12')]
+                '98765' => ['status' => 'Processed','withdrawnDate' => new DateTime('2019-02-12')]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -645,7 +645,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json([
             '98765' => [
                 'found' => true,
-                'status' => 'Returned',
+                'status' => 'Processed',
             ]]), $result);
     }
 

@@ -144,7 +144,7 @@ class ServiceTest extends MockeryTestCase
      * @throws ApiProblemException
      * @throws Exception
      */
-    public function testGetReturnedStatusForRejected()
+    public function testGetProcessedStatusForRejected()
     {
         $this->setUpSigning();
         $returnStatus = 200;
@@ -152,10 +152,10 @@ class ServiceTest extends MockeryTestCase
         $this->setUpRequest($returnStatus, $returnBody);
         $statusResult = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => ['status' => 'Returned', 'rejectedDate' => '2019-02-11']], $statusResult);
+        $this->assertEquals([1000000000 => ['status' => 'Processed', 'rejectedDate' => '2019-02-11']], $statusResult);
     }
 
-    public function testGetReturnedStatusForWithdrawn()
+    public function testGetProcessedStatusForWithdrawn()
     {
         $this->setUpSigning();
         $returnStatus = 200;
@@ -163,10 +163,10 @@ class ServiceTest extends MockeryTestCase
         $this->setUpRequest($returnStatus, $returnBody);
         $statusResult = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => ['status' => 'Returned', 'withdrawnDate' => '2021-03-08']], $statusResult);
+        $this->assertEquals([1000000000 => ['status' => 'Processed', 'withdrawnDate' => '2021-03-08']], $statusResult);
     }
 
-    public function testGetReturnedStatusForInvalid()
+    public function testGetProcessedStatusForInvalid()
     {
         $this->setUpSigning();
         $returnStatus = 200;
@@ -174,6 +174,6 @@ class ServiceTest extends MockeryTestCase
         $this->setUpRequest($returnStatus, $returnBody);
         $statusResult = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => ['status' => 'Returned', 'invalidDate' => '2021-02-08']], $statusResult);
+        $this->assertEquals([1000000000 => ['status' => 'Processed', 'invalidDate' => '2021-02-08']], $statusResult);
     }
 }
