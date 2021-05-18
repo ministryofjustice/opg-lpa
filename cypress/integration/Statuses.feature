@@ -29,16 +29,16 @@ Feature: Status display for LPAs
         And the LPA with ID "68582508781" should display with status "Checking"
 
         # receipt date and rejected date
-        And the LPA with ID "88668805824" should display with status "Returned"
+        And the LPA with ID "88668805824" should display with status "Processed"
 
         # receipt, registration and dispatch dates
-        And the LPA with ID "32004638272" should display with status "Returned"
+        And the LPA with ID "32004638272" should display with status "Processed"
 
         # receipt and invalid dates
-        And the LPA with ID "93348314693" should display with status "Returned"
+        And the LPA with ID "93348314693" should display with status "Processed"
 
         # receipt and withdrawn dates
-        And the LPA with ID "43476377885" should display with status "Returned"
+        And the LPA with ID "43476377885" should display with status "Processed"
 
     @focus
     Scenario: An LPA which has not been received yet displays as "Waiting" on its status page (LPAL-92)
@@ -77,49 +77,49 @@ Feature: Status display for LPAs
         And the LPA status is shown as "Checking"
 
     @focus
-    Scenario: A registered and dispatched LPA displays as "Returned" with dispatch date + 15 days on its status page (LPAL-92)
+    Scenario: A registered and dispatched LPA displays as "Processed" with dispatch date + 15 days on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
         And I click on the view message link for LPA with ID "32004638272"
         Then I am taken to the detail page for LPA with ID "32004638272"
         And I see "A320 0463 8272" in the page text
-        And the LPA status is shown as "Returned"
+        And the LPA status is shown as "Processed"
 
         # dispatch date is 03/05/21
         And the date by which the LPA should be received is shown as "18/05/21"
 
     @focus
-    Scenario: A rejected LPA displays as "Returned" with rejection date + 15 days on its status page (LPAL-92)
+    Scenario: A rejected LPA displays as "Processed" with rejection date + 15 days on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
         And I click on the view message link for LPA with ID "88668805824"
         Then I am taken to the detail page for LPA with ID "88668805824"
         And I see "A886 6880 5824" in the page text
-        And the LPA status is shown as "Returned"
+        And the LPA status is shown as "Processed"
 
         # rejection date is 14/02/2021
         And the date by which the LPA should be received is shown as "01/03/21"
 
     @focus
-    Scenario: A withdrawn LPA displays as "Returned" with withdrawn date + 15 days on its status page (LPAL-92)
+    Scenario: A withdrawn LPA displays as "Processed" with withdrawn date + 15 days on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
         And I click on the view message link for LPA with ID "43476377885"
         Then I am taken to the detail page for LPA with ID "43476377885"
         And I see "A434 7637 7885" in the page text
-        And the LPA status is shown as "Returned"
+        And the LPA status is shown as "Processed"
 
         # withdrawn date is 06/05/2020
         And the date by which the LPA should be received is shown as "21/05/20"
 
     @focus
-    Scenario: An invalid LPA displays as "Returned" with invalid date + 15 days on its status page (LPAL-92)
+    Scenario: An invalid LPA displays as "Processed" with invalid date + 15 days on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
         And I click on the view message link for LPA with ID "93348314693"
         Then I am taken to the detail page for LPA with ID "93348314693"
         And I see "A933 4831 4693" in the page text
-        And the LPA status is shown as "Returned"
+        And the LPA status is shown as "Processed"
 
         # invalid date is 05/01/2021
         And the date by which the LPA should be received is shown as "20/01/21"

@@ -201,10 +201,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
                     $metadata = $lpa->getMetadata();
 
-                    // If the application is returned, find the registration,
+                    // If the application is processed, find the registration,
                     // withdrawn, invalid and rejected dates; whichever is
-                    // set will be used for the eventual "returned" date in the UI
-                    $returnDate = null;
+                    // set will be used for the eventual "processed" date in the UI
+                    $rejectedDate = null;
 
                     // If we already have a processing status use that instead of "Waiting" status
                     if ($metadata !== null && array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata)) {
@@ -215,8 +215,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
                             $progress = $metadata[Lpa::SIRIUS_PROCESSING_STATUS];
                         }
 
-                        if ($processingStatus === 'Returned' && isset($metadata[Lpa::APPLICATION_REJECTED_DATE])) {
-                            $returnDate = $metadata[Lpa::APPLICATION_REJECTED_DATE];
+                        if ($processingStatus === 'Processed' && isset($metadata[Lpa::APPLICATION_REJECTED_DATE])) {
+                            $rejectedDate = $metadata[Lpa::APPLICATION_REJECTED_DATE];
                         }
                     }
 
@@ -237,7 +237,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 'type' => $lpaType,
                 'updatedAt' => $lpa->getUpdatedAt(),
                 'progress' => $progress,
-                'rejectedDate' => $returnDate,
+                'rejectedDate' => $rejectedDate,
                 'refreshId' => $refreshTracking ? $lpa->getId() : null
             ]);
         }

@@ -36,7 +36,7 @@ class StatusController extends AbstractLpaController
         }
 
         //  Keep these statues in workflow order
-        $statuses = ['completed', 'waiting', 'received', 'checking', 'returned'];
+        $statuses = ['completed', 'waiting', 'received', 'checking', 'processed'];
         if (!in_array($lpaStatus, $statuses)) {
             return $this->redirect()->toRoute('user/dashboard');
         }
@@ -49,36 +49,36 @@ class StatusController extends AbstractLpaController
         // populated from Sirius.
         $metadata = $lpa->getMetadata();
 
-        $returnDate = null;
+        $processedDate = null;
         if (isset($metadata['application-rejected-date']))
-            $returnDate = $metadata['application-rejected-date'];
+            $processedDate = $metadata['application-rejected-date'];
         else if (isset($metadata['application-withdrawn-date']))
-            $returnDate = $metadata['application-withdrawn-date'];
+            $processedDate = $metadata['application-withdrawn-date'];
         else if (isset($metadata['application-invalid-date']))
-            $returnDate = $metadata['application-invalid-date'];
+            $processedDate = $metadata['application-invalid-date'];
         else if (isset($metadata['application-dispatch-date']))
-            $returnDate = $metadata['application-dispatch-date'];
+            $processedDate = $metadata['application-dispatch-date'];
 
         // The "should receive by" date is set to a number of days after the
-        // $returnDate, defined in config
+        // $processedDate, defined in config
         $shouldReceiveByDate = null;
-        if (!is_null($returnDate) && isset($this->config()['processing-status']['expected-days-before-receipt'])) {
+        if (!is_null($processedDate) && isset($this->config()['processing-status']['expected-days-before-receipt'])) {
             $days = intval($this->config()['processing-status']['expected-days-before-receipt']);
             $interval = new DateInterval("P${days}D");
             try {
-                $shouldReceiveByDate = (new DateTime($returnDate))->add($interval);
+                $shouldReceiveByDate = (new DateTime($processedDate))->add($interval);
             } catch (Exception $e) {
                 $this->getLogger()->err('Error calculating expected receipt date: ' . $e->getMessage());
             }
         }
 
         return new ViewModel([
-            'returnDate'   => $returnDate,
-            'lpa'          => $lpa,
+            'processedDate'       => $processedDate,
+            'lpa'                 => $lpa,
             'shouldReceiveByDate' => $shouldReceiveByDate,
-            'status'       => $lpaStatus,
-            'doneStatuses' => $doneStatuses,
-            'canGenerateLPA120' => $lpa->canGenerateLPA120(),
+            'status'              => $lpaStatus,
+            'doneStatuses'        => $doneStatuses,
+            'canGenerateLPA120'   => $lpa->canGenerateLPA120(),
         ]);
     }
 }

@@ -70,7 +70,7 @@ class StatusControllerTest extends AbstractControllerTest
             ['waiting'],
             ['received'],
             ['checking'],
-            ['returned'],
+            ['processed'],
             ['completed']
         ];
     }
@@ -98,13 +98,13 @@ class StatusControllerTest extends AbstractControllerTest
      * withdrawnDate, invalidDate or rejectedDate)
      *
      * @param $metadataField Field which should be set in the metadata
-     * for the LPA, subsequently used to set the returnDate in the
+     * for the LPA, subsequently used to set the processedDate in the
      * view (what we want to test).
      * @param $expectedDateTime string expected
      *
      * @dataProvider metadataFieldNamesProvider
      */
-    public function testIndexActionReturnedDateGeneration($metadataField, $expectedDateTime)
+    public function testIndexActionProcessedDateGeneration($metadataField, $expectedDateTime)
     {
         $testLpa = clone($this->lpa);
         $testLpaId = $testLpa->id;
@@ -122,11 +122,11 @@ class StatusControllerTest extends AbstractControllerTest
              ->withArgs([$testLpaId])
              ->andReturn($testLpa);
 
-        // Return "Returned" as the status for the LPA
+        // Return "Processed" as the status for the LPA
         $this->lpaApplicationService
              ->shouldReceive('getStatuses')
              ->withArgs([$testLpaId])
-             ->andReturn(['found' => true, 'status' => 'Returned']);
+             ->andReturn(['found' => true, 'status' => 'Processed']);
 
         $userDetailsSession = new Container();
         $userDetailsSession->user = $this->user;
@@ -150,8 +150,8 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
 
         // Test what's in the view: has the right date been selected
-        // as the return date?
-        $this->assertEquals($metadataFields[$metadataField], $result->returnDate);
+        // as the processed date?
+        $this->assertEquals($metadataFields[$metadataField], $result->processedDate);
     }
 
     public function metadataFieldNamesProvider()
