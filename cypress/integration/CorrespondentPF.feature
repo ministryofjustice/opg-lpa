@@ -20,8 +20,7 @@ Feature: Add a correspondent to a Property and Finance LPA
         And I can find "contactByPhone"
         And I can find hidden "phone-number"
         And I can find hidden "email-address"
-        And I can find "change-correspondent"
-        And I wait for 10 seconds
+        And I can find "change-correspondent" with data-inited
         When I click "change-correspondent"
         Then I can see popup
         And I see "Which details would you like to reuse?" in the page text
