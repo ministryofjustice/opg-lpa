@@ -20,6 +20,8 @@ Feature: Add a correspondent to a Health and Welfare LPA
         And I can find "contactByPost"
         And I can find hidden "phone-number"
         And I can find hidden "email-address"
+        And I can find "change-correspondent"
+        And I wait for 10 seconds
         When I click "change-correspondent"
         Then I can see popup
         And I see "Which details would you like to reuse?" in the page text
