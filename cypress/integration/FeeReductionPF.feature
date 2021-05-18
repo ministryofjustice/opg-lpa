@@ -39,13 +39,13 @@ Feature: Fee Reduction for a Property and Finance LPA
         And I should not see "Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis." in the page text
         And I should not see "To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits." in the page text
 
+        When I check "notApply"
         When I click "save"
         Then I am taken to the checkout page
-        And I see "Application fee: £20.50 as the donor has an income of less than £12,000" in the page text
+        And I see "Application fee: £41 as you are not claiming a reduction" in the page text
+
         When I click occurrence 16 of "cya-change"
-        # undo apply fee reduction, when this should lead to a fee of £41 which we will see in stitched scenario
-        When I check "notApply"
-        # because cypress can be too quick off the mark, ensure that checking NotApply has actually happened , before proceeding to hit save
-        Then "notApply" is checked
+        When I check "reducedFeeLowIncome"
         And I click "save"
         Then I am taken to the checkout page
+        And I see "Application fee: £20.50 as the donor has an income of less than £12,000" in the page text

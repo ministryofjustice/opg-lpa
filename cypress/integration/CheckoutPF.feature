@@ -52,7 +52,7 @@ Feature: Checkout for a Property and Finance LPA
             | Person to notify | | |
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
-        And I see "Application fee: £41 as you are not claiming a reduction" in the page text
+        And I see "Application fee: £20.50 as the donor has an income of less than £12,000" in the page text
         And I can find "confirm-and-pay-by-card"
         And I can find "confirm-and-pay-by-cheque"
 
@@ -60,7 +60,8 @@ Feature: Checkout for a Property and Finance LPA
         Then I am taken to the complete page
         And I can find link pointing to "/lp1"
         And I can find link pointing to "/lp3"
-        #And I can find link pointing to "/lpa120"
+        # note that /lpa120 link only appears when fee reduction is requested
+        And I can find link pointing to "/lpa120"
         # lines below will be uncommented once we fix issues with pdf generation unreliability
-        And I can get pdf from link containing "Download your print-ready LPA form"
-        And I can get pdf from link containing "Download the letter to send"
+        #And I can get pdf from link containing "Download your print-ready LPA form"
+        #And I can get pdf from link containing "Download the letter to send"
