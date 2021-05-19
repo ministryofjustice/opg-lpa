@@ -157,6 +157,36 @@ def addPersonToNotify(lpaId):
     personToNotify = {"id":None,"name":{"title":"Sir","first":"Anthony","last":"Webb"},"address":{"address1":"Brickhill Cottage","address2":"Birch Cross","address3":"Marchington, Uttoxeter, Staffordshire","postcode":"BS18 6PL"}}
     postToAPI(lpaId, personToNotify, 'notified-people')
 
+def addCorrespondent(lpaId):
+    correspondent = {"who":"donor","name":{"title":"Mrs","first":"Nancy","last":"Garrison"},"company":None,"address":{"address1":"Bank End Farm House","address2":"Undercliff Drive","address3":"Ventnor, Isle of Wight","postcode":"PO38 1UL"},"email":{"address":"opglpademo+NancyGarrison@gmail.com"},"phone":None,"contactByPost":False,"contactInWelsh":False,"contactDetailsEnteredManually":None}
+    putToAPI(lpaId, correspondent, 'correspondent')
+
+def addWhoAreYou(lpaId):
+    whoAreYou = {"who":"donor","qualifier":None}
+    putToAPI(lpaId, whoAreYou, 'who-are-you')
+
+def setRepeatApplication(lpaId):
+    metadata = {"metadata":{"replacement-attorneys-confirmed":True,"repeat-application-confirmed":True}}
+    patchViaAPI(lpaId, metadata)
+
+def setRepeatCaseNumber(lpaId):
+    repeatCaseNumber = {"repeatCaseNumber":"12345678"}
+    putToAPI(lpaId, repeatCaseNumber, 'repeat-case-number')
+
+def setPayment(lpaId, amount = 82, method = None, reducedFeeReceivesBenefits = None, reducedFeeLowIncome = None, reducedFeeUniversalCredit = None):
+    # default is normal fee, without cheque, used by HW test
+    payment = {"method":method,"email":None,"amount":amount,"reference":None,"gatewayReference":None,"date":None,"reducedFeeReceivesBenefits":reducedFeeReceivesBenefits,"reducedFeeAwardedDamages":None,"reducedFeeLowIncome":reducedFeeLowIncome,"reducedFeeUniversalCredit":reducedFeeUniversalCredit}
+    putToAPI(lpaId, payment, 'payment')
+
+def setPaymentNormalFeeWithCheque(lpaId):
+    setPayment(lpaId, method = "cheque")
+
+def setPaymentLowIncomeClaimingReduction(lpaId):
+    setPayment(lpaId, amount = 20.5, reducedFeeReceivesBenefits = False, reducedFeeLowIncome = True)
+
+def setPaymentLowIncomeNotClaimingReduction(lpaId):
+    setPayment(lpaId, amount = 41 )
+
 def setInstruction(lpaId, instruction = "Lorem Ipsum"):
     instructionJson = {"instruction":instruction}
     putToAPI(lpaId, instructionJson, 'instruction')

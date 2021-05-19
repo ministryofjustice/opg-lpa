@@ -90,7 +90,27 @@ Then(`I am taken to the who are you page`, () => {
     checkOnPageWithPath('who-are-you');
     checkAccordionHeaderContains('Who was using the LPA service?');
 });
+ 
+Then(`I am taken to the repeat application page`, () => {
+    checkOnPageWithPath('repeat-application');
+    checkAccordionHeaderContains('Is the donor making a repeat application to register their LPA?');
+});
+ 
+Then(`I am taken to the fee reduction page`, () => {
+    checkOnPageWithPath('fee-reduction');
+    checkAccordionHeaderContains('Does the donor want to apply to pay a reduced fee?');
+});
+ 
+Then(`I am taken to the checkout page`, () => {
+    checkOnPageWithPath('checkout');
+    cy.contains('Final check: LPA details');
+});
 
+Then(`I am taken to the complete page`, () => {
+    checkOnPageWithPath('complete');
+    cy.contains('Last steps');
+});
+ 
 Then(`I am taken to the donor page`, () => {
     // We arrive at the donor page when we've just created an lpa through the web, so we store the lpaId for future use at this point
     cy.url().should('contain','donor').then((donorPageUrl) => {

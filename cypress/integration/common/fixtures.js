@@ -78,37 +78,87 @@ Then(`I create HW LPA test fixture with donor, attorneys, replacement attorneys,
 })
 
 Then(`I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify`, () => {
-    cy.runPythonApiCommand("createLpa.py -d -a -r -c -pn").its('stdout').as('lpaId').then(lpaId => {
+    cy.runPythonApiCommand("createLpa.py -d -a -r -cp -pn").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify through the API with id " + lpaId);
     });
 })
  
 Then(`I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify`, () => {
-    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -c -pn").its('stdout').as('lpaId').then(lpaId => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -cp -pn").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify through the API with id " + lpaId);
     });
 })
 
 Then(`I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences`, () => {
-    cy.runPythonApiCommand("createLpa.py -d -a -r -c -pn -i").its('stdout').as('lpaId').then(lpaId => {
+    cy.runPythonApiCommand("createLpa.py -d -a -r -cp -pn -i").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences through the API with id " + lpaId);
+    });
+})
+
+Then(`I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences`, () => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -cp -pn -i").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences through the API with id " + lpaId);
     });
 })
  
 Then(`I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant`, () => {
-    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -c -pn -i -w").its('stdout').as('lpaId').then(lpaId => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -cp -pn -i -w").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant through the API with id " + lpaId);
     });
 })
 
 Then(`I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant`, () => {
-    cy.runPythonApiCommand("createLpa.py -d -a -r -c -pn -i -w").its('stdout').as('lpaId').then(lpaId => {
+    cy.runPythonApiCommand("createLpa.py -d -a -r -cp -pn -i -w").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant through the API with id " + lpaId);
     });
 })
  
-Then(`I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences`, () => {
-    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -c -pn -i").its('stdout').as('lpaId').then(lpaId => {
-        cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences through the API with id " + lpaId);
+Then(`I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent`, () => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -cp -pn -i -w -co").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent through the API with id " + lpaId);
     });
 })
+
+Then(`I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent`, () => {
+    cy.runPythonApiCommand("createLpa.py -d -a -r -cp -pn -i -w -co").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent through the API with id " + lpaId);
+    });
+})
+ 
+Then(`I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you`, () => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -cp -pn -i -w -co -y").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you through the API with id " + lpaId);
+    });
+})
+
+Then(`I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you`, () => {
+    cy.runPythonApiCommand("createLpa.py -d -a -r -cp -pn -i -w -co -y").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent,  who are you through the API with id " + lpaId);
+    });
+})
+ 
+Then(`I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application`, () => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -cp -pn -i -w -co -y -ra").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application through the API with id " + lpaId);
+    });
+})
+
+Then(`I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application`, () => {
+    cy.runPythonApiCommand("createLpa.py -d -a -r -cp -pn -i -w -co -y -ra").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application through the API with id " + lpaId);
+    });
+})
+
+Then(`I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction`, () => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -a -r -cp -pn -i -w -co -y -ra -pa").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction through the API with id " + lpaId);
+    });
+})
+
+Then(`I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction`, () => {
+    cy.runPythonApiCommand("createLpa.py -d -a -r -cp -pn -i -w -co -y -ra -pa").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction through the API with id " + lpaId);
+    });
+})
+ 
+ 

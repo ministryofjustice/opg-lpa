@@ -47,6 +47,7 @@ class CheckoutController extends AbstractLpaController
 
         $form->setAttribute('action', $this->url()->fromRoute('lpa/checkout/pay', ['lpa-id' => $lpa->id]))->setAttribute('class', 'js-single-use');
         $form->get('submit')->setAttribute('value', 'Confirm and pay by card');
+        $form->get('submit')->setAttribute('data-cy', 'confirm-and-pay-by-card');
 
         return new ViewModel([
             'form'           => $form,
