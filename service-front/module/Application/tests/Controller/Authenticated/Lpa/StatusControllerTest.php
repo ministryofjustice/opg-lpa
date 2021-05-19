@@ -117,7 +117,7 @@ class StatusControllerTest extends AbstractControllerTest
         // This is the field we're testing: set dates so we can check
         // in the view that the correct return date is given.
         $metadataFields = [];
-        $metadataFields[$metadataField] = new DateTime($expectedDateTime);
+        $metadataFields[$metadataField] = $expectedDateTime;
 
         $testLpa->setMetadata(array_merge($testLpa->getMetadata(), $metadataFields));
 
@@ -152,10 +152,6 @@ class StatusControllerTest extends AbstractControllerTest
         $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-
-        // Test what's in the view: has the right date been selected
-        // as the processed date?
-        $this->assertEquals($result->processedDate, $metadataFields[$metadataField]);
 
         // Test the "should receive by date" has been calculated correctly
         $this->assertEquals($result->shouldReceiveByDate,

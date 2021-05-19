@@ -49,7 +49,7 @@ class StatusController extends AbstractLpaController
         $metadata = $lpa->getMetadata();
 
         // Return the rejected, invalid, withdrawn or dispatch date
-        // (whichever is latest).
+        // (whichever is latest). NB dates are strings at this point.
         $candidates = [];
         if (isset($metadata['application-rejected-date']))
             $candidates[] = $metadata['application-rejected-date'];
@@ -72,7 +72,7 @@ class StatusController extends AbstractLpaController
         $shouldReceiveByDate = null;
         if (!is_null($processedDate) && isset($this->config()['processing-status']['expected-working-days-before-receipt'])) {
             $days = intval($this->config()['processing-status']['expected-working-days-before-receipt']);
-            $shouldReceiveByDate = $processedDate;
+            $shouldReceiveByDate = new DateTime($processedDate);
             $interval = new DateInterval('P1D');
 
             $i = 1;
@@ -89,7 +89,6 @@ class StatusController extends AbstractLpaController
         }
 
         return new ViewModel([
-            'processedDate'       => $processedDate,
             'lpa'                 => $lpa,
             'shouldReceiveByDate' => $shouldReceiveByDate,
             'status'              => $lpaStatus,
