@@ -51,7 +51,7 @@ When("I force fill out", (dataTable) => {
             });
 });
 
-Then("I fill out {string} element with {string}", (element, value) => {
+Then("I force fill out {string} element with {string}", (element, value) => {
    cy.get(element).clear({ force: true }).type(value, { force: true })
 });
 
