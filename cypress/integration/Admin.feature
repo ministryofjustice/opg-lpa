@@ -51,13 +51,13 @@ Feature: Admin
     Then I am taken to the feedback page
 
     # date fields for feedback range
-    Then I fill out "#id-day-start-date" element with "11"
-    And I fill out "#id-month-start-date" element with "05"
-    And I fill out "#id-year-start-date" element with "2021"
+    Then I force fill out "#id-day-start-date" element with "11"
+    And I force fill out "#id-month-start-date" element with "05"
+    And I force fill out "#id-year-start-date" element with "2021"
 
-    Then I fill out "#id-day-end-date" element with "12"
-    And I fill out "#id-month-end-date" element with "05"
-    And I fill out "#id-year-end-date" element with "2021"
+    Then I force fill out "#id-day-end-date" element with "12"
+    And I force fill out "#id-month-end-date" element with "05"
+    And I force fill out "#id-year-end-date" element with "2021"
 
     # we have expected feedback displayed
     Then I click "submit-button"
