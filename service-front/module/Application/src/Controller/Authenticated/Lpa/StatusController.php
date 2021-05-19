@@ -44,31 +44,47 @@ class StatusController extends AbstractLpaController
         //  Determine what statuses should trigger the current status to display as 'done'
         $doneStatuses = array_slice($statuses, 0, array_search($lpaStatus, $statuses));
 
-        // Return the rejected, invalid, withdrawn or registration date.
         // The metadata used here is stored in the db but is originally
         // populated from Sirius.
         $metadata = $lpa->getMetadata();
 
-        $processedDate = null;
+        // Return the rejected, invalid, withdrawn or dispatch date
+        // (whichever is latest).
+        $candidates = [];
         if (isset($metadata['application-rejected-date']))
-            $processedDate = $metadata['application-rejected-date'];
-        else if (isset($metadata['application-withdrawn-date']))
-            $processedDate = $metadata['application-withdrawn-date'];
-        else if (isset($metadata['application-invalid-date']))
-            $processedDate = $metadata['application-invalid-date'];
-        else if (isset($metadata['application-dispatch-date']))
-            $processedDate = $metadata['application-dispatch-date'];
+            $candidates[] = $metadata['application-rejected-date'];
+        if (isset($metadata['application-withdrawn-date']))
+            $candidates[] = $metadata['application-withdrawn-date'];
+        if (isset($metadata['application-invalid-date']))
+            $candidates[] = $metadata['application-invalid-date'];
+        if (isset($metadata['application-dispatch-date']))
+            $candidates[] = $metadata['application-dispatch-date'];
 
-        // The "should receive by" date is set to a number of days after the
+        $processedDate = null;
+
+        if (count($candidates) > 0) {
+            sort($candidates);
+            $processedDate = $candidates[array_key_last($candidates)];
+        }
+
+        // The "should receive by" date is set to a number of working days after the
         // $processedDate, defined in config
         $shouldReceiveByDate = null;
-        if (!is_null($processedDate) && isset($this->config()['processing-status']['expected-days-before-receipt'])) {
-            $days = intval($this->config()['processing-status']['expected-days-before-receipt']);
-            $interval = new DateInterval("P${days}D");
-            try {
-                $shouldReceiveByDate = (new DateTime($processedDate))->add($interval);
-            } catch (Exception $e) {
-                $this->getLogger()->err('Error calculating expected receipt date: ' . $e->getMessage());
+        if (!is_null($processedDate) && isset($this->config()['processing-status']['expected-working-days-before-receipt'])) {
+            $days = intval($this->config()['processing-status']['expected-working-days-before-receipt']);
+            $shouldReceiveByDate = $processedDate;
+            $interval = new DateInterval('P1D');
+
+            $i = 1;
+            while ($i <= $days) {
+                $shouldReceiveByDate->add($interval);
+
+                // count this day if the new $shouldReceiveByDate is a week day
+                // (0 = Sunday, 6 = Saturday)
+                $dayOfWeek = $shouldReceiveByDate->format('w');
+                if ($dayOfWeek !== '0' && $dayOfWeek !== '6') {
+                    $i++;
+                }
             }
         }
 
