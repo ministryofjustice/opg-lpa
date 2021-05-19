@@ -71,6 +71,15 @@ services:
       APP_PORT: 9000
       NGINX_LOG_LEVEL: warn
 
+  flask-app:
+    container_name: lpa-flask-app
+    image: lpa-flask-app
+    build:
+      context: ./
+      dockerfile: service-front/docker/flask-app/Dockerfile
+    ports:
+      - 8005:5000
+
   front-app:
     container_name: lpa-front-app
     image: lpa-front-app
