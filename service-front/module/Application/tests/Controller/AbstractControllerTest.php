@@ -261,7 +261,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
                 ],
             ],
             'processing-status' => [
-                'track-from-date' => '2017-01-01'
+                'track-from-date' => '2017-01-01',
+                'expected-working-days-before-receipt' => 15,
             ]
         ];
 

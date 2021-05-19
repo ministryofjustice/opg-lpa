@@ -93,22 +93,26 @@ class StatusControllerTest extends AbstractControllerTest
     }
 
     /**
-     * Test that the return date shown on the status page for a single LPA
-     * is set by one of the dates returned by Sirius (dispatchDate,
-     * withdrawnDate, invalidDate or rejectedDate)
+     * Test that the processed date shown on the status page for a single LPA
+     * is set by one of the dates returned by Sirius (latest of dispatchDate,
+     * withdrawnDate, invalidDate or rejectedDate).
      *
      * @param $metadataField Field which should be set in the metadata
      * for the LPA, subsequently used to set the processedDate in the
      * view (what we want to test).
-     * @param $expectedDateTime string expected
+     * @param string $expectedDateTime Datetime we expect to be set as
+     * the processedDate
+     * @param string $expectedShouldReceiveByDateTime Expected
+     * datetime for the shouldReceiveByDate
      *
      * @dataProvider metadataFieldNamesProvider
      */
-    public function testIndexActionProcessedDateGeneration($metadataField, $expectedDateTime)
+    public function testIndexActionProcessedDateGeneration($metadataField,
+    $expectedDateTime, $expectedShouldReceiveByDateTime)
     {
         $testLpa = clone($this->lpa);
         $testLpaId = $testLpa->id;
-        $testLpa->setCompletedAt(new DateTime('2021-03-10'));
+        $testLpa->setCompletedAt(new DateTime('2020-03-10'));
 
         // This is the field we're testing: set dates so we can check
         // in the view that the correct return date is given.
@@ -151,16 +155,21 @@ class StatusControllerTest extends AbstractControllerTest
 
         // Test what's in the view: has the right date been selected
         // as the processed date?
-        $this->assertEquals($metadataFields[$metadataField], $result->processedDate);
+        $this->assertEquals($result->processedDate, $metadataFields[$metadataField]);
+
+        // Test the "should receive by date" has been calculated correctly
+        $this->assertEquals($result->shouldReceiveByDate,
+            new DateTime($expectedShouldReceiveByDateTime));
     }
 
     public function metadataFieldNamesProvider()
     {
+        // format is [date, processedDate, shouldReceiveByDate]
         return [
-            ['application-rejected-date', '2020-03-01'],
-            ['application-withdrawn-date', '2020-04-01'],
-            ['application-invalid-date', '2020-05-01'],
-            ['application-dispatch-date', '2020-06-01'],
+            ['application-rejected-date', '2020-03-01', '2020-03-20'],
+            ['application-withdrawn-date', '2020-04-01', '2020-04-22'],
+            ['application-invalid-date', '2020-05-01', '2020-05-22'],
+            ['application-dispatch-date', '2020-06-01', '2020-06-22'],
         ];
     }
 }
