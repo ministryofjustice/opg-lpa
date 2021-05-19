@@ -25,6 +25,14 @@ Then(`If I am on dashboard I visit the type page`, () => {
     });
 })
 
+Then(`I visit the admin sign-in page`, () => {
+    cy.visitWithChecks(Cypress.env('adminUrl') + '/sign-in');
+})
+
+Then (`I visit the admin system-message page`, () => {
+    cy.visit(Cypress.env('adminUrl') + '/system-message');
+})
+
 Then(`I visit the donor page for the test fixture lpa`, () => {
     visitPageForTestFixture('donor');
 })
