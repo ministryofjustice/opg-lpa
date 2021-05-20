@@ -97,29 +97,22 @@ class StatusControllerTest extends AbstractControllerTest
      * is set by one of the dates returned by Sirius (latest of dispatchDate,
      * withdrawnDate, invalidDate or rejectedDate).
      *
-     * @param $metadataField Field which should be set in the metadata
-     * for the LPA, subsequently used to set the processedDate in the
-     * view (what we want to test).
-     * @param string $expectedDateTime Datetime we expect to be set as
-     * the processedDate
-     * @param string $expectedShouldReceiveByDateTime Expected
-     * datetime for the shouldReceiveByDate
-     *
-     * @dataProvider metadataFieldNamesProvider
+     * @dataProvider processedDateFixtureProvider
      */
-    public function testIndexActionProcessedDateGeneration($metadataField,
-    $expectedDateTime, $expectedShouldReceiveByDateTime)
+    public function testIndexActionProcessedDateGeneration($dates, $shouldReceiveByDate)
     {
+        if (!is_null($shouldReceiveByDate)) {
+            $shouldReceiveByDate = new DateTime($shouldReceiveByDate);
+        }
+
         $testLpa = clone($this->lpa);
         $testLpaId = $testLpa->id;
         $testLpa->setCompletedAt(new DateTime('2020-03-10'));
 
-        // This is the field we're testing: set dates so we can check
-        // in the view that the correct return date is given.
-        $metadataFields = [];
-        $metadataFields[$metadataField] = $expectedDateTime;
+        // Set one or more dates so we can check in the view that the correct
+        // "should receive by" date is given.
+        $testLpa->setMetadata(array_merge($testLpa->getMetadata(), $dates));
 
-        $testLpa->setMetadata(array_merge($testLpa->getMetadata(), $metadataFields));
 
         $this->lpaApplicationService
              ->shouldReceive('getApplication')
@@ -154,18 +147,60 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
 
         // Test the "should receive by date" has been calculated correctly
-        $this->assertEquals($result->shouldReceiveByDate,
-            new DateTime($expectedShouldReceiveByDateTime));
+        $this->assertEquals($result->shouldReceiveByDate, $shouldReceiveByDate);
     }
 
-    public function metadataFieldNamesProvider()
+    public function processedDateFixtureProvider()
     {
-        // format is [date, processedDate, shouldReceiveByDate]
+        /*
+         * Each element in the returned array represents the data for a test
+         * case, and consists of 2 elements:
+         * 0 - Array of dates associated with this LPA
+         * 1 - String representation of expected datetime for the shouldReceiveByDate
+         */
         return [
-            ['application-rejected-date', '2020-03-01', '2020-03-20'],
-            ['application-withdrawn-date', '2020-04-01', '2020-04-22'],
-            ['application-invalid-date', '2020-05-01', '2020-05-22'],
-            ['application-dispatch-date', '2020-06-01', '2020-06-22'],
+            [
+                [], null
+            ],
+
+            [
+                [
+                    'application-rejected-date' => '2020-03-01'
+                ],
+                '2020-03-20'
+            ],
+
+            [
+                [
+                    'application-withdrawn-date' => '2020-04-01'
+                ],
+                '2020-04-22'
+            ],
+
+            [
+                [
+                    'application-invalid-date' => '2020-05-01'
+                ],
+                '2020-05-22'
+            ],
+
+            [
+                [
+                    'application-dispatch-date' => '2020-06-01'
+                ],
+                '2020-06-22'
+            ],
+
+            // this is not at all likely but here for completeness
+            [
+                [
+                    'application-invalid-date' => '2021-05-05',
+                    'application-dispatch-date' => '2021-05-07',
+                    'application-rejected-date' => '2021-05-06',
+                    'application-withdrawn-date' => '2021-05-04',
+                ],
+                '2021-05-28' // 15 working days after 2021-05-07
+            ],
         ];
     }
 }
