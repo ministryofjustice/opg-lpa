@@ -145,6 +145,11 @@ class StatusController extends AbstractRestfulController
         $this->getLogger()->debug('Updated metadata for: ' . $lpaId . var_export($metaData, true));
     }
 
+    private function getValue($array, $key, $default = null)
+    {
+        return (isset($array[$key]) ? $array[$key] : $default);
+    }
+
     /**
      * Checks whether we have a status from Sirius for a list of applications
      *
@@ -214,24 +219,16 @@ class StatusController extends AbstractRestfulController
                         $data = [
                             'found' => true,
                             'status' => $lpaDetail['status'],
-                            'rejectedDate' => isset($lpaDetail['rejectedDate']) ? $lpaDetail['rejectedDate'] : null
+                            'rejectedDate' => $this->getValue($lpaDetail, 'rejectedDate')
                         ];
 
                         if (isset($data['status'])) {
                             // Data we only need if status is set already
-                            $data['receiptDate'] = isset($lpaDetail['receiptDate']) ? $lpaDetail['receiptDate'] : null;
-
-                            $data['registrationDate'] = isset($lpaDetail['registrationDate']) ?
-                                $lpaDetail['registrationDate'] : null;
-
-                            $data['invalidDate'] = isset($lpaDetail['invalidDate']) ?
-                                $lpaDetail['invalidDate'] : null;
-
-                            $data['withdrawnDate'] = isset($lpaDetail['withdrawnDate']) ?
-                                $lpaDetail['withdrawnDate'] : null;
-
-                            $data['dispatchDate'] = isset($lpaDetail['dispatchDate']) ?
-                                $lpaDetail['dispatchDate'] : null;
+                            $data['receiptDate'] = $this->getValue($lpaDetail, 'receiptDate');
+                            $data['registrationDate'] = $this->getValue($lpaDetail, 'registrationDate');
+                            $data['invalidDate'] = $this->getValue($lpaDetail, 'invalidDate');
+                            $data['withdrawnDate'] = $this->getValue($lpaDetail, 'withdrawnDate');
+                            $data['dispatchDate'] = $this->getValue($lpaDetail, 'dispatchDate');
 
                             // If status doesn't match what we already have, update the database
                             if ($data['status'] !== $currentProcessingStatus) {
