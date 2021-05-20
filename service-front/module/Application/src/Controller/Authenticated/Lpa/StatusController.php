@@ -50,21 +50,16 @@ class StatusController extends AbstractLpaController
 
         // Return the rejected, invalid, withdrawn or dispatch date
         // (whichever is latest). NB dates are strings at this point.
-        $candidates = [];
-        if (isset($metadata['application-rejected-date']))
-            $candidates[] = $metadata['application-rejected-date'];
-        if (isset($metadata['application-withdrawn-date']))
-            $candidates[] = $metadata['application-withdrawn-date'];
-        if (isset($metadata['application-invalid-date']))
-            $candidates[] = $metadata['application-invalid-date'];
-        if (isset($metadata['application-dispatch-date']))
-            $candidates[] = $metadata['application-dispatch-date'];
-
         $processedDate = null;
-
-        if (count($candidates) > 0) {
-            sort($candidates);
-            $processedDate = $candidates[array_key_last($candidates)];
+        $dateFields = ['rejected', 'withdrawn', 'invalid', 'dispatch'];
+        for ($i = 0; $i < count($dateFields); $i++) {
+            $metadataField = 'application-' . $dateFields[$i] . '-date';
+            if (isset($metadata[$metadataField])) {
+                $dateString = $metadata[$metadataField];
+                if (is_null($processedDate) || $dateString > $processedDate) {
+                    $processedDate = $dateString;
+                }
+            }
         }
 
         // The "should receive by" date is set to a number of working days after the
