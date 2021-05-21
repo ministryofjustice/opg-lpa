@@ -51,7 +51,7 @@ services:
       OPG_LPA_COMMON_PDF_QUEUE_NAME: pdf-queue.fifo
 
       OPG_LPA_COMMON_S3_ENDPOINT: localstack:4566
-      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "LpaCache"
+      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
 
   # ---------------------------
   # Front
@@ -192,7 +192,7 @@ services:
       OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT: "0L5Mn687f312aj827NQq648U7899o91r"
 
       OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: "Properties"
-      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "LpaCache"
+      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
 
       OPG_LPA_PROCESSING_STATUS_ENDPOINT: "http://gateway:5000/lpa-online-tool/lpas/"
@@ -328,7 +328,7 @@ services:
       context: ./
       dockerfile: service-pdf/docker/app/Dockerfile
     environment:
-      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "LpaCache"
+      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
 
       # Local only
       AWS_ACCESS_KEY_ID: "-"
