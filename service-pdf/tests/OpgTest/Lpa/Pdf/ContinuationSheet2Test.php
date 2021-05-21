@@ -11,6 +11,17 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 {
     use LongContentTrait;
 
+    private $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
+
+    private function getConstituentPdfs()
+    {
+        return [
+            'start' => [
+                $this->getFullTemplatePath('blank.pdf'),
+            ]
+        ];
+    }
+
     public function testConstructorExceptionContentPageLessThan1()
     {
         $this->expectExceptionMessage('The requested content page must be a positive integer');
@@ -48,20 +59,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_INSTRUCTIONS, $lpa->document->instruction, 2);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "instructions",
             'cs2-content' => "\r\nSome long instructions here Some long instructions here Some long instructions here \r\nSome long instructions here Some long instructions here Some long instructions here \r\nSome long instructions here Some long instructions here Some long instructions here \r\nSome long instructions here Some long instructions here                             ",
@@ -72,7 +69,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -90,20 +87,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_PREFERENCES, $lpa->document->preference, 2);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "preferences",
             'cs2-content' => "\r\nSome long preferences here Some long preferences here Some long preferences here    \r\nSome long preferences here Some long preferences here Some long preferences here    \r\nSome long preferences here Some long preferences here Some long preferences here    \r\nSome long preferences here Some long preferences here                               ",
@@ -114,7 +97,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -132,20 +115,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS, $lpa->document->primaryAttorneyDecisions->howDetails, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "decisions",
             'cs2-content' => "\r\nSome content here                                                                   ",
@@ -156,7 +125,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -180,20 +149,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\nReplacement attorneys to step in only when none of the original attorneys can act   \r\nReplacement attorneys are to act joint for some decisions, joint and several for    \r\nother decisions, as below:                                                          \r\ntest test                                                                           ",
@@ -204,7 +159,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -228,20 +183,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\nReplacement attorneys to step in only when none of the original attorneys can act   \r\nReplacement attorneys are to act jointly and severally                              ",
@@ -252,7 +193,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -275,20 +216,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\n",
@@ -299,7 +226,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -322,20 +249,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\nHow replacement attorneys will replace the original attorneys:                      \r\ntest test                                                                           ",
@@ -346,7 +259,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -368,20 +281,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\n",
@@ -392,7 +291,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -414,20 +313,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\nReplacement attorneys to step in only when none of the original attorneys can act   ",
@@ -438,7 +323,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -461,20 +346,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\nHow replacement attorneys will replace the original attorneys:                      \r\ntest test                                                                           ",
@@ -485,7 +356,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -509,20 +380,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\nReplacement attorneys are to act jointly and severally                              ",
@@ -533,7 +390,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -558,20 +415,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\nReplacement attorneys are to act jointly for some decisions and jointly and         \r\nseverally for others, as below:                                                     \r\ntest test                                                                           ",
@@ -582,7 +425,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -606,20 +449,6 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [
-            'start' => [
-                $this->getFullTemplatePath('blank.pdf'),
-            ],
-        ];
-
         $data = [
             'cs2-is' => "how-replacement-attorneys-step-in",
             'cs2-content' => "\r\n",
@@ -630,7 +459,7 @@ class ContinuationSheet2Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();

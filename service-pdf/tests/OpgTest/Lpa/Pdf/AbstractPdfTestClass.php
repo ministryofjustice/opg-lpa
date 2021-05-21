@@ -17,6 +17,10 @@ abstract class AbstractPdfTestClass extends TestCase
     private const FIXTURES_DIR = __DIR__ . '/../../../fixtures/';
     private const BUILD_DIR = __DIR__ . '/../../../../build/';
 
+    protected $formattedLpaRef = 'A510 7295 5715';
+    protected $strikeThroughTargets = [];
+    protected $blankTargets = [];
+
     /**
      * PdftkFactory $factory Factory for creating PDF objects within tests;
      * this allows a tester to use a different pdftk command by
