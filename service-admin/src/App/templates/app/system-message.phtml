@@ -25,12 +25,13 @@
                     'formElement'   => $form->get('message'),
                     'formLabel'     => 'Message',
                     'formType'      => 'textarea',
+                    'attrs' => ['data-cy' => 'message']
                 ]) ?>
 
             </fieldset>
 
             <div class="form-group">
-                <input class="button" type="submit" value="Set system message">
+                <input class="button" type="submit" data-cy="submit-button" value="Set system message">
             </div>
 
         </form>

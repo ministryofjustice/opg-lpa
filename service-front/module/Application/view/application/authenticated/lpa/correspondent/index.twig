@@ -67,13 +67,15 @@
     class: 'form-control',
     type: 'tel',
     inputmode: 'numeric',
-    pattern: '[0-9]*'
+    pattern: '[0-9]*',
+    'data-cy' : 'phone-number'
 }) ? '' }}
 
 {{ email.setAttributes({
     id: 'email-address',
     type: 'text',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy' : 'email-address'
 }) ? '' }}
 
 {# form fields labels #}
