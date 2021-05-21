@@ -9,6 +9,22 @@ use Exception;
 
 class Lpa120Test extends AbstractPdfTestClass
 {
+    private function verifyPdf($lpa, $data, $pageShift)
+    {
+        $templateFileName = 'LPA120.pdf';
+        $constituentPdfs = [];
+
+        $pdf = new Lpa120($lpa);
+
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $this->strikeThroughTargets, $this->blankTargets, $constituentPdfs, $data, $pageShift, $this->formattedLpaRef);
+
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
+    }
+
+
     public function testConstructorThrowsExceptionNotEnoughData()
     {
         $this->expectException(Exception::class);
@@ -17,21 +33,24 @@ class Lpa120Test extends AbstractPdfTestClass
         new Lpa120(new Lpa());
     }
 
-    public function testGeneratePF()
+    public function testGenerateNoRepeatCaseNumberException()
     {
         $lpa = $this->getLpa();
 
+        //  Adapt the LPA data as required
+        //  Remove the repeat case number and blank the payment
+        $lpa->repeatCaseNumber = null;
+        $lpa->payment = new Payment();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate Opg\Lpa\Pdf\Lpa120');
+
         $pdf = new Lpa120($lpa);
+    }
 
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPA120.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [];
+    public function testGeneratePF()
+    {
+        $lpa = $this->getLpa();
 
         $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
@@ -56,27 +75,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
-
-        //  Test the generated filename created
-        $pdfFile = $pdf->generate();
-
-        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
-    }
-
-    public function testGenerateNoRepeatCaseNumberException()
-    {
-        $lpa = $this->getLpa();
-
-        //  Adapt the LPA data as required
-        //  Remove the repeat case number and blank the payment
-        $lpa->repeatCaseNumber = null;
-        $lpa->payment = new Payment();
-
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('LPA does not contain all the required data to generate Opg\Lpa\Pdf\Lpa120');
-
-        $pdf = new Lpa120($lpa);
+        $this->verifyPdf($lpa, $data, $pageShift);
     }
 
     public function testGeneratePFAttorneyCorrespondentEnteredManually()
@@ -86,18 +85,6 @@ class Lpa120Test extends AbstractPdfTestClass
         //  Adapt the LPA data as required
         //  Change the correspondent to an attorney
         $lpa->document->correspondent->who = 'attorney';
-
-        $pdf = new Lpa120($lpa);
-
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPA120.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [];
 
         $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
@@ -122,12 +109,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
-
-        //  Test the generated filename created
-        $pdfFile = $pdf->generate();
-
-        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
+        $this->verifyPdf($lpa, $data, $pageShift);
     }
 
     public function testGeneratePFOtherCorrespondentEnteredManually()
@@ -137,18 +119,6 @@ class Lpa120Test extends AbstractPdfTestClass
         //  Adapt the LPA data as required
         //  Change the correspondent to an other party
         $lpa->document->correspondent->who = 'other';
-
-        $pdf = new Lpa120($lpa);
-
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPA120.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [];
 
         $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
@@ -173,12 +143,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
-
-        //  Test the generated filename created
-        $pdfFile = $pdf->generate();
-
-        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
+        $this->verifyPdf($lpa, $data, $pageShift);
     }
 
     public function testGeneratePFDonorCorrespondent()
@@ -188,18 +153,6 @@ class Lpa120Test extends AbstractPdfTestClass
         //  Adapt the LPA data as required
         //  Change the correspondent to the donor and remove the manually entered data
         $lpa->document->whoIsRegistering = 'donor';
-
-        $pdf = new Lpa120($lpa);
-
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPA120.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [];
 
         $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
@@ -224,12 +177,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
-
-        //  Test the generated filename created
-        $pdfFile = $pdf->generate();
-
-        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
+        $this->verifyPdf($lpa, $data, $pageShift);
     }
 
     public function testGeneratePFApplicantTitleOther()
@@ -239,18 +187,6 @@ class Lpa120Test extends AbstractPdfTestClass
         //  Adapt the LPA data as required
         //  Change the correspondent title to a custom value
         $lpa->document->correspondent->name->title = 'Sir';
-
-        $pdf = new Lpa120($lpa);
-
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPA120.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [];
 
         $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
@@ -275,12 +211,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
-
-        //  Test the generated filename created
-        $pdfFile = $pdf->generate();
-
-        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
+        $this->verifyPdf($lpa, $data, $pageShift);
     }
 
     public function testGeneratePFBooleanAsNo()
@@ -290,18 +221,6 @@ class Lpa120Test extends AbstractPdfTestClass
         //  Adapt the LPA data as required
         //  Change a value to return a "No" for a false boolean
         $lpa->payment->reducedFeeReceivesBenefits = false;
-
-        $pdf = new Lpa120($lpa);
-
-        //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPA120.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
-        $constituentPdfs = [];
 
         $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
@@ -326,11 +245,6 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
-
-        //  Test the generated filename created
-        $pdfFile = $pdf->generate();
-
-        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
+        $this->verifyPdf($lpa, $data, $pageShift);
     }
 }
