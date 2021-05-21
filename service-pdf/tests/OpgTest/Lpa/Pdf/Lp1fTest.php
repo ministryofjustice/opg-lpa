@@ -27,7 +27,6 @@ class Lp1fTest extends AbstractPdfTestClass
         $pdf = new Lp1f($lpa, [], $this->factory);
 
         //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LP1F.pdf';
 
         $strikeThroughs = [
@@ -319,12 +318,12 @@ class Lp1fTest extends AbstractPdfTestClass
             'signature-attorney-3-name-last' => "Taylor",
             'footer-instrument-right' => "LP1F Property and financial affairs (07.15)",
             'footer-registration-right' => "LP1F Register your LPA (07.15)",
-            'lpa-a-reference-number' => "A510 7295 5715",
+            'lpa-a-reference-number' => $this->formattedLpaRef,
         ];
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $blankTargets, $constituentPdfs, $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();

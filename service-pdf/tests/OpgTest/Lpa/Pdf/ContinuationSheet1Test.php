@@ -21,12 +21,7 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
         $pdf = new ContinuationSheet1($lpa, $actorGroups);
 
         //  Set up the expected data for verification
-        $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LPC_Continuation_Sheet_1.pdf';
-
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
 
         $constituentPdfs = [
             'start' => [
@@ -65,7 +60,7 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $this->strikeThroughTargets, $this->blankTargets, $constituentPdfs, $data, $pageShift, $this->formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -91,10 +86,6 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5716';
         $templateFileName = 'LPC_Continuation_Sheet_1.pdf';
 
-        $strikeThroughTargets = [];
-
-        $blankTargets = [];
-
         $constituentPdfs = [
             'start' => [
                 $this->getFullTemplatePath('blank.pdf'),
@@ -132,7 +123,7 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $this->strikeThroughTargets, $this->blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
