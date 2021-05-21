@@ -116,6 +116,7 @@ class FeeReductionController extends AbstractLpaController
             'id' => 'reductionOptions',
             'value' => $reduction->getOptions()['value_options']['reducedFeeReceivesBenefits']['value'],
             'checked' => (($reduction->getValue() == 'reducedFeeReceivesBenefits')? 'checked':null),
+            'data-cy' => 'reducedFeeReceivesBenefits',
         ]);
 
         $reductionOptions['reducedFeeUniversalCredit'] = new Element('reductionOptions', [
@@ -126,6 +127,7 @@ class FeeReductionController extends AbstractLpaController
             'id' => 'reducedFeeUniversalCredit',
             'value' => $reduction->getOptions()['value_options']['reducedFeeUniversalCredit']['value'],
             'checked' => (($reduction->getValue() == 'reducedFeeUniversalCredit')? 'checked':null),
+            'data-cy' => 'reducedFeeUniversalCredit',
         ]);
 
         $amount = Calculator::getLowIncomeFee($isRepeatApplication);
@@ -138,6 +140,7 @@ class FeeReductionController extends AbstractLpaController
             'id' => 'reducedFeeLowIncome',
             'value' => $reduction->getOptions()['value_options']['reducedFeeLowIncome']['value'],
             'checked' => (($reduction->getValue() == 'reducedFeeLowIncome')? 'checked':null),
+            'data-cy' => 'reducedFeeLowIncome',
         ]);
 
         $amount = Calculator::getFullFee($isRepeatApplication);
@@ -150,6 +153,7 @@ class FeeReductionController extends AbstractLpaController
             'id' => 'notApply',
             'value' => $reduction->getOptions()['value_options']['notApply']['value'],
             'checked' => (($reduction->getValue() == 'notApply')? 'checked':null),
+            'data-cy' => 'notApply',
         ]);
 
         if($this->request->isPost()) {
