@@ -12,7 +12,6 @@ use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Model\Service\Authentication\Service as AppAuthenticationService;
 use Alphagov\Notifications\Client as NotifyClient;
-use Aws\Credentials\CredentialProvider;
 use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
@@ -136,11 +135,6 @@ class Module
                     }
 
                     return new SqsClient($config['pdf']['queue']['sqs']['client']);
-                },
-
-                'AwsCredentials' => function ($sm) {
-                    $provider = CredentialProvider::defaultProvider();
-                    return $provider()->wait();
                 },
 
                 'AwsApiGatewaySignature' => function ($sm) {

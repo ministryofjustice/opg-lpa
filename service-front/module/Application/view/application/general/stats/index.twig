@@ -85,10 +85,10 @@
                         <td class="numeric">{{ lpas['property-and-finance'].received }}</td>
                     </tr>
                     <tr>
-                        <td>Processed</td>
-                        <td class="numeric">{{ lpas.all.processed }}</td>
-                        <td class="numeric">{{ lpas['health-and-welfare'].processed }}</td>
-                        <td class="numeric">{{ lpas['property-and-finance'].processed }}</td>
+                        <td>Returned</td>
+                        <td class="numeric">{{ lpas.all.returned }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].returned }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].returned }}</td>
                     </tr>
                     <tr>
                         <td>Completed</td>
@@ -98,11 +98,11 @@
                     </tr>
                     <tr>
                         <td><strong>Total</strong></td>
-                        <td class="numeric">{{ lpas.all.started + lpas.all.created + lpas.all.waiting + lpas.all.checking + lpas.all.received + lpas.all.processed + lpas.all.completed }}</td>
+                        <td class="numeric">{{ lpas.all.started + lpas.all.created + lpas.all.waiting + lpas.all.checking + lpas.all.received + lpas.all.returned + lpas.all.completed }}</td>
                         <td class="numeric">{{ lpas['health-and-welfare'].started + lpas['health-and-welfare'].created + lpas['health-and-welfare'].waiting + lpas['health-and-welfare'].checking  +
-                            lpas['health-and-welfare'].received  + lpas['health-and-welfare'].processed + lpas['health-and-welfare'].completed }}</td>
+                            lpas['health-and-welfare'].received  + lpas['health-and-welfare'].returned + lpas['health-and-welfare'].completed }}</td>
                         <td class="numeric">{{ lpas['property-and-finance'].started + lpas['property-and-finance'].created + lpas['property-and-finance'].waiting + lpas['property-and-finance'].checking
-                            + lpas['property-and-finance'].received + lpas['property-and-finance'].processed + lpas['property-and-finance'].completed }}</td>
+                            + lpas['property-and-finance'].received + lpas['property-and-finance'].returned + lpas['property-and-finance'].completed }}</td>
                     </tr>
                     <tr>
                         <td>Deleted</td>
@@ -158,9 +158,9 @@
                         {% endfor %}
                     </tr>
                     <tr>
-                        <td>Processed LPAs</td>
+                        <td>Returned LPAs</td>
                         {% for month,values in lpas['by-month'] %}
-                            <td class="numeric">{{ values.processed }}</td>
+                            <td class="numeric">{{ values.returned }}</td>
                         {% endfor %}
                     </tr>
                 </tbody>
