@@ -27,7 +27,7 @@
 
                     <div class="list-item_status">
                         <p class="opg-application-status-text">Application status<span class="visually-hidden"> for A{{ lpa.id }}</span></p>
-                        <div class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
+                        <div data-cy="lpa-status-lozenge-{{ lpa.id }}" class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
                         <br/>
 
                         {{ macros.showStatusDescriptionLinksIfEnabled(trackingEnabled, status, lpa.id) }}
@@ -99,8 +99,8 @@
 
 {% macro showStatusDescriptionLinksIfEnabled(trackingEnabled, status, id) %}
     {% if trackingEnabled %}
-        {% if status in ['completed', 'waiting', 'received', 'checking', 'returned'] %}
-            <a id="status-description-link-{{ id }}" href="/lpa/{{ id }}/status">View {{ status }} message</a>
+        {% if status in ['completed', 'waiting', 'received', 'checking', 'processed'] %}
+            <a id="status-description-link-{{ id }}" data-cy="lpa-view-message-link-{{ id }}" href="/lpa/{{ id }}/status">View {{ status }} message</a>
         {% endif %}
     {% endif %}
 {% endmacro %}
