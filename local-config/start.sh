@@ -37,7 +37,7 @@ aws dynamodb create-table \
 
 ATTR="MessageRetentionPeriod=3600,\
 FifoQueue=true,\
-ContentBasedDeduplication=false,\
+ContentBasedDeduplication=true,\
 VisibilityTimeout=90"
 
 aws sqs create-queue \
