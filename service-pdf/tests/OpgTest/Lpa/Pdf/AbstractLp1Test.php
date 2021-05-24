@@ -30,7 +30,7 @@ use Opg\Lpa\Pdf\Traits\LongContentTrait;
  * we're testing is disjoint, we can create a single PDF and apply multiple
  * test cases to it.
  */
-class AbstractLp1Test extends AbstractPdfTestClass
+class AbstractLp1Test extends AbstractPdfTestCase
 {
     use LongContentTrait;
 

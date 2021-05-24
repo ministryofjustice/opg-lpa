@@ -10,7 +10,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Lp1f;
 use Exception;
 
-class Lp1fTest extends AbstractPdfTestClass
+class Lp1fTest extends AbstractPdfTestCase
 {
     public function testConstructorThrowsExceptionNotEnoughData()
     {

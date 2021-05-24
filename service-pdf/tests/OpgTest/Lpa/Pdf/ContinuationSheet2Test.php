@@ -7,7 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\Pdf\ContinuationSheet2;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 
-class ContinuationSheet2Test extends AbstractPdfTestClass
+class ContinuationSheet2Test extends AbstractPdfTestCase
 {
     use LongContentTrait;
 

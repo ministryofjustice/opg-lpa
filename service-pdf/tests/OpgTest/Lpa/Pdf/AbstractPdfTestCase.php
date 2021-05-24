@@ -10,7 +10,7 @@ use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdftkFactory;
 use PHPUnit\Framework\TestCase;
 
-abstract class AbstractPdfTestClass extends TestCase
+abstract class AbstractPdfTestCase extends TestCase
 {
     private $reflectionProperties = [];
 
