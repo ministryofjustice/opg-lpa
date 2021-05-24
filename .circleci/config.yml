@@ -481,8 +481,8 @@ orbs:
           - run:
               name: Install Terraform
               command: |
-                export TERRAFORM_VERSION=0.14.2
-                export TERRAFORM_SHA256SUM=6f380c0c7a846f9e0aedb98a2073d2cbd7d1e2dc0e070273f9325f1b69e668b2
+                export TERRAFORM_VERSION=0.15.4
+                export TERRAFORM_SHA256SUM=ddf9b409599b8c3b44d4e7c080da9a106befc1ff9e53b57364622720114e325c
                 curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                 echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
                 sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
@@ -510,9 +510,9 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
-      terraform14:
+      terraform15:
         docker:
-          - image: hashicorp/terraform:0.14.2
+          - image: hashicorp/terraform:0.15.4
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -526,7 +526,7 @@ orbs:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        executor: terraform14
+        executor: terraform15
         steps:
           - checkout
           - run:
@@ -537,7 +537,7 @@ orbs:
               command: |
                 terraform --version
                 cd ~/project/terraform/account
-                terraform init -lock-timeout=300s
+                terraform init
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
@@ -547,7 +547,7 @@ orbs:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        executor: terraform14
+        executor: terraform15
         steps:
           - checkout
           - run:
@@ -556,7 +556,7 @@ orbs:
                 export IMAGE_TAG=$(~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
                 cd ~/project/terraform/environment
-                terraform init -lock-timeout=300s
+                terraform init
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate -var container_version=${IMAGE_TAG}
@@ -566,7 +566,7 @@ orbs:
         # Apply the email terraform configuration. This:
         #   - Creates a mailbox used for functional testing;
         #
-        executor: terraform14
+        executor: terraform15
         parameters:
           workspace:
             description: Terraform workspace name
@@ -578,7 +578,7 @@ orbs:
               name: Apply Email Terraform
               command: |
                 cd ~/project/terraform/email
-                terraform init -lock-timeout=300s
+                terraform init
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
@@ -588,7 +588,7 @@ orbs:
         # Apply the shared terraform configuration. This:
         #   - Updates the account infrastructure;
         #
-        executor: terraform14
+        executor: terraform15
         parameters:
           workspace:
             description: Terraform workspace name
@@ -600,14 +600,14 @@ orbs:
               name: Apply Account Terraform
               command: |
                 cd ~/project/terraform/account
-                terraform init -lock-timeout=300s
+                terraform init
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
 
       plan_check_terraform:
         # plan check - with gating check
-        executor: terraform14
+        executor: terraform15
         parameters:
           terraform_level:
             description: choose account / enviroment for level to check
@@ -633,7 +633,7 @@ orbs:
                 echo selecting "${level}" level terraform...
                 cd ~/project/terraform/${level}
                 echo initialising...
-                terraform init -lock-timeout=300s
+                terraform init
                 export WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
 
                 echo terraform workspace: $WORKSPACE
@@ -680,7 +680,7 @@ orbs:
         #   - Updates per environment infrastructure; and
         #   - Triggers a deploy of the updated container (if changed)
         #
-        executor: terraform14
+        executor: terraform15
         parameters:
           workspace:
             description: Terraform workspace name
@@ -695,7 +695,7 @@ orbs:
                 export IMAGE_TAG=$(~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
                 cd ~/project/terraform/environment
-                terraform init -lock-timeout=300s
+                terraform init
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=${IMAGE_TAG}
@@ -719,7 +719,7 @@ orbs:
         # Destroys a development environment after testing and approval
         # Cannot be run on master branch
         #
-        executor: terraform14
+        executor: terraform15
         parameters:
           workspace:
             description: Terraform workspace name
@@ -734,7 +734,7 @@ orbs:
                 echo $TF_WORKSPACE
                 if [ "${CIRCLE_BRANCH}" != "master" ]; then
                   cd ~/project/terraform/environment
-                  terraform init -lock-timeout=300s
+                  terraform init
                   export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
@@ -798,7 +798,7 @@ orbs:
               command: |
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
-                  terraform init -lock-timeout=300s
+                  terraform init
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform apply -lock-timeout=300s -auto-approve
@@ -812,7 +812,7 @@ orbs:
               command: |
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
-                  terraform init -lock-timeout=300s
+                  terraform init
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
@@ -865,7 +865,7 @@ orbs:
               command: |
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
-                  terraform init -lock-timeout=300s
+                  terraform init
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
@@ -880,7 +880,7 @@ orbs:
               command: |
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
-                  terraform init -lock-timeout=300s
+                  terraform init
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
@@ -892,7 +892,7 @@ orbs:
         # Runs cypress testing
         #
         executor: python
-        parameters: 
+        parameters:
           workspace:
             description: Terraform workspace name
             type: string
@@ -936,7 +936,7 @@ orbs:
               command: |
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
-                  terraform init -lock-timeout=300s
+                  terraform init
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   echo $DOCKER_CYPRESS_REMOTE_IP
@@ -951,7 +951,7 @@ orbs:
               command: |
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
-                  terraform init -lock-timeout=300s
+                  terraform init
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
@@ -1053,7 +1053,7 @@ jobs:
 
   workspace_cleanup:
     docker:
-      - image: hashicorp/terraform:0.14.2
+      - image: hashicorp/terraform:0.15.4
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1065,7 +1065,7 @@ jobs:
           name: Cleanup Workspaces
           command: |
             cd terraform/environment
-            terraform init -lock-timeout=300s
+            terraform init
             export TF_PROTECTED_WORKSPACES=$(~/project/terraform-workspace-manager \
              -protected-workspaces=true \
              -aws-account-id=050256574573 \
