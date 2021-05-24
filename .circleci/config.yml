@@ -559,7 +559,7 @@ orbs:
                 terraform init
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
-                terraform validate -var container_version=${IMAGE_TAG}
+                terraform validate
 
       apply_email_terraform:
         #
