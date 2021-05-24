@@ -36,8 +36,8 @@ services:
   local-config:
     container_name: lpa-local-config
     build:
-      context: .
-      dockerfile: local-config/Dockerfile
+      context: ./local-config/
+      dockerfile: Dockerfile
     depends_on:
       - dynamodb
       - postgres
