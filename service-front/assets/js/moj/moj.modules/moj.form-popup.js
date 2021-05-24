@@ -21,6 +21,7 @@
       _.bindAll(this, 'btnClick', 'submitForm');
       this.cacheEls();
       this.bindEvents();
+      $(this.settings.selector).attr('data-inited', true);
     },
 
     cacheEls: function () {

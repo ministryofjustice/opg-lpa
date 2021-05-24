@@ -4,6 +4,10 @@ Then(`I can find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]");
 })
 
+Then(`I can find {string} with data-inited`, (object) => {
+  cy.get("[data-cy=" + object + "][data-inited=true]");
+})
+
 Then(`I can find old style id {string}`, (object) => {
   cy.get(object);
 })

@@ -1,14 +1,13 @@
 
-casper.test.begin("Checking user can access payment page", {
+casper.test.begin("Checking user can access complete page", {
 
     setUp: function(test) {
-        paymentPath = paths.payment.replace('\\d+', lpaId);
         completePath = paths.complete.replace('\\d+', lpaId);
         downloadPath = paths.download.replace('\\d+', lpaId);
     },
 
     tearDown: function(test) {
-        delete paymentPath, completePath;
+        delete downloadPath, completePath;
     },
 
     test: function(test) {
