@@ -124,6 +124,11 @@ abstract class AbstractWorker
 
             //  Add the file path to the logging params
             $loggingParams['filePath'] = $pdfFilePath;
+            $pdfSizeK = filesize($pdfFilePath) / 1024;
+
+            $this->logger->debug('----------------- Generated PDF for LPA ' .
+                $lpaId . ' at path ' . $pdfFilePath .
+                ' (PDF size Kb = ' . $pdfSizeK . ')');
 
             //  Save the generated file in the response
             $response = $this->getResponseObject($docId);
