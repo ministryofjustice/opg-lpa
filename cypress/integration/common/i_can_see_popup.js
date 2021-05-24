@@ -5,3 +5,6 @@ Then(`I can see popup`, () => {
   cy.get("#popup");
 })
 
+Then(`I cannot see popup`, (object) => {
+  cy.get("#popup").should('not.exist');
+})
