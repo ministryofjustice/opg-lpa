@@ -6,10 +6,10 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Lp3;
 use Opg\Lpa\Pdf\PdftkFactory;
-use OpgTest\Lpa\Pdf\AbstractPdfTestClass;
+use OpgTest\Lpa\Pdf\AbstractPdfTestCase;
 use Exception;
 
-class Lp3Test extends AbstractPdfTestClass
+class Lp3Test extends AbstractPdfTestCase
 {
     public function testConstructorThrowsExceptionNotEnoughData()
     {
