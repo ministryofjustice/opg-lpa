@@ -138,7 +138,7 @@
 
             <div class="form-group">
                 {{ formElement(form.get('submit')) }}
-                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
+                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
             </div>
 
             {{ form().closeTag|raw }}

@@ -13,7 +13,7 @@ parser.add_argument('-a', action='store_true',
 parser.add_argument('-r', action='store_true',
                     default=False,
                     help='Add Replacement attorneys')
-parser.add_argument('-c', action='store_true',
+parser.add_argument('-cp', action='store_true',
                     default=False,
                     help='Add Certificate Provider')
 parser.add_argument('-pn', action='store_true',
@@ -25,6 +25,18 @@ parser.add_argument('-i', action='store_true',
 parser.add_argument('-w', action='store_true',
                     default=False,
                     help='Set Who is Registering')
+parser.add_argument('-y', action='store_true',
+                    default=False,
+                    help='Set Who Are You')
+parser.add_argument('-co', action='store_true',
+                    default=False,
+                    help='Add Correspondent')
+parser.add_argument('-ra', action='store_true',
+                    default=False,
+                    help='Set Repeat Application')
+parser.add_argument('-pa', action='store_true',
+                    default=False,
+                    help='Set Payment')
 args = parser.parse_args()
 
 if args.hw :
@@ -49,7 +61,7 @@ if args.r :
     addSecondReplacementAttorney(lpaId)
     setReplacementAttorneyDecisionsMultipleAttorneys(lpaId, lpaType)
     setReplacementAttorneysConfirmed(lpaId)
-if args.c :
+if args.cp :
     setCertificateProvider(lpaId)
 if args.pn :
     addPersonToNotify(lpaId)
@@ -58,4 +70,17 @@ if args.i :
     setPreference(lpaId)
 if args.w :
     setWhoIsRegistering(lpaId)
+if args.co :
+    addCorrespondent(lpaId)
+if args.y :
+    addWhoAreYou(lpaId)
+if args.ra :
+    setRepeatApplication(lpaId)
+    if not args.hw :
+        setRepeatCaseNumber(lpaId)
+if args.pa :
+    if args.hw :
+        setPaymentNormalFeeWithCheque(lpaId)
+    else:
+        setPaymentLowIncomeClaimingReduction(lpaId)
 print(lpaId)
