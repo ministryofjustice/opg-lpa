@@ -90,6 +90,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                 [
                     GuzzleHttpClient::class => Mockery::mock(GuzzleHttpClient::class),
                     'config' => ['processing-status' => ['endpoint' => 'test endpoint']],
+                    'AwsCredentials' => Mockery::mock(\Aws\Credentials\CredentialsInterface::class),
                     'AwsApiGatewaySignature' => Mockery::mock(\Aws\Signature\SignatureV4::class),
                 ]
             ]
