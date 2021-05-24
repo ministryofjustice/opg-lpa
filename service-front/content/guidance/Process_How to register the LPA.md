@@ -32,7 +32,7 @@ You need a PDF reader like Adobe Reader to view and print the LPA form. You can 
 
 #### Track the progress of the LPA after you've posted it
 
-Once you've posted the LPA to us, you can track its progress from the [Your LPAs](/user/dashboard) page. This will let you know when we've received the LPA, when we're checking it, and when we've returned it.
+Once you've posted the LPA to us, you can track its progress from the [Your LPAs](/user/dashboard) page. This will let you know when we've received the LPA, when we're checking it, and when we've processed it.
 
 It’s not possible to track the progress of LPAs made before 1 April 2019.
 

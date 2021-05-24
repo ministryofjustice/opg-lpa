@@ -84,8 +84,8 @@
       @include current-style($status-checking-colour);
     }
 
-    &.current-returned {
-      @include current-style($status-returned-colour);
+    &.current-processed {
+      @include current-style($status-processed-colour);
     }
 
     .progress-bar__steps--numbers {
