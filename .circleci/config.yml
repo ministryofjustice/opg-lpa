@@ -883,7 +883,7 @@ orbs:
                   terraform init
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
-                  terraform destroy -lock-timeout=300s -auto-approve
+                  terraform destroy -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
                 fi
               when: always
 
@@ -954,7 +954,7 @@ orbs:
                   terraform init
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
-                  terraform destroy -lock-timeout=300s -auto-approve
+                  terraform destroy -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_CYPRESS_REMOTE_IP
                 fi
               when: always
 
