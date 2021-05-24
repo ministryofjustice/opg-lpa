@@ -160,6 +160,10 @@ return [
     'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
     'processing-status' => [
         'track-from-date' => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2019-04-01',
+
+        // Number of working days after an LPA is processed before we expect it
+        // to be received by the user
+        'expected-working-days-before-receipt' => 15,
     ],
 ];
 
