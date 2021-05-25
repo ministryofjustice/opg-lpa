@@ -7,7 +7,7 @@ on:
       - "main"
   schedule:
     # Every Tuesday, at 3pm UTC
-    - cron: '00 15 * * 2'
+    - cron: '20 15 * * 2'
 
 jobs:
   run:
