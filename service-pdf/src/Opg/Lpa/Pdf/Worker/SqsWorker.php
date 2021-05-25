@@ -55,6 +55,12 @@ class SqsWorker extends AbstractWorker
                 // Get the encrypted data and metadata
                 $lpaMessage = json_decode($sqsMessage['Body'], true);
 
+                $lpaId = $lpaMessage['lpaId'];
+
+                $this->logger->debug('----------------- RETRIEVED SQS MESSAGE ' .
+                    $sqsMessage['MessageId'] . ' AT ' . microtime(true) .
+                    ' TO GENERATE PDF FOR LPA ' . $lpaId);
+
                 // Decompress the message's body
                 $body = (new Decompress('Gz'))->filter(base64_decode($lpaMessage['data']));
 
@@ -63,7 +69,7 @@ class SqsWorker extends AbstractWorker
 
                 $this->logger->info("New job found on queue", [
                     'jobId' => $lpaMessage['jobId'],
-                    'lpaId' => $lpaMessage['lpaId'],
+                    'lpaId' => $lpaId,
                 ]);
 
                 //---
@@ -74,7 +80,9 @@ class SqsWorker extends AbstractWorker
                     // Generate the PDF
                     $this->run($lpaMessage['jobId'], $body['type'], $body['lpa']);
 
-                    $this->logger->info( "Generation time: ". (microtime(true) - $startTime) ." seconds");
+                    $this->logger->info("----------------- DONE - Generation time: ".
+                        (microtime(true) - $startTime) .
+                        " seconds to make PDF for LPA " . $lpaId);
 
                 } catch (\Exception $e) {
                     $this->logger->err("Error generating PDF", [
@@ -84,8 +92,6 @@ class SqsWorker extends AbstractWorker
 
                     throw $e;
                 }
-
-                //---
 
                 // If we get here, delete the job from the queue.
                 $client->deleteMessage([
