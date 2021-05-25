@@ -6,8 +6,8 @@ on:
       - "master"
       - "main"
   schedule:
-    # Every Tuesday, at 3.20pm UTC
-    - cron: '20 15 * * 2'
+    # Every Tuesday, at 6pm UTC
+    - cron: '00 18 * * 2'
 
 jobs:
   run:
