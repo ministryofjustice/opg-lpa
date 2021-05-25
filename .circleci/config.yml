@@ -270,7 +270,7 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF"
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @Statuses"
         workspace: preproduction
         filters: { branches: { only: [master] } }
         requires: [preprod_seed_environment_databases]
