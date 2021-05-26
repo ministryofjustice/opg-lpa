@@ -21,6 +21,11 @@ class SessionManagerTest extends MockeryTestCase
      */
     public function testSessionManager() : void
     {
+        // This prevents PHP defaulting to the Redis save handler while
+        // running unit tests
+        ini_set('session.save_handler', 'files');
+        ini_set('session.save_path', '/tmp/');
+
         $container = new Container('initialised', $sessionManager);
 
         $storage = Mockery::Mock(StorageInterface::class);
