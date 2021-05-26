@@ -2,9 +2,7 @@
 namespace ApplicationTest\Model\Service\Session;
 
 use Application\Model\Service\Session\SessionManager;
-use Laminas\Session\Config\SessionConfig;
 use Laminas\Session\Container;
-use Laminas\Session\Storage\StorageInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
@@ -28,10 +26,7 @@ class SessionManagerTest extends MockeryTestCase
 
         $container = new Container('initialised', $sessionManager);
 
-        $storage = Mockery::Mock(StorageInterface::class);
-        $storage->shouldReceive('isImmutable')->andReturn(TRUE);
-
-        $sessionManager = new SessionManager($storage, $container);
+        $sessionManager = new SessionManager($container);
         $sessionManager->start();
 
         $origId = $sessionManager->getId();

@@ -3,7 +3,6 @@ namespace Application\Model\Service\Session;
 
 use Laminas\Session\Container;
 use Laminas\Session\SessionManager as LaminasSessionManager;
-use Laminas\Session\Storage\StorageInterface;
 
 class SessionManager extends LaminasSessionManager
 {
@@ -12,11 +11,11 @@ class SessionManager extends LaminasSessionManager
      */
     private $container;
 
-    public function __construct(StorageInterface $storage = null, Container $container = null)
+    public function __construct(Container $container = null)
     {
         // parent constructor has to be called first, in case we have to
         // make a container within this constructor
-        parent::__construct(null, $storage);
+        parent::__construct();
 
         if (is_null($container)) {
             $container = new Container('initialised', $this);
