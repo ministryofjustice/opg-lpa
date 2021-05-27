@@ -17,6 +17,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet1 as ContinuationSheet1Aggregator;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet2 as ContinuationSheet2Aggregator;
+use Opg\Lpa\Pdf\PdftkFactory;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
 use mikehaertl\pdftk\Pdf as Pdftk;
@@ -61,9 +62,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     /**
      * @param Lpa|null $lpa
      * @param array $options
+     * @param ?PdftkFactory $pdftkFactory
      * @throws Exception
      */
-    public function __construct(Lpa $lpa = null, array $options = [])
+    public function __construct(Lpa $lpa = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
     {
         //  Check that the coversheet variables have been set
         if (is_null($this->coversheetFileName)) {
@@ -75,7 +77,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             $this->lpaIsComplete = $lpa->isStateCompleted() && $lpa->getCompletedAt() instanceof DateTime;
         }
 
-        parent::__construct($lpa, $options);
+        parent::__construct($lpa, $options, $pdftkFactory);
     }
 
     /**
@@ -97,7 +99,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         //  No content on page 9
         $this->populatePageTen($lpa->document->donor);
         $this->populatePageEleven($lpa->document->certificateProvider);
-        $this->populatePageTwelveThirteenFourteenFifthteen($lpa);
+        $this->populatePageTwelveThirteenFourteenFifteen($lpa);
         //  No content on page 16
         $this->populatePageSeventeen($lpa->document);
         $this->populatePageEighteen($lpa->document->correspondent);
@@ -338,11 +340,11 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      * @param Lpa $lpa
      * @param int $pageIteration
      */
-    private function populatePageTwelveThirteenFourteenFifthteen(Lpa $lpa, $pageIteration = 0)
+    private function populatePageTwelveThirteenFourteenFifteen(Lpa $lpa, $pageIteration = 0)
     {
         //  This page is repeatable so determine which PDF object to use
         //  For the first MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages we should populate the main document
-        $pdf = ($pageIteration >= self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 ? new $this() : $this);
+        $pdf = ($pageIteration >= self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 ? new $this(null, [], $this->pdftkFactory) : $this);
 
         //  Immediately get an array of all attorneys excluding trusts so we can work with it below
         $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
@@ -391,7 +393,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $pageIteration++;
 
         if ($pageIteration < self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 || array_key_exists($pageIteration, $attorneys)) {
-            $this->populatePageTwelveThirteenFourteenFifthteen($lpa, $pageIteration);
+            $this->populatePageTwelveThirteenFourteenFifteen($lpa, $pageIteration);
         }
     }
 
@@ -402,7 +404,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageSeventeen(Document $lpaDocument, $pageIteration = 0)
     {
         //  This page is repeatable so determine which PDF object to use
-        $pdf = ($pageIteration > 0 ? new $this() : $this);
+        $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
 
         $applicantType = 'donor';
         $strikeThroughIndex = 0;
@@ -563,7 +565,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageTwenty($whoIsRegistering, $pageIteration = 0)
     {
         //  This page is repeatable so determine which PDF object to use
-        $pdf = ($pageIteration > 0 ? new $this() : $this);
+        $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
 
         //  There must always be at least one signature
         $blankIndex = 1;
@@ -629,7 +631,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $peopleToNotify = array_splice($lpa->document->peopleToNotify, self::MAX_PEOPLE_TO_NOTIFY_SECTION_6);
 
         if (!empty($primaryAttorneys) || !empty($replacementAttorneys) || !empty($peopleToNotify)) {
-            $continuationSheet1 = new ContinuationSheet1Aggregator($lpa, $primaryAttorneys, $replacementAttorneys, $peopleToNotify);
+            $continuationSheet1 = new ContinuationSheet1Aggregator($lpa, $primaryAttorneys, $replacementAttorneys, $peopleToNotify, $this->pdftkFactory);
             $this->addConstituentPdf($continuationSheet1, 1, $continuationSheet1->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
@@ -637,7 +639,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Add continuation sheet 2 (primary attorney decisions) instances if required
         if ($lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS);
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS, $this->pdftkFactory);
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
@@ -647,7 +649,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $replacementAttorneysContent = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
 
         if (!empty($replacementAttorneysContent)) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN);
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $this->pdftkFactory);
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
@@ -655,7 +657,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Add continuation sheet 2 (preferences) instances if required
         if ($this->fillsInstructionsPreferencesBox($lpa->document->preference)) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_PREFERENCES);
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_PREFERENCES, $this->pdftkFactory);
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
@@ -663,7 +665,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Add continuation sheet 2 (instructions) instances if required
         if ($this->fillsInstructionsPreferencesBox($lpa->document->instruction)) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_INSTRUCTIONS);
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_INSTRUCTIONS, $this->pdftkFactory);
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
@@ -671,7 +673,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Add continuation sheet 3 instances if required
         if ($lpa->document->donor->canSign === false) {
-            $continuationSheet3 = new ContinuationSheet3($lpa);
+            $continuationSheet3 = new ContinuationSheet3($lpa, [], $this->pdftkFactory);
             $this->addConstituentPdf($continuationSheet3, 1, 2, 15);
 
             $continuationSheetsAdded = true;
@@ -681,7 +683,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
 
         if ($this->getTrustAttorney($attorneys) instanceof TrustCorporation) {
-            $continuationSheet4 = new ContinuationSheet4($lpa);
+            $continuationSheet4 = new ContinuationSheet4($lpa, [], $this->pdftkFactory);
             $this->addConstituentPdf($continuationSheet4, 1, 2, 15);
 
             $continuationSheetsAdded = true;
@@ -801,12 +803,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     {
         //  Create a copy of the LPA PDF with the contents of the provided PDF stamped on the specified page
         $tmpStampedPdfName = $this->getIntermediatePdfFilePath('stamp.pdf');
-        $stampedPdfAllPages = new Pdftk($this->pdfFile);
+        $stampedPdfAllPages = $this->pdftkFactory->create($this->pdfFile);
         $stampedPdfAllPages->stamp($stampPdf)
                            ->flatten()
                            ->saveAs($tmpStampedPdfName);
 
-        $newPdf = new Pdftk([
+        $newPdf = $this->pdftkFactory->create([
             'A' => $this->pdfFile,
             'B' => $tmpStampedPdfName
         ]);
