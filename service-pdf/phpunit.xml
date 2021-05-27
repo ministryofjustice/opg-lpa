@@ -1,14 +1,11 @@
-<phpunit bootstrap="./tests/Bootstrap.php" colors="true" strict="false" syntaxCheck="false" verbose="false">
-    <testsuite name="OpgLpaPdf">
-        <directory>./tests/OpgTest</directory>
-    </testsuite>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./../src</directory>
-        </whitelist>
-    </filter>
-    <php>
-        <server name="SERVER_NAME" value="phpunit"/>
-        <server name="APPLICATION_ENV" value="development"/>
-    </php>
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./tests/Bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+  </coverage>
+  <testsuite name="ApplicationTest">
+    <directory>./tests/OpgTest</directory>
+  </testsuite>
 </phpunit>
