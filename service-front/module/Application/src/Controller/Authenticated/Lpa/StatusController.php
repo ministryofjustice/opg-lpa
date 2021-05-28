@@ -51,7 +51,7 @@ class StatusController extends AbstractLpaController
         // Return the rejected, invalid, withdrawn or dispatch date
         // (whichever is latest). NB dates are strings at this point.
         $processedDate = null;
-        $dateFields = ['rejected', 'withdrawn', 'invalid', 'dispatch'];
+        $dateFields = ['rejected', 'withdrawn', 'invalid', 'dispatch', 'registration'];
         for ($i = 0; $i < count($dateFields); $i++) {
             $metadataField = 'application-' . $dateFields[$i] . '-date';
             if (isset($metadata[$metadataField])) {
