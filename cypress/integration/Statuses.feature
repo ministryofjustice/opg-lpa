@@ -26,7 +26,7 @@ Feature: Status display for LPAs
         And the LPA with ID "54171193342" should display with status "Checking"
 
         # receipt date and registration date, Registered status on Sirius, no dispatch date
-        And the LPA with ID "68582508781" should display with status "Checking"
+        And the LPA with ID "68582508781" should display with status "Processed"
 
         # receipt date and rejected date
         And the LPA with ID "88668805824" should display with status "Processed"
@@ -68,13 +68,16 @@ Feature: Status display for LPAs
         And the LPA status is shown as "Checking"
 
     @focus
-    Scenario: A registered LPA with no dispatch date displays as "Checking" on its status page (LPAL-92)
+    Scenario: A registered LPA with no dispatch date displays as "Processed" on its status page with registration date + 15 working days on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
         And I click on the view message link for LPA with ID "68582508781"
         Then I am taken to the detail page for LPA with ID "68582508781"
         And I see "A685 8250 8781" in the page text
-        And the LPA status is shown as "Checking"
+        And the LPA status is shown as "Processed"
+
+        # registration date is 04/03/2021
+        And the date by which the LPA should be received is shown as "25/03/21"
 
     @focus
     Scenario: A registered and dispatched LPA displays as "Processed" with dispatch date + 15 working days on its status page (LPAL-92)
