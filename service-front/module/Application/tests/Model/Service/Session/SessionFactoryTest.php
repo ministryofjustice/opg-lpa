@@ -4,6 +4,7 @@ namespace ApplicationTest\Model\Service\Session;
 
 use Application\Model\Service\Session\SessionFactory;
 use Application\Model\Service\Session\SessionManager;
+use ApplicationTest\Model\Service\ServiceTestHelper;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Mockery;
@@ -21,6 +22,8 @@ class SessionFactoryTest extends MockeryTestCase
      */
     public function testSessionFactory() : void
     {
+        ServiceTestHelper::disableRedisSaveHandler();
+
         $container = Mockery::Mock(ContainerInterface::class);
         $container->shouldReceive('get')
             ->withArgs(['Config'])
