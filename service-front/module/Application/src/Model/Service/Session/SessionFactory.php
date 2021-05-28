@@ -16,7 +16,6 @@ use Aws\DynamoDb\DynamoDbClient;
  * @package Application\Model\Service\Session
  */
 class SessionFactory implements FactoryInterface {
-
     /**
      * Create an object
      *
@@ -33,23 +32,19 @@ class SessionFactory implements FactoryInterface {
     {
         $config = $container->get('Config');
 
-        if( !isset( $config['session'] ) ){
+        if (!isset($config['session'])) {
             throw new RuntimeException('Session configuration setting not found');
         }
 
         $config = $config['session'];
 
-        //----------------------------------------
         // Apply any native PHP level settings
-
-        if( isset($config['native_settings']) && is_array($config['native_settings']) ){
-
-            foreach( $config['native_settings'] as $k => $v ){
-                ini_set( 'session.'.$k, $v );
+        if (isset($config['native_settings']) && is_array($config['native_settings'])) {
+            foreach ($config['native_settings'] as $k => $v) {
+                ini_set('session.' . $k, $v);
             }
         }
 
         return new SessionManager();
     }
-
-} // class
+}
