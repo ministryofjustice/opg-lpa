@@ -47,10 +47,7 @@ class SessionFactoryTest extends MockeryTestCase
 //        $this->assertInstanceOf(MailTransport::class, $result);
 //    }
 
-    /**
-     * @throws ContainerException
-     */
-    public function testMailTransportFactoryNoSessionConfig() : void
+    public function testSessionFactoryNoSessionConfig() : void
     {
         /** @var ContainerInterface|MockInterface $container */
         $container = Mockery::Mock(ContainerInterface::class);
@@ -63,7 +60,5 @@ class SessionFactoryTest extends MockeryTestCase
 
         $factory = new SessionFactory();
         $result = $factory($container, null, null);
-
-        $this->assertInstanceOf(MailTransport::class, $result);
     }
 }
