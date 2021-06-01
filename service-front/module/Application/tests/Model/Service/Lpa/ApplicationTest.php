@@ -242,7 +242,7 @@ class ApplicationTest extends MockeryTestCase
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/4321/applications', ['search' => null]])
             ->once()
-            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-2', 'Processed', '2019-01-2')]]);
+            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-2', 'Returned', '2019-01-2')]]);
 
         $result = $this->service->getLpaSummaries();
 
@@ -253,7 +253,7 @@ class ApplicationTest extends MockeryTestCase
                 'donor' => 'Hon Ayden Armstrong',
                 'type' => 'health-and-welfare',
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
-                'progress' => 'Processed',
+                'progress' => 'Returned',
                 'rejectedDate' => '2019-01-2',
                 'refreshId' => 5531003157
             ])

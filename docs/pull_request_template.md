@@ -6,7 +6,7 @@ Fixes LPAL-####
 
 ## Approach
 
-_Explain how your code addresses the purpose of the change_
+_Explain how your code addresses the purpose of the change_ 
 
 ## Learning
 

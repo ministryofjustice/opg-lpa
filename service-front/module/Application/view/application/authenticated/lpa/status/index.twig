@@ -19,19 +19,19 @@
         <ol class="progress-bar">
             <li class="progress-bar__steps {{ status == 'waiting' ? 'current-waiting' : '' }}">
                 <span class="{{ 'waiting' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
-                <span data-cy="lpa-progress-waiting" class="progress-bar__steps--text">Waiting</span>
+                <span class="progress-bar__steps--text">Waiting</span>
             </li>
             <li class="progress-bar__steps {{ status == 'received' ? 'current-received' : '' }}">
                 <span class="{{ 'received' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
-                <span data-cy="lpa-progress-received" class="progress-bar__steps--text">Received</span>
+                <span class="progress-bar__steps--text">Received</span>
             </li>
             <li class="progress-bar__steps {{ status == 'checking' ? 'current-checking' : '' }}">
                 <span class="{{ 'checking' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
-                <span data-cy="lpa-progress-checking" class="progress-bar__steps--text">Checking</span>
+                <span class="progress-bar__steps--text">Checking</span>
             </li>
-            <li class="progress-bar__steps {{ status == 'processed' ? 'current-processed' : '' }}">
-                <span class="{{ 'processed' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
-                <span data-cy="lpa-progress-processed" class="progress-bar__steps--text">Processed</span>
+            <li class="progress-bar__steps {{ status == 'returned' ? 'current-returned' : '' }}">
+                <span class="{{ 'returned' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
+                <span class="progress-bar__steps--text">Returned</span>
             </li>
         </ol>
 
@@ -69,31 +69,35 @@
                         <p>We’re currently asking customers to allow 30 working days for us to receive the LPA, enter it on to our system and update this message.</p>
                 {% endif %}
 
-                <p>If you think we should have received your LPA by now, please call 0300 456 0300.</p>
-                <p>Opening times: Monday, Tuesday, Thursday, Friday 9.30am to 5pm. Wednesday 10am to 5pm.</p>
+                <p>If you think we should have received your LPA by now, please call 0300 456 0300</p>
+                <p>Opening times: Monday, Tuesday, Thursday, Friday 9.30am to 5pm. Wednesday 10am to 5pm</p>
             </div>
 
-        {% elseif status == 'processed' %}
+
+        {% elseif status == 'returned' %}
 
             <div>
-                <h2 class="heading-xlarge">We’ve processed the LPA</h2>
+                <h2 class="heading-xlarge">We’ve returned the LPA</h2>
             </div>
-
             <div>
-                <p>For security reasons, we cannot tell you here if the LPA has been registered or not.</p>
-
-                <p>{{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }} will receive the LPA in the post, along with a letter saying if the LPA:
-
+                <p>We've sent the LPA to {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}.</p>
+                <p>For security reasons, we can only tell you we’ve returned the LPA. We cannot tell you on this service if the LPA is registered or not.</p>
+                <p>If you’re the donor or an attorney, you’ll receive a letter that tells you the LPA is:</p>
                 <ul class="list list-bullet" style="font-weight:normal;">
-                    <li>has been registered</li>
-                    <li>could not be registered - we’ll also say why we could not register it and what to do next</li>
+                    <li>registered</li>
+                    <li>unregistered - we’ll also say why we could not register it and what to do next</li>
                 </ul>
 
-                <p>The donor and all attorneys on the LPA will get a letter telling them the outcome.</p>
+                {% if returnDate != null  %}
+                    <p>We sent the LPA and letters by second class post on  {{ returnDate|date("d F Y")  }}. </p>
+                {% else %}
+                    <p>We sent the LPA and letters by second class post. </p>
+                {% endif %}
 
-                <p>If the LPA or the letters have not arrived by <span data-cy="lpa-should-receive-by-date">{{ shouldReceiveByDate|date('d/m/y') }}</span>, please call 0300 456 0300.</p>
+                <p>If they have not arrived after 10 working days, please call 0300 456 0300.</p>
 
                 <p>Opening times: Monday, Tuesday, Thursday, Friday 9.30am to 5pm. Wednesday 10am to 5pm.</p>
+
             </div>
 
         {% elseif status == 'received' %}

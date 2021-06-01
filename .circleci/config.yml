@@ -138,7 +138,7 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/run_cypress_test:
          name: run_cypress_test_remaining_tests
-         cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @Statuses"
+         cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF"
          filters: { branches: { ignore: [master] } }
          requires: [dev_seed_environment_databases]
 
@@ -892,7 +892,7 @@ orbs:
         # Runs cypress testing
         #
         executor: python
-        parameters:
+        parameters: 
           workspace:
             description: Terraform workspace name
             type: string

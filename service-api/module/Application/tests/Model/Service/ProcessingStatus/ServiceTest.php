@@ -4,7 +4,6 @@ namespace Application\Model\Service\ProcessingStatus;
 
 use Application\Library\ApiProblem\ApiProblemException;
 use GuzzleHttp\Client;
-use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
 use Http\Client\Exception;
 use Http\Client\HttpClient;
@@ -38,13 +37,11 @@ class ServiceTest extends MockeryTestCase
     public function setUp() : void
     {
         $this->httpClient = Mockery::mock(Client::class);
-        $this->credentials = Mockery::mock(CredentialsInterface::class);
         $this->awsSignature = Mockery::mock(SignatureV4::class);
 
         $this->service = new Service();
         $this->service->setAwsSignatureV4($this->awsSignature);
         $this->service->setClient($this->httpClient);
-        $this->service->setCredentials($this->credentials);
         $this->service->setConfig(['processing-status' => ['endpoint' => 'http://thing/processing-status/']]);
     }
 
@@ -144,7 +141,7 @@ class ServiceTest extends MockeryTestCase
      * @throws ApiProblemException
      * @throws Exception
      */
-    public function testGetProcessedStatusForRejected()
+    public function testGetReturnedStatus()
     {
         $this->setUpSigning();
         $returnStatus = 200;
@@ -152,28 +149,6 @@ class ServiceTest extends MockeryTestCase
         $this->setUpRequest($returnStatus, $returnBody);
         $statusResult = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => ['status' => 'Processed', 'rejectedDate' => '2019-02-11']], $statusResult);
-    }
-
-    public function testGetProcessedStatusForWithdrawn()
-    {
-        $this->setUpSigning();
-        $returnStatus = 200;
-        $returnBody = '{"status": "Withdrawn","withdrawnDate": "2021-03-08"}';
-        $this->setUpRequest($returnStatus, $returnBody);
-        $statusResult = $this->service->getStatuses([1000000000]);
-
-        $this->assertEquals([1000000000 => ['status' => 'Processed', 'withdrawnDate' => '2021-03-08']], $statusResult);
-    }
-
-    public function testGetProcessedStatusForInvalid()
-    {
-        $this->setUpSigning();
-        $returnStatus = 200;
-        $returnBody = '{"status": "Invalid","invalidDate": "2021-02-08"}';
-        $this->setUpRequest($returnStatus, $returnBody);
-        $statusResult = $this->service->getStatuses([1000000000]);
-
-        $this->assertEquals([1000000000 => ['status' => 'Processed', 'invalidDate' => '2021-02-08']], $statusResult);
+        $this->assertEquals([1000000000 => ['status' => 'Returned', 'rejectedDate' => '2019-02-11']], $statusResult);
     }
 }

@@ -110,13 +110,32 @@ class StatusController extends AbstractRestfulController
             return $lpaResult;
         }
         /** @var Lpa $lpa */
-        $metaData = $lpaResult->getData()->getMetaData();
+        $lpa = $lpaResult->getData();
+        $metaData = $lpa->getMetaData();
 
-        return array_key_exists(LPA::SIRIUS_PROCESSING_STATUS, $metaData) ?
+        $currentProcessingStatus = array_key_exists(LPA::SIRIUS_PROCESSING_STATUS, $metaData) ?
             $metaData[LPA::SIRIUS_PROCESSING_STATUS] : null;
+
+        return $currentProcessingStatus;
     }
 
-    private function updateMetadata($lpaId, $data)
+    public function getApplicationReturnDate($id)
+    {
+        $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
+        if ($lpaResult instanceof ApiProblem) {
+            $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
+            return $lpaResult;
+        }
+        /** @var Lpa $lpa */
+        $metaData = $lpaResult->getData()->getMetaData();
+
+        $applicationReturnDate = array_key_exists(LPA::APPLICATION_REJECTED_DATE, $metaData) ?
+            $metaData[LPA::APPLICATION_REJECTED_DATE] : $metaData[LPA::APPLICATION_REGISTRATION_DATE];
+
+        return $applicationReturnDate;
+    }
+
+    private function updateMetadata($lpaId, $lpaStatus, $receiptDate = null, $registrationDate = null, $rejectedDate = null)
     {
         $lpaResult = $this->getService()->fetch($lpaId, $this->routeUserId);
 
@@ -130,24 +149,13 @@ class StatusController extends AbstractRestfulController
         $metaData = $lpa->getMetaData();
 
         // Update metadata in DB
-        $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $data['status'];
-        $metaData[LPA::APPLICATION_REGISTRATION_DATE] = $data['registrationDate'];
-        $metaData[LPA::APPLICATION_RECEIPT_DATE] = $data['receiptDate'];
-        $metaData[LPA::APPLICATION_REJECTED_DATE] = $data['rejectedDate'];
-        $metaData[LPA::APPLICATION_INVALID_DATE] = $data['invalidDate'];
-        $metaData[LPA::APPLICATION_WITHDRAWN_DATE] = $data['withdrawnDate'];
-
-        // TODO edit third party library
-        $metaData['application-dispatch-date'] = $data['dispatchDate'];
-
+        $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $lpaStatus;
+        $metaData[LPA::APPLICATION_REGISTRATION_DATE] = $registrationDate;
+        $metaData[LPA::APPLICATION_RECEIPT_DATE] = $receiptDate;
+        $metaData[LPA::APPLICATION_REJECTED_DATE] = $rejectedDate;
         $this->getService()->patch(['metadata' => $metaData], $lpaId, $this->routeUserId);
 
-        $this->getLogger()->debug('Updated metadata for: ' . $lpaId . var_export($metaData, true));
-    }
-
-    private function getValue($array, $key, $default = null)
-    {
-        return (isset($array[$key]) ? $array[$key] : $default);
+        $this->getLogger()->debug('Updated metadata for  :' .$lpaId  .var_export($metaData, true));
     }
 
     /**
@@ -201,50 +209,34 @@ class StatusController extends AbstractRestfulController
 
             // Get status update from Sirius
             $siriusResponseArray = $this->processingStatusService->getStatuses($allIdsToCheckStatusInSirius);
-            if (!empty($siriusResponseArray)) {
+            if (!empty($siriusResponseArray))
+            {
                 // updates the results for the status received back from Sirius
-                foreach ($siriusResponseArray as $lpaId => $lpaDetail) {
-                    // If the processStatusService didn't get a response for
-                    // this LPA (it hasn't been received yet), the detail is null
-                    // and the LPA will display as "Waiting"
-                    if (is_null($lpaDetail)) {
-                        $results[$lpaId] = ['found' => false];
-                    }
-                    // There was a status returned by processStatusService
-                    else {
+                foreach ($siriusResponseArray as $lpaId => $lpaDetail)
+                {
+                    // If there was a status returned
+                    if (count($lpaDetail) > 0 ) {
+
                         $currentResult = $results[$lpaId];
                         $currentProcessingStatus = $currentResult['found'] ? $currentResult['status'] : null;
 
-                        // Common data, whether the status is set or not
-                        $data = [
-                            'found' => true,
-                            'status' => $lpaDetail['status'],
-                            'rejectedDate' => $this->getValue($lpaDetail, 'rejectedDate')
-                        ];
+                        $receiptDate = isset($lpaDetail['receiptDate']) ? $lpaDetail['receiptDate'] : null;
+                        $registrationDate = isset($lpaDetail['registrationDate']) ? $lpaDetail['registrationDate'] : null;
+                        $rejectDate = isset($lpaDetail['rejectedDate']) ? $lpaDetail['rejectedDate'] : null;
 
-                        if (isset($data['status'])) {
-                            // Data we only need if status is set already
-                            $data['receiptDate'] = $this->getValue($lpaDetail, 'receiptDate');
-                            $data['registrationDate'] = $this->getValue($lpaDetail, 'registrationDate');
-                            $data['invalidDate'] = $this->getValue($lpaDetail, 'invalidDate');
-                            $data['withdrawnDate'] = $this->getValue($lpaDetail, 'withdrawnDate');
-                            $data['dispatchDate'] = $this->getValue($lpaDetail, 'dispatchDate');
-
-                            // If status doesn't match what we already have, update the database
-                            if ($data['status'] !== $currentProcessingStatus) {
-                                $this->updateMetadata($lpaId, $data);
-                            }
-
-                            $results[$lpaId] = [
-                                'found' => true,
-                                'status' => $data['status'],
-                            ];
+                        // If it doesn't match what we already have update the database
+                        if (isset($lpaDetail['status']) && $lpaDetail['status'] !== $currentProcessingStatus) {
+                            $this->updateMetadata($lpaId, $lpaDetail['status'],$receiptDate,$registrationDate,$rejectDate);
+                            $results[$lpaId] = ['found' => true, 'status' => $lpaDetail['status'], 'receiptDate' => $receiptDate, 'registrationDate' => $registrationDate, 'rejectedDate' => $rejectDate];
                         }
-                        else if (!is_null($currentProcessingStatus) && is_null($data['rejectedDate'])) {
-                            $results[$lpaId] = [
-                                'found' => true,
-                                'status' => $currentProcessingStatus,
-                            ];
+                        else if (isset($lpaDetail['status']) && $lpaDetail['status'] == $currentProcessingStatus) {
+                            $results[$lpaId] = ['found' => true, 'status' => $currentProcessingStatus,'receiptDate' => $receiptDate, 'registrationDate' => $registrationDate, 'rejectedDate' => $rejectDate];
+                        }
+                        else if(is_null($lpaDetail['status']) && !is_null($currentProcessingStatus) && is_null($rejectDate)){
+                            $results[$lpaId] = ['found' => true, 'status' => $currentProcessingStatus, 'rejectedDate' => null];
+                        }
+                        else {
+                            $results[$lpaId] = ['found' => false];
                         }
                     }
                 }

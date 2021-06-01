@@ -4,7 +4,7 @@ namespace Application\Model\Service\ProcessingStatus;
 
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\AbstractService;
-use Aws\Credentials\CredentialsInterface;
+use Aws\Credentials\CredentialProvider;
 use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
@@ -18,26 +18,21 @@ use GuzzleHttp\Client as HttpClient;
 class Service extends AbstractService
 {
     private const SIRIUS_STATUS_TO_LPA = [
-        'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
-        'Perfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
-        'Imperfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
-        'Invalid' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-        'Rejected' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-        'Withdrawn' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-        'Registered' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-        'Cancelled' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-        'Revoked' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED
+            'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
+            'Perfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
+            'Imperfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
+            'Invalid' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Rejected' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Withdrawn' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Registered' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Cancelled' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Revoked' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED
     ];
 
     /**
      * @var $httpClient HttpClient
      */
     private $httpClient;
-
-    /**
-     * @var $credentials CredentialsInterface
-     */
-    private $credentials;
 
     /**
      * @var $processingStatusServiceUri string
@@ -52,11 +47,6 @@ class Service extends AbstractService
     public function setClient(HttpClient $httpClient)
     {
         $this->httpClient = $httpClient;
-    }
-
-    public function setCredentials(CredentialsInterface $credentials)
-    {
-        $this->credentials = $credentials;
     }
 
     public function setConfig(array $config)
@@ -85,6 +75,9 @@ class Service extends AbstractService
         $requests = [];
         $siriusResponseArray = [];
 
+        $provider = CredentialProvider::defaultProvider();
+        $credentials = $provider()->wait();
+
         foreach ($ids as $id) {
 
             $prefixedId = $id;
@@ -95,7 +88,7 @@ class Service extends AbstractService
 
             $url = new Uri($this->processingStatusServiceUri . $prefixedId);
             $requests[$id] = new Request('GET', $url, $this->buildHeaders());
-            $requests[$id] = $this->awsSignature->signRequest($requests[$id], $this->credentials);
+            $requests[$id] = $this->awsSignature->signRequest($requests[$id], $credentials);
         } //end of request loop
 
         // build pool
@@ -185,37 +178,10 @@ class Service extends AbstractService
         if (isset($responseBody['rejectedDate'])){
             $return['rejectedDate'] = $responseBody['rejectedDate'];
         }
-        if (isset($responseBody['invalidDate'])){
-            $return['invalidDate'] = $responseBody['invalidDate'];
-        }
-        if (isset($responseBody['withdrawnDate'])){
-            $return['withdrawnDate'] = $responseBody['withdrawnDate'];
-        }
-        if (isset($responseBody['dispatchDate'])) {
-            $return['dispatchDate'] = $responseBody['dispatchDate'];
-        }
         if (isset($responseBody['status'])) {
-            $status = self::SIRIUS_STATUS_TO_LPA[$responseBody['status']];
-
-            // We change the status manually to "checking" if the LPA
-            // is registered but has no dispatch date set yet; the logic
-            // in our front end assumes a "processed" LPA will have a dispatch,
-            // rejected, invalid or withdrawn date (registration date is now
-            // ignored), so we shouldn't treat a registered LPA without one
-            // of these dates as "processed"
-            if (!isset($responseBody['dispatchDate']) && $responseBody['status'] === 'Registered') {
-                $status = Lpa::SIRIUS_PROCESSING_STATUS_CHECKING;
-            }
-
-            // We manually change status to "Processed" if it is "Returned",
-            // as service-front wants "Processed" rather than "Returned" (LPAL-92)
-            if ($status === Lpa::SIRIUS_PROCESSING_STATUS_RETURNED) {
-                $status = 'Processed';
-            }
-
-            $return['status'] = $status;
+            $return['status'] = self::SIRIUS_STATUS_TO_LPA[$responseBody['status']];
         }
-
         return $return;
+
     }
 }
