@@ -108,49 +108,55 @@ pr_build: &pr_build
           ]
 
     - ecr_scan_results:
-         name: ecr_scan_results_development
-         filters: { branches: { ignore: [master] } }
-         requires:
-           [
-             front_docker_build,
-             admin_docker_build,
-             api_docker_build,
-             pdf_docker_build,
-             seeding_docker_build,
-           ]
+        name: ecr_scan_results_development
+        filters: { branches: { ignore: [master] } }
+        requires:
+          [
+            front_docker_build,
+            admin_docker_build,
+            api_docker_build,
+            pdf_docker_build,
+            seeding_docker_build,
+          ]
 
     - infrastructure_and_deployment/seed_environment_databases:
-         name: dev_seed_environment_databases
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_environment_apply_terraform]
+        name: dev_seed_environment_databases
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_environment_apply_terraform]
 
     - infrastructure_and_deployment/run_cypress_test:
-         name: run_cypress_test_stitchedpf
-         cypress_tags: "@StitchedPF"
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_seed_environment_databases]
+        name: run_cypress_test_stitchedpf
+        cypress_tags: "@StitchedPF"
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
-         name: run_cypress_test_stitchedhw
-         cypress_tags: "@StitchedHW"
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_seed_environment_databases]
+        name: run_cypress_test_stitchedhw
+        cypress_tags: "@StitchedHW"
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
-         name: run_cypress_test_remaining_tests
-         cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF"
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_seed_environment_databases]
+        name: run_cypress_test_remaining_tests
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF"
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_functional_test:
-         name: run_functional_test
-         filters: { branches: { ignore: [master] } }
-         requires: [dev_seed_environment_databases]
+        name: run_functional_test
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
 
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
-        requires: [run_functional_test, run_cypress_test_stitchedpf, run_cypress_test_stitchedhw, run_cypress_test_remaining_tests]
+        requires:
+          [
+            run_functional_test,
+            run_cypress_test_stitchedpf,
+            run_cypress_test_stitchedhw,
+            run_cypress_test_remaining_tests,
+          ]
 
 path_to_live: &path_to_live
   jobs:
@@ -285,7 +291,13 @@ path_to_live: &path_to_live
         name: prod_account_apply_terraform
         workspace: production
         filters: { branches: { only: [master] } }
-        requires: [preprod_test_functional, preprod_test_cypress_stitchedpf, preprod_test_cypress_stitchedhw, preprod_test_cypress_remaining_tests]
+        requires:
+          [
+            preprod_test_functional,
+            preprod_test_cypress_stitchedpf,
+            preprod_test_cypress_stitchedhw,
+            preprod_test_cypress_remaining_tests,
+          ]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: prod_environment_apply_terraform
@@ -334,7 +346,69 @@ workflows:
     <<: *path_to_live
 
 orbs:
-  slack: circleci/slack@4.4.0
+  my_slack: &slack_orb
+    environment:
+      SLACK_PARAM_WHEN: <<parameters.when>>
+    commands:
+      notify:
+        parameters:
+          slack_channel:
+            type: string
+            description: Slack channel id to use
+          template_file:
+            type: string
+            description: template filename to use
+          template_folder:
+            type: string
+            default: "templates"
+            description: provide a path for your template files. Default is templates (folder relative to slack script)
+          replacement_vars:
+            type: string
+            description: additional values to provide on top of environment variables. Provide key value pairs eg "stage=testing"
+            default: ""
+          when:
+            type: enum
+            default: always
+            enum:
+              - on_fail
+              - on_success
+              - always
+
+        steps:
+          - run:
+              command: |
+                echo 'export STEP_STATUS="on_fail"' >>$BASH_ENV
+              name: Slack - Detecting Job Status (FAIL)
+              when: on_fail
+          - run:
+              command: |
+                echo 'export STEP_STATUS="on_success"' >>$BASH_ENV
+              name: Slack - Detecting Job Status (PASS)
+              when: on_success
+          - run:
+              name: notify_channel
+              command: |
+
+                if [ "$STEP_STATUS" = "$SLACK_PARAM_WHEN" ] || [ "$SLACK_PARAM_WHEN" = "always" ]; then
+
+                  echo "Posting Status"
+
+
+                  cd ~/projects/scripts/pipeline/slack_notifications
+                  pip install -r requirements.txt
+                  chmod +x ./notify_slack_from_template.py
+                  python ./notify_slack_from_template.py --template_file=<<parameters.template_file>>  \
+                                                      --slack_channel=<<parameters.slack_channel>> \
+                                                      --slack_token=$SLACK_ACCESS_TOKEN\
+                                                      --replacement_vars <<parameters.replacement_vars>>
+                else
+                # dont send message.
+                  echo "NO SLACK ALERT"
+                  echo
+                  echo "This command is set to send an alert: $SLACK_PARAM_WHEN"
+                  echo "Current status: ${STEP_STATUS}"
+                fi
+
   build_containers_and_push_to_ecr:
     orbs:
       docker: circleci/docker@1.4.0
@@ -452,6 +526,8 @@ orbs:
 
   infrastructure_and_deployment:
     orbs:
+      my_slack:
+        <<: *slack_orb
       docker: circleci/docker@1.4.0
     commands:
       dockerhub_login:
@@ -626,9 +702,9 @@ orbs:
           - run:
               name: Plan Terraform against preproduction and scan for potential issues.
               command: |
-                apk update && apk add curl curl-dev bash jq
+                apk update && apk add curl curl-dev bash jq python
                 level=<<parameters.terraform_level>>
-                approval_step=<<parameters.approval_step>>
+                export $(echo APPROVAL_STEP=<<parameters.approval_step>>) >>$BASH_ENV
 
                 echo selecting "${level}" level terraform...
                 cd ~/project/terraform/${level}
@@ -654,25 +730,27 @@ orbs:
                 else
                   cat ${WORKSPACE}.log | grep -E 'aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
                 fi
-
-                if [[ "$?" -eq 0 ]]
+                  if [[ "$?" -eq 0 ]]
                 then
                    echo terraform log scan found a possible destructive change.
                    echo please review before approval.
-
-                   ~/project/scripts/pipeline/auto_approve_hold/slack_approval_warning.sh \
-                                        "${SLACK_DEV_WEBHOOK}" \
-                                        "${CIRCLE_PULL_REQUEST}" \
-                                        "${CIRCLE_JOB}" \
-                                        "${CIRCLE_BUILD_URL}" \
-                                        "${approval_step}"
+                   exit 1
                 else
-                  echo terraform log scan found no destructive changes. auto-approval will take place.
-                  ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh \
-                                        "${CIRCLE_WORKFLOW_ID}" \
-                                        "${approval_step}" \
-                                        "${CIRCLECI_API_KEY}"
+                    echo terraform log scan found no destructive changes. auto-approval will take place.
+                    exit 0
                 fi
+
+          - my_slack/notify:
+              when: on_fail
+              slack_channel: C01BKBWGWTY
+              template_file: slack_approval_warning.j2
+          - run:
+              when: on_success
+              command: |
+                ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh \
+                             "${CIRCLE_WORKFLOW_ID}" \
+                             "${APPROVAL_STEP}" \
+                             "${CIRCLECI_API_KEY}"
 
       apply_environment_terraform:
         #
@@ -892,7 +970,7 @@ orbs:
         # Runs cypress testing
         #
         executor: python
-        parameters: 
+        parameters:
           workspace:
             description: Terraform workspace name
             type: string
@@ -1000,12 +1078,11 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
-            ~/project/scripts/pipeline/set_environment_variables/set_slack_post_environment_domains.sh
 
-      - slack/notify:
-          event: pass
-          channel: "C01BKBWGWTY"
-          template: SLACK_POST_ENVIRONMENT_DOMAIN_TEMPLATE
+      - my_slack/notify:
+          when: on_success
+          slack_channel: "C01BKBWGWTY"
+          template_file: post_environment_domains.j2
 
   slack_notify_production_release:
     docker:
@@ -1029,11 +1106,10 @@ jobs:
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
-            ~/project/scripts/pipeline/set_environment_variables/set_slack_notify_production_release.sh
-      - slack/notify:
-          event: pass
-          channel: "C01BDM8T67J"
-          template: SLACK_NOTIFY_PRODUCTION_RELEASE_TEMPLATE
+      - my_slack/notify:
+          when: on_success
+          slack_channel: "C01BDM8T67J"
+          template_file: production_release_notification.j2
   ecr_scan_results:
     docker:
       - image: circleci/python
