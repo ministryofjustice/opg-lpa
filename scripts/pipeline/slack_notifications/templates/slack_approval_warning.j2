@@ -1,0 +1,24 @@
+{
+    "blocks":
+    [
+        {
+            "type": "section",
+            "text":
+            {
+                "type": "mrkdwn",
+                "text": "<!here> :sign-warning: CircleCI Pipeline Approval Needed!"
+            }
+        }
+    ],
+    "attachments" :
+    [
+        {
+            "blocks" : [],
+            "fallback": "Pipeline for {{ CIRCLE_PR }} needs a manual approval.",
+            "title" : "Pipeline for {{ CIRCLE_PR }} needs a manual approval.",
+            "text": "• The pipeline flagged some infrastructure that could potentially be destroyed or recreated.\n• Please check step <{{ CIRCLE_BUILD_URL }}|*${{ CIRCLE_JOB }}*> to confirm if this is as intended.\n• If it was, release the on hold step {{ APPROVAL_STEP }} when ready.",
+            "emoji": true,
+            "color": "#ffff00"
+        }
+    ]
+}
