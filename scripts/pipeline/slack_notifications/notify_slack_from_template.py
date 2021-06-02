@@ -94,7 +94,7 @@ class keyvalue(argparse.Action):
 def main():
     parser = argparse.ArgumentParser(description="runs a slack notification")
     parser.add_argument(
-        "--template", help="defines a template name to look up")
+        "--template_file", help="defines a template name to look up")
     parser.add_argument("--template_folder", nargs="?",
                         default="templates", help="folder for the templates")
     parser.add_argument("--slack_token", help="slack api token to use")
@@ -104,7 +104,7 @@ def main():
     args = parser.parse_args()
 
     renderer = TemplateRenderer(
-        args.template, args.template_folder, args.replacement_vars)
+        args.template_file, args.template_folder, args.replacement_vars)
     notifier = SlackNotifier(args.slack_token, args.slack_channel)
     notifier.notify(renderer.render())
 
