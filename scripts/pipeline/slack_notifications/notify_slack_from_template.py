@@ -55,7 +55,7 @@ class SlackNotifier:
     """
 
     def __init__(self, slack_token, slack_channel):
-        """[summary]
+        """constructor
 
         Args:
             slack_token (string): the slack app token to use
