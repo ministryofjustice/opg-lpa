@@ -224,7 +224,6 @@ path_to_live: &path_to_live
         requires:
           [
             preprod_infra_approval_terraform_apply_account_pr_build,
-            preprod_account_plan_check_terraform_pr_build,
           ]
 
     - infrastructure_and_deployment/apply_environment_terraform:
@@ -234,7 +233,6 @@ path_to_live: &path_to_live
         requires:
           [
             preprod_account_apply_terraform,
-            preprod_environment_plan_check_terraform_pr_build,
             preprod_infra_approval_terraform_apply_environment_pr_build,
             front_docker_build,
             admin_docker_build,
