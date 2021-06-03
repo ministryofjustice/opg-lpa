@@ -717,8 +717,6 @@ orbs:
               command: |
                 apk update && apk add curl curl-dev bash jq python3 py3-pip --no-cache
                 level=<<parameters.terraform_level>>
-                export APPROVAL_STEP=$(echo "<<parameters.approval_step>>") >> $BASH_ENV
-
                 echo selecting "${level}" level terraform...
                 cd ~/project/terraform/${level}
                 echo initialising...
@@ -762,7 +760,7 @@ orbs:
               command: |
                 ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh \
                              "${CIRCLE_WORKFLOW_ID}" \
-                             "${APPROVAL_STEP}" \
+                             "<<parameters.approval_step>> \
                              "${CIRCLECI_API_KEY}"
 
       apply_environment_terraform:
