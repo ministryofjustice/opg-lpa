@@ -9,8 +9,8 @@ resource "aws_elasticache_subnet_group" "private_subnets" {
   subnet_ids = aws_subnet.private[*].id
 }
 
-// commented out to break!
-/*resource "aws_elasticache_replication_group" "front_cache" {
+
+resource "aws_elasticache_replication_group" "front_cache" {
   replication_group_id          = "front-cache-replication-group"
   replication_group_description = "front cache replication group"
   parameter_group_name          = "default.redis5.0"
@@ -26,4 +26,4 @@ resource "aws_elasticache_subnet_group" "private_subnets" {
   security_group_ids = [aws_security_group.front_cache.id]
 
   tags = merge(local.default_tags, local.front_component_tag)
-}*/
+}
