@@ -751,7 +751,7 @@ orbs:
 
           - my_slack/notify:
               when: on_fail
-              slack_channel: C01BKBWGWTY
+              slack_channel: C01BDFQHTRU
               template_file: slack_approval_warning.j2
               replacement_vars: APPROVAL_STEP=<<parameters.approval_step>>
           - run:
