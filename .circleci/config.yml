@@ -760,7 +760,7 @@ orbs:
               command: |
                 ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh \
                              "${CIRCLE_WORKFLOW_ID}" \
-                             "<<parameters.approval_step>> \
+                             "<<parameters.approval_step>>" \
                              "${CIRCLECI_API_KEY}"
 
       apply_environment_terraform:
