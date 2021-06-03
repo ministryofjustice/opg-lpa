@@ -717,7 +717,7 @@ orbs:
               command: |
                 apk update && apk add curl curl-dev bash jq python3 py3-pip --no-cache
                 level=<<parameters.terraform_level>>
-                $APPROVAL_STEP=$(echo "<parameters.approval_step>>") >> $BASH_ENV
+                $APPROVAL_STEP=$(echo "<<parameters.approval_step>>") >> $BASH_ENV
 
                 echo selecting "${level}" level terraform...
                 cd ~/project/terraform/${level}
