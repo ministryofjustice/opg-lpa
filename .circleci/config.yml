@@ -392,11 +392,13 @@ orbs:
               name: Slack - Detecting Job Status - on success
               when: on_success
           - run:
+              when: always
               command: |
                 echo 'export SLACK_PARAM_WHEN="<<parameters.when>>"' >> /tmp/SLACK_JOB_STATUS
 
               name: store when to run notification
           - run:
+              when: always
               name: notify_channel
               command: |
                 . "/tmp/SLACK_JOB_STATUS"
