@@ -347,6 +347,14 @@ workflows:
 
 orbs:
   my_slack: &slack_orb
+    executors:
+      python:
+        docker:
+        - image: circleci/python
+          auth:
+            username: $DOCKER_USER
+            password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
     environment:
       SLACK_PARAM_WHEN: <<parameters.when>>
     commands:
@@ -373,7 +381,6 @@ orbs:
               - on_fail
               - on_success
               - always
-
         steps:
           - run:
               command: |
@@ -396,7 +403,7 @@ orbs:
                   cd ~/project/scripts/pipeline/slack_notifications
                   pip install -r requirements.txt
                   chmod +x ./notify_slack_from_template.py
-                  python ./notify_slack_from_template.py --template_file=<<parameters.template_file>>  \
+                  python3 ./notify_slack_from_template.py --template_file=<<parameters.template_file>>  \
                                                       --slack_channel=<<parameters.slack_channel>> \
                                                       --slack_token=$SLACK_ACCESS_TOKEN\
                                                       --replacement_vars <<parameters.replacement_vars>>
