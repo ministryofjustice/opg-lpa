@@ -384,18 +384,19 @@ orbs:
         steps:
           - run:
               command: |
-                echo 'export STEP_STATUS="on_fail"' >> $BASH_ENV
+                echo 'export STEP_STATUS="on_fail" > /tmp/SLACK_JOB_STATUS
               name: Slack - Detecting Job Status (FAIL)
               when: on_fail
           - run:
               command: |
-                echo 'export STEP_STATUS="on_success"' >> $BASH_ENV
+                echo 'export STEP_STATUS="on_success"' > /tmp/SLACK_JOB_STATUS
 
               name: Slack - Detecting Job Status (PASS)
               when: on_success
           - run:
               name: notify_channel
               command: |
+                . "/tmp/SLACK_JOB_STATUS"
                 echo "step status:$STEP_STATUS"
                 echo "when: $SLACK_PARAM_WHEN"
                 if [ "$STEP_STATUS" = "$SLACK_PARAM_WHEN" ] || [ "$SLACK_PARAM_WHEN" = "always" ]; then
@@ -711,7 +712,7 @@ orbs:
               command: |
                 apk update && apk add curl curl-dev bash jq python3 py3-pip --no-cache
                 level=<<parameters.terraform_level>>
-                echo $(export APPROVAL_STEP=<<parameters.approval_step>>) >> $BASH_ENV
+                echo "export APPROVAL_STEP=<parameters.approval_step>>" >> $BASH_ENV
 
                 echo selecting "${level}" level terraform...
                 cd ~/project/terraform/${level}
