@@ -393,7 +393,7 @@ orbs:
 
                   echo "Posting message..."
 
-                  cd ~/projects/scripts/pipeline/slack_notifications
+                  cd ~/project/scripts/pipeline/slack_notifications
                   pip install -r requirements.txt
                   chmod +x ./notify_slack_from_template.py
                   python ./notify_slack_from_template.py --template_file=<<parameters.template_file>>  \
