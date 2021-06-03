@@ -391,8 +391,7 @@ orbs:
 
                 if [ "$STEP_STATUS" = "$SLACK_PARAM_WHEN" ] || [ "$SLACK_PARAM_WHEN" = "always" ]; then
 
-                  echo "Posting Status"
-
+                  echo "Posting message..."
 
                   cd ~/projects/scripts/pipeline/slack_notifications
                   pip install -r requirements.txt
@@ -402,11 +401,10 @@ orbs:
                                                       --slack_token=$SLACK_ACCESS_TOKEN\
                                                       --replacement_vars <<parameters.replacement_vars>>
                 else
-                # dont send message.
-                  echo "NO SLACK ALERT"
+                   echo "Skipping message send."
                   echo
-                  echo "This command is set to send an alert: $SLACK_PARAM_WHEN"
-                  echo "Current status: ${STEP_STATUS}"
+                  echo "This command is set to send an alert when status is: $SLACK_PARAM_WHEN"
+                  echo "Current status is: ${STEP_STATUS}"
                 fi
 
   build_containers_and_push_to_ecr:
@@ -702,7 +700,7 @@ orbs:
           - run:
               name: Plan Terraform against preproduction and scan for potential issues.
               command: |
-                apk update && apk add curl curl-dev bash jq python
+                apk update && apk add curl curl-dev bash jq python3 py3-pip --no-cache
                 level=<<parameters.terraform_level>>
                 export $(echo APPROVAL_STEP=<<parameters.approval_step>>) >>$BASH_ENV
 
