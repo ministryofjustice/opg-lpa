@@ -756,6 +756,7 @@ orbs:
               slack_channel: C01BKBWGWTY
               template_file: slack_approval_warning.j2
           - run:
+              name: auto approve job hold
               when: on_success
               command: |
                 ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh \
