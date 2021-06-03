@@ -49,7 +49,7 @@ resource "aws_cloudwatch_metric_alarm" "account_breakglass_login_alarm" {
 
 
 # elasticache cloudwatch alerts
-/*resource "aws_cloudwatch_metric_alarm" "elasticache_high_cpu_utilization" {
+resource "aws_cloudwatch_metric_alarm" "elasticache_high_cpu_utilization" {
   for_each                  = toset(aws_elasticache_replication_group.front_cache.member_clusters)
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn]
@@ -91,4 +91,4 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
   dimensions = {
     CacheClusterId = each.value
   }
-}*/
+}
