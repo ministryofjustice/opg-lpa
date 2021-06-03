@@ -81,7 +81,6 @@ pr_build: &pr_build
         requires:
           [
             cancel_previous_jobs,
-            dev_account_plan_check_terraform_pr_build,
             dev_infra_approval_terraform_apply_account_pr_build,
           ]
 
@@ -97,7 +96,6 @@ pr_build: &pr_build
           [
             cancel_previous_jobs,
             lint_environment_terraform_pr_build,
-            dev_environment_plan_check_terraform_pr_build,
             dev_infra_approval_terraform_apply_environment_pr_build,
             dev_account_apply_terraform,
             front_docker_build,
