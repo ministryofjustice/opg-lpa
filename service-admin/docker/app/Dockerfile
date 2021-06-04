@@ -1,4 +1,4 @@
-FROM composer:latest AS composer
+FROM composer:2.0.14 AS composer
 
 COPY service-admin/composer.json /app/composer.json
 COPY service-admin/composer.lock /app/composer.lock
