@@ -351,8 +351,6 @@ orbs:
             username: $DOCKER_USER
             password: $DOCKER_ACCESS_TOKEN
         resource_class: small
-    environment:
-      SLACK_PARAM_WHEN: <<parameters.when>>
     commands:
       notify:
         parameters:
@@ -400,8 +398,7 @@ orbs:
               name: notify_channel
               command: |
                 . "/tmp/SLACK_JOB_STATUS"
-                echo "step status:$STEP_STATUS"
-                echo "when: $SLACK_PARAM_WHEN"
+
                 if [ "$STEP_STATUS" = "$SLACK_PARAM_WHEN" ] || [ "$SLACK_PARAM_WHEN" = "always" ]; then
 
                   echo "Posting message..."
