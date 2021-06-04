@@ -748,7 +748,7 @@ orbs:
 
           - my_slack/notify:
               when: on_fail
-              slack_channel: C01BDFQHTRU
+              slack_channel: $DEV_SLACK_CHANNEL
               template_file: slack_approval_warning.j2
               replacement_vars: APPROVAL_STEP=<<parameters.approval_step>>
           - run:
@@ -1089,7 +1089,7 @@ jobs:
 
       - my_slack/notify:
           when: on_success
-          slack_channel: "C01BKBWGWTY"
+          slack_channel: $BUILD_SLACK_CHANNEL
           template_file: post_environment_domains.j2
 
   slack_notify_production_release:
@@ -1116,7 +1116,7 @@ jobs:
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - my_slack/notify:
           when: on_success
-          slack_channel: "C01BDM8T67J"
+          slack_channel: $LIVE_SLACK_CHANNEL
           template_file: production_release_notification.j2
   ecr_scan_results:
     docker:
