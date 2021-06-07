@@ -51,7 +51,7 @@ class ContinuationSheet2 extends AbstractContinuationSheet
      * @param $contentPage
      * @throws Exception
      */
-    public function __construct(Lpa $lpa, $cs2Type, $fullContent, $contentPage)
+    public function __construct(Lpa $lpa, $cs2Type, $fullContent, $contentPage, ?PdftkFactory $pdftkFactory = null)
     {
         //  Ensure that the content type and page number selected are allowed
         if (!is_int($contentPage) || $contentPage < 1) {
@@ -79,7 +79,7 @@ class ContinuationSheet2 extends AbstractContinuationSheet
         $this->content = $content;
         $this->isContinued = ($contentPage > 1);
 
-        parent::__construct($lpa);
+        parent::__construct($lpa, [], $pdftkFactory);
     }
 
     /**
