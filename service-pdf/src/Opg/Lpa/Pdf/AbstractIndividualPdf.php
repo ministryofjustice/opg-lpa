@@ -3,6 +3,7 @@
 namespace Opg\Lpa\Pdf;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\PdftkFactory;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Exception;
 use setasign\Fpdi\Tcpdf\Fpdi;
@@ -55,9 +56,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * @param Lpa|null $lpa
      * @param array $options
+     * @param ?PdftkFactory $pdftkFactory
      * @throws Exception
      */
-    public function __construct(Lpa $lpa = null, array $options = [])
+    public function __construct(Lpa $lpa = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
     {
         //  Ensure that a template file was defined
         if (is_null($this->templateFileName)) {
@@ -75,7 +77,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
             }
         }
 
-        parent::__construct($lpa, $this->templateFileName, $options);
+        parent::__construct($lpa, $this->templateFileName, $options, $pdftkFactory);
     }
 
     /**
@@ -155,6 +157,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
             return;
         }
 
+        // 'P' = portrait, 'pt' = use points for measurements
         $pdf = new FPDI('P', 'pt');
 
         // Turn off line at top of PDF
@@ -256,7 +259,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                         $constituentPdfFile = $constituentPdfFile->generate();
                     }
 
-                    $pdfMaster = new PdftkPdf([
+                    $pdfMaster = $this->pdftkFactory->create([
                         'A' => $this->pdfFile,
                         'B' => $constituentPdfFile,
                     ]);

@@ -3,7 +3,7 @@ resource "aws_sqs_queue" "pdf_fifo_queue" {
   message_retention_seconds         = "3600"
   visibility_timeout_seconds        = "90"
   fifo_queue                        = true
-  content_based_deduplication       = false
+  content_based_deduplication       = true
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = "300"
   max_message_size                  = "262144"
