@@ -580,13 +580,13 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
-      python-medium:
+      python-large:
         docker:
           - image: circleci/python
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
-        resource_class: medium
+        resource_class: large
       python-build:
         docker:
           - image: python:alpine
@@ -916,7 +916,7 @@ orbs:
         #
         # Runs user journey tests using casper JS
         #
-        executor: python-medium
+        executor: python-large
         parameters:
           workspace:
             description: Terraform workspace name
@@ -984,7 +984,7 @@ orbs:
         #
         # Runs cypress testing
         #
-        executor: python-medium
+        executor: python-large
         parameters:
           workspace:
             description: Terraform workspace name
