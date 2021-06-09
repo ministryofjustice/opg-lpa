@@ -53,7 +53,7 @@
             $dayObj = $('#dob-date-day'),
             $monthObj = $('#dob-date-month'),
             $yearObj = $('#dob-date-year'),
-            returnDate;
+            birthdate;
 
           if ($dayObj.val() !== '') {
             day = parseInt($dayObj.val(), 10);
@@ -77,12 +77,12 @@
             }
           }
 
-          returnDate = new Date(year, month, day);
-          if (!isFinite(returnDate)) {
-            returnDate = null;
+          birthdate = new Date(year, month, day);
+          if (!isFinite(birthdate)) {
+            birthdate = null;
           }
 
-          return returnDate;
+          return birthdate;
 
         },
         tplAlert = lpa.templates['alert.withinForm'];
