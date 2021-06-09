@@ -136,7 +136,7 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF"
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @Statuses"
         filters: { branches: { ignore: [master] } }
         requires: [dev_seed_environment_databases]
 
@@ -565,8 +565,8 @@ orbs:
           - run:
               name: Install Terraform
               command: |
-                export TERRAFORM_VERSION=0.15.4
-                export TERRAFORM_SHA256SUM=ddf9b409599b8c3b44d4e7c080da9a106befc1ff9e53b57364622720114e325c
+                export TERRAFORM_VERSION=1.0.0
+                export TERRAFORM_SHA256SUM=8be33cc3be8089019d95eb8f546f35d41926e7c1e5deff15792e969dde573eb5
                 curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                 echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
                 sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
@@ -601,9 +601,9 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
-      terraform15:
+      terraform:
         docker:
-          - image: hashicorp/terraform:0.15.4
+          - image: hashicorp/terraform:1.0.0
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -617,7 +617,7 @@ orbs:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        executor: terraform15
+        executor: terraform
         steps:
           - checkout
           - run:
@@ -638,7 +638,7 @@ orbs:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        executor: terraform15
+        executor: terraform
         steps:
           - checkout
           - run:
@@ -657,7 +657,7 @@ orbs:
         # Apply the email terraform configuration. This:
         #   - Creates a mailbox used for functional testing;
         #
-        executor: terraform15
+        executor: terraform
         parameters:
           workspace:
             description: Terraform workspace name
@@ -679,7 +679,7 @@ orbs:
         # Apply the shared terraform configuration. This:
         #   - Updates the account infrastructure;
         #
-        executor: terraform15
+        executor: terraform
         parameters:
           workspace:
             description: Terraform workspace name
@@ -698,7 +698,7 @@ orbs:
 
       plan_check_terraform:
         # plan check - with gating check
-        executor: terraform15
+        executor: terraform
         parameters:
           terraform_level:
             description: choose account / enviroment for level to check
@@ -773,7 +773,7 @@ orbs:
         #   - Updates per environment infrastructure; and
         #   - Triggers a deploy of the updated container (if changed)
         #
-        executor: terraform15
+        executor: terraform
         parameters:
           workspace:
             description: Terraform workspace name
@@ -812,7 +812,7 @@ orbs:
         # Destroys a development environment after testing and approval
         # Cannot be run on master branch
         #
-        executor: terraform15
+        executor: terraform
         parameters:
           workspace:
             description: Terraform workspace name
@@ -1144,7 +1144,7 @@ jobs:
 
   workspace_cleanup:
     docker:
-      - image: hashicorp/terraform:0.15.4
+      - image: hashicorp/terraform:1.0.0
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
