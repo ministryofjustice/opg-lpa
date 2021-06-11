@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "24537fb9371ce65c55e28ae29ddc6a45",
+    "content-hash": "90f69e597111d594b7e31973b337c969",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
