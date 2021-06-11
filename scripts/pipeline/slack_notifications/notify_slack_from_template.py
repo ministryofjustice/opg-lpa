@@ -24,9 +24,8 @@ class TemplateRenderer:
         self.template_environment = jinja2.Environment(
             loader=FileSystemLoader(template_folder))
 
-        # pull in environment variables, and  any replacement variables to use, and merge.
-        self.template_vars = {**dict([(k, self.sanitize(v)) for k, v in os.environ.items()]),
-                              **{k: self.sanitize(v) for k, v in replacement_vars.items()}}
+        # pull in  variables to use, and merge.
+        self.template_vars = {**{k: self.sanitize(v) for k, v in replacement_vars.items()}}
 
     def sanitize(key, value):
         """sanitize any strings passed from a dict to make it json compatible.
@@ -99,7 +98,7 @@ def main():
                         default="templates", help="folder for the templates")
     parser.add_argument("--slack_token", help="slack api token to use")
     parser.add_argument("--slack_channel", help="slack channel to post to")
-    parser.add_argument("--replacement_vars", help="additional replacement variables to pass in",
+    parser.add_argument("--vars", help="replacement variables to pass in",
                         nargs="*", action=keyvalue, default=dict())
     args = parser.parse_args()
 
