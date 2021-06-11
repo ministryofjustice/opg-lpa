@@ -3,6 +3,11 @@ namespace Application\Library\ApiProblem;
 
 use Laminas\ApiTools\ApiProblem\ApiProblem as LaminasApiProblem;
 
+/**
+ * While this class superficially duplicates LaminasApiProblem, the difference
+ * is that this class makes protected methods on its parent class into
+ * public methods.
+ */
 class ApiProblem extends LaminasApiProblem
 {
     /**
