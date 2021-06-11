@@ -26,6 +26,7 @@ class TemplateRenderer:
 
         # pull in  variables to use, and merge.
         self.template_vars = {**{k: self.sanitize(v) for k, v in replacement_vars.items()}}
+        print(self.template_vars)
 
     def sanitize(key, value):
         """sanitize any strings passed from a dict to make it json compatible.
@@ -82,12 +83,14 @@ class keyvalue(argparse.Action):
     def __call__(self, parser, namespace,
                  values, option_string=None):
         setattr(namespace, self.dest, dict())
-
+        print("values:")
+        print(values)
         for value in values:
+            print(value)
             # split it into key and value
-            key, value = value.split('=')
+            key, val = value.split('=')
             # assign into dictionary
-            getattr(namespace, self.dest)[key] = value
+            getattr(namespace, self.dest)[key] = val
 
 
 def main():
