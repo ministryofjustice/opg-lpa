@@ -122,39 +122,42 @@ pr_build: &pr_build
         filters: { branches: { ignore: [master] } }
         requires: [dev_environment_apply_terraform]
 
-    - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_stitchedpf
-        cypress_tags: "@StitchedPF"
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+    # - infrastructure_and_deployment/run_cypress_test:
+    #     name: run_cypress_test_stitchedpf
+    #     cypress_tags: "@StitchedPF"
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [dev_seed_environment_databases]
 
-    - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_stitchedhw
-        cypress_tags: "@StitchedHW"
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+    # - infrastructure_and_deployment/run_cypress_test:
+    #     name: run_cypress_test_stitchedhw
+    #     cypress_tags: "@StitchedHW"
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [dev_seed_environment_databases]
 
-    - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @Statuses"
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+    # - infrastructure_and_deployment/run_cypress_test:
+    #     name: run_cypress_test_remaining_tests
+    #     cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @Statuses"
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [dev_seed_environment_databases]
 
-    - infrastructure_and_deployment/run_functional_test:
-        name: run_functional_test
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+    # - infrastructure_and_deployment/run_functional_test:
+    #     name: run_functional_test
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [dev_seed_environment_databases]
 
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
         requires:
           [
-            run_functional_test,
-            run_cypress_test_stitchedpf,
-            run_cypress_test_stitchedhw,
-            run_cypress_test_remaining_tests,
+            dev_seed_environment_databases
           ]
+          # [
+          #   run_functional_test,
+          #   run_cypress_test_stitchedpf,
+          #   run_cypress_test_stitchedhw,
+          #   run_cypress_test_remaining_tests,
+          # ]
 
 path_to_live: &path_to_live
   jobs:
