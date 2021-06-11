@@ -41,22 +41,23 @@ class SystemMessageHandler extends AbstractHandler
 
         if ($request->getMethod() == 'POST') {
             $form->setData($request->getParsedBody());
+            $newMessage = $form->get('message')->getValue();
 
-            if ($form->isValid()) {
-                $newMessage = $form->get('message')->getValue();
-                $confirmMessage = 'System message set';
+            $confirmMessage = "No system message has been set";
 
-                if (empty($newMessage)) {
-                    $this->cache->removeItem('system-message');
-                    $confirmMessage = 'System message removed';
-                } else {
+            if (empty($newMessage) && !is_null($this->cache->getItem('system-message'))) {
+                $this->cache->removeItem('system-message');
+                $confirmMessage = 'System message removed';
+            } else {
+                if ($form->isValid()) {
                     $this->cache->setItem('system-message', $newMessage);
+                    $confirmMessage = 'System message set';
                 }
-
-                $this->setFlashInfoMessage($request, $confirmMessage);
-
-                return $this->redirectToRoute('system.message');
             }
+
+            $this->setFlashInfoMessage($request, $confirmMessage);
+
+            return $this->redirectToRoute('system.message');
         } else {
             $currentMessage = $this->cache->getItem('system-message');
 
