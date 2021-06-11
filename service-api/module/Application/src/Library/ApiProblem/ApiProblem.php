@@ -14,9 +14,9 @@ class ApiProblem extends LaminasApiProblem
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getStatus()
+    public function getStatus() : int
     {
         return parent::getStatus();
     }
