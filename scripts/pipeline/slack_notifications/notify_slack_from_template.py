@@ -11,13 +11,13 @@ class TemplateRenderer:
     """Template renderer class
     """
 
-    def __init__(self, template_file, template_folder, replacement_vars):
+    def __init__(self, template_file, template_folder, vars):
         """constructor
 
         Args:
             template_file (string): filename of the template to use
             template_folder (string):
-            replacement_vars (dict(string, string)): a dictionary of replacement variables passed on the command line
+            vars (dict(string, string)): a dictionary of replacement variables passed on the command line
         """
         self.template_file = template_file
 
@@ -25,7 +25,7 @@ class TemplateRenderer:
             loader=FileSystemLoader(template_folder))
 
         # pull in  variables to use, and merge.
-        self.template_vars = {**{k: self.sanitize(v) for k, v in replacement_vars.items()}}
+        self.template_vars = {**{k: self.sanitize(v) for k, v in vars.items()}}
         print(self.template_vars)
 
     def sanitize(key, value):
@@ -83,10 +83,8 @@ class keyvalue(argparse.Action):
     def __call__(self, parser, namespace,
                  values, option_string=None):
         setattr(namespace, self.dest, dict())
-        print("values:")
-        print(values)
+
         for value in values:
-            print(value)
             # split it into key and value
             key, val = value.split('=')
             # assign into dictionary
@@ -106,7 +104,7 @@ def main():
     args = parser.parse_args()
 
     renderer = TemplateRenderer(
-        args.template_file, args.template_folder, args.replacement_vars)
+        args.template_file, args.template_folder, args.vars)
     notifier = SlackNotifier(args.slack_token, args.slack_channel)
     notifier.notify(renderer.render())
 
