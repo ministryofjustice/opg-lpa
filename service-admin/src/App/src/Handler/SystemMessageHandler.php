@@ -50,9 +50,8 @@ class SystemMessageHandler extends AbstractHandler
                 $confirmMessage = 'System message removed';
 
             } elseif ($form->isValid() && !empty($newMessage)) {
-                    $this->cache->setItem('system-message', $newMessage);
-                    $confirmMessage = 'System message set';
-                }
+                $this->cache->setItem('system-message', $newMessage);
+                $confirmMessage = 'System message set';
             }
 
             $this->setFlashInfoMessage($request, $confirmMessage);
