@@ -2,6 +2,7 @@
 namespace ApplicationTest\Model\Service\Session;
 
 use Application\Model\Service\Session\SessionManager;
+use ApplicationTest\Model\Service\ServiceTestHelper;
 use Laminas\Session\Container;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -19,10 +20,7 @@ class SessionManagerTest extends MockeryTestCase
      */
     public function testSessionManager() : void
     {
-        // This prevents PHP defaulting to the Redis save handler while
-        // running unit tests
-        ini_set('session.save_handler', 'files');
-        ini_set('session.save_path', '/tmp/');
+        ServiceTestHelper::disableRedisSaveHandler();
 
         $container = new Container('initialised', $sessionManager);
 
