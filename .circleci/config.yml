@@ -409,7 +409,7 @@ orbs:
                   python3 ./notify_slack_from_template.py --template_file=<<parameters.template_file>>  \
                                                       --slack_channel=<<parameters.slack_channel>> \
                                                       --slack_token=$SLACK_ACCESS_TOKEN\
-                                                      --replacement_vars <<parameters.replacement_vars>>
+                                                      --vars <<parameters.replacement_vars>>
                 else
                   echo "Skipping message send."
                   echo
@@ -750,7 +750,7 @@ orbs:
               when: on_fail
               slack_channel: $DEV_SLACK_CHANNEL
               template_file: slack_approval_warning.j2
-              replacement_vars: APPROVAL_STEP=<<parameters.approval_step>>
+              replacement_vars: APPROVAL_STEP=<<parameters.approval_step>> CIRCLE_PULL_REQUEST=$CIRCLE_PULL_REQUEST CIRCLE_BUILD_URL=$CIRCLE_BUILD_URL CIRCLE_JOB=$CIRCLE_JOB
           - run:
               name: auto approve job hold
               when: on_success
@@ -1091,6 +1091,7 @@ jobs:
           when: on_success
           slack_channel: $BUILD_SLACK_CHANNEL
           template_file: post_environment_domains.j2
+          replacement_vars: PUBLIC_FACING_DOMAIN=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN=$FRONT_DOMAIN ADMIN_DOMAIN=$ADMIN_DOMAIN CIRCLE_USERNAME=$CIRCLE_USERNAME CIRCLE_BRANCH=$CIRCLE_BRANCH COMMIT_MESSAGE="$COMMIT_MESSAGE"
 
   slack_notify_production_release:
     docker:
@@ -1118,6 +1119,7 @@ jobs:
           when: on_success
           slack_channel: $LIVE_SLACK_CHANNEL
           template_file: production_release_notification.j2
+          replacement_vars: PUBLIC_FACING_DOMAIN=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN=$FRONT_DOMAIN ADMIN_DOMAIN=$ADMIN_DOMAIN CIRCLE_USERNAME=$CIRCLE_USERNAME CIRCLE_BRANCH=$CIRCLE_BRANCH COMMIT_MESSAGE="$COMMIT_MESSAGE"
   ecr_scan_results:
     docker:
       - image: circleci/python
