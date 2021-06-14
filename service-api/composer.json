@@ -31,7 +31,6 @@
         "alphagov/notifications-php-client": "^1.6",
         "robmorgan/phinx": "^0.10.6",
         "laminas/laminas-db": "^2.9",
-        "nategood/commando": "^0.3.0",
         "league/csv": "^9.0",
         "laminas/laminas-cli": "^1.1"
     },
