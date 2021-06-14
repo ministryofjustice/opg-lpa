@@ -43,6 +43,43 @@ Feature: Admin
     And I click "submit-button"
     And I see "System message removed" in the page text
 
+  Scenario: Set and remove a system message on user facing site consecutively
+    Given I visit the admin sign-in page
+    And I log in to admin
+    And I click "system-message-link"
+    Then I am taken to the system message page
+
+    # set message to display on front end
+    When I type "Your pizza is burning" into "message"
+    And I click "submit-button"
+    And I see "System message set" in the page text
+
+    # remove message to display on front end
+    Then I clear the value in "message"
+    And I click "submit-button"
+    And I see "System message removed" in the page text
+
+    # set message to display on front end
+    When I type "Your pizza is burning" into "message"
+    And I click "submit-button"
+    And I see "System message set" in the page text
+
+    # remove message to display on front end
+    Then I clear the value in "message"
+    And I click "submit-button"
+    And I see "System message removed" in the page text
+
+  Scenario: Try to set empty message on system message
+    Given I visit the admin sign-in page
+    And I log in to admin
+    And I click "system-message-link"
+    Then I am taken to the system message page
+
+    # set message to display on front end
+    When I type " " into "message"
+    And I click "submit-button"
+    And I see "No system message has been set" in the page text
+
   @focus
   Scenario: View feedback sent to the service
     Given I visit the admin sign-in page
