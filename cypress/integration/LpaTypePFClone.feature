@@ -5,6 +5,7 @@ Feature: Clone Property and Finance LPA starting from the Type page
 
     Background:
         Given I ignore application exceptions
+        And I set cloned to true
         And I log in as seeded user
         Then I am taken to the dashboard page
 
