@@ -153,7 +153,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
   "containerOverrides": [
     {
       "name": "app",
-      "command": ["php", "/app/public/index.php", "generate-stats"]
+      "command": ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"]
     }
   ]
 }

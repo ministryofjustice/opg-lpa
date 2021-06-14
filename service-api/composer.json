@@ -22,7 +22,6 @@
         "laminas/laminas-filter": "^2.7",
         "laminas/laminas-math": "^3.0",
         "laminas/laminas-mvc": "^3.1",
-        "laminas/laminas-mvc-console": "^1.1",
         "laminas/laminas-mvc-i18n": "^1.0",
         "laminas/laminas-paginator": "^2.8",
         "laminas/laminas-zendframework-bridge": "^1.1.1",
@@ -34,7 +33,8 @@
         "robmorgan/phinx": "^0.10.6",
         "laminas/laminas-db": "^2.9",
         "nategood/commando": "^0.3.0",
-        "league/csv": "^9.0"
+        "league/csv": "^9.0",
+        "laminas/laminas-cli": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",

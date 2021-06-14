@@ -15,16 +15,6 @@ return [
                         ],
                     ],
                 ],
-                'generate-stats' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'generate-stats',
-                        'defaults' => [
-                            'controller' => 'Application\Controller\Console\GenerateStats',
-                            'action'     => 'generate'
-                        ],
-                    ],
-                ],
                 'dynamodb-init' => [
                     'type'    => 'simple',
                     'options' => [
@@ -483,7 +473,6 @@ return [
         'factories' => [
             'Application\Controller\Console\AccountCleanup' => Application\ControllerFactory\AccountCleanupControllerFactory::class,
             'Application\Controller\Console\DynamoDbController' => Application\ControllerFactory\DynamoDbControllerFactory::class,
-            'Application\Controller\Console\GenerateStats'  => Application\ControllerFactory\GenerateStatsControllerFactory::class,
             'Application\Controller\Ping'                   => Application\ControllerFactory\PingControllerFactory::class,
             'Application\Controller\Stats'                  => Application\ControllerFactory\StatsControllerFactory::class,
             'Application\Controller\Feedback'               => Application\ControllerFactory\FeedbackControllerFactory::class,
@@ -502,6 +491,9 @@ return [
         ],
         'aliases' => [
             'translator' => 'MvcTranslator',
+        ],
+        'factories' => [
+            'Application\Command\GenerateStatsCommand' => 'Application\Command\GenerateStatsCommand',
         ],
     ], // service_manager
 
@@ -533,6 +525,12 @@ return [
         ],
         'strategies' => [
             'ViewJsonStrategy',
+        ],
+    ],
+
+    'laminas-cli' => [
+        'commands' => [
+            'service-api:generate-stats' => Application\Command\GenerateStatsCommand::class,
         ],
     ],
 
