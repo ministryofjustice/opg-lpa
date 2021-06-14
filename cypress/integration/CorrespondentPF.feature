@@ -28,7 +28,7 @@ Feature: Add a correspondent to a Property and Finance LPA
         And I see "Mrs Nancy Garrison" in the page text
         And "contactByEmail" is checked
         # choose new correspondent
-        When I check "reuse-details--1"
+        When I opt not to re-use details
         And I click "continue"
         Then I see "Correspondent details" in the page text
         And I can find "postcode-lookup"

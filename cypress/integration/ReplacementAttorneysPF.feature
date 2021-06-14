@@ -19,7 +19,8 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         Then I am taken to the replacement attorney page
         When I click "add-replacement-attorney"
         Then I can see popup
-        And I can find "use-my-details"
+        And I can find use-my-details if lpa is new
+        And I opt not to re-use details if lpa is a clone
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
         When I force fill out
@@ -52,6 +53,8 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         Then I see "Ms Isobel Ward" in the page text
         # Test adding same attorney twice
         When I click "add-replacement-attorney"
+        And I can find use-my-details if lpa is new
+        And I opt not to re-use details if lpa is a clone
         # deliberately Mrs instead of Ms this time
         When I select "Mrs" on "name-title"
         And I force fill out
@@ -86,6 +89,8 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         Then I do not see "Mr Ewan Adams" in the page text
         # re-add 2cnd replacement attorney
         When I click "add-replacement-attorney"
+        And I can find use-my-details if lpa is new
+        And I opt not to re-use details if lpa is a clone
         And I select "Mr" on "name-title"
         And I force fill out
             | name-first | Ewan |

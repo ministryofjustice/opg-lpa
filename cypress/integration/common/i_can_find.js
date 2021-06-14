@@ -4,6 +4,12 @@ Then(`I can find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]");
 })
 
+Then(`I can find use-my-details if lpa is new`, (object) => {
+  if (Cypress.env('clonedLpa') !== true) {
+      cy.get("[data-cy=use-my-details]");
+  }
+})
+
 Then(`I can find {string} with data-inited`, (object) => {
   cy.get("[data-cy=" + object + "][data-inited=true]");
 })
