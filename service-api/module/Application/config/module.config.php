@@ -2,23 +2,6 @@
 
 return [
 
-    'console' => [
-        'router' => [
-            'routes' => [
-                'account-cleanup' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'account-cleanup',
-                        'defaults' => [
-                            'controller' => 'Application\Controller\Console\AccountCleanup',
-                            'action'     => 'cleanup'
-                        ],
-                    ],
-                ]
-            ],
-        ],
-    ],
-
     'router' => [
         'routes' => [
             'home' => [
@@ -461,7 +444,6 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController'
         ],
         'factories' => [
-            'Application\Controller\Console\AccountCleanup' => Application\ControllerFactory\AccountCleanupControllerFactory::class,
             'Application\Controller\Ping'                   => Application\ControllerFactory\PingControllerFactory::class,
             'Application\Controller\Stats'                  => Application\ControllerFactory\StatsControllerFactory::class,
             'Application\Controller\Feedback'               => Application\ControllerFactory\FeedbackControllerFactory::class,
@@ -483,6 +465,7 @@ return [
         ],
         'factories' => [
             'Application\Command\GenerateStatsCommand' => 'Application\Command\GenerateStatsCommand',
+            'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
         ],
     ], // service_manager
 
@@ -520,6 +503,7 @@ return [
     'laminas-cli' => [
         'commands' => [
             'service-api:generate-stats' => Application\Command\GenerateStatsCommand::class,
+            'service-api:account-cleanup' => Application\Command\AccountCleanupCommand::class,
         ],
     ],
 
