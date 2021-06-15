@@ -27,7 +27,7 @@ Feature: Add donor to Health and Welfare LPA
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
         And I click element marked "Find UK address"
         # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
-        Then I can find old style id "#address-search-result" with 6 options
+        Then I can find "address-search-result" with 6 options
         When I select "Mrs" on "name-title"
         And I force fill out
             | name-first | Nancy |

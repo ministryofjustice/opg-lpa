@@ -27,7 +27,7 @@ Feature: Add donor to Property and Finance LPA
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
         And I click element marked "Find UK address"
         # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
-        Then I can find old style id "#address-search-result" with 6 options
+        Then I can find "address-search-result" with 6 options
         # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
         And I can find "name-title" with 8 options
         When I force fill out
@@ -87,7 +87,7 @@ Feature: Add donor to Property and Finance LPA
         Then I am taken to the when lpa starts page
         And I see "When can the LPA be used?" in the page text
         # in this test we check the when-no-capacity exists, then a few lines down we actually click when-now
-        And I can find old style id "#when-no-capacity"
+        And I can find "when-no-capacity"
         When I click "save"
         Then I see in the page text
             | There is a problem |
