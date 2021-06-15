@@ -32,7 +32,8 @@
         "robmorgan/phinx": "^0.10.6",
         "laminas/laminas-db": "^2.9",
         "league/csv": "^9.0",
-        "laminas/laminas-cli": "^1.1"
+        "laminas/laminas-cli": "^1.1",
+        "nategood/commando": "^0.4.0"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
