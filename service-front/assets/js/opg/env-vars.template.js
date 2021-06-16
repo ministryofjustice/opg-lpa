@@ -20,3 +20,7 @@ window.getMakeEnvVar = function (varName) {
 
     return window.MAKE_ENV[varName];
 };
+
+window.getMakeRevision = function () {
+    return window.getMakeEnvVar('revision');
+};

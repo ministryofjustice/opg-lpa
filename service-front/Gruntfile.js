@@ -41,11 +41,11 @@ const injectEnvVars = function (content) {
     let envVars = {};
 
     // The following variables are set and passed to the template:
-    //   cacheBust: set from the REVISION env var; in CircleCI, this is set
+    //   revision: set from the REVISION env var; in CircleCI, this is set
     //   from pipeline.git.revision; used as a cacheBust parameter on JS ajax
     //   calls (see cache-busting.js)
     if ('REVISION' in process.env) {
-        envVars.cacheBust = process.env.REVISION;
+        envVars.revision = process.env.REVISION;
     }
 
     // render the template

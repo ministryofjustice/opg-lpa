@@ -5,14 +5,14 @@
 
     var cacheBustingUrl = function (url) {
         // defined in env-vars JS file
-        var cacheBust = window.getMakeEnvVar('cacheBust');
+        var revision = window.getMakeRevision();
 
-        if (cacheBust === undefined) {
+        if (revision === undefined) {
             return url;
         }
 
         var url = window.URI(url);
-        url.addQuery({cacheBust: cacheBust});
+        url.addQuery({revision: revision});
         return url.toString();
     };
 
