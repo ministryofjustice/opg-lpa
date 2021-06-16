@@ -14,10 +14,6 @@ Then(`I can find {string} with data-inited`, (object) => {
   cy.get("[data-cy=" + object + "][data-inited=true]");
 })
 
-Then(`I can find old style id {string}`, (object) => {
-  cy.get(object);
-})
-
 Then(`I cannot find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]").should('not.exist');
 })
@@ -49,15 +45,6 @@ Then(`I can find {string} with {int} options`, (object, count) => {
 })
 
 // used for dropdown list for example
-Then(`I can find old style id {string} with options`, (object, dataTable) => {
-  cy.get(object).children().should($foundObject => {
-    var rawTable = dataTable.rawTable;
-    rawTable.forEach(row => { 
-        expect($foundObject).to.contain(row[0]);
-        });
-    })
-})
-
 Then(`I can find {string} with options`, (object, dataTable) => {
   cy.get("[data-cy=" + object + "]").children().should($foundObject => {
     var rawTable = dataTable.rawTable;
