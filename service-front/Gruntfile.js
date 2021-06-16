@@ -1,3 +1,7 @@
+const process = require('process');
+
+const Handlebars = require('handlebars');
+
 // for global replace of incorrect colours (from obsolete
 // govuk design system) with correct colours (from latest
 // design system); this will not be required when we upgrade to the latest
@@ -16,7 +20,7 @@ const colourPatching = [
   }
 ];
 
-let colourPatch = function (content) {
+const colourPatch = function (content) {
     for (let patch in colourPatching) {
         let oldColour = patch.from;
         let newColour = patch.to;
@@ -24,6 +28,32 @@ let colourPatch = function (content) {
     }
 
     return content;
+};
+
+// content is the handlebars template content for the env-vars JS file
+const injectEnvVars = function (content) {
+    // load the template into Handlebars
+    const template = Handlebars.compile(content);
+
+    // construct the ENV_VARS variable to inject into the template
+    // from the nodejs environment; these come from the pipeline env and similar.
+    //
+    // The following variables are set and passed to the template:
+    //   REVISION: set from pipeline.git.revision in CircleCI; used as the
+    //   cache-bust parameter on JS ajax calls
+    let revision = 'xxxxxxx';
+    if ('REVISION' in process.env) {
+        revision = process.env.REVISION;
+    }
+
+    const context = {
+        ENV_VARS: {
+            cacheBust: revision,
+        }
+    };
+
+    // render the template
+    return template(context);
 };
 
 module.exports = function (grunt) {
@@ -96,7 +126,7 @@ module.exports = function (grunt) {
     },
 
     copy: {
-      main: {
+      css: {
         src: [
           'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
           'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
@@ -107,6 +137,15 @@ module.exports = function (grunt) {
           process: colourPatch
         },
         flatten: true,
+      },
+
+      jsenv: {
+        src: 'assets/js/opg/env-vars.template.js',
+        dest: 'assets/js/opg/env-vars.js',
+        options: {
+          process: injectEnvVars
+        },
+        flatten: true
       }
     },
 
@@ -137,6 +176,7 @@ module.exports = function (grunt) {
           // Dependencies
           'node_modules/handlebars/dist/handlebars.js',
           'node_modules/lodash/lodash.js',
+          'node_modules/urijs/src/URI.min.js',
           'assets/js/govuk/stageprompt.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
@@ -147,6 +187,7 @@ module.exports = function (grunt) {
           'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
           'assets/js/opg/jquery-plugin-opg-spinner.js',
           'assets/js/opg/session-timeout-dialog.js',
+          'assets/js/opg/env-vars.js',
 
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',
@@ -247,7 +288,7 @@ module.exports = function (grunt) {
 
   // define tasks
   grunt.registerTask('test', ['scsslint', 'jshint']);
-  grunt.registerTask('build_js', ['handlebars', 'concat', 'uglify']);
-  grunt.registerTask('build_css', ['sass', 'replace', 'copy', 'cssmin']);
+  grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify']);
+  grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };
