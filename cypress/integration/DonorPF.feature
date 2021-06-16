@@ -86,13 +86,20 @@ Feature: Add donor to Property and Finance LPA
         And I click "save-and-continue"
         Then I am taken to the when lpa starts page
         And I see "When can the LPA be used?" in the page text
-        # in this test we check the when-no-capacity exists, then a few lines down we actually click when-now
-        And I can find "when-no-capacity"
         When I click "save"
         Then I see in the page text
             | There is a problem |
             | Choose when your LPA can be used |
+        When I check "when-no-capacity"
+        And I click "save"
+        Then I am taken to the primary attorney page
+        And I see "The LPA starts only if the donor does not have mental capacity" in the page text
+        And I do not see "The LPA starts as soon as it's registered (with the donor's consent)" in the page text
+        And I cannot find "save"
+        When I click occurrence 1 of "accordion-view-change"
+        Then I am taken to the when lpa starts page
         When I check "when-now"
         And I click "save"
         Then I am taken to the primary attorney page
-        And I cannot find "save"
+        And I see "The LPA starts as soon as it's registered (with the donor's consent)" in the page text
+        And I do not see "The LPA starts only if the donor does not have mental capacity" in the page text
