@@ -10,3 +10,13 @@ window.MAKE_ENV = {};
 window.MAKE_ENV.{{@key}} = "{{this}}";
     {{/each}}
 {{/if}}
+
+// return a value from window.MAKE_ENV (if varName is a key in it),
+// or undefined (if not)
+window.getMakeEnvVar = function (varName) {
+    if (!(varName in window.MAKE_ENV)) {
+        return undefined;
+    }
+
+    return window.MAKE_ENV[varName];
+};

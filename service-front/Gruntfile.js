@@ -36,24 +36,20 @@ const injectEnvVars = function (content) {
     const template = Handlebars.compile(content);
 
     // construct the ENV_VARS variable to inject into the template
-    // from the nodejs environment; these come from the pipeline env and similar.
-    //
+    // from the nodejs runtime environment variables; these will be from the
+    // pipeline env and similar
+    let envVars = {};
+
     // The following variables are set and passed to the template:
-    //   REVISION: set from pipeline.git.revision in CircleCI; used as the
-    //   cache-bust parameter on JS ajax calls
-    let revision = 'xxxxxxx';
+    //   cacheBust: set from the REVISION env var; in CircleCI, this is set
+    //   from pipeline.git.revision; used as a cacheBust parameter on JS ajax
+    //   calls (see cache-busting.js)
     if ('REVISION' in process.env) {
-        revision = process.env.REVISION;
+        envVars.cacheBust = process.env.REVISION;
     }
 
-    const context = {
-        ENV_VARS: {
-            cacheBust: revision,
-        }
-    };
-
     // render the template
-    return template(context);
+    return template({ENV_VARS: envVars});
 };
 
 module.exports = function (grunt) {
@@ -188,6 +184,7 @@ module.exports = function (grunt) {
           'assets/js/opg/jquery-plugin-opg-spinner.js',
           'assets/js/opg/session-timeout-dialog.js',
           'assets/js/opg/env-vars.js',
+          'assets/js/opg/cache-busting.js',
 
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',

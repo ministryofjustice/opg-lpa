@@ -181,7 +181,9 @@
           ident: self.settings.overlayIdent,
           source: this.source,
           beforeOpen: function () {
-            $('#popup-content').load('/' + self.settings.guidancePath, function (html) {
+            var url = window.cacheBusting.url('/' + self.settings.guidancePath);
+
+            $('#popup-content').load(url, function (html) {
               // cache content
               if (moj.Helpers.hasHtml5Storage()) {
                 // save to html5 storage
