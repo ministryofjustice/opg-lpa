@@ -30,7 +30,7 @@ awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/inte
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/FeeReductionHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CheckoutHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
 # Stitch together PF Clone feature files 
-cat cypress/integration/LpaTypePFClone.feature | sed "s/@CreateLpa/@StitchedPF/" > cypress/integration/StitchedClonePFLpa.feature 
+cat cypress/integration/LpaTypePFClone.feature | sed "s/@CreateLpa/@StitchedPFClone/" > cypress/integration/StitchedClonePFLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/AttorneysPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ReplacementAttorneysPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature

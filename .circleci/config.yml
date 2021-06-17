@@ -129,6 +129,12 @@ pr_build: &pr_build
         requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
+        name: run_cypress_test_stitchedpfclone
+        cypress_tags: "@StitchedPFClone"
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
+
+    - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedhw
         cypress_tags: "@StitchedHW"
         filters: { branches: { ignore: [master] } }
@@ -152,6 +158,7 @@ pr_build: &pr_build
           [
             run_functional_test,
             run_cypress_test_stitchedpf,
+            run_cypress_test_stitchedpfclone,
             run_cypress_test_stitchedhw,
             run_cypress_test_remaining_tests,
           ]
@@ -1031,7 +1038,7 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" cypress:latest run || true
+                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" cypress:latest run 
           - run:
               name: Remove CircleCI ingress to environment
               command: |
