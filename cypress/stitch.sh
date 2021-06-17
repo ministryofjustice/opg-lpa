@@ -33,11 +33,11 @@ awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/inte
 cat cypress/integration/LpaTypePFClone.feature | sed "s/@CreateLpa/@StitchedPF/" > cypress/integration/StitchedClonePFLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/AttorneysPF.feature >> cypress/integration/StitchedClonePFLpa.feature
-awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ReplacementAttorneysPF.feature >> cypress/integration/StitchedClonePFLpa.feature
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ReplacementAttorneysPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CertProviderPF.feature >> cypress/integration/StitchedClonePFLpa.feature
-awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/PeopleToNotifyPF.feature >> cypress/integration/StitchedClonePFLpa.feature
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/PeopleToNotifyPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/InstructionsPreferencesPF.feature >> cypress/integration/StitchedClonePFLpa.feature
-awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/SummaryPF.feature >> cypress/integration/StitchedClonePFLpa.feature
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/SummaryPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ApplicantPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CorrespondentPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/WhoAreYouPF.feature >> cypress/integration/StitchedClonePFLpa.feature
