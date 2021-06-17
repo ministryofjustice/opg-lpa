@@ -22,6 +22,14 @@ Then(`I can find hidden {string}`, (object) => {
   cy.get("[data-cy=" + object + "]").should('be.hidden');
 })
 
+Then(`I can find {string} but it is not visible`, (object) => {
+  cy.get("[data-cy=" + object + "]").should('not.be.visible');
+})
+
+Then(`I can find {string} and it is visible`, (object) => {
+  cy.get("[data-cy=" + object + "]").should('be.visible');
+})
+
 Then(`I can find {string} wrapped with error highlighting`, (object) => {
     cy.get("div.form-group-error").within((el) => {
       cy.get("[data-cy=" + object + "]");

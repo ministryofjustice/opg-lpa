@@ -13,8 +13,12 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         And I visit the instructions page for the test fixture lpa
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
+        Then I can find "instruction" but it is not visible
+        And I can find "preferences" but it is not visible
         When I click "add-extra-preferences"
-        And I force fill out
+        Then I can find "instruction" and it is visible
+        And I can find "preferences" and it is visible
+        And I fill out
             | instruction | Lorem Ipsum |
             | preferences | Neque porro quisquam |
         When I click "save"
