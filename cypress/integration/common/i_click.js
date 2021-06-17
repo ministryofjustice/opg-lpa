@@ -10,6 +10,17 @@ Then(`I click occurrence {int} of {string}`, (number, clickable) => {
     cy.OPGCheckA11y();
 })
 
+Then(`I click to change instructions and preferences`, () => {
+    if (Cypress.env('clonedLpa') === true) {
+      var number = 7
+    }
+    else {
+      var number = 9
+    }
+    cy.get("[data-cy=accordion-view-change]").eq(number).click();
+    cy.OPGCheckA11y();
+})
+
 Then(`I force click {string}`, (clickable) => {
     cy.get("[data-cy=" + clickable + "]").click({ force: true });
     cy.OPGCheckA11y();
