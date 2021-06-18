@@ -7,7 +7,7 @@ use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\Http\Response\Json;
 use Application\Model\DataAccess\Repository\Application\LockedException;
-use Application\Model\Service\Applications\Service;
+use Application\Model\Service\Applications\Service as ApplicationsService;
 use Exception;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
@@ -29,9 +29,9 @@ class StatusController extends AbstractRestfulController
     protected $identifierName = 'lpaIds';
 
     /**
-     * @var $service Service
+     * @var $applicationsService ApplicationsService
      */
-    private $service;
+    private $applicationsService;
 
     /**
      * @var $authorizationService AuthorizationService
@@ -55,21 +55,21 @@ class StatusController extends AbstractRestfulController
      */
     protected function getService()
     {
-        return $this->service;
+        return $this->applicationsService;
     }
 
     /**
      * @param AuthorizationService $authorizationService
-     * @param Service $service
+     * @param Service $applicationsService
      * @param ProcessingStatusService $processingStatusService
      */
     public function __construct(
         AuthorizationService $authorizationService,
-        Service $service,
+        ApplicationsService $applicationsService,
         ProcessingStatusService $processingStatusService
     ) {
         $this->authorizationService = $authorizationService;
-        $this->service = $service;
+        $this->applicationsService = $applicationsService;
         $this->processingStatusService = $processingStatusService;
     }
 
@@ -169,27 +169,24 @@ class StatusController extends AbstractRestfulController
             throw new ApiProblemException('User identifier missing from URL', 400);
         }
 
-        $exploded_ids = explode(',', $ids);
-        $results = [];
+        $explodedIds = explode(',', $ids);
 
         // Adding an array to check id's for which status requests would be sent without any condition set
         $allIdsToCheckStatusInSirius = [];
 
-        foreach ($exploded_ids as $id) {
+        // This is our eventual return value
+        $results = [];
+
+        foreach ($explodedIds as $id) {
             $currentProcessingStatus = $this->getCurrentProcessingStatus($id);
 
-            //Add all id's to array to check status in SIRIUS for all applications created by the user
+            // Add all id's to array to check status in SIRIUS for all applications created by the user
             $allIdsToCheckStatusInSirius[] = $id;
 
-            if ($currentProcessingStatus instanceof ApiProblem) {
+            if ($currentProcessingStatus instanceof ApiProblem || $currentProcessingStatus == null) {
                 $results[$id] = ['found' => false];
-                continue;
             }
-
-            if ($currentProcessingStatus == null) {
-                $results[$id] = ['found' => false];
-
-            } else {
+            else {
                 $results[$id] = ['found' => true, 'status' => $currentProcessingStatus];
             }
         }
@@ -201,51 +198,50 @@ class StatusController extends AbstractRestfulController
 
             // Get status update from Sirius
             $siriusResponseArray = $this->processingStatusService->getStatuses($allIdsToCheckStatusInSirius);
-            if (!empty($siriusResponseArray)) {
-                // updates the results for the status received back from Sirius
-                foreach ($siriusResponseArray as $lpaId => $lpaDetail) {
-                    // If the processStatusService didn't get a response for
-                    // this LPA (it hasn't been received yet), the detail is null
-                    // and the LPA will display as "Waiting"
-                    if (is_null($lpaDetail)) {
-                        $results[$lpaId] = ['found' => false];
-                    }
-                    // There was a status returned by processStatusService
-                    else {
-                        $currentResult = $results[$lpaId];
-                        $currentProcessingStatus = $currentResult['found'] ? $currentResult['status'] : null;
 
-                        // Common data, whether the status is set or not
-                        $data = [
+            // Update the results for the status received back from Sirius
+            foreach ($siriusResponseArray as $lpaId => $lpaDetail) {
+                // If the processStatusService didn't get a response for
+                // this LPA (it hasn't been received yet), the detail is null
+                // and the LPA will display as "Waiting"
+                if (is_null($lpaDetail)) {
+                    $results[$lpaId] = ['found' => false];
+                }
+                // There was a status returned by processStatusService
+                else {
+                    $currentResult = $results[$lpaId];
+                    $currentProcessingStatus = $currentResult['found'] ? $currentResult['status'] : null;
+
+                    // Common data, whether the status is set or not
+                    $data = [
+                        'found' => true,
+                        'status' => $lpaDetail['status'],
+                        'rejectedDate' => $this->getValue($lpaDetail, 'rejectedDate')
+                    ];
+
+                    if (isset($data['status'])) {
+                        // Data we only need if status is set already
+                        $data['receiptDate'] = $this->getValue($lpaDetail, 'receiptDate');
+                        $data['registrationDate'] = $this->getValue($lpaDetail, 'registrationDate');
+                        $data['invalidDate'] = $this->getValue($lpaDetail, 'invalidDate');
+                        $data['withdrawnDate'] = $this->getValue($lpaDetail, 'withdrawnDate');
+                        $data['dispatchDate'] = $this->getValue($lpaDetail, 'dispatchDate');
+
+                        // If status doesn't match what we already have, update the database
+                        if ($data['status'] !== $currentProcessingStatus) {
+                            $this->updateMetadata($lpaId, $data);
+                        }
+
+                        $results[$lpaId] = [
                             'found' => true,
-                            'status' => $lpaDetail['status'],
-                            'rejectedDate' => $this->getValue($lpaDetail, 'rejectedDate')
+                            'status' => $data['status'],
                         ];
-
-                        if (isset($data['status'])) {
-                            // Data we only need if status is set already
-                            $data['receiptDate'] = $this->getValue($lpaDetail, 'receiptDate');
-                            $data['registrationDate'] = $this->getValue($lpaDetail, 'registrationDate');
-                            $data['invalidDate'] = $this->getValue($lpaDetail, 'invalidDate');
-                            $data['withdrawnDate'] = $this->getValue($lpaDetail, 'withdrawnDate');
-                            $data['dispatchDate'] = $this->getValue($lpaDetail, 'dispatchDate');
-
-                            // If status doesn't match what we already have, update the database
-                            if ($data['status'] !== $currentProcessingStatus) {
-                                $this->updateMetadata($lpaId, $data);
-                            }
-
-                            $results[$lpaId] = [
-                                'found' => true,
-                                'status' => $data['status'],
-                            ];
-                        }
-                        else if (!is_null($currentProcessingStatus) && is_null($data['rejectedDate'])) {
-                            $results[$lpaId] = [
-                                'found' => true,
-                                'status' => $currentProcessingStatus,
-                            ];
-                        }
+                    }
+                    else if (!is_null($currentProcessingStatus) && is_null($data['rejectedDate'])) {
+                        $results[$lpaId] = [
+                            'found' => true,
+                            'status' => $currentProcessingStatus,
+                        ];
                     }
                 }
             }
