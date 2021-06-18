@@ -101,23 +101,10 @@ class StatusController extends AbstractRestfulController
         }
     }
 
-    public function getCurrentProcessingStatus($id)
-    {
-        $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
-
-        if ($lpaResult instanceof ApiProblem) {
-            $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
-            return $lpaResult;
-        }
-        /** @var Lpa $lpa */
-        $metaData = $lpaResult->getData()->getMetaData();
-
-        return array_key_exists(LPA::SIRIUS_PROCESSING_STATUS, $metaData) ?
-            $metaData[LPA::SIRIUS_PROCESSING_STATUS] : null;
-    }
-
     private function updateMetadata($lpaId, $data)
     {
+        // TODO remove this call and just use the metadata retrieved in
+        // the initial db select
         $lpaResult = $this->getService()->fetch($lpaId, $this->routeUserId);
 
         if ($lpaResult instanceof ApiProblem) {
@@ -171,23 +158,46 @@ class StatusController extends AbstractRestfulController
 
         $explodedIds = explode(',', $ids);
 
-        // Adding an array to check id's for which status requests would be sent without any condition set
-        $allIdsToCheckStatusInSirius = [];
+        // Fetch requested LPAs, provided they are owned by the user
+        $lpasFromDb = $this->applicationsService->filterByIdsAndUser($explodedIds, $this->routeUserId);
+
+        // Convert db results into a map from ID to metadata
+        $lpaMetas = array_reduce($lpasFromDb, function ($sofar, $lpa) {
+            $sofar['' . $lpa->getId()] = $lpa->getMetaData();
+            return $sofar;
+        }, []);
 
         // This is our eventual return value
         $results = [];
 
-        foreach ($explodedIds as $id) {
-            $currentProcessingStatus = $this->getCurrentProcessingStatus($id);
+        // Adding an array to check ids for which status requests would be sent
+        // without any condition set
+        $allIdsToCheckStatusInSirius = [];
 
-            // Add all id's to array to check status in SIRIUS for all applications created by the user
+        // Compare each requested ID against the ones retrieved from the db
+        foreach ($explodedIds as $id) {
             $allIdsToCheckStatusInSirius[] = $id;
 
-            if ($currentProcessingStatus instanceof ApiProblem || $currentProcessingStatus == null) {
-                $results[$id] = ['found' => false];
+            if (array_key_exists($id, $lpaMetas)) {
+                // We got a record from db: status=status in db
+                $processingStatus = $this->getValue($lpaMetas[$id], LPA::SIRIUS_PROCESSING_STATUS);
+
+                // If no status is set, we treat this as "not found";
+                // I don't think this behaviour is correct, but I'm retaining
+                // it to stop other stuff breaking.
+                if (is_null($processingStatus)) {
+                    $results[$id] = ['found' => false];
+                }
+                else {
+                    $results[$id] = [
+                        'found' => true,
+                        'status' => $processingStatus,
+                    ];
+                }
             }
             else {
-                $results[$id] = ['found' => true, 'status' => $currentProcessingStatus];
+                // We found no record for it: found=false
+                $results[$id] = ['found' => false];
             }
         }
 
@@ -228,6 +238,7 @@ class StatusController extends AbstractRestfulController
                         $data['dispatchDate'] = $this->getValue($lpaDetail, 'dispatchDate');
 
                         // If status doesn't match what we already have, update the database
+                        // TODO also update if any dates have changed
                         if ($data['status'] !== $currentProcessingStatus) {
                             $this->updateMetadata($lpaId, $data);
                         }

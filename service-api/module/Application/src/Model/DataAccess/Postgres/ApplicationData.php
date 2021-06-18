@@ -10,6 +10,7 @@ use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Sql\Predicate\In as InPredicate;
 use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
@@ -92,6 +93,14 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         return $this->mapPostgresToLpaCompatible($result->current());
     }
 
+    public function getByIdsAndUser(array $lpaIds, string $userId) : Traversable
+    {
+        return $this->select([
+            'user' => $userId,
+            new InPredicate('id', $lpaIds),
+        ]);
+    }
+
     /**
      * Counts the number of results for the given criteria.
      *
@@ -154,6 +163,29 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
                 $direction = ($direction === 1) ? 'ASC' : 'DESC';
                 $select->order("$field $direction");
             }
+        }
+
+        $results = $sql->prepareStatementForSqlObject($select)->execute();
+
+        foreach ($results as $result) {
+            yield $this->mapPostgresToLpaCompatible($result);
+        }
+    }
+
+    /**
+     * Generic select allowing arbitrary SQL construction to fetch LPAs.
+     *
+     * @param array $where If provided, clauses are ANDed together by
+     * default; see https://docs.laminas.dev/laminas-db/sql/#where-having
+     * @return Traversable
+     */
+    public function select(array $where = null) : Traversable
+    {
+        $sql = new Sql($this->getZendDb());
+        $select = $sql->select(self::APPLICATIONS_TABLE);
+
+        if (!is_null($where)) {
+            $select->where($where);
         }
 
         $results = $sql->prepareStatementForSqlObject($select)->execute();
