@@ -62,11 +62,6 @@ class StatusControllerTest extends AbstractControllerTest
             ->once()
             ->andReturn([$lpa]);
 
-        $this->applicationsService->shouldReceive('fetch')
-            ->withArgs(['98765', '12345'])
-            ->once()
-            ->andReturn($dataModel);
-
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
@@ -113,11 +108,6 @@ class StatusControllerTest extends AbstractControllerTest
             ->withArgs([['98765'], '12345'])
             ->once()
             ->andReturn([$lpa]);
-
-        $this->applicationsService->shouldReceive('fetch')
-            ->withArgs(['98765', '12345'])
-            ->once()
-            ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
@@ -198,11 +188,6 @@ class StatusControllerTest extends AbstractControllerTest
             ->once()
             ->andReturn([$lpa]);
 
-        $this->applicationsService->shouldReceive('fetch')
-            ->withArgs(['98765', '12345'])
-            ->once()
-            ->andReturn($dataModel);
-
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
@@ -254,11 +239,6 @@ class StatusControllerTest extends AbstractControllerTest
             ->once()
             ->andReturn([$lpa]);
 
-        $this->applicationsService->shouldReceive('fetch')
-            ->withArgs(['98765', '12345'])
-            ->once()
-            ->andReturn($dataModel);
-
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
@@ -309,11 +289,6 @@ class StatusControllerTest extends AbstractControllerTest
             ->withArgs([['98765'], '12345'])
             ->once()
             ->andReturn([$lpa]);
-
-        $this->applicationsService->shouldReceive('fetch')
-            ->withArgs(['98765', '12345'])
-            ->once()
-            ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
@@ -432,7 +407,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -442,12 +417,6 @@ class StatusControllerTest extends AbstractControllerTest
             ->withArgs([['98765'], '12345'])
             ->once()
             ->andReturn([]);
-
-        // Fail the fetch from the db (record not found)
-        $this->applicationsService->shouldReceive('fetch')
-            ->withArgs(['98765', '12345'])
-            ->once()
-            ->andReturn(new ApiProblem(500, 'Test error'));
 
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
@@ -480,11 +449,6 @@ class StatusControllerTest extends AbstractControllerTest
             ->withArgs([['98765'], '12345'])
             ->once()
             ->andReturn([$lpa]);
-
-        $this->applicationsService->shouldReceive('fetch')
-            ->withArgs(['98765', '12345'])
-            ->once()
-            ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
@@ -572,16 +536,6 @@ class StatusControllerTest extends AbstractControllerTest
             ->withArgs([['98765', '98766'], '12345'])
             ->once()
             ->andReturn([$lpa1, $lpa2]);
-
-        $this->applicationsService->shouldReceive('fetch')
-            ->withArgs(['98765', '12345'])
-            ->once()
-            ->andReturn($dataModel1);
-
-        $this->applicationsService->shouldReceive('fetch')
-            ->withArgs(['98766', '12345'])
-            ->once()
-            ->andReturn($dataModel2);
 
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
