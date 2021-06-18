@@ -3,6 +3,7 @@ namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
 use PDOException;
+use EmptyIterator;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Laminas\Db\Sql\Sql;
@@ -189,6 +190,10 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         }
 
         $results = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$results->isQueryResult()) {
+            return new EmptyIterator();
+        }
 
         foreach ($results as $result) {
             yield $this->mapPostgresToLpaCompatible($result);
