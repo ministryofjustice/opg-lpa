@@ -4,6 +4,15 @@ services:
   # ---------------------------
   # Local Services
 
+  local-artefacts:
+    container_name: local-artefacts
+    image: local-artefacts
+    volumes:
+      - ./service-front:/service-front:rw,delegated
+    build:
+      context: ./
+      dockerfile: local-artefacts/docker/Dockerfile
+
   postgres:
     image: postgres:10.13
     ports:
@@ -83,6 +92,7 @@ services:
       - dynamodb
       - localstack
       - local-config
+      - local-artefacts
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
