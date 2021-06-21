@@ -37,7 +37,6 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
             return false;
-
         }
 
         return true;

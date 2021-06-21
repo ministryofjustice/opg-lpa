@@ -26,15 +26,20 @@ class Service extends AbstractService
     public function add(array $feedback) : bool
     {
         // Filter out any 'non-allowed' fields
-        $allowed = ['agent', 'fromPage', 'rating', 'details', 'email', 'phone'];
+        $allowed = ['agent', 'fromPage', 'rating', 'details', 'email', 'phone', 'foo'];
         $feedback = array_intersect_key($feedback, array_flip($allowed));
 
         // Feedback cannot be empty
         if (empty($feedback)) {
+            $this->getLogger()->err('Required fields for saving feedback not present');
             return false;
         }
 
-        return $this->getFeedbackRepository()->insert($feedback);
+        $dbInsertResult = $this->getFeedbackRepository()->insert($feedback);
+        if (!$dbInsertResult) {
+            $this->getLogger()->err('Error inserting feedback into database: invalid query');
+        }
+        return $dbInsertResult;
     }
 
     /**
