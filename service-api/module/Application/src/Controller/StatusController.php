@@ -107,24 +107,43 @@ class StatusController extends AbstractRestfulController
     private function updateMetadata($lpaId, $metaData, $data)
     {
         // Update metadata in DB
-        $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $data['status'];
-        $metaData[LPA::APPLICATION_REGISTRATION_DATE] = $data['registrationDate'];
-        $metaData[LPA::APPLICATION_RECEIPT_DATE] = $data['receiptDate'];
-        $metaData[LPA::APPLICATION_REJECTED_DATE] = $data['rejectedDate'];
-        $metaData[LPA::APPLICATION_INVALID_DATE] = $data['invalidDate'];
-        $metaData[LPA::APPLICATION_WITHDRAWN_DATE] = $data['withdrawnDate'];
+        $newMeta[LPA::SIRIUS_PROCESSING_STATUS] = $data['status'];
+        $newMeta[LPA::APPLICATION_REGISTRATION_DATE] = $data['registrationDate'];
+        $newMeta[LPA::APPLICATION_RECEIPT_DATE] = $data['receiptDate'];
+        $newMeta[LPA::APPLICATION_REJECTED_DATE] = $data['rejectedDate'];
+        $newMeta[LPA::APPLICATION_INVALID_DATE] = $data['invalidDate'];
+        $newMeta[LPA::APPLICATION_WITHDRAWN_DATE] = $data['withdrawnDate'];
 
         // TODO edit third party library
-        $metaData['application-dispatch-date'] = $data['dispatchDate'];
+        $newMeta['application-dispatch-date'] = $data['dispatchDate'];
 
-        $this->getService()->patch(['metadata' => $metaData], $lpaId, $this->routeUserId);
-
-        $this->getLogger()->debug('Updated metadata for: ' . $lpaId . var_export($metaData, true));
+        if ($this->hasDifference($newMeta, $metaData)) {
+            $metaData = array_merge($metaData, $newMeta);
+            $this->getService()->patch(['metadata' => $metaData], $lpaId, $this->routeUserId);
+            $this->getLogger()->debug('Updated metadata for: ' . $lpaId . var_export($metaData, true));
+        }
     }
 
     private function getValue($array, $key, $default = null)
     {
         return (isset($array[$key]) ? $array[$key] : $default);
+    }
+
+    // returns true if the value of at least one key in $array1 is different
+    // from that key in $array2, and the value in $array1 is not null (we
+    // don't bother to save null values to the metadata unless the value
+    // for the same key in $array2 is *not* null)
+    private function hasDifference($array1, $array2) : bool
+    {
+        foreach ($array1 as $key => $array1Value) {
+            $array2Value = $this->getValue($array2, $key);
+
+            if ($array1Value != $array2Value
+            && (!is_null($array1Value) || (is_null($array1Value) && !is_null($array2Value)))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -210,7 +229,6 @@ class StatusController extends AbstractRestfulController
 
                     // Common data, whether the status is set or not
                     $data = [
-                        'found' => true,
                         'status' => $lpaDetail['status'],
                         'rejectedDate' => $this->getValue($lpaDetail, 'rejectedDate')
                     ];
@@ -223,12 +241,11 @@ class StatusController extends AbstractRestfulController
                         $data['withdrawnDate'] = $this->getValue($lpaDetail, 'withdrawnDate');
                         $data['dispatchDate'] = $this->getValue($lpaDetail, 'dispatchDate');
 
-                        // If status doesn't match what we already have, and we
-                        // found a record in the db, update that record
-                        if ($data['status'] !== $dbProcessingStatus
-                        && $this->getValue($dbResult, 'inDb')) {
-                            // default to [] if metadata not set for this LPA in db
-                            $metaData = $this->getValue($lpaMetas, $lpaId, []);
+                        // If we found a record in the db, try to update it
+                        // (the decision of whether to run the update is made
+                        // in updateMetadata)
+                        $metaData = $this->getValue($lpaMetas, $lpaId, []);
+                        if ($this->getValue($dbResult, 'inDb')) {
                             $this->updateMetadata($lpaId, $metaData, $data);
                         }
 

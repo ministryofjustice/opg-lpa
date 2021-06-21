@@ -142,7 +142,7 @@ class StatusControllerTest extends AbstractControllerTest
         ), $result);
     }
 
-    public function testGetWithUpdatesOnValidCaseWithSameStatusDateReturn()
+    public function testGetWithUpdatesOnValidCaseWithSameStatusDifferentReturnDate()
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
@@ -155,6 +155,21 @@ class StatusControllerTest extends AbstractControllerTest
             ->withArgs([['98765'], '12345'])
             ->once()
             ->andReturn([$lpa]);
+
+        $this->applicationsService->shouldReceive('patch')
+            ->withArgs([
+                [
+                    'metadata' => [
+                        'sirius-processing-status' => 'Received',
+                        'application-registration-date' => null,
+                        'application-receipt-date' => new DateTime('2019-02-11'),
+                        'application-rejected-date' => null,
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
+                    ]
+                ], '98765', '12345'
+            ])->once();
 
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
@@ -374,12 +389,18 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(['98765' => ['found' => false]]), $result);
     }
 
-    public function testGetWithSameStatus()
+    public function testGetWithSameStatusAndDates()
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
+        $lpa = new Lpa([
+            'id' => 98765,
+            'completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
+                Lpa::APPLICATION_RECEIPT_DATE => new DateTime('2019-02-02'),
+            ]
+        ]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -391,7 +412,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+                '98765' => ['status' => 'Checking', 'receiptDate' => new DateTime('2019-02-02')]
             ]);
 
         $result = $this->statusController->get('98765');
