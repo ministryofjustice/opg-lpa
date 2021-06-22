@@ -28,12 +28,12 @@ Feature: View Summary for Create a Property and Finance LPA
             | Company number | 678437685 | |
             | Email address | opglpademo+trustcorp@gmail.com | |
             | Address | 1 Laburnum Place $ Sketty $ Swansea, Abertawe $ SA2 8HT | |
-            | No replacement attorneys | | |
+            | Replacement attorney | No replacement attorneys | replacement-attorney |
             | Certificate provider | | |
             | Name | Mr Reece Richards | certificate-provider |
             | Address | 11 Brookside $ Cholsey $ Wallingford, Oxfordshire $ OX10 9NN | |
         And I can find draft download link
         # line below will be uncommented once we fix issues with pdf generation unreliability
         #And I can get pdf from link containing "download a preview"
-        #When I click "continue"
-        #Then I am taken to the applicant page
+        When I click "continue"
+        Then I am taken to the applicant page
