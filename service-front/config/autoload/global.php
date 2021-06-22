@@ -58,7 +58,7 @@ return [
         'native_settings' => [
 
             // The cookie name used in the session
-            'name' => 'lpa',
+            'name' => 'lpa2',
 
             // Hash settings
             'hash_function' => 'sha512',
