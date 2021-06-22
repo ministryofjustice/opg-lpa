@@ -23,7 +23,7 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
             | preferences | Neque porro quisquam |
         When I click "save"
         Then I am taken to the applicant page
-        When I click to change instructions and preferences 
+        When I click occurrence -1 of "accordion-view-change"
         Then I see in the page text
             | Lorem Ipsum |
             | Neque porro quisquam |

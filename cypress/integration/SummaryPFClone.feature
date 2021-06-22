@@ -23,7 +23,7 @@ Feature: View Summary for Create a Property and Finance LPA
             | Address | Bank End Farm House $ Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
             | The donor can physically sign or make a mark on the LPA | No | |
             | When LPA starts |  As soon as it's registered (and with the donor's consent) | when-lpa-starts |
-            | 1st attorney | | |
+            | Attorney | | |
             | Name | Standard Trust | primary-attorney |
             | Company number | 678437685 | |
             | Email address | opglpademo+trustcorp@gmail.com | |
