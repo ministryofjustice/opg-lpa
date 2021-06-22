@@ -30,7 +30,7 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
 
             return true;
         } catch (Exception $e) {
-            $this->getLogger()->err('Erroring sending feedback email');
+            $this->getLogger()->err('Exception while adding feedback from Feedback service');
             $this->getLogger()->err($e->getMessage());
             $this->getLogger()->err($e->getTraceAsString());
         }

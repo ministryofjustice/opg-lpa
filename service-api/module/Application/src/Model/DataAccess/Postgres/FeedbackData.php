@@ -36,6 +36,9 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
         try {
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
+            $this->getLogger()->err('Error running insert query for feedback');
+            $this->getLogger()->err($e->getMessage());
+            $this->getLogger()->err($e->getTraceAsString());
             return false;
         }
 
