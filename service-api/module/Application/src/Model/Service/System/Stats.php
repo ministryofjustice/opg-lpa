@@ -17,7 +17,8 @@ use Exception;
 
 /**
  * Generate LPA stats and saves the results back into the Database.
- * To run, bash into apiv2, cd to app and run 'php public/index.php generate-stats'
+ * To run, bash into the api-app container, cd to /app and run
+ * './vendor/bin/laminas service-api:generate-stats'
  *
  * Class Stats
  * @package Application\Model\Service\System
@@ -244,7 +245,7 @@ class Stats extends AbstractService
 
         for ($i = 0; $i < 4; $i++) {
             $ts = strtotime("-{$i} months", $firstDayOfThisMonth);
-            
+
             $results['by-month'][date('Y-m', $ts)] = $this->getWhoRepository()->getStatsForTimeRange(
                 new DateTime("@{$ts}"),
                 new DateTime("@{$lastTimestamp}"),
