@@ -2,43 +2,6 @@
 
 return [
 
-    'console' => [
-        'router' => [
-            'routes' => [
-                'account-cleanup' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'account-cleanup',
-                        'defaults' => [
-                            'controller' => 'Application\Controller\Console\AccountCleanup',
-                            'action'     => 'cleanup'
-                        ],
-                    ],
-                ],
-                'generate-stats' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'generate-stats',
-                        'defaults' => [
-                            'controller' => 'Application\Controller\Console\GenerateStats',
-                            'action'     => 'generate'
-                        ],
-                    ],
-                ],
-                'dynamodb-init' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'dynamodb-init',
-                        'defaults' => [
-                            'controller' => 'Application\Controller\Console\DynamoDbController',
-                            'action'     => 'init'
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ],
-
     'router' => [
         'routes' => [
             'home' => [
@@ -481,9 +444,6 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController'
         ],
         'factories' => [
-            'Application\Controller\Console\AccountCleanup' => Application\ControllerFactory\AccountCleanupControllerFactory::class,
-            'Application\Controller\Console\DynamoDbController' => Application\ControllerFactory\DynamoDbControllerFactory::class,
-            'Application\Controller\Console\GenerateStats'  => Application\ControllerFactory\GenerateStatsControllerFactory::class,
             'Application\Controller\Ping'                   => Application\ControllerFactory\PingControllerFactory::class,
             'Application\Controller\Stats'                  => Application\ControllerFactory\StatsControllerFactory::class,
             'Application\Controller\Feedback'               => Application\ControllerFactory\FeedbackControllerFactory::class,
@@ -502,6 +462,10 @@ return [
         ],
         'aliases' => [
             'translator' => 'MvcTranslator',
+        ],
+        'factories' => [
+            'Application\Command\GenerateStatsCommand' => 'Application\Command\GenerateStatsCommand',
+            'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
         ],
     ], // service_manager
 
@@ -533,6 +497,13 @@ return [
         ],
         'strategies' => [
             'ViewJsonStrategy',
+        ],
+    ],
+
+    'laminas-cli' => [
+        'commands' => [
+            'service-api:generate-stats' => Application\Command\GenerateStatsCommand::class,
+            'service-api:account-cleanup' => Application\Command\AccountCleanupCommand::class,
         ],
     ],
 
