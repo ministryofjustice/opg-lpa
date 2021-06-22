@@ -17,12 +17,10 @@
         "laminas/laminas-authentication": "^2.5",
         "laminas/laminas-cache": "^2.7",
         "laminas/laminas-component-installer": "^2.4",
-        "laminas/laminas-console": "^2.6",
         "laminas/laminas-crypt": "^3.2",
         "laminas/laminas-filter": "^2.7",
         "laminas/laminas-math": "^3.0",
         "laminas/laminas-mvc": "^3.1",
-        "laminas/laminas-mvc-console": "^1.1",
         "laminas/laminas-mvc-i18n": "^1.0",
         "laminas/laminas-paginator": "^2.8",
         "laminas/laminas-zendframework-bridge": "^1.1.1",
@@ -33,8 +31,22 @@
         "alphagov/notifications-php-client": "^1.6",
         "robmorgan/phinx": "^0.10.6",
         "laminas/laminas-db": "^2.9",
-        "nategood/commando": "^0.3.0",
-        "league/csv": "^9.0"
+        "league/csv": "^9.0",
+        "laminas/laminas-cli": "^1.1",
+        "nategood/commando": "^0.4.0"
+    },
+    "replace": {
+        "laminas/laminas-cache-storage-adapter-apc": "*",
+        "laminas/laminas-cache-storage-adapter-apcu": "*",
+        "laminas/laminas-cache-storage-adapter-blackhole": "*",
+        "laminas/laminas-cache-storage-adapter-dba": "*",
+        "laminas/laminas-cache-storage-adapter-ext-mongodb": "*",
+        "laminas/laminas-cache-storage-adapter-memcache": "*",
+        "laminas/laminas-cache-storage-adapter-memcached": "*",
+        "laminas/laminas-cache-storage-adapter-mongodb": "*",
+        "laminas/laminas-cache-storage-adapter-wincache": "*",
+        "laminas/laminas-cache-storage-adapter-xcache": "*",
+        "laminas/laminas-cache-storage-adapter-zend-server": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
