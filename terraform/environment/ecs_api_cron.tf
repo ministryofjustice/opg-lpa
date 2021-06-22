@@ -116,7 +116,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
   "containerOverrides": [
     {
       "name": "app",
-      "command": ["php", "/app/public/index.php", "account-cleanup"]
+      "command": ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"]
     }
   ]
 }
@@ -153,7 +153,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
   "containerOverrides": [
     {
       "name": "app",
-      "command": ["php", "/app/public/index.php", "generate-stats"]
+      "command": ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"]
     }
   ]
 }

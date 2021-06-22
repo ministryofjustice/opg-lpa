@@ -9,9 +9,12 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Mezzio\Template\TemplateRendererInterface;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class HomeHandlerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testReturnsHtmlResponseWhenTemplateRendererProvided()
     {
         $rendererProphecy = $this->prophesize(TemplateRendererInterface::class);
