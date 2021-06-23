@@ -4,14 +4,14 @@ services:
   # ---------------------------
   # Local Services
 
-  local-artefacts:
-    container_name: local-artefacts
-    image: local-artefacts
+  node_build_local:
+    container_name: node-build-local
+    image: node-build-local
     volumes:
       - ./service-front:/service-front:rw,delegated
     build:
       context: ./
-      dockerfile: local-artefacts/docker/Dockerfile
+      dockerfile: node-build-local/docker/Dockerfile
 
   postgres:
     image: postgres:10.13
