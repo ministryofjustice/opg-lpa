@@ -14,7 +14,7 @@ Then(`I can find feedback buttons`, () => {
 })
 
 Then(`I select satisfied`, () => {
-    cy.get('[data-cy=rating-satisfied]').click();;
+    cy.get('[data-cy=rating-satisfied]').click();
 })
 
 Then(`I select neither satisfied or dissatisfied`, () => {

@@ -18,6 +18,8 @@ class ServiceTest extends AbstractServiceTest
             ->withFeedbackRepository($feedbackRepository)
             ->build();
 
+        $service->getLogger()->shouldReceive('err');
+
         $result = $service->add([]);
 
         $this->assertFalse($result);
