@@ -6,7 +6,7 @@ pr_build: &pr_build
         name: cancel_previous_jobs
         filters: { branches: { ignore: [master] } }
 
-    - build_container_and_push_to_ecr/node_build_web:
+    - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
         filters: { branches: { ignore: [master] } }
 
@@ -15,7 +15,7 @@ pr_build: &pr_build
         ecr_repository_name_prefix: online-lpa/front
         service_path: service-front
         filters: { branches: { ignore: [master] } }
-        requires: [local_artefacts_build]
+        requires: [node_build_web]
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: admin_docker_build
@@ -462,6 +462,7 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
+
     jobs:
       checkout_docker_build_push_web-app:
         executor: python
@@ -546,7 +547,7 @@ orbs:
 
       node_build_web:
         #
-        # Build frontend assets (css, js, images)
+        # Build frontend assets (css, js)
         #
         executor: php-browsers
         steps:
