@@ -6,11 +6,18 @@ pr_build: &pr_build
         name: cancel_previous_jobs
         filters: { branches: { ignore: [master] } }
 
+    - build_container_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: grunt_artefacts_build
+        ecr_repository_name_prefix: online-lpa/grunt
+        service_path: grunt-artefacts
+        filters: { branches: { ignore: [master] } }
+
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
         ecr_repository_name_prefix: online-lpa/front
         service_path: service-front
         filters: { branches: { ignore: [master] } }
+        requires: [local_artefacts_build]
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: admin_docker_build
@@ -450,6 +457,13 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
+      php-browsers:
+        docker:
+          - image: circleci/php:7-cli-browsers
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
     jobs:
       checkout_docker_build_push_web-app:
         executor: python
@@ -532,6 +546,36 @@ orbs:
                   docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG}
                 fi
 
+      node_build_web:
+        #
+        # Build frontend assets (css, js, images)
+        #
+        executor: php-browsers
+        steps:
+          - checkout
+          - restore_cache:
+              name: Restore node modules cache
+              key: node_modules-{{ checksum "service-front/package-lock.json" }}
+          - run:
+              name: Install dependencies
+              command: |
+                if [ ! -d service-front/node_modules ]; then
+                  cd service-front/ && npm install
+                fi
+          - run:
+              name: Build assets
+              command: |
+                cd service-front/ && grunt build
+          - save_cache:
+              name: Save node modules cache
+              key: node_modules-{{ checksum "service-front/package-lock.json" }}
+              paths:
+                - service-front/node_modules
+          - persist_to_workspace:
+              root: ~/project
+              paths:
+                - service-front/assests
+              when: always
   infrastructure_and_deployment:
     orbs:
       my_slack:

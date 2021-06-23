@@ -252,7 +252,4 @@ module.exports = function (grunt) {
   grunt.registerTask('build_js', ['handlebars', 'concat', 'uglify']);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
-
-  // run tasks
-  grunt.task.run(['watch']);
 };
