@@ -26,7 +26,7 @@ class Service extends AbstractService
     public function add(array $feedback) : bool
     {
         // Filter out any 'non-allowed' fields
-        $allowed = ['agent', 'fromPage', 'rating', 'details', 'email', 'phone', 'foo'];
+        $allowed = ['agent', 'fromPage', 'rating', 'details', 'email', 'phone'];
         $feedback = array_intersect_key($feedback, array_flip($allowed));
 
         // Feedback cannot be empty
