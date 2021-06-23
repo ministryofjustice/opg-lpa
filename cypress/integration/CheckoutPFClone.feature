@@ -33,7 +33,16 @@ Feature: Checkout for a Property and Finance LPA
             | Name | Mr Reece Richards | certificate-provider |
             | Address | 11 Brookside $ Cholsey $ Wallingford, Oxfordshire $ OX10 9NN | |
             | Person to notify | No people to notify | people-to-notify |
-        And I see "Application fee: £20.50 as the donor has an income of less than £12,000" in the page text
+            | Preferences | Neque porro quisquam | instructions |
+            | Instructions | Lorem Ipsum | instructions |
+            | Who is registering the LPA | Standard Trust | applicant |
+            | Correspondent | | |
+            | Name | Standard Trust | correspondent |
+            | Company number | 678437685 | |
+            | Email address | opglpademo+trustcorp@gmail.com | |
+            | Address | 1 Laburnum Place $ Sketty $ Swansea, Abertawe $ SA2 8HT | |
+            | Repeat application | This is not a repeat application | repeat-application |
+            | Application fee | Application fee: £0 as the donor is claiming an eligible benefit | fee-reduction |
         And I can find "confirm-and-pay-by-card"
         And I can find "confirm-and-pay-by-cheque"
 

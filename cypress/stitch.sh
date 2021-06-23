@@ -41,6 +41,7 @@ awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/inte
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ApplicantPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CorrespondentPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/WhoAreYouPF.feature >> cypress/integration/StitchedClonePFLpa.feature
-awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/RepeatApplicationPF.feature >> cypress/integration/StitchedClonePFLpa.feature
-awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/FeeReductionPF.feature >> cypress/integration/StitchedClonePFLpa.feature
+# for PF clone, we stitch in the HW repeat application scenario so that this is not a repeat application
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/RepeatApplicationHW.feature >> cypress/integration/StitchedClonePFLpa.feature
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/FeeReductionPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CheckoutPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
