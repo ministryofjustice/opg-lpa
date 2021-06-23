@@ -6,10 +6,8 @@ pr_build: &pr_build
         name: cancel_previous_jobs
         filters: { branches: { ignore: [master] } }
 
-    - build_container_and_push_to_ecr/checkout_docker_build_push_web-app:
-        name: grunt_artefacts_build
-        ecr_repository_name_prefix: online-lpa/grunt
-        service_path: grunt-artefacts
+    - build_container_and_push_to_ecr/node_build_web:
+        name: node_build_web
         filters: { branches: { ignore: [master] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
@@ -576,6 +574,7 @@ orbs:
               paths:
                 - service-front/assests
               when: always
+
   infrastructure_and_deployment:
     orbs:
       my_slack:
