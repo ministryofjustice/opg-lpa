@@ -5,11 +5,14 @@ COPY service-front/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:7.4.16-fpm-alpine3.12
+FROM php:7.4.20-fpm-alpine3.12
 
 RUN apk add --update --no-cache icu
 
-RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
+# manually update libxml2 as the 3.12 alpine build doesn't have this fix yet,
+# but the apk ports repo does:
+# https://github.com/alpinelinux/docker-alpine/issues/175
+RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev libxml2 \
         && pecl install redis \
         && pecl install xdebug \
         && pecl clear-cache \
