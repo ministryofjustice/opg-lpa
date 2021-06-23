@@ -38,9 +38,9 @@ awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/inte
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/PeopleToNotifyPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/InstructionsPreferencesPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/SummaryPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
-awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ApplicantPF.feature >> cypress/integration/StitchedClonePFLpa.feature
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ApplicantPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CorrespondentPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/WhoAreYouPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/RepeatApplicationPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/FeeReductionPF.feature >> cypress/integration/StitchedClonePFLpa.feature
-awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CheckoutPF.feature >> cypress/integration/StitchedClonePFLpa.feature
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CheckoutPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
