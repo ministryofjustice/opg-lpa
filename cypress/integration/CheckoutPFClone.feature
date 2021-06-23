@@ -37,16 +37,13 @@ Feature: Checkout for a Property and Finance LPA
             | Instructions | Lorem Ipsum | instructions |
             | Who is registering the LPA | Standard Trust | applicant |
             | Correspondent | | |
-            | Name | Standard Trust | correspondent |
-            | Company number | 678437685 | |
-            | Email address | opglpademo+trustcorp@gmail.com | |
-            | Address | 1 Laburnum Place $ Sketty $ Swansea, Abertawe $ SA2 8HT | |
+            | Name | Mrs Nancy Garrison | correspondent |
+            | Email address | opglpademo+NancyGarrison@gmail.com | |
+            | Address | Bank End Farm House $ Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
             | Repeat application | This is not a repeat application | repeat-application |
             | Application fee | Application fee: £0 as the donor is claiming an eligible benefit | fee-reduction |
-        And I can find "confirm-and-pay-by-card"
-        And I can find "confirm-and-pay-by-cheque"
 
-        When I click "confirm-and-pay-by-cheque"
+        When I click "confirm-and-finish"
         Then I am taken to the complete page
         And I can find link pointing to "/lp1"
         # note there is not /lp3 link as there is no person to notify
