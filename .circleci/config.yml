@@ -455,9 +455,9 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
-      php-browsers:
+      node-browsers:
         docker:
-          - image: circleci/php:7-cli-browsers
+          - image: circleci/node:14.15.5-browsers
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -549,7 +549,7 @@ orbs:
         #
         # Build frontend assets (css, js)
         #
-        executor: php-browsers
+        executor: node-browsers
         steps:
           - checkout
           - restore_cache:
@@ -559,7 +559,7 @@ orbs:
               name: Install dependencies
               command: |
                 if [ ! -d service-front/node_modules ]; then
-                  cd service-front/ && apk add npm && npm install
+                  cd service-front/ && npm install
                 fi
           - run:
               name: Build assets
