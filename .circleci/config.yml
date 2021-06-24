@@ -559,7 +559,7 @@ orbs:
               name: Install dependencies
               command: |
                 if [ ! -d service-front/node_modules ]; then
-                  cd service-front/ && npm install
+                  cd service-front/ && npm install -g
                 fi
           - run:
               name: Build assets
