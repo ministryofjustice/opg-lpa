@@ -5,7 +5,7 @@ Feature: View Summary for Create a Property and Finance LPA
 
     Background:
         Given I ignore application exceptions
-        And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences
+        And I create PF LPA test fixture with donor, single attorney, cert provider, people to notify, instructions, preferences
 
     @focus
     Scenario: View Summary
