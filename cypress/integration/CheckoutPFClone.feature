@@ -37,7 +37,7 @@ Feature: Checkout for a Property and Finance LPA
             | Instructions | Lorem Ipsum | instructions |
             | Who is registering the LPA | Standard Trust | applicant |
             | Correspondent | | |
-            | Company Name | Standard Trust | correspondent |
+            | Company name | Standard Trust | correspondent |
             | Email address | opglpademo+trustcorp@gmail.com | |
             | Address | 1 Laburnum Place $ Sketty $ Swansea, Abertawe $ SA2 8HT | |
             | Repeat application | This is not a repeat application | repeat-application |
