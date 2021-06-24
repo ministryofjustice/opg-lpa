@@ -130,7 +130,7 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedpfclone
-        cypress_tags: "@StitchedPFClone"
+        cypress_tags: "@StitchedClone"
         filters: { branches: { ignore: [master] } }
         requires: [dev_seed_environment_databases]
 
