@@ -37,9 +37,9 @@ Feature: Checkout for a Property and Finance LPA
             | Instructions | Lorem Ipsum | instructions |
             | Who is registering the LPA | Standard Trust | applicant |
             | Correspondent | | |
-            | Name | Mrs Nancy Garrison | correspondent |
-            | Email address | opglpademo+NancyGarrison@gmail.com | |
-            | Address | Bank End Farm House $ Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
+            | Company Name | Standard Trust | correspondent |
+            | Email address | opglpademo+trustcorp@gmail.com | |
+            | Address | 1 Laburnum Place $ Sketty $ Swansea, Abertawe $ SA2 8HT | |
             | Repeat application | This is not a repeat application | repeat-application |
             | Application fee | Application fee: £0 as the donor is claiming an eligible benefit | fee-reduction |
 
