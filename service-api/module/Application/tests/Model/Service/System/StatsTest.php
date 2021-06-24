@@ -25,7 +25,7 @@ class StatsTest extends AbstractServiceTest
         $apiLpaCollection->shouldReceive('countWaitingForType')->andReturn(1);
         $apiLpaCollection->shouldReceive('countCheckingForType')->andReturn(1);
         $apiLpaCollection->shouldReceive('countReceivedForType')->andReturn(1);
-        $apiLpaCollection->shouldReceive('countReturnedForType')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countProcessedForType')->andReturn(1);
         $apiLpaCollection->shouldReceive('countCompletedForType')->andReturn(1);
         $apiLpaCollection->shouldReceive('countDeleted')->andReturn(1);
         $apiLpaCollection->shouldReceive('countCompletedBetween')->andReturn(1);
