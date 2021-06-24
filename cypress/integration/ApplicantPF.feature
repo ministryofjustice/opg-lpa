@@ -20,6 +20,6 @@ Feature: Add Applicant to a Property and Finance LPA
             | Select the person who is applying to register the LPA |
         And I see "Error" in the title
         # select the donor as applicant
-        When I check occurrence 0 of checkbox
+        When I check "whoIsRegistering-donor"
         And I click "save"
         Then I am taken to the correspondent page
