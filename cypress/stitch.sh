@@ -30,7 +30,7 @@ awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/inte
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/FeeReductionHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CheckoutHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
 # Stitch together PF Clone feature files 
-cat cypress/integration/LpaTypePFClone.feature | sed "s/@CreateLpa/@StitchedPFClone/" > cypress/integration/StitchedClonePFLpa.feature 
+cat cypress/integration/LpaTypePFClone.feature | sed "s/@CreateLpa/@StitchedClone/" > cypress/integration/StitchedClonePFLpa.feature 
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/AttorneysPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ReplacementAttorneysPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
@@ -39,7 +39,7 @@ awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/inte
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/InstructionsPreferencesPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/SummaryPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/ApplicantPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
-awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CorrespondentPF.feature >> cypress/integration/StitchedClonePFLpa.feature
+awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CorrespondentPFClone.feature >> cypress/integration/StitchedClonePFLpa.feature
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/WhoAreYouPF.feature >> cypress/integration/StitchedClonePFLpa.feature
 # for PF clone, we stitch in the HW repeat application scenario so that this is not a repeat application
 awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/RepeatApplicationHW.feature >> cypress/integration/StitchedClonePFLpa.feature
