@@ -564,7 +564,7 @@ orbs:
           - run:
               name: Build assets
               command: |
-                cd service-front/ && grunt build
+                cd service-front/ && node_modules/grunt-cli/bin/grunt build
           - save_cache:
               name: Save node modules cache
               key: node_modules-{{ checksum "service-front/package-lock.json" }}
