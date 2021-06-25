@@ -455,9 +455,9 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
-      node-browsers:
+      ruby-node:
         docker:
-          - image: circleci/node:14.15.5-browsers
+          - image: circleci/ruby:3.0.1-node
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -549,7 +549,7 @@ orbs:
         #
         # Build frontend assets (css, js)
         #
-        executor: node-browsers
+        executor: ruby-node
         steps:
           - checkout
           - restore_cache:
