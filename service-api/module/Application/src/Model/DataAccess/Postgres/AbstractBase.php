@@ -1,9 +1,11 @@
 <?php
 namespace Application\Model\DataAccess\Postgres;
 
+use Application\Logging\LoggerTrait;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 
 class AbstractBase {
+    use LoggerTrait;
 
     /**
      * Time format to use when converting DateTime to a string.

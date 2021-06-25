@@ -495,16 +495,16 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     }
 
     /**
-     * Count the number of LPAs returned for a given LPA type
+     * Count the number of LPAs processed for a given LPA type
      *
      * @param $lpaType
      * @return int
      */
-    public function countReturnedForType(string $lpaType) : int
+    public function countProcessedForType(string $lpaType) : int
     {
         return $this->count([
             new IsNotNull('completedAt'),
-            new Expression("metadata ->> 'sirius-processing-status' = ?", Lpa::SIRIUS_PROCESSING_STATUS_RETURNED),
+            new Expression("metadata ->> 'sirius-processing-status' = ?", 'Processed'),
             new Expression("document ->> 'type' = ?", $lpaType),
         ]);
     }
