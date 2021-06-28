@@ -567,9 +567,7 @@ orbs:
                 fi
                 wget https://github.com/sass/dart-sass/releases/download/1.35.1/dart-sass-1.35.1-linux-x64.tar.gz && /
                 tar xfz dart-sass-1.35.1-linux-x64.tar.gz && /
-                echo $PATH
-                export PATH=/home/circleci/project/service-front/dart-sass:$PATH
-                echo $PATH
+                export PATH="/home/circleci/project/service-front/dart-sass:$PATH"
           - run:
               name: Build assets
               command: |
