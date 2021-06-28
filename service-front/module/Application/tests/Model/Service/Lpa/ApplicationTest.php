@@ -33,6 +33,28 @@ class ApplicationTest extends MockeryTestCase
      */
     private $service;
 
+    private function modifiedLPA($id = 5531003157, $completedAt = null, $processingStatus = null, $rejectedDate = null)
+    {
+        $decodeJsonAsArray = TRUE;
+        $arr = json_decode(FixturesData::getHwLpaJson(), $decodeJsonAsArray);
+
+        $arr['id'] = $id;
+
+        if ($completedAt != null) {
+            $arr['completedAt'] = $completedAt;
+        }
+
+        if ($processingStatus) {
+            $arr['metadata'][Lpa::SIRIUS_PROCESSING_STATUS] = $processingStatus;
+        }
+
+        if ($rejectedDate != null) {
+            $arr['metadata'][Lpa::APPLICATION_REJECTED_DATE] = $rejectedDate;
+        }
+
+        return $arr;
+    }
+
     public function setUp() : void
     {
         $identity = Mockery::mock();
@@ -134,42 +156,6 @@ class ApplicationTest extends MockeryTestCase
         $result = $this->service->getLpaSummaries();
 
         $this->assertEquals(['applications' => [],'trackingEnabled' => true], $result);
-    }
-
-    private function modifiedLPA($id = 5531003157, $completedAt = null, $processingStatus = null, $rejectedDate = null)
-    {
-        $lpaJson = FixturesData::getHwLpaJson();
-
-        $lpaJson = str_replace('"id" : 5531003156', '"id" : ' . $id, $lpaJson);
-
-        if ($completedAt != null) {
-            $lpaJson = str_replace(
-                '"completedAt" : "2017-03-24T16:21:52.804Z"',
-                '"completedAt" : "' . $completedAt . '"',
-                $lpaJson
-            );
-        }
-
-        if ($processingStatus) {
-            $lpaJson = str_replace(
-                '"metadata" : {',
-                '"metadata" : {
-                "' . Lpa::SIRIUS_PROCESSING_STATUS . '" : "' . $processingStatus . '",',
-                $lpaJson
-            );
-        }
-
-        if ($rejectedDate != null) {
-            $lpaJson = str_replace(
-                '"metadata" : {',
-                '"metadata" : {
-                 "' . Lpa::APPLICATION_REJECTED_DATE . '" : "' . $rejectedDate . '",',
-                $lpaJson
-            );
-        }
-
-
-        return $lpaJson;
     }
 
     /**
