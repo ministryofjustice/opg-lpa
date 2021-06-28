@@ -574,6 +574,7 @@ orbs:
               paths:
                 - service-front/node_modules
           - persist_to_workspace:
+              name: Debugging step
               command: |
                 pwd
                 ls
