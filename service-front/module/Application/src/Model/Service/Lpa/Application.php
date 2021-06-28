@@ -177,35 +177,18 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
             $lpa = new Lpa($applicationData);
 
+            $metadata = $lpa->getMetadata();
+
             // Determine whether the LPA details are re-usable.
-            // As per LPAL-64, this is any time where an LPA has a donor,
-            // at least one primary attorney, the start conditions have been set,
-            // the certificate provider has been added or skipped, and people
-            // to notify have been confirmed.
-            $hasCompletedDonor = $lpa->hasDonor();
-
-            // PF LPA => hasWhenLpaStarts
-            // HW LPA => hasPrimaryAttorneyDecisions
-            $hasCompletedWhenLpaConditions = $lpa->hasWhenLpaStarts() ||
-                $lpa->hasPrimaryAttorneyDecisions();
-
-            $hasCompletedPrimaryAttorneys = $lpa->hasPrimaryAttorney();
-            $hasCompletedReplacementAttorneys = $lpa->hasDocument() &&
-                array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->getMetadata());
-            $hasCompletedCertificateProvider = $lpa->hasCertificateProvider()
-                || $lpa->hasCertificateProviderSkipped();
-            $hasCompletedPeopleToNotify = $lpa->hasDocument() &&
-                array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->getMetadata());
-
-            $isReusable = $hasCompletedDonor &&
-                $hasCompletedWhenLpaConditions &&
-                $hasCompletedPrimaryAttorneys &&
-                $hasCompletedReplacementAttorneys &&
-                $hasCompletedCertificateProvider &&
-                $hasCompletedPeopleToNotify;
+            // As per LPAL-64, this is when people to notify has been confirmed.
+            // Note that we don't bother to check whether the LPA actually
+            // has reusable pieces, like a donor, attorney or certificate provider:
+            // that is dealt with by the pop-up which prompts the user
+            // to select details to reuse when filling an LPA application.
+            $isReusable = array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $metadata);
 
             //  Get the Donor name
-            if ($hasCompletedDonor && $lpa->document->donor->name instanceof LongName) {
+            if ($lpa->hasDonor() && $lpa->document->donor->name instanceof LongName) {
                 $donorName = (string) $lpa->document->donor->name;
             }
 
@@ -225,8 +208,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
                 if ($trackingEnabled && $trackFromDate <= $lpa->getCompletedAt()) {
                     $progress = 'Waiting';
-
-                    $metadata = $lpa->getMetadata();
 
                     // If the application is processed, find the registration,
                     // withdrawn, invalid and rejected dates; whichever is
