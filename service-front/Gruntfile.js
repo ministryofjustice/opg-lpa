@@ -26,8 +26,6 @@ let colourPatch = function (content) {
     return content;
 };
 
-const gruntDefault = (! process.env.CIRCLECI ? 'watch' : 'build');
-
 module.exports = function (grunt) {
   'use strict';
 
@@ -248,7 +246,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   // define tasks
-  grunt.registerTask('default', [gruntDefault]);
   grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('build_js', ['handlebars', 'concat', 'uglify']);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy', 'cssmin']);
