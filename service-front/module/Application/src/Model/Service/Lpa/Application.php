@@ -180,17 +180,32 @@ class Application extends AbstractService implements ApiClientAwareInterface
             // Determine whether the LPA details are re-usable.
             // As per LPAL-64, this is any time where an LPA has a donor,
             // at least one primary attorney, the start conditions have been set,
-            // the certificate provider has been added or skipped.
-            $hasDonor = $applicationData['hasCompletedDonor'];
-            $isReusable = $hasDonor &&
-                $applicationData['hasCompletedWhenLpaConditions'] &&
-                $applicationData['hasCompletedPrimaryAttorneys'] &&
-                $applicationData['hasCompletedReplacementAttorneys'] &&
-                $applicationData['hasCompletedCertificateProvider'] &&
-                $applicationData['hasCompletedPeopleToNotify'];
+            // the certificate provider has been added or skipped, and people
+            // to notify have been confirmed.
+            $hasCompletedDonor = $lpa->hasDonor();
+
+            // PF LPA => hasWhenLpaStarts
+            // HW LPA => hasPrimaryAttorneyDecisions
+            $hasCompletedWhenLpaConditions = $lpa->hasWhenLpaStarts() ||
+                $lpa->hasPrimaryAttorneyDecisions();
+
+            $hasCompletedPrimaryAttorneys = $lpa->hasPrimaryAttorney();
+            $hasCompletedReplacementAttorneys = $lpa->hasDocument() &&
+                array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->getMetadata());
+            $hasCompletedCertificateProvider = $lpa->hasCertificateProvider()
+                || $lpa->hasCertificateProviderSkipped();
+            $hasCompletedPeopleToNotify = $lpa->hasDocument() &&
+                array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->getMetadata());
+
+            $isReusable = $hasCompletedDonor &&
+                $hasCompletedWhenLpaConditions &&
+                $hasCompletedPrimaryAttorneys &&
+                $hasCompletedReplacementAttorneys &&
+                $hasCompletedCertificateProvider &&
+                $hasCompletedPeopleToNotify;
 
             //  Get the Donor name
-            if ($hasDonor && $lpa->document->donor->name instanceof LongName) {
+            if ($hasCompletedDonor && $lpa->document->donor->name instanceof LongName) {
                 $donorName = (string) $lpa->document->donor->name;
             }
 
