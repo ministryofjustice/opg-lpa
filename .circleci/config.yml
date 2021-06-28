@@ -561,8 +561,9 @@ orbs:
                 if [ ! -d service-front/node_modules ]; then
                   cd service-front/ && npm install
                 fi
-                wget https://github.com/sass/dart-sass/releases/download/1.35.1/dart-sass-1.35.1-linux-x64.tar.gz
-                tar xfz dart-sass-1.35.1-linux-x64.tar.gz
+                SASS-VER=`npm view sass | grep latest | awk '{print $2}'` # installing via npm does not pull down exe files, resorted to pulling directly
+                wget "https://github.com/sass/dart-sass/releases/download/$SASS-VER/dart-sass-$SASS-VER-linux-x64.tar.gz"
+                tar xfz "dart-sass-$SASS-VER-linux-x64.tar.gz"
           - run:
               name: Build assets
               command: |
