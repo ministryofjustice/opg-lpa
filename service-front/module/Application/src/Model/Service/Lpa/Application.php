@@ -172,13 +172,25 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         //  Loop through the applications in the result, enhance the data and set it in an array object
         foreach ($result['applications'] as $applicationIdx => $applicationData) {
-            $lpa = new Lpa($applicationData);
-
-            //  Get the Donor name
             $donorName = '';
             $lpaType = '';
 
-            if ($lpa->document->donor instanceof Donor && $lpa->document->donor->name instanceof LongName) {
+            $lpa = new Lpa($applicationData);
+
+            // Determine whether the LPA details are re-usable.
+            // As per LPAL-64, this is any time where an LPA has a donor,
+            // at least one primary attorney, the start conditions have been set,
+            // the certificate provider has been added or skipped.
+            $hasDonor = $applicationData['hasCompletedDonor'];
+            $isReusable = $hasDonor &&
+                $applicationData['hasCompletedWhenLpaConditions'] &&
+                $applicationData['hasCompletedPrimaryAttorneys'] &&
+                $applicationData['hasCompletedReplacementAttorneys'] &&
+                $applicationData['hasCompletedCertificateProvider'] &&
+                $applicationData['hasCompletedPeopleToNotify'];
+
+            //  Get the Donor name
+            if ($hasDonor && $lpa->document->donor->name instanceof LongName) {
                 $donorName = (string) $lpa->document->donor->name;
             }
 
@@ -229,11 +241,13 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 $progress = 'Created';
             }
 
-            //  Create a record for the returned LPA in an array object
+            // Create a record for the returned LPA in an array object;
+            // LPA details are reusable so long as the LPA at least has a donor
             $result['applications'][$applicationIdx] = new ArrayObject([
                 'id' => $lpa->getId(),
                 'version' => 2,
                 'donor' => $donorName,
+                'isReusable' => $isReusable,
                 'type' => $lpaType,
                 'updatedAt' => $lpa->getUpdatedAt(),
                 'progress' => $progress,

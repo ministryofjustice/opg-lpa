@@ -193,7 +193,8 @@ class ApplicationTest extends MockeryTestCase
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Completed',
                 'rejectedDate' => null,
-                'refreshId' => null
+                'refreshId' => null,
+                'isReusable' => true
             ]),
             new ArrayObject([
                 'id' => 5531003157,
@@ -203,7 +204,8 @@ class ApplicationTest extends MockeryTestCase
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Completed',
                 'rejectedDate' => null,
-                'refreshId' => null
+                'refreshId' => null,
+                'isReusable' => true
             ])
         ], 'trackingEnabled' => true], $result);
     }
@@ -229,7 +231,8 @@ class ApplicationTest extends MockeryTestCase
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Waiting',
                 'rejectedDate' => null,
-                'refreshId' => 5531003157
+                'refreshId' => 5531003157,
+                'isReusable' => true
             ])
         ], 'trackingEnabled' => true], $result);
     }
@@ -255,7 +258,8 @@ class ApplicationTest extends MockeryTestCase
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Processed',
                 'rejectedDate' => '2019-01-2',
-                'refreshId' => 5531003157
+                'refreshId' => 5531003157,
+                'isReusable' => true
             ])
         ], 'trackingEnabled' => true], $result);
     }
