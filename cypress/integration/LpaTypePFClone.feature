@@ -16,13 +16,15 @@ Feature: Clone Property and Finance LPA starting from the Type page
         And I can find "delete-lpa"
         When I click occurrence 0 of "reuse-lpa-details"
         Then I am taken to the type page for cloned lpa
-        When I click "save"
+        # we use force click here to get around cypress "detached from dom" flakiness
+        When I force click "save"
         Then I see in the page text
             | There is a problem |
             | Choose a type of LPA |
         And I see "Error" in the title
         When I choose Property and Finance
-        And I click "save"
+        # we use force click here to get around cypress "detached from dom" flakiness
+        And I force click "save"
         Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
         When I click "add-donor"
@@ -36,7 +38,8 @@ Feature: Clone Property and Finance LPA starting from the Type page
         When I click occurrence 0 of "reuse-lpa-details"
         Then I am taken to the type page for cloned lpa
         When I choose Property and Finance
-        And I click "save"
+        # we use force click here to get around cypress "detached from dom" flakiness
+        And I force click "save"
         Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
 
