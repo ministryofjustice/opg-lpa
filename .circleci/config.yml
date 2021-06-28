@@ -574,13 +574,9 @@ orbs:
               paths:
                 - service-front/node_modules
           - persist_to_workspace:
-              name: Debugging step
-              command: |
-                pwd
-                ls
-              root: /home/circleci/project/
+              root: /home/circleci/project
               paths:
-                - service-front/assests
+                - service-front/assets
               when: always
 
   infrastructure_and_deployment:
