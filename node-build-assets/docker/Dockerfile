@@ -10,4 +10,4 @@ RUN npm install -g grunt-cli \
 
 WORKDIR /service-front
 
-CMD ["grunt", "default"]
+CMD ["grunt", "watch"]
