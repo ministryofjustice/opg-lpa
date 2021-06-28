@@ -8,10 +8,6 @@ pr_build: &pr_build
 
     - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
-        ecr_repository_name_prefix: online-lpa/assets
-        service_path: node-build-assets
-        build_web: false
-        unit_test: false
         filters: { branches: { ignore: [ master ] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
