@@ -29,7 +29,6 @@ Feature: Add a correspondent to a Property and Finance LPA
         And "contactByEmail" is checked
         # choose new correspondent
         When I opt not to re-use details
-        And I click "continue"
         Then I see "Correspondent details" in the page text
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
