@@ -24,6 +24,7 @@ Feature: Add a correspondent to a Property and Finance LPA
         And I click "continue"
         Then I can find "form-correspondent"
         And I click "form-save"
+        # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
         Then I cannot find "form-correspondent"
         And I see "Standard Trust" in the page text
         When I click "save"

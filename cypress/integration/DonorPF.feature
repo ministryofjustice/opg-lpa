@@ -84,6 +84,7 @@ Feature: Add donor to Property and Finance LPA
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
         When I click "form-cancel"
+        # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
         Then I cannot find "form-donor" 
         When I click "save-and-continue"
         And I am taken to the when lpa starts page

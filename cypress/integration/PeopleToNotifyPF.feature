@@ -15,7 +15,7 @@ Feature: Add People to Notify to a Property and Finance LPA
 
         When I click "add"
         And I opt not to re-use details if lpa is a clone
-        Then I can see popup
+        Then I can find "form-people-to-notify"
         And I can find "form-cancel"
         And I can find "name-title" with 8 options
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
@@ -47,7 +47,7 @@ Feature: Add People to Notify to a Property and Finance LPA
         And I click "form-save"
         Then I see "Sir Anthony Webb" in the page text
         When I click "view-change"
-        Then I can see popup
+        Then I can find "form-people-to-notify"
         And I see form prepopulated with
             | name-title | Sir |
             | name-first | Anthony |
@@ -57,5 +57,7 @@ Feature: Add People to Notify to a Property and Finance LPA
             | address-address3 | Marchington, Uttoxeter, Staffordshire |
             | address-postcode | BS18 6PL |
         And I click "form-cancel"
+        # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
+        Then I cannot find "form-people-to-notify" 
         When I click "save"
         Then I am taken to the instructions page
