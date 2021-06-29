@@ -15,7 +15,7 @@ Feature: Add attorneys to a Property and Finance LPA
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
         When I click "add-attorney"
         And I opt not to re-use details if lpa is a clone
-        Then I can see popup
+        Then I can find "form-attorney"
         And I can find "form-cancel"
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
