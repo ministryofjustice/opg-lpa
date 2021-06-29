@@ -16,7 +16,7 @@ Feature: Add donor to Property and Finance LPA
         # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
-        Then I can see popup
+        Then I can find "form-donor" 
         And accessibility checks should pass for "donorPF page with popup open"
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find use-my-details if lpa is new
@@ -70,7 +70,7 @@ Feature: Add donor to Property and Finance LPA
         And I see "Mrs Nancy Garrison" in the page text
         # following line uses force click because view-change-donor button is partly obscured
         When I force click "view-change-donor"
-        Then I can see popup
+        Then I can find "form-donor" 
         And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
             | name-first | Nancy |

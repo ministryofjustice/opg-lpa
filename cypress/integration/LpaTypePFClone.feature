@@ -18,7 +18,7 @@ Feature: Clone Property and Finance LPA starting from the Type page
         Then I am taken to the type page for cloned lpa
         When I choose Property and Finance
         # we use force click here to get around cypress "detached from dom" flakiness
-        And I force click "save"
+        And I click "save"
         Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
 

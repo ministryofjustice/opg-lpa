@@ -16,14 +16,15 @@ Feature: Add a correspondent to a Property and Finance LPA
 
         And I can find "change-correspondent" with data-inited
         When I click "change-correspondent"
-        Then I can see popup
+        Then I can find "form-reuse-details"
         And I see "Which details would you like to reuse?" in the page text
         # donor is correspondent as default
         # choose attorney as correspondent
         When I check "reuse-details-2"
         And I click "continue"
+        Then I can find "form-correspondent"
         And I click "form-save"
-        Then I cannot see popup
+        Then I cannot find "form-correspondent"
         And I see "Standard Trust" in the page text
         When I click "save"
         Then I am taken to the who are you page

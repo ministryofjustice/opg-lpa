@@ -47,7 +47,7 @@ Feature: Add donor to Health and Welfare LPA
         And I see "Mrs Nancy Garrison" in the page text
         # following line uses force click because view-change-donor button is partly obscured
         When I force click "view-change-donor"
-        Then I can see popup
+        Then I can find "form-donor" 
         And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
             | name-first | Nancy |

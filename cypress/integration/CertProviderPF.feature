@@ -15,7 +15,7 @@ Feature: Add a Certificate Provider to a Property and Finance LPA
 
         When I click "add-certificate-provider"
         And I opt not to re-use details if lpa is a clone
-        Then I can see popup
+        Then I can find "form-certificate-provider"
         And I can find "form-cancel"
         And I can find "name-title" with 8 options
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
@@ -51,7 +51,7 @@ Feature: Add a Certificate Provider to a Property and Finance LPA
         When I click "delete-certificate-provider"
         And I click "cancel"
         And I click "view-change-certificate-provider"
-        Then I can see popup
+        Then I can find "form-certificate-provider"
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
             | name-first | Reece |
