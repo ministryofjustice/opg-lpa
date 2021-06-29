@@ -61,7 +61,8 @@ Feature: Add donor to Health and Welfare LPA
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
         When I click "form-cancel"
-        And I click "save-and-continue"
+        Then I cannot find "form-donor" 
+        When I click "save-and-continue"
         Then I am taken to the life sustaining page
         And I see "Who does the donor want to make decisions about life-sustaining treatment?" in the page text
         # in this test we check CanSustainLife-0 (no option) exists, then a few lines down we actually click canSustainLife-1 (yes)

@@ -16,11 +16,11 @@ Feature: Add donor to Property and Finance LPA
         # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
+        # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
+        Then I can find use-my-details if lpa is new
+        And I opt not to re-use details if lpa is a clone
         Then I can find "form-donor" 
         And accessibility checks should pass for "donorPF page with popup open"
-        # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
-        And I can find use-my-details if lpa is new
-        And I opt not to re-use details if lpa is a clone
         # ensure we are on the donor form , in case re-use details form was previously shown
         Then I can find "form-donor" 
         When I type "B1 1TF" into "postcode-lookup" working around cypress bug
@@ -84,9 +84,9 @@ Feature: Add donor to Property and Finance LPA
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
         When I click "form-cancel"
-        And I click "save-and-continue"
-        Then I am taken to the when lpa starts page
-        And I see "When can the LPA be used?" in the page text
+        Then I cannot find "form-donor" 
+        When I click "save-and-continue"
+        And I am taken to the when lpa starts page
         When I click "save"
         Then I see in the page text
             | There is a problem |
