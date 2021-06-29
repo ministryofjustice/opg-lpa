@@ -22,13 +22,14 @@ Feature: Add a correspondent to a Property and Finance LPA
         And I can find hidden "email-address"
         And I can find "change-correspondent" with data-inited
         When I click "change-correspondent"
-        Then I can see popup
+        Then I can find "form-reuse-details"
         And I see "Which details would you like to reuse?" in the page text
         # donor is correspondent as default
         And I see "Mrs Nancy Garrison" in the page text
         And "contactByEmail" is checked
         # choose new correspondent
         When I opt not to re-use details
+        Then I can find "form-correspondent"
         Then I see "Correspondent details" in the page text
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
@@ -52,11 +53,12 @@ Feature: Add a correspondent to a Property and Finance LPA
         # force click needed on line below as sometimes button obscured
         When I force click "form-back"
         # we are taken back to re-use details page
-        Then I see "Which details would you like to reuse?" in the page text
+        Then I can find "form-reuse-details"
+        And I see "Which details would you like to reuse?" in the page text
         # choose donor as correspondent
         When I check "reuse-details-1"
         And I click "continue"
-        Then I cannot see popup
+        Then I cannot find "form-reuse-details"
         And I see "Mrs Nancy Garrison" in the page text
         When I uncheck "contactByEmail"
         And I click "save"

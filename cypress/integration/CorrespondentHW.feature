@@ -22,7 +22,7 @@ Feature: Add a correspondent to a Health and Welfare LPA
         And I can find hidden "email-address"
         And I can find "change-correspondent" with data-inited
         When I click "change-correspondent"
-        Then I can see popup
+        Then I can find "form-reuse-details"
         And I see "Which details would you like to reuse?" in the page text
         # donor is correspondent as default
         And I see "Mrs Nancy Garrison" in the page text
@@ -30,7 +30,7 @@ Feature: Add a correspondent to a Health and Welfare LPA
         # choose donor as correspondent
         When I check "reuse-details-1"
         And I click "continue"
-        Then I cannot see popup
+        Then I cannot find "form-reuse-details" 
         And I see "Mrs Nancy Garrison" in the page text
         And I click "save"
         Then I am taken to the who are you page
