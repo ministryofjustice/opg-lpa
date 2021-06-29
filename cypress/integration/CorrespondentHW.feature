@@ -30,6 +30,7 @@ Feature: Add a correspondent to a Health and Welfare LPA
         # choose donor as correspondent
         When I check "reuse-details-1"
         And I click "continue"
+        # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
         Then I cannot find "form-reuse-details" 
         And I see "Mrs Nancy Garrison" in the page text
         And I click "save"
