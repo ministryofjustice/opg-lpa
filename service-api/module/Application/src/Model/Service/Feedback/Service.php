@@ -31,10 +31,15 @@ class Service extends AbstractService
 
         // Feedback cannot be empty
         if (empty($feedback)) {
+            $this->getLogger()->err('Required fields for saving feedback not present');
             return false;
         }
 
-        return $this->getFeedbackRepository()->insert($feedback);
+        $dbInsertResult = $this->getFeedbackRepository()->insert($feedback);
+        if (!$dbInsertResult) {
+            $this->getLogger()->err('Error inserting feedback into database: invalid query');
+        }
+        return $dbInsertResult;
     }
 
     /**
