@@ -15,13 +15,13 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
 
         # note that for the clone test, we do not add a replacement attorney, as that is already covered by PF test, the scenario we cover here is not having replacement attorney(s)
         When I click "add-replacement-attorney"
-        Then I can see popup
         And I can find use-my-details if lpa is new
         And I opt not to re-use details if lpa is a clone
+        Then I can find "form-attorney"
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
         When I click "form-cancel"
-        And I cannot see popup
+        And I cannot find "form-attorney"
         And I click "save"
         Then I am taken to the certificate provider page
 
