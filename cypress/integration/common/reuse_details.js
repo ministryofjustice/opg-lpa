@@ -5,6 +5,7 @@ import { Then } from "cypress-cucumber-preprocessor/steps";
 
 Then(`I opt not to re-use details`, (checkable) => {
     cy.get("[data-cy=reuse-details--1]").check().should('be.checked');
+    cy.get("[data-cy=continue]").click();
 })
  
 Then(`I opt not to re-use details if lpa is a clone`, (checkable) => {

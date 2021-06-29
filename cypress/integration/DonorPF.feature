@@ -21,6 +21,8 @@ Feature: Add donor to Property and Finance LPA
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find use-my-details if lpa is new
         And I opt not to re-use details if lpa is a clone
+        # ensure we are on the donor form , in case re-use details form was previously shown
+        Then I can find "form-donor" 
         When I type "B1 1TF" into "postcode-lookup" working around cypress bug
         # cypress is not reliable at filling in postcode fully before hitting next button, so, ensure it is now filled in
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
