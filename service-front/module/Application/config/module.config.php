@@ -15,7 +15,6 @@ return [
 
     'controllers' => [
         'factories' => [
-            'DynamoDbController' => 'Application\Controller\Console\DynamoDbControllerFactory',
             'PingController' => 'Application\ControllerFactory\PingControllerFactory',
         ],
         'abstract_factories' => [
@@ -113,25 +112,6 @@ return [
             'accountInfo'   => 'Application\View\Helper\AccountInfoFactory',
             'routeName'     => 'Application\View\Helper\RouteNameFactory',
             'systemMessage' => 'Application\View\Helper\SystemMessageFactory',
-        ],
-    ],
-
-    // Placeholder for console routes
-    'console' => [
-        'router' => [
-            'routes' => [
-                'dynamodb-init' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'dynamodb-init',
-                        'defaults' => [
-                            'controller' => 'DynamoDbController',
-                            'action'     => 'init'
-                        ],
-                    ],
-                ],
-
-            ],
         ],
     ],
 

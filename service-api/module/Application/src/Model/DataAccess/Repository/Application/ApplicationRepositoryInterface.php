@@ -117,12 +117,12 @@ interface ApplicationRepositoryInterface {
     public function countReceivedForType(string $lpaType) : int;
 
     /**
-     * Count the number of LPAs returned for a given LPA type
+     * Count the number of LPAs processed for a given LPA type
      *
      * @param $lpaType
      * @return int
      */
-    public function countReturnedForType(string $lpaType) : int;
+    public function countProcessedForType(string $lpaType) : int;
 
     /**
      * Count the number of LPAs completed for a given LPA type
