@@ -65,6 +65,7 @@ Feature: Add donor to Property and Finance LPA
             | address-postcode| PO38 1UL |
         And I check "can-sign"
         And I click "form-save"
+        Then I cannot find "form-donor" 
         Then I can find "save-and-continue"
         And I cannot find "add-donor"
         And I see "Mrs Nancy Garrison" in the page text
