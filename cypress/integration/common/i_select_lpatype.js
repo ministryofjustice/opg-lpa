@@ -1,9 +1,9 @@
 import { Then } from "cypress-cucumber-preprocessor/steps";
 
 Then(`I choose Property and Finance`, () => {
-    cy.get("[data-cy=type-property-and-financial]").check();
-})
+    Cypress.$("[data-cy=type-property-and-financial]").click();
+});
 
 Then(`I choose Health and Welfare`, () => {
-    cy.get("[data-cy=type-health-and-welfare]").check();
-})
+    Cypress.$("[data-cy=type-health-and-welfare]").click();
+});

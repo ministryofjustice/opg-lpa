@@ -20,4 +20,3 @@ Feature: Clone Property and Finance LPA starting from the Type page
         And I click "save"
         Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
-
