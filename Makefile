@@ -66,6 +66,11 @@ dc-up:
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker-compose up
 
+# target for users outside MoJ to run the stack without 3rd party integrations
+.PHONY: dc-up-out
+dc-up-out:
+	@${MAKE} dc-up SENDGRID=- GOVPAY=- NOTIFY=- ORDNANCESURVEY=-
+
 .PHONY: dc-build
 dc-build:
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \

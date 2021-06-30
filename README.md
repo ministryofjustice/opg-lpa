@@ -24,7 +24,7 @@ cd opg-lpa
 If you intend to run the application in tandem with 3rd party integrations, you currently require a Ministry of Justice AWS account. If you don't have one of these, you can still run the stack locally, minus these integrations, with:
 
 ```
-make dc-up SENDGRID=- GOVPAY=- ORDNANCESURVEY=- NOTIFY=-
+make dc-up-out
 ```
 
 The LPA Tool service will be available via <https://localhost:7002/home>
