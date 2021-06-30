@@ -13,7 +13,10 @@ Feature: Homepage
     And I click "save"
     And I visit the certificate provider page for the test fixture lpa
     And I click "skip-certificate-provider"
-    And I visit the people to notify page for the test fixture lpa
+    When I visit the dashboard
+    Then I cannot see a "Reuse LPA details" link for the test fixture lpa
+
+    Given I visit the people to notify page for the test fixture lpa
     And I click "save"
     When I visit the dashboard
     Then I can see a "Reuse LPA details" link for the test fixture lpa
@@ -26,7 +29,10 @@ Feature: Homepage
     And I click "save"
     And I visit the certificate provider page for the test fixture lpa
     And I click "skip-certificate-provider"
-    And I visit the people to notify page for the test fixture lpa
+    When I visit the dashboard
+    Then I cannot see a "Reuse LPA details" link for the test fixture lpa
+
+    Given I visit the people to notify page for the test fixture lpa
     And I click "save"
     When I visit the dashboard
     Then I can see a "Reuse LPA details" link for the test fixture lpa
