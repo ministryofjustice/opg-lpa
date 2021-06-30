@@ -1,7 +1,10 @@
 import { Then } from "cypress-cucumber-preprocessor/steps";
+
+// should('not.be.disabled') is here because it looks like cypress may choke trying to click a button that has 
+// been temporarily disabled while the page is loading. This may need ultimately to be done for more or even all steps here
  
 Then(`I click {string}`, (clickable) => {
-    cy.get("[data-cy=" + clickable + "]").click();
+    cy.get("[data-cy=" + clickable + "]").should('not.be.disabled').click();
     cy.OPGCheckA11y();
 })
 
