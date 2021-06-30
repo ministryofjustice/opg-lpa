@@ -84,7 +84,7 @@ class FeedbackController extends AbstractBaseController
         ]);
     }
 
-    public function setFeedbackService(Feedback $feedbackService)
+    public function setFeedbackService(Feedback $feedbackService): void
     {
         $this->feedbackService = $feedbackService;
     }

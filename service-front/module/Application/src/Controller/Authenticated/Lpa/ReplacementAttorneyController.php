@@ -11,6 +11,9 @@ use Laminas\View\Model\ViewModel;
 class ReplacementAttorneyController extends AbstractLpaActorController
 {
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -58,6 +61,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         ]);
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function addAction()
     {
         $viewModel = new ViewModel();
@@ -119,6 +125,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function editAction()
     {
         $viewModel = new ViewModel();
@@ -190,7 +199,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         return $viewModel;
     }
 
-    public function confirmDeleteAction()
+    public function confirmDeleteAction(): ViewModel
     {
         $lpaId = $this->getLpa()->id;
         $lpaDocument = $this->getLpa()->document;
@@ -227,6 +236,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function deleteAction()
     {
         $lpa = $this->getLpa();
@@ -255,6 +267,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         return $this->redirect()->toRoute($route, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($route));
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function addTrustAction()
     {
         $viewModel = new ViewModel();

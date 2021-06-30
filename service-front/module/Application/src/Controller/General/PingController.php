@@ -19,7 +19,7 @@ class PingController extends AbstractActionController
         return new ViewModel(['status'=>$result]);
     }
 
-    public function jsonAction() {
+    public function jsonAction(): JsonModel {
         $result = $this->statusService->check();
         $result['tag'] = $this->config['version']['tag'];
         return new JsonModel($result);
@@ -28,8 +28,10 @@ class PingController extends AbstractActionController
     /**
      * Endpoint for the AWS ELB.
      * All we're checking is that PHP can be called and a 200 returned.
+     *
+     * @return \Laminas\Stdlib\ResponseInterface
      */
-    public function elbAction() {
+    public function elbAction(): \Laminas\Stdlib\ResponseInterface {
         $response = $this->getResponse();
 
         $path = '/etc/ssl/certs/b204d74a.0';
@@ -46,7 +48,7 @@ class PingController extends AbstractActionController
         return $response;
     }
 
-    public function pingdomAction() {
+    public function pingdomAction(): \Laminas\Http\Response {
         $start = round(microtime(true) * 1000);
 
         $response = new \Laminas\Http\Response();
@@ -73,12 +75,12 @@ class PingController extends AbstractActionController
         return $response;
     }
 
-    public function setStatusService(Status $statusService)
+    public function setStatusService(Status $statusService): void
     {
         $this->statusService = $statusService;
     }
 
-    public function setConfig(array $config)
+    public function setConfig(array $config): void
     {
         $this->config = $config;
     }

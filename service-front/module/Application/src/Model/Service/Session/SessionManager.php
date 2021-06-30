@@ -26,8 +26,10 @@ class SessionManager extends LaminasSessionManager
 
     /**
      * Tracks whether we've seen this session before and does a regenerateId() if not.
+     *
+     * @return void
      */
-    public function initialise()
+    public function initialise(): void
     {
         // If it's a new session, regenerate the id.
         if (!isset($this->container->init)) {

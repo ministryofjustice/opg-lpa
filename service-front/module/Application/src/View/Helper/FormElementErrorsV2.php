@@ -5,7 +5,10 @@ use Laminas\Form\ElementInterface;
 
 class FormElementErrorsV2 extends \Laminas\Form\View\Helper\FormElementErrors
 {
-    public function __invoke(ElementInterface $element = null, array $attributes = array(), array $messageOverrideMap = [])
+    /**
+     * @return null|static
+     */
+    public function __invoke(ElementInterface $element = null, array $attributes = array(), array $messageOverrideMap = []): ?self
     {
         if (!$element) {
             return $this;

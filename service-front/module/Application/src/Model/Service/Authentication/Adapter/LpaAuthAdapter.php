@@ -140,7 +140,9 @@ class LpaAuthAdapter implements AdapterInterface
     /**
      * @param $token string
      * @param $expirySeconds int - set expiry this many seconds from now
-     * @return array|null
+     *
+     * @return array|null|string
+     *
      * @throws \Http\Client\Exception
      */
     public function setSessionExpiry(string $token, int $expireInSeconds)

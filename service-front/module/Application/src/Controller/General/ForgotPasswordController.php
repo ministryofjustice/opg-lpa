@@ -17,7 +17,7 @@ class ForgotPasswordController extends AbstractBaseController
      * GET: Display's the 'Enter your email address' form.
      * POST: Sends the password reset email.
      *
-     * @return ViewModel
+     * @return ViewModel|\Laminas\Http\Response|false
      */
     public function indexAction()
     {
@@ -62,7 +62,7 @@ class ForgotPasswordController extends AbstractBaseController
      * GET: Displays the 'Enter new password' form.
      * POST: Sets the new password.
      *
-     * @return ViewModel
+     * @return ViewModel|\Laminas\Http\Response
      */
     public function resetPasswordAction()
     {
@@ -124,7 +124,7 @@ class ForgotPasswordController extends AbstractBaseController
         );
     }
 
-    public function setUserService(UserService $userService)
+    public function setUserService(UserService $userService): void
     {
         $this->userService = $userService;
     }

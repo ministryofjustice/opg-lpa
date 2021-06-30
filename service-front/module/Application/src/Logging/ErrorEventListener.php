@@ -18,7 +18,8 @@ class ErrorEventListener extends AbstractListenerAggregate
 
     /**
      * Magic method so this class can be its own factory
-     * @return EventLogger
+     *
+     * @return self
      */
     public function __invoke(): self
     {

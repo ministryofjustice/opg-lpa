@@ -63,7 +63,7 @@ class AuthenticationService extends LaminasAuthenticationService
      * @param $email
      * @return $this
      */
-    public function setEmail($email)
+    public function setEmail(string $email)
     {
         /** @var LpaAdapterInterface $adapter */
         $adapter = $this->adapter;

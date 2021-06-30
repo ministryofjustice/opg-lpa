@@ -36,7 +36,7 @@ class GuidanceController extends AbstractBaseController
 
     }
 
-    public function setGuidanceService(Guidance $guidanceService)
+    public function setGuidanceService(Guidance $guidanceService): void
     {
         $this->guidanceService = $guidanceService;
     }

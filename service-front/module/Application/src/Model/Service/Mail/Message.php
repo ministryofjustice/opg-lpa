@@ -25,7 +25,10 @@ class Message extends LaminasMessage
         $this->setEncoding("UTF-8");
     }
 
-    public function addCategory($category)
+    /**
+     * @return static
+     */
+    public function addCategory($category): self
     {
         $this->categories[] = $category;
 
@@ -37,7 +40,12 @@ class Message extends LaminasMessage
         return $this->categories;
     }
 
-    public function setSendAt($sendAt)
+    /**
+     * @param false|int $sendAt
+     *
+     * @return static
+     */
+    public function setSendAt($sendAt): self
     {
         $this->sendAt = $sendAt;
 

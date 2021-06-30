@@ -86,8 +86,10 @@ class AuthResponse
 
     /**
      * @param string $userId
+     *
+     * @return void
      */
-    public function setUserId($userId)
+    public function setUserId($userId): void
     {
         $this->userId = $userId;
     }
@@ -102,8 +104,10 @@ class AuthResponse
 
     /**
      * @param string $token
+     *
+     * @return void
      */
-    public function setToken($token)
+    public function setToken($token): void
     {
         $this->token = $token;
     }
@@ -118,8 +122,10 @@ class AuthResponse
 
     /**
      * @param number $expiresIn
+     *
+     * @return void
      */
-    public function setExpiresIn($expiresIn)
+    public function setExpiresIn($expiresIn): void
     {
         $this->expiresIn = $expiresIn;
     }
@@ -134,24 +140,28 @@ class AuthResponse
 
     /**
      * @param string $expiresAt
+     *
+     * @return void
      */
-    public function setExpiresAt($expiresAt)
+    public function setExpiresAt($expiresAt): void
     {
         $this->expiresAt = $expiresAt;
     }
 
     /**
-     * @return string variable $lastLogin
+     * @return number variable $lastLogin
      */
-    public function getLastLogin()
+    public function getLastLogin(): number
     {
         return $this->lastLogin;
     }
 
     /**
      * @param string $lastLogin
+     *
+     * @return void
      */
-    public function setLastLogin($lastLogin)
+    public function setLastLogin($lastLogin): void
     {
         $this->lastLogin = $lastLogin;
     }
@@ -166,8 +176,10 @@ class AuthResponse
 
     /**
      * @param string $username
+     *
+     * @return void
      */
-    public function setUsername($username)
+    public function setUsername($username): void
     {
         $this->username = $username;
     }
@@ -182,8 +194,10 @@ class AuthResponse
 
     /**
      * @param boolean $inactivityFlagsCleared
+     *
+     * @return void
      */
-    public function setInactivityFlagsCleared($inactivityFlagsCleared)
+    public function setInactivityFlagsCleared($inactivityFlagsCleared): void
     {
         $this->inactivityFlagsCleared = $inactivityFlagsCleared;
     }
@@ -218,8 +232,10 @@ class AuthResponse
      * Populate the member variables from an array
      *
      * @param array $array
+     *
+     * @return void
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): void
     {
         $this->userId = isset($array['userId']) ? $array['userId'] : null;
         $this->token = isset($array['token']) ? $array['token'] : null;

@@ -9,6 +9,9 @@ use Laminas\View\Model\ViewModel;
 
 class CertificateProviderController extends AbstractLpaActorController
 {
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -37,6 +40,9 @@ class CertificateProviderController extends AbstractLpaActorController
         ]);
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function addAction()
     {
         $viewModel = new ViewModel();
@@ -95,6 +101,9 @@ class CertificateProviderController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function editAction()
     {
         $viewModel = new ViewModel();
@@ -143,7 +152,7 @@ class CertificateProviderController extends AbstractLpaActorController
         return $viewModel;
     }
 
-    public function confirmDeleteAction()
+    public function confirmDeleteAction(): ViewModel
     {
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
@@ -167,7 +176,7 @@ class CertificateProviderController extends AbstractLpaActorController
         return $viewModel;
     }
 
-    public function deleteAction()
+    public function deleteAction(): \Laminas\Http\Response
     {
         $lpa = $this->getLpa();
 

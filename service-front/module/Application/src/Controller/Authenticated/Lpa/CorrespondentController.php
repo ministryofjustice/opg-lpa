@@ -23,6 +23,9 @@ class CorrespondentController extends AbstractLpaActorController
      *  Else we pull in the details of the default correspondent, then merge in other fields.
      *
      */
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -191,6 +194,9 @@ class CorrespondentController extends AbstractLpaActorController
         return false;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function editAction()
     {
         $viewModel = new ViewModel();

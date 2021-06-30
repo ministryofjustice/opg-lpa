@@ -24,9 +24,9 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     /**
      * Function to check if the reuse details options are available and if it is appropriate to redirect to them
      *
-     * @return \Laminas\Http\Response
+     * @return \Laminas\Http\Response|null
      */
-    protected function checkReuseDetailsOptions(ViewModel $viewModel)
+    protected function checkReuseDetailsOptions(ViewModel $viewModel): ?\Laminas\Http\Response
     {
         //  If we are posting then do not execute a redirect just go back to the calling function
         if (!$this->request->isPost()) {
@@ -131,8 +131,10 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      * Add a flag to allow the reuse details back button if the situation dictates it can be used
      *
      * @param ViewModel $viewModel
+     *
+     * @return void
      */
-    protected function addReuseDetailsBackButton(ViewModel $viewModel)
+    protected function addReuseDetailsBackButton(ViewModel $viewModel): void
     {
         //  If required add the back button URL
         if (count($this->getActorReuseDetails()) > 1) {
@@ -252,8 +254,10 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      *
      * @param array $actorReuseDetails
      * @param bool $checkIfAlreadyUsed
+     *
+     * @return void
      */
-    private function addCurrentUserDetailsForReuse(array &$actorReuseDetails, $checkIfAlreadyUsed = true)
+    private function addCurrentUserDetailsForReuse(array &$actorReuseDetails, $checkIfAlreadyUsed = true): void
     {
         //  Check that the current session user details have not already been used
         $currentUserDetailsUsedToBeAdded = true;
@@ -379,7 +383,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      * @param $actorType
      * @return array
      */
-    private function getActorDetails(AbstractData $actorData, $actorType)
+    private function getActorDetails(AbstractData $actorData, string $actorType)
     {
         $actorDetails = [];
 
@@ -487,8 +491,10 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      *
      * @param ViewModel $viewModel
      * @param $route
+     *
+     * @return void
      */
-    protected function addCancelUrlToView(ViewModel $viewModel, $route)
+    protected function addCancelUrlToView(ViewModel $viewModel, string $route): void
     {
         //  If a route string is provided then add it now
         if (is_string($route)) {
@@ -501,8 +507,10 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      *
      * @param AbstractData $actor
      * @param bool $isDelete
+     *
+     * @return void
      */
-    protected function updateCorrespondentData(AbstractData $actor, $isDelete = false)
+    protected function updateCorrespondentData(AbstractData $actor, $isDelete = false): void
     {
         $lpa = $this->getLpa();
         $correspondent = $lpa->document->correspondent;

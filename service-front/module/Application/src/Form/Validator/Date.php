@@ -72,7 +72,7 @@ class Date extends DateValidator
         return parent::isValid($value);
     }
 
-    private function intBetweenInclusive($value, $min, $max)
+    private function intBetweenInclusive(int $value, int $min, int $max): bool
     {
         return (is_int($value) && $value >= $min && $value <= $max);
     }

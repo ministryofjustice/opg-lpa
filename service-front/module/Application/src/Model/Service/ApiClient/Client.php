@@ -51,8 +51,10 @@ class Client
      * trigger a user authentication which updates the auth token in the backend
      *
      * @param $token
+     *
+     * @return void
      */
-    public function updateToken($token)
+    public function updateToken(string $token): void
     {
         $this->defaultHeaders['Token'] = $token;
     }
@@ -69,7 +71,7 @@ class Client
      * @throws \Http\Client\Exception
      */
     public function httpGet(
-        $path,
+        string $path,
         array $query = [],
         $jsonResponse = true,
         $anonymous = false,
@@ -143,11 +145,13 @@ class Client
      *
      * @param string $path
      * @param array $payload
-     * @return array
+     *
+     * @return array|null
+     *
      * @throws Exception\ApiException
      * @throws \Http\Client\Exception
      */
-    public function httpPut($path, array $payload = [])
+    public function httpPut($path, array $payload = []): ?array
     {
         $url = new Uri($this->apiBaseUri . $path);
 
@@ -171,11 +175,13 @@ class Client
      *
      * @param string $path
      * @param array $payload
-     * @return array
+     *
+     * @return array|null
+     *
      * @throws Exception\ApiException
      * @throws \Http\Client\Exception
      */
-    public function httpPatch($path, array $payload = [])
+    public function httpPatch($path, array $payload = []): ?array
     {
         $url = new Uri($this->apiBaseUri . $path);
 
@@ -248,7 +254,9 @@ class Client
      *
      * @param ResponseInterface $response
      * @param bool $jsonResponse
-     * @return array
+     *
+     * @return \Psr\Http\Message\StreamInterface|array
+     *
      * @throws Exception\ApiException
      */
     private function handleResponse(ResponseInterface $response, $jsonResponse = true)

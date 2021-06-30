@@ -72,7 +72,7 @@ class DynamoDbKeyValueStore
     /* (non-PHPdoc)
      * @see \Laminas\Cache\Storage\StorageInterface::setItem()
      */
-    public function setItem($key, $value)
+    public function setItem($key, $value): void
     {
         $key = array('S' => $this->formatKey($key));
 
@@ -94,7 +94,7 @@ class DynamoDbKeyValueStore
     /* (non-PHPdoc)
      * @see \Laminas\Cache\Storage\StorageInterface::removeItem()
      */
-    public function removeItem($key)
+    public function removeItem($key): void
     {
         $key = array('S' => $this->formatKey($key));
 
@@ -109,7 +109,10 @@ class DynamoDbKeyValueStore
     /* (non-PHPdoc)
      * @see \Laminas\Cache\Storage\StorageInterface::getItem()
      */
-    public function getItem($key, & $success = null, & $casToken = null)
+    /**
+     * @param string $key
+     */
+    public function getItem(string $key, & $success = null, & $casToken = null)
     {
         try {
             $result = $this->client->getItem(array(
@@ -133,8 +136,10 @@ class DynamoDbKeyValueStore
 
     /**
      * @param DynamoDbClient $dynamoDbClient set Dynamo DB client
+     *
+     * @return void
      */
-    public function setDynamoDbClient(DynamoDbClient $dynamoDbClient)
+    public function setDynamoDbClient(DynamoDbClient $dynamoDbClient): void
     {
         $this->client = $dynamoDbClient;
     }

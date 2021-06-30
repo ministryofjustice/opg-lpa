@@ -172,9 +172,12 @@ class MailTransport implements TransportInterface
     /**
      * Send a mail message
      *
-     * @param  LaminasMessage $message
+     * @param LaminasMessage $message
+     *
      * @throws InvalidArgumentException
      * @throws TransportInvalidArgumentException
+     *
+     * @return void
      */
     public function send(LaminasMessage $message)
     {
@@ -322,9 +325,13 @@ class MailTransport implements TransportInterface
      * @param $emailRef
      * @param array $data
      * @param DateTime|null $sendAt
+     * @param (mixed|string)[]|string $to
+     *
      * @throws Exception
+     *
+     * @return void
      */
-    public function sendMessageFromTemplate($to, $emailRef, array $data = [], DateTime $sendAt = null)
+    public function sendMessageFromTemplate($to, string $emailRef, array $data = [], DateTime $sendAt = null): void
     {
         //  Ensure the TO address/addresses are an array
         if (!is_array($to)) {

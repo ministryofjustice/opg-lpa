@@ -29,6 +29,9 @@ class DonorController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function addAction()
     {
         $viewModel = new ViewModel();
@@ -86,6 +89,9 @@ class DonorController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function editAction()
     {
         $viewModel = new ViewModel();

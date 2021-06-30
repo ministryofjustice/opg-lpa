@@ -20,8 +20,10 @@ abstract class AbstractForm extends Form
      * Add input data to input filter
      *
      * @param array $inputData
+     *
+     * @return void
      */
-    protected function addToInputFilter(array $inputData)
+    protected function addToInputFilter(array $inputData): void
     {
         //  Merge the required input filters into the input data
         $inputData = array_merge_recursive([

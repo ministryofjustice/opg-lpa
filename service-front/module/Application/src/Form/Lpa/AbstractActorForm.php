@@ -100,7 +100,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
      *
      * @return array. e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
      */
-    protected function convertFormDataForModel($formData)
+    protected function convertFormDataForModel(array $formData)
     {
         //  If it exists transfer the dob array into a string
         if (array_key_exists('dob-date', $formData) && is_array($formData['dob-date'])) {
@@ -151,8 +151,10 @@ abstract class AbstractActorForm extends AbstractLpaForm
      *
      * @param $actorType
      * @param array $actorNames
+     *
+     * @return void
      */
-    public function setActorData($actorType, array $actorNames)
+    public function setActorData($actorType, array $actorNames): void
     {
         $this->setAttribute('data-actor-type', $actorType);
         $this->setAttribute('data-actor-names', json_encode($actorNames));

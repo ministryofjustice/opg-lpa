@@ -12,6 +12,9 @@ class SessionKeepAliveController extends AbstractAuthenticatedController
         return new JsonModel(['refreshed' => $this->getSessionManager()->sessionExists()]);
     }
 
+    /**
+     * @return JsonModel|\Laminas\Stdlib\ResponseInterface
+     */
     public function setExpiryAction()
     {
         if ($this->request->isPost()) {

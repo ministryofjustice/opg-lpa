@@ -19,8 +19,10 @@ class Applicant extends AbstractService
      *
      * @param Lpa $lpa
      * @param $attorneyId
+     *
+     * @return void
      */
-    public function removeAttorney(Lpa $lpa, $attorneyId)
+    public function removeAttorney(Lpa $lpa, $attorneyId): void
     {
         $whoIsRegistering = $lpa->document->whoIsRegistering;
 
@@ -44,8 +46,10 @@ class Applicant extends AbstractService
      * Cleanup applicant data (whoIsRegistering) if invalid
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    public function cleanUp(Lpa $lpa)
+    public function cleanUp(Lpa $lpa): void
     {
         $applicants = $lpa->document->whoIsRegistering;
 
@@ -67,7 +71,7 @@ class Applicant extends AbstractService
         }
     }
 
-    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
+    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService): void
     {
         $this->lpaApplicationService = $lpaApplicationService;
     }

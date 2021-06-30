@@ -53,9 +53,12 @@ class DashboardController extends AbstractAuthenticatedController
      * @param $lpasPerPage
      * @param $lpasTotalCount
      * @param $numberOfPagesInRange
+     * @param int $lpasPerPage
+     * @param int $numberOfPagesInRange
+     *
      * @return array
      */
-    private function getPaginationControlData($page, $lpasPerPage, $lpasTotalCount, $numberOfPagesInRange)
+    private function getPaginationControlData($page, int $lpasPerPage, $lpasTotalCount, int $numberOfPagesInRange)
     {
         //  Determine the total number of pages
         $pageCount = ceil($lpasTotalCount / $lpasPerPage);
@@ -115,8 +118,10 @@ class DashboardController extends AbstractAuthenticatedController
      * Creates a new LPA
      *
      * If 'lpa-id' is set, use the passed ID to seed the new LPA.
+     *
+     * @return \Laminas\Http\Response
      */
-    public function createAction()
+    public function createAction(): \Laminas\Http\Response
     {
         $seedId = $this->params()->fromRoute('lpa-id');
 
@@ -153,7 +158,7 @@ class DashboardController extends AbstractAuthenticatedController
         return $this->redirect()->toRoute('lpa-type-no-id');
     }
 
-    public function deleteLpaAction()
+    public function deleteLpaAction(): \Laminas\Http\Response
     {
         $page = $this->params()->fromQuery('page');
 
@@ -177,7 +182,7 @@ class DashboardController extends AbstractAuthenticatedController
         return $this->redirect()->toRoute($target, $params);
     }
 
-    public function confirmDeleteLpaAction()
+    public function confirmDeleteLpaAction(): ViewModel
     {
         $page = $this->params()->fromQuery('page');
 
@@ -204,8 +209,10 @@ class DashboardController extends AbstractAuthenticatedController
 
     /**
      * Displayed when the Terms of use have changed since the user last logged in.
+     *
+     * @return ViewModel
      */
-    public function termsAction()
+    public function termsAction(): ViewModel
     {
         return new ViewModel();
     }
@@ -222,7 +229,7 @@ class DashboardController extends AbstractAuthenticatedController
         return parent::checkAuthenticated(false);
     }
 
-    public function statusesAction()
+    public function statusesAction(): JsonModel
     {
         $lpaIds = $this->getEvent()->getRouteMatch()->getParam('lpa-ids');
         $statuses = $this->getLpaApplicationService()->getStatuses($lpaIds);

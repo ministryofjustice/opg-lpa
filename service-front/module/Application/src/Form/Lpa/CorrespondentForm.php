@@ -101,12 +101,12 @@ class CorrespondentForm extends AbstractActorForm
         return parent::bind($data, $flags);
     }
 
-    public function trustSelected()
+    public function trustSelected(): bool
     {
         return $this->trustSelected;
     }
 
-    public function isEditable()
+    public function isEditable(): bool
     {
         return $this->isEditable;
     }

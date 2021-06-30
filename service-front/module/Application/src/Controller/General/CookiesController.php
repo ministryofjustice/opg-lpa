@@ -14,6 +14,9 @@ class CookiesController extends AbstractBaseController
     const SEEN_COOKIE_NAME   = 'seen_cookie_message';
     const SUBMITTED_COOKIE_PAGE   = 'submitted_cookie_page';
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $form = $this->getFormElementManager()->get('Application\Form\General\CookieConsentForm');

@@ -39,6 +39,8 @@ class Logger extends LaminasLogger
     /**
      * Override the log() method to allow us to append a trace_id field into
      * the $extra argument.
+     *
+     * @return void
      */
     public function log($priority, $msg, $extra = [])
     {

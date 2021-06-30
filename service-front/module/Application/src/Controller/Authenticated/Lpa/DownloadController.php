@@ -15,6 +15,9 @@ class DownloadController extends AbstractLpaController
      */
     private $analyticsService;
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response|false
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -51,6 +54,9 @@ class DownloadController extends AbstractLpaController
         return false;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function checkAction()
     {
         $lpa = $this->getLpa();
@@ -76,7 +82,7 @@ class DownloadController extends AbstractLpaController
 
     }
 
-    public function downloadAction()
+    public function downloadAction(): \Laminas\Stdlib\ResponseInterface
     {
         $lpa = $this->getLpa();
 
@@ -135,7 +141,7 @@ class DownloadController extends AbstractLpaController
      * @param $pdfType
      * @return bool
      */
-    private function pdfIsReady($lpaId, $pdfType)
+    private function pdfIsReady(int $lpaId, $pdfType)
     {
         $details = $this->getLpaApplicationService()
                         ->getPdf($lpaId, $pdfType);
@@ -177,8 +183,10 @@ class DownloadController extends AbstractLpaController
      * Set the service to be used for sending analytics data
      *
      * @param GoogleAnalyticsService
+     *
+     * @return void
      */
-    public function setAnalyticsService($analyticsService)
+    public function setAnalyticsService($analyticsService): void
     {
         $this->analyticsService = $analyticsService;
     }

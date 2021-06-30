@@ -9,6 +9,9 @@ use Laminas\View\Model\ViewModel;
 
 class PeopleToNotifyController extends AbstractLpaActorController
 {
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -54,6 +57,9 @@ class PeopleToNotifyController extends AbstractLpaActorController
         return $view;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function addAction()
     {
         $viewModel = new ViewModel();
@@ -115,6 +121,9 @@ class PeopleToNotifyController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function editAction()
     {
         $viewModel = new ViewModel();
@@ -170,7 +179,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         return $viewModel;
     }
 
-    public function confirmDeleteAction()
+    public function confirmDeleteAction(): ViewModel
     {
         $lpaId = $this->getLpa()->id;
         $lpaDocument = $this->getLpa()->document;
@@ -203,6 +212,9 @@ class PeopleToNotifyController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function deleteAction()
     {
         $lpa = $this->getLpa();

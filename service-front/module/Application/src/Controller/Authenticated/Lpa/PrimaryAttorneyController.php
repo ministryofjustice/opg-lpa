@@ -57,6 +57,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function addAction()
     {
         $viewModel = new ViewModel();
@@ -113,6 +116,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function editAction()
     {
         $viewModel = new ViewModel();
@@ -198,7 +204,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         return $viewModel;
     }
 
-    public function confirmDeleteAction()
+    public function confirmDeleteAction(): ViewModel
     {
         $lpaId = $this->getLpa()->id;
         $lpaDocument = $this->getLpa()->document;
@@ -235,6 +241,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         return $viewModel;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function deleteAction()
     {
         $lpa = $this->getLpa();
@@ -282,6 +291,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         return $this->redirect()->toRoute($route, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($route));
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function addTrustAction()
     {
         $viewModel = new ViewModel();
@@ -332,7 +344,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         return $viewModel;
     }
 
-    public function setApplicantService(ApplicantService $applicantService)
+    public function setApplicantService(ApplicantService $applicantService): void
     {
         $this->applicantService = $applicantService;
     }

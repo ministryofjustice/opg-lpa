@@ -57,6 +57,9 @@ class Correspondence extends Fieldset
         ]);
     }
 
+    /**
+     * @return void
+     */
     public function setMessages($messages)
     {
         $this->messages = $messages;

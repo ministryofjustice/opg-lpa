@@ -37,7 +37,7 @@ class CompleteController extends AbstractLpaController
         return $viewModel;
     }
 
-    public function viewDocsAction()
+    public function viewDocsAction(): ViewModel
     {
         $this->ensureLpaIsLocked();
 
@@ -46,8 +46,10 @@ class CompleteController extends AbstractLpaController
 
     /**
      * Ensure the LPA is always locked by this stage.
+     *
+     * @return void
      */
-    private function ensureLpaIsLocked()
+    private function ensureLpaIsLocked(): void
     {
         $lpa = $this->getLpa();
 
@@ -56,7 +58,12 @@ class CompleteController extends AbstractLpaController
         }
     }
 
-    private function getViewParams()
+    /**
+     * @return (bool|mixed|string|string[])[]
+     *
+     * @psalm-return array{lp1Url: string, cloneUrl: string, dateCheckUrl: string, correspondentName: mixed, paymentAmount: mixed, paymentReferenceNo: mixed, hasRemission: bool, isPaymentSkipped: bool, continuationNoteKeys: list<string>, lp3Url?: string, peopleToNotify?: mixed, lpa120Url?: string}
+     */
+    private function getViewParams(): array
     {
         $lpa = $this->getLpa();
 

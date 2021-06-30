@@ -8,6 +8,9 @@ use Laminas\View\Model\ViewModel;
 
 class InstructionsController extends AbstractLpaController
 {
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();

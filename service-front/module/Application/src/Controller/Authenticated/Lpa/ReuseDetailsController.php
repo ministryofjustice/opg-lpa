@@ -89,7 +89,7 @@ class ReuseDetailsController extends AbstractLpaActorController
         return $viewModel;
     }
 
-    public function setRouter(RouteStackInterface $router)
+    public function setRouter(RouteStackInterface $router): void
     {
         $this->router = $router;
     }

@@ -33,8 +33,11 @@ class FormLinkedErrorListV2 extends AbstractHelper
      *
      * @param $field
      * @param $error
+     * @param (int|string) $field
+     *
+     * @return void
      */
-    private function outputError ($field, $error)
+    private function outputError ($field, $error): void
     {
 
         echo '<li><a href="#' . $field . '">';

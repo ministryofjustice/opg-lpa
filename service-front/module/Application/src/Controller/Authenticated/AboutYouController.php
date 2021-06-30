@@ -88,8 +88,10 @@ class AboutYouController extends AbstractAuthenticatedController
 
     /**
      * @param Container $userDetailsSession
+     *
+     * @return void
      */
-    public function setUserDetailsSession(Container $userDetailsSession)
+    public function setUserDetailsSession(Container $userDetailsSession): void
     {
         $this->userDetailsSession = $userDetailsSession;
     }

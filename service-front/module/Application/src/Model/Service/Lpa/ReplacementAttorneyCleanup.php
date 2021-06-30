@@ -19,8 +19,10 @@ class ReplacementAttorneyCleanup extends AbstractService
      * Cleanup data to to with how the Replacement Attorneys should act
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    public function cleanUp(Lpa $lpa)
+    public function cleanUp(Lpa $lpa): void
     {
         if ($this->whenDecisionsInvalid($lpa)) {
             $lpa->getDocument()->getReplacementAttorneyDecisions()->setWhen(null);
@@ -89,7 +91,7 @@ class ReplacementAttorneyCleanup extends AbstractService
         return false;
     }
 
-    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
+    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService): void
     {
         $this->lpaApplicationService = $lpaApplicationService;
     }

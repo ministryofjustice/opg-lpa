@@ -62,6 +62,9 @@ class FeeReductionController extends AbstractLpaController
         $this->moneyFormat = $moneyFormat;
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();

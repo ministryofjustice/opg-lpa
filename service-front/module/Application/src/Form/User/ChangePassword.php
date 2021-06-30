@@ -59,8 +59,10 @@ class ChangePassword extends SetPassword
      * Set the Authentication Service used to validate the user's password.
      *
      * @param AuthenticationService $authenticationService
+     *
+     * @return void
      */
-    public function setAuthenticationService(AuthenticationService $authenticationService)
+    public function setAuthenticationService(AuthenticationService $authenticationService): void
     {
         $this->authenticationService = $authenticationService;
     }

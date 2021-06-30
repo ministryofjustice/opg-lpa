@@ -15,6 +15,9 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
      */
     private $applicantService;
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -70,7 +73,7 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
         ]);
     }
 
-    public function setApplicantService(ApplicantService $applicantService)
+    public function setApplicantService(ApplicantService $applicantService): void
     {
         $this->applicantService = $applicantService;
     }

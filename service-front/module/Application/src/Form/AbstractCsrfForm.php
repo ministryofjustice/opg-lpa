@@ -17,15 +17,17 @@ abstract class AbstractCsrfForm extends AbstractForm
      */
     private $csrf = null;
 
-    public function setConfig(array $config)
+    public function setConfig(array $config): void
     {
         $this->config = $config;
     }
 
     /**
      * Set the CSRF element
+     *
+     * @return void
      */
-    public function setCsrf()
+    public function setCsrf(): void
     {
         //  Add the csrf element
         $csrfName = 'secret_' . md5(get_class($this));

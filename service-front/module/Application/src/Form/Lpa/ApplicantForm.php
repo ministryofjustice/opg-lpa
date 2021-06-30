@@ -42,7 +42,7 @@ class ApplicantForm extends AbstractMainFlowForm
         parent::init();
     }
 
-    private function setAttorneyList()
+    private function setAttorneyList(): void
     {
         $this->formElements += [
             'attorneyList' => [

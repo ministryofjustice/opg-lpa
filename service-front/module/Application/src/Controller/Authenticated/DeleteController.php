@@ -18,6 +18,9 @@ class DeleteController extends AbstractAuthenticatedController
         return new ViewModel();
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function confirmAction()
     {
         //  Delete all v2 LPAs, their v2 Personal details, and their Auth account.

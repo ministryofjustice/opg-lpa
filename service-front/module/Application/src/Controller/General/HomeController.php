@@ -18,28 +18,28 @@ class HomeController extends AbstractBaseController
         ]);
     }
 
-    public function redirectAction()
+    public function redirectAction(): \Laminas\Http\Response
     {
         return $this->redirect()->toUrl( $this->config()['redirects']['index'] );
     }
 
-    public function enableCookieAction(){
+    public function enableCookieAction(): ViewModel{
         return new ViewModel();
     }
 
-    public function termsAction(){
+    public function termsAction(): ViewModel{
         return new ViewModel();
     }
 
-    public function accessibilityAction(){
+    public function accessibilityAction(): ViewModel{
         return new ViewModel();
     }
 
-    public function privacyAction(){
+    public function privacyAction(): ViewModel{
         return new ViewModel();
     }
 
-    public function contactAction(){
+    public function contactAction(): ViewModel{
         return new ViewModel();
     }
 

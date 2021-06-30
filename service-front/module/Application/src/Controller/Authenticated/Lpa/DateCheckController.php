@@ -8,6 +8,9 @@ use Laminas\View\Model\ViewModel;
 
 class DateCheckController extends AbstractLpaController
 {
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -117,7 +120,7 @@ class DateCheckController extends AbstractLpaController
     }
 
 
-    public function validAction()
+    public function validAction(): ViewModel
     {
         //  Generate the return target from the route
         //  If there is no route then return to the dashboard
@@ -132,6 +135,9 @@ class DateCheckController extends AbstractLpaController
         ]);
     }
 
+    /**
+     * @return false|int
+     */
     private function dateArrayToTime(array $dateArray)
     {
         $day = $dateArray['day'];

@@ -215,7 +215,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      * @param $requestedName
      * @return string
      */
-    private function getControllerName($requestedName)
+    private function getControllerName(string $requestedName)
     {
         return 'Application\Controller\\' . $requestedName;
     }

@@ -57,7 +57,7 @@ class CheckoutController extends AbstractLpaController
         ]);
     }
 
-    private function redirectToMoreInfoRequired()
+    private function redirectToMoreInfoRequired(): \Laminas\Stdlib\ResponseInterface
     {
         $route = 'lpa/more-info-required';
 
@@ -106,7 +106,7 @@ class CheckoutController extends AbstractLpaController
         return $this->finishCheckout();
     }
 
-    private function finishCheckout()
+    private function finishCheckout(): \Laminas\Http\Response
     {
         $lpa = $this->getLpa();
 
@@ -129,7 +129,7 @@ class CheckoutController extends AbstractLpaController
     //------------------------------------------------------------------------------
     // GDS Pay
 
-    private function isLPAComplete()
+    private function isLPAComplete(): bool
     {
         return ($this->getLpa()->isStateCreated() && $this->getFlowChecker()->backToForm() == "lpa/checkout");
     }
@@ -230,8 +230,10 @@ class CheckoutController extends AbstractLpaController
      * If the amount has changed them set the new value and null any gateway reference so a new transaction is issued.
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    private function verifyLpaPaymentAmount(Lpa $lpa)
+    private function verifyLpaPaymentAmount(Lpa $lpa): void
     {
         $lpaPayment = $lpa->payment;
 
@@ -314,12 +316,12 @@ class CheckoutController extends AbstractLpaController
         return $this->finishCheckout();
     }
 
-    public function setCommunicationService(Communication $communicationService)
+    public function setCommunicationService(Communication $communicationService): void
     {
         $this->communicationService = $communicationService;
     }
 
-    public function setPaymentClient(GovPayClient $paymentClient)
+    public function setPaymentClient(GovPayClient $paymentClient): void
     {
         $this->paymentClient = $paymentClient;
     }

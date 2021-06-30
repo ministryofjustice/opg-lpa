@@ -66,9 +66,11 @@ abstract class AbstractBaseController extends AbstractActionController
      * Thus is the session cookies doesn't exist AND cookie=1, we can assume the client is not sending cookies.
      *
      * @param $routeName string The route name for the current page for if a redirect is needed.
+     * @param string $routeName
+     *
      * @return bool|\Laminas\Http\Response Iff bool true is returned, all is good. Otherwise the calling controller should return the response.
      */
-    protected function checkCookie($routeName)
+    protected function checkCookie(string $routeName)
     {
         // Only do a cookie check on GETs
         if ($this->getRequest()->getMethod() !== 'GET') {

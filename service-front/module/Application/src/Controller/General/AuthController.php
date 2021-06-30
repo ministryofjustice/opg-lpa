@@ -202,8 +202,10 @@ class AuthController extends AbstractBaseController
 
     /**
      * Destroys the current session.
+     *
+     * @return void
      */
-    private function clearSession()
+    private function clearSession(): void
     {
         $this->getAuthenticationService()->clearIdentity();
 
@@ -214,8 +216,10 @@ class AuthController extends AbstractBaseController
 
     /**
      * @param LpaApplicationService $lpaApplicationService
+     *
+     * @return void
      */
-    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
+    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService): void
     {
         $this->lpaApplicationService = $lpaApplicationService;
     }

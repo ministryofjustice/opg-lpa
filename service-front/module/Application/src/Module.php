@@ -28,7 +28,7 @@ use Twig\TwigFunction;
 
 class Module implements FormElementProviderInterface
 {
-    public function onBootstrap(MvcEvent $e)
+    public function onBootstrap(MvcEvent $e): void
     {
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
@@ -73,8 +73,10 @@ class Module implements FormElementProviderInterface
      * Sets up and starts global sessions.
      *
      * @param MvcEvent $e
+     *
+     * @return void
      */
-    private function bootstrapSession(MvcEvent $e)
+    private function bootstrapSession(MvcEvent $e): void
     {
         $session = $e->getApplication()->getServiceManager()->get('SessionManager');
 
@@ -90,7 +92,6 @@ class Module implements FormElementProviderInterface
     }
 
     /**
-     *
      * This now checks the token on every request otherwise we have no method of knowing if the user has
      * logged in on another browser.
      *
@@ -98,8 +99,10 @@ class Module implements FormElementProviderInterface
      * may be accessing a page that does not require authentication.
      *
      * @param MvcEvent $e
+     *
+     * @return void
      */
-    private function bootstrapIdentity(MvcEvent $e, bool $updateToken = true)
+    private function bootstrapIdentity(MvcEvent $e, bool $updateToken = true): void
     {
         $sm = $e->getApplication()->getServiceManager();
 
@@ -124,7 +127,12 @@ class Module implements FormElementProviderInterface
         }
     }
 
-    public function getServiceConfig()
+    /**
+     * @return (\Closure|false|string)[][]
+     *
+     * @psalm-return array{shared: array{HttpClient: false}, aliases: array{AddressLookup: 'OrdnanceSurvey', 'Laminas\\Authentication\\AuthenticationService': 'AuthenticationService'}, factories: array{ApiClient: 'Application\Model\Service\ApiClient\ClientFactory', AuthenticationService: 'Application\Model\Service\Authentication\AuthenticationServiceFactory', OrdnanceSurvey: 'Application\Model\Service\AddressLookup\OrdnanceSurveyFactory', SessionManager: 'Application\Model\Service\Session\SessionFactory', MailTransport: 'Application\Model\Service\Mail\Transport\MailTransportFactory', AnalyticsClient: \Closure():Analytics, LpaAuthAdapter: \Closure(ServiceLocatorInterface):LpaAuthAdapter, UserDetailsSession: \Closure():Container, PersistentSessionDetails: \Closure(ServiceLocatorInterface):PersistentSessionDetails, HttpClient: \Closure():\Http\Adapter\Guzzle6\Client, Cache: \Closure(ServiceLocatorInterface):DynamoDbKeyValueStore, DynamoDbCronClient: \Closure(ServiceLocatorInterface):DynamoDbClient, DynamoCronLock: \Closure(ServiceLocatorInterface):DynamoCronLock, GovPayClient: \Closure(ServiceLocatorInterface):GovPayClient, TwigEmailRenderer: \Closure(ServiceLocatorInterface):Environment, TwigViewRenderer: \Closure(ServiceLocatorInterface):Environment}}
+     */
+    public function getServiceConfig(): array
     {
         return [
             'shared' => [
@@ -238,7 +246,12 @@ class Module implements FormElementProviderInterface
         ];
     }
 
-    public function getViewHelperConfig()
+    /**
+     * @return \Closure[][]
+     *
+     * @psalm-return array{factories: array{StaticAssetPath: \Closure(mixed):View\Helper\StaticAssetPath}}
+     */
+    public function getViewHelperConfig(): array
     {
         return array(
             'factories' => array(
@@ -250,7 +263,7 @@ class Module implements FormElementProviderInterface
         );
     }
 
-    public function getConfig()
+    public function getConfig(): array
     {
         $configFiles = [
             __DIR__ . '/../config/module.config.php',
@@ -273,8 +286,10 @@ class Module implements FormElementProviderInterface
      * then change the current layout to be the ".twig" layout.
      *
      * @param MvcEvent $e
+     *
+     * @return void
      */
-    public function preRender(MvcEvent $e)
+    public function preRender(MvcEvent $e): void
     {
         $viewModel = $e->getViewModel();
 
@@ -310,9 +325,10 @@ class Module implements FormElementProviderInterface
      * which is attached to these events in config.
      *
      * @param MvcEvent $e
-     * @return ViewModel
+     *
+     * @return ViewModel|null
      */
-    public function handleError(MvcEvent $e)
+    public function handleError(MvcEvent $e): ?ViewModel
     {
         $exception = $e->getResult()->exception;
 

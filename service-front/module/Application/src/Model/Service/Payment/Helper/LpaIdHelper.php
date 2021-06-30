@@ -16,7 +16,7 @@ class LpaIdHelper
         return self::padLpaId($lpaId) . '-' . time();
     }
 
-    public static function padLpaId($lpaId)
+    public static function padLpaId(string $lpaId): string
     {
         if (strlen($lpaId) > self::LPA_ID_LENGTH) {
             throw new \Exception('LPA ID is too long');

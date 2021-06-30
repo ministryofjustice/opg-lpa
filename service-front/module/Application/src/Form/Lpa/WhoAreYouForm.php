@@ -85,8 +85,11 @@ class WhoAreYouForm extends AbstractMainFlowForm
      * Convert form data to model-compatible input data format.
      *
      * @param array $formData. e.g. ['who'=>'other', 'digitalPartner'=>null, 'other'=>null]
+     * @param \Traversable|array|null $formData
      *
-     * @return array. e.g. ['who'=>'prefessional', 'subquestion'=>'solicitor', 'qualifier'=>null]
+     * @return (mixed|null)[] e.g. ['who'=>'prefessional', 'subquestion'=>'solicitor', 'qualifier'=>null]
+     *
+     * @psalm-return array{who?: mixed, qualifier?: mixed|null}
      */
     protected function convertFormDataForModel($formData)
     {
@@ -116,8 +119,14 @@ class WhoAreYouForm extends AbstractMainFlowForm
 
     /**
      * Convert model validation response to Zend Form validation messages format.
+     *
+     * @param iterable|null $context
+     *
+     * @return array[][]
+     *
+     * @psalm-return array<array<array<empty, empty>>>
      */
-    protected function modelValidationMessageConverter(ValidatorResponse $validation, $context = null)
+    protected function modelValidationMessageConverter(ValidatorResponse $validation, ?iterable $context = null)
     {
         $messages = [];
 

@@ -123,7 +123,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         return "unknown-error";
     }
 
-    public function updateEmailUsingToken($emailUpdateToken)
+    public function updateEmailUsingToken($emailUpdateToken): bool
     {
         $this->getLogger()->info('Updating email using token');
 
@@ -413,7 +413,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         return false;
     }
 
-    public function setUserDetailsSession(Container $userDetailsSession)
+    public function setUserDetailsSession(Container $userDetailsSession): void
     {
         $this->userDetailsSession = $userDetailsSession;
     }

@@ -21,6 +21,11 @@ class Communication extends AbstractEmailService
      */
     private $userDetailsSession;
 
+    /**
+     * @return string|true
+     *
+     * @psalm-return 'failed-sending-email'|true
+     */
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
         //  Get the user email address
@@ -56,7 +61,7 @@ class Communication extends AbstractEmailService
         return true;
     }
 
-    public function setUserDetailsSession(Container $userDetailsSession)
+    public function setUserDetailsSession(Container $userDetailsSession): void
     {
         $this->userDetailsSession = $userDetailsSession;
     }

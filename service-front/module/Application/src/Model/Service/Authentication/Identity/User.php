@@ -67,32 +67,32 @@ class User {
 
     //------
 
-    public function id(){
+    public function id(): string{
         return $this->id;
     }
 
-    public function token(){
+    public function token(): string{
         return $this->token;
     }
     
-    public function setToken($token){
+    public function setToken($token): void{
         $this->token = $token;
     }
 
-    public function lastLogin(){
+    public function lastLogin(): DateTime{
         
         return $this->lastLogin;
     }
 
-    public function tokenExpiresAt(){
+    public function tokenExpiresAt(): DateTime{
         return $this->tokenExpiresAt;
     }
 
-    public function roles(){
+    public function roles(): array{
         return $this->roles;
     }
 
-    public function isAdmin(){
+    public function isAdmin(): bool{
         return in_array('admin', $this->roles);
     }
 
@@ -100,8 +100,10 @@ class User {
 
     /**
      * @param int $expiresIn The number of seconds in which the token expires.
+     *
+     * @return void
      */
-    public function tokenExpiresIn( $expiresIn ){
+    public function tokenExpiresIn( $expiresIn ): void{
         $this->tokenExpiresAt = (new DateTime())->setTimestamp( (int)$expiresIn + time() );
     }
 
@@ -109,8 +111,10 @@ class User {
 
     /**
      * Flags this user as an admin.
+     *
+     * @return void
      */
-    private function setAsAdmin(){
+    private function setAsAdmin(): void{
 
         if( !in_array('admin', $this->roles) ){
             $this->roles[] = 'admin';
@@ -120,8 +124,12 @@ class User {
     
     /**
      * Return this identity as a JSON string
+     *
+     * @return (DateTime|array|string)[]
+     *
+     * @psalm-return array{id: string, token: string, tokenExpiresAt: DateTime, lastLogin: DateTime, roles: array}
      */
-    public function toArray() {
+    public function toArray(): array {
         return get_object_vars($this);
     }
 

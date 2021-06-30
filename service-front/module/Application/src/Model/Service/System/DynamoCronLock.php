@@ -42,7 +42,7 @@ class DynamoCronLock
 
     }
 
-    public function getLock( $name, $allowedSecondsSinceLastRun ){
+    public function getLock( $name, $allowedSecondsSinceLastRun ): bool{
 
         // Current time in milliseconds
         $time = round(microtime(true) * 1000);

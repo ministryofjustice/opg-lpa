@@ -7,6 +7,9 @@ use Laminas\View\Model\ViewModel;
 
 class ChangePasswordController extends AbstractAuthenticatedController
 {
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $form = $this->getFormElementManager()->get('Application\Form\User\ChangePassword');

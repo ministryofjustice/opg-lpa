@@ -93,8 +93,10 @@ class AboutYou extends AbstractActorForm
      * Filter an array to remove any parts of the data that are fully missing
      *
      * @param array $data
+     *
+     * @return void
      */
-    private function filterData(array &$data)
+    private function filterData(array &$data): void
     {
         //  If the date of birth is empty then remove it here completely
         if (array_key_exists('dob-date', $data)

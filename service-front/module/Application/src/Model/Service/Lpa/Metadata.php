@@ -52,7 +52,7 @@ class Metadata extends AbstractService
         return $this->setMetadataByKey($lpa, Lpa::ANALYTICS_RETURN_COUNT, $returnCount);
     }
 
-    public function removeMetadata(Lpa $lpa, $key)
+    public function removeMetadata(Lpa $lpa, string $key): bool
     {
         if (array_key_exists($key, $lpa->metadata)) {
             //  Remove the value
@@ -84,7 +84,7 @@ class Metadata extends AbstractService
         return true;
     }
 
-    private function setMetadataByKey(Lpa $lpa, $key, $value = true)
+    private function setMetadataByKey(Lpa $lpa, string $key, $value = true): bool
     {
         if (!array_key_exists($key, $lpa->metadata) || $lpa->metadata[$key] !== $value) {
             //  Update the value
@@ -100,7 +100,7 @@ class Metadata extends AbstractService
         return false;
     }
 
-    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
+    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService): void
     {
         $this->lpaApplicationService = $lpaApplicationService;
     }

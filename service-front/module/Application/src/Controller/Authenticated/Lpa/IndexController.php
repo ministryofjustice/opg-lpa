@@ -6,7 +6,7 @@ use Application\Controller\AbstractLpaController;
 
 class IndexController extends AbstractLpaController
 {
-    public function indexAction()
+    public function indexAction(): \Laminas\Http\Response
     {
         $lpa = $this->getLpa();
 

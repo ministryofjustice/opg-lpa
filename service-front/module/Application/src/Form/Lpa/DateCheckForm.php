@@ -76,8 +76,10 @@ class DateCheckForm extends AbstractCsrfForm
      * Add a standard data element to the form
      *
      * @param $elementName
+     *
+     * @return void
      */
-    private function addDataCheckFieldset($elementName)
+    private function addDataCheckFieldset(string $elementName): void
     {
         //  Add the fieldset
         $this->add([

@@ -10,6 +10,9 @@ use RuntimeException;
 
 class TypeController extends AbstractAuthenticatedController
 {
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $form = $this->getFormElementManager()

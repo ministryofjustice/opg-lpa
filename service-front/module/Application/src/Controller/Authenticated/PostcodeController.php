@@ -44,7 +44,7 @@ class PostcodeController extends AbstractAuthenticatedController
         ]);
     }
 
-    public function setAddressLookup(OrdnanceSurvey $addressLookup)
+    public function setAddressLookup(OrdnanceSurvey $addressLookup): void
     {
         $this->addressLookup = $addressLookup;
     }

@@ -90,7 +90,7 @@ class RegisterController extends AbstractBaseController
     /**
      * Display the form to resend the activation email or process a post
      *
-     * @return ViewModel
+     * @return HttpResponse|ViewModel|false
      */
     public function resendEmailAction()
     {
@@ -174,7 +174,7 @@ class RegisterController extends AbstractBaseController
         return $viewModel;
     }
 
-    public function setUserService(UserService $userService)
+    public function setUserService(UserService $userService): void
     {
         $this->userService = $userService;
     }

@@ -34,8 +34,12 @@ class Status extends AbstractService implements ApiClientAwareInterface
      *  - RedisFront
      *  - Postcode Anywhere #TODO
      *  - SendGird #TODO
+     *
+     * @return (bool|int|mixed)[]
+     *
+     * @psalm-return array{dynamo: mixed, api: mixed, ok: bool, iterations: positive-int}
      */
-    public function check()
+    public function check(): array
     {
         $result = ['ok' => false];
 
@@ -73,7 +77,12 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     //------------------------------------------------------------------------
 
-    private function dynamo()
+    /**
+     * @return (bool|bool[])[]
+     *
+     * @psalm-return array{ok: bool, details: array{locks: bool}}
+     */
+    private function dynamo(): array
     {
         $result = array('ok' => false, 'details' => [
 //            'sessions' => false,
@@ -124,7 +133,12 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     //------------------------------------------------------------------------
 
-    private function api()
+    /**
+     * @return (array|false|mixed|null)[]
+     *
+     * @psalm-return array{ok: false|mixed|null, details: array}
+     */
+    private function api(): array
     {
         $result = [
             'ok'      => false,
@@ -147,16 +161,20 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     /**
      * @param DynamoDbClient $dynamoDbSessionClient
+     *
+     * @return void
      */
-    public function setDynamoDbSessionClient(DynamoDbClient $dynamoDbSessionClient)
+    public function setDynamoDbSessionClient(DynamoDbClient $dynamoDbSessionClient): void
     {
         $this->dynamoDbSessionClient = $dynamoDbSessionClient;
     }
 
     /**
      * @param DynamoDbClient $dynamoDbCronClient
+     *
+     * @return void
      */
-    public function setDynamoDbCronClient(DynamoDbClient $dynamoDbCronClient)
+    public function setDynamoDbCronClient(DynamoDbClient $dynamoDbCronClient): void
     {
         $this->dynamoDbCronClient = $dynamoDbCronClient;
     }

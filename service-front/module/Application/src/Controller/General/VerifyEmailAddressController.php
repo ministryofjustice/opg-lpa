@@ -12,7 +12,7 @@ class VerifyEmailAddressController extends AbstractBaseController
      */
     private $userService;
 
-    public function verifyAction()
+    public function verifyAction(): \Laminas\Http\Response
     {
         //---------------------------
 
@@ -39,7 +39,7 @@ class VerifyEmailAddressController extends AbstractBaseController
         return $this->redirect()->toRoute( 'login' );
     }
 
-    public function setUserService(UserService $userService)
+    public function setUserService(UserService $userService): void
     {
         $this->userService = $userService;
     }

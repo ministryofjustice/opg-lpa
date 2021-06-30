@@ -20,6 +20,11 @@ class SendgridController extends AbstractBaseController
      */
     private $blackHoleAddress = 'blackhole@lastingpowerofattorney.service.gov.uk';
 
+    /**
+     * @return \Laminas\Stdlib\ResponseInterface|string
+     *
+     * @psalm-return 'failed-sending-email'|\Laminas\Stdlib\ResponseInterface
+     */
     public function bounceAction()
     {
         $fromAddress = $this->request->getPost('from');
@@ -92,7 +97,7 @@ class SendgridController extends AbstractBaseController
         return $response;
     }
 
-    public function setMailTransport(MailTransport $mailTransport)
+    public function setMailTransport(MailTransport $mailTransport): void
     {
         $this->mailTransport = $mailTransport;
     }

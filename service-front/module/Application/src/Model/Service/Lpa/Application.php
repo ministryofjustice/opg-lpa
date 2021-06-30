@@ -33,9 +33,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param string|null $token
-     * @return array|bool|null
+     *
+     * @return Lpa|false
      */
-    public function getApplication($lpaId, string $token = null)
+    public function getApplication(int $lpaId, string $token = null)
     {
         if ($token) {
             $this->apiClient->updateToken($token);
@@ -51,7 +52,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
         return false;
     }
 
-    public function getStatuses($ids)
+    /**
+     * @return (false[]|mixed)[]
+     *
+     * @psalm-return array<array{found: false}|mixed>
+     */
+    public function getStatuses(int $ids): array
     {
         $target = sprintf('/v2/user/%s/statuses/%s', $this->getUserId(), $ids);
 
@@ -82,7 +88,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
     /**
      * Create a new LPA application
      *
-     * @return bool
+     * @return Lpa|false
      */
     public function createApplication()
     {
@@ -100,9 +106,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param array $data
-     * @return bool
+     *
+     * @return Lpa|false
      */
-    public function updateApplication($lpaId, array $data)
+    public function updateApplication(string $lpaId, array $data)
     {
         $target = sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId);
 
@@ -284,7 +291,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * @return array|bool|null
      * @throws ApiException
      */
-    public function getPdfContents($lpaId, $pdfType)
+    public function getPdfContents(int $lpaId, $pdfType)
     {
         $target = sprintf('/v2/user/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType);
 
@@ -647,9 +654,11 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param Lpa $lpa
      * @param $whoIsRegistering
+     * @param array|null $whoIsRegistering
+     *
      * @return bool
      */
-    public function setWhoIsRegistering(Lpa $lpa, $whoIsRegistering)
+    public function setWhoIsRegistering(Lpa $lpa, ?array $whoIsRegistering)
     {
         $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/who-is-registering', $this->getUserId(), $lpa->id), [
             'whoIsRegistering' => $whoIsRegistering,
@@ -733,7 +742,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * @param $seedId
      * @return bool
      */
-    public function setSeed(Lpa $lpa, $seedId)
+    public function setSeed(Lpa $lpa, int $seedId)
     {
         $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/seed', $this->getUserId(), $lpa->id), [
             'seed' => $seedId,
@@ -909,7 +918,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * @param $jsonBody
      * @return bool|mixed
      */
-    private function executePut($target, $jsonBody)
+    private function executePut(string $target, array $jsonBody)
     {
         try {
             return $this->apiClient->httpPut($target, $jsonBody);
@@ -922,7 +931,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * @param $target
      * @return bool
      */
-    private function executeDelete($target)
+    private function executeDelete(string $target)
     {
         try {
             $this->apiClient->httpDelete($target);

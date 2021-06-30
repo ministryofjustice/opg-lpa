@@ -20,7 +20,7 @@ class StatsController extends AbstractBaseController
         return new ViewModel($stats);
     }
 
-    public function setStatsService(StatsService $statsService)
+    public function setStatsService(StatsService $statsService): void
     {
         $this->statsService = $statsService;
     }

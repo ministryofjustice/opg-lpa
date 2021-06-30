@@ -195,7 +195,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      *
      * @return bool|\Laminas\Http\Response
      */
-    protected function checkAuthenticated($allowRedirect = true)
+    protected function checkAuthenticated(bool $allowRedirect = true)
     {
         if (!$this->identity instanceof Identity) {
             if ($allowRedirect) {
@@ -220,8 +220,10 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      * to make sure clone data will be loaded freshly when actor form is rendered.
      *
      * @param int $seedId
+     *
+     * @return void
      */
-    protected function resetSessionCloneData($seedId)
+    protected function resetSessionCloneData($seedId): void
     {
         $cloneContainer = new Container('clone');
 
