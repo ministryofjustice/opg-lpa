@@ -9,13 +9,48 @@ Set up software on your machine required to run the application locally:
 * Install `make` using the native package manager (assuming you are on Mac or Linux)
 * Install [docker](https://docs.docker.com/get-docker/)
 * Install [docker-compose](https://docs.docker.com/compose/install/)
-* Install `awscli`: while this can be done via brew, this failed for me on Linux, so I used [these instructions](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) instead.
-* Install [homebrew](https://docs.brew.sh/)
-* Install dependencies for the Makefile using brew: `brew install aws-vault jq`
+
+### Running locally without 3rd party integrations
+
+**This is the recommended approach for developers outside the Ministry of Justice.**
+
+Download the repo via:
+
+```bash
+git clone https://github.com/ministryofjustice/opg-lpa.git
+cd opg-lpa
+```
+
+If you intend to run the application in tandem with 3rd party integrations, you currently require a Ministry of Justice AWS account. If you don't have one of these, you can still run the stack locally, minus these integrations, with:
+
+```
+make dc-up SENDGRID=- GOVPAY=- ORDNANCESURVEY=- NOTIFY=-
+```
+
+The LPA Tool service will be available via <https://localhost:7002/home>
+
+The Admin service will be available via <https://localhost:7003>
+
+The API service will be available (direct) via <http://localhost:7001>
+
+Note that running in this mode (currently) breaks the following integrations:
+
+* When signing up, completing an LPA, changing email address etc., you won't receive any notification emails. This makes it impossible to sign up a new user as you won't get the confirmation link. Instead, you can use the test user to access the service: username: seeded_test_user@digital.justice.gov.uk / password: Pass1234
+* You won't be able to make any payments for LPA applications. To avoid this, you can select the £0 charge LPA in testing, which will turn off prompts for payment.
+* Postcode lookups for donor/attorney/certificate provider etc. will not work. You can work around this by selecting the manual address entry method.
+* The script designed to periodically clean up inactive users, `service-api/module/Application/src/Command/AccountCleanupCommand.php`, will run, but will not email the admin address with the command output.
+
+The long-term plan is for these integrations to be mocked out locally so that a more representative stack can be run in local development, without the need for AWS secrets (see below).
 
 ### Access to Amazon secrets
 
-[Set up access to Amazon with MFA]().
+To run the application with 3rd party integrations, set up the software needed to support a Ministry of Justice AWS account:
+
+* Install `awscli`: while this can be done via brew, [these instructions](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) may be more useful.
+* Install [homebrew](https://docs.brew.sh/)
+* Install dependencies for the Makefile using brew: `brew install aws-vault jq`
+
+Set up access to Amazon with MFA.
 
 Add a default profile which references your account to `~/.aws/config`:
 
@@ -55,34 +90,15 @@ You will be prompted for an MFA token, which should be displayed on whichever de
 
 NB This command is run when starting the application locally, which is why you need to get this set up.
 
-## Running the Application Locally
+## Running the application locally with integrations
 
-Download the repo via:
-
-```bash
-git clone git@github.com:ministryofjustice/opg-lpa.git
-cd opg-lpa
-```
-
-Within `opg-lpa` directory to *run* the project for the first time use the following:
+Once you have access to Amazon secrets, you can run the application with integrations from the `opg-lpa` directory with:
 
 ```bash
-make dc-run
-make
+make dc-up
 ```
 
-The `Makefile` will fetch secrets using `aws secretsmanager` and `docker-compose` commands together to pass along environment variables removing the need for local configuration files.
-
-The LPA Tool service will be available via <https://localhost:7002/home>
-The Admin service will be available via <https://localhost:7003>
-
-The API service will be available (direct) via <http://localhost:7001>
-
-After the first time, you can *run* the project by:
-
-```bash
-make
-```
+In this mode, the `Makefile` will fetch secrets using `aws secretsmanager` and `docker-compose` commands, removing the need for local configuration files. Most of the sign up, email, postcode lookup and payment functionality should now work against dev variants of 3rd party systems.
 
 ### Tests
 
