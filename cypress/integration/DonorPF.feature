@@ -22,7 +22,6 @@ Feature: Add donor to Property and Finance LPA
         Then I can find "form-donor" 
         And accessibility checks should pass for "donorPF page with popup open"
         # ensure we are on the donor form , in case re-use details form was previously shown
-        Then I can find "form-donor" 
         When I type "B1 1TF" into "postcode-lookup" working around cypress bug
         # cypress is not reliable at filling in postcode fully before hitting next button, so, ensure it is now filled in
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
