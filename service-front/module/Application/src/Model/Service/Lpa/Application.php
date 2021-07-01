@@ -237,8 +237,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 $progress = 'Created';
             }
 
-            // Create a record for the returned LPA in an array object;
-            // LPA details are reusable so long as the LPA at least has a donor
+            // Create a record for the returned LPA in an array object
             $result['applications'][$applicationIdx] = new ArrayObject([
                 'id' => $lpa->getId(),
                 'version' => 2,
