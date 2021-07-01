@@ -14,8 +14,10 @@ echo Starting Cypress Tests
 if [[ "$CYPRESS_CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     echo "Running Cypress headless"
     # It's CI (used in CircleCI) or headless local CLI runs
-    # so run the signup test first, then stitched, followed by all others
-    ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
+    # so run the signup test first, then stitched, followed by all others, except for Clone which doesn't need a signup as it uses seeded user
+    if ! [[ $string =~ "StitchedClone" ]] ; then
+        ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
+    fi
     # stitch feature files and run, to simulate newly signed-up user doing all actions from start to finish
     cypress/stitch.sh
 
