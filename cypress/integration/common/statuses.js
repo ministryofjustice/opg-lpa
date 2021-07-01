@@ -13,8 +13,11 @@ Then('the LPA with ID {string} should display with status {string}', (lpaId, exp
     })
 })
 
-Then('I click on the view message link for LPA with ID {string}', (lpaId) => {
-    cy.get('[data-cy=lpa-view-message-link-' + lpaId + ']').click();
+Then('I click on the View {string} message link for LPA with ID {string}', (status, lpaId) => {
+    // NB check for data-journey-click to ensure we are getting the link after its
+    // status has been updated from Sirius
+    cy.get('[data-journey-click="page:link:View ' + status + ' message"]' +
+        '[data-cy=lpa-view-message-link-' + lpaId + ']').click();
 })
 
 Then('I am taken to the detail page for LPA with ID {string}', (lpaId) => {
