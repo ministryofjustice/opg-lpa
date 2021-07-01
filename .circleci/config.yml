@@ -122,11 +122,11 @@ pr_build: &pr_build
         filters: { branches: { ignore: [master] } }
         requires: [dev_environment_apply_terraform]
 
-    - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_stitchedpf
-        cypress_tags: "@StitchedPF"
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+          #- infrastructure_and_deployment/run_cypress_test:
+          #name: run_cypress_test_stitchedpf
+          #cypress_tags: "@StitchedPF"
+          #filters: { branches: { ignore: [master] } }
+          #requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedpfclone
@@ -157,7 +157,7 @@ pr_build: &pr_build
         requires:
           [
             run_functional_test,
-            run_cypress_test_stitchedpf,
+            # run_cypress_test_stitchedpf,
             run_cypress_test_stitchedpfclone,
             run_cypress_test_stitchedhw,
             #  run_cypress_test_remaining_tests,
