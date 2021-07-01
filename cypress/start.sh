@@ -24,6 +24,7 @@ if [[ "$CYPRESS_CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     if [ -z "$CYPRESS_TAGS" ]; then
         # CYPRESS_TAGS not set to we default to sequentially running StitchedPF, then StitchedHW then the rest
         ./node_modules/.bin/cypress-tags run -e TAGS='@StitchedPF'
+        ./node_modules/.bin/cypress-tags run -e TAGS='@StitchedClone'
         ./node_modules/.bin/cypress-tags run -e TAGS='@StitchedHW'
         # run remaining feature files that haven't already been run
         # @CreateLpa is files used in stitching, @StitchedXX is the files resulting from stitching, @SignUp is the SignUp feature
