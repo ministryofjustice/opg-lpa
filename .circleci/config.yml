@@ -140,11 +140,11 @@ pr_build: &pr_build
         filters: { branches: { ignore: [master] } }
         requires: [dev_seed_environment_databases]
 
-    - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses"
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+          #- infrastructure_and_deployment/run_cypress_test:
+          #name: run_cypress_test_remaining_tests
+          #cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses"
+          #filters: { branches: { ignore: [master] } }
+          #requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_functional_test:
         name: run_functional_test
@@ -160,7 +160,7 @@ pr_build: &pr_build
             run_cypress_test_stitchedpf,
             run_cypress_test_stitchedpfclone,
             run_cypress_test_stitchedhw,
-            run_cypress_test_remaining_tests,
+            #  run_cypress_test_remaining_tests,
           ]
 
 path_to_live: &path_to_live
