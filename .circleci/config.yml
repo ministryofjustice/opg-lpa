@@ -1039,11 +1039,12 @@ orbs:
               name: Run cypress tests
               command: |
                 docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" --name cypress_tests cypress:latest 
-                docker cp cypress_tests:/app/cypress/activation_emails .
-                docker cp cypress_tests:/app/cypress/screenshots .
-                ls -R screenshots
+                mkdir artifacts
+                docker cp cypress_tests:/app/cypress/activation_emails artifacts
+                docker cp cypress_tests:/app/cypress/screenshots artifacts
+                ls -R artifacts
           - store_artifacts:
-              path: screenshots
+              path: artifacts
           - run:
               name: Remove CircleCI ingress to environment
               command: |
