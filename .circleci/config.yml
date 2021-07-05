@@ -132,10 +132,7 @@ pr_build: &pr_build
         name: run_cypress_test_stitchedpfclone
         cypress_tags: "@StitchedClone"
         filters: { branches: { ignore: [master] } }
-        requires: [
-            run_cypress_test_stitchedpf,
-            run_cypress_test_stitchedhw,
-        ]
+        requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedhw
@@ -1041,7 +1038,7 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" -v `pwd`/cypress:/app/cypress cypress:latest run 
+                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" -v ./cypress:/app/cypress cypress:latest run 
                 ls -R cypress/screenshots
           - run:
               name: Remove CircleCI ingress to environment
