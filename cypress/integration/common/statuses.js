@@ -24,8 +24,7 @@ Then('I am taken to the detail page for LPA with ID {string}', (lpaId) => {
 Then('the LPA status is shown as {string}', (expectedStatus) => {
     expectedStatus = expectedStatus.toLowerCase();
 
-    const selector = '.progress-bar__steps--text' +
-        '[data-cy=lpa-progress-' + expectedStatus + ']';
+    const selector = 'li[data-cy=lpa-progress-' + expectedStatus + '] > [data-cy=lpa-progress-text]';
 
     cy.get(selector).then((elt) => {
         expect(elt.text().toLowerCase()).to.eql(expectedStatus);
