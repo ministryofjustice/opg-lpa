@@ -1,9 +1,23 @@
 SHELL := '/bin/bash'
-SENDGRID := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_email_sendgrid_api_key | jq -r .'SecretString')
-GOVPAY := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_gov_pay_key | jq -r .'SecretString')
-ORDNANCESURVEY := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_os_places_hub_license_key | jq -r .'SecretString')
-ADMIN_USERS := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_common_admin_accounts | jq -r .'SecretString')
-NOTIFY :=  $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_api_notify_api_key | jq -r .'SecretString')
+
+# Must be set to some string.
+# Used to send notifications to end users from service-front.
+SENDGRID ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_email_sendgrid_api_key | jq -r .'SecretString')
+
+# Used by service-front for making payments.
+# Can be disabled in dev, just don't offer to pay when completing LPA.
+GOVPAY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_gov_pay_key | jq -r .'SecretString')
+
+# Used by service-front for postcode lookup.
+ORDNANCESURVEY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_os_places_hub_license_key | jq -r .'SecretString')
+
+# Used for emails sent by service-api's account cleanup CLI script.
+NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_api_notify_api_key | jq -r .'SecretString')
+
+# Used in service-admin to determine which logged-in user has admin rights.
+# This user is in the test data seeded into the system.
+ADMIN_USERS := "seeded_test_user@digital.justice.gov.uk"
+
 .PHONY: all
 all:
 	@${MAKE} dc-up
@@ -51,6 +65,11 @@ dc-up:
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker-compose up
+
+# target for users outside MoJ to run the stack without 3rd party integrations
+.PHONY: dc-up-out
+dc-up-out:
+	@${MAKE} dc-up SENDGRID=- GOVPAY=- NOTIFY=- ORDNANCESURVEY=-
 
 .PHONY: dc-build
 dc-build:

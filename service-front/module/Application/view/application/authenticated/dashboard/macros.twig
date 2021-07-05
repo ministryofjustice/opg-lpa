@@ -52,7 +52,7 @@
                         {% if lpa.progress in ['Started', 'Created'] %}Continue<span class="visually-hidden"> LPA A{{ lpa.id }}</span>{% else %}View LPA<span class="visually-hidden"> A{{ lpa.id }}</span>{% endif %}
                     </a>
                     <ul class="list-item_secondary_actions">
-                        {% if lpa.progress != 'Started' %}
+                        {% if lpa.isReusable %}
                             <li>
                                 <a href="/lpa/{{ lpa.id }}/date-check" data-cy="check-signing-dates" data-journey-click="page:link:navigation: Check signing dates">Check <span class="extra-text">signing</span> dates<span class="visually-hidden"> for A{{ lpa.id }}</span></a>
                             </li>
