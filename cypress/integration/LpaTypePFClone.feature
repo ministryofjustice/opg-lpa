@@ -18,7 +18,7 @@ Feature: Clone Property and Finance LPA starting from the Type page
         Then I am taken to the type page for cloned lpa
         When I choose Property and Finance
         And I click "save"
-        And If I see Oops due to Csrf button I hit save again
+        #And If I see Oops due to Csrf button I hit save again
         Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
 
