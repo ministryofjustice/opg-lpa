@@ -33,6 +33,28 @@ class ApplicationTest extends MockeryTestCase
      */
     private $service;
 
+    private function modifiedLPA($id = 5531003157, $completedAt = null, $processingStatus = null, $rejectedDate = null)
+    {
+        $decodeJsonAsArray = TRUE;
+        $arr = json_decode(FixturesData::getHwLpaJson(), $decodeJsonAsArray);
+
+        $arr['id'] = $id;
+
+        if ($completedAt != null) {
+            $arr['completedAt'] = $completedAt;
+        }
+
+        if ($processingStatus) {
+            $arr['metadata'][Lpa::SIRIUS_PROCESSING_STATUS] = $processingStatus;
+        }
+
+        if ($rejectedDate != null) {
+            $arr['metadata'][Lpa::APPLICATION_REJECTED_DATE] = $rejectedDate;
+        }
+
+        return $arr;
+    }
+
     public function setUp() : void
     {
         $identity = Mockery::mock();
@@ -136,42 +158,6 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals(['applications' => [],'trackingEnabled' => true], $result);
     }
 
-    private function modifiedLPA($id = 5531003157, $completedAt = null, $processingStatus = null, $rejectedDate = null)
-    {
-        $lpaJson = FixturesData::getHwLpaJson();
-
-        $lpaJson = str_replace('"id" : 5531003156', '"id" : ' . $id, $lpaJson);
-
-        if ($completedAt != null) {
-            $lpaJson = str_replace(
-                '"completedAt" : "2017-03-24T16:21:52.804Z"',
-                '"completedAt" : "' . $completedAt . '"',
-                $lpaJson
-            );
-        }
-
-        if ($processingStatus) {
-            $lpaJson = str_replace(
-                '"metadata" : {',
-                '"metadata" : {
-                "' . Lpa::SIRIUS_PROCESSING_STATUS . '" : "' . $processingStatus . '",',
-                $lpaJson
-            );
-        }
-
-        if ($rejectedDate != null) {
-            $lpaJson = str_replace(
-                '"metadata" : {',
-                '"metadata" : {
-                 "' . Lpa::APPLICATION_REJECTED_DATE . '" : "' . $rejectedDate . '",',
-                $lpaJson
-            );
-        }
-
-
-        return $lpaJson;
-    }
-
     /**
      * @throws Exception
      */
@@ -193,7 +179,8 @@ class ApplicationTest extends MockeryTestCase
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Completed',
                 'rejectedDate' => null,
-                'refreshId' => null
+                'refreshId' => null,
+                'isReusable' => true
             ]),
             new ArrayObject([
                 'id' => 5531003157,
@@ -203,7 +190,8 @@ class ApplicationTest extends MockeryTestCase
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Completed',
                 'rejectedDate' => null,
-                'refreshId' => null
+                'refreshId' => null,
+                'isReusable' => true
             ])
         ], 'trackingEnabled' => true], $result);
     }
@@ -229,7 +217,8 @@ class ApplicationTest extends MockeryTestCase
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Waiting',
                 'rejectedDate' => null,
-                'refreshId' => 5531003157
+                'refreshId' => 5531003157,
+                'isReusable' => true
             ])
         ], 'trackingEnabled' => true], $result);
     }
@@ -255,7 +244,8 @@ class ApplicationTest extends MockeryTestCase
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Processed',
                 'rejectedDate' => '2019-01-2',
-                'refreshId' => 5531003157
+                'refreshId' => 5531003157,
+                'isReusable' => true
             ])
         ], 'trackingEnabled' => true], $result);
     }
