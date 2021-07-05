@@ -1041,7 +1041,8 @@ orbs:
                 docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" -v cypress:/app/cypress cypress:latest run 
                 ls -R cypress/screenshots
           - store_artifacts:
-              path: cypress/screenshots
+            #path: cypress/screenshots
+              path: cypress/activation_emails
           - run:
               name: Remove CircleCI ingress to environment
               command: |
