@@ -521,7 +521,7 @@ class ServiceTest extends AbstractServiceTest
         $applications = $apiLpaCollection['applications'];
         $this->assertEquals(1, count($applications));
 
-        $this->assertEquals(($lpas[0])->abbreviatedToArray(), $applications[0]);
+        $this->assertEquals(($lpas[0])->toArray(), $applications[0]);
     }
 
     public function testFetchAllSearchById()
@@ -547,7 +547,7 @@ class ServiceTest extends AbstractServiceTest
         $applications = $apiLpaCollection['applications'];
         $this->assertEquals(1, count($applications));
 
-        $this->assertEquals(($lpas[1])->abbreviatedToArray(), $applications[0]);
+        $this->assertEquals(($lpas[1])->toArray(), $applications[0]);
     }
 
     public function testFetchAllSearchByIdAndFilter()
@@ -597,7 +597,7 @@ class ServiceTest extends AbstractServiceTest
         $applications = $apiLpaCollection['applications'];
         $this->assertEquals(1, count($applications));
 
-        $this->assertEquals(($lpas[0])->abbreviatedToArray(), $applications[0]);
+        $this->assertEquals(($lpas[0])->toArray(), $applications[0]);
     }
 
     public function testFetchAllSearchByName()
