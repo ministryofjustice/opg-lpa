@@ -128,6 +128,25 @@ class Service extends AbstractService
     }
 
     /**
+     * Fetch LPAs with the specified $lpaIds, providing they are owned by
+     * the user with given $userId. If an LPA is requested which is not owned
+     * by the user, that record is not returned.
+     *
+     * @param array $lpaIds : IDs of LPAs to fetch
+     * @param string $userId : restrict results to this user ID
+     * @return Lpa[]
+     */
+    public function filterByIdsAndUser(array $lpaIds, string $userId) : array
+    {
+        $records = $this->getApplicationRepository()->getByIdsAndUser($lpaIds, $userId);
+        $lpas = [];
+        foreach ($records as $record) {
+            $lpas[] = new Lpa($record);
+        }
+        return $lpas;
+    }
+
+    /**
      * @param $userId
      * @param array $params
      * @return Collection
