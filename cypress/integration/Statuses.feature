@@ -67,13 +67,13 @@ Feature: Status display for LPAs
         And the LPA status is shown as "Checking"
 
     @focus
-    Scenario: An LPA which is received and is Pending displays as "Checking" on its status page (LPAL-92)
+    Scenario: An LPA which is received and is Pending displays as "Received" on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
         And I click on the view message link for LPA with ID "91155453023"
         Then I am taken to the detail page for LPA with ID "91155453023"
         And I see "A911 5545 3023" in the page text
-        And the LPA status is shown as "Checking"
+        And the LPA status is shown as "Received"
 
     @focus
     Scenario: A registered LPA with no dispatch date displays as "Checking" on its status page (LPAL-92)
