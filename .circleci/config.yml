@@ -1041,10 +1041,8 @@ orbs:
                 docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" --name cypress_tests cypress:latest 
                 mkdir artifacts
                 echo "something or other" > artifacts/examplefile
-                echo "i am actually producing some output!"
                 # need to restart cypress_tests to copy screenshots from it.  Note, in an ideal world we'd do this using a docker volume, but circle doesn't support that
                 docker start cypress_tests
-                docker cp cypress_tests:/app/cypress/activation_emails artifacts
                 docker cp cypress_tests:/app/cypress/screenshots artifacts
                 docker stop cypress_tests
                 ls -R artifacts
