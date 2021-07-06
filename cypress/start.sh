@@ -21,6 +21,9 @@ if [[ "$CYPRESS_CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     # stitch feature files and run, to simulate newly signed-up user doing all actions from start to finish
     cypress/stitch.sh
 
+    # if not already there, make the cypress screenshots directory. This is because Circle needs to try to copy across screenshots dir after a run and will get upset if its not there
+    mkdir -p cypress/screenshots
+
     if [ -z "$CYPRESS_TAGS" ]; then
         # CYPRESS_TAGS not set to we default to sequentially running StitchedPF, then StitchedHW then the rest
         ./node_modules/.bin/cypress-tags run -e TAGS='@StitchedPF'
