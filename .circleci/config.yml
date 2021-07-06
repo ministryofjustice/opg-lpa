@@ -144,7 +144,7 @@ pr_build: &pr_build
         name: run_cypress_test_remaining_tests
         cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses"
         filters: { branches: { ignore: [master] } }
-        requires: [ run_cypress_test_stitchedpfclone ]
+        requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_functional_test:
         name: run_functional_test
@@ -1038,8 +1038,7 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" --name cypress_tests cypress:latest 
-                if [ "$?" -eq "0" ]
+                if [ `docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" --name cypress_tests cypress:latest ; echo $?` -eq "0" ]
                 then
                   exit 0
                 else

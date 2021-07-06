@@ -8,6 +8,10 @@ When(`I log in as seeded user`, () => {
     logInAsSeededUser();
 })
 
+When(`I log in as second seeded user`, () => {
+    logInAsSecondSeededUser();
+})
+
 When(`I log in to admin`, () => {
     logIn(Cypress.env('seeded_email'), Cypress.env('seeded_password'),
         Cypress.env('adminUrl') + '/sign-in');
@@ -35,6 +39,11 @@ function logInAsStandardUser(){
 function logInAsSeededUser(){
     // log in using seeded_test_user
     logIn(Cypress.env("seeded_email"),Cypress.env("seeded_password"));
+}
+
+function logInAsSecondSeededUser(){
+    // log in using seeded_test_user
+    logIn(Cypress.env("second_seeded_email"),Cypress.env("seeded_password"));
 }
 
 function logIn(user, password, url){
