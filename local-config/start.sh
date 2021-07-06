@@ -46,6 +46,11 @@ aws sqs create-queue \
 --region=eu-west-1 \
 --endpoint=http://${OPG_LPA_COMMON_SQS_ENDPOINT}
 
+aws sqs create-queue \
+--queue-name=${OPG_LPA_COMMON_PERFPLAT_QUEUE_NAME} \
+--attributes="$ATTR" \
+--region=eu-west-1 \
+--endpoint=http://${OPG_LPA_COMMON_SQS_ENDPOINT}
 
 # ----------------------------------------------------------
 /usr/local/bin/waitforit -address=tcp://${OPG_LPA_COMMON_S3_ENDPOINT} -timeout 60 -retry 6000 -debug
