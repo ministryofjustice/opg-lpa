@@ -85,9 +85,10 @@ if [ "${result}" != "" ] ; then
     --region=${DEFAULT_REGION}
 fi
 
-echo "Zipping perfplat worker code for deployment as lambda"
-cd /perfplat-src/
-zip /tmp/handler.zip ./handler.py
+echo "Building perfplat worker package for deployment as lambda"
+cd /perfplatworker-src/
+chmod +x ./lambda-package.sh
+./lambda-package.sh /tmp/perfplatworker.zip
 cd /app/
 
 echo "Creating perfplat worker lambda"
@@ -98,7 +99,7 @@ aws lambda create-function \
 --runtime=python3.7 \
 --handler=handler.exec \
 --memory-size=128 \
---zip-file=fileb:///tmp/handler.zip \
+--zip-file=fileb:///tmp/perfplatworker.zip \
 --role=arn:aws:iam::000000000000:role/irrelevant:role/irrelevant
 
 # Trigger the worker lambda via events on the perfplat queue
