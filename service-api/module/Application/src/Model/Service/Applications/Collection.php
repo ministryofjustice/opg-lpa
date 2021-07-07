@@ -14,10 +14,10 @@ class Collection extends Paginator
 
         $lpas = iterator_to_array($this->getItemsByPage($this->getCurrentPageNumber()));
 
-        //  Get the abbreviated details of the LPA
+        //  Get the full details of the LPA
         foreach ($lpas as $lpa) {
             /** @var $lpa Lpa */
-            $applications[] = $lpa->abbreviatedToArray();
+            $applications[] = $lpa->toArray();
         }
 
         return [
