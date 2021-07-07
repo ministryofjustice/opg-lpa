@@ -98,7 +98,7 @@
 
         <div class="form-group">
             <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>
-            <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-journey-click="page:link:skip: Skip this question for now" />
+            <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-journey-click="page:link:skip: Skip this question for now" data-cy="skip-certificate-provider"/>
         </div>
 
         {{ form().closeTag|raw }}
