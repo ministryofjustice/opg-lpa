@@ -8,7 +8,7 @@ Then(`I click {string}`, (clickable) => {
 
     // if this results in an Oops, then retry the click
     cy.document().then(docStr => {
-        if (docStr.documentElement.innerHTML.includes('Oops')) {
+        if (docStr.documentElement.innerHTML.includes('Oops! Something went wrong with the information you entered.')) {
             cy.get("[data-cy=" + clickable + "]").click();
             cy.OPGCheckA11y();
         }
