@@ -1,3 +1,4 @@
+import json
 import sys
 
 import botocore
@@ -28,8 +29,8 @@ def send_message(queue_name):
     url = client.get_queue_url(QueueName=queue_name)['QueueUrl']
     return client.send_message(
         QueueUrl=url,
-        MessageBody='I am a message',
-        MessageGroupId='one'
+        MessageBody=json.dumps({'month': 4, 'year': 2021}),
+        MessageGroupId='generate-stats'
     )
 
 if __name__ == '__main__':
