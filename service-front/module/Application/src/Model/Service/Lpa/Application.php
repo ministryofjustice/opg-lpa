@@ -172,13 +172,23 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         //  Loop through the applications in the result, enhance the data and set it in an array object
         foreach ($result['applications'] as $applicationIdx => $applicationData) {
-            $lpa = new Lpa($applicationData);
-
-            //  Get the Donor name
             $donorName = '';
             $lpaType = '';
 
-            if ($lpa->document->donor instanceof Donor && $lpa->document->donor->name instanceof LongName) {
+            $lpa = new Lpa($applicationData);
+
+            $metadata = $lpa->getMetadata();
+
+            // Determine whether the LPA details are re-usable.
+            // As per LPAL-64, this is when people to notify has been confirmed.
+            // Note that we don't bother to check whether the LPA actually
+            // has reusable pieces, like a donor, attorney or certificate provider:
+            // that is dealt with by the pop-up which prompts the user
+            // to select details to reuse when filling an LPA application.
+            $isReusable = array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $metadata);
+
+            //  Get the Donor name
+            if ($lpa->hasDonor() && $lpa->document->donor->name instanceof LongName) {
                 $donorName = (string) $lpa->document->donor->name;
             }
 
@@ -198,8 +208,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
                 if ($trackingEnabled && $trackFromDate <= $lpa->getCompletedAt()) {
                     $progress = 'Waiting';
-
-                    $metadata = $lpa->getMetadata();
 
                     // If the application is processed, find the registration,
                     // withdrawn, invalid and rejected dates; whichever is
@@ -229,11 +237,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 $progress = 'Created';
             }
 
-            //  Create a record for the returned LPA in an array object
+            // Create a record for the returned LPA in an array object
             $result['applications'][$applicationIdx] = new ArrayObject([
                 'id' => $lpa->getId(),
                 'version' => 2,
                 'donor' => $donorName,
+                'isReusable' => $isReusable,
                 'type' => $lpaType,
                 'updatedAt' => $lpa->getUpdatedAt(),
                 'progress' => $progress,
