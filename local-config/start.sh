@@ -69,7 +69,9 @@ aws sqs create-queue \
 --region=${DEFAULT_REGION} \
 --endpoint=http://${OPG_LPA_COMMON_SQS_ENDPOINT}
 
-# Recreate the worker lambda
+# Recreate the worker lambda;
+# we do this by removing then re-adding the lambda in dev, as this also
+# prevents duplication of the event mappings.
 COMMAND="aws lambda list-functions \
 --endpoint=http://${OPG_LPA_COMMON_LAMBDA_ENDPOINT} \
 --region=${DEFAULT_REGION} | jq '.Functions[] | select(.FunctionName == \"${PERFPLAT_LAMBDA_NAME}\")'"
@@ -97,7 +99,7 @@ aws lambda create-function \
 --region=${DEFAULT_REGION} \
 --function-name=${PERFPLAT_LAMBDA_NAME} \
 --runtime=python3.7 \
---handler=handler.exec \
+--handler=perfplatworker.handler.exec \
 --memory-size=128 \
 --zip-file=fileb:///tmp/perfplatworker.zip \
 --role=arn:aws:iam::000000000000:role/irrelevant:role/irrelevant

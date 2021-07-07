@@ -1,4 +1,5 @@
 import logging
+from .client import fetch
 
 
 LOGGER = logging.getLogger()
@@ -10,4 +11,5 @@ Event looks like this:
 """
 def exec(event, context):
     LOGGER.debug(event)
+    print(fetch('https://google.com/').status_code)
     return 'MESSAGE RECEIVED'

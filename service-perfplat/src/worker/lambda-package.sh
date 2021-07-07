@@ -8,13 +8,12 @@ if [ ! -d build ] ; then
 fi
 
 # Install dependencies to build directory
-pip install --target ./build -r requirements.txt
+pip install --upgrade --target ./build -r requirements.txt
 
 # Include deps in zip file
 cd ./build
 zip -r $TARGET_ZIP .
 
 # Include the Python module in the zip file
-cd $CURRENT_DIR/perfplatworker
-zip -g -r $TARGET_ZIP .
 cd $CURRENT_DIR
+zip -g -r $TARGET_ZIP perfplatworker
