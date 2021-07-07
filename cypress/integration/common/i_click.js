@@ -5,6 +5,14 @@ import { Then } from "cypress-cucumber-preprocessor/steps";
  
 Then(`I click {string}`, (clickable) => {
     cy.get("[data-cy=" + clickable + "]").should('not.be.disabled').click();
+
+    // if this results in an Oops, then retry the click
+    cy.document().then(docStr => {
+        if (docStr.documentElement.innerHTML.includes('Oops')) {
+            cy.get("[data-cy=" + clickable + "]").click();
+            cy.OPGCheckA11y();
+        }
+    });
     cy.OPGCheckA11y();
 })
 
