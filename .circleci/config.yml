@@ -172,6 +172,7 @@ path_to_live: &path_to_live
         ecr_repository_name_prefix: online-lpa/front
         service_path: service-front
         filters: { branches: { only: [master] } }
+        requires: [node_build_web]
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: admin_docker_build
