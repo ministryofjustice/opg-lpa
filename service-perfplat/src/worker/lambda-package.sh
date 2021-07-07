@@ -1,3 +1,6 @@
+# Script to package Python application and its dependencies
+# for deployment as an AWS lambda
+
 # Absolute path to zip file
 TARGET_ZIP="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 
