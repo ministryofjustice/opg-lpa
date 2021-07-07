@@ -6,11 +6,16 @@ pr_build: &pr_build
         name: cancel_previous_jobs
         filters: { branches: { ignore: [master] } }
 
+    - build_containers_and_push_to_ecr/node_build_web:
+        name: node_build_web
+        filters: { branches: { ignore: [ master ] } }
+
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
         ecr_repository_name_prefix: online-lpa/front
         service_path: service-front
         filters: { branches: { ignore: [master] } }
+        requires: [node_build_web]
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: admin_docker_build
@@ -165,6 +170,10 @@ pr_build: &pr_build
 
 path_to_live: &path_to_live
   jobs:
+    - build_containers_and_push_to_ecr/node_build_web:
+        name: node_build_web
+        filters: { branches: { only: [ master ] } }
+
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
         ecr_repository_name_prefix: online-lpa/front
@@ -457,6 +466,14 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
+      ruby-node:
+        docker:
+          - image: circleci/ruby:3.0.1-node
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
+
     jobs:
       checkout_docker_build_push_web-app:
         executor: python
@@ -484,6 +501,8 @@ orbs:
           - setup_remote_docker:
               version: 19.03.12
               docker_layer_caching: false
+          - attach_workspace:
+              at: ~/project
           - dockerhub_login
           - run:
               name: Build web container
@@ -538,6 +557,42 @@ orbs:
                   # Else, push branch tag only
                   docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG}
                 fi
+
+      node_build_web:
+        #
+        # Build frontend assets (css, js)
+        #
+        executor: ruby-node
+        steps:
+          - checkout
+          - restore_cache:
+              name: Restore node modules cache
+              key: node_modules-{{ checksum "service-front/package-lock.json" }}
+          - run:
+              name: Install dependencies
+              command: |
+                if [ ! -d service-front/node_modules ]; then
+                  cd service-front/ && npm install
+                fi
+                # installing via npm does not pull down correct files to call via cli, resorted to pulling directly
+                export SASS_VER=`npm view sass | grep latest | awk '{print $2}'`
+                wget "https://github.com/sass/dart-sass/releases/download/$SASS_VER/dart-sass-$SASS_VER-linux-x64.tar.gz"
+                tar xfz "dart-sass-$SASS_VER-linux-x64.tar.gz"
+          - run:
+              name: Build assets
+              command: |
+                export PATH="/home/circleci/project/service-front/dart-sass:$PATH"
+                cd service-front/ && node_modules/grunt-cli/bin/grunt build
+          - save_cache:
+              name: Save node modules cache
+              key: node_modules-{{ checksum "service-front/package-lock.json" }}
+              paths:
+                - service-front/node_modules
+          - persist_to_workspace:
+              root: /home/circleci/project
+              paths:
+                - service-front/public/assets
+              when: always
 
   infrastructure_and_deployment:
     orbs:
