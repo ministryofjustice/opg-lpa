@@ -163,6 +163,10 @@ pr_build: &pr_build
 
 path_to_live: &path_to_live
   jobs:
+    - build_containers_and_push_to_ecr/node_build_web:
+        name: node_build_web
+        filters: { branches: { only: [ master ] } }
+
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
         ecr_repository_name_prefix: online-lpa/front
