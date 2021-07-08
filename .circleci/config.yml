@@ -1155,7 +1155,7 @@ jobs:
           command: |
             export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-            echo Terraform workspace: TF_WORKSPACE
+            echo Terraform workspace: $TF_WORKSPACE
             echo Image tag: $IMAGE_TAG
             echo Public Facing Domain: $PUBLIC_FACING_DOMAIN
             echo Front Domain: $FRONT_DOMAIN
@@ -1194,7 +1194,7 @@ jobs:
           command: |
             export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-            echo Terraform workspace: TF_WORKSPACE
+            echo Terraform workspace: $TF_WORKSPACE
             echo Image tag: $IMAGE_TAG
             echo Public Facing Domain: $PUBLIC_FACING_DOMAIN
             echo Front Domain: $FRONT_DOMAIN
