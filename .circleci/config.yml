@@ -147,7 +147,7 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses"
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @Reusable"
         filters: { branches: { ignore: [master] } }
         requires: [dev_seed_environment_databases]
 
