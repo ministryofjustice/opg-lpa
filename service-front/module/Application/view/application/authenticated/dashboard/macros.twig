@@ -100,7 +100,7 @@
 {% macro showStatusDescriptionLinksIfEnabled(trackingEnabled, status, id) %}
     {% if trackingEnabled %}
         {% if status in ['completed', 'waiting', 'received', 'checking', 'processed'] %}
-            <a id="status-description-link-{{ id }}" data-cy="lpa-view-message-link-{{ id }}" href="/lpa/{{ id }}/status">View {{ status }} message</a>
+            <a id="status-description-link-{{ id }}" data-journey-click="page:link:View {{status}} message" data-cy="lpa-view-message-link-{{ id }}" href="/lpa/{{ id }}/status">View {{ status }} message</a>
         {% endif %}
     {% endif %}
 {% endmacro %}
