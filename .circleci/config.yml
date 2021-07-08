@@ -1140,7 +1140,9 @@ jobs:
           name: Get URLs
           command: |
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             echo $TF_WORKSPACE
+            echo $IMAGE_TAG
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
 
       - my_slack/notify:
@@ -1148,7 +1150,16 @@ jobs:
           slack_channel: $BUILD_SLACK_CHANNEL
           template_file: post_environment_domains.j2
           replacement_vars: PUBLIC_FACING_DOMAIN=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN=$FRONT_DOMAIN ADMIN_DOMAIN=$ADMIN_DOMAIN CIRCLE_USERNAME=$CIRCLE_USERNAME CIRCLE_BRANCH=$CIRCLE_BRANCH COMMIT_MESSAGE="$COMMIT_MESSAGE"
-
+      - run:
+          name: print deployment values
+          command: |
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+            export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+            echo Terraform workspace: $TF_WORKSPACE
+            echo Image tag: $IMAGE_TAG
+            echo Public Facing Domain: $PUBLIC_FACING_DOMAIN
+            echo Front Domain: $FRONT_DOMAIN
+            echo Admin Domain: $ADMIN_DOMAIN
   slack_notify_production_release:
     docker:
       - image: circleci/python
@@ -1169,13 +1180,25 @@ jobs:
           name: Get URLs
           command: |
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             echo $TF_WORKSPACE
+            echo $IMAGE_TAG
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - my_slack/notify:
           when: on_success
           slack_channel: $LIVE_SLACK_CHANNEL
           template_file: production_release_notification.j2
           replacement_vars: PUBLIC_FACING_DOMAIN=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN=$FRONT_DOMAIN ADMIN_DOMAIN=$ADMIN_DOMAIN CIRCLE_USERNAME=$CIRCLE_USERNAME CIRCLE_BRANCH=$CIRCLE_BRANCH COMMIT_MESSAGE="$COMMIT_MESSAGE"
+      - run:
+          name: print deployment values
+          command: |
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+            export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+            echo Terraform workspace: $TF_WORKSPACE
+            echo Image tag: $IMAGE_TAG
+            echo Public Facing Domain: $PUBLIC_FACING_DOMAIN
+            echo Front Domain: $FRONT_DOMAIN
+            echo Admin Domain: $ADMIN_DOMAIN
   ecr_scan_results:
     docker:
       - image: circleci/python
