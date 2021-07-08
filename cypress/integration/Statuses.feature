@@ -41,6 +41,14 @@ Feature: Status display for LPAs
         And the LPA with ID "43476377885" should display with status "Processed"
 
     @focus
+    Scenario: The status message page for an LPA has the title "Status message" (???REF)
+        Given I log in as appropriate test user
+        When I am taken to the dashboard page
+        And I click on the view message link for LPA with ID "33718377316"
+        And I am taken to the detail page for LPA with ID "33718377316"
+        Then I see "Status message" in the title
+
+    @focus
     Scenario: An LPA which has not been received yet displays as "Waiting" on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
