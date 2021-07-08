@@ -1140,7 +1140,9 @@ jobs:
           name: Get URLs
           command: |
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             echo $TF_WORKSPACE
+            echo $IMAGE_TAG
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
 
       - my_slack/notify:
@@ -1151,7 +1153,7 @@ jobs:
       - run:
           name: print deployment values
           command: |
-            echo image tag: $IMAGE_TAG
+            echo Image tag: $IMAGE_TAG
             echo Public Facing Domain: $PUBLIC_FACING_DOMAIN
             echo Front Domain: $FRONT_DOMAIN
             echo Admin Domain: $ADMIN_DOMAIN
@@ -1175,7 +1177,9 @@ jobs:
           name: Get URLs
           command: |
             export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             echo $TF_WORKSPACE
+            echo $IMAGE_TAG
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - my_slack/notify:
           when: on_success
@@ -1185,7 +1189,7 @@ jobs:
       - run:
           name: print deployment values
           command: |
-            echo image tag: $IMAGE_TAG
+            echo Image tag: $IMAGE_TAG
             echo Public Facing Domain: $PUBLIC_FACING_DOMAIN
             echo Front Domain: $FRONT_DOMAIN
             echo Admin Domain: $ADMIN_DOMAIN
