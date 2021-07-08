@@ -85,7 +85,7 @@ class keyvalue(argparse.Action):
 
         for value in values:
             # split it into key and value
-            key, value = value.split('=')
+            key, value = value.split(':=')
             # assign into dictionary
             getattr(namespace, self.dest)[key] = value
 
