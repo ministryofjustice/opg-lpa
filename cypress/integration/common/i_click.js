@@ -7,6 +7,8 @@ Then(`I click {string}`, (clickable) => {
     cy.get("[data-cy=" + clickable + "]").should('not.be.disabled').click();
 
     // if this results in an Oops, then retry the click
+    // we currently believe this to be caused by the CSRF problem, which we intend to fix fully in future
+    // and this retry step will be able to be removed from the tests
     cy.document().then(docStr => {
         if (docStr.documentElement.innerHTML.includes('Oops! Something went wrong with the information you entered.')) {
             cy.get("[data-cy=" + clickable + "]").click();

@@ -17,7 +17,6 @@ Feature: Property and Finance LPA starting from the Type page
         And I see "Error" in the title
         When I choose Property and Finance
         And I click "save"
-        #And If I see Oops due to Csrf button I hit save again
         Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
         When I click "add-donor"
@@ -27,7 +26,6 @@ Feature: Property and Finance LPA starting from the Type page
     Scenario: Choose Property and Finance as Lpa Type
         When I choose Property and Finance
         And I click "save"
-        #And If I see Oops due to Csrf button I hit save again
         Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
 
