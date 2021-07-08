@@ -1,4 +1,4 @@
-FROM cypress/included:7.5.0
+FROM cypress/included:7.7.0
 
 WORKDIR /app
 
