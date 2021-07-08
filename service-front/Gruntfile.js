@@ -31,6 +31,22 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
 
+    // watching sass and js (as they need post tasks)
+    watch: {
+      scss: {
+        files: 'assets/sass/**/*.scss',
+        tasks: ['sass', 'replace:image_url', 'cssmin']
+      },
+      js: {
+        files: 'assets/js/**/*.js',
+        tasks: ['concat', 'uglify']
+      },
+      templates: {
+        files: ['<%= handlebars.compile.src %>'],
+        tasks: ['handlebars']
+      }
+    },
+
     // sass files to compile
     sass: {
       dev: {
@@ -219,6 +235,7 @@ module.exports = function (grunt) {
 
   // load npm tasks
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-scss-lint');
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-contrib-concat');
