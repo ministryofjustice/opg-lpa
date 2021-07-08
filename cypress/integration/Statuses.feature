@@ -41,10 +41,18 @@ Feature: Status display for LPAs
         And the LPA with ID "43476377885" should display with status "Processed"
 
     @focus
-    Scenario: An LPA which has not been received yet displays as "Waiting" on its status page (LPAL-92)
+    Scenario: The status message page for an LPA has the title "Status message" (???REF)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
         And I click on the view message link for LPA with ID "33718377316"
+        And I am taken to the detail page for LPA with ID "33718377316"
+        Then I see "Status message" in the title
+
+    @focus
+    Scenario: An LPA which has not been received yet displays as "Waiting" on its status page (LPAL-92)
+        Given I log in as appropriate test user
+        When I am taken to the dashboard page
+        And I click on the View "waiting" message link for LPA with ID "33718377316"
         Then I am taken to the detail page for LPA with ID "33718377316"
         And I see "A337 1837 7316" in the page text
         And the LPA status is shown as "Waiting"
@@ -53,7 +61,7 @@ Feature: Status display for LPAs
     Scenario: An LPA which is received and is Perfect displays as "Checking" on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
-        And I click on the view message link for LPA with ID "54171193342"
+        And I click on the View "checking" message link for LPA with ID "54171193342"
         Then I am taken to the detail page for LPA with ID "54171193342"
         And I see "A541 7119 3342" in the page text
         And the LPA status is shown as "Checking"
@@ -62,7 +70,7 @@ Feature: Status display for LPAs
     Scenario: An LPA which is received and is Pending displays as "Received" on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
-        And I click on the view message link for LPA with ID "91155453023"
+        And I click on the View "received" message link for LPA with ID "91155453023"
         Then I am taken to the detail page for LPA with ID "91155453023"
         And I see "A911 5545 3023" in the page text
         And the LPA status is shown as "Received"
@@ -71,7 +79,7 @@ Feature: Status display for LPAs
     Scenario: A registered LPA with no dispatch date displays as "Checking" on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
-        And I click on the view message link for LPA with ID "68582508781"
+        And I click on the View "checking" message link for LPA with ID "68582508781"
         Then I am taken to the detail page for LPA with ID "68582508781"
         And I see "A685 8250 8781" in the page text
         And the LPA status is shown as "Checking"
@@ -80,7 +88,7 @@ Feature: Status display for LPAs
     Scenario: A registered and dispatched LPA displays as "Processed" with dispatch date + 15 working days on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
-        And I click on the view message link for LPA with ID "32004638272"
+        And I click on the View "processed" message link for LPA with ID "32004638272"
         Then I am taken to the detail page for LPA with ID "32004638272"
         And I see "A320 0463 8272" in the page text
         And the LPA status is shown as "Processed"
@@ -92,7 +100,7 @@ Feature: Status display for LPAs
     Scenario: A rejected LPA displays as "Processed" with rejection date + 15 working days on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
-        And I click on the view message link for LPA with ID "88668805824"
+        And I click on the View "processed" message link for LPA with ID "88668805824"
         Then I am taken to the detail page for LPA with ID "88668805824"
         And I see "A886 6880 5824" in the page text
         And the LPA status is shown as "Processed"
@@ -104,7 +112,7 @@ Feature: Status display for LPAs
     Scenario: A withdrawn LPA displays as "Processed" with withdrawn date + 15 working days on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
-        And I click on the view message link for LPA with ID "43476377885"
+        And I click on the View "processed" message link for LPA with ID "43476377885"
         Then I am taken to the detail page for LPA with ID "43476377885"
         And I see "A434 7637 7885" in the page text
         And the LPA status is shown as "Processed"
@@ -116,7 +124,7 @@ Feature: Status display for LPAs
     Scenario: An invalid LPA displays as "Processed" with invalid date + 15 working days on its status page (LPAL-92)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
-        And I click on the view message link for LPA with ID "93348314693"
+        And I click on the View "processed" message link for LPA with ID "93348314693"
         Then I am taken to the detail page for LPA with ID "93348314693"
         And I see "A933 4831 4693" in the page text
         And the LPA status is shown as "Processed"
