@@ -1153,6 +1153,7 @@ jobs:
       - run:
           name: print deployment values
           command: |
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             echo Image tag: $IMAGE_TAG
             echo Public Facing Domain: $PUBLIC_FACING_DOMAIN
             echo Front Domain: $FRONT_DOMAIN
@@ -1189,6 +1190,7 @@ jobs:
       - run:
           name: print deployment values
           command: |
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             echo Image tag: $IMAGE_TAG
             echo Public Facing Domain: $PUBLIC_FACING_DOMAIN
             echo Front Domain: $FRONT_DOMAIN
