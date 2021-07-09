@@ -1,7 +1,8 @@
 resource "aws_security_group" "front_cache" {
-  name   = "front-cache"
-  vpc_id = aws_default_vpc.default.id
-  tags   = merge(local.default_tags, local.front_component_tag)
+  name        = "front-cache"
+  description = "Front cache Security group"
+  vpc_id      = aws_default_vpc.default.id
+  tags        = merge(local.default_tags, local.front_component_tag)
 }
 
 resource "aws_elasticache_subnet_group" "private_subnets" {

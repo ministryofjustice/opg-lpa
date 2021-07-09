@@ -2,6 +2,7 @@
 // The Api service's Security Groups
 
 resource "aws_security_group" "seeding_ecs_service" {
+  description = "Seeding ECS security group"
   name_prefix = "${terraform.workspace}-seeding-ecs-service"
   vpc_id      = data.aws_vpc.default.id
   tags        = merge(local.default_tags, local.seeding_component_tag)
@@ -10,11 +11,12 @@ resource "aws_security_group" "seeding_ecs_service" {
 //----------------------------------
 // Anything out except production
 resource "aws_security_group_rule" "seeding_ecs_service_egress" {
-  count     = local.environment == "production" ? 0 : 1
-  type      = "egress"
-  from_port = 0
-  to_port   = 0
-  protocol  = "-1"
+  description = "Seeding ECS egress: Anything out except production"
+  count       = local.environment == "production" ? 0 : 1
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
   #tfsec:ignore:AWS007
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.seeding_ecs_service.id
