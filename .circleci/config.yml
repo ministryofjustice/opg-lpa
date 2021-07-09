@@ -806,7 +806,7 @@ orbs:
               when: on_fail
               slack_channel: $DEV_SLACK_CHANNEL
               template_file: slack_approval_warning.j2
-              replacement_vars: APPROVAL_STEP=<<parameters.approval_step>> CIRCLE_PULL_REQUEST=$CIRCLE_PULL_REQUEST CIRCLE_BUILD_URL=$CIRCLE_BUILD_URL CIRCLE_JOB=$CIRCLE_JOB
+              replacement_vars: APPROVAL_STEP:=<<parameters.approval_step>> CIRCLE_PULL_REQUEST:=$CIRCLE_PULL_REQUEST CIRCLE_BUILD_URL:=$CIRCLE_BUILD_URL CIRCLE_JOB:=$CIRCLE_JOB
           - run:
               name: auto approve job hold
               when: on_success
