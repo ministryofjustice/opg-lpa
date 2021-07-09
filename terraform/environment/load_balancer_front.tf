@@ -20,11 +20,11 @@ resource "aws_lb_target_group" "front" {
 resource "aws_lb" "front" {
   name = "${local.environment}-front"
   #tfsec:ignore:AWS005
-  internal           = false
-  load_balancer_type = "application"
-  subnets            = data.aws_subnet_ids.public.ids
-  tags               = merge(local.default_tags, local.front_component_tag)
-
+  internal                   = false
+  load_balancer_type         = "application"
+  subnets                    = data.aws_subnet_ids.public.ids
+  tags                       = merge(local.default_tags, local.front_component_tag)
+  drop_invalid_header_fields = true
 
   security_groups = [
     aws_security_group.front_loadbalancer.id,
