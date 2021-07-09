@@ -1,6 +1,11 @@
 resource "aws_ecs_cluster" "online-lpa" {
   name = "${local.environment}-online-lpa"
   tags = merge(local.default_tags, local.shared_component_tag)
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 data "aws_cloudwatch_log_group" "online-lpa" {
