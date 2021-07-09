@@ -18,7 +18,8 @@ resource "aws_lb_target_group" "admin" {
 }
 
 resource "aws_lb" "admin" {
-  name               = "${local.environment}-admin"
+  name = "${local.environment}-admin"
+  #tfsec:ignore:AWS005
   internal           = false
   load_balancer_type = "application"
   subnets            = data.aws_subnet_ids.public.ids
