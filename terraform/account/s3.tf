@@ -22,7 +22,10 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
   }
 }
 
+
+#tfsec:ignore:AWS002
 resource "aws_s3_bucket" "access_log" {
+  #tfsec:ignore:AWS077
   bucket = "online-lpa-${terraform.workspace}-lb-access-logs"
   acl    = "private"
   tags   = local.default_tags
@@ -39,8 +42,10 @@ resource "aws_s3_bucket" "access_log" {
 resource "aws_s3_bucket_policy" "access_log" {
   bucket = aws_s3_bucket.access_log.id
   policy = data.aws_iam_policy_document.loadbalancer_logging.json
+
 }
 
+#tfsec:ignore:AWS002
 resource "aws_s3_bucket" "lpa_pdf_cache" {
   bucket        = lower("online-lpa-pdf-cache-${terraform.workspace}")
   acl           = "private"
