@@ -58,10 +58,11 @@ resource "aws_security_group_rule" "front_ecs_service_elasticache_ingress" {
 
 // Anything out
 resource "aws_security_group_rule" "front_ecs_service_egress" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
+  #tfsec:ignore:AWS007
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_ecs_service.id
 }
