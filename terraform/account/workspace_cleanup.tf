@@ -1,3 +1,4 @@
+#tfsec:ignore:AWS086
 resource "aws_dynamodb_table" "workspace_cleanup_table" {
   count        = local.account_name == "development" ? 1 : 0
   name         = "WorkspaceCleanup"
