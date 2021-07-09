@@ -45,7 +45,7 @@ resource "aws_s3_bucket_policy" "access_log" {
 
 }
 
-#tfsec:ignore:AWS002
+#tfsec:ignore:AWS002 #tfsec:ignore:AWS077
 resource "aws_s3_bucket" "lpa_pdf_cache" {
   bucket        = lower("online-lpa-pdf-cache-${terraform.workspace}")
   acl           = "private"

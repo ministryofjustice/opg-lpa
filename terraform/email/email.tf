@@ -34,7 +34,7 @@ resource "aws_route53_record" "casper_amazonses_mx" {
 
 # Create S3 bucket for SES mail storage
 
-#tfsec:ignore:AWS017 #tfsec:ignore:AWS002
+#tfsec:ignore:AWS017 #tfsec:ignore:AWS002 #tfsec:ignore:AWS077
 resource "aws_s3_bucket" "mailbox" {
   bucket = "opg-lpa-casper-mailbox"
   acl    = "private"
