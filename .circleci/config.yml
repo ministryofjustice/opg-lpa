@@ -1184,6 +1184,7 @@ jobs:
             echo $TF_WORKSPACE
             echo $IMAGE_TAG
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+            echo PUBLIC_FACING_DOMAIN:=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN:=$FRONT_DOMAIN ADMIN_DOMAIN:=$ADMIN_DOMAIN CIRCLE_USERNAME:=$CIRCLE_USERNAME CIRCLE_BRANCH:=$CIRCLE_BRANCH COMMIT_MESSAGE:="$COMMIT_MESSAGE"
       - my_slack/notify:
           when: on_success
           slack_channel: $LIVE_SLACK_CHANNEL
