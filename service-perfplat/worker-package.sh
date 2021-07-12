@@ -19,6 +19,7 @@ pip install --upgrade --target ./build -r worker-requirements.txt
 cd ./build
 zip -r $TARGET_ZIP .
 
-# Include the Python module in the zip file
+# Include the Python modules in the zip file
 cd $CURRENT_DIR
 zip -g --exclude \*.DS_Store -r $TARGET_ZIP perfplatworker
+zip -g --exclude \*.DS_Store -r $TARGET_ZIP perfplatcommon
