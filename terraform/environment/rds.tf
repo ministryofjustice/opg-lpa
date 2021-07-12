@@ -47,7 +47,7 @@ module "api_aurora" {
   instance_class                = "db.t3.medium"
   kms_key_id                    = data.aws_kms_key.rds.arn
   replication_source_identifier = local.account.always_on ? aws_db_instance.api[0].arn : ""
-  skip_final_snapshot           = ! local.account.deletion_protection
+  skip_final_snapshot           = !local.account.deletion_protection
   vpc_security_group_ids        = [aws_security_group.rds-api.id]
   tags                          = merge(local.default_tags, local.db_component_tag)
 }
