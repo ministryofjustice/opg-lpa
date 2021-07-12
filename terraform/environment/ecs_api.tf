@@ -93,7 +93,7 @@ resource "aws_security_group_rule" "api_ecs_service_egress" {
   from_port = 0
   to_port   = 0
   protocol  = "-1"
-  #tfsec:ignore:AWS007
+  #tfsec:ignore:AWS007 - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.api_ecs_service.id
 }
