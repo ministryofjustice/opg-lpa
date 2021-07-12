@@ -582,8 +582,8 @@ orbs:
           - run:
               name: Build assets
               command: |
-                export REVISION="${CIRCLE_BUILD_NUM}"
-                echo "Using REVISION ${CIRCLE_BUILD_NUM} for cache busting"
+                export REVISION=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1)
+                echo "Using REVISION ${REVISION} for cache busting"
                 export PATH="/home/circleci/project/service-front/dart-sass:$PATH"
                 cd service-front/ && node_modules/grunt-cli/bin/grunt build
           - save_cache:
