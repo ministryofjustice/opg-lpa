@@ -54,7 +54,7 @@ locals {
 
 //----------------------------------
 // The Api service's Security Groups
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
   vpc_id      = data.aws_vpc.default.id
@@ -63,7 +63,7 @@ resource "aws_security_group" "api_ecs_service" {
 
 //----------------------------------
 // 80 in from front ECS service
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -75,7 +75,7 @@ resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
 
 //----------------------------------
 // 80 in from Admin ECS service
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -87,7 +87,7 @@ resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
 
 //----------------------------------
 // Anything out
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_egress" {
   type      = "egress"
   from_port = 0

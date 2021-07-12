@@ -51,7 +51,7 @@ resource "aws_lb_listener" "front_loadbalancer" {
   }
 }
 
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "front_loadbalancer" {
   name        = "${local.environment}-front-loadbalancer"
   description = "Allow inbound traffic"
@@ -60,7 +60,7 @@ resource "aws_security_group" "front_loadbalancer" {
 
 }
 
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_ingress" {
   type              = "ingress"
   from_port         = 443
@@ -70,7 +70,7 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress" {
   security_group_id = aws_security_group.front_loadbalancer.id
 }
 
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
   count     = local.environment == "production" ? 1 : 0
   type      = "ingress"
@@ -83,7 +83,7 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
 }
 
 // Allow http traffic in to be redirected to https
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
   type      = "ingress"
   from_port = 80
@@ -95,7 +95,7 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
 }
 
 //Anything out
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_egress" {
   type      = "egress"
   from_port = 0

@@ -23,9 +23,9 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
 }
 
 
-#tfsec:ignore:AWS002
+#tfsec:ignore:AWS002 bucket logging not needed
 resource "aws_s3_bucket" "access_log" {
-  #tfsec:ignore:AWS077
+  #tfsec:ignore:AWS077 versioning not required for a logging bucket
   bucket = "online-lpa-${terraform.workspace}-lb-access-logs"
   acl    = "private"
   tags   = local.default_tags
@@ -53,7 +53,7 @@ resource "aws_s3_bucket_policy" "access_log" {
 
 }
 
-#tfsec:ignore:AWS002 #tfsec:ignore:AWS077
+#tfsec:ignore:AWS002 #tfsec:ignore:AWS077 - no logging or versioning required as a temp cache
 resource "aws_s3_bucket" "lpa_pdf_cache" {
   bucket        = lower("online-lpa-pdf-cache-${terraform.workspace}")
   acl           = "private"

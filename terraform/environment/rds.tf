@@ -95,7 +95,7 @@ resource "aws_security_group" "rds-api" {
   }
 }
 
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "rds-api" {
   type                     = "ingress"
   from_port                = 5432

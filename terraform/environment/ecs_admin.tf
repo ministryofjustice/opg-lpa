@@ -29,7 +29,7 @@ resource "aws_ecs_service" "admin" {
 //----------------------------------
 // The service's Security Groups
 
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "admin_ecs_service" {
   name_prefix = "${local.environment}-admin-ecs-service"
   vpc_id      = data.aws_vpc.default.id
@@ -37,7 +37,7 @@ resource "aws_security_group" "admin_ecs_service" {
 }
 
 // 80 in from the ELB
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_ecs_service_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -48,7 +48,7 @@ resource "aws_security_group_rule" "admin_ecs_service_ingress" {
 }
 
 // Anything out
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_ecs_service_egress" {
   type      = "egress"
   from_port = 0

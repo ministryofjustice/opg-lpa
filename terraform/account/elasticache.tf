@@ -1,4 +1,4 @@
-#tfsec:ignore:AWS018
+#tfsec:ignore:AWS018 - adding a description is a destructive change.
 resource "aws_security_group" "front_cache" {
   name   = "front-cache"
   vpc_id = aws_default_vpc.default.id

@@ -6,7 +6,7 @@ resource "aws_flow_log" "vpc_flow_logs" {
   tags            = local.default_tags
 }
 
-#tfsec:ignore:AWS089
+#tfsec:ignore:AWS089 cost to encrypt is expensive.
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name = "vpc_flow_logs"
   tags = merge(local.default_tags, local.shared_component_tag)
