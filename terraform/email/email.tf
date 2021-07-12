@@ -33,6 +33,8 @@ resource "aws_route53_record" "casper_amazonses_mx" {
 }
 
 # Create S3 bucket for SES mail storage
+# this is ony used for emil testing, which will change anyway
+#tfsec:ignore:AWS017 #tfsec:ignore:AWS002 #tfsec:ignore:AWS077 #tfsec:ignore:AWS098
 resource "aws_s3_bucket" "mailbox" {
   bucket = "opg-lpa-casper-mailbox"
   acl    = "private"
@@ -44,8 +46,8 @@ resource "aws_s3_bucket" "mailbox" {
       days = 1
     }
   }
-
 }
+
 
 resource "aws_s3_bucket_policy" "mailbox" {
   bucket = aws_s3_bucket.mailbox.id

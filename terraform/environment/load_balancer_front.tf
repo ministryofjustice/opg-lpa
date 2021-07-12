@@ -18,12 +18,13 @@ resource "aws_lb_target_group" "front" {
 }
 
 resource "aws_lb" "front" {
-  name               = "${local.environment}-front"
-  internal           = false
-  load_balancer_type = "application"
-  subnets            = data.aws_subnet_ids.public.ids
-  tags               = merge(local.default_tags, local.front_component_tag)
-
+  name = "${local.environment}-front"
+  #tfsec:ignore:AWS005 - public facing load balancer
+  internal                   = false
+  load_balancer_type         = "application"
+  subnets                    = data.aws_subnet_ids.public.ids
+  tags                       = merge(local.default_tags, local.front_component_tag)
+  drop_invalid_header_fields = true
 
   security_groups = [
     aws_security_group.front_loadbalancer.id,
@@ -50,6 +51,7 @@ resource "aws_lb_listener" "front_loadbalancer" {
   }
 }
 
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "front_loadbalancer" {
   name        = "${local.environment}-front-loadbalancer"
   description = "Allow inbound traffic"
@@ -58,6 +60,7 @@ resource "aws_security_group" "front_loadbalancer" {
 
 }
 
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_ingress" {
   type              = "ingress"
   from_port         = 443
@@ -66,31 +69,39 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress" {
   cidr_blocks       = module.allowed_ip_list.moj_sites
   security_group_id = aws_security_group.front_loadbalancer.id
 }
+
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
-  count             = local.environment == "production" ? 1 : 0
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
+  count     = local.environment == "production" ? 1 : 0
+  type      = "ingress"
+  from_port = 443
+  to_port   = 443
+  protocol  = "tcp"
+  #tfsec:ignore:AWS006 - public facing inbound rule
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
 }
 
 // Allow http traffic in to be redirected to https
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
+  type      = "ingress"
+  from_port = 80
+  to_port   = 80
+  protocol  = "tcp"
+  #tfsec:ignore:AWS006 - public facing inbound rule
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
 }
 
+//Anything out
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_egress" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
+  #tfsec:ignore:AWS007 - public facing load balancer
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
 }
