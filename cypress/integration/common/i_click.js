@@ -11,6 +11,7 @@ Then(`I click {string}`, (clickable) => {
     // and this retry step will be able to be removed from the tests
     cy.document().then(docStr => {
         if (docStr.documentElement.innerHTML.includes('Oops! Something went wrong with the information you entered.')) {
+            cy.log("Received the Oops! Something went wrong with the information you entered message, so retrying the click");
             cy.get("[data-cy=" + clickable + "]").click();
         }
     });
