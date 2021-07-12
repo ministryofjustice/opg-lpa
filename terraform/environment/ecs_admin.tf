@@ -30,7 +30,6 @@ resource "aws_ecs_service" "admin" {
 // The service's Security Groups
 
 resource "aws_security_group" "admin_ecs_service" {
-  description = "Admin ECS Security Group"
   name_prefix = "${local.environment}-admin-ecs-service"
   vpc_id      = data.aws_vpc.default.id
   tags        = merge(local.default_tags, local.admin_component_tag)
@@ -38,7 +37,6 @@ resource "aws_security_group" "admin_ecs_service" {
 
 // 80 in from the ELB
 resource "aws_security_group_rule" "admin_ecs_service_ingress" {
-  description              = "Admin ECS ingress: HTTP in from ELB"
   type                     = "ingress"
   from_port                = 80
   to_port                  = 80
@@ -49,11 +47,10 @@ resource "aws_security_group_rule" "admin_ecs_service_ingress" {
 
 // Anything out
 resource "aws_security_group_rule" "admin_ecs_service_egress" {
-  description = "Admin ECS Egress: anything out"
-  type        = "egress"
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
   #tfsec:ignore:AWS007
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_ecs_service.id

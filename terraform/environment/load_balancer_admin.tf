@@ -52,13 +52,12 @@ resource "aws_lb_listener" "admin_loadbalancer" {
 
 resource "aws_security_group" "admin_loadbalancer" {
   name        = "${local.environment}-admin-loadbalancer"
-  description = "admin Load Balancer security group"
+  description = "Allow inbound traffic"
   vpc_id      = data.aws_vpc.default.id
   tags        = merge(local.default_tags, local.admin_component_tag)
 }
 
 resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
-  description       = "Admin Load Balancer ingress: SSL in from MOJ only"
   type              = "ingress"
   from_port         = 443
   to_port           = 443
@@ -67,23 +66,21 @@ resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
   security_group_id = aws_security_group.admin_loadbalancer.id
 }
 resource "aws_security_group_rule" "admin_loadbalancer_ingress_production" {
-  count       = local.environment == "production" ? 1 : 0
-  description = "Admin Load Balancer ingress: SSL in for production site (all locations)"
-  type        = "ingress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
+  count     = local.environment == "production" ? 1 : 0
+  type      = "ingress"
+  from_port = 443
+  to_port   = 443
+  protocol  = "tcp"
   #tfsec:ignore:AWS006
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_loadbalancer.id
 }
 
 resource "aws_security_group_rule" "admin_loadbalancer_egress" {
-  description = "Admin Load Balancer egress: Anything out"
-  type        = "egress"
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
   #tfsec:ignore:AWS007
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_loadbalancer.id
