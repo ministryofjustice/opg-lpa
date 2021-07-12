@@ -59,7 +59,7 @@ services:
       - localstack
     volumes:
       - ./local-config/:/app/
-      - ./service-perfplat/src/worker/:/perfplatworker-src/
+      - ./service-perfplat/:/service-perfplat/
     environment:
       AWS_ACCESS_KEY_ID: "-"
       AWS_SECRET_ACCESS_KEY: "-"

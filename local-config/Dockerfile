@@ -9,7 +9,7 @@ RUN wget -q -O /usr/local/bin/waitforit https://github.com/maxcnunes/waitforit/r
 
 # these 2 lines should be mirrored by the volumes set up in docker-compose.yml
 COPY ./local-config/start.sh /app/
-COPY ./service-perfplat/src/worker/ /perfplatworker-src/
+COPY ./service-perfplat/ /service-perfplat/
 
 WORKDIR /app
 

@@ -88,9 +88,9 @@ if [ "${result}" != "" ] ; then
 fi
 
 echo "Building perfplat worker package for deployment as lambda"
-cd /perfplatworker-src/
-chmod +x ./lambda-package.sh
-./lambda-package.sh /tmp/perfplatworker.zip
+cd /service-perfplat/
+chmod +x ./worker-package.sh
+./worker-package.sh /tmp/perfplatworker.zip
 cd /app/
 
 echo "Creating perfplat worker lambda"

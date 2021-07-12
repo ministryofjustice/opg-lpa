@@ -1,7 +1,9 @@
-# Script to package Python application and its dependencies
+# Script to package Python worker and its dependencies
 # for deployment as an AWS lambda
 
-# Absolute path to zip file
+# Usage: worker-package.sh <path to output zip file>
+
+# Absolute path to output zip file
 TARGET_ZIP="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 
 CURRENT_DIR=`pwd`
@@ -11,7 +13,7 @@ if [ ! -d build ] ; then
 fi
 
 # Install dependencies to build directory
-pip install --upgrade --target ./build -r requirements.txt
+pip install --upgrade --target ./build -r worker-requirements.txt
 
 # Include deps in zip file
 cd ./build
