@@ -67,6 +67,7 @@ class CorrespondentForm extends AbstractActorForm
     public function init()
     {
         $this->setName('form-correspondent');
+        $this->setAttribute('data-cy', 'form-correspondent');
 
         //  Set the actor model so it can be used during validation
         $this->actorModel = new Correspondence();

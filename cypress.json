@@ -5,5 +5,6 @@
     "rootRedirectUrl": "https://www.gov.uk/power-of-attorney/make-lasting-power",
     "numberOfGuidanceHelpTopics": 22,
     "defaultCommandTimeout": 12000,
-    "requestTimeout": 12000
+    "requestTimeout": 12000,
+    "trashAssetsBeforeRuns": false
 }

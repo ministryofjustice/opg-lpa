@@ -134,6 +134,12 @@ pr_build: &pr_build
         requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
+        name: run_cypress_test_stitchedpfclone
+        cypress_tags: "@StitchedClone"
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
+
+    - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedhw
         cypress_tags: "@StitchedHW"
         filters: { branches: { ignore: [master] } }
@@ -141,7 +147,7 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @Statuses"
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @Reusable"
         filters: { branches: { ignore: [master] } }
         requires: [dev_seed_environment_databases]
 
@@ -157,6 +163,7 @@ pr_build: &pr_build
           [
             run_functional_test,
             run_cypress_test_stitchedpf,
+            run_cypress_test_stitchedpfclone,
             run_cypress_test_stitchedhw,
             run_cypress_test_remaining_tests,
           ]
@@ -1087,7 +1094,10 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" cypress:latest run || true
+                # if errors occured, we need to restart cypress_tests to copy screenshots from it.  Note, in an ideal world we'd do this using a docker volume, but circle doesn't support that
+                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" --name cypress_tests cypress:latest && exit 0 || (docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1) 
+          - store_artifacts:
+              path: screenshots
           - run:
               name: Remove CircleCI ingress to environment
               command: |
