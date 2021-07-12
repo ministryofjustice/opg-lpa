@@ -289,7 +289,7 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @Statuses"
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @Reusable"
         workspace: preproduction
         filters: { branches: { only: [master] } }
         requires: [preprod_seed_environment_databases]
@@ -1196,6 +1196,7 @@ jobs:
             echo $TF_WORKSPACE
             echo $IMAGE_TAG
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+            echo PUBLIC_FACING_DOMAIN:=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN:=$FRONT_DOMAIN ADMIN_DOMAIN:=$ADMIN_DOMAIN CIRCLE_USERNAME:=$CIRCLE_USERNAME CIRCLE_BRANCH:=$CIRCLE_BRANCH COMMIT_MESSAGE:="$COMMIT_MESSAGE"
       - my_slack/notify:
           when: on_success
           slack_channel: $LIVE_SLACK_CHANNEL
