@@ -5,7 +5,7 @@ Feature: Homepage
   Background:
     Given I ignore application exceptions
 
-  @focus, @CleanupFixtures
+  @focus, @CleanupFixtures, @Reusable
   Scenario: PF LPA is reusable after skipping replacement attorneys, certificate provider and people to notify (LPAL-64)
     Given I create PF LPA test fixture with a donor and attorneys
     And I log in as appropriate test user
@@ -21,7 +21,7 @@ Feature: Homepage
     When I visit the dashboard
     Then I can see a "Reuse LPA details" link for the test fixture lpa
 
-  @focus, @CleanupFixtures
+  @focus, @CleanupFixtures, @Reusable
   Scenario: HW LPA is reusable after skipping replacement attorneys, certificate provider and people to notify (LPAL-64)
     Given I create HW LPA test fixture with a donor and attorneys
     And I log in as appropriate test user

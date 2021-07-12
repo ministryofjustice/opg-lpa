@@ -10,7 +10,7 @@ Feature: Admin
     Then I am taken to the find users page
 
     # search for the users seeded into the database
-    When I type "FindUser" into "query-input"
+    When I type "FindUser" into "query-input" working around cypress bug
     And I click "submit-button"
     Then there are "ten" ".user-find-result" elements on the page
     And the first activation date is "22nd Jan 2020 at 10:11:53 am"
@@ -22,7 +22,7 @@ Feature: Admin
 
     # search for deleted user elliot@townx.org
     When I click "user-search-link"
-    And I type "elliot@townx.org" into "email-address-input"
+    And I type "elliot@townx.org" into "email-address-input" working around cypress bug
     And I click "submit-button"
     Then deleted user is displayed with deletion date of "5th May 2021 at 12:21:20 pm"
 
