@@ -12,7 +12,6 @@ Then(`I click {string}`, (clickable) => {
     cy.document().then(docStr => {
         if (docStr.documentElement.innerHTML.includes('Oops! Something went wrong with the information you entered.')) {
             cy.get("[data-cy=" + clickable + "]").click();
-            cy.OPGCheckA11y();
         }
     });
     cy.OPGCheckA11y();
