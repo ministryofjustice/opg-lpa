@@ -20,7 +20,7 @@ Feature: Health and Welfare LPA starting from the Type page
         Then I am taken to the donor page
         And I see "This LPA covers health and welfare" in the page text
         When I click "add-donor"
-        Then I can see popup
+        Then I can find "form-donor" 
 
     @focus, @CleanupFixtures
     Scenario: Choose Health and Welfare as Lpa Type

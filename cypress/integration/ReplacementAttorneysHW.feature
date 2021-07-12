@@ -18,7 +18,7 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         When I click occurrence 4 of "accordion-view-change"
         Then I am taken to the replacement attorney page
         When I click "add-replacement-attorney"
-        Then I can see popup
+        Then I can find "form-attorney"
         And I can find "use-my-details"
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
@@ -34,7 +34,8 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
             | address-address3 | Trull, Taunton, Somerset |
             | address-postcode | TA3 7HF |
         And I click "form-save"
-        Then I see "Ms Isobel Ward" in the page text
+        Then I cannot find "form-attorney" 
+        And I see "Ms Isobel Ward" in the page text
         When I click "save"
         Then I am taken to the when replacement attorneys step in page
         When I click occurrence 4 of "accordion-view-change"
@@ -66,7 +67,8 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
             | address-address3 | Trull, Taunton, Somerset |
             | address-postcode | TA3 7HF |
         When I click "form-save"
-        Then I see "Ms Isobel Ward" in the page text
+        Then I cannot find "form-attorney" 
+        And I see "Ms Isobel Ward" in the page text
         And I see "Mr Ewan Adams" in the page text
         When I click occurrence 1 of "delete-attorney"
         And I click "delete"
@@ -87,12 +89,13 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
             | address-address3 | Trull, Taunton, Somerset |
             | address-postcode | TA3 7HF |
         When I click "form-save"
+        Then I cannot find "form-attorney" 
         # both replacement attorneys can be seen again
-        Then I see "Ms Isobel Ward" in the page text
+        And I see "Ms Isobel Ward" in the page text
         And I see "Mr Ewan Adams" in the page text
         # re-view 2cnd replacement attorney
         When I click occurrence 1 of "view-change-attorney"
-        Then I can see popup
+        Then I can find "form-attorney"
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
             | name-first | Ewan |
