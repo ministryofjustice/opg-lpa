@@ -30,6 +30,7 @@ resource "aws_ecs_service" "front" {
 // The service's Security Groups
 
 resource "aws_security_group" "front_ecs_service" {
+  description = "Front ECS Service security group"
   name_prefix = "${local.environment}-front-ecs-service"
   vpc_id      = data.aws_vpc.default.id
   tags        = merge(local.default_tags, local.front_component_tag)
@@ -38,6 +39,7 @@ resource "aws_security_group" "front_ecs_service" {
 
 // 80 in from the ELB
 resource "aws_security_group_rule" "front_ecs_service_ingress" {
+  description              = "Front ECS Service ingress rule: HTTP in from Load Balancer"
   type                     = "ingress"
   from_port                = 80
   to_port                  = 80
@@ -48,6 +50,7 @@ resource "aws_security_group_rule" "front_ecs_service_ingress" {
 
 // from front to Elasticache
 resource "aws_security_group_rule" "front_ecs_service_elasticache_ingress" {
+  description              = "Front ECS Service to Elasticache ingress rule: all in to Elasticache Port"
   type                     = "ingress"
   from_port                = 0
   to_port                  = 6379
@@ -58,10 +61,11 @@ resource "aws_security_group_rule" "front_ecs_service_elasticache_ingress" {
 
 // Anything out
 resource "aws_security_group_rule" "front_ecs_service_egress" {
-  type      = "egress"
-  from_port = 0
-  to_port   = 0
-  protocol  = "-1"
+  description = "Front ECS Service egress rule: anything out"
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
   #tfsec:ignore:AWS007
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_ecs_service.id

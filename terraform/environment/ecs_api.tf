@@ -56,6 +56,7 @@ locals {
 // The Api service's Security Groups
 
 resource "aws_security_group" "api_ecs_service" {
+  description = "API ECS Security Group"
   name_prefix = "${terraform.workspace}-api-ecs-service"
   vpc_id      = data.aws_vpc.default.id
   tags        = merge(local.default_tags, local.api_component_tag)
@@ -65,6 +66,7 @@ resource "aws_security_group" "api_ecs_service" {
 // 80 in from front ECS service
 
 resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
+  description              = "API ECS service ingress: HTTP in from Front"
   type                     = "ingress"
   from_port                = 80
   to_port                  = 80
@@ -74,9 +76,10 @@ resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
 }
 
 //----------------------------------
-// 80 in from Actor ECS service
+// 80 in from Admin ECS service
 
 resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
+  description              = "API ECS ingress: 80 in from Admin"
   type                     = "ingress"
   from_port                = 80
   to_port                  = 80
@@ -88,10 +91,11 @@ resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
 //----------------------------------
 // Anything out
 resource "aws_security_group_rule" "api_ecs_service_egress" {
-  type      = "egress"
-  from_port = 0
-  to_port   = 0
-  protocol  = "-1"
+  description = "API ECS egress: anything out"
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
   #tfsec:ignore:AWS007
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.api_ecs_service.id

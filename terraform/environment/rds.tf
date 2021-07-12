@@ -96,6 +96,7 @@ resource "aws_security_group" "rds-api" {
 }
 
 resource "aws_security_group_rule" "rds-api" {
+  description              = "RDS API ingress: postgres"
   type                     = "ingress"
   from_port                = 5432
   to_port                  = 5432

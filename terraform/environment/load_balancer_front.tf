@@ -53,13 +53,14 @@ resource "aws_lb_listener" "front_loadbalancer" {
 
 resource "aws_security_group" "front_loadbalancer" {
   name        = "${local.environment}-front-loadbalancer"
-  description = "Allow inbound traffic"
+  description = "Front Load Balancer Security Group"
   vpc_id      = data.aws_vpc.default.id
   tags        = merge(local.default_tags, local.front_component_tag)
 
 }
 
 resource "aws_security_group_rule" "front_loadbalancer_ingress" {
+  description       = "Front Load Balancer ingress: SSL in from MOJ Sites"
   type              = "ingress"
   from_port         = 443
   to_port           = 443
@@ -68,11 +69,12 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress" {
   security_group_id = aws_security_group.front_loadbalancer.id
 }
 resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
-  count     = local.environment == "production" ? 1 : 0
-  type      = "ingress"
-  from_port = 443
-  to_port   = 443
-  protocol  = "tcp"
+  count       = local.environment == "production" ? 1 : 0
+  description = "Front Load Balancer ingress: SSL in from internet for production site"
+  type        = "ingress"
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
   #tfsec:ignore:AWS006
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
@@ -80,20 +82,22 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
 
 // Allow http traffic in to be redirected to https
 resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
-  type      = "ingress"
-  from_port = 80
-  to_port   = 80
-  protocol  = "tcp"
+  description = "Front Load Balancer ingress: HTTP in from internet, which will be redirected to SSL"
+  type        = "ingress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
   #tfsec:ignore:AWS006
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
 }
 
 resource "aws_security_group_rule" "front_loadbalancer_egress" {
-  type      = "egress"
-  from_port = 0
-  to_port   = 0
-  protocol  = "-1"
+  description = "Front Load Balancer egress:Anything out"
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
   #tfsec:ignore:AWS007
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
