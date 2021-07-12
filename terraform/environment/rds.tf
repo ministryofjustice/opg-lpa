@@ -34,7 +34,7 @@ module "api_aurora" {
   count                         = local.account.aurora_enabled ? 1 : 0
   aurora_serverless             = local.account.aurora_serverless
   account_id                    = data.aws_caller_identity.current.account_id
-  apply_immediately             = ! local.account.deletion_protection
+  apply_immediately             = !local.account.deletion_protection
   cluster_identifier            = "api2"
   db_subnet_group_name          = "data-persistence-subnet-default"
   deletion_protection           = local.account.deletion_protection
