@@ -1040,7 +1040,8 @@ orbs:
         #
         # Runs cypress testing
         #
-        executor: python
+        orbs:
+          cypress: cypress-io/cypress@1
         parameters:
           workspace:
             description: Terraform workspace name
@@ -1051,18 +1052,8 @@ orbs:
             type: string
         steps:
           - checkout
-          - setup_remote_docker:
-              version: 19.03.12
-              docker_layer_caching: false
           - attach_workspace:
               at: /tmp
-          - dockerhub_login
-          - run:
-              name: Build cypress container
-              command: |
-                docker build -f ./cypress/Dockerfile  -t cypress:latest .
-                echo 'export DOCKER_CYPRESS_REMOTE_IP="$(docker run -it --entrypoint curl cypress:latest --silent https://checkip.amazonaws.com/ | tr -d '^@')"' >> $BASH_ENV
-                echo $DOCKER_CYPRESS_REMOTE_IP
           - run:
               name: Install python dependencies
               command: |
@@ -1094,8 +1085,11 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                # if errors occured, we need to restart cypress_tests to copy screenshots from it.  Note, in an ideal world we'd do this using a docker volume, but circle doesn't support that
-                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" --name cypress_tests cypress:latest && exit 0 || (docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1) 
+                export CYPRESS_TAGS="<<parameters.cypress_tags>>"
+                export CYPRESS_CI=true
+                export "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN"
+                export "CYPRESS_adminUrl=https://$ADMIN_DOMAIN"
+                ./cypress/start.sh
           - store_artifacts:
               path: screenshots
           - run:
