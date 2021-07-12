@@ -29,7 +29,7 @@ Feature: Who Are You for a Property and Finance LPA
         When I check "who"
         And I click "save"
         Then I am taken to the repeat application page
-        When I click occurrence -1 of "accordion-view-change"
+        When I click the last occurrence of "accordion-view-change"
         Then I am taken to the who are you page
         And I see "Thanks, you have already answered this question" in the page text
         When I click "continue"
