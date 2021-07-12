@@ -51,6 +51,7 @@ resource "aws_lb_listener" "front_loadbalancer" {
   }
 }
 
+#tfsec:ignore:AWS018
 resource "aws_security_group" "front_loadbalancer" {
   name        = "${local.environment}-front-loadbalancer"
   description = "Allow inbound traffic"
@@ -59,6 +60,7 @@ resource "aws_security_group" "front_loadbalancer" {
 
 }
 
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "front_loadbalancer_ingress" {
   type              = "ingress"
   from_port         = 443
@@ -67,6 +69,8 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress" {
   cidr_blocks       = module.allowed_ip_list.moj_sites
   security_group_id = aws_security_group.front_loadbalancer.id
 }
+
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
   count     = local.environment == "production" ? 1 : 0
   type      = "ingress"
@@ -79,6 +83,7 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
 }
 
 // Allow http traffic in to be redirected to https
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
   type      = "ingress"
   from_port = 80
@@ -89,6 +94,8 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
   security_group_id = aws_security_group.front_loadbalancer.id
 }
 
+//Anything out
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "front_loadbalancer_egress" {
   type      = "egress"
   from_port = 0

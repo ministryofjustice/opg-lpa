@@ -24,6 +24,7 @@ resource "aws_ecs_service" "pdf" {
 //----------------------------------
 // The service's Security Groups
 
+#tfsec:ignore:AWS018
 resource "aws_security_group" "pdf_ecs_service" {
   name_prefix = "${local.environment}-pdf-ecs-service"
   vpc_id      = data.aws_vpc.default.id
@@ -32,6 +33,7 @@ resource "aws_security_group" "pdf_ecs_service" {
 
 //----------------------------------
 // Anything out
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "pdf_ecs_service_egress" {
   type      = "egress"
   from_port = 0

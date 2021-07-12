@@ -29,6 +29,7 @@ resource "aws_ecs_service" "front" {
 //----------------------------------
 // The service's Security Groups
 
+#tfsec:ignore:AWS018
 resource "aws_security_group" "front_ecs_service" {
   name_prefix = "${local.environment}-front-ecs-service"
   vpc_id      = data.aws_vpc.default.id
@@ -37,6 +38,7 @@ resource "aws_security_group" "front_ecs_service" {
 }
 
 // 80 in from the ELB
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "front_ecs_service_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -47,6 +49,7 @@ resource "aws_security_group_rule" "front_ecs_service_ingress" {
 }
 
 // from front to Elasticache
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "front_ecs_service_elasticache_ingress" {
   type                     = "ingress"
   from_port                = 0
@@ -57,6 +60,7 @@ resource "aws_security_group_rule" "front_ecs_service_elasticache_ingress" {
 }
 
 // Anything out
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "front_ecs_service_egress" {
   type      = "egress"
   from_port = 0

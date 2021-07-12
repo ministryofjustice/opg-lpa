@@ -34,7 +34,7 @@ module "api_aurora" {
   count                         = local.account.aurora_enabled ? 1 : 0
   aurora_serverless             = local.account.aurora_serverless
   account_id                    = data.aws_caller_identity.current.account_id
-  apply_immediately             = !local.account.deletion_protection
+  apply_immediately             = ! local.account.deletion_protection
   cluster_identifier            = "api2"
   db_subnet_group_name          = "data-persistence-subnet-default"
   deletion_protection           = local.account.deletion_protection
@@ -47,7 +47,7 @@ module "api_aurora" {
   instance_class                = "db.t3.medium"
   kms_key_id                    = data.aws_kms_key.rds.arn
   replication_source_identifier = local.account.always_on ? aws_db_instance.api[0].arn : ""
-  skip_final_snapshot           = !local.account.deletion_protection
+  skip_final_snapshot           = ! local.account.deletion_protection
   vpc_security_group_ids        = [aws_security_group.rds-api.id]
   tags                          = merge(local.default_tags, local.db_component_tag)
 }
@@ -95,6 +95,7 @@ resource "aws_security_group" "rds-api" {
   }
 }
 
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "rds-api" {
   type                     = "ingress"
   from_port                = 5432

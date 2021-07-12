@@ -50,6 +50,7 @@ resource "aws_lb_listener" "admin_loadbalancer" {
   }
 }
 
+#tfsec:ignore:AWS018
 resource "aws_security_group" "admin_loadbalancer" {
   name        = "${local.environment}-admin-loadbalancer"
   description = "Allow inbound traffic"
@@ -57,6 +58,7 @@ resource "aws_security_group" "admin_loadbalancer" {
   tags        = merge(local.default_tags, local.admin_component_tag)
 }
 
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
   type              = "ingress"
   from_port         = 443
@@ -65,6 +67,8 @@ resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
   cidr_blocks       = module.allowed_ip_list.moj_sites
   security_group_id = aws_security_group.admin_loadbalancer.id
 }
+
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "admin_loadbalancer_ingress_production" {
   count     = local.environment == "production" ? 1 : 0
   type      = "ingress"
@@ -76,6 +80,7 @@ resource "aws_security_group_rule" "admin_loadbalancer_ingress_production" {
   security_group_id = aws_security_group.admin_loadbalancer.id
 }
 
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "admin_loadbalancer_egress" {
   type      = "egress"
   from_port = 0

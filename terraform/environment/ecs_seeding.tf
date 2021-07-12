@@ -1,6 +1,6 @@
 //----------------------------------
 // The Api service's Security Groups
-
+#tfsec:ignore:AWS018
 resource "aws_security_group" "seeding_ecs_service" {
   name_prefix = "${terraform.workspace}-seeding-ecs-service"
   vpc_id      = data.aws_vpc.default.id
@@ -9,6 +9,7 @@ resource "aws_security_group" "seeding_ecs_service" {
 
 //----------------------------------
 // Anything out except production
+#tfsec:ignore:AWS018
 resource "aws_security_group_rule" "seeding_ecs_service_egress" {
   count     = local.environment == "production" ? 0 : 1
   type      = "egress"
