@@ -797,7 +797,7 @@ orbs:
                 then
                   cat ${WORKSPACE}.log | grep -E 'destroyed|replaced'
                 else
-                  cat ${WORKSPACE}.log | grep -E 'aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
+                  cat ${WORKSPACE}.log | grep -E 'aws_security*|aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
                 fi
                   if [[ "$?" -eq 0 ]]
                 then
@@ -813,7 +813,7 @@ orbs:
               when: on_fail
               slack_channel: $DEV_SLACK_CHANNEL
               template_file: slack_approval_warning.j2
-              replacement_vars: APPROVAL_STEP=<<parameters.approval_step>> CIRCLE_PULL_REQUEST=$CIRCLE_PULL_REQUEST CIRCLE_BUILD_URL=$CIRCLE_BUILD_URL CIRCLE_JOB=$CIRCLE_JOB
+              replacement_vars: APPROVAL_STEP:=<<parameters.approval_step>> CIRCLE_PULL_REQUEST:=$CIRCLE_PULL_REQUEST CIRCLE_BUILD_URL:=$CIRCLE_BUILD_URL CIRCLE_JOB:=$CIRCLE_JOB
           - run:
               name: auto approve job hold
               when: on_success
@@ -1159,7 +1159,7 @@ jobs:
           when: on_success
           slack_channel: $BUILD_SLACK_CHANNEL
           template_file: post_environment_domains.j2
-          replacement_vars: PUBLIC_FACING_DOMAIN=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN=$FRONT_DOMAIN ADMIN_DOMAIN=$ADMIN_DOMAIN CIRCLE_USERNAME=$CIRCLE_USERNAME CIRCLE_BRANCH=$CIRCLE_BRANCH COMMIT_MESSAGE="$COMMIT_MESSAGE"
+          replacement_vars: PUBLIC_FACING_DOMAIN:=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN:=$FRONT_DOMAIN ADMIN_DOMAIN:=$ADMIN_DOMAIN CIRCLE_USERNAME:=$CIRCLE_USERNAME CIRCLE_BRANCH:=$CIRCLE_BRANCH COMMIT_MESSAGE:="$COMMIT_MESSAGE"
       - run:
           name: print deployment values
           command: |
@@ -1198,7 +1198,7 @@ jobs:
           when: on_success
           slack_channel: $LIVE_SLACK_CHANNEL
           template_file: production_release_notification.j2
-          replacement_vars: PUBLIC_FACING_DOMAIN=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN=$FRONT_DOMAIN ADMIN_DOMAIN=$ADMIN_DOMAIN CIRCLE_USERNAME=$CIRCLE_USERNAME CIRCLE_BRANCH=$CIRCLE_BRANCH COMMIT_MESSAGE="$COMMIT_MESSAGE"
+          replacement_vars: PUBLIC_FACING_DOMAIN:=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN:=$FRONT_DOMAIN ADMIN_DOMAIN:=$ADMIN_DOMAIN CIRCLE_USERNAME:=$CIRCLE_USERNAME CIRCLE_BRANCH:=$CIRCLE_BRANCH COMMIT_MESSAGE:="$COMMIT_MESSAGE"
       - run:
           name: print deployment values
           command: |
