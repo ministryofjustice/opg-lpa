@@ -19,7 +19,7 @@ resource "aws_lb_target_group" "front" {
 
 resource "aws_lb" "front" {
   name = "${local.environment}-front"
-  #tfsec:ignore:AWS005
+  #tfsec:ignore:AWS005 - public facing load balancer
   internal                   = false
   load_balancer_type         = "application"
   subnets                    = data.aws_subnet_ids.public.ids
