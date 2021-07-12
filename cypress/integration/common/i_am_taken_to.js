@@ -21,6 +21,11 @@ Then(`I am taken to the lpa type page`, () => {
     checkAccordionHeaderContains("What type of LPA do you want to make?");
 })
 
+Then(`I am taken to the type page for cloned lpa`, () => {
+    cy.url().should('contain','type');
+    checkAccordionHeaderContains("What type of LPA do you want to make?");
+})
+
 Then(`I am taken to the when lpa starts page`, () => {
     checkOnPageWithPath('when-lpa-starts');
     checkAccordionHeaderContains("When can the LPA be used?")
