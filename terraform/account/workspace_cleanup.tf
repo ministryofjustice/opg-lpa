@@ -1,3 +1,4 @@
+#tfsec:ignore:AWS086 #tfsec:ignore:AWS092 Point in time and encryption not needed for this short lived data
 resource "aws_dynamodb_table" "workspace_cleanup_table" {
   count        = local.account_name == "development" ? 1 : 0
   name         = "WorkspaceCleanup"
