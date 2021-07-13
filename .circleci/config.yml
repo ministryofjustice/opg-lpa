@@ -94,6 +94,7 @@ pr_build: &pr_build
         workspace: development
         filters: { branches: { ignore: [master] } }
         requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
+
     - infrastructure_and_deployment/apply_environment_terraform:
         name: dev_environment_apply_terraform
         filters: { branches: { ignore: [master] } }
@@ -150,6 +151,13 @@ pr_build: &pr_build
         cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @Reusable"
         filters: { branches: { ignore: [master] } }
         requires: [dev_seed_environment_databases]
+
+    - cypress/run:
+        name: new_cypress_tests
+        tags: "SignUp"
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
+
 
     - infrastructure_and_deployment/run_functional_test:
         name: run_functional_test
@@ -289,7 +297,7 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @Statuses"
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @Reusable"
         workspace: preproduction
         filters: { branches: { only: [master] } }
         requires: [preprod_seed_environment_databases]
@@ -433,7 +441,7 @@ orbs:
                   echo "This command is set to send an alert when status is: $SLACK_PARAM_WHEN"
                   echo "Current status is: ${STEP_STATUS}"
                 fi
-
+  cypress: cypress-io/cypress@1
   build_containers_and_push_to_ecr:
     orbs:
       docker: circleci/docker@1.4.0
@@ -600,6 +608,7 @@ orbs:
       my_slack:
         <<: *slack_orb
       docker: circleci/docker@1.4.0
+      cypress: cypress-io/cypress@1
     commands:
       dockerhub_login:
         steps:
@@ -1040,8 +1049,7 @@ orbs:
         #
         # Runs cypress testing
         #
-        orbs:
-          cypress: cypress-io/cypress@1
+        executor: python
         parameters:
           workspace:
             description: Terraform workspace name
@@ -1052,8 +1060,18 @@ orbs:
             type: string
         steps:
           - checkout
+          - setup_remote_docker:
+              version: 19.03.12
+              docker_layer_caching: false
           - attach_workspace:
               at: /tmp
+          - dockerhub_login
+          - run:
+              name: Build cypress container
+              command: |
+                docker build -f ./cypress/Dockerfile  -t cypress:latest .
+                echo 'export DOCKER_CYPRESS_REMOTE_IP="$(docker run -it --entrypoint curl cypress:latest --silent https://checkip.amazonaws.com/ | tr -d '^@')"' >> $BASH_ENV
+                echo $DOCKER_CYPRESS_REMOTE_IP
           - run:
               name: Install python dependencies
               command: |
@@ -1085,11 +1103,8 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                export CYPRESS_TAGS="<<parameters.cypress_tags>>"
-                export CYPRESS_CI=true
-                export "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN"
-                export "CYPRESS_adminUrl=https://$ADMIN_DOMAIN"
-                ./cypress/start.sh
+                # if errors occured, we need to restart cypress_tests to copy screenshots from it.  Note, in an ideal world we'd do this using a docker volume, but circle doesn't support that
+                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" --name cypress_tests cypress:latest && exit 0 || (docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1)
           - store_artifacts:
               path: screenshots
           - run:
@@ -1105,6 +1120,7 @@ orbs:
               when: always
 
 jobs:
+
   cancel_redundant_builds:
     docker:
       - image: circleci/python
@@ -1188,6 +1204,7 @@ jobs:
             echo $TF_WORKSPACE
             echo $IMAGE_TAG
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+            echo PUBLIC_FACING_DOMAIN:=$PUBLIC_FACING_DOMAIN FRONT_DOMAIN:=$FRONT_DOMAIN ADMIN_DOMAIN:=$ADMIN_DOMAIN CIRCLE_USERNAME:=$CIRCLE_USERNAME CIRCLE_BRANCH:=$CIRCLE_BRANCH COMMIT_MESSAGE:="$COMMIT_MESSAGE"
       - my_slack/notify:
           when: on_success
           slack_channel: $LIVE_SLACK_CHANNEL
