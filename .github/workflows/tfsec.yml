@@ -26,10 +26,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
       - name: tfsec with pr comments
         uses: tfsec/tfsec-pr-commenter-action@main
         with:
           working_directory: ${{ matrix.terraform_path }}
-          github_token: ${{secrets.GITHUB_TOKEN}}
+          github_token: ${{github.token}}
