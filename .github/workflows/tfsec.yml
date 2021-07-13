@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@master
+        with:
+          fetch_depth: 0
+
       - name: tfsec with pr comments
         uses: aquasecurity/tfsec-pr-commenter-action@main
         with:
