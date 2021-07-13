@@ -2,7 +2,6 @@ name: TFSec Static analysis
 
 on:
   pull_request:
-
 permissions:
   actions: read
   checks: read
@@ -26,7 +25,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@master
       - name: tfsec with pr comments
-        uses: aquasecurity/tfsec-pr-commenter-action@main
+        uses: aquasecurity/tfsec-pr-commenter-action
         with:
           working_directory: ${{ matrix.terraform_path }}
           github_token: ${{github.token}}
