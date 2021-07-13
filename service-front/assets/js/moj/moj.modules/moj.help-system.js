@@ -149,22 +149,22 @@
       // vs. the one we have stored in sessionStorage and invalidate the cache
       // if they differ
       var html = undefined;
-      var revision = window.getMakeRevision();
+      var revision = window.getBuildRevision();
 
-      // first try to load from html5 storage; note the '' + revision used in the
+      // try from this class (NB we don't worry about the revision, as
+      // this class will be instantiated afresh on page load and won't be
+      // retained between releases of different versions of the app)
+      if (typeof this.html !== 'undefined') {
+        html = this.html;
+      }
+      // next try to load from html5 storage; note the '' + revision used in the
       // comparison is necessary as the value in storage is a string and will
       // be 'undefined' if window.MAKE_ENV.revision is not set; by contrast,
-      // getMakeRevision() returns undefined (not a string)
-      if (moj.Helpers.hasHtml5Storage() &&
+      // getBuildRevision() returns undefined (not a string)
+      else if (moj.Helpers.hasHtml5Storage() &&
       typeof sessionStorage.guidanceHTML !== 'undefined' &&
       sessionStorage.guidanceHTMLRevision === '' + revision) {
         html = sessionStorage.guidanceHTML;
-      }
-      // then try from this class (NB we don't worry about the revision, as
-      // this class will be instantiated afresh on page load and won't be
-      // retained between releases of different versions of the app)
-      else if (typeof this.html !== 'undefined') {
-        html = this.html;
       }
 
       return {
@@ -207,10 +207,11 @@
                 // to help us decide whether to refresh the cache later
                 sessionStorage.guidanceHTMLRevision = revision;
                 sessionStorage.guidanceHTML = html;
-              } else {
-                // save to obj
-                self.html = html;
               }
+
+              // save to obj
+              self.html = html;
+
               // set the topic now that all content has loaded
               self._setTopic(topic);
 
