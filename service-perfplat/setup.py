@@ -17,6 +17,7 @@ setup(
     install_requires=[
         'requests',
         'SQLAlchemy',
+        'psycopg2-binary',
     ],
     extras_require={
         'dev': [

@@ -6,8 +6,8 @@ class Database:
 
     # example connstr for postgres:
     # postgresql://scott:tiger@localhost:5432/mydatabase
-    def __init__(self, connstr):
-        engine = create_engine(connstr)
+    def __init__(self, conn_str):
+        engine = create_engine(conn_str)
         self.session = sessionmaker(bind=engine)()
 
     def query(self, *args, **kwargs):

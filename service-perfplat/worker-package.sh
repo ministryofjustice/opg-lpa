@@ -8,15 +8,24 @@ TARGET_ZIP="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 
 CURRENT_DIR=`pwd`
 
-if [ ! -d build ] ; then
-    mkdir build
+if [ ! -d build/packages ] ; then
+    mkdir -p build/packages
 fi
 
 # Install dependencies to build directory
-pip install --upgrade --target ./build -r worker-requirements.txt
+pip3 install --upgrade --target ./build/packages -r worker-requirements.txt
+
+cd ./build
+
+# Time to get funky: get a statically-compiled psycopg2 and put it into the zip file
+# see https://github.com/jkehler/awslambda-psycopg2
+if [ ! -d ./packages/psycopg2 ] ; then
+    git clone https://github.com/jkehler/awslambda-psycopg2.git
+    cp -a awslambda-psycopg2/psycopg2-3.8 ./packages/psycopg2
+fi
 
 # Include deps in zip file
-cd ./build
+cd ./packages
 zip -r $TARGET_ZIP .
 
 # Include the Python modules in the zip file

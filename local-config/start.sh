@@ -98,11 +98,17 @@ aws lambda create-function \
 --endpoint=http://${OPG_LPA_COMMON_LAMBDA_ENDPOINT} \
 --region=${DEFAULT_REGION} \
 --function-name=${PERFPLAT_LAMBDA_NAME} \
---runtime=python3.7 \
+--runtime=python3.8 \
 --handler=perfplatworker.handler.exec \
 --memory-size=128 \
 --zip-file=fileb:///tmp/perfplatworker.zip \
---role=arn:aws:iam::000000000000:role/irrelevant:role/irrelevant
+--role=arn:aws:iam::000000000000:role/irrelevant:role/irrelevant \
+--environment \
+"Variables={OPG_LPA_POSTGRES_HOSTNAME=${OPG_LPA_POSTGRES_HOSTNAME},\
+OPG_LPA_POSTGRES_PORT=${OPG_LPA_POSTGRES_PORT},\
+OPG_LPA_POSTGRES_NAME=${OPG_LPA_POSTGRES_NAME},\
+OPG_LPA_POSTGRES_USERNAME=${OPG_LPA_POSTGRES_USERNAME},\
+OPG_LPA_POSTGRES_PASSWORD=${OPG_LPA_POSTGRES_PASSWORD}}"
 
 # Trigger the worker lambda via events on the perfplat queue
 echo "Adding trigger to connect perfplat worker to queue"

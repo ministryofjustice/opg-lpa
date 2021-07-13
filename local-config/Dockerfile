@@ -1,7 +1,8 @@
-FROM python:alpine
+FROM amazonlinux:2
 
-RUN pip install awscli && \
-    apk add zip jq gcc g++ musl-dev
+# python should match the version "aws lambda create-function --runtime" in start.sh
+RUN yum install -y zip jq wget python3 git && \
+    pip3 install awscli
 
 ENV WAITFORIT_VERSION="v2.4.1"
 RUN wget -q -O /usr/local/bin/waitforit https://github.com/maxcnunes/waitforit/releases/download/$WAITFORIT_VERSION/waitforit-linux_amd64 \
