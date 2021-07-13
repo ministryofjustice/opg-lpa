@@ -1,0 +1,35 @@
+name: TFSec Static analysis
+
+on:
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  actions: read
+  checks: read
+  contents: none
+  deployments: none
+  issues: none
+  packages: none
+  pull-requests: write
+  repository-projects: none
+  security-events: none
+  statuses: none
+
+jobs:
+  tfsec:
+    name: TFSec Static analysis
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        terraform_path: [ 'terraform/environment', 'terraform/account' ]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: tfsec with pr comments
+        uses: tfsec/tfsec-pr-commenter-action@main
+        with:
+          working_directory: ${{ matrix.terraform_path }}
+          github_token: ${{secrets.GITHUB_TOKEN}}
