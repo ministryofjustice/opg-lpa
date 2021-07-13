@@ -5,7 +5,7 @@
 
     var cacheBustingUrl = function (url) {
         // defined in env-vars JS file
-        var revision = window.getMakeRevision();
+        var revision = window.getBuildRevision();
 
         if (revision === undefined) {
             return url;

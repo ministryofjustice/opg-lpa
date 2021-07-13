@@ -3,24 +3,24 @@
 // This enables the build to put environment variables into the
 // browser's JavaScript environment, such as the current git commit hash.
 
-window.MAKE_ENV = {};
+window.BUILD_ENV = {};
 
 {{#if ENV_VARS}}
     {{#each ENV_VARS}}
-window.MAKE_ENV.{{@key}} = "{{this}}";
+window.BUILD_ENV.{{@key}} = "{{this}}";
     {{/each}}
 {{/if}}
 
 // return a value from window.MAKE_ENV (if varName is a key in it),
 // or undefined (if not)
-window.getMakeEnvVar = function (varName) {
-    if (!(varName in window.MAKE_ENV)) {
+window.getBuildEnvVar = function (varName) {
+    if (!(varName in window.BUILD_ENV)) {
         return undefined;
     }
 
-    return window.MAKE_ENV[varName];
+    return window.BUILD_ENV[varName];
 };
 
-window.getMakeRevision = function () {
-    return window.getMakeEnvVar('revision');
+window.getBuildRevision = function () {
+    return window.getBuildEnvVar('revision');
 };
