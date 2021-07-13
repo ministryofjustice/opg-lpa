@@ -26,6 +26,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: tfsec with pr comments
         uses: tfsec/tfsec-pr-commenter-action@main
         with:
