@@ -6,7 +6,6 @@ DYNAMODN_ENDPOINT=http://${AWS_ENDPOINT_DYNAMODB}
 /usr/local/bin/waitforit -address=tcp://${AWS_ENDPOINT_DYNAMODB} -timeout 60 -retry 6000 -debug
 
 DEFAULT_REGION=eu-west-1
-PERFPLAT_LAMBDA_NAME=perfplatworker
 
 # ----------------------------------------------------------
 # Add any setup here that is performed with Terraform in AWS.
@@ -68,52 +67,3 @@ aws sqs create-queue \
 --attributes="$ATTR" \
 --region=${DEFAULT_REGION} \
 --endpoint=http://${OPG_LPA_COMMON_SQS_ENDPOINT}
-
-# Recreate the worker lambda;
-# we do this by removing then re-adding the lambda in dev, as this also
-# prevents duplication of the event mappings.
-COMMAND="aws lambda list-functions \
---endpoint=http://${OPG_LPA_COMMON_LAMBDA_ENDPOINT} \
---region=${DEFAULT_REGION} | jq '.Functions[] | select(.FunctionName == \"${PERFPLAT_LAMBDA_NAME}\")'"
-
-result=`echo ${COMMAND} | sh`
-
-if [ "${result}" != "" ] ; then
-    echo "Lambda exists; removing"
-
-    aws lambda delete-function \
-    --function-name=${PERFPLAT_LAMBDA_NAME} \
-    --endpoint=http://${OPG_LPA_COMMON_LAMBDA_ENDPOINT} \
-    --region=${DEFAULT_REGION}
-fi
-
-echo "Building perfplat worker package for deployment as lambda"
-cd /service-perfplat/
-chmod +x ./worker-package.sh
-./worker-package.sh /tmp/perfplatworker.zip
-cd /app/
-
-echo "Creating perfplat worker lambda"
-aws lambda create-function \
---endpoint=http://${OPG_LPA_COMMON_LAMBDA_ENDPOINT} \
---region=${DEFAULT_REGION} \
---function-name=${PERFPLAT_LAMBDA_NAME} \
---runtime=python3.8 \
---handler=perfplatworker.handler.exec \
---memory-size=128 \
---zip-file=fileb:///tmp/perfplatworker.zip \
---role=arn:aws:iam::000000000000:role/irrelevant:role/irrelevant \
---environment \
-"Variables={OPG_LPA_POSTGRES_HOSTNAME=${OPG_LPA_POSTGRES_HOSTNAME},\
-OPG_LPA_POSTGRES_PORT=${OPG_LPA_POSTGRES_PORT},\
-OPG_LPA_POSTGRES_NAME=${OPG_LPA_POSTGRES_NAME},\
-OPG_LPA_POSTGRES_USERNAME=${OPG_LPA_POSTGRES_USERNAME},\
-OPG_LPA_POSTGRES_PASSWORD=${OPG_LPA_POSTGRES_PASSWORD}}"
-
-# Trigger the worker lambda via events on the perfplat queue
-echo "Adding trigger to connect perfplat worker to queue"
-aws lambda create-event-source-mapping \
---endpoint=http://${OPG_LPA_COMMON_LAMBDA_ENDPOINT} \
---region=${DEFAULT_REGION} \
---function-name=${PERFPLAT_LAMBDA_NAME} \
---event-source-arn=arn:aws:sqs:eu-west-1:000000000000:perfplat-queue.fifo
