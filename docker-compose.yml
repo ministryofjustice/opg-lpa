@@ -135,6 +135,7 @@ services:
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
 
       OPG_LPA_OS_PLACES_HUB_ENDPOINT : "https://api.os.uk/search/places/v1/postcode"
+
   front-composer:
     image: composer:latest
     volumes:
@@ -368,6 +369,7 @@ services:
       - --no-scripts
       - --optimize-autoloader
       - --ignore-platform-reqs
+
   # ---------------------------
   # Seeding
   seeding:
@@ -412,3 +414,22 @@ services:
       dockerfile: ./Dockerfile-mocksirius
     ports:
       - 7011:5000
+
+  # ---------------------------
+  # performance platform
+  perfplatworker:
+    container_name: perfplatworker
+    image: perfplatworker
+    build:
+      context: ./service-perfplat
+      dockerfile: ./Dockerfile-worker
+    ports:
+      - 7020:8080
+    volumes:
+      - ./service-perfplat:/service-perfplat
+    environment:
+      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
+      OPG_LPA_POSTGRES_PORT: "5432"
+      OPG_LPA_POSTGRES_NAME: "lpadb"
+      OPG_LPA_POSTGRES_USERNAME: "lpauser"
+      OPG_LPA_POSTGRES_PASSWORD: "lpapass"

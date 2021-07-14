@@ -1,7 +1,12 @@
+# This is required when running in the lambda docker image,
+# so that we can locate the supporting Python code
+import sys
+sys.path.append("/service-perfplat/")
+
 import logging
 
 from perfplatcommon.db import Database
-from .config import CONFIG
+from perfplatworker.config import CONFIG
 
 
 LOGGER = logging.getLogger()
@@ -14,4 +19,4 @@ Event looks like this:
 def exec(event, context):
     db = Database(CONFIG['db_conn_str'])
     LOGGER.debug(event)
-    return 'MESSAGE RECEIVED - CHECKING CONN STR'
+    return 'MESSAGE RECEIVED WITH DB CONNECTION MADE'
