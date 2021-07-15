@@ -11,7 +11,7 @@ RUN npm install --save-dev axe-core \
     cypress-cucumber-preprocessor cypress-plugin-tab
 
 ENV CYPRESS_VIDEO=false
-ENV CYPRESS_RUN_A11Y_TESTS=true
+#ENV CYPRESS_RUN_A11Y_TESTS=false
 
 COPY cypress.json .
 COPY package.json .

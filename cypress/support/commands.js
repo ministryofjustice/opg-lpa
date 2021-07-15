@@ -81,6 +81,7 @@ Cypress.Commands.add("runAxe", (window, options, url, stopOnError) => {
  * page has multiple states, e.g. with/without open popup
  */
 Cypress.Commands.add("OPGCheckA11y", (axeOptions, stopOnError, pageState) => {
+    if (Cypress.env('CYPRESS_RUN_A11Y_TESTS')) {
     axeOptions = axeOptions || {};
     stopOnError = !!stopOnError;
 
@@ -93,11 +94,14 @@ Cypress.Commands.add("OPGCheckA11y", (axeOptions, stopOnError, pageState) => {
             cy.runAxe(window, axeOptions, url, stopOnError);
         });
     });
+    }
 });
 
-Cypress.Commands.add("OPGCheckA11yWithUrl", (url) => {
-    if (!Cypress.env("a11yCheckedPages").has(url)) {
-        cy.OPGCheckA11y();
-        Cypress.env("a11yCheckedPages").add(url);
+Cypress.Commands.add("OPGCheckA11yWithUrl", (url) => { 
+    if (Cypress.env('CYPRESS_RUN_A11Y_TESTS')) {
+        if (!Cypress.env("a11yCheckedPages").has(url)) {
+            cy.OPGCheckA11y();
+            Cypress.env("a11yCheckedPages").add(url);
+        }
     }
 });
