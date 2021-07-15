@@ -25,5 +25,8 @@ setup(
             'localstack-client',
             'alembic',
         ],
-    }
+    },
+    scripts=[
+        './bin/queuecli'
+    ],
 )

@@ -445,16 +445,16 @@ services:
         aliases:
           - perfplatworker
 
-  perfplatworkerproxy:
-    container_name: perfplatworkerproxy
-    image: perfplatworkerproxy
+  perfplatconfig:
+    container_name: perfplatconfig
+    image: perfplatconfig
     depends_on:
       - perfplatworker
       - local-config
       - localstack
     build:
       context: ./service-perfplat
-      dockerfile: ./dev-proxy/Dockerfile-worker-proxy
+      dockerfile: ./Dockerfile-config
     volumes:
       - ./service-perfplat:/service-perfplat
     environment:
