@@ -21,3 +21,4 @@ module/Application/tests/coverage/
 venv
 vendor/*
 .composer/*
+assets/js/opg/env-vars.js
