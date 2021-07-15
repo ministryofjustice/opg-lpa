@@ -44,7 +44,7 @@ VisibilityTimeout=90"
 
 aws sqs create-queue \
 --queue-name=${OPG_LPA_COMMON_PDF_QUEUE_NAME} \
---attributes="$ATTR" \
+--attributes="${ATTR}" \
 --region=${DEFAULT_REGION} \
 --endpoint=http://${OPG_LPA_COMMON_SQS_ENDPOINT}
 
@@ -64,6 +64,6 @@ aws s3api create-bucket \
 echo "Adding queue for perfplat"
 aws sqs create-queue \
 --queue-name=${OPG_LPA_COMMON_PERFPLAT_QUEUE_NAME} \
---attributes="$ATTR" \
+--attributes="${ATTR}" \
 --region=${DEFAULT_REGION} \
 --endpoint=http://${OPG_LPA_COMMON_SQS_ENDPOINT}

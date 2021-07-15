@@ -1,5 +1,9 @@
 version: "3.7"
 
+networks:
+  malpadev:
+    external: true
+
 services:
   # ---------------------------
   # Local Services
@@ -44,6 +48,7 @@ services:
       - HOSTNAME=localstack
       - LAMBDA_EXECUTOR=docker
       - DEBUG=1
+      - LAMBDA_DOCKER_NETWORK=malpadev
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/localstack:/tmp/localstack
@@ -423,6 +428,8 @@ services:
     build:
       context: ./service-perfplat
       dockerfile: ./Dockerfile-worker
+    depends_on:
+      - postgres
     ports:
       - 7020:8080
     volumes:
@@ -433,3 +440,23 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+    networks:
+      malpadev:
+        aliases:
+          - perfplatworker
+
+  perfplatworkerproxy:
+    container_name: perfplatworkerproxy
+    image: perfplatworkerproxy
+    depends_on:
+      - perfplatworker
+      - local-config
+      - localstack
+    build:
+      context: ./service-perfplat
+      dockerfile: ./dev-proxy/Dockerfile-worker-proxy
+    volumes:
+      - ./service-perfplat:/service-perfplat
+    environment:
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"

@@ -7,7 +7,7 @@ RUN wget -q -O /usr/local/bin/waitforit https://github.com/maxcnunes/waitforit/r
   && chmod +x /usr/local/bin/waitforit
 
 # COPY commands should mirror volumes set up in docker-compose.yml
-COPY ./local-config/start.sh /app/
+COPY ./start.sh /app/
 
 WORKDIR /app
 
