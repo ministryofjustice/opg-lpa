@@ -5,8 +5,8 @@ sys.path.append("/service-perfplat/")
 
 import logging
 
-from perfplatcommon.db import Database
-from perfplatworker.config import CONFIG
+from perfplat.common.db import Database
+from perfplat.worker.config import CONFIG
 
 
 LOGGER = logging.getLogger()

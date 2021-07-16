@@ -6,7 +6,7 @@ import json
 from argparse import ArgumentParser
 from datetime import datetime
 
-from perfplatcommon.sqsclient import SqsClient
+from perfplat.common.sqsclient import SqsClient
 
 
 parser = ArgumentParser(description='SQS queue client')

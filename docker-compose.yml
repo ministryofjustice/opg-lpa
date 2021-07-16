@@ -427,7 +427,7 @@ services:
     image: perfplatworker
     build:
       context: ./service-perfplat
-      dockerfile: ./Dockerfile-worker
+      dockerfile: ./docker/Dockerfile-worker
     depends_on:
       - postgres
     ports:
@@ -454,7 +454,7 @@ services:
       - localstack
     build:
       context: ./service-perfplat
-      dockerfile: ./Dockerfile-config
+      dockerfile: ./docker/Dockerfile-config-dev
     volumes:
       - ./service-perfplat:/service-perfplat
     environment:

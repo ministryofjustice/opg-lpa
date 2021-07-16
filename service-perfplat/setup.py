@@ -9,13 +9,10 @@ setup(
     long_description='',
     long_description_content_type='text/plain',
     packages=[
-        'perfplatcli',
-        'perfplatworker',
-        'perfplatcommon',
+        'perfplat',
     ],
     python_requires='>=3.7, <4',
     install_requires=[
-        'requests',
         'SQLAlchemy',
         'psycopg2',
     ],

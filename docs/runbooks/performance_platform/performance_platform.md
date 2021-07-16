@@ -44,14 +44,14 @@ The code is organised as follows:
 
 * bin/ contains scripts; these will become available without specifying
 the path after you have installed the project with pip (see **Setup for dev**).
-* perfplatcommon/ contains common code which is shared between logical
+* perfplat/common/ contains common code which is shared between logical
 containers.
-* perfplatworker/ contains code specific to the worker lambda.
+* perfplat/worker/ contains code specific to the worker lambda.
 * dev-proxy/ contains code specifically for running the proxy (see below).
-* Dockerfile-worker is the dockerfile for the worker lambda, which is
+* docker/Dockerfile-worker is the dockerfile for the worker lambda, which is
 deployed as a lambda from a docker image.
-* Dockerfile-config is the dockerfile which sets up components required
-in dev, such as the proxy.
+* docker/Dockerfile-config-dev is the dockerfile which creates a container to
+set up components required in dev, such as the proxy.
 
 ### Proxy (dev only)
 
@@ -89,7 +89,7 @@ Follow these steps to set up an environment to run the perfplat code:
 
 1. `virtualenv -p python3 ~/.perfplat-venv`
 2. `source ~/.perfplat-venv/bin/active`
-3. `cd service-perfplat`
+3. `cd service-perfplat/src`
 4. `python setup.py -e.[dev]` (note that if you're using zsh, you may need
 to do `python setup.py -e.\[dev\]`)
 
