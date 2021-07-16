@@ -73,13 +73,7 @@ dc-up-out:
 
 .PHONY: dc-build
 dc-build:
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
-
+	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
 
 # remove docker containers, volumes, images left by existing system, remove vendor folders, rebuild everything
 # with no-cache
@@ -87,12 +81,7 @@ dc-build:
 .PHONY: dc-build-clean
 dc-build-clean:
 	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker system prune -f --volumes; \
+	@docker system prune -f --volumes; \
 	docker rmi lpa-pdf-app || true; \
 	docker rmi lpa-admin-web || true; \
 	docker rmi lpa-admin-app || true; \
@@ -115,12 +104,7 @@ dc-build-clean:
 .PHONY: reset-front
 reset-front:
 	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker system prune -f --volumes; \
+	@docker system prune -f --volumes; \
 	docker rmi lpa-front-web || true; \
 	docker rmi lpa-front-app || true; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
@@ -135,12 +119,7 @@ reset-front:
 .PHONY: reset-api
 reset-api:
 	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker system prune -f --volumes; \
+	@docker system prune -f --volumes; \
 	docker rmi lpa-api-web || true; \
 	docker rmi lpa-api-app || true; \
 	rm -fr ./service-api/vendor; \
@@ -150,12 +129,7 @@ reset-api:
 
 .PHONY: dc-down
 dc-down:
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose down --remove-orphans
+	@docker-compose down --remove-orphans
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
