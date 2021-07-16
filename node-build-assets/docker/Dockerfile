@@ -4,10 +4,10 @@ FROM alpine:latest
 RUN apk add ruby
 RUN apk add npm
 
-RUN npm install -g grunt-cli \
-    && npm install -g grunt-contrib-watch \
-    && npm install -g sass
+WORKDIR /app
 
-WORKDIR /service-front
+COPY ./node-build-assets/docker/start.sh /app/
+RUN npm install -g grunt-cli grunt-contrib-watch sass && \
+    chmod +x /app/start.sh
 
-CMD ["grunt", "build", "watch"]
+CMD ["/app/start.sh"]
