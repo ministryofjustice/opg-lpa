@@ -4,7 +4,8 @@ from typing import Any, Optional, Union
 
 import boto3
 import botocore
-import localstack_client.session as localstack_session
+import logging
+import localstack_client.session as session
 
 
 class SqsClient:
@@ -19,17 +20,15 @@ class SqsClient:
     # Set on all messages to the queue
     MESSAGE_GROUP_ID = 'perfplat'
 
-    def __init__(self, queue_name: str, client: boto3.session=None) -> None:
+    def __init__(self, queue_name: str, client: boto3.session=session.client('sqs')) -> None:
         """
-        :param: queue_name: str; name of the SQS queue
-        :param: client: boto3 SQS client; if not set, create one pointing
+        :param queue_name: str; name of the SQS queue
+        :param client: boto3 SQS client; if not set, create one pointing
             at localstack
         """
-        if client is None:
-            client = localstack_session.client('sqs')
         self.client = client
-
         self.queue_name = queue_name
+        self.logger = logging.getLogger()
 
     def list_queues(self) -> dict:
         """
@@ -48,6 +47,7 @@ class SqsClient:
         try:
             return self.client.get_queue_url(QueueName=self.queue_name)['QueueUrl']
         except botocore.exceptions.ClientError as e:
+            self.logger.error(e)
             return None
 
     def queue_exists(self) -> bool:
@@ -60,17 +60,16 @@ class SqsClient:
 
     def create_queue(self) -> bool:
         """
-        Create the queue if it doesn't exist.
+        Create the queue.
 
-        :return: False if queue exists or could not be created, True otherwise
+        :return: False if error occurred while creating the queue, True otherwise
         """
-        if not self.queue_exists():
-            try:
-                self.client.create_queue(QueueName=self.queue_name)
-                return True
-            except botocore.exceptions.ClientError as e:
-                return False
-        return False
+        try:
+            self.client.create_queue(QueueName=self.queue_name)
+            return True
+        except botocore.exceptions.ClientError as e:
+            self.logger.error(e)
+            return False
 
     def send_message(self, json_payload: Any) -> Union[bool, dict]:
         """
@@ -79,7 +78,7 @@ class SqsClient:
         Note that MESSAGE_GROUP_ID is used as the message group for all
         messages sent to the queue.
 
-        :param: json_payload: any; data to serialise to JSON and use
+        :param json_payload: any; data to serialise to JSON and use
             as MessageBody
         :return: response from queue if it exists, False otherwise
         """

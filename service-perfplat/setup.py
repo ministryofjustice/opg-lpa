@@ -21,6 +21,8 @@ setup(
             'boto3',
             'localstack-client',
             'alembic',
+            'nose',
+            'coverage',
         ],
     },
     scripts=[

@@ -44,4 +44,5 @@ cypress/integration/common/local_dev_only.js
 *.egg-info
 *.pyc
 __pycache__
-build
+**/build
+.coverage
