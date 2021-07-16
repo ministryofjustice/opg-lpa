@@ -49,10 +49,6 @@ Then(`I visit the replacement attorney page for the test fixture lpa`, () => {
     visitPageForTestFixture('replacement-attorney');
 })
 
-Then(`I visit the certificate provider page for the test fixture lpa`, () => {
-    visitPageForTestFixture('certificate-provider');
-})
-
 Then(`I visit the people to notify page for the test fixture lpa`, () => {
     visitPageForTestFixture('people-to-notify');
 })
