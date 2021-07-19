@@ -13,6 +13,16 @@ services:
       context: ./
       dockerfile: node-build-assets/docker/Dockerfile
 
+  local-dataplatform:
+    container_name: local-dataplatform
+    image: local-dataplatform
+    build:
+      context: ./service-perfplat/lambda_functions/v1
+    ports:
+      - "4343:4343"
+    volumes:
+      - ./service-perfplat/lambda_functions/v1/:/var/www/lambda_functions/v1/
+
   postgres:
     image: postgres:10.13
     ports:
