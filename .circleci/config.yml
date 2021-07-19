@@ -6,9 +6,13 @@ pr_build: &pr_build
         name: cancel_previous_jobs
         filters: { branches: { ignore: [master] } }
 
+    - infrastructure_and_deployment/build_cypress_test_image:
+        name: prebuild_cypress_test_image_pr
+        filters: { branches: { ignore: [master] } }
+
     - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
-        filters: { branches: { ignore: [ master ] } }
+        filters: { branches: { ignore: [master] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
@@ -126,7 +130,11 @@ pr_build: &pr_build
     - infrastructure_and_deployment/seed_environment_databases:
         name: dev_seed_environment_databases
         filters: { branches: { ignore: [master] } }
-        requires: [dev_environment_apply_terraform]
+        requires:
+          [
+            dev_environment_apply_terraform,
+            prebuild_cypress_test_image_pr
+          ]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedpf
@@ -160,16 +168,13 @@ pr_build: &pr_build
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
-        requires:
-          [
-            dev_seed_environment_databases
-          ]
+        requires: [dev_seed_environment_databases]
 
 path_to_live: &path_to_live
   jobs:
     - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
-        filters: { branches: { only: [ master ] } }
+        filters: { branches: { only: [master] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
@@ -233,10 +238,7 @@ path_to_live: &path_to_live
         name: preprod_account_apply_terraform
         workspace: preproduction
         filters: { branches: { only: [master] } }
-        requires:
-          [
-            preprod_infra_approval_terraform_apply_account_pr_build,
-          ]
+        requires: [preprod_infra_approval_terraform_apply_account_pr_build]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: preprod_environment_apply_terraform
@@ -360,10 +362,10 @@ orbs:
     executors:
       python:
         docker:
-        - image: circleci/python
-          auth:
-            username: $DOCKER_USER
-            password: $DOCKER_ACCESS_TOKEN
+          - image: circleci/python
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
         resource_class: small
     commands:
       notify:
@@ -966,7 +968,28 @@ orbs:
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
               when: always
-
+      build_cypress_test_image:
+        #
+        # Runs cypress testing
+        #
+        executor: python
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - setup_remote_docker:
+              version: 19.03.12
+              docker_layer_caching: true
+          - attach_workspace:
+              at: /tmp
+          - dockerhub_login
+          - run:
+              name: Build cypress container
+              command: |
+                docker build -f ./cypress/Dockerfile  -t cypress:latest .
       run_functional_test:
         #
         # Runs user journey tests using casper JS
@@ -1052,7 +1075,7 @@ orbs:
           - checkout
           - setup_remote_docker:
               version: 19.03.12
-              docker_layer_caching: false
+              docker_layer_caching: true
           - attach_workspace:
               at: /tmp
           - dockerhub_login
