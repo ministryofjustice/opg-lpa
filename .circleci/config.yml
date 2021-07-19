@@ -505,6 +505,7 @@ orbs:
           - run:
               name: Build web container
               command: |
+                docker --version
                 if << parameters.build_web >> ; then
                   docker build -f << parameters.service_path >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
                 else
@@ -513,6 +514,7 @@ orbs:
           - run:
               name: Build app container
               command: |
+                docker --version
                 docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
           - run:
               name: Run unit tests
