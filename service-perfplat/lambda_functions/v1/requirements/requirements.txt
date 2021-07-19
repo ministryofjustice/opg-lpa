@@ -1,0 +1,7 @@
+#Update this date to trigger update of layers: 140721
+Flask==1.1.2
+flask-lambda==0.0.4
+flask-lambda-python36==0.1.0
+itsdangerous==1.1.0
+python-dotenv==0.13.0
+Werkzeug==1.0.1
