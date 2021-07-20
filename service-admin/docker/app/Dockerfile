@@ -5,7 +5,7 @@ COPY service-admin/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:7.4.20-fpm-alpine3.14
+FROM php:8.0.8-fpm-alpine3.14
 
 RUN apk add --update --no-cache icu
 
