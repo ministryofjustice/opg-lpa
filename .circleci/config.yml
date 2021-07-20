@@ -6,10 +6,6 @@ pr_build: &pr_build
         name: cancel_previous_jobs
         filters: { branches: { ignore: [master] } }
 
-    - infrastructure_and_deployment/build_cypress_test_image:
-        name: prebuild_cypress_test_image_pr
-        filters: { branches: { ignore: [master] } }
-
     - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
         filters: { branches: { ignore: [master] } }
@@ -132,8 +128,7 @@ pr_build: &pr_build
         filters: { branches: { ignore: [master] } }
         requires:
           [
-            dev_environment_apply_terraform,
-            prebuild_cypress_test_image_pr
+            dev_environment_apply_terraform
           ]
 
     - infrastructure_and_deployment/run_cypress_test:
@@ -968,28 +963,6 @@ orbs:
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
               when: always
-      build_cypress_test_image:
-        #
-        # Runs cypress testing
-        #
-        executor: python
-        parameters:
-          workspace:
-            description: Terraform workspace name
-            type: string
-            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        steps:
-          - checkout
-          - setup_remote_docker:
-              version: 19.03.12
-              docker_layer_caching: true
-          - attach_workspace:
-              at: /tmp
-          - dockerhub_login
-          - run:
-              name: Build cypress container
-              command: |
-                docker build -f ./cypress/Dockerfile  -t cypress:latest .
       run_functional_test:
         #
         # Runs user journey tests using casper JS
