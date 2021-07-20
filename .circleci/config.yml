@@ -433,7 +433,7 @@ orbs:
 
   build_containers_and_push_to_ecr:
     orbs:
-      docker: circleci/docker@1.4.0
+      docker: circleci/docker@1.6.0
     commands:
       dockerhub_login:
         steps:
@@ -497,7 +497,7 @@ orbs:
           - checkout
           - install_aws_cli
           - setup_remote_docker:
-              version: 19.03.12
+              version: 20.10.6
               docker_layer_caching: false
           - attach_workspace:
               at: ~/project
@@ -598,7 +598,7 @@ orbs:
     orbs:
       my_slack:
         <<: *slack_orb
-      docker: circleci/docker@1.4.0
+      docker: circleci/docker@1.6.0
     commands:
       dockerhub_login:
         steps:
@@ -980,7 +980,7 @@ orbs:
         steps:
           - checkout
           - setup_remote_docker:
-              version: 19.03.12
+              version: 20.10.6
               docker_layer_caching: false
           - attach_workspace:
               at: /tmp
@@ -1051,7 +1051,7 @@ orbs:
         steps:
           - checkout
           - setup_remote_docker:
-              version: 19.03.12
+              version: 20.10.6
               docker_layer_caching: false
           - attach_workspace:
               at: /tmp
