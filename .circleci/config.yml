@@ -497,7 +497,7 @@ orbs:
           - checkout
           - install_aws_cli
           - setup_remote_docker:
-              version: 19.03.12
+              version: 20.10.6
               docker_layer_caching: false
           - attach_workspace:
               at: ~/project
@@ -505,7 +505,6 @@ orbs:
           - run:
               name: Build web container
               command: |
-                docker --version
                 if << parameters.build_web >> ; then
                   docker build -f << parameters.service_path >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
                 else
@@ -514,7 +513,6 @@ orbs:
           - run:
               name: Build app container
               command: |
-                docker --version
                 docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
           - run:
               name: Run unit tests
@@ -982,7 +980,7 @@ orbs:
         steps:
           - checkout
           - setup_remote_docker:
-              version: 19.03.12
+              version: 20.10.6
               docker_layer_caching: false
           - attach_workspace:
               at: /tmp
@@ -1053,7 +1051,7 @@ orbs:
         steps:
           - checkout
           - setup_remote_docker:
-              version: 19.03.12
+              version: 20.10.6
               docker_layer_caching: false
           - attach_workspace:
               at: /tmp
