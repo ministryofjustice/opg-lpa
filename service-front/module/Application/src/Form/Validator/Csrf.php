@@ -6,6 +6,7 @@ use Application\Logging\LoggerTrait;
 use Laminas\Math\Rand;
 use Laminas\Session\Container;
 use Laminas\Validator\Csrf as LaminasCsrfValidator;
+use Redis;
 use RuntimeException;
 
 /**
@@ -34,6 +35,8 @@ class Csrf extends LaminasCsrfValidator
         self::NOT_SAME => "Oops! Something went wrong with the information you entered. Please try again.",
     ];
 
+    protected $hash = null;
+
     /**
      * Does the provided token match the one generated?
      *
@@ -43,22 +46,24 @@ class Csrf extends LaminasCsrfValidator
      */
     public function isValid($value, $context = null)
     {
-        $hash = $this->getHash(true);
-
-        $this->getLogger()->err(sprintf(
-            "{isValid} Hash value (with regeneration set as true): %s",
-            $hash
-        ));
+        $hash = $this->getHash();
 
         if ($value !== $hash) {
             $this->getLogger()->err(sprintf(
-                "Mismatched CSRF provided; expected %s received %s",
+                "!!!!!!!!!!!!!!!!!!!!!!!! OH DEAR! Mismatched CSRF provided; expected %s BUT received %s",
+                $hash,
                 $value,
-                $this->getHash(),
             ));
+
             $this->error(self::NOT_SAME);
             return false;
         }
+
+        $this->getLogger()->debug(sprintf(
+            "Got expected CSRF provided; expected %s and received %s",
+            $hash,
+            $value,
+        ));
 
         return true;
     }
@@ -66,27 +71,28 @@ class Csrf extends LaminasCsrfValidator
 
     public function getHash($regenerate = false)
     {
-        $isNull = (null === $this->hash);
-
-        $this->getLogger()->err(sprintf(
-            "{getHash} Getting hash [regenerate: %s] [hash: %s] [isNull: %s]",
-            $regenerate,
-            $this->hash,
-            $isNull
-        ));
-
-
-        if ( $isNull || $regenerate) {
-
-            $this->getLogger()->err(sprintf(
-                "{getHash} Getting hash - generating new version."
-            ));
-
-            $this->generateHash();
+        if ($regenerate || is_null($this->hash)) {
+            $this->hash = $this->generateHash();
         }
+
         return $this->hash;
     }
 
+    public function showSessionData()
+    {
+        $key = 'PHPREDIS_SESSION:' . $_COOKIE['lpa2'];
+
+        $redis = new Redis();
+        $redis->connect('redis');
+        $sessionData = $redis->get($key);
+        $stamp = time();
+        $redis->close();
+
+        $this->getLogger()->debug(sprintf('++++++++++++++++++++++ TIME: %s; DATA STORED IN REDIS FOR SESSION = %s', $stamp, $sessionData));
+        //$this->getLogger()->debug(sprintf('++++++++++++++++++++++ CONTENTS OF $_SESSION: %s', print_r($_SESSION, true)));
+
+        return $sessionData;
+    }
 
     /**
      * Generate CSRF token
@@ -98,35 +104,107 @@ class Csrf extends LaminasCsrfValidator
      *
      * @return void
      */
-    protected function generateHash()
+    protected function generateHashUsingSession()
     {
-        $this->getLogger()->err(sprintf(
-            "{generateHash} Generating hash"
-        ));
-
         $salt = $this->getSalt();
 
         if ($salt == null || empty($salt)) {
             throw new RuntimeException('CSRF salt cannot be null or empty');
         }
 
+        $this->getLogger()->debug(sprintf('##################### BEFORE CHECKING FOR csrf_token IN SESSION'));
+        $this->showSessionData();
+
         $session = new Container('CsrfValidator');
 
-        if (!isset($session->token)) {
-            $this->getLogger()->err(sprintf(
-                "{generateHash} Generating hash - generating new token"
-            ));
-            $session->token = hash('sha512', Rand::getBytes(128, true));
+        if (isset($session->csrf_token)) {
+            $token = $session->csrf_token;
+        }
+        else {
+            $this->getLogger()->debug('!!!!!!!!!!!!!!!!!!! NO csrf_token IN SESSION; HERE\'s WHAT WE DO HAVE...');
+
+            $token = hash('sha512', Rand::getBytes(128, true));
+            $this->getLogger()->debug(sprintf('CSRF SESSION TOKEN WAS RESET: %s', $token));
+            $session->csrf_token = $token;
+            session_write_close();
+
+            $this->getLogger()->debug('##################### AFTER RESETTING CSRF TOKEN:');
+            $this->showSessionData();
         }
 
-        $this->hash = hash('sha512', $this->getName() . $session->token . $salt);
+        $hash = hash('sha512', $this->getName() . $token . $salt);
 
-        $this->getLogger()->err(sprintf(
-            "{generateHash} Generated hash [salt: %s] [token: %s] [hash: %s] [name: %s]",
+        $this->getLogger()->debug(sprintf(
+            'DETERMINING CSRF HASH - FORM NAME: %s; TOKEN: %s; SALT: %s; HASH = %s',
+            $this->getName(),
+            $token,
             $salt,
-            $session->token,
-            $this->hash,
-            $this->getName()
+            $hash
         ));
+
+        return $hash;
+    }
+
+    public function setCsrfData($csrfData)
+    {
+        $key = 'CSRF-' . $_COOKIE['lpa2'];
+
+        $redis = new Redis();
+        $redis->connect('redis');
+        $setOk = $redis->set($key, sprintf('%s', $csrfData));
+        $stamp = time();
+        $redis->close();
+
+        $this->getLogger()->debug(sprintf('++++++++++++++++++++++ TIME: %s; KEY: %s; csrfData ATTEMPTED SET IN REDIS = %s; SUCCESSFUL? %s', $stamp, $key, $csrfData, $setOk));
+    }
+
+    public function getCsrfData()
+    {
+        $key = 'CSRF-' . $_COOKIE['lpa2'];
+
+        $redis = new Redis();
+        $redis->connect('redis');
+        $csrfData = $redis->get($key);
+        $stamp = time();
+        $redis->close();
+
+        $this->getLogger()->debug(sprintf('++++++++++++++++++++++ TIME: %s; KEY: %s; csrfData FETCHED FROM REDIS = %s', $stamp, $key, $csrfData));
+
+        return $csrfData;
+    }
+
+    protected function generateHash()
+    {
+        $salt = $this->getSalt();
+
+        if ($salt == null || empty($salt)) {
+            throw new RuntimeException('CSRF salt cannot be null or empty');
+        }
+
+        $this->getLogger()->debug(sprintf('##################### BEFORE CHECKING FOR csrf_token IN SESSION'));
+        $token = $this->getCsrfData();
+
+        if (empty($token)) {
+            $this->getLogger()->debug('!!!!!!!!!!!!!!!!!!! NO csrfData IN SESSION; HERE\'s WHAT WE DO HAVE...');
+
+            $token = hash('sha512', Rand::getBytes(128, true));
+            $this->getLogger()->debug(sprintf('CSRF SESSION TOKEN RESET TO %s', $token));
+            $this->setCsrfData($token);
+
+            $this->getLogger()->debug('##################### AFTER CSRF TOKEN RESET:');
+            $this->getCsrfData();
+        }
+
+        $hash = hash('sha512', $this->getName() . $token . $salt);
+
+        $this->getLogger()->debug(sprintf(
+            'DETERMINING CSRF HASH - FORM NAME: %s; TOKEN: %s; SALT: %s; HASH = %s',
+            $this->getName(),
+            $token,
+            $salt,
+            $hash
+        ));
+
+        return $hash;
     }
 }
