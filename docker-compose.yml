@@ -1,5 +1,16 @@
 version: "3.7"
 
+# Additional external network for routing traffic from
+# the proxy perfplat lambda to the worker perfplat lambda.
+# This is required as non-docker lambdas are started within the
+# localstack docker container (docker within docker),
+# and don't have access to the default docker compose
+# network. This means the proxy lambda is unable to make HTTP
+# requests to the worker lambda. By adding an external
+# network, we provide a route between the proxy lambda
+# (started as a docker container within the localstack
+# docker container) and the worker lambda (started as
+# a docker container within the docker compose context).
 networks:
   malpadev:
     external: true
@@ -48,6 +59,11 @@ services:
       - HOSTNAME=localstack
       - LAMBDA_EXECUTOR=docker
       - DEBUG=1
+      # Configure lambdas started within localstack so
+      # that they use the external malpadev network.
+      # This enables them to resolve names of containers
+      # within the docker compose environment, providing
+      # they have an alias on this network.
       - LAMBDA_DOCKER_NETWORK=malpadev
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -440,6 +456,16 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+    # Apply an alias to the worker lambda (running
+    # as a docker compose container) on the malpadev
+    # network. This enables localstack lambdas attached
+    # to malpadev to reach the worker lambda through
+    # this alias, so we can make requests to
+    # http://perfplatworker/... In turn, this enables
+    # us to forward events received by the proxy lambda
+    # from the SQS queue on to the worker, by converting
+    # them into HTTP POST requests to the worker lambda's
+    # endpoint.
     networks:
       malpadev:
         aliases:
