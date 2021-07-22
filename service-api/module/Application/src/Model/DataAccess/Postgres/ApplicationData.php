@@ -6,7 +6,6 @@ use PDOException;
 use EmptyIterator;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
@@ -83,49 +82,6 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
         ]);
     }
 
-    // Internal function to reduce repeated code for SELECT queries
-    //
-    // $criteria are added to the WHERE clause; the "search" key is escaped
-    // and used for a regex match if present
-    // $options are used to set columns, LIMIT, OFFSET and SORT
-    private function select(array $criteria, array $options=[]) : Result
-    {
-        $sql = $this->dbWrapper->createSql();
-
-        $select = $sql->select(self::APPLICATIONS_TABLE);
-
-        if (isset($criteria['search'])) {
-            $quoted = $this->dbWrapper->quoteValue($criteria['search']);
-            $select->where([new Expression("search ~* {$quoted}")]);
-            unset($criteria['search']);
-        }
-
-        if ($criteria !== [] && !is_null($criteria)) {
-            $select->where($criteria);
-        }
-
-        if (isset($options['skip']) && $options['skip'] !== 0) {
-            $select->offset($options['skip']);
-        }
-
-        if (isset($options['limit'])) {
-            $select->limit($options['limit']);
-        }
-
-        if (isset($options['sort'])) {
-            foreach($options['sort'] as $field=>$direction){
-                $direction = ($direction === 1) ? 'ASC' : 'DESC';
-                $select->order("$field $direction");
-            }
-        }
-
-        if (isset($options['columns'])) {
-            $select->columns($options['columns']);
-        }
-
-        return $sql->prepareStatementForSqlObject($select)->execute();
-    }
-
     /**
      * @param array $criteria
      * @param array $options
@@ -133,7 +89,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
      */
     public function fetch(array $criteria, array $options = []) : Traversable
     {
-        $result = $this->select($criteria, $options);
+        $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, $options);
 
         foreach ($result as $resultRecord) {
             yield $this->mapPostgresToLpaCompatible($resultRecord);
@@ -154,7 +110,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             $criteria['user'] = $userId;
         }
 
-        $result = $this->select($criteria, ['limit' => 1]);
+        $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, ['limit' => 1]);
 
         if (!$result->isQueryResult() || $result->count() != 1) {
             return null;
@@ -175,7 +131,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             'columns' => ['count' => new Expression('count(*)')]
         ];
 
-        $result = $this->select($criteria, $options);
+        $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, $options);
 
         if (!$result->isQueryResult() || $result->count() != 1) {
             return 0;

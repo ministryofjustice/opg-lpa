@@ -3,9 +3,11 @@ namespace Application\Model\DataAccess\Postgres;
 
 use Application\Logging\LoggerTrait;
 use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
 use Laminas\Db\ResultSet;
+use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Sql;
 
 /**
@@ -28,6 +30,7 @@ class DbWrapper {
     /**
      * Constructor.
      * @param Adapter $adapter
+     * @param string $tableName
      */
     public function __construct(Adapter $adapter)
     {
@@ -74,5 +77,52 @@ class DbWrapper {
     public function createSql() : Sql
     {
         return new Sql($this->adapter);
+    }
+
+    /**
+     * Perform a SQL SELECT against the db.
+     *
+     * @param string $tableName Name of table to select against
+     * @param array $criteria Added to the WHERE clause; the "search" key is escaped
+     * and used for a regex match if present
+     * @param array $options Used to set columns, LIMIT, OFFSET and SORT
+     * @return Result
+     */
+    public function select(string $tableName, array $criteria, array $options=[]) : Result
+    {
+        $sql = $this->createSql();
+
+        $select = $sql->select($tableName);
+
+        if (isset($criteria['search'])) {
+            $quoted = $this->quoteValue($criteria['search']);
+            $select->where([new Expression("search ~* {$quoted}")]);
+            unset($criteria['search']);
+        }
+
+        if ($criteria !== [] && !is_null($criteria)) {
+            $select->where($criteria);
+        }
+
+        if (isset($options['skip']) && $options['skip'] !== 0) {
+            $select->offset($options['skip']);
+        }
+
+        if (isset($options['limit'])) {
+            $select->limit($options['limit']);
+        }
+
+        if (isset($options['sort'])) {
+            foreach ($options['sort'] as $field => $direction) {
+                $direction = ($direction === 1) ? 'ASC' : 'DESC';
+                $select->order("$field $direction");
+            }
+        }
+
+        if (isset($options['columns'])) {
+            $select->columns($options['columns']);
+        }
+
+        return $sql->prepareStatementForSqlObject($select)->execute();
     }
 }
