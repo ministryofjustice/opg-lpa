@@ -1,5 +1,20 @@
 version: "3.7"
 
+# Additional external network for routing traffic from
+# the proxy perfplat lambda to the worker perfplat lambda.
+# This is required as non-docker lambdas are started within the
+# localstack docker container (docker within docker),
+# and don't have access to the default docker compose
+# network. This means the proxy lambda is unable to make HTTP
+# requests to the worker lambda. By adding an external
+# network, we provide a route between the proxy lambda
+# (started as a docker container within the localstack
+# docker container) and the worker lambda (started as
+# a docker container within the docker compose context).
+networks:
+  malpadev:
+    external: true
+
 services:
   # ---------------------------
   # Local Services
@@ -35,22 +50,36 @@ services:
 
   localstack:
     image: localstack/localstack:latest
+    privileged: true
     ports:
       - 4566:4566
     environment:
-      - SERVICES=sqs,s3
+      - SERVICES=sqs,s3,lambda
       - DEFAULT_REGION=eu-west-1
       - HOSTNAME=localstack
+      - LAMBDA_EXECUTOR=docker
+      - DEBUG=1
+      # Configure lambdas started within localstack so
+      # that they use the external malpadev network.
+      # This enables them to resolve names of containers
+      # within the docker compose environment, providing
+      # they have an alias on this network.
+      - LAMBDA_DOCKER_NETWORK=malpadev
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/localstack:/tmp/localstack
 
   local-config:
     container_name: lpa-local-config
     build:
       context: ./local-config/
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
     depends_on:
       - dynamodb
       - postgres
       - localstack
+    volumes:
+      - ./local-config/:/app/
     environment:
       AWS_ACCESS_KEY_ID: "-"
       AWS_SECRET_ACCESS_KEY: "-"
@@ -58,9 +87,12 @@ services:
 
       OPG_LPA_COMMON_SQS_ENDPOINT: localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_NAME: pdf-queue.fifo
+      OPG_LPA_COMMON_PERFPLAT_QUEUE_NAME: perfplat-queue.fifo
 
       OPG_LPA_COMMON_S3_ENDPOINT: localstack:4566
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
+
+      OPG_LPA_COMMON_LAMBDA_ENDPOINT: localstack:4566
 
   # ---------------------------
   # Front
@@ -124,6 +156,7 @@ services:
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
 
       OPG_LPA_OS_PLACES_HUB_ENDPOINT : "https://api.os.uk/search/places/v1/postcode"
+
   front-composer:
     image: composer:latest
     volumes:
@@ -357,6 +390,7 @@ services:
       - --no-scripts
       - --optimize-autoloader
       - --ignore-platform-reqs
+
   # ---------------------------
   # Seeding
   seeding:
@@ -401,3 +435,54 @@ services:
       dockerfile: ./Dockerfile-mocksirius
     ports:
       - 7011:5000
+
+  # ---------------------------
+  # performance platform
+  perfplatworker:
+    container_name: perfplatworker
+    image: perfplatworker
+    build:
+      context: ./service-perfplat
+      dockerfile: ./docker/Dockerfile-worker
+    depends_on:
+      - postgres
+    ports:
+      - 7020:8080
+    volumes:
+      - ./service-perfplat:/service-perfplat
+    environment:
+      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
+      OPG_LPA_POSTGRES_PORT: "5432"
+      OPG_LPA_POSTGRES_NAME: "lpadb"
+      OPG_LPA_POSTGRES_USERNAME: "lpauser"
+      OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+    # Apply an alias to the worker lambda (running
+    # as a docker compose container) on the malpadev
+    # network. This enables localstack lambdas attached
+    # to malpadev to reach the worker lambda through
+    # this alias, so we can make requests to
+    # http://perfplatworker/... In turn, this enables
+    # us to forward events received by the proxy lambda
+    # from the SQS queue on to the worker, by converting
+    # them into HTTP POST requests to the worker lambda's
+    # endpoint.
+    networks:
+      malpadev:
+        aliases:
+          - perfplatworker
+
+  perfplatconfig:
+    container_name: perfplatconfig
+    image: perfplatconfig
+    depends_on:
+      - perfplatworker
+      - local-config
+      - localstack
+    build:
+      context: ./service-perfplat
+      dockerfile: ./docker/Dockerfile-config-dev
+    volumes:
+      - ./service-perfplat:/service-perfplat
+    environment:
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
