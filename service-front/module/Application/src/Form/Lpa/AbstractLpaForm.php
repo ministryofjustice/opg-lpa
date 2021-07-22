@@ -141,6 +141,7 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
                     }
                 }
 
+                $this->getLogger()->info('BOOM ', $fields);
                 foreach ($fields as $field) {
                     $childFields = [rtrim($field, '-')];
 
@@ -148,7 +149,7 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
                     //  Name on its own means that the custom violation was built in the parent object context
                     //  Otherwise it would be prefixed with parentElementName.name and this statement would not match.
                     //  If it does it means we need to map name to the three name components, title, first, last
-                    if ($childFields[0] === 'name') {
+                    if ($childFields[0] === 'name' and $fields[1] !== 'number') {
                         $childFields = ['name-title', 'name-first', 'name-last'];
                     }
 
