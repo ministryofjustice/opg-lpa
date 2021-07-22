@@ -27,7 +27,7 @@
 
                     <div class="list-item_status">
                         <p class="opg-application-status-text">Application status<span class="visually-hidden"> for A{{ lpa.id }}</span></p>
-                        <div class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
+                        <div data-cy="lpa-status-lozenge-{{ lpa.id }}" class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
                         <br/>
 
                         {{ macros.showStatusDescriptionLinksIfEnabled(trackingEnabled, status, lpa.id) }}
@@ -52,16 +52,16 @@
                         {% if lpa.progress in ['Started', 'Created'] %}Continue<span class="visually-hidden"> LPA A{{ lpa.id }}</span>{% else %}View LPA<span class="visually-hidden"> A{{ lpa.id }}</span>{% endif %}
                     </a>
                     <ul class="list-item_secondary_actions">
-                        {% if lpa.progress != 'Started' %}
+                        {% if lpa.isReusable %}
                             <li>
-                                <a href="/lpa/{{ lpa.id }}/date-check" data-journey-click="page:link:navigation: Check signing dates">Check <span class="extra-text">signing</span> dates<span class="visually-hidden"> for A{{ lpa.id }}</span></a>
+                                <a href="/lpa/{{ lpa.id }}/date-check" data-cy="check-signing-dates" data-journey-click="page:link:navigation: Check signing dates">Check <span class="extra-text">signing</span> dates<span class="visually-hidden"> for A{{ lpa.id }}</span></a>
                             </li>
                             <li>
-                                <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}" data-journey-click="page:link:reuse: Reuse LPA details">Reuse <span class="extra-text">LPA</span> details<span class="visually-hidden"> from A{{ lpa.id }}</span></a>
+                                <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}" data-cy="reuse-lpa-details" data-journey-click="page:link:reuse: Reuse LPA details">Reuse <span class="extra-text">LPA</span> details<span class="visually-hidden"> from A{{ lpa.id }}</span></a>
                             </li>
                         {% endif %}
                         <li>
-                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" class="js-form-popup" data-journey-click="page:link:delete: Delete">Delete <span class="extra-text">LPA</span><span class="visually-hidden"> A{{ lpa.id }}</span></a>
+                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" class="js-form-popup" data-cy="delete-lpa" data-journey-click="page:link:delete: Delete">Delete <span class="extra-text">LPA</span><span class="visually-hidden"> A{{ lpa.id }}</span></a>
                         </li>
                     </ul>
                 </div>
@@ -99,8 +99,8 @@
 
 {% macro showStatusDescriptionLinksIfEnabled(trackingEnabled, status, id) %}
     {% if trackingEnabled %}
-        {% if status in ['completed', 'waiting', 'received', 'checking', 'returned'] %}
-            <a id="status-description-link-{{ id }}" href="/lpa/{{ id }}/status">View {{ status }} message</a>
+        {% if status in ['completed', 'waiting', 'received', 'checking', 'processed'] %}
+            <a id="status-description-link-{{ id }}" data-journey-click="page:link:View {{status}} message" data-cy="lpa-view-message-link-{{ id }}" href="/lpa/{{ id }}/status">View {{ status }} message</a>
         {% endif %}
     {% endif %}
 {% endmacro %}

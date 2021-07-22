@@ -8,9 +8,12 @@ use App\Service\ApiClient\Client as ApiClient;
 use App\Service\User\UserService;
 use DateTime;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class UserServiceTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSearchForUserByEmail()
     {
         $id = 'fooman';

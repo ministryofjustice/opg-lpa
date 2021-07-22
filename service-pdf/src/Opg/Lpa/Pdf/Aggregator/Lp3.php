@@ -20,7 +20,7 @@ class Lp3 extends AbstractAggregator
     {
         //  Loop through the people to notify and set up the individual PDFs
         foreach ($lpa->document->peopleToNotify as $personToNotify) {
-            $this->addPdf(new Lp3Pdf($lpa, $personToNotify));
+            $this->addPdf(new Lp3Pdf($lpa, $personToNotify, $this->pdftkFactory));
         }
     }
 }

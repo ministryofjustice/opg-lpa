@@ -89,19 +89,37 @@ if [ "$?" -ne "0" ] ; then
     exit 1
 fi
 
-echo "Seeding data"
+echo "==-------=="
+echo "Truncating any existing Seed data"
+echo "==-------=="
 PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
   ${OPG_LPA_POSTGRES_NAME} \
   -f clear_tables.sql
 
+echo "==-------=="
+echo "Seeding data: Users Table"
+echo "==-------=="
 PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
   ${OPG_LPA_POSTGRES_NAME} \
   -f seed_test_users.sql
 
+echo "==-------=="
+echo "Seeding data: LPA Applications Table"
+echo "==-------=="
 PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
   ${OPG_LPA_POSTGRES_NAME} \
   -f seed_test_applications.sql
 
+echo "==-------=="
+echo "Seeding data: Feedback Table"
+echo "==-------=="
+PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
+  ${OPG_LPA_POSTGRES_NAME} \
+  -f seed_test_feedback.sql
+
+echo "==-------=="
+echo "Seeding data: User Deletion Log Table"
+echo "==-------=="
 PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
   ${OPG_LPA_POSTGRES_NAME} \
   -f seed_test_deletion_log.sql

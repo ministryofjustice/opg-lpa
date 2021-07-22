@@ -14,11 +14,12 @@ Feature: Add a Certificate Provider to a Property and Finance LPA
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
         When I click "add-certificate-provider"
-        Then I can see popup
+        And I opt not to re-use details if lpa is a clone
+        Then I can find "form-certificate-provider"
         And I can find "form-cancel"
         And I can find "name-title" with 8 options
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
-        And I can find "use-my-details"
+        And I can find use-my-details if lpa is new
         When I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -50,7 +51,7 @@ Feature: Add a Certificate Provider to a Property and Finance LPA
         When I click "delete-certificate-provider"
         And I click "cancel"
         And I click "view-change-certificate-provider"
-        Then I can see popup
+        Then I can find "form-certificate-provider"
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
             | name-first | Reece |

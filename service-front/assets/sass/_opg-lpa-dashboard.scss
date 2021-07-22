@@ -41,7 +41,7 @@
   font-weight: bold;
 }
 
-.opg-status--returned {
+.opg-status--processed {
   background-color: $white;
   color: $dark-grey;
   font-weight: bold;
@@ -78,8 +78,8 @@
   font-weight: bold;
 }
 
-.opg-lozenge-status--returned {
-  background-color: $status-returned-colour;
+.opg-lozenge-status--processed {
+  background-color: $status-processed-colour;
   color: $white;
   font-weight: bold;
 }
@@ -117,10 +117,10 @@ ul.track-my-lpa li{
   border-left-color: $status-checking-colour;
 }
 
-.status-container--returned
+.status-container--processed
 {
   border-left: 10px solid;
-  border-left-color: $status-returned-colour;
+  border-left-color: $status-processed-colour;
 }
 
 .opg-application-status-text {

@@ -143,27 +143,44 @@
       $('#help-sections').focus();
     },
 
-    _hasCachedContent: function () {
-      // first try to load from html5 storage
-      if (moj.Helpers.hasHtml5Storage() && typeof sessionStorage.guidanceHTML !== 'undefined') {
-        return sessionStorage.guidanceHTML;
+    _getCachedContent: function () {
+      // use the revision variable on the window to determine whether we
+      // have valid cached content: we compare the revision in the current app
+      // vs. the one we have stored in sessionStorage and invalidate the cache
+      // if they differ
+      var html = undefined;
+      var revision = window.getBuildRevision();
+
+      // try from this class (NB we don't worry about the revision, as
+      // this class will be instantiated afresh on page load and won't be
+      // retained between releases of different versions of the app)
+      if (typeof this.html !== 'undefined') {
+        html = this.html;
       }
-      // then try from this class
-      else if (typeof this.html !== 'undefined') {
-        return this.html;
+      // next try to load from html5 storage; note the '' + revision used in the
+      // comparison is necessary as the value in storage is a string and will
+      // be 'undefined' if window.MAKE_ENV.revision is not set; by contrast,
+      // getBuildRevision() returns undefined (not a string)
+      else if (moj.Helpers.hasHtml5Storage() &&
+      typeof sessionStorage.guidanceHTML !== 'undefined' &&
+      sessionStorage.guidanceHTMLRevision === '' + revision) {
+        html = sessionStorage.guidanceHTML;
       }
-      // otherwise, return false
-      else {
-        return false;
-      }
+
+      return {
+        revision: revision,
+        html: html,
+      };
     },
 
     _loadOverlay: function (topic) {
-      var self = this,
-        html = this._hasCachedContent();
+      var self = this;
+      var cached = this._getCachedContent();
+      var html = cached.html;
+      var revision = cached.revision;
 
       // if content has been cached, load it straight in
-      if (html !== false) {
+      if (html !== undefined) {
         moj.Modules.Popup.open(html, {
           ident: this.settings.overlayIdent,
           source: this.source,
@@ -181,15 +198,20 @@
           ident: self.settings.overlayIdent,
           source: this.source,
           beforeOpen: function () {
-            $('#popup-content').load('/' + self.settings.guidancePath, function (html) {
+            var url = window.cacheBusting.url('/' + self.settings.guidancePath);
+
+            $('#popup-content').load(url, function (html) {
               // cache content
               if (moj.Helpers.hasHtml5Storage()) {
-                // save to html5 storage
+                // save to html5 storage; note we also store the revision
+                // to help us decide whether to refresh the cache later
+                sessionStorage.guidanceHTMLRevision = revision;
                 sessionStorage.guidanceHTML = html;
-              } else {
-                // save to obj
-                self.html = html;
               }
+
+              // save to obj
+              self.html = html;
+
               // set the topic now that all content has loaded
               self._setTopic(topic);
 

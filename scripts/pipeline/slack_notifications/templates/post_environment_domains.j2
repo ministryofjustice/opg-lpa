@@ -1,0 +1,72 @@
+{
+
+    "blocks":
+    [
+        {
+            "type": "header",
+            "text":
+            {
+                "type": "plain_text",
+                "text": "Online LPA Development Environment Deployed",
+                "emoji": false
+            }
+        },
+        {
+            "type": "section",
+            "text":
+            {
+                "type": "mrkdwn",
+                "text": "*NOTE:* This build is still running tests.\n You may want to check the tests for success or failures."
+            }
+        },
+        {
+            "type": "section",
+            "text":
+            {
+                "type": "mrkdwn",
+                "text": "The workflow is located at: <https://app.circleci.com/pipelines/workflows/{{ CIRCLE_WORKFLOW_ID }}>"
+            }
+        }
+    ],
+    "attachments":
+    [
+        {
+            "fallback" : "Online LPA Development Environment Ready",
+            "color": "#508c18",
+            "blocks":
+            [
+                {
+                    "type": "section",
+                    "text": {
+                    "type": "mrkdwn",
+                    "text": "public facing url: <https://{{ PUBLIC_FACING_DOMAIN }}/home>"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                    "type": "mrkdwn",
+                    "text": "front url: <https://{{ FRONT_DOMAIN }}>"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                    "type": "mrkdwn",
+                    "text": "admin url: <https://{{ ADMIN_DOMAIN }}>"
+                    }
+                },
+                {
+                    "type": "context",
+                    "elements":
+                    [
+                        {
+                            "type": "mrkdwn",
+                            "text": "by user: {{ CIRCLE_USERNAME }} - branch: {{ CIRCLE_BRANCH }} - Commit Message:  {{ COMMIT_MESSAGE }}"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

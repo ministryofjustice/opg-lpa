@@ -36,6 +36,7 @@ class PeopleToNotifyForm extends AbstractActorForm
     public function init()
     {
         $this->setName('form-people-to-notify');
+        $this->setAttribute('data-cy', 'form-people-to-notify');
 
         //  Set the actor model so it can be used during validation
         $this->actorModel = new NotifiedPerson();

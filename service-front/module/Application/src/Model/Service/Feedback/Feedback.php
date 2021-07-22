@@ -29,7 +29,11 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
             $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_FEEDBACK, $data);
 
             return true;
-        } catch (Exception $ignore) {}
+        } catch (Exception $e) {
+            $this->getLogger()->err('Exception while adding feedback from Feedback service');
+            $this->getLogger()->err($e->getMessage());
+            $this->getLogger()->err($e->getTraceAsString());
+        }
 
         return false;
     }

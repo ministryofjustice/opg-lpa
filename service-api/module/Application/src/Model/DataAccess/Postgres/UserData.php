@@ -144,7 +144,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $likes->orPredicate(new Like('u.identity', $likeString));
 
         $lcaseLikeString = strtolower($likeString);
-        if ($lcaseLikeString !== $likesString) {
+        if ($lcaseLikeString !== $likeString) {
             $likes->orPredicate(new Like('u.identity', $lcaseLikeString));
         }
 

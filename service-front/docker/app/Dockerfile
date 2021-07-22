@@ -1,11 +1,11 @@
-FROM composer:latest AS composer
+FROM composer:2.1.3 AS composer
 
 COPY service-front/composer.json /app/composer.json
 COPY service-front/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:7.4.16-fpm-alpine3.12
+FROM php:7.4.20-fpm-alpine3.14
 
 RUN apk add --update --no-cache icu
 

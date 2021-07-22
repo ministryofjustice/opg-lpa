@@ -22,7 +22,10 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
   }
 }
 
+
+#tfsec:ignore:AWS002 bucket logging not needed
 resource "aws_s3_bucket" "access_log" {
+  #tfsec:ignore:AWS077 versioning not required for a logging bucket
   bucket = "online-lpa-${terraform.workspace}-lb-access-logs"
   acl    = "private"
   tags   = local.default_tags
@@ -36,11 +39,21 @@ resource "aws_s3_bucket" "access_log" {
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "access_log" {
+  bucket                  = aws_s3_bucket.access_log.id
+  block_public_acls       = true
+  block_public_policy     = true
+  restrict_public_buckets = true
+  ignore_public_acls      = true
+}
+
 resource "aws_s3_bucket_policy" "access_log" {
   bucket = aws_s3_bucket.access_log.id
   policy = data.aws_iam_policy_document.loadbalancer_logging.json
+
 }
 
+#tfsec:ignore:AWS002 #tfsec:ignore:AWS077 - no logging or versioning required as a temp cache
 resource "aws_s3_bucket" "lpa_pdf_cache" {
   bucket        = lower("online-lpa-pdf-cache-${terraform.workspace}")
   acl           = "private"
@@ -79,6 +92,7 @@ resource "aws_kms_key" "lpa_pdf_cache" {
   description             = "S3 bucket encryption key for lpa_pdf_cache"
   deletion_window_in_days = 7
   tags                    = merge(local.default_tags, local.pdf_component_tag)
+  enable_key_rotation     = true
 }
 
 resource "aws_kms_alias" "lpa_pdf_cache" {

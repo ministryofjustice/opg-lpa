@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     {%- set defaultTitle = 'Make a lasting power of attorney' -%}
-    <title>{% if (authError is not empty or error is not empty or (form is not empty and form.getMessages|length > 0)) %}Error: {% endif %}{% if pageTitle %}{{ pageTitle }} - {% else %}{% set pageTitle = defaultTitle %}{% endif %}{{ defaultTitle }} - GOV.UK</title>
+    <title>{% if (authError is not empty or error is not empty or (form is not empty and form.getMessages|length > 0)) %}Error: {% endif %}{% if overridePageTitle %}{{ overridePageTitle }} - {% elseif pageTitle %}{{ pageTitle }} - {% else %}{% set pageTitle = defaultTitle %}{% endif %}{{ defaultTitle }} - GOV.UK</title>
 
     <link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template.css', { 'minify':true } ) }}" rel="stylesheet" type="text/css"/>
 

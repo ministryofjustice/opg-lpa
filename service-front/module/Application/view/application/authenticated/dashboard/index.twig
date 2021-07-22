@@ -16,7 +16,7 @@
                 <li><strong class="bold-small">continue creating</strong> an LPA</li>
                 <li><strong class="bold-small">check the signing dates</strong> on an LPA are in the right order before you send it to OPG - if they're not, we cannot register the LPA and you may have to pay another application fee
                 </li>
-                <li><strong class="bold-small">reuse details from an existing LPA to create a new one</strong> - you can do this once you've completed all sections up to and including the person to notify section, and have added a certificate provider
+                <li><strong class="bold-small">reuse details from an existing LPA to create a new one</strong> - you can do this once you've completed all sections up to and including the person to notify section
                 </li>
             </ul>
         </div>
@@ -123,25 +123,25 @@
 {% block scripts %}
     {% if trackingEnabled %}
     <script>
-        $( document ).ready(function() {
+        $(document).ready(function() {
             // Get an array of the LPA IDs to check for a status update
-            const ids = $('li[data-refresh-id]').map(function () { return this.getAttribute('data-refresh-id'); }).get();
+            var ids = $('li[data-refresh-id]').map(function () { return this.getAttribute('data-refresh-id'); }).get();
 
             if(ids.length > 0) {
                 $.getJSON("/user/dashboard/statuses/" + ids.join(), function (results) {
                     // Loop through all the ids that were requested and update the text css style to the new status
                     ids.forEach(function (lpaId) {
-                        const lpaResult = results[lpaId];
+                        var lpaResult = results[lpaId];
 
                         if (lpaResult['found']) {
-                            const li = $('li[data-refresh-id=' + lpaId + ']');
+                            var li = $('li[data-refresh-id=' + lpaId + ']');
 
                             // Get the status from the returned data
-                            const newStatus = lpaResult['status'].toLowerCase();
+                            var newStatus = lpaResult['status'].toLowerCase();
 
                             // Store current status then update style on the status indicator
-                            const statusIndicator = li.find(".opg-status");
-                            const currentStatus = statusIndicator.html().toLowerCase();
+                            var statusIndicator = li.find(".opg-status");
+                            var currentStatus = statusIndicator.html().toLowerCase();
 
                             statusIndicator.html(newStatus);
 
@@ -152,9 +152,10 @@
                             li.removeClass('status-container--' + currentStatus);
                             li.addClass('status-container--' + newStatus);
 
-                            // Update the status link
-                            const link = $('a[id=status-description-link-' + lpaId + ']');
+                            // Update the status link with the new status
+                            var link = $('a[id=status-description-link-' + lpaId + ']');
                             link.attr('href', '/lpa/' + lpaId + '/status');
+                            link.attr('data-journey-click', 'page:link:View ' + newStatus + ' message');
                             link.text('View ' + newStatus + ' message');
                         }
                     });

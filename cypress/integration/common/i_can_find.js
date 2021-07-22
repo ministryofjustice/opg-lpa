@@ -4,12 +4,14 @@ Then(`I can find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]");
 })
 
-Then(`I can find {string} with data-inited`, (object) => {
-  cy.get("[data-cy=" + object + "][data-inited=true]");
+Then(`I can find use-my-details if lpa is new`, (object) => {
+  if (Cypress.env('clonedLpa') !== true) {
+      cy.get("[data-cy=use-my-details]");
+  }
 })
 
-Then(`I can find old style id {string}`, (object) => {
-  cy.get(object);
+Then(`I can find {string} with data-inited`, (object) => {
+  cy.get("[data-cy=" + object + "][data-inited=true]");
 })
 
 Then(`I cannot find {string}`, (object) => {
@@ -18,6 +20,14 @@ Then(`I cannot find {string}`, (object) => {
 
 Then(`I can find hidden {string}`, (object) => {
   cy.get("[data-cy=" + object + "]").should('be.hidden');
+})
+
+Then(`I can find {string} but it is not visible`, (object) => {
+  cy.get("[data-cy=" + object + "]").should('not.be.visible');
+})
+
+Then(`I can find {string} and it is visible`, (object) => {
+  cy.get("[data-cy=" + object + "]").should('be.visible');
 })
 
 Then(`I can find {string} wrapped with error highlighting`, (object) => {
@@ -38,24 +48,11 @@ Then(`I can find draft download link`, () => {
     });
 })
 
-Then(`I can find old style id {string} with {int} options`, (object, count) => {
-  cy.get(object).children().should("have.length", count);
-})
-
 Then(`I can find {string} with {int} options`, (object, count) => {
   cy.get("[data-cy=" + object + "]").children().should("have.length", count);
 })
 
 // used for dropdown list for example
-Then(`I can find old style id {string} with options`, (object, dataTable) => {
-  cy.get(object).children().should($foundObject => {
-    var rawTable = dataTable.rawTable;
-    rawTable.forEach(row => { 
-        expect($foundObject).to.contain(row[0]);
-        });
-    })
-})
-
 Then(`I can find {string} with options`, (object, dataTable) => {
   cy.get("[data-cy=" + object + "]").children().should($foundObject => {
     var rawTable = dataTable.rawTable;

@@ -35,11 +35,11 @@ class ContinuationSheet1 extends AbstractContinuationSheet
      * @param Lpa $lpa
      * @param array $actorGroups
      */
-    public function __construct(Lpa $lpa, array $actorGroups)
+    public function __construct(Lpa $lpa, array $actorGroups, ?PdftkFactory $pdftkFactory = null)
     {
         $this->actorGroups = $actorGroups;
 
-        parent::__construct($lpa);
+        parent::__construct($lpa, [], $pdftkFactory);
     }
 
     /**

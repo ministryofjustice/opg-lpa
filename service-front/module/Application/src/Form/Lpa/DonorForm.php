@@ -52,6 +52,7 @@ class DonorForm extends AbstractActorForm
     public function init()
     {
         $this->setName('form-donor');
+        $this->setAttribute('data-cy', 'form-donor');
 
         //  Set the actor model so it can be used during validation
         $this->actorModel = new Donor();
