@@ -110,20 +110,19 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function count(array $criteria) : int
     {
-        $sql    = new Sql($this->getZendDb());
+        $adapter = $this->getZendDb();
+        $sql    = new Sql($adapter);
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         $select->columns(['count' => new Expression('count(*)')]);
 
         if (isset($criteria['search'])) {
-            $select->where([new Expression("search ~* '{$criteria['search']['$regex']}'")]);
+            $quoted = $adapter->getPlatform()->quoteValue($criteria['search']);
+            $select->where([new Expression("search ~* {$quoted}")]);
             unset($criteria['search']);
         }
 
         $select->where($criteria);
-
-        // Below echo left purposely to view the prepared sql query for test
-        //  echo $select->getSqlString($this->getZendDb()->getPlatform())."\n";
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
@@ -141,11 +140,13 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function fetch(array $criteria, array $options = []) : Traversable
     {
-        $sql    = new Sql($this->getZendDb());
+        $adapter = $this->getZendDb();
+        $sql    = new Sql($adapter);
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         if (isset($criteria['search'])) {
-            $select->where([new Expression("search ~* '{$criteria['search']['$regex']}'")]);
+            $quoted = $adapter->getPlatform()->quoteValue($criteria['search']);
+            $select->where([new Expression("search ~* {$quoted}")]);
             unset($criteria['search']);
         }
 
