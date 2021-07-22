@@ -6,6 +6,7 @@ use PDOException;
 use EmptyIterator;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
@@ -17,7 +18,6 @@ use Application\Library\DateTime as MillisecondDateTime;
 
 class ApplicationData implements ApplicationRepository\ApplicationRepositoryInterface
 {
-
     const APPLICATIONS_TABLE = 'applications';
 
     /**
@@ -83,83 +83,15 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
         ]);
     }
 
-    /**
-     * Get an LPA by ID, and user ID if provided
-     *
-     * @param int $id
-     * @param string $userId
-     * @return array|null
-     */
-    public function getById(int $id, ?string $userId = null) : ?array
+    // Internal function to reduce repeated code for SELECT queries
+    //
+    // $criteria are added to the WHERE clause; the "search" key is escaped
+    // and used for a regex match if present
+    // $options are used to set columns, LIMIT, OFFSET and SORT
+    private function select(array $criteria, array $options=[]) : Result
     {
         $sql = $this->dbWrapper->createSql();
-        $select = $sql->select(self::APPLICATIONS_TABLE);
 
-        $select->where(['id' => $id]);
-        if (is_string($userId)) {
-            $select->where(['user' => $userId]);
-        }
-
-        $select->limit(1);
-
-        $result = $sql->prepareStatementForSqlObject($select)->execute();
-
-        if (!$result->isQueryResult() || $result->count() != 1) {
-            return null;
-        }
-
-        return $this->mapPostgresToLpaCompatible($result->current());
-    }
-
-    public function getByIdsAndUser(array $lpaIds, string $userId) : Traversable
-    {
-        return $this->select([
-            'user' => $userId,
-            new InPredicate('id', $lpaIds),
-        ]);
-    }
-
-    /**
-     * Counts the number of results for the given criteria.
-     *
-     * @param array $criteria
-     * @return int
-     */
-    public function count(array $criteria) : int
-    {
-        $sql = $this->dbWrapper->createSql();
-        $select = $sql->select(self::APPLICATIONS_TABLE);
-
-        $select->columns(['count' => new Expression('count(*)')]);
-
-        if (isset($criteria['search'])) {
-            $quoted = $this->dbWrapper->quoteValue($criteria['search']);
-            $select->where([new Expression("search ~* {$quoted}")]);
-            unset($criteria['search']);
-        }
-
-        // any remaining criteria are added as additional where conditions
-        if ($criteria !== []) {
-            $select->where($criteria);
-        }
-
-        $result = $sql->prepareStatementForSqlObject($select)->execute();
-
-        if (!$result->isQueryResult() || $result->count() != 1) {
-            return 0;
-        }
-
-        return $result->current()['count'];
-    }
-
-    /**
-     * @param array $criteria
-     * @param array $options
-     * @return Traversable
-     */
-    public function fetch(array $criteria, array $options = []) : Traversable
-    {
-        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         if (isset($criteria['search'])) {
@@ -168,7 +100,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             unset($criteria['search']);
         }
 
-        if ($criteria !== []) {
+        if ($criteria !== [] && !is_null($criteria)) {
             $select->where($criteria);
         }
 
@@ -187,41 +119,73 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             }
         }
 
-        $results = $sql->prepareStatementForSqlObject($select)->execute();
-
-        foreach ($results as $result) {
-            yield $this->mapPostgresToLpaCompatible($result);
+        if (isset($options['columns'])) {
+            $select->columns($options['columns']);
         }
+
+        return $sql->prepareStatementForSqlObject($select)->execute();
     }
 
     /**
-     * Generic select allowing arbitrary SQL construction to fetch LPAs.
-     *
-     * @param array $where If provided, clauses are ANDed together by
-     * default; see https://docs.laminas.dev/laminas-db/sql/#where-having
+     * @param array $criteria
+     * @param array $options
      * @return Traversable
      */
-    public function select(array $where = null) : Traversable
+    public function fetch(array $criteria, array $options = []) : Traversable
     {
-        $sql = $this->dbWrapper->createSql();
-        $select = $sql->select(self::APPLICATIONS_TABLE);
+        $result = $this->select($criteria, $options);
 
-        if (!is_null($where)) {
-            $select->where($where);
-        }
-
-        $results = $sql->prepareStatementForSqlObject($select)->execute();
-
-        if (!$results->isQueryResult()) {
-            return new EmptyIterator();
-        }
-
-        foreach ($results as $result) {
-            yield $this->mapPostgresToLpaCompatible($result);
+        foreach ($result as $resultRecord) {
+            yield $this->mapPostgresToLpaCompatible($resultRecord);
         }
     }
 
     /**
+     * Get an LPA by ID, and user ID if provided
+     *
+     * @param int $id
+     * @param string $userId
+     * @return array|null
+     */
+    public function getById(int $id, ?string $userId = null) : ?array
+    {
+        $criteria = ['id' => $id];
+        if (is_string($userId)) {
+            $criteria['user'] = $userId;
+        }
+
+        $result = $this->select($criteria, ['limit' => 1]);
+
+        if (!$result->isQueryResult() || $result->count() != 1) {
+            return null;
+        }
+
+        return $this->mapPostgresToLpaCompatible($result->current());
+    }
+
+    /**
+     * Counts the number of results for the given criteria.
+     *
+     * @param array $criteria
+     * @return int
+     */
+    public function count(array $criteria) : int
+    {
+        $options = [
+            'columns' => ['count' => new Expression('count(*)')]
+        ];
+
+        $result = $this->select($criteria, $options);
+
+        if (!$result->isQueryResult() || $result->count() != 1) {
+            return 0;
+        }
+
+        return $result->current()['count'];
+    }
+
+    /**
+     * Get LPAs for the specified user.
      * @param string $userId
      * @param array $options
      * @return Traversable
@@ -229,6 +193,22 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
     public function fetchByUserId(string $userId, array $options = []) : Traversable
     {
         return $this->fetch(['user' => $userId], $options);
+    }
+
+    /**
+     * Get LPAs whose IDs are in $lpaIds for the specified user.
+     * @param array $lpaIds Array of LPA IDs which must be matched
+     * @param string $userId ID of the user to get LPAs for
+     * @return Traversable containing LPA items
+     */
+    public function getByIdsAndUser(array $lpaIds, string $userId) : Traversable
+    {
+        $criteria = [
+            'user' => $userId,
+            new InPredicate('id', $lpaIds),
+        ];
+
+        return $this->fetch($criteria);
     }
 
     /**
@@ -322,7 +302,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             $searchField = (string)$lpa->getDocument()->getDonor()->getName();
         }
 
-        $lastUpdated = $lpa->getUpdatedAt()->format(self::TIME_FORMAT);
+        $lastUpdated = $lpa->getUpdatedAt()->format($this->dbWrapper::TIME_FORMAT);
 
         if ($updateTimestamp === true) {
             // Record the time we updated the document.
@@ -384,7 +364,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
 
 
         unset($data['id']); // We want to keep this
-        $data['updatedAt'] = gmdate(self::TIME_FORMAT); // We want to keep and update this.
+        $data['updatedAt'] = gmdate($this->dbWrapper::TIME_FORMAT); // We want to keep and update this.
 
         //--
 

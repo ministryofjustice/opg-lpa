@@ -6,7 +6,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Postgres\DbWrapper;
-use Laminas\Db\ResultSet;
+use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 
@@ -21,7 +21,7 @@ class ApplicationDataTest extends MockeryTestCase
         $dbWrapperMock = Mockery::Mock(DbWrapper::class);
         $sqlMock = Mockery::Mock(Sql::class);
         $selectMock = Mockery::Mock(Select::class);
-        $resultSetMock = Mockery::Mock(ResultSet::class);
+        $resultMock = Mockery::Mock(Result::class);
 
         // expectations
         $dbWrapperMock->shouldReceive('createSql')
@@ -49,12 +49,12 @@ class ApplicationDataTest extends MockeryTestCase
             ->with($selectMock)
             ->andReturn($sqlMock);
         $sqlMock->shouldReceive('execute')
-            ->andReturn($resultSetMock);
-        $resultSetMock->shouldReceive('isQueryResult')
+            ->andReturn($resultMock);
+        $resultMock->shouldReceive('isQueryResult')
             ->andReturn(True);
-        $resultSetMock->shouldReceive('count')
+        $resultMock->shouldReceive('count')
             ->andReturn(1);
-        $resultSetMock->shouldReceive('current')
+        $resultMock->shouldReceive('current')
             ->andReturn(['count' => $expectedCount]);
 
         // test method
