@@ -1,3 +1,7 @@
+const process = require('process');
+
+const Handlebars = require('handlebars');
+
 // for global replace of incorrect colours (from obsolete
 // govuk design system) with correct colours (from latest
 // design system); this will not be required when we upgrade to the latest
@@ -16,7 +20,7 @@ const colourPatching = [
   }
 ];
 
-let colourPatch = function (content) {
+const colourPatch = function (content) {
     for (let patch in colourPatching) {
         let oldColour = patch.from;
         let newColour = patch.to;
@@ -26,10 +30,49 @@ let colourPatch = function (content) {
     return content;
 };
 
+// content is the handlebars template content for the env-vars JS file
+const injectEnvVars = function (content) {
+    // load the template into Handlebars
+    const template = Handlebars.compile(content);
+
+    // construct the ENV_VARS variable to inject into the template
+    // from the nodejs runtime environment variables; these will be from the
+    // pipeline env and similar
+    let envVars = {};
+
+    // The following variables are set and passed to the template:
+    //   revision: set from the REVISION env var; in CircleCI, this is set
+    //   from a build-unique string in the pipeline;
+    //   this is then used as a cacheBust parameter on JS ajax calls
+    //   (see cache-busting.js)
+    if ('REVISION' in process.env) {
+        envVars.revision = process.env.REVISION;
+    }
+
+    // render the template
+    return template({ENV_VARS: envVars});
+};
+
 module.exports = function (grunt) {
   'use strict';
 
   grunt.initConfig({
+
+    // watching sass and js (as they need post tasks)
+    watch: {
+      scss: {
+        files: 'assets/sass/**/*.scss',
+        tasks: ['sass', 'replace:image_url', 'cssmin']
+      },
+      js: {
+        files: 'assets/js/**/*.js',
+        tasks: ['concat', 'uglify']
+      },
+      templates: {
+        files: ['<%= handlebars.compile.src %>'],
+        tasks: ['handlebars']
+      }
+    },
 
     // sass files to compile
     sass: {
@@ -80,7 +123,7 @@ module.exports = function (grunt) {
     },
 
     copy: {
-      main: {
+      css: {
         src: [
           'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
           'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
@@ -91,6 +134,15 @@ module.exports = function (grunt) {
           process: colourPatch
         },
         flatten: true,
+      },
+
+      jsenv: {
+        src: 'assets/js/opg/env-vars.template.js',
+        dest: 'assets/js/opg/env-vars.js',
+        options: {
+          process: injectEnvVars
+        },
+        flatten: true
       }
     },
 
@@ -121,6 +173,7 @@ module.exports = function (grunt) {
           // Dependencies
           'node_modules/handlebars/dist/handlebars.js',
           'node_modules/lodash/lodash.js',
+          'node_modules/urijs/src/URI.min.js',
           'assets/js/govuk/stageprompt.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
@@ -131,6 +184,8 @@ module.exports = function (grunt) {
           'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
           'assets/js/opg/jquery-plugin-opg-spinner.js',
           'assets/js/opg/session-timeout-dialog.js',
+          'assets/js/opg/env-vars.js',
+          'assets/js/opg/cache-busting.js',
 
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',
@@ -219,6 +274,7 @@ module.exports = function (grunt) {
 
   // load npm tasks
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-scss-lint');
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -230,7 +286,7 @@ module.exports = function (grunt) {
 
   // define tasks
   grunt.registerTask('test', ['scsslint', 'jshint']);
-  grunt.registerTask('build_js', ['handlebars', 'concat', 'uglify']);
-  grunt.registerTask('build_css', ['sass', 'replace', 'copy', 'cssmin']);
+  grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify']);
+  grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };

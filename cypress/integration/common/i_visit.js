@@ -10,6 +10,10 @@ Then(`I visit the login page`, () => {
     cy.visit('/login');
 })
 
+Then(`I visit the dashboard`, () => {
+    cy.visit('/user/dashboard');
+})
+
 Then(`I visit the type page`, () => {
     cy.visitWithChecks('/lpa/type');
 })
@@ -23,6 +27,14 @@ Then(`If I am on dashboard I visit the type page`, () => {
             cy.visitWithChecks('/lpa/type');
         }
     });
+})
+
+Then(`I visit the admin sign-in page`, () => {
+    cy.visitWithChecks(Cypress.env('adminUrl') + '/sign-in');
+})
+
+Then (`I visit the admin system-message page`, () => {
+    cy.visit(Cypress.env('adminUrl') + '/system-message');
 })
 
 Then(`I visit the donor page for the test fixture lpa`, () => {

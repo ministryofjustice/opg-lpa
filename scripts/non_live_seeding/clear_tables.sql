@@ -1,4 +1,5 @@
 -- empty tables
-TRUNCATE TABLE public.users CASCADE;
-TRUNCATE TABLE public.applications CASCADE;
-TRUNCATE TABLE public.deletion_log CASCADE;
+TRUNCATE TABLE public.users RESTART identity CASCADE;
+TRUNCATE TABLE public.applications RESTART identity CASCADE;
+TRUNCATE TABLE public.deletion_log RESTART identity CASCADE;
+TRUNCATE TABLE public.feedback RESTART identity CASCADE;

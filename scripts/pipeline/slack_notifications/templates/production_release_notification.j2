@@ -1,0 +1,55 @@
+{
+    "blocks":
+    [
+        {
+            "type": "header",
+            "text":
+            {
+                "type": "plain_text",
+                "text": "LPA Production Release Successful",
+                "emoji": false
+            }
+        }
+    ],
+    "attachments":
+    [
+        {
+            "fallback" : "LPA Production Release Successful",
+            "color": "#508c18",
+            "blocks":
+            [
+                {
+                    "type": "section",
+                    "text": {
+                    "type": "mrkdwn",
+                    "text": "public facing url: <https://{{ PUBLIC_FACING_DOMAIN }}/home>"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                    "type": "mrkdwn",
+                    "text": "front url: <https://{{ FRONT_DOMAIN }}>"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                    "type": "mrkdwn",
+                    "text": "admin url: <https://{{ ADMIN_DOMAIN }}>"
+                    }
+                },
+                {
+                    "type": "context",
+                    "elements":
+                    [
+                        {
+                            "type": "mrkdwn",
+                            "text": "by user: {{ CIRCLE_USERNAME }} - branch: {{ CIRCLE_BRANCH }} - Commit Message: {{ COMMIT_MESSAGE }}"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

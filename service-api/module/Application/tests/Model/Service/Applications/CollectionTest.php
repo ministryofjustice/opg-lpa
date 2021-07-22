@@ -19,7 +19,7 @@ class CollectionTest extends TestCase
         $array = $collection->toArray();
 
         $this->assertEquals(count($lpaArray), $array['total']);
-        $this->assertEquals($array['applications'][0], $lpa1->abbreviatedToArray());
-        $this->assertEquals($array['applications'][1], $lpa2->abbreviatedToArray());
+        $this->assertEquals($array['applications'][0], $lpa1->toArray());
+        $this->assertEquals($array['applications'][1], $lpa2->toArray());
     }
 }

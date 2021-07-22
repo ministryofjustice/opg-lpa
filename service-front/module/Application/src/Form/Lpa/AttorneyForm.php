@@ -45,6 +45,7 @@ class AttorneyForm extends AbstractActorForm
     public function init()
     {
         $this->setName('form-attorney');
+        $this->setAttribute('data-cy', 'form-attorney');
 
         //  Set the actor model so it can be used during validation
         $this->actorModel = new Human();

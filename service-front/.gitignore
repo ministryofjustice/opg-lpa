@@ -11,8 +11,14 @@ nbproject
 .sass-cache/*
 node_modules/*
 public/nocommit/*
+public/assets/v2/css/application.css.map
+public/assets/v2/css/application.min.css
+public/assets/v2/css/print.min.css
+public/assets/v2/js/application.min.js
+public/assets/v2/js/application.min.js.map
 local.php.old
 module/Application/tests/coverage/
 venv
 vendor/*
 .composer/*
+assets/js/opg/env-vars.js

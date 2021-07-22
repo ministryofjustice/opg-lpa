@@ -3,6 +3,7 @@ namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
 use PDOException;
+use EmptyIterator;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Laminas\Db\Sql\Sql;
@@ -10,6 +11,7 @@ use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Sql\Predicate\In as InPredicate;
 use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
@@ -92,6 +94,14 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         return $this->mapPostgresToLpaCompatible($result->current());
     }
 
+    public function getByIdsAndUser(array $lpaIds, string $userId) : Traversable
+    {
+        return $this->select([
+            'user' => $userId,
+            new InPredicate('id', $lpaIds),
+        ]);
+    }
+
     /**
      * Counts the number of results for the given criteria.
      *
@@ -157,6 +167,33 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         }
 
         $results = $sql->prepareStatementForSqlObject($select)->execute();
+
+        foreach ($results as $result) {
+            yield $this->mapPostgresToLpaCompatible($result);
+        }
+    }
+
+    /**
+     * Generic select allowing arbitrary SQL construction to fetch LPAs.
+     *
+     * @param array $where If provided, clauses are ANDed together by
+     * default; see https://docs.laminas.dev/laminas-db/sql/#where-having
+     * @return Traversable
+     */
+    public function select(array $where = null) : Traversable
+    {
+        $sql = new Sql($this->getZendDb());
+        $select = $sql->select(self::APPLICATIONS_TABLE);
+
+        if (!is_null($where)) {
+            $select->where($where);
+        }
+
+        $results = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$results->isQueryResult()) {
+            return new EmptyIterator();
+        }
 
         foreach ($results as $result) {
             yield $this->mapPostgresToLpaCompatible($result);
@@ -458,16 +495,16 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     }
 
     /**
-     * Count the number of LPAs returned for a given LPA type
+     * Count the number of LPAs processed for a given LPA type
      *
      * @param $lpaType
      * @return int
      */
-    public function countReturnedForType(string $lpaType) : int
+    public function countProcessedForType(string $lpaType) : int
     {
         return $this->count([
             new IsNotNull('completedAt'),
-            new Expression("metadata ->> 'sirius-processing-status' = ?", Lpa::SIRIUS_PROCESSING_STATUS_RETURNED),
+            new Expression("metadata ->> 'sirius-processing-status' = ?", 'Processed'),
             new Expression("document ->> 'type' = ?", $lpaType),
         ]);
     }

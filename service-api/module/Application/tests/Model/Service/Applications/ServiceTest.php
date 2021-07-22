@@ -9,6 +9,7 @@ use Application\Library\DateTime;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
+use \EmptyIterator;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Formatter;
@@ -520,7 +521,7 @@ class ServiceTest extends AbstractServiceTest
         $applications = $apiLpaCollection['applications'];
         $this->assertEquals(1, count($applications));
 
-        $this->assertEquals(($lpas[0])->abbreviatedToArray(), $applications[0]);
+        $this->assertEquals(($lpas[0])->toArray(), $applications[0]);
     }
 
     public function testFetchAllSearchById()
@@ -546,7 +547,7 @@ class ServiceTest extends AbstractServiceTest
         $applications = $apiLpaCollection['applications'];
         $this->assertEquals(1, count($applications));
 
-        $this->assertEquals(($lpas[1])->abbreviatedToArray(), $applications[0]);
+        $this->assertEquals(($lpas[1])->toArray(), $applications[0]);
     }
 
     public function testFetchAllSearchByIdAndFilter()
@@ -596,7 +597,7 @@ class ServiceTest extends AbstractServiceTest
         $applications = $apiLpaCollection['applications'];
         $this->assertEquals(1, count($applications));
 
-        $this->assertEquals(($lpas[0])->abbreviatedToArray(), $applications[0]);
+        $this->assertEquals(($lpas[0])->toArray(), $applications[0]);
     }
 
     public function testFetchAllSearchByName()
@@ -624,6 +625,46 @@ class ServiceTest extends AbstractServiceTest
         $this->assertEquals(0, $response->count());
     }
 
+    public function testFilterByIdsAndUser_ApplicationRepositoryReturnsEmptyIterator()
+    {
+        $lpaIds = ['1234', '5678'];
+        $userId = 'user1';
+
+        $this->applicationRepository->shouldReceive('getByIdsAndUser')
+            ->withArgs([$lpaIds, $userId])
+            ->andReturn([]);
+
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApplicationRepository($this->applicationRepository)
+            ->build();
+
+        $response = $service->filterByIdsAndUser($lpaIds, $userId);
+
+        $this->assertEquals([], $response);
+    }
+
+    public function testFilterByIdsAndUser_ApplicationRepositoryReturnsLpas()
+    {
+        $lpaIds = ['1234', '5678'];
+        $userId = 'user1';
+        $hwLpa = FixturesData::getHwLpa();
+        $pfLpa = FixturesData::getPfLpa();
+
+        $this->applicationRepository->shouldReceive('getByIdsAndUser')
+            ->withArgs([$lpaIds, $userId])
+            ->andReturn([$hwLpa->toArray(), $pfLpa->toArray()]);
+
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApplicationRepository($this->applicationRepository)
+            ->build();
+
+        $response = $service->filterByIdsAndUser($lpaIds, $userId);
+
+        $this->assertEquals([$hwLpa, $pfLpa], $response);
+    }
+
     /**
      * @param User $user
      * @param Lpa $lpa
@@ -638,7 +679,7 @@ class ServiceTest extends AbstractServiceTest
             ->withArgs([$lpa->getId()])
             ->andReturn($lpa->toArray());
     }
-    
+
     /**
      * @param User $user
      */

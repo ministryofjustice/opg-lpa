@@ -17,7 +17,8 @@ use Exception;
 
 /**
  * Generate LPA stats and saves the results back into the Database.
- * To run, bash into apiv2, cd to app and run 'php public/index.php generate-stats'
+ * To run, bash into the api-app container, cd to /app and run
+ * './vendor/bin/laminas service-api:generate-stats'
  *
  * Class Stats
  * @package Application\Model\Service\System
@@ -154,7 +155,7 @@ class Stats extends AbstractService
             $month['checking'] = $this->getApplicationRepository()->countCheckedBetween($start, $end);
 
             // Count all the LPAs that have rejected date...
-            $month['returned'] = $this->getApplicationRepository()->countReturnedBetween($start, $end);
+            $month['processed'] = $this->getApplicationRepository()->countReturnedBetween($start, $end);
 
             $byMonth[date('Y-m', $start->getTimestamp())] = $month;
 
@@ -183,8 +184,8 @@ class Stats extends AbstractService
         // Count all the LPAs that have been received
         $summary['received'] = $pf['received'] = $this->getApplicationRepository()->countReceivedForType(Document::LPA_TYPE_PF);
 
-        // Count all the LPAs that have been returned
-        $summary['returned'] = $pf['returned'] = $this->getApplicationRepository()->countReturnedForType(Document::LPA_TYPE_PF);
+        // Count all the LPAs that have been processed
+        $summary['processed'] = $pf['processed'] = $this->getApplicationRepository()->countProcessedForType(Document::LPA_TYPE_PF);
 
         // Count all the LPAs that have a completedAt...
         $summary['completed'] = $pf['completed'] = $this->getApplicationRepository()->countCompletedForType(Document::LPA_TYPE_PF);
@@ -206,8 +207,8 @@ class Stats extends AbstractService
         // Count all the LPAs that have been received
         $summary['received'] += $hw['received'] = $this->getApplicationRepository()->countReceivedForType(Document::LPA_TYPE_HW);
 
-        // Count all the LPAs that have been returned
-        $summary['returned'] += $hw['returned'] = $this->getApplicationRepository()->countReturnedForType(Document::LPA_TYPE_HW);
+        // Count all the LPAs that have been processed
+        $summary['processed'] += $hw['processed'] = $this->getApplicationRepository()->countProcessedForType(Document::LPA_TYPE_HW);
 
         // Count all the LPAs that have a completedAt...
         $summary['completed'] += $hw['completed'] = $this->getApplicationRepository()->countCompletedForType(Document::LPA_TYPE_HW);
@@ -244,7 +245,7 @@ class Stats extends AbstractService
 
         for ($i = 0; $i < 4; $i++) {
             $ts = strtotime("-{$i} months", $firstDayOfThisMonth);
-            
+
             $results['by-month'][date('Y-m', $ts)] = $this->getWhoRepository()->getStatsForTimeRange(
                 new DateTime("@{$ts}"),
                 new DateTime("@{$lastTimestamp}"),

@@ -3,6 +3,7 @@ namespace Application\Model\Service\Session;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
+use Laminas\Console\Request as ConsoleRequest;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -16,7 +17,6 @@ use Aws\DynamoDb\DynamoDbClient;
  * @package Application\Model\Service\Session
  */
 class SessionFactory implements FactoryInterface {
-
     /**
      * Create an object
      *
@@ -33,40 +33,33 @@ class SessionFactory implements FactoryInterface {
     {
         $config = $container->get('Config');
 
-        if( !isset( $config['session'] ) ){
+        if (!isset($config['session'])) {
             throw new RuntimeException('Session configuration setting not found');
         }
 
         $config = $config['session'];
 
-        //----------------------------------------
         // Apply any native PHP level settings
-
-        if( isset($config['native_settings']) && is_array($config['native_settings']) ){
-
-            foreach( $config['native_settings'] as $k => $v ){
-                ini_set( 'session.'.$k, $v );
+        if (isset($config['native_settings']) && is_array($config['native_settings'])) {
+            foreach ($config['native_settings'] as $k => $v) {
+                ini_set('session.' . $k, $v);
             }
-
         }
 
         //----------------------------------------
         // Set the cookie domain
 
         // Only if it's not a Console request.
-        if( !( $container->get('Request') instanceof \Laminas\Console\Request ) ){
-
+        if(!($container->get('Request') instanceof ConsoleRequest)){
             // This is requirement of the GDS service checker
 
             // Get the hostname of the current request
             $hostname = $container->get('Request')->getUri()->getHost();
 
             // and set it as the domain cookie.
-            ini_set( 'session.cookie_domain', $hostname );
-
+            ini_set('session.cookie_domain', $hostname);
         }
 
         return new SessionManager();
     }
-
-} // class
+}
