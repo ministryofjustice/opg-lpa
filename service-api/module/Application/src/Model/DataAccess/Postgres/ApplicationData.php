@@ -6,13 +6,13 @@ use PDOException;
 use EmptyIterator;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Sql\Predicate\In as InPredicate;
-use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Library\DateTime as MillisecondDateTime;
@@ -27,7 +27,6 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     const TABLE_COLUMNS = ['id', 'user', 'updatedAt', 'startedAt', 'createdAt', 'completedAt', 'lockedAt', 'locked',
                             'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document', 'payment', 'metadata'];
-
 
     /**
      * Maps LPA object fields to Postgres' fields.
@@ -75,7 +74,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function getById(int $id, ?string $userId = null) : ?array
     {
-        $sql    = new Sql($this->getZendDb());
+        $sql    = $this->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         $select->where(['id' => $id]);
@@ -110,14 +109,13 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function count(array $criteria) : int
     {
-        $adapter = $this->getZendDb();
-        $sql    = new Sql($adapter);
+        $sql    = $this->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         $select->columns(['count' => new Expression('count(*)')]);
 
         if (isset($criteria['search'])) {
-            $quoted = $adapter->getPlatform()->quoteValue($criteria['search']);
+            $quoted = $this->quoteValue($criteria['search']);
             $select->where([new Expression("search ~* {$quoted}")]);
             unset($criteria['search']);
         }
@@ -140,12 +138,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function fetch(array $criteria, array $options = []) : Traversable
     {
-        $adapter = $this->getZendDb();
-        $sql    = new Sql($adapter);
+        $sql    = $this->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         if (isset($criteria['search'])) {
-            $quoted = $adapter->getPlatform()->quoteValue($criteria['search']);
+            $quoted = $this->quoteValue($criteria['search']);
             $select->where([new Expression("search ~* {$quoted}")]);
             unset($criteria['search']);
         }
@@ -183,7 +180,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function select(array $where = null) : Traversable
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         if (!is_null($where)) {
@@ -218,7 +215,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function insert(Lpa $lpa) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->createSql();
         $insert = $sql->insert(self::APPLICATIONS_TABLE);
 
         $data = $this->mapLpaToPostgres($lpa);
@@ -311,7 +308,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         //------------------------------------------
 
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->createSql();
         $update = $sql->update(self::APPLICATIONS_TABLE);
 
         $update->where([
@@ -339,7 +336,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function deleteById(int $lpaId, string $userId) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->createSql();
         $update = $sql->update(self::APPLICATIONS_TABLE);
 
         $update->where([
@@ -353,8 +350,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
          * We pull the full column list from Postgres here to ensure we set all of the to null.
          * (This isn't efficient for bulk deletes but is fine until we see any issues)
          */
-        $metadata = DbMetadataFactory::createSourceFromAdapter($this->getZendDb());
-        $table = $metadata->getTable(self::APPLICATIONS_TABLE);
+        $table = $this->getTable(self::APPLICATIONS_TABLE);
 
         $data = [];
 
@@ -533,8 +529,6 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function getLpasPerUser() : array
     {
-        $adapter = $this->getZendDb();
-
         /*
          The query is:
 
@@ -544,7 +538,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             SELECT lpa_count, count(*) AS "user_count" FROM lpa_counts GROUP BY lpa_count
          */
 
-        $sql = new Sql($adapter);
+        $sql = $this->createSql();
 
         $selectOne = $sql->select(self::APPLICATIONS_TABLE);
         $selectOne->columns(['user', 'lpa_count' => new Expression('count(*)')]);
@@ -556,9 +550,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $selectTwo->group('lpa_count');
         $selectTwo->order('lpa_count DESC');
 
-        $query = 'WITH lpa_counts AS('.$sql->buildSqlString($selectOne).') '.$sql->buildSqlString($selectTwo);
+        $query = 'WITH lpa_counts AS(' . $sql->buildSqlString($selectOne). ') ' . $sql->buildSqlString($selectTwo);
 
-        $results = $adapter->query($query, $adapter::QUERY_MODE_EXECUTE)->toArray();
+        $results = $this->rawQuery($query)->toArray();
 
         /*
          * This creates an array where:
