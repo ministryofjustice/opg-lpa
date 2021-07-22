@@ -30,18 +30,25 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
 
     /**
      * Wrapper around db adapter and SQL generation.
-     * @var AbstractBase
+     * @var DbWrapper
      */
     private $dbWrapper;
+
+    /**
+     * Application configuration.
+     * @var array
+     */
+    private $config;
 
     /**
      * Constructor.
      * @param ZendDbAdapter $adapter
      * @param array $config
      */
-    public final function __construct(AbstractBase $dbWrapper)
+    public final function __construct(DbWrapper $dbWrapper, array $config)
     {
         $this->dbWrapper = $dbWrapper;
+        $this->config = $config;
     }
 
     /**
@@ -87,7 +94,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
      */
     public function getById(int $id, ?string $userId = null) : ?array
     {
-        $sql    = $this->dbWrapper->createSql();
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         $select->where(['id' => $id]);
@@ -122,7 +129,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
      */
     public function count(array $criteria) : int
     {
-        $sql    = $this->dbWrapper->createSql();
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         $select->columns(['count' => new Expression('count(*)')]);
@@ -151,7 +158,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
      */
     public function fetch(array $criteria, array $options = []) : Traversable
     {
-        $sql    = $this->dbWrapper->createSql();
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         if (isset($criteria['search'])) {
@@ -464,14 +471,12 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
      */
     public function countCompletedForType(string $lpaType) : int
     {
-        {
-            $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
-            return $this->count([
-                new IsNotNull('completedAt'),
-                new Operator('completedAt', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $trackFromDate->format('c')),
-                new Expression("document ->> 'type' = ?", $lpaType),
-            ]);
-        }
+        $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
+        return $this->count([
+            new IsNotNull('completedAt'),
+            new Operator('completedAt', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $trackFromDate->format('c')),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
     }
 
     /**

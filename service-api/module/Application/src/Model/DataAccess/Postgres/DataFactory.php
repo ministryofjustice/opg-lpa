@@ -23,15 +23,11 @@ class DataFactory implements FactoryInterface
 
         // Special treatment for ApplicationData as it is in the process of being refactored
         if ($requestedName === ApplicationData::class) {
-            $dbWrapper = new AbstractBase(
-                $container->get('ZendDbAdapter'),
-                $container->get('Config')
-            );
-
-            return new ApplicationData($dbWrapper);
+            $dbWrapper = new DbWrapper($container->get('ZendDbAdapter'));
+            return new ApplicationData($dbWrapper, $container->get('Config'));
         }
 
-        // Create subclasses of AbstractBase
+        // Create subclasses of AbstractBase the old way
         if (!is_subclass_of($requestedName, AbstractBase::class)) {
             throw new \RuntimeException("Class {$requestedName} cannot be created with this factory");
         }
