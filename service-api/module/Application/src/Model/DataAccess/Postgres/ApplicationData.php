@@ -17,7 +17,7 @@ use Application\Model\DataAccess\Repository\Application as ApplicationRepository
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Library\DateTime as MillisecondDateTime;
 
-class ApplicationData extends AbstractBase implements ApplicationRepository\ApplicationRepositoryInterface
+class ApplicationData implements ApplicationRepository\ApplicationRepositoryInterface
 {
 
     const APPLICATIONS_TABLE = 'applications';
@@ -27,6 +27,22 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     const TABLE_COLUMNS = ['id', 'user', 'updatedAt', 'startedAt', 'createdAt', 'completedAt', 'lockedAt', 'locked',
                             'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document', 'payment', 'metadata'];
+
+    /**
+     * Wrapper around db adapter and SQL generation.
+     * @var AbstractBase
+     */
+    private $dbWrapper;
+
+    /**
+     * Constructor.
+     * @param ZendDbAdapter $adapter
+     * @param array $config
+     */
+    public final function __construct(AbstractBase $dbWrapper)
+    {
+        $this->dbWrapper = $dbWrapper;
+    }
 
     /**
      * Maps LPA object fields to Postgres' fields.
@@ -62,9 +78,6 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         ]);
     }
 
-
-    //------------------------------------------
-
     /**
      * Get an LPA by ID, and user ID if provided
      *
@@ -74,7 +87,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function getById(int $id, ?string $userId = null) : ?array
     {
-        $sql    = $this->createSql();
+        $sql    = $this->dbWrapper->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         $select->where(['id' => $id]);
@@ -109,13 +122,13 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function count(array $criteria) : int
     {
-        $sql    = $this->createSql();
+        $sql    = $this->dbWrapper->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         $select->columns(['count' => new Expression('count(*)')]);
 
         if (isset($criteria['search'])) {
-            $quoted = $this->quoteValue($criteria['search']);
+            $quoted = $this->dbWrapper->quoteValue($criteria['search']);
             $select->where([new Expression("search ~* {$quoted}")]);
             unset($criteria['search']);
         }
@@ -138,11 +151,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function fetch(array $criteria, array $options = []) : Traversable
     {
-        $sql    = $this->createSql();
+        $sql    = $this->dbWrapper->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         if (isset($criteria['search'])) {
-            $quoted = $this->quoteValue($criteria['search']);
+            $quoted = $this->dbWrapper->quoteValue($criteria['search']);
             $select->where([new Expression("search ~* {$quoted}")]);
             unset($criteria['search']);
         }
@@ -180,7 +193,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function select(array $where = null) : Traversable
     {
-        $sql = $this->createSql();
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::APPLICATIONS_TABLE);
 
         if (!is_null($where)) {
@@ -215,7 +228,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function insert(Lpa $lpa) : bool
     {
-        $sql = $this->createSql();
+        $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::APPLICATIONS_TABLE);
 
         $data = $this->mapLpaToPostgres($lpa);
@@ -308,7 +321,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         //------------------------------------------
 
-        $sql = $this->createSql();
+        $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::APPLICATIONS_TABLE);
 
         $update->where([
@@ -336,7 +349,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function deleteById(int $lpaId, string $userId) : bool
     {
-        $sql = $this->createSql();
+        $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::APPLICATIONS_TABLE);
 
         $update->where([
@@ -350,7 +363,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
          * We pull the full column list from Postgres here to ensure we set all of the to null.
          * (This isn't efficient for bulk deletes but is fine until we see any issues)
          */
-        $table = $this->getTable(self::APPLICATIONS_TABLE);
+        $table = $this->dbWrapper->getTable(self::APPLICATIONS_TABLE);
 
         $data = [];
 
@@ -538,7 +551,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             SELECT lpa_count, count(*) AS "user_count" FROM lpa_counts GROUP BY lpa_count
          */
 
-        $sql = $this->createSql();
+        $sql = $this->dbWrapper->createSql();
 
         $selectOne = $sql->select(self::APPLICATIONS_TABLE);
         $selectOne->columns(['user', 'lpa_count' => new Expression('count(*)')]);
@@ -552,7 +565,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         $query = 'WITH lpa_counts AS(' . $sql->buildSqlString($selectOne). ') ' . $sql->buildSqlString($selectTwo);
 
-        $results = $this->rawQuery($query)->toArray();
+        $results = $this->dbWrapper->rawQuery($query)->toArray();
 
         /*
          * This creates an array where:

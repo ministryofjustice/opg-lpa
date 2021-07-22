@@ -57,7 +57,7 @@ class AbstractBase {
      * Returns table object for given name.
      * @return ???
      */
-    protected function getTable(string $tableName)
+    public function getTable(string $tableName)
     {
         $metadata = DbMetadataFactory::createSourceFromAdapter($this->adapter);
         return $metadata->getTable($tableName);
@@ -67,7 +67,7 @@ class AbstractBase {
      * Perform a raw SQL query via the adapter.
      * @return ResultSet
      */
-    protected function rawQuery(string $query)
+    public function rawQuery(string $query)
     {
         return $this->adapter->query($query, $this->adapter::QUERY_MODE_EXECUTE);
     }
@@ -78,7 +78,7 @@ class AbstractBase {
      * any single quotes.
      * @return string
      */
-    protected function quoteValue(string $toQuote)
+    public function quoteValue(string $toQuote)
     {
         return $this->adapter->getPlatform()->quoteValue($toQuote);
     }
@@ -87,7 +87,7 @@ class AbstractBase {
      * Create a SQL statement ready for addition of clauses etc.
      * @return Sql
      */
-    protected function createSql()
+    public function createSql()
     {
         return new Sql($this->adapter);
     }
