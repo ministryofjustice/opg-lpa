@@ -6,8 +6,6 @@ use PDOException;
 use EmptyIterator;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
-use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
@@ -140,7 +138,10 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             unset($criteria['search']);
         }
 
-        $select->where($criteria);
+        // any remaining criteria are added as additional where conditions
+        if ($criteria !== []) {
+            $select->where($criteria);
+        }
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
@@ -167,7 +168,9 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             unset($criteria['search']);
         }
 
-        $select->where($criteria);
+        if ($criteria !== []) {
+            $select->where($criteria);
+        }
 
         if (isset($options['skip']) && $options['skip'] !== 0) {
             $select->offset($options['skip']);
