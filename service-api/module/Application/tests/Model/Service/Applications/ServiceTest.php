@@ -608,10 +608,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->setFetchAllExpectations([
             'user' => $user->getId(),
-            'search' => [
-                '$regex' => '.*' . $lpas[0]->document->donor->name . '.*',
-                '$options' => 'i',
-            ],
+            'search' => $lpas[0]->document->donor->name
         ], []);
 
         $serviceBuilder = new ServiceBuilder();
