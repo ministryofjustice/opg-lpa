@@ -17,16 +17,24 @@ class DataFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         // Ensure that the request class exists
-        if (!(class_exists($requestedName) && is_subclass_of($requestedName, AbstractBase::class))) {
-            throw new \RuntimeException("Class {$requestedName} cannot be created with this factory");
+        if (!class_exists($requestedName)) {
+            throw new \RuntimeException("Class {$requestedName} does not exist");
         };
 
-        //---
+        // Special treatment for ApplicationData as it is in the process of being refactored
+        if ($requestedName === ApplicationData::class) {
+            $dbWrapper = new DbWrapper($container->get('ZendDbAdapter'));
+            return new ApplicationData($dbWrapper, $container->get('Config'));
+        }
 
-        $test =  new $requestedName(
+        // Create subclasses of AbstractBase the old way
+        if (!is_subclass_of($requestedName, AbstractBase::class)) {
+            throw new \RuntimeException("Class {$requestedName} cannot be created with this factory");
+        }
+
+        return new $requestedName(
             $container->get('ZendDbAdapter'),
             $container->get('Config')
         );
-        return $test;
     }
 }

@@ -602,13 +602,13 @@ class ServiceTest extends AbstractServiceTest
 
     public function testFetchAllSearchByName()
     {
-        $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
+        $name = 'o\'connor';
 
         $user = FixturesData::getUser();
 
         $this->setFetchAllExpectations([
             'user' => $user->getId(),
-            'search' => $lpas[0]->document->donor->name
+            'search' => $name
         ], []);
 
         $serviceBuilder = new ServiceBuilder();
@@ -617,7 +617,7 @@ class ServiceTest extends AbstractServiceTest
             ->build();
 
         /** @var Collection $response */
-        $response = $service->fetchAll($user->getId(), ['search' => $lpas[0]->document->donor->name]);
+        $response = $service->fetchAll($user->getId(), ['search' => $name]);
 
         $this->assertEquals(0, $response->count());
     }
