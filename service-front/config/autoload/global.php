@@ -103,6 +103,9 @@ return [
     'csrf' => [
         // Salt used for generating csrf tokens
         'salt' => getenv('OPG_LPA_FRONT_CSRF_SALT') ?: null,
+
+        // Location of the Redis server used to store CSRF tokens
+        'redis_url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL') ?: null,
     ],
 
 

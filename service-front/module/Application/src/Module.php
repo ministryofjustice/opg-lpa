@@ -7,6 +7,7 @@ use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Model\Service\Session\CsrfClient;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
@@ -20,7 +21,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
-use Opg\Lpa\Logger\LoggerTrait;
+use Redis;
 use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
@@ -178,6 +179,21 @@ class Module implements FormElementProviderInterface
                     $dynamoDbAdapter->setDynamoDbClient(new DynamoDbClient($config['client']));
 
                     return $dynamoDbAdapter;
+                },
+
+                // Specialised Redis client to maintain CSRF tokens in Redis, outside
+                // of the session flow. This prevents CSRF tokens being removed from
+                // or overwritten in the session, e.g. by rogue Ajax requests.
+                'CsrfClient' => function (ServiceLocatorInterface $sm) {
+                    $config = $sm->get('config');
+                    $redisUrl = $config['csrf']['redis_url'];
+
+                    // Name of cookie containing the user's session ID
+                    $cookieName = $config['session']['native_settings']['name'];
+
+                    // TODO TTL for tokens
+
+                    return new CsrfClient($redisUrl, $cookieName, new Redis());
                 },
 
                 'DynamoDbCronClient' => function (ServiceLocatorInterface $sm) {
@@ -343,7 +359,7 @@ class Module implements FormElementProviderInterface
                     if ($form instanceof AbstractCsrfForm) {
                         $config = $serviceManager->get('Config');
                         $form->setConfig($config);
-                        $form->setCsrf();
+                        $form->setCsrf($serviceManager->get('CsrfClient'));
                     }
                 },
             ],

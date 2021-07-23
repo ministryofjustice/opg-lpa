@@ -24,8 +24,9 @@ abstract class AbstractCsrfForm extends AbstractForm
 
     /**
      * Set the CSRF element
+     * TODO type hint for $csrfClient
      */
-    public function setCsrf()
+    public function setCsrf($csrfClient)
     {
         //  Add the csrf element
         $csrfName = 'secret_' . md5(get_class($this));
@@ -37,6 +38,8 @@ abstract class AbstractCsrfForm extends AbstractForm
             'name' => $csrf->getName(),
             'salt' => $csrfSalt,
         ]);
+
+        $csrfValidator->setCsrfClient($csrfClient);
 
         $csrf->setCsrfValidator($csrfValidator);
 
