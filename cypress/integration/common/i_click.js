@@ -11,7 +11,9 @@ Then(`I click {string}`, (clickable) => {
     // are when the CSRF token is incorrect when clicking "Save and continue" on the replacement
     // attorneys page - the title says "Error" but there is no indication of what the error is
     // in the page itself.
-    cy.get("[data-cy=" + clickable + "]").should('not.be.disabled').click().document().then(doc => {
+    cy.get("[data-cy=" + clickable + "]").should('not.be.disabled').click();
+
+    /*.document().then(doc => {
         if (doc.documentElement.innerHTML.includes('Oops! Something went wrong with the information you entered.')) {
             cy.log("Received the Oops! Something went wrong with the information you entered message, so retrying the click");
             cy.get("[data-cy=" + clickable + "]").click();
@@ -20,7 +22,8 @@ Then(`I click {string}`, (clickable) => {
             cy.log("Saw 'Error' in page title, so retrying the click");
             cy.get("[data-cy=" + clickable + "]").click();
         }
-    });
+    });*/
+
     cy.OPGCheckA11y();
 })
 
