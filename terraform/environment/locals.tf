@@ -14,6 +14,7 @@ locals {
   cert_prefix_internal        = local.account_name == "production" ? "" : "*."
   dns_namespace_env           = local.environment == "production" ? "" : "${local.environment}."
   dns_namespace_env_public    = local.environment == "production" ? "www." : "${local.environment}."
+  dns_namespace_dev_prefix    = local.environment == "development" ? "development." ? ""
   track_from_date             = "2019-04-01"
   front_dns                   = "front.lpa"
   admin_dns                   = "admin.lpa"
