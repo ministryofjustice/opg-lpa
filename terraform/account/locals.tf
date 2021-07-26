@@ -24,7 +24,7 @@ locals {
   account_id                  = local.account.account_id
   cert_prefix_internal        = local.account_name == "production" ? "" : "*."
   cert_prefix_public_facing   = local.account_name == "production" ? "www." : "*."
-
+  cert_prefix_development     = local.account_name == "development" ? "development." : ""
 
   mandatory_moj_tags = {
     business-unit = "OPG"
