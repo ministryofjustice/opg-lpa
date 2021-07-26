@@ -6,9 +6,15 @@ variable "account_mapping" {
   type = map(any)
 }
 
+variable "lambda_container_version" {
+  type    = string
+  default = "latest"
+}
+
 variable "accounts" {
   type = map(
     object({
+      performance_platform_enabled= bool
       pagerduty_service_name      = string
       account_id                  = string
       is_production               = string
