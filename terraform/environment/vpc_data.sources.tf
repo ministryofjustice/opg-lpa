@@ -35,15 +35,15 @@ data "aws_kms_key" "lpa_pdf_cache" {
 }
 
 data "aws_acm_certificate" "certificate_front" {
-  domain = "${local.cert_prefix_internal}${local.cert_prefix_development}front.lpa.opg.service.justice.gov.uk"
+  domain = "${local.cert_prefix_internal}${local.dns_namespace_dev_prefix}front.lpa.opg.service.justice.gov.uk"
 }
 
 data "aws_acm_certificate" "certificate_admin" {
-  domain = "${local.cert_prefix_internal}${local.cert_prefix_development}admin.lpa.opg.service.justice.gov.uk"
+  domain = "${local.cert_prefix_internal}${local.dns_namespace_dev_prefix}admin.lpa.opg.service.justice.gov.uk"
 }
 
 data "aws_acm_certificate" "public_facing_certificate" {
-  domain = "${local.cert_prefix_public_facing}${local.cert_prefix_development}lastingpowerofattorney.service.gov.uk"
+  domain = "${local.cert_prefix_public_facing}${local.dns_namespace_dev_prefix}lastingpowerofattorney.service.gov.uk"
 }
 
 data "aws_iam_role" "ecs_autoscaling_service_role" {
