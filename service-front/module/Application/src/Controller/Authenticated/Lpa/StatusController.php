@@ -29,7 +29,8 @@ class StatusController extends AbstractLpaController
 
                 $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpa->getId());
 
-                if ($lpaStatusDetails[$lpa->getId()]['found'] == true) {
+                $lpaId = $lpa->getId();
+                if (array_key_exists($lpaId, $lpaStatusDetails) && $lpaStatusDetails[$lpaId]['found'] == true) {
                     $lpaStatus = strtolower($lpaStatusDetails[$lpa->getId()]['status']);
                 }
             }
