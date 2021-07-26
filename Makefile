@@ -210,4 +210,4 @@ restitch:
 .PHONY: cypress-open
 cypress-open:
 	aws-vault exec moj-lpa-dev -- python3 cypress/S3Monitor.py &
-	CYPRESS_userNumber=`node cypress/userNumber.js` cypress open --project ./
+	CYPRESS_userNumber=`node cypress/userNumber.js` ./node_modules/.bin/cypress open --project ./
