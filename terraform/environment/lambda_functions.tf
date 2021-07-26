@@ -3,7 +3,7 @@ data "aws_ecr_repository" "perfplat_worker" {
 }
 
 module "perfplat_worker"{
-      source            = "./modules/lambda_function"
+  source            = "./modules/lambda_function"
   count             = local.account.performance_platform_enabled == true ? 1 : 0
   lambda_name       = "clsf-to-sqs"
   description       = "Function to take Cloudwatch Logs Subscription Filters and send them to SQS"
@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "perfplat_worker_lambda_function_policy" {
   statement {
     sid       = "AllowSQSAccess"
     effect    = "Allow"
-    resources = [aws_sqs_queue.perplat_fifo_queue[0].arn]
+    resources = [aws_sqs_queue.perplat_worker[0].arn]
     actions = [
       "sqs:SendMessage",
       "sqs:ReceiveMessage",
