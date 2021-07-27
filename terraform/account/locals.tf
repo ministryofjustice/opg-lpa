@@ -65,4 +65,9 @@ locals {
   db_component_tag = {
     component = "db"
   }
+
+  performance_platform_component_tag = {
+    component = "perform_platform"
+  }
+
 }
