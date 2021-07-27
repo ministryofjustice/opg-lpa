@@ -38,6 +38,10 @@ locals {
     "Name" = "${local.environment}-online-lpa-tool"
   })
 
+  perfplat_component_tag = {
+    component = "perfplat"
+  }
+
   shared_component_tag = {
     component = "shared"
   }
