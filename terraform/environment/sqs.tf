@@ -58,7 +58,7 @@ resource "aws_sqs_queue" "perfplat_worker" {
   max_message_size          = 16384 #adjust as needed
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
-  tags                      = merge(local.default_tags, local.perfplat_tag)
+  tags                      = merge(local.default_tags, local.perfplat_component_tag)
 
 }
 
