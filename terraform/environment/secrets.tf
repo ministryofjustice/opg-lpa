@@ -60,19 +60,19 @@ data "aws_secretsmanager_secret_version" "api_rds_password" {
   secret_id = data.aws_secretsmanager_secret.api_rds_password.id
 }
 
-#perfplat secrets
-data "aws_secretsmanager_secret" "perfplat_db_username" {
-  name = "${local.account_name}/perfplat_db_username"
+#performance_platform secrets
+data "aws_secretsmanager_secret" "performance_platform_db_username" {
+  name = "${local.account_name}/performance_platform_db_username"
 }
 
-data "aws_secretsmanager_secret" "perfplat_db_password" {
-  name = "${local.account_name}/perfplat_db_password"
+data "aws_secretsmanager_secret" "performance_platform_db_password" {
+  name = "${local.account_name}/performance_platform_db_password"
 }
 
-data "aws_secretsmanager_secret_version" "perfplat_db_username" {
-  secret_id = data.aws_secretsmanager_secret.perfplat_db_username.id
+data "aws_secretsmanager_secret_version" "performance_platform_db_username" {
+  secret_id = data.aws_secretsmanager_secret.performance_platform_db_username.id
 }
 
-data "aws_secretsmanager_secret_version" "perfplat_db_password" {
-  secret_id = data.aws_secretsmanager_secret.perfplat_db_password.id
+data "aws_secretsmanager_secret_version" "performance_platform_db_password" {
+  secret_id = data.aws_secretsmanager_secret.performance_platform_db_password.id
 }

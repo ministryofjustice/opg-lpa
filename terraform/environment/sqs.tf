@@ -51,28 +51,28 @@ data "aws_iam_policy_document" "queue_policy_document" {
 }
 
 
-resource "aws_sqs_queue" "perfplat_worker" {
-  name                      = "lpa-perfplat-worker-queue-${local.environment}.fifo"
+resource "aws_sqs_queue" "performance_platform_worker" {
+  name                      = "lpa-performance_platform-worker-queue-${local.environment}.fifo"
   count                     = local.account.performance_platform_enabled == true ? 1 : 0
   delay_seconds             = 90
   max_message_size          = 16384 #adjust as needed
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
-  tags                      = merge(local.default_tags, local.perfplat_component_tag)
+  tags                      = merge(local.default_tags, local.performance_platform_component_tag)
 
 }
 
-resource "aws_sqs_queue_policy" "perfplat_worker_policy" {
+resource "aws_sqs_queue_policy" "performance_platform_worker_policy" {
   count       = local.account.performance_platform_enabled == true ? 1 : 0
-  queue_url  = aws_sqs_queue.perfplat_worker[0].id
-  policy     = data.aws_iam_policy_document.perfplat_worker_policy_document.json
+  queue_url  = aws_sqs_queue.performance_platform_worker[0].id
+  policy     = data.aws_iam_policy_document.performance_platform_worker_policy_document.json
   depends_on = [aws_ecs_service.api, aws_iam_role.api_task_role]
 }
 
-data "aws_iam_policy_document" "perfplat_worker_policy_document" {
+data "aws_iam_policy_document" "performance_platform_worker_policy_document" {
    statement {
     effect    = "Allow"
-    resources = [aws_sqs_queue.perfplat_worker[0].arn]
+    resources = [aws_sqs_queue.performance_platform_worker[0].arn]
     actions = [
       "sqs:ChangeMessageVisibility",
       "sqs:DeleteMessage",
@@ -89,8 +89,8 @@ data "aws_iam_policy_document" "perfplat_worker_policy_document" {
   }
 }
 
-resource "aws_lambda_event_source_mapping" "perfplat_worker" {
+resource "aws_lambda_event_source_mapping" "performance_platform_worker" {
   count       = local.account.performance_platform_enabled == true ? 1 : 0
-  event_source_arn = aws_sqs_queue.perfplat_worker[0].arn
-  function_name    = module.perfplat_worker[0].lambda_function.arn
+  event_source_arn = aws_sqs_queue.performance_platform_worker[0].arn
+  function_name    = module.performance_platform_worker[0].lambda_function.arn
 }
