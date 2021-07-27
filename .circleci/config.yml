@@ -921,7 +921,7 @@ orbs:
                 terraform init
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
-                terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=${IMAGE_TAG}
+                terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=${IMAGE_TAG} -var lambda_container_version=${IMAGE_TAG}
           - run:
               name: register workspace
               command: |
