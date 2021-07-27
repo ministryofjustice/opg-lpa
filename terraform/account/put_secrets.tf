@@ -84,12 +84,12 @@ resource "aws_secretsmanager_secret" "api_rds_password" {
 #performance platform db secrets
 resource "aws_secretsmanager_secret" "performance_platform_db_username" {
   name       = "${local.account_name}/performance_platform_db_username"
-  tags       = merge(local.default_tags, local.perfplat_component_tag)
+  tags       = merge(local.default_tags, local.performance_platform_component_tag)
   kms_key_id = aws_kms_key.secrets_encryption_key.arn
 }
 
 resource "aws_secretsmanager_secret" "performance_platform_db_password" {
   name       = "${local.account_name}/performance_platform_db_password"
-  tags       = merge(local.default_tags, local.perfplat_component_tag)
+  tags       = merge(local.default_tags, local.performance_platform_component_tag)
   kms_key_id = aws_kms_key.secrets_encryption_key.arn
 }
