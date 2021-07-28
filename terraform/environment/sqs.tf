@@ -65,11 +65,12 @@ resource "aws_sqs_queue" "performance_platform_worker" {
 resource "aws_sqs_queue_policy" "performance_platform_worker_policy" {
   count      = local.account.performance_platform_enabled == true ? 1 : 0
   queue_url  = aws_sqs_queue.performance_platform_worker[0].id
-  policy     = data.aws_iam_policy_document.performance_platform_worker_policy_document.json
+  policy     = data.aws_iam_policy_document[0].performance_platform_worker_policy_document.json
   depends_on = [aws_ecs_service.api, aws_iam_role.api_task_role]
 }
 
 data "aws_iam_policy_document" "performance_platform_worker_policy_document" {
+  count      = local.account.performance_platform_enabled == true ? 1 : 0
   statement {
     effect    = "Allow"
     resources = [aws_sqs_queue.performance_platform_worker[0].arn]
