@@ -221,7 +221,7 @@ path_to_live: &path_to_live
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { only: [master] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-build-production
@@ -230,7 +230,7 @@ path_to_live: &path_to_live
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { only: [master] } }
 
     - infrastructure_and_deployment/plan_check_terraform:
         name: preprod_account_plan_check_terraform_pr_build
