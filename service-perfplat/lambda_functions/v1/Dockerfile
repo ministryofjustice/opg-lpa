@@ -9,4 +9,4 @@ RUN pip install -r ./requirements/local-requirements.txt
 
 EXPOSE 4343
 
-ENTRYPOINT ["python", "/var/www/lambda_functions/v1/functions/lpa_codes/app/lpa_make_datapatform_mock.py"]
+ENTRYPOINT ["python", "/var/www/lambda_functions/v1/functions/lpa_make_dataplatform/app/lpa_make_dataplatform_mock.py"]
