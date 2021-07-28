@@ -118,6 +118,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            perfplat-lambda-docker-build
           ]
 
     - ecr_scan_results:
@@ -130,6 +131,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            perfplat-lambda-docker-build
           ]
 
     - infrastructure_and_deployment/seed_environment_databases:
@@ -278,6 +280,7 @@ path_to_live: &path_to_live
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            perfplat-lambda-docker-build-preproduction
           ]
 
     - ecr_scan_results:
@@ -289,6 +292,7 @@ path_to_live: &path_to_live
             admin_docker_build,
             api_docker_build,
             pdf_docker_build,
+            perfplat-lambda-docker-build-preproduction
           ]
 
     - infrastructure_and_deployment/seed_environment_databases:
