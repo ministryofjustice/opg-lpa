@@ -8,7 +8,7 @@ from .errors import error_message
 from .endpoints import handle_dummy
 
 version = os.getenv("API_VERSION")
-api = Blueprint("api", __name__, url_prefix=f"/{version}"i)
+api = Blueprint("api", __name__, url_prefix=f"/{version}")
 
 
 @api.route("/healthcheck", methods=["GET"])
@@ -36,14 +36,14 @@ def check_route():
     return jsonify(result), status_code
 
 @api.route("/remove", methods=["DELETE"])
-def healthcheck_route():
+def remove_route():
     result, status_code = handle_dummy()
 
     return jsonify(result), status_code
 
 @api.app_errorhandler(404)
 def handle404(error=None):
-    return error_message(404, "Not found url {}".format(request.url))
+    return error_message(404, f"Not found url {request.url}")
 
 
 @api.app_errorhandler(405)
