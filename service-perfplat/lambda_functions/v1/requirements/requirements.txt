@@ -5,3 +5,5 @@ flask-lambda-python36==0.1.0
 itsdangerous==1.1.0
 python-dotenv==0.13.0
 Werkzeug==1.0.1
+connexion==2.7.0
+swagger-ui-bundle==0.0.8
