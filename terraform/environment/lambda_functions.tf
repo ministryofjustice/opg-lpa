@@ -32,6 +32,7 @@ data "aws_iam_policy_document" "performance_platform_worker_lambda_function_poli
       "sqs:SendMessage",
       "sqs:ReceiveMessage",
       "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes",
     ]
   }
 }
