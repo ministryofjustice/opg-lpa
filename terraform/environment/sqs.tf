@@ -70,7 +70,7 @@ resource "aws_sqs_queue_policy" "performance_platform_worker" {
 }
 
 data "aws_iam_policy_document" "performance_platform_worker" {
-  count      = local.account.performance_platform_enabled == true ? 1 : 0
+  count = local.account.performance_platform_enabled == true ? 1 : 0
   statement {
     effect    = "Allow"
     resources = [aws_sqs_queue.performance_platform_worker[0].arn]
