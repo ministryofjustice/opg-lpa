@@ -5,7 +5,7 @@ data "aws_ecr_repository" "performance_platform_worker" {
 module "performance_platform_worker" {
   source            = "./modules/lambda_function"
   count             = local.account.performance_platform_enabled == true ? 1 : 0
-  lambda_name       = "${local.environment}-performance-platform-worker"
+  lambda_name       = "${local.environment}-perfplat-worker" #limited to 32 chars hence shortened
   description       = "Function to take Cloudwatch Logs Subscription Filters and send them to SQS"
   working_directory = "/var/task"
   environment_variables = {
@@ -15,7 +15,7 @@ module "performance_platform_worker" {
     "OPG_LPA_POSTGRES_PORT" : local.db.port,
     "OPG_LPA_POSTGRES_NAME" : local.db.name
   }
-  image_uri = "${data.aws_ecr_repository.performance_platform_worker}:${var.lambda_container_version}"
+  image_uri = "${data.aws_ecr_repository.performance_platform_worker.repository_url}:${var.lambda_container_version}"
 
   ecr_arn                     = data.aws_ecr_repository.performance_platform_worker.arn
   lambda_role_policy_document = data.aws_iam_policy_document.performance_platform_worker_lambda_function_policy[0].json
