@@ -2,18 +2,18 @@ data "aws_ecr_repository" "performance_platform_worker" {
   name = "${local.environment}/perfplat-worker"
 }
 
-module "performance_platform_worker"{
+module "performance_platform_worker" {
   source            = "./modules/lambda_function"
   count             = local.account.performance_platform_enabled == true ? 1 : 0
   lambda_name       = "${local.environment}-performance-platform-worker"
   description       = "Function to take Cloudwatch Logs Subscription Filters and send them to SQS"
   working_directory = "/var/task"
   environment_variables = {
-     "OPG_LPA_POSTGRES_USERNAME": data.aws_secretsmanager_secret_version.performance_platform_db_username.secret_string ,
-     "OPG_LPA_POSTGRES_PASSWORD": data.aws_secretsmanager_secret_version.performance_platform_db_password.secret_string ,
-     "OPG_LPA_POSTGRES_HOSTNAME" : local.db.endpoint,
-     "OPG_LPA_POSTGRES_PORT": local.db.port,
-     "OPG_LPA_POSTGRES_NAME" : local.db.name
+    "OPG_LPA_POSTGRES_USERNAME" : data.aws_secretsmanager_secret_version.performance_platform_db_username.secret_string,
+    "OPG_LPA_POSTGRES_PASSWORD" : data.aws_secretsmanager_secret_version.performance_platform_db_password.secret_string,
+    "OPG_LPA_POSTGRES_HOSTNAME" : local.db.endpoint,
+    "OPG_LPA_POSTGRES_PORT" : local.db.port,
+    "OPG_LPA_POSTGRES_NAME" : local.db.name
   }
   image_uri = "${data.aws_ecr_repository.performance_platform_worker}:${var.lambda_container_version}"
 

@@ -63,14 +63,14 @@ resource "aws_sqs_queue" "performance_platform_worker" {
 }
 
 resource "aws_sqs_queue_policy" "performance_platform_worker_policy" {
-  count       = local.account.performance_platform_enabled == true ? 1 : 0
+  count      = local.account.performance_platform_enabled == true ? 1 : 0
   queue_url  = aws_sqs_queue.performance_platform_worker[0].id
   policy     = data.aws_iam_policy_document.performance_platform_worker_policy_document.json
   depends_on = [aws_ecs_service.api, aws_iam_role.api_task_role]
 }
 
 data "aws_iam_policy_document" "performance_platform_worker_policy_document" {
-   statement {
+  statement {
     effect    = "Allow"
     resources = [aws_sqs_queue.performance_platform_worker[0].arn]
     actions = [
@@ -90,7 +90,7 @@ data "aws_iam_policy_document" "performance_platform_worker_policy_document" {
 }
 
 resource "aws_lambda_event_source_mapping" "performance_platform_worker" {
-  count       = local.account.performance_platform_enabled == true ? 1 : 0
+  count            = local.account.performance_platform_enabled == true ? 1 : 0
   event_source_arn = aws_sqs_queue.performance_platform_worker[0].arn
   function_name    = module.performance_platform_worker[0].lambda_function.arn
 }
