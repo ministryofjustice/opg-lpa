@@ -52,7 +52,7 @@ data "aws_iam_policy_document" "queue_policy_document" {
 
 
 resource "aws_sqs_queue" "performance_platform_worker" {
-  name                      = "lpa-performance-platform-worker-queue-${local.environment}.fifo"
+  name                      = "lpa-performance-platform-worker-queue-${local.environment}"
   count                     = local.account.performance_platform_enabled == true ? 1 : 0
   delay_seconds             = 90
   max_message_size          = 16384 #adjust as needed
