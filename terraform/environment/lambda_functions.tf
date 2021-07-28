@@ -1,5 +1,5 @@
 data "aws_ecr_repository" "performance_platform_worker" {
-  name = "${local.environment}/perfplat-worker"
+  name = "${local.account_name}/perfplat-worker"
 }
 
 module "performance_platform_worker" {
