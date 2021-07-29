@@ -12,17 +12,17 @@ class SessionManager extends LaminasSessionManager
      */
     private $container;
 
-    public function __construct(SaveHandlerInterface $saveHandler, Container $container = null)
+    /**
+     * @param SaveHandlerInterface $saveHandler If defaults to null, the SessionManager is
+     * constructed with the default save handler
+     */
+    public function __construct(Container $container = null, SaveHandlerInterface $saveHandler = null)
     {
         // parent constructor has to be called first, in case we have to
-        // make a container within this constructor
-        parent::__construct();
-
-        // This has to be done in the SessionManager constructor. If left
-        // until after this, setSaveHandler() appears to have no effect,
-        // as the code below which constructs the container causes the
-        // session to be initialised with an incorrect save handler.
-        $this->setSaveHandler($saveHandler);
+        // make a container within this constructor;
+        // for constructor signature, see:
+        // https://docs.laminas.dev/laminas-session/manager/
+        parent::__construct(null, null, $saveHandler);
 
         if (is_null($container)) {
             $container = new Container('initialised', $this);

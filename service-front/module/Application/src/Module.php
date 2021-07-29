@@ -219,16 +219,9 @@ class Module implements FormElementProviderInterface
                     return new MessageFactory($sm->get('config'), $localViewRenderer);
                 },
 
-                // Redis client for managing session data
-                'RedisSessionClient' => function (ServiceLocatorInterface $sm) {
+                'SaveHandler' => function (ServiceLocatorInterface $sm) {
                     $redisUrl = $sm->get('config')['session']['redis']['url'];
 
-                    // TODO TTL for tokens
-
-                    return new RedisClient($redisUrl, new Redis());
-                },
-
-                'SaveHandler' => function (ServiceLocatorInterface $sm) {
                     $request = $sm->get('Request');
                     $logger = $this->getLogger();
 
@@ -246,7 +239,7 @@ class Module implements FormElementProviderInterface
                         return $shouldWrite;
                     };
 
-                    return new FilteringSaveHandler($sm->get('RedisSessionClient'), [$filter]);
+                    return new FilteringSaveHandler($redisUrl, [$filter], new Redis());
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
