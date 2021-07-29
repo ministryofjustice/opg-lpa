@@ -10,6 +10,7 @@ use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Mail\MessageFactory;
 use Application\Model\Service\RedisClient\RedisClient;
+use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\System\DynamoCronLock;
 use Application\View\Helper\LocalViewRenderer;
@@ -225,6 +226,10 @@ class Module implements FormElementProviderInterface
                     // TODO TTL for tokens
 
                     return new RedisClient($redisUrl, new Redis());
+                },
+
+                'SaveHandler' => function (ServiceLocatorInterface $sm) {
+                    return new FilteringSaveHandler($sm->get('Request'));
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
