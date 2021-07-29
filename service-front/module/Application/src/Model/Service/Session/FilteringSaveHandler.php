@@ -37,6 +37,12 @@ class FilteringSaveHandler implements SaveHandlerInterface
     private $redisPort = 6379;
 
     /**
+     * TTL for Redis keys, in milliseconds
+     * @var int
+     */
+    private $ttl;
+
+    /**
      * Array of closures, called in order to determine
      * whether to write a session or not.
      * @var array
@@ -52,11 +58,12 @@ class FilteringSaveHandler implements SaveHandlerInterface
     /**
      * Constructor
      *
-     * @param Redis $client Client for Redis access
      * @param string $redisUrl In format tcp://host:port or tls://host:port
+     * @param int $ttlMs TTL for Redis keys, in milliseconds
      * @param array $filters Filters to assign
+     * @param Redis $client Client for Redis access
      */
-    public function __construct(string $redisUrl, $filters = [], $redis = null)
+    public function __construct(string $redisUrl, int $ttlMs, $filters = [], $redis = null)
     {
         $urlParts = parse_url($redisUrl);
 
@@ -72,6 +79,8 @@ class FilteringSaveHandler implements SaveHandlerInterface
         if (isset($urlParts['port'])) {
             $this->redisPort = intval($urlParts['port']);
         }
+
+        $this->ttl = $ttlMs;
 
         if (!empty($filters)) {
             $this->filters = $filters;
@@ -147,8 +156,7 @@ class FilteringSaveHandler implements SaveHandlerInterface
             $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; key = %s; session data = %s',
                 microtime(TRUE), $key, $data));
 
-            // TODO add TTL to keys
-            return $this->redisClient->set($key, $data);
+            return $this->redisClient->setEx($key, $this->ttl, $data);
         }
         else {
             $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for key %s',
