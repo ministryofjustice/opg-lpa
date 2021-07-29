@@ -222,15 +222,15 @@ class Module implements FormElementProviderInterface
                     $logger = $this->getLogger();
 
                     $filter = function () use ($request, $logger) {
-                        $shouldWrite = !$request->isXmlHttpRequest();
+                        $shouldWrite = !$request->getHeaders()->has('X-SessionReadOnly');
 
                         if ($shouldWrite) {
-                            $msg = 'Writing session for request on path';
+                            $msg = 'Writing session for request';
                         }
                         else {
-                            $msg = 'IGNORING session write for request on path';
+                            $msg = 'IGNORING session write for request marked with X-SessionReadOnly';
                         }
-                        $logger->debug('XXXXXXXXXXXXXXXXXXXXXXXXXXX ' . $msg . ' ' . $request->getUri()->getPath());
+                        $logger->debug('XXXXXXXXXXXXXXXXXXXXXXXXXXX ' . $msg . '; path = ' . $request->getUri()->getPath());
 
                         return $shouldWrite;
                     };
