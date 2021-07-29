@@ -24,8 +24,6 @@ class SessionFactoryTest extends MockeryTestCase
      */
     public function testSessionFactory() : void
     {
-        ServiceTestHelper::disableRedisSaveHandler();
-
         $uri = Mockery::Mock(Uri::class);
         $uri->shouldReceive('getHost')->andReturn('foo');
 
