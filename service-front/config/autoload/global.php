@@ -56,7 +56,6 @@ return [
 
         // ini session.* settings...
         'native_settings' => [
-
             // The cookie name used in the session
             'name' => 'lpa2',
 
@@ -73,17 +72,15 @@ return [
             // Don't accept uninitialized session IDs
             'use_strict_mode' => true,
 
-            // Time before a session can be garbage collected.
-            // (time since the session was last accessed)
-            'gc_maxlifetime' => (60 * 60 * 3), // 3 hours
-
             // The probability of GC running is gc_probability/gc_divisor
             'gc_probability' => 0,
-            'gc_divisor' => 20,
         ],
 
         'redis' => [
             'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL'),
+
+            // TTL for Redis keys in milliseconds
+            'ttlMs' => (1000 * 60 * 60 * 3), // 3 hours,
         ],
 
         'dynamodb' => [
