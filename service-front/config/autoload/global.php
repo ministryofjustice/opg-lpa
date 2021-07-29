@@ -88,6 +88,11 @@ return [
             'gc_divisor' => 20,
         ],
 
+        'redis' => [
+            // Use Redis URL (tcp://host:port or tls://host:port) as save path
+            'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL'),
+        ],
+
         'dynamodb' => [
             'client' => $DYNAMO_DB_CONFIG,
             'settings' => [

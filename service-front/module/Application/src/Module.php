@@ -9,6 +9,7 @@ use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Mail\MessageFactory;
+use Application\Model\Service\RedisClient\RedisClient;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\System\DynamoCronLock;
 use Application\View\Helper\LocalViewRenderer;
@@ -23,6 +24,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Redis;
 use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
@@ -214,6 +216,15 @@ class Module implements FormElementProviderInterface
                 'MessageFactory' => function (ServiceLocatorInterface $sm) {
                     $localViewRenderer = new LocalViewRenderer($sm->get('TwigEmailRenderer'));
                     return new MessageFactory($sm->get('config'), $localViewRenderer);
+                },
+
+                // Redis client for managing session data
+                'RedisSessionClient' => function (ServiceLocatorInterface $sm) {
+                    $redisUrl = $sm->get('config')['session']['redis']['url'];
+
+                    // TODO TTL for tokens
+
+                    return new RedisClient($redisUrl, new Redis());
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
