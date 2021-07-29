@@ -60,8 +60,8 @@ class SessionFactory implements FactoryInterface {
             ini_set('session.cookie_domain', $hostname);
         }
 
+        // use our own save handler on the SessionManager
         $saveHandler = $container->get('SaveHandler');
-        $sessionManager = new SessionManager($saveHandler);
-        return $sessionManager;
+        return new SessionManager(null, $saveHandler);
     }
 }
