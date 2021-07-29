@@ -5,21 +5,33 @@ use Application\Logging\LoggerTrait;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 
 
+/**
+ * Custom save handler to which write filters can be applied.
+ * If any filter in the chain returns FALSE, the session
+ * will not be written.
+ * Typically, filters are closures which inspect the incoming
+ * request, environment etc. to determine whether the session
+ * should be written after execution of an action.
+ */
 class FilteringSaveHandler implements SaveHandlerInterface
 {
     use LoggerTrait;
 
-    private $request;
+    private $filters = [];
     private $savePath;
 
-    public function __construct($request = null)
+    /**
+     * Add a filter to the chain. Filters in the chain
+     * are checked in the order they were added.
+     *
+     * @param callable $closure Closure which returns TRUE
+     * (session should be written) or FALSE (ignore the write
+     * for this session)
+     */
+    public function addFilter(callable $closure)
     {
-        $this->setRequest($request);
-    }
-
-    public function setRequest($request)
-    {
-        $this->request = $request;
+        $this->filters[] = $closure;
+        return $this;
     }
 
     // $savePath and $sessionName are ignored as we inject the $redisClient
@@ -42,20 +54,31 @@ class FilteringSaveHandler implements SaveHandlerInterface
     public function read($id)
     {
         $data = (string)@file_get_contents("$this->savePath/sess_$id");
-        $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Reading session data at %s for request on path %s; session data = %s', microtime(TRUE), $this->request->getUri()->getPath(), serialize($data)));
+        $this->getLogger()->debug(
+            sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Reading session data at %s; session data = %s',
+                microtime(TRUE), serialize($data))
+        );
         return $data;
     }
 
     public function write($id, $data)
     {
-        // Ignore writes initiated from an Ajax request
-        if ($this->request->isXmlHttpRequest()) {
-            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for Ajax request on path %s', microtime(TRUE), $this->request->getUri()->getPath()));
-            return TRUE;
+        // Ignore writes if any filter returns FALSE
+        $doWrite = TRUE;
+        foreach ($this->filters as $_ => $filter) {
+            if (!$filter()) {
+                $doWrite = FALSE;
+                break;
+            }
+        }
+
+        if ($doWrite) {
+            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; session data = %s', microtime(TRUE), serialize($data)));
+            return file_put_contents("$this->savePath/sess_$id", $data) === false ? false : true;
         }
         else {
-            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s for request on path %s; session data = %s', microtime(TRUE), $this->request->getUri()->getPath(), serialize($data)));
-            return file_put_contents("$this->savePath/sess_$id", $data) === false ? false : true;
+            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for request', microtime(TRUE)));
+            return TRUE;
         }
     }
 
