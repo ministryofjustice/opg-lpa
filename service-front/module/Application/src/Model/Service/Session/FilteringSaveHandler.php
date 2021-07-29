@@ -2,8 +2,9 @@
 namespace Application\Model\Service\Session;
 
 use Application\Logging\LoggerTrait;
-use Application\Model\Service\RedisClient\RedisClient;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
+use InvalidArgumentException;
+use Redis;
 
 
 /**
@@ -18,26 +19,68 @@ class FilteringSaveHandler implements SaveHandlerInterface
 {
     use LoggerTrait;
 
-    private $filters = [];
-    private $savePath;
+    private const SESSION_PREFIX = 'PHP_SESSID_';
 
     /**
-     * @var RedisClient
+     * @var Redis
      */
     private $redisClient;
 
     /**
+     * @var string
+     */
+    private $redisHost;
+
+    /**
+     * @var string
+     */
+    private $redisPort = 6379;
+
+    /**
+     * Array of closures, called in order to determine
+     * whether to write a session or not.
+     * @var array
+     */
+    private $filters = [];
+
+    // generate a session ID key for Redis
+    private function getKey($id)
+    {
+        return self::SESSION_PREFIX . $id;
+    }
+
+    /**
      * Constructor
      *
-     * @param RedisClient $client Client for Redis access
+     * @param Redis $client Client for Redis access
+     * @param string $redisUrl In format tcp://host:port or tls://host:port
      * @param array $filters Filters to assign
      */
-    public function __construct(RedisClient $client, $filters = [])
+    public function __construct(string $redisUrl, $filters = [], $redis = null)
     {
-        $this->redisClient = $client;
+        $urlParts = parse_url($redisUrl);
+
+        if (!isset($urlParts['host'])) {
+            throw new InvalidArgumentException('Redis hostname could not be parsed from provided URL');
+        }
+        $this->redisHost = $urlParts['host'];
+
+        if ($urlParts['scheme'] === 'tls') {
+            $this->redisHost = 'tls://' . $this->redisHost;
+        }
+
+        if (isset($urlParts['port'])) {
+            $this->redisPort = intval($urlParts['port']);
+        }
+
         if (!empty($filters)) {
             $this->filters = $filters;
         }
+
+        if (is_null($redis)) {
+            $redis = new Redis();
+        }
+        $this->redisClient = $redis;
     }
 
     /**
@@ -54,30 +97,31 @@ class FilteringSaveHandler implements SaveHandlerInterface
         return $this;
     }
 
-    // $savePath and $sessionName are ignored as we inject the $redisClient
-    // into the save handler, which is configured with the Redis server location
+    // $savePath and $sessionName are ignored
     public function open($savePath, $sessionName): bool
     {
-        $this->savePath = $savePath;
-        if (!is_dir($this->savePath)) {
-            mkdir($this->savePath, 0777);
-        }
-
-        return true;
+        return $this->redisClient->connect($this->redisHost, $this->redisPort);
     }
 
     public function close()
     {
-        return true;
+        return $this->redisClient->close();
     }
 
     public function read($id)
     {
-        $data = (string)@file_get_contents("$this->savePath/sess_$id");
+        $key = $this->getKey($id);
+        $data = $this->redisClient->get($key);
+
+        if ($data === FALSE) {
+            $data = '';
+        }
+
         $this->getLogger()->debug(
-            sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Reading session data at %s; session data = %s',
-                microtime(TRUE), serialize($data))
+            sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Reading session data at %s; key = %s; session data = %s',
+                microtime(TRUE), $key, $data)
         );
+
         return $data;
     }
 
@@ -97,34 +141,32 @@ class FilteringSaveHandler implements SaveHandlerInterface
             }
         }
 
+        $key = $this->getKey($id);
+
         if ($doWrite) {
-            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; session data = %s', microtime(TRUE), serialize($data)));
-            return file_put_contents("$this->savePath/sess_$id", $data) === FALSE ? FALSE : TRUE;
+            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; key = %s; session data = %s',
+                microtime(TRUE), $key, $data));
+
+            // TODO add TTL to keys
+            return $this->redisClient->set($key, $data);
         }
         else {
-            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for request', microtime(TRUE)));
+            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for key %s',
+                microtime(TRUE), $key));
+
             return TRUE;
         }
     }
 
     public function destroy($id)
     {
-        $file = "$this->savePath/sess_$id";
-        if (file_exists($file)) {
-            unlink($file);
-        }
-
+        $this->redisClient->del($this->getKey($id));
         return TRUE;
     }
 
+    // no-op, as we let Redis clean up expired keys and rely on TTL
     public function gc($maxlifetime)
     {
-        foreach (glob("$this->savePath/sess_*") as $file) {
-            if (filemtime($file) + $maxlifetime < time() && file_exists($file)) {
-                unlink($file);
-            }
-        }
-
         return TRUE;
     }
 }

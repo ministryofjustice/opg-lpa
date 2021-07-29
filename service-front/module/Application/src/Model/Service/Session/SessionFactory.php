@@ -61,7 +61,6 @@ class SessionFactory implements FactoryInterface {
         }
 
         $saveHandler = $container->get('SaveHandler');
-        $sessionManager = new SessionManager($saveHandler);
-        return $sessionManager;
+        return new SessionManager($saveHandler);
     }
 }
