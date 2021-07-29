@@ -220,7 +220,10 @@ class Module implements FormElementProviderInterface
                 },
 
                 'SaveHandler' => function (ServiceLocatorInterface $sm) {
-                    $redisUrl = $sm->get('config')['session']['redis']['url'];
+                    $config = $sm->get('config');
+
+                    $redisUrl = $config['session']['redis']['url'];
+                    $ttlMs = $config['session']['redis']['ttlMs'];
 
                     $request = $sm->get('Request');
                     $logger = $this->getLogger();
@@ -239,7 +242,7 @@ class Module implements FormElementProviderInterface
                         return $shouldWrite;
                     };
 
-                    return new FilteringSaveHandler($redisUrl, [$filter], new Redis());
+                    return new FilteringSaveHandler($redisUrl, $ttlMs, [$filter], new Redis());
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
