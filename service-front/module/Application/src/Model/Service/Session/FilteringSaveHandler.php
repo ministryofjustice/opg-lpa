@@ -2,6 +2,7 @@
 namespace Application\Model\Service\Session;
 
 use Application\Logging\LoggerTrait;
+use Application\Model\Service\RedisClient\RedisClient;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 
 
@@ -21,6 +22,25 @@ class FilteringSaveHandler implements SaveHandlerInterface
     private $savePath;
 
     /**
+     * @var RedisClient
+     */
+    private $redisClient;
+
+    /**
+     * Constructor
+     *
+     * @param RedisClient $client Client for Redis access
+     * @param array $filters Filters to assign
+     */
+    public function __construct(RedisClient $client, $filters = [])
+    {
+        $this->redisClient = $client;
+        if (!empty($filters)) {
+            $this->filters = $filters;
+        }
+    }
+
+    /**
      * Add a filter to the chain. Filters in the chain
      * are checked in the order they were added.
      *
@@ -35,7 +55,7 @@ class FilteringSaveHandler implements SaveHandlerInterface
     }
 
     // $savePath and $sessionName are ignored as we inject the $redisClient
-    // into the save handler
+    // into the save handler, which is configured with the Redis server location
     public function open($savePath, $sessionName): bool
     {
         $this->savePath = $savePath;
@@ -61,6 +81,11 @@ class FilteringSaveHandler implements SaveHandlerInterface
         return $data;
     }
 
+    /**
+     * Filtered session write. If any filter in the chain returns FALSE,
+     * the session is not written. We still return TRUE so that PHP's
+     * session machinery knows that the save handler has done its job.
+     */
     public function write($id, $data)
     {
         // Ignore writes if any filter returns FALSE
@@ -74,7 +99,7 @@ class FilteringSaveHandler implements SaveHandlerInterface
 
         if ($doWrite) {
             $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; session data = %s', microtime(TRUE), serialize($data)));
-            return file_put_contents("$this->savePath/sess_$id", $data) === false ? false : true;
+            return file_put_contents("$this->savePath/sess_$id", $data) === FALSE ? FALSE : TRUE;
         }
         else {
             $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for request', microtime(TRUE)));
@@ -89,7 +114,7 @@ class FilteringSaveHandler implements SaveHandlerInterface
             unlink($file);
         }
 
-        return true;
+        return TRUE;
     }
 
     public function gc($maxlifetime)
@@ -100,6 +125,6 @@ class FilteringSaveHandler implements SaveHandlerInterface
             }
         }
 
-        return true;
+        return TRUE;
     }
 }
