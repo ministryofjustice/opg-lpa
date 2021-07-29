@@ -46,6 +46,9 @@ class SessionFactoryTest extends MockeryTestCase
             ->withArgs(['Request'])
             ->andReturn($request);
 
+        $container->shouldReceive('get')
+            ->with('SaveHandler');
+
         $factory = new SessionFactory();
         $result = $factory($container, null, null);
 
