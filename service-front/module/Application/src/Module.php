@@ -246,9 +246,7 @@ class Module implements FormElementProviderInterface
                         return $shouldWrite;
                     };
 
-                    $saveHandler = new FilteringSaveHandler();
-                    $saveHandler->addFilter($filter);
-                    return $saveHandler;
+                    return new FilteringSaveHandler($sm->get('RedisSessionClient'), [$filter]);
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
