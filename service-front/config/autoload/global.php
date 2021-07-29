@@ -80,6 +80,9 @@ return [
             // The probability of GC running is gc_probability/gc_divisor
             'gc_probability' => 0,
             'gc_divisor' => 20,
+
+            // TODO remove once we're using Redis
+            'save_path' => '/tmp/',
         ],
 
         'redis' => [
