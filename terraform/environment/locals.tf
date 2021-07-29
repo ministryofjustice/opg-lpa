@@ -38,6 +38,10 @@ locals {
     "Name" = "${local.environment}-online-lpa-tool"
   })
 
+  performance_platform_component_tag = {
+    component = "performance_platform"
+  }
+
   shared_component_tag = {
     component = "shared"
   }

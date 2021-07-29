@@ -1,6 +1,9 @@
 ### Base image - contains dependencies required for build
 FROM public.ecr.aws/lambda/python:3.8 AS base
 
+# fixes security issues detected in build.
+RUN yum update -y rpm openssl
+
 # Dependencies required to install psycopg2 (postgres driver)
 # used in SQLAlchemy
 RUN yum install -y gcc postgresql-devel
@@ -11,6 +14,9 @@ RUN pip install -r /service-perfplat/worker-requirements.txt --target ${LAMBDA_T
 
 ### Final image - contains compiled dependencies
 FROM public.ecr.aws/lambda/python:3.8
+
+# fixes security issues detected in build.
+RUN yum update -y rpm openssl
 
 RUN yum install -y postgresql && \
     yum clean all && \

@@ -443,7 +443,7 @@ services:
     image: perfplatworker
     build:
       context: ./service-perfplat
-      dockerfile: ./docker/Dockerfile-worker
+      dockerfile: ./docker/Dockerfile-worker-dev
     depends_on:
       - postgres
     ports:

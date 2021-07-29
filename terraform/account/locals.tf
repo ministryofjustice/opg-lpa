@@ -67,7 +67,7 @@ locals {
   }
 
   performance_platform_component_tag = {
-    component = "perform_platform"
+    component = "performance_platform"
   }
 
 }
