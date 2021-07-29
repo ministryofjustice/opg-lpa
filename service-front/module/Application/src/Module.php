@@ -4,6 +4,7 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
+use Application\Logging\LoggerTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
@@ -30,6 +31,8 @@ use Twig\TwigFunction;
 
 class Module implements FormElementProviderInterface
 {
+    use LoggerTrait;
+
     public function onBootstrap(MvcEvent $e)
     {
         $eventManager        = $e->getApplication()->getEventManager();
@@ -219,7 +222,26 @@ class Module implements FormElementProviderInterface
                 },
 
                 'SaveHandler' => function (ServiceLocatorInterface $sm) {
-                    return new FilteringSaveHandler($sm->get('Request'));
+                    $request = $sm->get('Request');
+                    $logger = $this->getLogger();
+
+                    $filter = function () use ($request, $logger) {
+                        $shouldWrite = !$request->isXmlHttpRequest();
+
+                        if ($shouldWrite) {
+                            $msg = 'Writing session for request on path';
+                        }
+                        else {
+                            $msg = 'IGNORING session write for request on path';
+                        }
+                        $logger->debug('XXXXXXXXXXXXXXXXXXXXXXXXXXX ' . $msg . ' ' . $request->getUri()->getPath());
+
+                        return $shouldWrite;
+                    };
+
+                    $saveHandler = new FilteringSaveHandler();
+                    $saveHandler->addFilter($filter);
+                    return $saveHandler;
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
