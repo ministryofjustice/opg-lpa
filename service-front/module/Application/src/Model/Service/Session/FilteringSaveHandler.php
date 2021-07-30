@@ -20,7 +20,15 @@ class FilteringSaveHandler implements SaveHandlerInterface
 {
     use LoggerTrait;
 
-    public const SESSION_PREFIX = 'PHP_SESSID_';
+    /**
+     * Prefix for session keys in Redis; this ensures parity
+     * with the prefix used by the stock Redis save handler
+     * so that sessions should not be lost in the transition
+     * between the stock handler and this one. NB phpredis
+     * doesn't appear to define a constant for this.
+     * @var string
+     */
+    public const SESSION_PREFIX = 'PHPREDIS_SESSION:';
 
     /**
      * @var Redis
@@ -49,6 +57,18 @@ class FilteringSaveHandler implements SaveHandlerInterface
      * @var array
      */
     private $filters = [];
+
+    /**
+     * Marker to identify how many times writes of session data have been
+     * attempted via the write() method. Note that this
+     * does not record successful writes, only the number of writes attempted.
+     *
+     * Value is 0 if a write hasn't been attempted yet in the lifetime
+     * of this instance.
+     *
+     * @var int
+     */
+    public $sessionWritesAttempted = 0;
 
     // generate a session ID key for Redis
     private function getKey($id)
@@ -108,7 +128,7 @@ class FilteringSaveHandler implements SaveHandlerInterface
     }
 
     // $savePath and $sessionName are ignored
-    public function open($savePath, $sessionName): bool
+    public function open($savePath, $sessionName)
     {
         $result = FALSE;
 
@@ -171,6 +191,8 @@ class FilteringSaveHandler implements SaveHandlerInterface
         if ($doWrite) {
             $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; key = %s; session data = %s',
                 microtime(TRUE), $key, $data));
+
+            $this->sessionWritesAttempted += 1;
 
             return $this->redisClient->setEx($key, $this->ttl, $data);
         }
