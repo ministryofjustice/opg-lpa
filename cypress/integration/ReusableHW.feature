@@ -1,3 +1,4 @@
+@Reusable
 Feature: Reusable HW LPA details
 
   I want to be able to visit the dashboard and reuse HW LPA details
@@ -5,7 +6,7 @@ Feature: Reusable HW LPA details
   Background:
     Given I ignore application exceptions
 
-  @focus @CleanupFixtures @Reusable
+  @focus @CleanupFixtures
   Scenario: HW LPA is reusable after skipping replacement attorneys, certificate provider and people to notify (LPAL-64)
     Given I create HW LPA test fixture with a donor and attorneys
     And I log in as appropriate test user
