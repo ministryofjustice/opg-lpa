@@ -46,9 +46,9 @@ fi
 
 
 RETVAL=$?
-echo printing $RETVAL
+echo "printing $RETVAL"
 
-if [ $RETVAL -eq 0 ]; then
+if [[ $RETVAL -eq 0 ]]; then
     echo OK
 else
     echo FAIL
