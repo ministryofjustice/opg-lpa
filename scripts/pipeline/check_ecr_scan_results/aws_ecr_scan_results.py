@@ -196,7 +196,8 @@ class ECRScanChecker:
             print("sending slack message...")
             client = WebClient(token=self.slack_token)
             client.chat_postMessage(channel=self.slack_channel,
-                                    blocks=message['blocks'])
+                                    blocks=message['blocks'],
+                                    text="Scan Results Received")
 
 
 def main():
