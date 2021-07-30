@@ -49,3 +49,51 @@ data "aws_iam_policy_document" "queue_policy_document" {
     ]
   }
 }
+
+
+resource "aws_sqs_queue" "performance_platform_worker" {
+  name                              = "lpa-performance-platform-worker-queue-${local.environment}"
+  count                             = local.account.performance_platform_enabled == true ? 1 : 0
+  delay_seconds                     = 90
+  max_message_size                  = 16384 #adjust as needed
+  message_retention_seconds         = 86400
+  receive_wait_time_seconds         = 10
+  tags                              = merge(local.default_tags, local.performance_platform_component_tag)
+  kms_master_key_id                 = "alias/aws/sqs"
+  kms_data_key_reuse_period_seconds = "300"
+
+}
+
+resource "aws_sqs_queue_policy" "performance_platform_worker" {
+  count      = local.account.performance_platform_enabled == true ? 1 : 0
+  queue_url  = aws_sqs_queue.performance_platform_worker[0].id
+  policy     = data.aws_iam_policy_document.performance_platform_worker[0].json
+  depends_on = [aws_ecs_service.api, aws_iam_role.api_task_role]
+}
+
+data "aws_iam_policy_document" "performance_platform_worker" {
+  count = local.account.performance_platform_enabled == true ? 1 : 0
+  statement {
+    effect    = "Allow"
+    resources = [aws_sqs_queue.performance_platform_worker[0].arn]
+    actions = [
+      "sqs:ChangeMessageVisibility",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl",
+      "sqs:ListQueueTags",
+      "sqs:ReceiveMessage",
+      "sqs:SendMessage",
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = [local.account.account_id]
+    }
+  }
+}
+
+resource "aws_lambda_event_source_mapping" "performance_platform_worker" {
+  count            = local.account.performance_platform_enabled == true ? 1 : 0
+  event_source_arn = aws_sqs_queue.performance_platform_worker[0].arn
+  function_name    = module.performance_platform_worker[0].lambda_function.arn
+}
