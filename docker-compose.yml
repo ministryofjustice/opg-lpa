@@ -83,6 +83,8 @@ services:
   flask-app:
     container_name: lpa-flask-app
     image: lpa-flask-app
+    volumes:
+      - ./service-front/govuk-frontend-jinja-makelpa:/makelpa
     build:
       context: ./
       dockerfile: service-front/docker/flask-app/Dockerfile
