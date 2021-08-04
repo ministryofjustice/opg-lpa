@@ -9,6 +9,8 @@ use Application\Model\DataAccess\Postgres\DbWrapper;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Sql\Predicate\In as InPredicate;
 
+use ApplicationTest\Helpers;
+
 
 class ApplicationDataTest extends MockeryTestCase
 {
@@ -58,7 +60,11 @@ class ApplicationDataTest extends MockeryTestCase
 
         // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $resultMock = Mockery::Mock(Result::class);
+        $resultMock = Helpers::makePdoResultMock([[
+            'document' => '{"a":1}',
+            'metadata' => '{"b":2}',
+            'payment' => null,
+        ]]);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')
@@ -71,24 +77,6 @@ class ApplicationDataTest extends MockeryTestCase
                 [],
             )
             ->andReturn($resultMock);
-
-        // these are methods called internally when foreach is invoked
-        // with a Traversable, which is what a PDO Result is; we return a
-        // single record to exercise the mapPostgresToLpaCompatible() method
-        $resultMock->shouldReceive('rewind');
-
-        // second time valid() is called, we return FALSE so foreach() stops
-        // traversing the result
-        $resultMock->shouldReceive('valid')
-            ->andReturn(TRUE, FALSE);
-
-        $resultMock->shouldReceive('current')
-            ->andReturn([
-                'document' => '{"a":1}',
-                'metadata' => '{"b":2}',
-                'payment' => null,
-            ]);
-        $resultMock->shouldReceive('next');
 
         // test method
         $applicationData = new ApplicationData($dbWrapperMock, []);
