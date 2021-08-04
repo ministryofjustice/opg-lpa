@@ -86,6 +86,15 @@ class DbWrapper {
      * @param array $criteria Added to the WHERE clause; the "search" key is escaped
      * and used for a regex match if present
      * @param array $options Used to set columns, LIMIT, OFFSET and SORT
+     *
+     * For sorting:
+     * $options = [
+     *     'sort' => [
+     *         'column1' => 1,   # ASC sort
+     *         'column2' => 0    # DESC sort
+     *     ]
+     * ]
+     *
      * @return Result
      */
     public function select(string $tableName, array $criteria, array $options=[]) : Result
