@@ -258,7 +258,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             $searchField = (string)$lpa->getDocument()->getDonor()->getName();
         }
 
-        $lastUpdated = $lpa->getUpdatedAt()->format($this->dbWrapper::TIME_FORMAT);
+        $lastUpdated = $lpa->getUpdatedAt()->format(DbWrapper::TIME_FORMAT);
 
         if ($updateTimestamp === true) {
             // Record the time we updated the document.
@@ -320,7 +320,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
 
 
         unset($data['id']); // We want to keep this
-        $data['updatedAt'] = gmdate($this->dbWrapper::TIME_FORMAT); // We want to keep and update this.
+        $data['updatedAt'] = gmdate(DbWrapper::TIME_FORMAT); // We want to keep and update this.
 
         //--
 
