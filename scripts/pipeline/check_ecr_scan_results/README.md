@@ -4,11 +4,19 @@ This script returns ECR scan results for known vulnerabilities.
 
 Information about ECR scan on image push is available at <https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html>
 
-The script takes arguments for image tag to return results for, the Slack webhook to use for posting results and whether to post to slack.
+The script takes arguments for:
 
-If omitted, the image tag will default to `latest`, and the webhook will default to the system environment variable `$SLACK_WEBHOOK`.
+- Repository name search terms (comma separated) e.g, `online-lpa,perfplat`.
+- Image tag (optional) default to `latest`.
+- Slack token.
+- Slack channel to use for posting results.
+- Result limits (optional), default to 5.
+- AWS Account id - defaults to the management account.
+- Test mode flag (optional) - prints only to `stdout` if used.
+- Branch name (optional).
+- Build url (optional).
 
-The script will return the first 5 results, in order of most severe first, for each image. More results can be returned using the result_limit argument when running the script.
+The script will return the results, in order of most severe first, for each image.
 
 ## Install python dependencies with pip
 
@@ -20,20 +28,27 @@ pip install -r requirements.txt
 
 The script uses your IAM user credentials to assume the appropriate role.
 
-You can provide the script credentials using aws-vault
+This also assumes you have the slack token and channel to hand for posting to.
+You can provide the script credentials using aws-vault:
+
+minimal example, for performing a scan on online-lpa repo for the latest tag:
 
 ``` bash
-aws-vault exec identity -- python scripts/pipeline/check_ecr_scan_results/aws_ecr_scan_results.py \
-  --search online-lpa
+aws-vault exec identity -- python3 aws_ecr_scan_results.py \
+  --search online-lpa \
+  --slack_token $SLACK_ACCESS_TOKEN \
+  --slack_channel $BUILD_SLACK_CHANNEL
 ```
 
-to configure other options, use the additional arguments
+this is the full list of options and flags:
 
 ``` bash
-aws-vault exec identity -- python scripts/pipeline/check_ecr_scan_results/aws_ecr_scan_results.py \
-  --search online-lpa \
-  --tag latest \
-  --webhook "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX" \
-  --post_to_slack True \
-  --result_limit 10
+aws-vault exec identity -- python3 aws_ecr_scan_results.py \
+  --search online-lpa,perfplat-worker \
+  --tag <image-tagged> \
+  --slack_token $SLACK_ACCESS_TOKEN \
+  --slack_channel $BUILD_SLACK_CHANNEL \
+  --result_limit 10  \
+  --test_mode \
+  --account_id <aws_account_id>
 ```
