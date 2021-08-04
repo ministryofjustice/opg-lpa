@@ -7,10 +7,24 @@ use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 
-class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRepositoryInterface
+class FeedbackData implements FeedbackRepository\FeedbackRepositoryInterface
 {
-
     const FEEDBACK_TABLE = 'feedback';
+
+    /**
+     * Wrapper around db adapter and SQL generation.
+     * @var DbWrapper
+     */
+    private $dbWrapper;
+
+    /**
+     * Constructor.
+     * @param ZendDbAdapter $adapter
+     */
+    public final function __construct(DbWrapper $dbWrapper)
+    {
+        $this->dbWrapper = $dbWrapper;
+    }
 
     /**
      * Insert a new feedback item
@@ -20,22 +34,23 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      */
     public function insert(array $feedback) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::FEEDBACK_TABLE);
 
         $data = [
-            'received'  => gmdate(self::TIME_FORMAT),
+            'received'  => gmdate(DbWrapper::TIME_FORMAT),
             'message'   => json_encode($feedback),
         ];
 
         $insert->columns(array_keys($data));
         $insert->values($data);
 
-        $statement = $sql->prepareStatementForSqlObject($insert);
+        $sql = $sql->prepareStatementForSqlObject($insert);
 
         try {
-            $statement->execute();
-        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
+            $sql->execute();
+        }
+        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             $this->getLogger()->err('Error running insert query for feedback');
             $this->getLogger()->err($e->getMessage());
             $this->getLogger()->err($e->getTraceAsString());
@@ -50,23 +65,22 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      *
      * @param DateTime $from
      * @param DateTime $to
-     * @return mixed
+     * @return Traversable
      */
     public function getForDateRange(DateTime $from, DateTime $to) : Traversable
     {
-        $sql    = new Sql($this->getZendDb());
-        $select = $sql->select(self::FEEDBACK_TABLE);
-        $select->order('received ASC');
-
-        $select->where([
+        $criteria = [
             new Operator('received', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $from->format('c')),
             new Operator('received', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $to->format('c')),
-        ]);
+        ];
 
-        $results = $sql->prepareStatementForSqlObject($select)->execute();
+        $options = [
+            'sort' => ['received' => 1]
+        ];
+
+        $results = $this->dbWrapper->select(self::FEEDBACK_TABLE, $criteria, $options);
 
         foreach ($results as $result) {
-
             if (!empty($result['message'])) {
                 $json = json_decode($result['message'], true);
                 $result = array_merge($result, $json);
@@ -87,7 +101,7 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      */
     public function prune(DateTime $before) : bool
     {
-        $sql    = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $delete = $sql->delete(self::FEEDBACK_TABLE);
 
         $delete->where([
