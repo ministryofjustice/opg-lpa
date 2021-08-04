@@ -39,7 +39,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
 
     /**
      * Constructor.
-     * @param ZendDbAdapter $adapter
+     * @param DbWrapper $dbWrapper
      * @param array $config
      */
     public final function __construct(DbWrapper $dbWrapper, array $config)
