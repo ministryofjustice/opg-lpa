@@ -18,6 +18,13 @@ pr_build: &pr_build
         requires: [node_build_web]
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: flask_docker_build
+        ecr_repository_name_prefix: online-lpa/flask
+        service_path: service-flask
+        build_web: false
+        filters: { branches: { ignore: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: admin_docker_build
         ecr_repository_name_prefix: online-lpa/admin
         service_path: service-admin
