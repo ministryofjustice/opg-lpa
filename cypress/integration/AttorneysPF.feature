@@ -123,6 +123,15 @@ Feature: Add attorneys to a Property and Finance LPA
         And I click "form-save"
         Then I see in the page text
             | There is a problem |
+            | Enter the company's name |
+            | Enter a registration number that's less than 76 characters long |
+            | Change address line 1 so that it has fewer than 51 characters |
+            | Change address line 2 so that it has fewer than 51 characters |
+            | Change address line 3 so that it has fewer than 51 characters |
+        When I type "qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB" into "name"
+        And I click "form-save"
+        Then I see in the page text
+            | There is a problem |
             | Enter a company name that's less than 76 characters long |
             | Enter a registration number that's less than 76 characters long |
             | Change address line 1 so that it has fewer than 51 characters |
