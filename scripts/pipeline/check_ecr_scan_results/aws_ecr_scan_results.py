@@ -1,41 +1,83 @@
-import boto3
 import argparse
-import requests
 import json
 import os
+import traceback
+
+import boto3
+import jinja2
+from jinja2.loaders import FileSystemLoader
+from slack_sdk import WebClient
 
 
 class ECRScanChecker:
+
     aws_account_id = ''
     aws_iam_session = ''
     aws_ecr_client = ''
     images_to_check = []
     tag = ''
     report = ''
-    report_limit = ''
+    result_limit = ''
+    test_mode = False
+    slack_channel = ''
+    slack_token = ''
+    search_terms = []
+    branch = ''
+    build_url = ''
 
-    def __init__(self, report_limit, search_term):
-        self.report_limit = int(report_limit)
-        self.aws_account_id = 311462405659  # management account id
+    def __init__(self, args):
+        self.search_terms = [s.strip() for s in args.search.split(",")]
+        self.result_limit = int(args.result_limit)
+        self.aws_account_id = args.account_id
+        self.test_mode = args.test_mode
+        self.slack_channel = args.slack_channel
+        self.slack_token =  args.slack_token
+        self.tag = args.tag
+        self.branch = args.branch
+        self.build_url = args.build_url
+
+        self.template_environment = jinja2.Environment(
+            loader=FileSystemLoader("templates"))
+
         self.set_iam_role_session()
+        self.set_ecr_client()
+        self.images_to_check = self.get_repositories(self.search_terms)
+
+    def render(self, template_file, template_vars):
+        tmpl = self.template_environment.get_template(template_file)
+        return tmpl.render(**template_vars)
+
+    def get_severity_emoji(self, severity):
+        if severity == "CRITICAL":
+            return "siren"
+        if severity == "HIGH":
+            return "x"
+        if severity == "MEDIUM":
+            return "sign-warning"
+        if severity == "LOW":
+            return "information_source"
+        return "grey_question"
+
+    def set_ecr_client(self):
         self.aws_ecr_client = boto3.client(
             'ecr',
             region_name='eu-west-1',
             aws_access_key_id=self.aws_iam_session['Credentials']['AccessKeyId'],
             aws_secret_access_key=self.aws_iam_session['Credentials']['SecretAccessKey'],
-            aws_session_token=self.aws_iam_session['Credentials']['SessionToken'])
-        self.images_to_check = self.get_repositories(search_term)
+            aws_session_token=self.aws_iam_session['Credentials']['SessionToken']
+            )
 
     def set_iam_role_session(self):
         if os.getenv('CI'):
-            role_arn = f'arn:aws:iam::{self.aws_account_id}:role/opg-lpa-ci'
+            role_arn = f"arn:aws:iam::{self.aws_account_id}:role/opg-lpa-ci"
         else:
-            role_arn = f'arn:aws:iam::{self.aws_account_id}:role/operator'
+            role_arn = f"arn:aws:iam::{self.aws_account_id}:role/operator"
 
         sts = boto3.client(
             'sts',
             region_name='eu-west-1',
         )
+
         session = sts.assume_role(
             RoleArn=role_arn,
             RoleSessionName='checking_ecr_image_scan',
@@ -43,19 +85,14 @@ class ECRScanChecker:
         )
         self.aws_iam_session = session
 
-    def get_repositories(self, search_term):
+    def get_repositories(self, search_terms):
         images_to_check = []
         response = self.aws_ecr_client.describe_repositories()
         for repository in response["repositories"]:
-            if search_term in repository["repositoryName"]:
-                images_to_check.append(repository["repositoryName"])
+            for search_term in search_terms:
+                if search_term != None and search_term in repository["repositoryName"]:
+                    images_to_check.append(repository["repositoryName"])
         return images_to_check
-
-    def recursive_wait(self, tag):
-        print("Waiting for ECR scans to complete...")
-        for image in self.images_to_check:
-            self.wait_for_scan_completion(image, tag)
-        print("ECR image scans complete")
 
     def wait_for_scan_completion(self, image, tag):
         try:
@@ -65,7 +102,6 @@ class ECRScanChecker:
                 imageId={
                     'imageTag': tag
                 },
-                # maxResults=1,
                 WaiterConfig={
                     'Delay': 5,
                     'MaxAttempts': 60
@@ -74,60 +110,94 @@ class ECRScanChecker:
         except:
             print(f"No ECR image scan results for image {image}, tag {tag}")
 
-    def recursive_check_make_report(self, tag):
-        print("Checking ECR scan results...")
-        for image in self.images_to_check:
-            try:
-                findings = self.get_ecr_scan_findings(image, tag)[
-                    "imageScanFindings"]
-                if findings["findings"] != []:
-                    counts = findings["findingSeverityCounts"]
-                    title = f"\n\n:warning: *AWS ECR Scan found results for {image}:* \n"
-                    severity_counts = f"Severity finding counts:\n{counts}\nDisplaying the first {self.report_limit} in order of severity\n\n"
-                    self.report = title + severity_counts
-
-                    for finding in findings["findings"]:
-                        cve = finding["name"]
-                        description = "None"
-                        if "description" in finding:
-                            description = finding["description"]
-
-                        severity = finding["severity"]
-                        link = finding["uri"]
-                        result = f"*Image:* {image} \n**Tag:* {tag} \n*Severity:* {severity} \n*CVE:* {cve} \n*Description:* {description} \n*Link:* {link}\n\n"
-                        self.report += result
-            except:
-                print(f"Unable to get ECR image scan results for image {image}, tag {tag}")
-        if not self.report :
-           self.report = "AWS ECR Scan found no issues.\n"
-           print(self.report)
-
     def get_ecr_scan_findings(self, image, tag):
         response = self.aws_ecr_client.describe_image_scan_findings(
             repositoryName=image,
             imageId={
                 'imageTag': tag
             },
-            maxResults=self.report_limit
+            maxResults=self.result_limit
         )
         return response
 
-    def post_to_slack(self, slack_webhook):
-        if os.getenv('CI'):
+    def wait_for_scans(self):
+        print("Waiting for ECR scans to complete...")
+        for image in self.images_to_check:
+            self.wait_for_scan_completion(image, self.tag)
+        print("ECR image scans complete")
 
-            ci_footer = f"*Github Branch:* {os.getenv('CIRCLE_BRANCH')}\n\n*CircleCI Job Link:* {os.getenv('CIRCLE_BUILD_URL')}\n\n"
-            self.report += ci_footer
+    def generate_report(self):
+        print("Checking ECR scan results...")
+        for image in self.images_to_check:
+            try:
+                findings = self.get_ecr_scan_findings(
+                    image, self.tag)["imageScanFindings"]
 
-        post_data = json.dumps({"text": self.report})
-        response = requests.post(
-            slack_webhook, data=post_data,
-            headers={'Content-Type': 'application/json'}
-        )
-        if response.status_code != 200:
-            raise ValueError(
-                'Request to slack returned an error %s, the response is:\n%s'
-                % (response.status_code, response.text)
-            )
+                if findings["findings"] != []:
+                    counts = findings["findingSeverityCounts"]
+                    titleInfo = {
+                        "image": image,
+                        "counts": counts,
+                        "report_limit": self.result_limit
+                    }
+
+
+                    self.report = self.render("header.j2", titleInfo)
+                    findingResults = []
+
+                    for finding in findings["findings"]:
+                        findingResult = {
+                            "cve_tag": finding["name"],
+                            "emoji": self.get_severity_emoji(finding["severity"]),
+                            "severity": finding["severity"],
+                            "cve_link": finding["uri"],
+                            "image": image,
+                            "tag": self.tag
+                        }
+                        findingResult["description"] = "None"
+
+                        if "description" in finding:
+                            findingResult["description"] = finding["description"]
+                        findingResults.append(findingResult)
+
+                    self.report += self.render("finding.j2", {"results": findingResults})
+
+            except Exception as e:
+                print(
+                    f"Unable to get ECR image scan results for image {image}, tag {self.tag}")
+                print(f"The following error occurred:{e}")
+                print('trace:')
+                traceback.print_exc()
+
+        if not self.report:
+            self.report = self.render("no_scan_results.j2", {"image": image})
+
+        self.write_build_details()
+
+
+    def write_build_details(self):
+        build_vars = {
+           "branch": self.branch,
+            "build_url": self.build_url
+        }
+
+        self.report += self.render("footer.j2", build_vars)
+
+
+    def post_to_slack(self):
+        message_content = {"blocks": self.report}
+
+        message = json.loads(self.render("message.j2", message_content))
+
+        if self.test_mode:
+            print("TEST MODE - not sending to slack.")
+            print(message)
+        else:
+            print("sending slack message...")
+            client = WebClient(token=self.slack_token)
+            client.chat_postMessage(channel=self.slack_channel,
+                                    blocks=message['blocks'],
+                                    text="Scan Results Received")
 
 
 def main():
@@ -135,28 +205,39 @@ def main():
         description="Check ECR Scan results for all service container images.")
     parser.add_argument("--search",
                         default="",
-                        help="The root part oof the ECR repositry path, for example online-lpa")
+                        help="a comma separated list of repository names to partial match:"
+                        "for example online-lpa,perfplat")
     parser.add_argument("--tag",
                         default="latest",
                         help="Image tag to check scan results for.")
     parser.add_argument("--result_limit",
                         default=5,
                         help="How many results for each image to return. Defaults to 5")
-    parser.add_argument("--slack_webhook",
-                        default=os.getenv('SLACK_WEBHOOK'),
-                        help="Webhook to use, determines what channel to post to")
-    parser.add_argument("--post_to_slack",
-                        default=True,
-                        help="Optionally turn off posting messages to slack")
+    parser.add_argument("--slack_token",
+                        help="slack api token to use")
+    parser.add_argument("--slack_channel",
+                        help="slack channel to post to")
+    parser.add_argument("--test_mode",
+                        help="run the script in test mode, does not post to slack",
+                        dest="test_mode",
+                        action="store_true")
+    parser.add_argument("--account_id",
+                        default="311462405659",
+                        help="Optionally specify account for scan, defauts to the management account")
+    parser.add_argument("--branch",
+                        default="N/A",
+                        help="branch for build")
+    parser.add_argument("--build_url",
+                        default="N/A",
+                        help="build tool URL")
 
     args = parser.parse_args()
-    work = ECRScanChecker(args.result_limit, args.search)
-    work.recursive_wait(args.tag)
-    work.recursive_check_make_report(args.tag)
-    if args.slack_webhook is None:
-        print("No slack webhook provided, skipping post of results to slack")
-    if args.post_to_slack == True and args.slack_webhook is not None:
-        work.post_to_slack(args.slack_webhook)
+
+
+    work = ECRScanChecker(args)
+    work.wait_for_scans()
+    work.generate_report()
+    work.post_to_slack()
 
 
 if __name__ == "__main__":

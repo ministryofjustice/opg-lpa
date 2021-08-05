@@ -22,10 +22,9 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
   }
 }
 
-
-#tfsec:ignore:AWS002 bucket logging not needed
+#versioning not required for a logging bucket bucket logging not needed
+#tfsec:ignore:AWS002  #tfsec:ignore:AWS077
 resource "aws_s3_bucket" "access_log" {
-  #tfsec:ignore:AWS077 versioning not required for a logging bucket
   bucket = "online-lpa-${terraform.workspace}-lb-access-logs"
   acl    = "private"
   tags   = local.default_tags
