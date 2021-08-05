@@ -6,20 +6,17 @@ use PDOException;
 use EmptyIterator;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Sql\Predicate\In as InPredicate;
-use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Library\DateTime as MillisecondDateTime;
 
-class ApplicationData extends AbstractBase implements ApplicationRepository\ApplicationRepositoryInterface
+class ApplicationData implements ApplicationRepository\ApplicationRepositoryInterface
 {
-
     const APPLICATIONS_TABLE = 'applications';
 
     /**
@@ -28,6 +25,28 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     const TABLE_COLUMNS = ['id', 'user', 'updatedAt', 'startedAt', 'createdAt', 'completedAt', 'lockedAt', 'locked',
                             'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document', 'payment', 'metadata'];
 
+    /**
+     * Wrapper around db adapter and SQL generation.
+     * @var DbWrapper
+     */
+    private $dbWrapper;
+
+    /**
+     * Application configuration.
+     * @var array
+     */
+    private $config;
+
+    /**
+     * Constructor.
+     * @param ZendDbAdapter $adapter
+     * @param array $config
+     */
+    public final function __construct(DbWrapper $dbWrapper, array $config)
+    {
+        $this->dbWrapper = $dbWrapper;
+        $this->config = $config;
+    }
 
     /**
      * Maps LPA object fields to Postgres' fields.
@@ -63,8 +82,19 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         ]);
     }
 
+    /**
+     * @param array $criteria
+     * @param array $options
+     * @return Traversable
+     */
+    public function fetch(array $criteria, array $options = []) : Traversable
+    {
+        $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, $options);
 
-    //------------------------------------------
+        foreach ($result as $resultRecord) {
+            yield $this->mapPostgresToLpaCompatible($resultRecord);
+        }
+    }
 
     /**
      * Get an LPA by ID, and user ID if provided
@@ -75,31 +105,18 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function getById(int $id, ?string $userId = null) : ?array
     {
-        $sql    = new Sql($this->getZendDb());
-        $select = $sql->select(self::APPLICATIONS_TABLE);
-
-        $select->where(['id' => $id]);
+        $criteria = ['id' => $id];
         if (is_string($userId)) {
-            $select->where(['user' => $userId]);
+            $criteria['user'] = $userId;
         }
 
-        $select->limit(1);
-
-        $result = $sql->prepareStatementForSqlObject($select)->execute();
+        $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, ['limit' => 1]);
 
         if (!$result->isQueryResult() || $result->count() != 1) {
             return null;
         }
 
         return $this->mapPostgresToLpaCompatible($result->current());
-    }
-
-    public function getByIdsAndUser(array $lpaIds, string $userId) : Traversable
-    {
-        return $this->select([
-            'user' => $userId,
-            new InPredicate('id', $lpaIds),
-        ]);
     }
 
     /**
@@ -110,22 +127,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function count(array $criteria) : int
     {
-        $sql    = new Sql($this->getZendDb());
-        $select = $sql->select(self::APPLICATIONS_TABLE);
+        $options = [
+            'columns' => ['count' => new Expression('count(*)')]
+        ];
 
-        $select->columns(['count' => new Expression('count(*)')]);
-
-        if (isset($criteria['search'])) {
-            $select->where([new Expression("search ~* '{$criteria['search']['$regex']}'")]);
-            unset($criteria['search']);
-        }
-
-        $select->where($criteria);
-
-        // Below echo left purposely to view the prepared sql query for test
-        //  echo $select->getSqlString($this->getZendDb()->getPlatform())."\n";
-
-        $result = $sql->prepareStatementForSqlObject($select)->execute();
+        $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, $options);
 
         if (!$result->isQueryResult() || $result->count() != 1) {
             return 0;
@@ -135,72 +141,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     }
 
     /**
-     * @param array $criteria
-     * @param array $options
-     * @return Traversable
-     */
-    public function fetch(array $criteria, array $options = []) : Traversable
-    {
-        $sql    = new Sql($this->getZendDb());
-        $select = $sql->select(self::APPLICATIONS_TABLE);
-
-        if (isset($criteria['search'])) {
-            $select->where([new Expression("search ~* '{$criteria['search']['$regex']}'")]);
-            unset($criteria['search']);
-        }
-
-        $select->where($criteria);
-
-        if (isset($options['skip']) && $options['skip'] !== 0) {
-            $select->offset($options['skip']);
-        }
-
-        if (isset($options['limit'])) {
-            $select->limit($options['limit']);
-        }
-
-        if (isset($options['sort'])) {
-            foreach($options['sort'] as $field=>$direction){
-                $direction = ($direction === 1) ? 'ASC' : 'DESC';
-                $select->order("$field $direction");
-            }
-        }
-
-        $results = $sql->prepareStatementForSqlObject($select)->execute();
-
-        foreach ($results as $result) {
-            yield $this->mapPostgresToLpaCompatible($result);
-        }
-    }
-
-    /**
-     * Generic select allowing arbitrary SQL construction to fetch LPAs.
-     *
-     * @param array $where If provided, clauses are ANDed together by
-     * default; see https://docs.laminas.dev/laminas-db/sql/#where-having
-     * @return Traversable
-     */
-    public function select(array $where = null) : Traversable
-    {
-        $sql = new Sql($this->getZendDb());
-        $select = $sql->select(self::APPLICATIONS_TABLE);
-
-        if (!is_null($where)) {
-            $select->where($where);
-        }
-
-        $results = $sql->prepareStatementForSqlObject($select)->execute();
-
-        if (!$results->isQueryResult()) {
-            return new EmptyIterator();
-        }
-
-        foreach ($results as $result) {
-            yield $this->mapPostgresToLpaCompatible($result);
-        }
-    }
-
-    /**
+     * Get LPAs for the specified user.
      * @param string $userId
      * @param array $options
      * @return Traversable
@@ -211,13 +152,29 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     }
 
     /**
+     * Get LPAs whose IDs are in $lpaIds for the specified user.
+     * @param array $lpaIds Array of LPA IDs which must be matched
+     * @param string $userId ID of the user to get LPAs for
+     * @return Traversable containing LPA items
+     */
+    public function getByIdsAndUser(array $lpaIds, string $userId) : Traversable
+    {
+        $criteria = [
+            'user' => $userId,
+            new InPredicate('id', $lpaIds),
+        ];
+
+        return $this->fetch($criteria);
+    }
+
+    /**
      * @param Lpa $lpa
      * @return bool
      * @throws \Exception
      */
     public function insert(Lpa $lpa) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::APPLICATIONS_TABLE);
 
         $data = $this->mapLpaToPostgres($lpa);
@@ -301,7 +258,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             $searchField = (string)$lpa->getDocument()->getDonor()->getName();
         }
 
-        $lastUpdated = $lpa->getUpdatedAt()->format(self::TIME_FORMAT);
+        $lastUpdated = $lpa->getUpdatedAt()->format($this->dbWrapper::TIME_FORMAT);
 
         if ($updateTimestamp === true) {
             // Record the time we updated the document.
@@ -310,7 +267,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         //------------------------------------------
 
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::APPLICATIONS_TABLE);
 
         $update->where([
@@ -338,7 +295,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function deleteById(int $lpaId, string $userId) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::APPLICATIONS_TABLE);
 
         $update->where([
@@ -352,8 +309,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
          * We pull the full column list from Postgres here to ensure we set all of the to null.
          * (This isn't efficient for bulk deletes but is fine until we see any issues)
          */
-        $metadata = DbMetadataFactory::createSourceFromAdapter($this->getZendDb());
-        $table = $metadata->getTable(self::APPLICATIONS_TABLE);
+        $table = $this->dbWrapper->getTable(self::APPLICATIONS_TABLE);
 
         $data = [];
 
@@ -364,7 +320,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
 
         unset($data['id']); // We want to keep this
-        $data['updatedAt'] = gmdate(self::TIME_FORMAT); // We want to keep and update this.
+        $data['updatedAt'] = gmdate($this->dbWrapper::TIME_FORMAT); // We want to keep and update this.
 
         //--
 
@@ -454,14 +410,12 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedForType(string $lpaType) : int
     {
-        {
-            $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
-            return $this->count([
-                new IsNotNull('completedAt'),
-                new Operator('completedAt', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $trackFromDate->format('c')),
-                new Expression("document ->> 'type' = ?", $lpaType),
-            ]);
-        }
+        $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
+        return $this->count([
+            new IsNotNull('completedAt'),
+            new Operator('completedAt', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $trackFromDate->format('c')),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
     }
 
     /**
@@ -532,8 +486,6 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function getLpasPerUser() : array
     {
-        $adapter = $this->getZendDb();
-
         /*
          The query is:
 
@@ -543,7 +495,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             SELECT lpa_count, count(*) AS "user_count" FROM lpa_counts GROUP BY lpa_count
          */
 
-        $sql = new Sql($adapter);
+        $sql = $this->dbWrapper->createSql();
 
         $selectOne = $sql->select(self::APPLICATIONS_TABLE);
         $selectOne->columns(['user', 'lpa_count' => new Expression('count(*)')]);
@@ -555,9 +507,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $selectTwo->group('lpa_count');
         $selectTwo->order('lpa_count DESC');
 
-        $query = 'WITH lpa_counts AS('.$sql->buildSqlString($selectOne).') '.$sql->buildSqlString($selectTwo);
+        $query = 'WITH lpa_counts AS(' . $sql->buildSqlString($selectOne). ') ' . $sql->buildSqlString($selectTwo);
 
-        $results = $adapter->query($query, $adapter::QUERY_MODE_EXECUTE)->toArray();
+        $results = $this->dbWrapper->rawQuery($query)->toArray();
 
         /*
          * This creates an array where:
