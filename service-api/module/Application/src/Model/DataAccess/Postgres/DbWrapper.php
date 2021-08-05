@@ -87,12 +87,19 @@ class DbWrapper {
      * and used for a regex match if present
      * @param array $options Used to set columns, LIMIT, OFFSET and SORT
      *
-     * For sorting:
+     * Example options:
+     *
      * $options = [
      *     'sort' => [
      *         'column1' => 1,   # ASC sort
      *         'column2' => 0    # DESC sort
-     *     ]
+     *     ],
+     *     'limit' => 1,
+     *     'skip' => 10,         # sets offset in SQL
+     *     'columns' => [
+     *         'column1',
+     *         'column2'
+     *     ],
      * ]
      *
      * @return Result

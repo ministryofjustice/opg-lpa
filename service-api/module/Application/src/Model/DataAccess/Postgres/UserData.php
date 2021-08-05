@@ -32,12 +32,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     private function getByField(array $where) : ?array
     {
-        $sql = $this->dbWrapper->createSql();
-        $select = $sql->select(self::USERS_TABLE);
-        $select->where($where);
-        $select->limit(1);
-
-        $result = $sql->prepareStatementForSqlObject($select)->execute();
+        $result = $this->dbWrapper->select(self::USERS_TABLE, $where, ['limit' => 1]);
 
         if (!$result->isQueryResult() || $result->count() != 1) {
             return null;
@@ -54,12 +49,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     private function countRows(array $where) : int
     {
-        $sql = $this->dbWrapper->createSql();
-        $select = $sql->select(self::USERS_TABLE);
-        $select->columns(['count' => new Expression('count(*)')]);
-        $select->where($where);
+         $options = [
+            'columns' => [
+                'count' => new Expression('count(*)')
+            ]
+        ];
 
-        $result = $sql->prepareStatementForSqlObject($select)->execute();
+        $result = $this->dbWrapper->select(self::USERS_TABLE, $where, $options);
 
         if (!$result->isQueryResult() || $result->count() != 1) {
             return 0;
@@ -294,7 +290,6 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         try {
             $statement->execute();
-
         }
         catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
             // If it's a key clash, and not on the identity, re-try with new values.
@@ -557,21 +552,17 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null) : iterable
     {
-        $sql = $this->dbWrapper->createSql();
-        $select = $sql->select(self::USERS_TABLE);
-
-        $select->where([
+        $where = [
             new Operator('last_login', Operator::OPERATOR_LESS_THAN, $since->format('c'))
-        ]);
+        ];
 
-        // Exclude results that have already been actioned.
+        // Exclude results that have already been actioned
         if (!is_null($excludeFlag)) {
-            $select->where([
-                new Expression("inactivity_flags -> '{$excludeFlag}' IS NULL")
-            ]);
+            $excludeFlag = $this->dbWrapper->quoteValue($excludeFlag);
+            $where[] = new Expression("inactivity_flags -> {$excludeFlag} IS NULL");
         }
 
-        $users = $sql->prepareStatementForSqlObject($select)->execute();
+        $users = $this->dbWrapper->select(self::USERS_TABLE, $where);
 
         foreach ($users as $user) {
             yield new UserModel($user);
@@ -607,15 +598,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getAccountsUnactivatedOlderThan(DateTime $olderThan) : iterable
     {
-        $sql = $this->dbWrapper->createSql();
-        $select = $sql->select(self::USERS_TABLE);
-
-        $select->where([
+        $where = [
             'active' => false,
             new Operator('created', Operator::OPERATOR_LESS_THAN, $olderThan->format('c')),
-        ]);
+        ];
 
-        $users = $sql->prepareStatementForSqlObject($select)->execute();
+        $users = $this->dbWrapper->select(self::USERS_TABLE, $where);
 
         foreach ($users as $user) {
             yield new UserModel($user);
