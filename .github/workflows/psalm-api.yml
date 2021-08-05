@@ -8,7 +8,7 @@ on:
     paths:
       - 'service-api/**'
 jobs:
-  psalm:
+  psalm_api:
     name: Psalm
     runs-on: ubuntu-latest
     defaults:
