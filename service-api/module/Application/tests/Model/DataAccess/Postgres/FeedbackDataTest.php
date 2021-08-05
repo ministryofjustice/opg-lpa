@@ -8,6 +8,7 @@ use Application\Model\DataAccess\Postgres\FeedbackData;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 use DateTime;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Sql;
@@ -30,6 +31,7 @@ class FeedbackDataTest extends MockeryTestCase
         $dbWrapperMock = Mockery::Mock(DbWrapper::class);
         $sqlMock = Mockery::Mock(Sql::class);
         $insertMock = Mockery::Mock(Insert::class);
+        $statementMock = Mockery::Mock(StatementInterface::class);
 
         // expectations
         $dbWrapperMock->shouldReceive('createSql')
@@ -49,9 +51,9 @@ class FeedbackDataTest extends MockeryTestCase
 
         $sqlMock->shouldReceive('prepareStatementForSqlObject')
             ->with($insertMock)
-            ->andReturn($sqlMock);
+            ->andReturn($statementMock);
 
-        $sqlMock->shouldReceive('execute')
+        $statementMock->shouldReceive('execute')
             ->andReturn(TRUE);
 
         // test method
