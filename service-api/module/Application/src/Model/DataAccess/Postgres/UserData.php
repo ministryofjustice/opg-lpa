@@ -130,8 +130,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         // count applications by user
         $subselect = $sql->select(['a' => ApplicationData::APPLICATIONS_TABLE])
-                         ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
-                         ->group(['user']);
+            ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
+            ->group(['user']);
 
         // LIKE statements for WHERE clause
         $likes = new PredicateSet();
@@ -147,14 +147,14 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
         // invalid SQL; but this potentially locks the code to Postgres
         $select = $sql->select(['u' => self::USERS_TABLE])
-                      ->join(['a' => $subselect],
-                              'u.id = a.user',
-                              ['numberOfLpas'],
-                              'FULL')
-                      ->where($likes)
-                      ->order('identity ASC')
-                      ->offset($offset)
-                      ->limit($limit);
+            ->join(['a' => $subselect],
+                  'u.id = a.user',
+                  ['numberOfLpas'],
+                  'FULL')
+            ->where($likes)
+            ->order('identity ASC')
+            ->offset($offset)
+            ->limit($limit);
 
         $users = $sql->prepareStatementForSqlObject($select)->execute();
 
@@ -667,9 +667,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         // Map fields needed from the top level (user), into the profile.
         $profile = array_merge(json_decode($user['profile'], true), [
-            'id'=>$id,
-            'createdAt'=>$user['created'],
-            'updatedAt'=>$user['updated']
+            'id' => $id,
+            'createdAt' => $user['created'],
+            'updatedAt' => $user['updated']
         ]);
 
         return new ProfileUserModel($profile);
@@ -689,7 +689,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         unset($data['id'], $data['createdAt'], $data['updatedAt']);
 
         return $this->updateRow(
-            ['id'=>$user->getId()],
+            ['id' => $user->getId()],
             [
                 'profile' => json_encode($data),
             ]
