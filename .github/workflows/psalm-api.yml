@@ -1,0 +1,32 @@
+name: Psalm analysis - API
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'service-api/**'
+jobs:
+  psalm:
+    name: Psalm
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./service-api/
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup PHP with tools
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: vimeo/psalm
+      - name: Composer install
+        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts
+      - name: Run psalm
+        run: psalm --output-format=github --taint-analysis --report=results.sarif
+      - name: Upload Security Analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ./service-api/results.sarif
