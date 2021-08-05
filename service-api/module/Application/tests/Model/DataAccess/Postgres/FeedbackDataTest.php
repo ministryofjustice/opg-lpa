@@ -9,12 +9,59 @@ use Application\Model\DataAccess\Postgres\DbWrapper;
 use DateTime;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Insert;
+use Laminas\Db\Sql\Sql;
 
 use ApplicationTest\Helpers;
 
 
 class FeedbackDataTest extends MockeryTestCase
 {
+    public function testInsertSuccess() : void
+    {
+        $expected = TRUE;
+
+        $data = [
+            'email' => 'boff@bip',
+            'details' => 'Great site',
+        ];
+
+        // mocks
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $sqlMock = Mockery::Mock(Sql::class);
+        $insertMock = Mockery::Mock(Insert::class);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('createSql')
+            ->andReturn($sqlMock);
+
+        $sqlMock->shouldReceive('insert')
+            ->with(FeedbackData::FEEDBACK_TABLE)
+            ->andReturn($insertMock);
+
+        $insertMock->shouldReceive('columns')
+            ->with(['received', 'message']);
+        $insertMock->shouldReceive('values')
+            ->withArgs(function ($valuesArg) use ($data) {
+                return $valuesArg['message'] == json_encode($data) &&
+                    Helpers::isGmDateString($valuesArg['received']);
+            });
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($insertMock)
+            ->andReturn($sqlMock);
+
+        $sqlMock->shouldReceive('execute')
+            ->andReturn(TRUE);
+
+        // test method
+        $feedbackData = new FeedbackData($dbWrapperMock);
+        $actual = $feedbackData->insert($data);
+
+        // assertions
+        $this->assertEquals($expected, $actual);
+    }
+
     public function testGetForDateRange() : void
     {
         $expected = [
