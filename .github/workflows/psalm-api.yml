@@ -2,14 +2,14 @@ name: Psalm analysis - API
 
 on:
   push:
-    branches: [ master ]
+    branches: [ "master", "main" ]
   pull_request:
-    branches: [ master ]
+    branches: [ "master", "main" ]
     paths:
       - 'service-api/**'
 jobs:
   psalm_api:
-    name: Psalm
+    name: Psalm API
     runs-on: ubuntu-latest
     defaults:
       run:
