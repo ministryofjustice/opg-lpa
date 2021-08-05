@@ -39,7 +39,7 @@ resource "aws_acm_certificate_validation" "certificate_front" {
 }
 
 resource "aws_acm_certificate" "certificate_front" {
-  domain_name       = "${local.cert_prefix_internal}front.lpa.opg.service.justice.gov.uk"
+  domain_name       = "${local.cert_prefix_internal}${local.cert_prefix_development}front.lpa.opg.service.justice.gov.uk"
   validation_method = "DNS"
   tags              = merge(local.default_tags, local.shared_component_tag)
 }
@@ -72,7 +72,7 @@ resource "aws_acm_certificate_validation" "certificate_admin" {
 }
 
 resource "aws_acm_certificate" "certificate_admin" {
-  domain_name       = "${local.cert_prefix_internal}admin.lpa.opg.service.justice.gov.uk"
+  domain_name       = "${local.cert_prefix_internal}${local.cert_prefix_development}admin.lpa.opg.service.justice.gov.uk"
   validation_method = "DNS"
   tags              = merge(local.default_tags, local.shared_component_tag)
 }
@@ -105,7 +105,7 @@ resource "aws_acm_certificate_validation" "certificate_public_facing" {
 }
 
 resource "aws_acm_certificate" "certificate_public_facing" {
-  domain_name               = "${local.cert_prefix_public_facing}${data.aws_route53_zone.live_lastingpowerofattorney_gov_uk.name}"
+  domain_name               = "${local.cert_prefix_public_facing}${local.cert_prefix_development}${data.aws_route53_zone.live_lastingpowerofattorney_gov_uk.name}"
   validation_method         = "DNS"
   subject_alternative_names = terraform.workspace == "production" ? ["lastingpowerofattorney.service.gov.uk", "maintenance.lastingpowerofattorney.service.gov.uk"] : []
   tags                      = merge(local.default_tags, local.shared_component_tag)

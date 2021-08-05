@@ -1,0 +1,68 @@
+workspace "Performance Platform - embedded" {
+
+    model {
+        user = person "User"
+        admin = person "Admin"
+        takeup = softwareSystem "Digital take-up system/manual process" "" "External"
+        govuk = softwareSystem "data.gov.uk website" "" "External"
+        adminui = softwareSystem "Admin" "" "External"
+        analytics = softwareSystem "Google Analytics" "" "External"
+
+        front = softwareSystem "Make an LPA front-end" "" "External"
+
+        api = softwareSystem "Make an LPA API with embedded Performance Platform" "" "Software" {
+            apiweb = container "api-web" "" "nginx" "External"
+            apiapp = container "api-app" "" "php-fpm" "External"
+            postgres = container "database" "" "postgres" "External"
+            perfplat_api = container "perfplat-api" "" "Python" "Software"
+            perfplat_queue = container "perfplat-queue" "" "SQS" "Software"
+            perfplat_worker = container "perfplat-worker" "" "Python lambda" "Software"
+        }
+
+        user -> front "Posts user satisfaction form"
+        front -> apiweb "Posts user satisfaction data"
+        admin -> adminui "Triggers generation of perf data"
+        govuk -> apiweb "Gets perf data"
+        front -> apiweb "Posts user satisfaction data"
+        adminui -> apiweb "Initiates generation of perf data"
+        apiweb -> apiapp "Proxies requests re: user satisfaction data"
+        apiweb -> perfplat_api "Proxies requests re: perf data"
+        apiapp -> postgres "CRUD on perf data"
+
+        perfplat_api -> perfplat_queue "Manages perf data jobs"
+        perfplat_worker -> postgres "Caches perf data"
+        perfplat_worker -> takeup "Gets digital take-up data"
+        perfplat_queue -> perfplat_worker "Triggers perf data collation job"
+        perfplat_worker -> apiweb "Gets user satisfaction data"
+        perfplat_worker -> analytics "Gets completion rate data"
+    }
+
+    views {
+        systemlandscape "SystemLandscapeEmbedded" "System Landscape - embedded perfplat (C4 level 1)" {
+            include *
+            autoLayout
+        }
+
+        container api "ContainerEmbedded" "System Context diagram - embedded perfplat (C4 level 2)" {
+            include *
+            autolayout
+        }
+
+        styles {
+            element "Software" {
+                background #1168bd
+                color #ffffff
+            }
+            element "External" {
+                background #999999
+                color #ffffff
+            }
+            element "Person" {
+                shape person
+                background #08427b
+                color #ffffff
+            }
+        }
+    }
+
+}

@@ -18,7 +18,7 @@ resource "aws_service_discovery_private_dns_namespace" "internal" {
 resource "aws_route53_record" "public_facing_lastingpowerofattorney" {
   provider        = aws.management
   zone_id         = data.aws_route53_zone.live_service_lasting_power_of_attorney.zone_id
-  name            = "${local.dns_namespace_env_public}${data.aws_route53_zone.live_service_lasting_power_of_attorney.name}"
+  name            = "${local.dns_namespace_env_public}${local.dns_namespace_dev_prefix}${data.aws_route53_zone.live_service_lasting_power_of_attorney.name}"
   type            = "A"
   allow_overwrite = true
   alias {
@@ -39,7 +39,7 @@ resource "aws_route53_record" "public_facing_lastingpowerofattorney" {
 resource "aws_route53_record" "front" {
   provider = aws.management
   zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
-  name     = "${local.dns_namespace_env}${local.front_dns}"
+  name     = "${local.dns_namespace_env}${local.dns_namespace_dev_prefix}${local.front_dns}"
   type     = "A"
 
   alias {
@@ -64,7 +64,7 @@ output "front-domain" {
 resource "aws_route53_record" "admin" {
   provider = aws.management
   zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
-  name     = "${local.dns_namespace_env}${local.admin_dns}"
+  name     = "${local.dns_namespace_env}${local.dns_namespace_dev_prefix}${local.admin_dns}"
   type     = "A"
 
   alias {
