@@ -5,26 +5,13 @@ use DateTime;
 use Traversable;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
+use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 
-class FeedbackData implements FeedbackRepository\FeedbackRepositoryInterface
+
+class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRepositoryInterface
 {
     const FEEDBACK_TABLE = 'feedback';
-
-    /**
-     * Wrapper around db adapter and SQL generation.
-     * @var DbWrapper
-     */
-    private $dbWrapper;
-
-    /**
-     * Constructor.
-     * @param ZendDbAdapter $adapter
-     */
-    public final function __construct(DbWrapper $dbWrapper)
-    {
-        $this->dbWrapper = $dbWrapper;
-    }
 
     /**
      * Insert a new feedback item
@@ -38,8 +25,8 @@ class FeedbackData implements FeedbackRepository\FeedbackRepositoryInterface
         $insert = $sql->insert(self::FEEDBACK_TABLE);
 
         $data = [
-            'received'  => gmdate(DbWrapper::TIME_FORMAT),
-            'message'   => json_encode($feedback),
+            'received' => gmdate(DbWrapper::TIME_FORMAT),
+            'message' => json_encode($feedback),
         ];
 
         $insert->columns(array_keys($data));
@@ -112,5 +99,4 @@ class FeedbackData implements FeedbackRepository\FeedbackRepositoryInterface
 
         return true;
     }
-
 }

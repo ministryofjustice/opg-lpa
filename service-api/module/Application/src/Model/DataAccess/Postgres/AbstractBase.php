@@ -2,52 +2,31 @@
 namespace Application\Model\DataAccess\Postgres;
 
 use Application\Logging\LoggerTrait;
-use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
+use Application\Model\DataAccess\Postgres\DbWrapper;
+
 
 class AbstractBase {
     use LoggerTrait;
 
     /**
-     * Time format to use when converting DateTime to a string.
+     * Wrapper around db adapter and SQL generation.
+     * @var DbWrapper
      */
-    const TIME_FORMAT = 'Y-m-d\TH:i:s.uO'; // ISO8601 including microseconds
-
-    /**
-     * @var ZendDbAdapter
-     */
-    private $adapter;
+    protected $dbWrapper;
 
     /**
      * @var array
      */
-    private $config;
+    protected $config = [];
 
     /**
-     * AbstractBase constructor.
-     * @param ZendDbAdapter $adapter
+     * Constructor.
+     * @param DbWrapper $dbWrapper
      * @param array $config
      */
-    public final function __construct(ZendDbAdapter $adapter, array $config)
+    public final function __construct(DbWrapper $dbWrapper, array $config = [])
     {
-        $this->adapter = $adapter;
+        $this->dbWrapper = $dbWrapper;
         $this->config = $config;
     }
-
-    /**
-     * @return ZendDbAdapter
-     */
-    protected function getZendDb() : ZendDbAdapter
-    {
-        return $this->adapter;
-    }
-
-    /**
-     * Returns the global config.
-     * @return array
-     */
-    protected function config(): array
-    {
-        return $this->config;
-    }
-
 }

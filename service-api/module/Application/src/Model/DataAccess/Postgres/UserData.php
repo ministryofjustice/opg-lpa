@@ -12,11 +12,13 @@ use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\PredicateSet;
 use Opg\Lpa\DataModel\User\User as ProfileUserModel;
+use Application\Model\DataAccess\Postgres\AbstractBase;
+use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Repository\User as UserRepository;
-use Application\Model\DataAccess\Postgres\ApplicationData as ApplicationData;
 
-class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface {
 
+class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface
+{
     const USERS_TABLE = 'users';
 
     //-----------------------------------------------------------
@@ -30,7 +32,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     private function getByField(array $where) : ?array
     {
-        $sql    = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::USERS_TABLE);
         $select->where($where);
         $select->limit(1);
@@ -52,12 +54,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     private function countRows(array $where) : int
     {
-        $sql = new Sql($this->getZendDb());
-
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::USERS_TABLE);
-
         $select->columns(['count' => new Expression('count(*)')]);
-
         $select->where($where);
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
@@ -78,7 +77,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     private function updateRow(array $where, array $set) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::USERS_TABLE);
         $update->where($where);
 
@@ -116,7 +115,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $query
      * @param $options - array of optional parameters, including
      * 'offset' (int, default 0) and 'limit' (int, default 10)
-     * @return iterable
+     * @return iterable UserModel instances
      */
     public function matchUsers(string $query, array $options = []) : iterable
     {
@@ -131,7 +130,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             $limit = intval($options['limit']);
         }
 
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
 
         // count applications by user
         $subselect = $sql->select(['a' => ApplicationData::APPLICATIONS_TABLE])
@@ -157,7 +156,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
                               ['numberOfLpas'],
                               'FULL')
                       ->where($likes)
-                      ->order('identity')
+                      ->order('identity ASC')
                       ->offset($offset)
                       ->limit($limit);
 
@@ -219,10 +218,10 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function updateLastLoginTime(string $id) : bool
     {
-        return  $this->updateRow(
+        return $this->updateRow(
             ['id' => $id],
             [
-                'last_login' => gmdate(self::TIME_FORMAT),
+                'last_login' => gmdate(DbWrapper::TIME_FORMAT),
                 'inactivity_flags' => null,
             ]
         );
@@ -236,7 +235,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function resetFailedLoginCounter(string $id) : bool
     {
-        return  $this->updateRow(
+        return $this->updateRow(
             ['id' => $id],
             [
                 'failed_login_attempts' => 0,
@@ -252,10 +251,10 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function incrementFailedLoginCounter(string $id) : bool
     {
-        return  $this->updateRow(
+        return $this->updateRow(
             ['id' => $id],
             [
-                'last_failed_login' => gmdate(self::TIME_FORMAT),
+                'last_failed_login' => gmdate(DbWrapper::TIME_FORMAT),
                 'failed_login_attempts' => new Expression('failed_login_attempts + 1'),
             ]
         );
@@ -273,17 +272,17 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function create(string $id, array $details) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::USERS_TABLE);
 
         $data = [
-            'id'                    => $id,
-            'identity'              => $details['identity'],
-            'password_hash'         => $details['password_hash'],
-            'activation_token'      => $details['activation_token'],
-            'active'                => $details['active'],
-            'created'               => $details['created']->format(self::TIME_FORMAT),
-            'updated'               => $details['last_updated']->format(self::TIME_FORMAT),
+            'id' => $id,
+            'identity' => $details['identity'],
+            'password_hash' => $details['password_hash'],
+            'activation_token' => $details['activation_token'],
+            'active' => $details['active'],
+            'created' => $details['created']->format(DbWrapper::TIME_FORMAT),
+            'updated' => $details['last_updated']->format(DbWrapper::TIME_FORMAT),
             'failed_login_attempts' => $details['failed_login_attempts']
         ];
 
@@ -296,8 +295,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         try {
             $statement->execute();
 
-        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
-
+        }
+        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
             // If it's a key clash, and not on the identity, re-try with new values.
             if ($e->getPrevious() instanceof PDOException) {
                 $pdoException = $e->getPrevious();
@@ -328,7 +327,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         return $this->updateRow(
             ['id' => $id],
             [
-                'deleted' => gmdate(self::TIME_FORMAT),
+                'deleted' => gmdate(DbWrapper::TIME_FORMAT),
                 'active' => null,
                 'identity' => null,
                 'password_hash' => null,
@@ -360,8 +359,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ['activation_token' => $token],
             [
                 'active' => true,
-                'updated' => gmdate(self::TIME_FORMAT),
-                'activated' => gmdate(self::TIME_FORMAT),
+                'updated' => gmdate(DbWrapper::TIME_FORMAT),
+                'activated' => gmdate(DbWrapper::TIME_FORMAT),
                 'activation_token' => null,
             ]
         );
@@ -380,7 +379,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ['id' => $userId],
             [
                 'password_hash' => $passwordHash,
-                'updated' => gmdate(self::TIME_FORMAT),
+                'updated' => gmdate(DbWrapper::TIME_FORMAT),
                 'auth_token' => null,
             ]
         );
@@ -401,9 +400,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             [
                 'auth_token' => json_encode([
                     'token' => $token,
-                    'createdAt' => gmdate(self::TIME_FORMAT),
-                    'updatedAt' => gmdate(self::TIME_FORMAT),
-                    'expiresAt' => $expires->format(self::TIME_FORMAT),
+                    'createdAt' => gmdate(DbWrapper::TIME_FORMAT),
+                    'updatedAt' => gmdate(DbWrapper::TIME_FORMAT),
+                    'expiresAt' => $expires->format(DbWrapper::TIME_FORMAT),
                 ]),
             ]
         );
@@ -418,12 +417,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function updateAuthTokenExpiry(string $userId, DateTime $expires) : bool
     {
-        return  $this->updateRow(
+        return $this->updateRow(
             ['id' => $userId],
             [
                 'auth_token' => new Expression("auth_token || ?", json_encode([
-                    'updatedAt' => gmdate(self::TIME_FORMAT),
-                    'expiresAt' => $expires->format(self::TIME_FORMAT),
+                    'updatedAt' => gmdate(DbWrapper::TIME_FORMAT),
+                    'expiresAt' => $expires->format(DbWrapper::TIME_FORMAT),
                 ]))
             ]
         );
@@ -438,7 +437,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     {
         // Map DateTimes to Strings
         $token = array_map(function ($v) {
-            return ($v instanceof DateTime) ? $v->format(self::TIME_FORMAT) : $v;
+            return ($v instanceof DateTime) ? $v->format(DbWrapper::TIME_FORMAT) : $v;
         }, $token);
 
         return $this->updateRow(
@@ -461,7 +460,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             [
                 'password_reset_token' => null,
                 'password_hash' => $passwordHash,
-                'updated' => gmdate(self::TIME_FORMAT),
+                'updated' => gmdate(DbWrapper::TIME_FORMAT),
                 'auth_token' => null,
             ]
         );
@@ -484,7 +483,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     {
         // Map DateTimes to Strings
         $token = array_map(function ($v) {
-            return ($v instanceof DateTime) ? $v->format(self::TIME_FORMAT) : $v;
+            return ($v instanceof DateTime) ? $v->format(DbWrapper::TIME_FORMAT) : $v;
         }, $token);
 
         return $this->updateRow(
@@ -534,7 +533,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ['id' => $user['id']],
             [
                 'identity' => $newEmail,
-                'updated' => gmdate(self::TIME_FORMAT),
+                'updated' => gmdate(DbWrapper::TIME_FORMAT),
                 'email_update_request' => null,
             ]
         );
@@ -558,7 +557,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null) : iterable
     {
-        $sql    = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::USERS_TABLE);
 
         $select->where([
@@ -608,7 +607,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getAccountsUnactivatedOlderThan(DateTime $olderThan) : iterable
     {
-        $sql    = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::USERS_TABLE);
 
         $select->where([
@@ -645,8 +644,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         if (is_null($since)) {
             // All activated accounts have an activation date.
             $where = [new IsNotNull('activated')];
-
-        } else {
+        }
+        else {
             $where = [new Operator('activated', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $since->format('c'))];
         }
 
@@ -708,5 +707,4 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ]
         );
     }
-
 }
