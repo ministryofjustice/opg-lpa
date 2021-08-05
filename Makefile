@@ -57,6 +57,10 @@ dc-run:
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	sleep 20; docker-compose run pdf-composer | xargs -L1 echo pdf-composer:
 
+# This will make a docker network called "malpadev", used to communicate from
+# the perfplatworkerproxy lambda (running in localstack) to the perfplatworker
+# lambda (running as a docker container).
+# The name of the network created here must match the one in the docker-compose.yml.
 .PHONY: dc-up
 dc-up:
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
@@ -64,6 +68,7 @@ dc-up:
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	docker-compose up
 
 # target for users outside MoJ to run the stack without 3rd party integrations
