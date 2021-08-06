@@ -9,7 +9,7 @@ Feature: Clone Property and Finance LPA starting from the Type page
         And I log in as second seeded user
         Then I am taken to the dashboard page
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Choose Property and Finance as Lpa Type
         # we should find at least one existing lpa with related links. we simply click the first one we find , to clone it
         Then I can find "check-signing-dates"

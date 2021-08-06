@@ -7,7 +7,7 @@ Feature: Add a correspondent to a Health and Welfare LPA
         Given I ignore application exceptions
         And I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add a correspondent 
         When I log in as appropriate test user
         And I visit the correspondent page for the test fixture lpa
