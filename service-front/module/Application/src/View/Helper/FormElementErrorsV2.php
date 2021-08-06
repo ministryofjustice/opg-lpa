@@ -20,7 +20,12 @@ class FormElementErrorsV2 extends \Laminas\Form\View\Helper\FormElementErrors
             $messages = $element->getMessages();
 
             foreach ($messages as $key => &$message) {
-                if (array_key_exists($key, $messageOverrideMap)) {
+                // Work-around for issue where we erroneously get multiple error messages
+                // for certain fields, e.g. company name (see LPAL-325). If the error
+                // message is set to '' for a field when calling the
+                // formErrorTextExchange() twig macro, this prevents that error
+                // from being displayed.
+                if (array_key_exists($key, $messageOverrideMap) && $message !== '') {
                     $message = $messageOverrideMap[$key];
                 }
             }
