@@ -7,7 +7,7 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with a donor and attorneys
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add Replacment Attorneys
         When I log in as appropriate test user
         And I visit the replacement attorney page for the test fixture lpa

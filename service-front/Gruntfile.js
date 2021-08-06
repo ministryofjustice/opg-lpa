@@ -66,7 +66,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: 'assets/js/**/*.js',
-        tasks: ['concat', 'uglify']
+        tasks: ['concat', 'copy:jsdev']
       },
       templates: {
         files: ['<%= handlebars.compile.src %>'],
@@ -143,6 +143,11 @@ module.exports = function (grunt) {
           process: injectEnvVars
         },
         flatten: true
+      },
+
+      jsdev: {
+        src: 'public/assets/v2/js/application.js',
+        dest: 'public/assets/v2/js/application.min.js'
       }
     },
 
@@ -287,6 +292,7 @@ module.exports = function (grunt) {
   // define tasks
   grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify']);
+  grunt.registerTask('build_js_dev', ['copy:jsenv', 'handlebars', 'concat', 'copy:jsdev']);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };

@@ -7,7 +7,7 @@ Feature: Add attorneys to a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with a donor
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add Attorneys
         When I log in as appropriate test user
         And I visit the primary attorney page for the test fixture lpa

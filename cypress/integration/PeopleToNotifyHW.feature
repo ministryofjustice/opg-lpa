@@ -7,7 +7,7 @@ Feature: Add People to Notify to a Health and Welfare LPA
         Given I ignore application exceptions
         And I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add person to notify
         When I log in as appropriate test user
         And I visit the people to notify page for the test fixture lpa
