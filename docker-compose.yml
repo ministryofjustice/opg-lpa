@@ -13,14 +13,6 @@ services:
       context: ./
       dockerfile: node-build-assets/docker/Dockerfile
 
-  local-dataplatform:
-    build:
-      context: ./service-perfplat/lambda_functions/v1
-    ports:
-      - "4343:4343"
-    volumes:
-      - ./service-perfplat/lambda_functions/v1:/var/www/lambda_functions/v1
-
   postgres:
     image: postgres:10.13
     ports:
@@ -409,3 +401,54 @@ services:
       dockerfile: ./Dockerfile-mocksirius
     ports:
       - 7011:5000
+
+  # ---------------------------
+  # performance platform
+  perfplatworker:
+    container_name: perfplatworker
+    image: perfplatworker
+    build:
+      context: ./service-perfplat
+      dockerfile: ./docker/Dockerfile-worker-dev
+    depends_on:
+      - postgres
+    ports:
+      - 7020:8080
+    volumes:
+      - ./service-perfplat:/service-perfplat
+    environment:
+      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
+      OPG_LPA_POSTGRES_PORT: "5432"
+      OPG_LPA_POSTGRES_NAME: "lpadb"
+      OPG_LPA_POSTGRES_USERNAME: "lpauser"
+      OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+    # Apply an alias to the worker lambda (running
+    # as a docker compose container) on the malpadev
+    # network. This enables localstack lambdas attached
+    # to malpadev to reach the worker lambda through
+    # this alias, so we can make requests to
+    # http://perfplatworker/... In turn, this enables
+    # us to forward events received by the proxy lambda
+    # from the SQS queue on to the worker, by converting
+    # them into HTTP POST requests to the worker lambda's
+    # endpoint.
+    networks:
+      malpadev:
+        aliases:
+          - perfplatworker
+
+  perfplatconfig:
+    container_name: perfplatconfig
+    image: perfplatconfig
+    depends_on:
+      - perfplatworker
+      - local-config
+      - localstack
+    build:
+      context: ./service-perfplat
+      dockerfile: ./docker/Dockerfile-config-dev
+    volumes:
+      - ./service-perfplat:/service-perfplat
+    environment:
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
