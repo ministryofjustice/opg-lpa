@@ -6,7 +6,7 @@ import time
 import pytest
 from flask import Flask
 
-from lambda_functions.v1.functions.lpa_make_dataplatform.app import create_app
+from perfplat import create_app
 
 
 def get_open_port():

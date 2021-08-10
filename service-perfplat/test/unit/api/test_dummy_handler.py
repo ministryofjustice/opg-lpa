@@ -2,8 +2,8 @@ import pytest
 
 from pytest_cases import CaseDataGetter, cases_data
 
-from lambda_functions.v1.tests.api import cases_handle_dummy
-from lambda_functions.v1.functions.lpa_make_dataplatform.app.api.endpoints import handle_dummy
+from test.unit.api import cases_handle_dummy
+from perfplat.api.endpoints import handle_dummy
 
 @cases_data(module=cases_handle_dummy)
 def test_dummy(case_data: CaseDataGetter):
