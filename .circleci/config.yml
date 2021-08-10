@@ -127,7 +127,7 @@ pr_build: &pr_build
             pdf_docker_build,
             seeding_docker_build,
             perfplat-lambda-docker-worker-build,
-            #perfplat-lambda-docker-api-build
+            perfplat-lambda-docker-api-build
           ]
 
     - ecr_scan_results:
@@ -141,7 +141,7 @@ pr_build: &pr_build
             pdf_docker_build,
             seeding_docker_build,
             perfplat-lambda-docker-worker-build,
-            #perfplat-lambda-docker-api-build
+            perfplat-lambda-docker-api-build
           ]
 
     - infrastructure_and_deployment/seed_environment_databases:
