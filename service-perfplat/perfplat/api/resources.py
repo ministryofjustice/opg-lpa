@@ -1,8 +1,7 @@
 import json
 import os
 
-from flask import Blueprint
-from flask import request, jsonify
+from flask import Blueprint, request, jsonify
 
 from .errors import error_message
 from .endpoints import handle_dummy

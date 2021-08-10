@@ -23,7 +23,7 @@ def rewrite_bad_request(response):
     return response
 
 
-mock = connexion.FlaskApp(__name__, specification_dir="../../../openapi/")
+mock = connexion.FlaskApp(__name__, specification_dir="../openapi/")
 mock.app.after_request(rewrite_bad_request)
 mock.add_api("lpa-make-performance-platform-openapi-v1.yml", strict_validation="true")
 mock.run(port=4343)
