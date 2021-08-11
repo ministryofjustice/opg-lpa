@@ -1335,7 +1335,19 @@ jobs:
                                            --branch $CIRCLE_BRANCH \
                                            --slack_channel $BUILD_SLACK_CHANNEL \
                                            --slack_token $SLACK_ACCESS_TOKEN
-      
+      - run:
+          name: Check ECR Scan Results for Lambda containers
+          command: |
+            sudo pip3 install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+            echo $IMAGE_TAG
+            cd scripts/pipeline/check_ecr_scan_results/
+            #python aws_ecr_scan_results.py  --search perfplat \
+            #                                --tag ${IMAGE_TAG} \
+            #                                --build_url $CIRCLE_BUILD_URL \
+            #                                --branch $CIRCLE_BRANCH \
+            #                                --slack_channel $BUILD_SLACK_CHANNEL \
+            #                                --slack_token $SLACK_ACCESS_TOKEN 
 
   workspace_cleanup:
     docker:
