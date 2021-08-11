@@ -203,16 +203,16 @@ class Application extends AbstractService implements ApiClientAwareInterface
             // applications', and add tracking update id for any in 'Waiting'
             $refreshTracking = false;
 
+            // If the application is processed, find the registration,
+            // withdrawn, invalid and rejected dates; whichever is
+            // set will be used for the eventual "processed" date in the UI
+            $rejectedDate = null;
+
             if ($lpa->getCompletedAt() instanceof DateTime) {
                 $progress = 'Completed';
 
                 if ($trackingEnabled && $trackFromDate <= $lpa->getCompletedAt()) {
                     $progress = 'Waiting';
-
-                    // If the application is processed, find the registration,
-                    // withdrawn, invalid and rejected dates; whichever is
-                    // set will be used for the eventual "processed" date in the UI
-                    $rejectedDate = null;
 
                     // If we already have a processing status use that instead of "Waiting" status
                     if ($metadata !== null && array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata)) {

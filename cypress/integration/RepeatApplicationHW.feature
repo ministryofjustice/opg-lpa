@@ -7,7 +7,7 @@ Feature: Repeat Application for a Health and Welfare LPA
         Given I ignore application exceptions
         And I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Repeat Application
         When I log in as appropriate test user
         And I visit the repeat application page for the test fixture lpa

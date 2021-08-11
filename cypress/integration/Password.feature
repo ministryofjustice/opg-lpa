@@ -1,3 +1,4 @@
+@Password
 Feature: Password
 
     I want to be able to reset or change my password
@@ -41,7 +42,7 @@ Feature: Password
         And I see "Password successfully reset" in the page text
         When I log in with new password
         # change password back to old one. This wasn't in the original casper tests, but ensures this feature doesn't have any side effects
-        When I visit link containing "Your details"
+        And I visit link containing "Your details"
         Then I am taken to "/user/about-you"
         When I visit link containing "Change Password"
         Then I am taken to "/user/change-password"
