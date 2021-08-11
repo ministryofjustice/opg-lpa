@@ -4,37 +4,37 @@ pr_build: &pr_build
   jobs:
     - cancel_redundant_builds:
         name: cancel_previous_jobs
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
-        filters: { branches: { ignore: [ master ] } }
+        filters: { branches: { ignore: [ main ] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
         ecr_repository_name_prefix: online-lpa/front
         service_path: service-front
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [node_build_web]
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: admin_docker_build
         ecr_repository_name_prefix: online-lpa/admin
         service_path: service-admin
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: api_docker_build
         ecr_repository_name_prefix: online-lpa/api
         service_path: service-api
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: pdf_docker_build
         ecr_repository_name_prefix: online-lpa/pdf
         service_path: service-pdf
         build_web: false
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: seeding_docker_build
@@ -42,7 +42,7 @@ pr_build: &pr_build
         service_path: service-seeding
         build_web: false
         unit_test: false
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-build
@@ -51,47 +51,47 @@ pr_build: &pr_build
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
 
     - infrastructure_and_deployment/lint_account_terraform:
         name: lint_account_terraform_pr_build
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
 
     - infrastructure_and_deployment/lint_environment_terraform:
         name: lint_environment_terraform_pr_build
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
 
     - infrastructure_and_deployment/plan_check_terraform:
         name: dev_account_plan_check_terraform_pr_build
         workspace: development
         terraform_level: account
         approval_step: "dev_infra_approval_terraform_apply_account_pr_build"
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
 
     - hold_for_approval_tf:
         name: dev_infra_approval_terraform_apply_account_pr_build
         type: approval
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [lint_account_terraform_pr_build]
 
     - infrastructure_and_deployment/plan_check_terraform:
         name: dev_environment_plan_check_terraform_pr_build
         terraform_level: environment
         approval_step: "dev_infra_approval_terraform_apply_environment_pr_build"
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [cancel_previous_jobs, lint_environment_terraform_pr_build]
 
     - hold_for_approval_tf:
         name: dev_infra_approval_terraform_apply_environment_pr_build
         type: approval
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [lint_environment_terraform_pr_build]
 
     - infrastructure_and_deployment/apply_account_terraform:
         name: dev_account_apply_terraform
         workspace: development
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires:
           [
             cancel_previous_jobs,
@@ -101,12 +101,12 @@ pr_build: &pr_build
     - infrastructure_and_deployment/apply_email_terraform:
         name: email_apply_terraform
         workspace: development
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: dev_environment_apply_terraform
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires:
           [
             cancel_previous_jobs,
@@ -124,7 +124,7 @@ pr_build: &pr_build
     - ecr_scan_results:
         name: ecr_scan_results_development
         account_id: "050256574573"
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires:
           [
             front_docker_build,
@@ -137,41 +137,41 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/seed_environment_databases:
         name: dev_seed_environment_databases
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [dev_environment_apply_terraform]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedpf
         cypress_tags: "@StitchedPF"
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedpfclone
         cypress_tags: "@StitchedClone"
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedhw
         cypress_tags: "@StitchedHW"
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_remaining_tests
         cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @Reusable"
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases]
 
     - infrastructure_and_deployment/run_functional_test:
         name: run_functional_test
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases]
 
     - slack_notify_domain:
         name: post_environment_domains
-        filters: { branches: { ignore: [master] } }
+        filters: { branches: { ignore: [main] } }
         requires:
           [
             dev_seed_environment_databases
@@ -181,33 +181,33 @@ path_to_live: &path_to_live
   jobs:
     - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
-        filters: { branches: { only: [ master ] } }
+        filters: { branches: { only: [ main ] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
         ecr_repository_name_prefix: online-lpa/front
         service_path: service-front
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires: [node_build_web]
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: admin_docker_build
         ecr_repository_name_prefix: online-lpa/admin
         service_path: service-admin
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: api_docker_build
         ecr_repository_name_prefix: online-lpa/api
         service_path: service-api
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: pdf_docker_build
         ecr_repository_name_prefix: online-lpa/pdf
         service_path: service-pdf
         build_web: false
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: seeding_docker_build
@@ -215,7 +215,7 @@ path_to_live: &path_to_live
         service_path: service-seeding
         build_web: false
         unit_test: false
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-build-preproduction
@@ -224,7 +224,7 @@ path_to_live: &path_to_live
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-build-production
@@ -233,36 +233,36 @@ path_to_live: &path_to_live
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - infrastructure_and_deployment/plan_check_terraform:
         name: preprod_account_plan_check_terraform_pr_build
         workspace: preproduction
         terraform_level: account
         approval_step: "preprod_infra_approval_terraform_apply_account_pr_build"
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - infrastructure_and_deployment/plan_check_terraform:
         name: preprod_environment_plan_check_terraform_pr_build
         workspace: preproduction
         terraform_level: environment
         approval_step: "preprod_infra_approval_terraform_apply_environment_pr_build"
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - hold_for_approval_tf:
         name: preprod_infra_approval_terraform_apply_account_pr_build
         type: approval
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - hold_for_approval_tf:
         name: preprod_infra_approval_terraform_apply_environment_pr_build
         type: approval
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - infrastructure_and_deployment/apply_account_terraform:
         name: preprod_account_apply_terraform
         workspace: preproduction
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires:
           [
             preprod_infra_approval_terraform_apply_account_pr_build,
@@ -271,7 +271,7 @@ path_to_live: &path_to_live
     - infrastructure_and_deployment/apply_environment_terraform:
         name: preprod_environment_apply_terraform
         workspace: preproduction
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires:
           [
             preprod_account_apply_terraform,
@@ -286,9 +286,9 @@ path_to_live: &path_to_live
           ]
 
     - ecr_scan_results:
-        name: ecr_scan_results_master
+        name: ecr_scan_results_main
         account_id: "980242665824"
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires:
           [
             front_docker_build,
@@ -302,40 +302,40 @@ path_to_live: &path_to_live
     - infrastructure_and_deployment/seed_environment_databases:
         name: preprod_seed_environment_databases
         workspace: preproduction
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires: [preprod_environment_apply_terraform]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_stitchedpf
         cypress_tags: "@StitchedPF"
         workspace: preproduction
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_stitchedhw
         cypress_tags: "@StitchedHW"
         workspace: preproduction
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_remaining_tests
         cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @Reusable"
         workspace: preproduction
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases]
 
     - infrastructure_and_deployment/run_functional_test:
         name: preprod_test_functional
         workspace: preproduction
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases]
 
     - infrastructure_and_deployment/apply_account_terraform:
         name: prod_account_apply_terraform
         workspace: production
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires:
           [
             preprod_test_functional,
@@ -347,18 +347,18 @@ path_to_live: &path_to_live
     - infrastructure_and_deployment/apply_environment_terraform:
         name: prod_environment_apply_terraform
         requires: [prod_account_apply_terraform]
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         workspace: production
 
     - infrastructure_and_deployment/run_healthcheck_test:
         name: test_healthcheck_prod
         requires: [prod_environment_apply_terraform]
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         workspace: production
 
     - slack_notify_production_release:
         name: post_production_release_message
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
         requires: [test_healthcheck_prod]
 
 workflows:
@@ -369,7 +369,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
     jobs:
       - workspace_cleanup:
           name: workspace_cleanup
@@ -387,7 +387,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
     <<: *path_to_live
 
 orbs:
@@ -585,8 +585,8 @@ orbs:
                 echo $IMAGE_TAG
                 if << parameters.build_web >> ; then
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:${IMAGE_TAG}
-                  if [ "${CIRCLE_BRANCH}" == "master" ]; then
-                    # If master, push branch tag and latest
+                  if [ "${CIRCLE_BRANCH}" == "main" ]; then
+                    # If main, push branch tag and latest
                     docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:${IMAGE_TAG} << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:latest
                     docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web
                   else
@@ -600,8 +600,8 @@ orbs:
                 export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
                 docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG}
-                if [ "${CIRCLE_BRANCH}" == "master" ]; then
-                  # If master, push branch tag and latest
+                if [ "${CIRCLE_BRANCH}" == "main" ]; then
+                  # If main, push branch tag and latest
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG} << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
                   docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
                 else
@@ -688,7 +688,7 @@ orbs:
                 echo $IMAGE_TAG
                 echo $ECR_URL
                 docker tag ${ECR_URL}:latest ${ECR_URL}:${IMAGE_TAG}
-                if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                if [ "${CIRCLE_BRANCH}" == "main" ]; then
                   # We want all of the tags pushed
                   docker push ${ECR_URL}
                 else
@@ -966,7 +966,7 @@ orbs:
       destroy_dev_environment:
         #
         # Destroys a development environment after testing and approval
-        # Cannot be run on master branch
+        # Cannot be run on main branch
         #
         executor: terraform
         parameters:
@@ -981,7 +981,7 @@ orbs:
               command: |
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
-                if [ "${CIRCLE_BRANCH}" != "master" ]; then
+                if [ "${CIRCLE_BRANCH}" != "main" ]; then
                   cd ~/project/terraform/environment
                   terraform init
                   export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
@@ -1335,20 +1335,7 @@ jobs:
                                            --branch $CIRCLE_BRANCH \
                                            --slack_channel $BUILD_SLACK_CHANNEL \
                                            --slack_token $SLACK_ACCESS_TOKEN
-      - run:
-          name: Check ECR Scan Results for Lambda containers
-          command: |
-            sudo pip3 install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
-            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
-            echo $IMAGE_TAG
-            cd scripts/pipeline/check_ecr_scan_results/
-            python aws_ecr_scan_results.py  --search perfplat \
-                                            --tag ${IMAGE_TAG} \
-                                            --build_url $CIRCLE_BUILD_URL \
-                                            --branch $CIRCLE_BRANCH \
-                                            --slack_channel $BUILD_SLACK_CHANNEL \
-                                            --slack_token $SLACK_ACCESS_TOKEN \
-                                            --account_id << parameters.account_id >>
+      
 
   workspace_cleanup:
     docker:
