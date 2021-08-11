@@ -7,7 +7,7 @@ Feature: Specify Instructions and Preferences for a Health and Welfare LPA
         Given I ignore application exceptions
         And I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Specify Instructions and Preferences
         When I log in as appropriate test user
         And I visit the instructions page for the test fixture lpa

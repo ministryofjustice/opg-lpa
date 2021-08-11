@@ -6,6 +6,7 @@ const {
 // but only if we're not running under CI. In CI we leave it intact for 
 // the next scenario, to simulate the user journey
 After({ tags: "@CleanupFixtures" }, () => {
+    cy.log('cleaning up fixtures');
     if (!Cypress.env('CI')) {
         cy.get('@lpaId').then((lpaId) => {
             cy.runPythonApiCommand("deleteLpa.py -i " + lpaId).its('stdout').then(deleteResult => {

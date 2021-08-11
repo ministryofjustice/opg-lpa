@@ -39,7 +39,7 @@ def deleteViaAPI(lpaId, jsonData, pathSuffix = ''):
     pathTemplate = '{apiRoot}/v2/user/{userId}/applications/{lpaId}/{pathSuffix}'
     fullPath = pathTemplate.format(apiRoot = apiRoot, userId = userId, lpaId = lpaId, pathSuffix = pathSuffix)
     r = s.delete(fullPath, headers=token)
-    print(r)
+    print(r,file=sys.stderr)
 
 def authenticate(username = "seeded_test_user@digital.justice.gov.uk", password = "Pass1234"):
     # authenticate using the suppled creds, returning the resulting token and the userId
@@ -64,7 +64,7 @@ def deleteLpa(lpaId):
     lpaPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}'
     emptyData = []
     r = s.delete(lpaPath, headers=token)
-    print(r)
+    print(r,file=sys.stderr)
 
 def setLpaType(lpaId, lpaType = 'health-and-welfare'):
     lpaTypeJson = {"type": lpaType}
@@ -128,7 +128,7 @@ def deletePrimaryAttorney(lpaId, index = 1):
     token, userId = authenticate()
     primaryAttorneyPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/primary-attorneys/{index}'
     r = s.delete(primaryAttorneyPath, headers=token)
-    print(r)
+    print(r,file=sys.stderr)
 
 def addReplacementAttorney(lpaId):
     replacementAttorneyDetails = {"name":{"title":"Ms","first":"Isobel","last":"Ward"},"dob":{"date":"1937-02-01T00:00:00.000000+0000"},"id":None,"address":{"address1":"2 Westview","address2":"Staplehay","address3":"Trull, Taunton, Somerset","postcode":"TA3 7HF"},"email":None,"type":"human"}
@@ -142,7 +142,7 @@ def deleteReplacementAttorney(lpaId, index = 1):
     token, userId = authenticate()
     replacementAttorneyPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/replacement-attorneys/{index}'
     r = s.delete(replacementAttorneyPath, headers=token)
-    print(r)
+    print(r,file=sys.stderr)
 
 def setReplacementAttorneysConfirmed(lpaId):
     token, userId = authenticate()
@@ -203,5 +203,5 @@ def getPdf1(lpaId):
     token, userId = authenticate()
     pdf1Path = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/pdfs/lp1'
     r = s.get(pdf1Path, headers=token )
-    print(r)
-    print(r.content)
+    print(r,file=sys.stderr)
+    print(r.content,file=sys.stderr)

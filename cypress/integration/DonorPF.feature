@@ -7,7 +7,7 @@ Feature: Add donor to Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add Donor to LPA
         When I log in as appropriate test user
         And I visit the donor page for the test fixture lpa
