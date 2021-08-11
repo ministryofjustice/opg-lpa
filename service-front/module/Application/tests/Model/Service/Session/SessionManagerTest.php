@@ -22,7 +22,7 @@ class SessionManagerTest extends MockeryTestCase
     {
         ServiceTestHelper::disableRedisSaveHandler();
 
-        $container = new Container('initialised', $sessionManager);
+        $container = new Container('initialised');
 
         $sessionManager = new SessionManager($container);
         $sessionManager->start();
