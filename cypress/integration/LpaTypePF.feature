@@ -8,7 +8,7 @@ Feature: Property and Finance LPA starting from the Type page
         And I log in as appropriate test user
         And If I am on dashboard I visit the type page
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Create LPA with error first
         When I click "save"
         Then I see in the page text
@@ -22,10 +22,9 @@ Feature: Property and Finance LPA starting from the Type page
         When I click "add-donor"
         Then I can find "form-donor" 
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Choose Property and Finance as Lpa Type
         When I choose Property and Finance
         And I click "save"
         Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
-

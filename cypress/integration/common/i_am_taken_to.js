@@ -115,6 +115,10 @@ Then(`I am taken to the complete page`, () => {
     checkOnPageWithPath('complete');
     cy.contains('Last steps');
 });
+
+Then(`I am taken to the certificate provider page for the test fixture lpa`, () => {
+    checkOnPageWithPath('certificate-provider');
+})
  
 Then(`I am taken to the donor page`, () => {
     // We arrive at the donor page when we've just created an lpa through the web, so we store the lpaId for future use at this point
