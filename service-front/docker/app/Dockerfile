@@ -8,7 +8,7 @@ RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-auto
 FROM php:7.4.20-fpm-alpine
 
 #docker image on hub hasn't been upgraded yet - fixes CVE-2021-36159 (temporarily)
-#RUN apk add --upgrade apk-tools
+RUN apk add --upgrade apk-tools
 RUN apk add --update --no-cache icu
 
 
