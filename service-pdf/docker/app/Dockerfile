@@ -5,7 +5,10 @@ COPY service-pdf/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:7.4.16-cli-alpine3.12
+FROM php:7.4-cli-alpine
+
+RUN apk add --upgrade apk-tools
+RUN apk upgrade --available
 
 RUN apk update \
     && apk add --no-cache openjdk8-jre gcc make musl-dev pkgconfig bash\
