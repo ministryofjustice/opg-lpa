@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.186.0",
+            "version": "3.190.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e8511d38de286233bcb6a827d3344c0fc4808b75"
+                "reference": "8ca6a5f9834de3eb3fb84b28fc12c9088bc01293"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e8511d38de286233bcb6a827d3344c0fc4808b75",
-                "reference": "e8511d38de286233bcb6a827d3344c0fc4808b75",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8ca6a5f9834de3eb3fb84b28fc12c9088bc01293",
+                "reference": "8ca6a5f9834de3eb3fb84b28fc12c9088bc01293",
                 "shasum": ""
             },
             "require": {
@@ -92,9 +92,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.186.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.190.2"
             },
-            "time": "2021-07-27T18:17:00+00:00"
+            "time": "2021-08-13T18:12:28+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -1988,16 +1988,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.23.0",
+            "version": "v1.23.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "2df51500adbaebdc4c38dea4c89a2e131c45c8a1"
+                "reference": "9174a3d80210dca8daa7f31fec659150bbeabfc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/2df51500adbaebdc4c38dea4c89a2e131c45c8a1",
-                "reference": "2df51500adbaebdc4c38dea4c89a2e131c45c8a1",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/9174a3d80210dca8daa7f31fec659150bbeabfc6",
+                "reference": "9174a3d80210dca8daa7f31fec659150bbeabfc6",
                 "shasum": ""
             },
             "require": {
@@ -2048,7 +2048,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.23.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.23.1"
             },
             "funding": [
                 {
@@ -2064,20 +2064,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-27T09:27:20+00:00"
+            "time": "2021-05-27T12:26:48+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.23.0",
+            "version": "v1.23.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "eca0bf41ed421bed1b57c4958bab16aa86b757d0"
+                "reference": "1100343ed1a92e3a38f9ae122fc0eb21602547be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/eca0bf41ed421bed1b57c4958bab16aa86b757d0",
-                "reference": "eca0bf41ed421bed1b57c4958bab16aa86b757d0",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/1100343ed1a92e3a38f9ae122fc0eb21602547be",
+                "reference": "1100343ed1a92e3a38f9ae122fc0eb21602547be",
                 "shasum": ""
             },
             "require": {
@@ -2131,7 +2131,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.23.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.23.1"
             },
             "funding": [
                 {
@@ -2147,7 +2147,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-19T12:13:01+00:00"
+            "time": "2021-07-28T13:41:28+00:00"
         },
         {
             "name": "symfony/translation-contracts",
@@ -2229,16 +2229,16 @@
         },
         {
             "name": "symfony/validator",
-            "version": "v4.4.27",
+            "version": "v4.4.29",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/validator.git",
-                "reference": "ac16e9c0b723f7a2b263c87487a429a7c1744246"
+                "reference": "43ee727eac546610f8da01cf69857fde34b394ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/validator/zipball/ac16e9c0b723f7a2b263c87487a429a7c1744246",
-                "reference": "ac16e9c0b723f7a2b263c87487a429a7c1744246",
+                "url": "https://api.github.com/repos/symfony/validator/zipball/43ee727eac546610f8da01cf69857fde34b394ea",
+                "reference": "43ee727eac546610f8da01cf69857fde34b394ea",
                 "shasum": ""
             },
             "require": {
@@ -2315,7 +2315,7 @@
             "description": "Provides tools to validate values",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/validator/tree/v4.4.27"
+                "source": "https://github.com/symfony/validator/tree/v4.4.29"
             },
             "funding": [
                 {
@@ -2331,7 +2331,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-24T22:44:19+00:00"
+            "time": "2021-07-27T06:31:16+00:00"
         },
         {
             "name": "tecnickcom/tcpdf",
@@ -3351,16 +3351,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.7",
+            "version": "9.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d0dc8b6999c937616df4fb046792004b33fd31c5"
+                "reference": "191768ccd5c85513b4068bdbe99bb6390c7d54fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d0dc8b6999c937616df4fb046792004b33fd31c5",
-                "reference": "d0dc8b6999c937616df4fb046792004b33fd31c5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/191768ccd5c85513b4068bdbe99bb6390c7d54fb",
+                "reference": "191768ccd5c85513b4068bdbe99bb6390c7d54fb",
                 "shasum": ""
             },
             "require": {
@@ -3372,7 +3372,7 @@
                 "ext-xml": "*",
                 "ext-xmlwriter": "*",
                 "myclabs/deep-copy": "^1.10.1",
-                "phar-io/manifest": "^2.0.1",
+                "phar-io/manifest": "^2.0.3",
                 "phar-io/version": "^3.0.2",
                 "php": ">=7.3",
                 "phpspec/prophecy": "^1.12.1",
@@ -3438,7 +3438,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.7"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.8"
             },
             "funding": [
                 {
@@ -3450,7 +3450,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-07-19T06:14:47+00:00"
+            "time": "2021-07-31T15:17:34+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -4305,7 +4305,6 @@
                     "type": "github"
                 }
             ],
-            "abandoned": true,
             "time": "2020-09-28T06:45:17+00:00"
         },
         {
