@@ -6,7 +6,6 @@ COPY service-front/composer.lock /app/composer.lock
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
 FROM php:7.4-fpm-alpine
-
 #docker image on hub hasn't been upgraded yet - fixes CVE-2021-36159
 RUN apk add --upgrade --available
 RUN apk add --update --no-cache icu
