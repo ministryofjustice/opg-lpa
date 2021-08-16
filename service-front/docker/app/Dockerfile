@@ -7,9 +7,10 @@ RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-auto
 
 FROM php:7.4-fpm-alpine
 #docker image on hub hasn't been upgraded yet - fixes CVE-2021-36159
-RUN apk add --upgrade --available
-RUN apk add --update --no-cache icu
+RUN apk add --upgrade apk-tools
+RUN apk upgrade --available
 
+RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
         && pecl install redis \
