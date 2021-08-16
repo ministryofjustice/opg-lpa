@@ -159,7 +159,8 @@ class ECRScanChecker:
                         findingResult["description"] = "None"
 
                         if "description" in finding:
-                            findingResult["description"] = finding["description"]
+                            # make json string,strip start and end quotes
+                            findingResult["description"] = json.dumps(finding["description"])[1:-1]
                         findingResults.append(findingResult)
                     self.report += self.render("finding.j2", {"results": findingResults})
             except self.aws_ecr_client.exceptions.ImageNotFoundException as e:
@@ -189,8 +190,8 @@ class ECRScanChecker:
 
 
     def post_to_slack(self):
+        print(self.report)
         message_content = {"blocks": self.report}
-
         message = json.loads(self.render("message.j2", message_content))
 
         if self.test_mode:
