@@ -25,7 +25,7 @@
 
         enableAllCookies: function(evt) {
             window.GOVUK.approveAllCookieTypes();
-            window.GOVUK.cookie('seen_cookie_message', 'true');
+            window.GOVUK.cookie('seen_cookie_message', 'true', { days: 365 });
             this.displayCookieMessage(false);
 
             // enable analytics and fire off a pageview
