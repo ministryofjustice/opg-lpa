@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "execution_role" {
   }
   statement {
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:logs:*:*:*"]
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "execution_role" {
   }
   statement {
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:elasticloadbalancing:*:*:*"]
     actions = [
       "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
       "elasticloadbalancing:DeregisterTargets",
