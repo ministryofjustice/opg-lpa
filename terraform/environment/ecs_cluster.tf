@@ -59,7 +59,12 @@ data "aws_iam_policy_document" "execution_role" {
   }
   statement {
     effect    = "Allow"
-    resources = ["arn:aws:*:*:*"]
+    resources = ["arn:aws:ssm:*:*:*"]
+    actions    = ["ssm:GetParameters"]
+  }
+  statement {
+    effect    = "Allow"
+    resources = ["arn:aws:logs:*:*:*"]
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
