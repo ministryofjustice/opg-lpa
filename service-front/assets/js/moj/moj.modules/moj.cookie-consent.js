@@ -29,9 +29,11 @@
 
         displayElement: function (elt, show) {
             if (show) {
+                elt.hidden = 'false';
                 elt.style.display = 'block';
             }
             else {
+                elt.hidden = 'true';
                 elt.style.display = 'none';
             }
         },
@@ -51,7 +53,11 @@
             }
             document.getElementById('cookie-preferences-decision').innerHTML = text;
 
-            this.displayElement(document.getElementById('cookie-preferences-save-confirm'), show);
+            // set tabindex and role as per https://design-system.service.gov.uk/components/cookie-banner/
+            var elt = document.getElementById('cookie-preferences-save-confirm');
+            elt.setAttribute('tabindex', '-1');
+            elt.setAttribute('role', 'alert');
+            this.displayElement(elt, show);
         },
 
         // usage: true if usage cookies accepted, false otherwise
