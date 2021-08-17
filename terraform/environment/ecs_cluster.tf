@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "execution_role" {
   }
   statement {
     effect    = "Allow"
-    resources = ["arn:aws:logs:*:*:*"]
+    resources = ["*"]
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
