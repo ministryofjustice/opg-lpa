@@ -38,19 +38,10 @@ resource "aws_iam_role_policy" "execution_role" {
 }
 
 data "aws_iam_policy_document" "execution_role" {
-  statement {
-    effect = "Allow"
-    resources = [
-      data.aws_ecr_repository.lpa_pdf_app.arn,
-      data.aws_ecr_repository.lpa_admin_web.arn,
-      data.aws_ecr_repository.lpa_admin_app.arn,
-      data.aws_ecr_repository.lpa_api_web.arn,
-      data.aws_ecr_repository.lpa_api_app.arn,
-      data.aws_ecr_repository.lpa_front_web.arn,
-      data.aws_ecr_repository.lpa_front_app.arn,
-      data.aws_ecr_repository.lpa_seeding_app.arn,
-    ]
-    actions = [
+  statement{
+    effect    = "Allow"
+    resources = ["arn:ecr:*:*:*"]
+    actions   = [
       "ecr:GetAuthorizationToken",
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
