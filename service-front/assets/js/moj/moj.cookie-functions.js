@@ -110,8 +110,6 @@
             return false
         }
 
-        currentConsentCookie = GOVUK.getConsentCookie()
-
         // Sometimes currentConsentCookie is malformed in some of the tests, so we need to handle these
         try {
             return currentConsentCookie[cookieCategory]
