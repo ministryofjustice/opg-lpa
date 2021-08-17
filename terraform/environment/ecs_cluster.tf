@@ -60,7 +60,7 @@ data "aws_iam_policy_document" "execution_role" {
   statement {
     effect    = "Allow"
     resources = ["arn:aws:ssm:*:*:*"]
-    actions    = ["ssm:GetParameters"]
+    actions   = ["ssm:GetParameters"]
   }
   statement {
     effect    = "Allow"
