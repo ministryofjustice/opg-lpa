@@ -190,7 +190,6 @@ class ECRScanChecker:
 
 
     def post_to_slack(self):
-        print(self.report)
         message_content = {"blocks": self.report}
         message = json.loads(self.render("message.j2", message_content))
 
