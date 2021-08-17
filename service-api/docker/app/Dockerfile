@@ -5,8 +5,10 @@ COPY service-api/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:7.4.20-fpm-alpine3.14
+FROM php:7.4-fpm-alpine
 
+RUN apk add --upgrade apk-tools
+RUN apk upgrade --available
 # Postgres lib needs to remain in the container
 RUN apk add --update --no-cache postgresql-libs
 
