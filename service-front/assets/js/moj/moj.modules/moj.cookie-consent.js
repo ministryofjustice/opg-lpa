@@ -8,9 +8,11 @@
                 window.GOVUK.cookie('cookie_policy') || window.GOVUK.setDefaultConsentCookie()
             }
 
-            this.enableAllCookies = this.enableAllCookies.bind(this);
             var acceptButton = document.querySelector('.global-cookie-message__button_accept');
-            acceptButton.addEventListener('click', this.enableAllCookies);
+            acceptButton.addEventListener('click', this.acceptAdditionalCookies.bind(this));
+
+            var rejectButton = document.querySelector('.global-cookie-message__button_reject');
+            rejectButton.addEventListener('click', this.rejectAdditionalCookies.bind(this));
         },
 
         displayCookieMessage: function(show) {
@@ -23,13 +25,19 @@
             }
         },
 
-        enableAllCookies: function(evt) {
-            window.GOVUK.approveAllCookieTypes();
+        acceptAdditionalCookies: function(evt) {
+            window.GOVUK.setUsageConsentInCookie(true);
             window.GOVUK.cookie('seen_cookie_message', 'true', { days: 365 });
             this.displayCookieMessage(false);
 
             // enable analytics and fire off a pageview
             moj.Events.trigger('Analytics.start');
+        },
+
+        rejectAdditionalCookies: function(evt) {
+            window.GOVUK.setUsageConsentInCookie(false);
+            window.GOVUK.cookie('seen_cookie_message', 'true', { days: 365 });
+            this.displayCookieMessage(false);
         },
 
         isInCookiesPage: function() {

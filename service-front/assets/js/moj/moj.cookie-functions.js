@@ -38,14 +38,16 @@
         if (typeof value !== 'undefined') {
             if (value === false || value === null) {
                 return GOVUK.setCookie(name, '', { days: -1 })
-            } else {
+            }
+            else {
                 // Default expiry date of 30 days
                 if (typeof options === 'undefined') {
                     options = { days: 30 }
                 }
                 return GOVUK.setCookie(name, value, options)
             }
-        } else {
+        }
+        else {
             return GOVUK.getCookie(name)
         }
     }
@@ -54,13 +56,14 @@
         GOVUK.setCookie('cookie_policy', JSON.stringify(DEFAULT_COOKIE_CONSENT), { days: 365 })
     }
 
-    GOVUK.approveAllCookieTypes = function () {
-        var approvedConsent = {
+    // acceptUsage: true if usage cookies are allowed, false otherwise
+    GOVUK.setUsageConsentInCookie = function (acceptUsage) {
+        var consent = {
             'essential': true,
-            'usage': true
+            'usage': acceptUsage
         }
 
-        GOVUK.setCookie('cookie_policy', JSON.stringify(approvedConsent), { days: 365 })
+        GOVUK.setCookie('cookie_policy', JSON.stringify(consent), { days: 365 })
     }
 
     GOVUK.getConsentCookie = function () {
@@ -70,14 +73,16 @@
         if (consentCookie) {
             try {
                 consentCookieObj = JSON.parse(consentCookie)
-            } catch (err) {
+            }
+            catch (err) {
                 return null
             }
 
             if (typeof consentCookieObj !== 'object' && consentCookieObj !== null) {
                 consentCookieObj = JSON.parse(consentCookieObj)
             }
-        } else {
+        }
+        else {
             return null
         }
 
@@ -124,7 +129,8 @@
         // Sometimes currentConsentCookie is malformed in some of the tests, so we need to handle these
         try {
             return currentConsentCookie[cookieCategory]
-        } catch (e) {
+        }
+        catch (e) {
             console.error(e + ' when checking ' + cookieName + ' and ' + cookieCategory)
             return false
         }
@@ -140,7 +146,8 @@
             var cookieCategory = COOKIE_CATEGORIES[cookieName]
 
             return GOVUK.checkConsentCookieCategory(cookieName, cookieCategory)
-        } else {
+        }
+        else {
             // Deny the cookie if it is not known to us
             return false
         }
