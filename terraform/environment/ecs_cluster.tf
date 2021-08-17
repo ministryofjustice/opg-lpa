@@ -48,6 +48,7 @@ data "aws_iam_policy_document" "execution_role" {
       data.aws_ecr_repository.lpa_api_app.arn,
       data.aws_ecr_repository.lpa_front_web.arn,
       data.aws_ecr_repository.lpa_front_app.arn,
+      data.aws_ecr_repository.lpa_seeding_app.arn,
     ]
     actions = [
       "ecr:GetAuthorizationToken",
