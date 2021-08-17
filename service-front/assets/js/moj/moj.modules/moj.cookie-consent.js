@@ -26,7 +26,7 @@
         },
 
         acceptAdditionalCookies: function(evt) {
-            window.GOVUK.setUsageConsentInCookie(true);
+            window.GOVUK.setConsentCookie({essential: true, usage: true});
             window.GOVUK.cookie('seen_cookie_message', 'true', { days: 365 });
             this.displayCookieMessage(false);
 
@@ -35,7 +35,7 @@
         },
 
         rejectAdditionalCookies: function(evt) {
-            window.GOVUK.setUsageConsentInCookie(false);
+            window.GOVUK.setConsentCookie({essential: true, usage: false});
             window.GOVUK.cookie('seen_cookie_message', 'true', { days: 365 });
             this.displayCookieMessage(false);
         },
