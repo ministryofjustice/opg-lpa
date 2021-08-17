@@ -14,7 +14,6 @@
     var COOKIE_CATEGORIES = {
         'cookie_policy': 'essential',
         'seen_cookie_message': 'essential',
-        'submitted_cookie_page': 'essential',
         '_ga': 'usage',
         '_gid': 'usage',
         '_gat': 'usage'
