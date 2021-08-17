@@ -72,11 +72,6 @@ data "aws_iam_policy_document" "execution_role" {
     ]
   }
   statement {
-    effect    = "Allow"
-    resources = ["*"]
-    actions   = ["ssm:GetParameters"]
-  }
-  statement {
     effect = "Allow"
 
     actions = [
