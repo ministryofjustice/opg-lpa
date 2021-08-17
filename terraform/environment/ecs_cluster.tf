@@ -39,7 +39,7 @@ resource "aws_iam_role_policy" "execution_role" {
 
 data "aws_iam_policy_document" "execution_role" {
   statement {
-    effect    = "Allow"
+    effect = "Allow"
     resources = [
       data.aws_ecr_repository.lpa_pdf_app.arn,
       data.aws_ecr_repository.lpa_admin_web.arn,
