@@ -38,10 +38,10 @@ resource "aws_iam_role_policy" "execution_role" {
 }
 
 data "aws_iam_policy_document" "execution_role" {
-  statement{
+  statement {
     effect    = "Allow"
     resources = ["arn:aws:ecr:*:*:*"]
-    actions   = [
+    actions = [
       "ecr:GetAuthorizationToken",
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
