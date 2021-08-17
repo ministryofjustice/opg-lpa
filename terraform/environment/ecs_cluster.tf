@@ -84,6 +84,21 @@ data "aws_iam_policy_document" "execution_role" {
       "secretsmanager:GetSecretValue",
     ]
 
-    resources = ["*"]
+    resources = [
+      data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.arn,
+      data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.arn,
+      data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.arn,
+      data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.arn,
+      data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.arn,
+      data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_webhook_token.arn,
+      data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_api_key.arn,
+      data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.arn,
+      data.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key.arn,
+      data.aws_secretsmanager_secret.opg_lpa_pdf_owner_password.arn,
+      data.aws_secretsmanager_secret.api_rds_username.arn,
+      data.aws_secretsmanager_secret.api_rds_password.arn,
+      data.aws_secretsmanager_secret.performance_platform_db_username.arn,
+      data.aws_secretsmanager_secret.performance_platform_db_password.arn
+    ]
   }
 }
