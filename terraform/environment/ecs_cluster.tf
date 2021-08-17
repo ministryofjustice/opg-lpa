@@ -40,12 +40,26 @@ resource "aws_iam_role_policy" "execution_role" {
 data "aws_iam_policy_document" "execution_role" {
   statement {
     effect    = "Allow"
-    resources = ["*"]
+    resources = [
+      data.aws_ecr_repository.lpa_pdf_app.arn,
+      data.aws_ecr_repository.lpa_admin_web.arn,
+      data.aws_ecr_repository.lpa_admin_app.arn,
+      data.aws_ecr_repository.lpa_api_web.arn,
+      data.aws_ecr_repository.lpa_api_app.arn,
+      data.aws_ecr_repository.lpa_front_web.arn,
+      data.aws_ecr_repository.lpa_front_app.arn,
+    ]
     actions = [
       "ecr:GetAuthorizationToken",
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
+      "ecr:BatchGetImage"
+    ]
+  }
+  statement {
+    effect    = "Allow"
+    resources = ["*"]
+    actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
     ]
