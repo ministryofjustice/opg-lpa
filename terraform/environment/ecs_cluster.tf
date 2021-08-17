@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "execution_role" {
   }
   statement {
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:*:*:*"]
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
@@ -92,6 +92,7 @@ data "aws_iam_policy_document" "execution_role" {
     actions = [
       "kms:Decrypt",
       "secretsmanager:GetSecretValue",
+      "ssm:GetParameters"
     ]
 
     resources = [
