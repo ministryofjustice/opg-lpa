@@ -44,7 +44,8 @@ data "aws_iam_policy_document" "vpc_flow_logs_role_policy" {
       "logs:DescribeLogGroups",
       "logs:DescribeLogStreams"
     ]
-
+    # This is as defined in the AWS Documentation. See https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-cwl.html
+    #tfsec:ignore:aws-iam-no-policy-wildcards
     resources = ["*"]
     effect    = "Allow"
   }
