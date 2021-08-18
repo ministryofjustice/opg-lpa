@@ -53,18 +53,18 @@
                 </p>
             </div>
             <div class="global-cookie-message__buttons">
-                <button class="global-cookie-message__button global-cookie-message__button_accept button" type="submit">Accept analytics cookies</button>
-                <button class="global-cookie-message__button global-cookie-message__button_reject button" type="submit">Reject analytics cookies</button>
+                <button class="global-cookie-message__button global-cookie-message__button_accept button" type="submit" data-cy="accept-analytics-cookies">Accept analytics cookies</button>
+                <button class="global-cookie-message__button global-cookie-message__button_reject button" type="submit" data-cy="reject-analytics-cookies">Reject analytics cookies</button>
                 <a class="global-cookie-message__button-link global-cookie-message__button-link_settings" role="button" href="/cookies" rel="noreferrer noopener" target="_blank">View cookies<span class="visually-hidden"> (opens in new tab)</span></a>
             </div>
         </div>
 
-        <div id="cookie-preferences-save-confirm" class="global-cookie-message__content" hidden="true">
+        <div id="cookie-preferences-save-confirm" class="global-cookie-message__content" hidden="true" data-cy="cookie-preferences-save-confirm">
             <p class="global-cookie-message__text">You’ve <span id="cookie-preferences-decision"></span> analytics cookies.
             You can <a href="/cookies" rel="noreferrer noopener" target="_blank">change your
             cookie settings<span class="visually-hidden"> (opens in new tab)</span></a> at any time.</p>
             <div class="global-cookie-message__buttons">
-                <button class="global-cookie-message__button global-cookie-message__button_hide button" type="submit">Hide this message</button>
+                <button class="global-cookie-message__button global-cookie-message__button_hide button" type="submit" data-cy="hide-cookies-banner">Hide this message</button>
             </div>
         </div>
     </div>

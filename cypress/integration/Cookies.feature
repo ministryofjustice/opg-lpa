@@ -11,3 +11,23 @@ Feature: Cookies
         When I visit link in new tab containing "View cookies"
         Then there is "one" "legend" element inside "cookies-fieldset"
         And there are "two" "input[type=radio]" elements inside "cookies-fieldset"
+
+    @focus
+    Scenario: Accepting analytics cookies in banner sets analytics cookies on client (LPAL-480)
+        Given I visit "/home"
+        When I click "accept-analytics-cookies"
+        Then analytics cookies are set
+        And I see a message that I have "accepted" analytics cookies
+        And I can see a hide button to close the cookies banner
+        When I click "hide-cookies-banner"
+        Then the cookie banner is not visible
+
+    @focus
+    Scenario: Rejecting analytics cookies in banner does not set analytics cookies on client (LPAL-480)
+        Given I visit "/home"
+        When I click "reject-analytics-cookies"
+        Then analytics cookies are not set
+        And I see a message that I have "rejected" analytics cookies
+        And I can see a hide button to close the cookies banner
+        When I click "hide-cookies-banner"
+        Then the cookie banner is not visible
