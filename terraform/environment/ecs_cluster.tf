@@ -42,7 +42,13 @@ data "aws_iam_policy_document" "execution_role" {
     effect    = "Allow"
     resources = ["*"]
     actions = [
-      "ecr:GetAuthorizationToken",
+      "ecr:GetAuthorizationToken"
+    ]
+  }
+  statement {
+    effect    = "Allow"
+    resources = ["arn:aws:ecr:*:*:*"]
+    actions = [
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage"
