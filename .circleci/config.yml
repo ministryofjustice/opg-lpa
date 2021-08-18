@@ -1007,12 +1007,6 @@ orbs:
               command: |
                 pip install -r scripts/pipeline/requirements.txt --user
           - run:
-              name: Wait for new tasks in services to be running
-              command: |
-                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-                echo $TF_WORKSPACE
-                python scripts/pipeline/ecs_monitor/ecs_monitor.py
-          - run:
               name: Run seeding ecs task
               command: |
                 python scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
@@ -1036,12 +1030,6 @@ orbs:
               command: |
                 pip install -r scripts/pipeline/requirements.txt --user
           - install_terraform
-          - run:
-              name: Wait for new tasks in services to be running
-              command: |
-                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-                echo $TF_WORKSPACE
-                python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
               command: |
@@ -1103,12 +1091,6 @@ orbs:
                 export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
-          - run:
-              name: Wait for new tasks in services to be running
-              command: |
-                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-                echo $TF_WORKSPACE
-                python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
               command: |
@@ -1174,12 +1156,6 @@ orbs:
                 export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
-          - run:
-              name: Wait for new tasks in services to be running
-              command: |
-                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-                echo $TF_WORKSPACE
-                python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
               command: |
