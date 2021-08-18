@@ -282,8 +282,6 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             'failed_login_attempts' => $details['failed_login_attempts']
         ];
 
-        $insert->columns(array_keys($data));
-
         $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
@@ -291,7 +289,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         try {
             $statement->execute();
         }
-        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
+        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             // If it's a key clash, and not on the identity, re-try with new values.
             if ($e->getPrevious() instanceof PDOException) {
                 $pdoException = $e->getPrevious();
