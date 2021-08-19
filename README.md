@@ -40,7 +40,7 @@ This will install the pre-commit hooks for the repo. This covers:
 
 Add more as needed to the `.pre-commit-config.yaml`.
 
-For linux users, revert to the instructions for installing phpcs, phpstan and precommit hooks:
+For Linux users, revert to the instructions for installing phpcs, phpstan and pre-commit hooks:
 
 * <https://github.com/squizlabs/PHP_CodeSniffer>
 * <https://phpstan.org/user-guide/getting-started>
