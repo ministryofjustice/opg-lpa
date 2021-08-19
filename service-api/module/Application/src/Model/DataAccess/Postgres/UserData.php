@@ -556,7 +556,6 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         // Exclude results that have already been actioned
         if (!is_null($excludeFlag)) {
-            $excludeFlag = $this->dbWrapper->quoteValue($excludeFlag);
             $where[] = new Expression("inactivity_flags -> {$excludeFlag} IS NULL");
         }
 
