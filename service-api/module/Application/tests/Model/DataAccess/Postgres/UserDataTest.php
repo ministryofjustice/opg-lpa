@@ -9,6 +9,7 @@ use PDOException;
 use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Postgres\UserData;
 use Application\Model\DataAccess\Postgres\DbWrapper;
+use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
@@ -17,12 +18,32 @@ use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Statement;
+use Laminas\Db\Sql\Update;
 
 use ApplicationTest\Helpers;
 
 
 class UserDataTest extends MockeryTestCase
 {
+    const DATE_PATTERN = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}\+0000$/';
+
+    // create a PDO Result mock to test queries which use getByField
+    // $isQueryResult: bool
+    // $count: int
+    // $current: array representing single user result
+    private function makeGetByFieldResult($isQueryResult, $count, $current)
+    {
+        $result = Mockery::Mock(Result::class);
+
+        $result->allows([
+            'isQueryResult' => $isQueryResult,
+            'count' => $count,
+            'current' => $current,
+        ]);
+
+        return $result;
+    }
+
     // data provider for getByUsername, providing the
     // possible result permutations
     public function getByUsernameDataProvider()
@@ -46,7 +67,7 @@ class UserDataTest extends MockeryTestCase
 
         // mocks
         $dbWrapperMock = Mockery::Mock(DbWrapper::class);
-        $resultMock = Mockery::Mock(Result::class);
+        $resultMock = $this->makeGetByFieldResult($isQueryResult, $count, []);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')
@@ -57,14 +78,10 @@ class UserDataTest extends MockeryTestCase
             )
             ->andReturn($resultMock);
 
-        $resultMock->shouldReceive('isQueryResult')->andReturn($isQueryResult);
-        $resultMock->shouldReceive('count')->andReturn($count);
-
         // expect null back if result is empty; otherwise expect
         // a call to the result which returns a UserInterface implementation
         $expected = null;
         if ($isQueryResult && $count > 0) {
-            $resultMock->shouldReceive('current')->andReturn([]);
             $expected = UserInterface::class;
         }
 
@@ -184,6 +201,7 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals(1, count($actual));
     }
 
+    // TODO failure path once exception handling has been refactored out (see LPAL-487)
     public function testCreate()
     {
         $expected = TRUE;
@@ -220,9 +238,8 @@ class UserDataTest extends MockeryTestCase
                 // note that the field name for 'last_updated' in the db is 'updated'...
                 $dateFields = ['created', 'updated'];
 
-                $datePattern = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}\+0000$/';
                 foreach ($dateFields as $dateField) {
-                    if (!preg_match($datePattern, $data[$dateField])) {
+                    if (!preg_match(self::DATE_PATTERN, $data[$dateField])) {
                         return FALSE;
                     }
                 }
@@ -250,5 +267,71 @@ class UserDataTest extends MockeryTestCase
 
         // assertions
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testUpdateEmailUsingToken() : void
+    {
+        $id = 'ddddddd';
+        $token = '1234';
+        $newEmail = 'mrfoo@uat.digital.justice.gov.uk';
+
+        // mocks
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $sqlMock = Mockery::Mock(Sql::class);
+        $updateMock = Mockery::Mock(Update::class);
+        $statementMock = Mockery::Mock(Statement::class);
+        $updateResultsMock = Mockery::Mock(Result::class);
+
+        // query for token returns single user with matching token
+        $getByFieldResult1 = $this->makeGetByFieldResult(
+            TRUE,
+            1,
+            [
+                'id' => $id,
+                'email_update_request' => json_encode([
+                    'token' => [
+                        'expiresAt' => '9999-01-01T00:00:00.00000+0000'
+                    ],
+                    'email' => $newEmail,
+                ])
+            ]
+        );
+
+        // query by email returns no matching user
+        $getByFieldResult2 = $this->makeGetByFieldResult(TRUE, 0, null);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('select')
+            ->andReturn($getByFieldResult1, $getByFieldResult2);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sqlMock->shouldReceive('update')->andReturn($updateMock);
+
+        $updateMock->shouldReceive('where')
+            ->with(['id' => $id])
+            ->andReturn($updateMock);
+
+        $updateMock->shouldReceive('set')
+            ->with(Mockery::on(function ($data) use ($newEmail) {
+                return $data['identity'] === $newEmail &&
+                    preg_match(self::DATE_PATTERN, $data['updated']) &&
+                    is_null($data['email_update_request']);
+            }))
+            ->andReturn($updateMock);
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute')
+            ->andReturn($updateResultsMock);
+
+        $updateResultsMock->shouldReceive('getAffectedRows')->andReturn(1);
+
+        // test method
+        $userData = new UserData($dbWrapperMock);
+        $actual = $userData->updateEmailUsingToken($token);
+
+        // assertions
+        $this->assertInstanceOf(UpdateEmailUsingTokenResponse::class, $actual);
     }
 }
