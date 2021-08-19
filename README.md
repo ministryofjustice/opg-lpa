@@ -22,7 +22,7 @@ cd opg-lpa
 
 ### install pre-commit hooks (mac)
 
-please install the precommit hooks as follows in the root of the repo directory (Mac only):
+Install the precommit hooks as follows in the root of the repo directory (Mac only):
 
 ```bash
 brew install php-code-sniffer
