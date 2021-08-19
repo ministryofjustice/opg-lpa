@@ -4,12 +4,16 @@ namespace ApplicationTest\Model\DataAccess\Postgres;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
+use DateTime;
+use PDOException;
 use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Postgres\UserData;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
+use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Expression as SqlExpression;
+use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Statement;
@@ -178,5 +182,73 @@ class UserDataTest extends MockeryTestCase
         $actual = iterator_to_array($userData->matchUsers($query, ['offset' => $offset, 'limit' => $limit]));
 
         $this->assertEquals(1, count($actual));
+    }
+
+    public function testCreate()
+    {
+        $expected = TRUE;
+
+        $id = '1234';
+
+        $details = [
+            'identity' => 'foo',
+            'password_hash' => 'hash',
+            'activation_token' => 'act',
+            'active' => TRUE,
+            'created' => new DateTime(),
+            'last_updated' => new DateTime(),
+            'failed_login_attempts' => 0,
+        ];
+
+        // mocks
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $sqlMock = Mockery::Mock(Sql::class);
+        $insertMock = Mockery::Mock(Insert::class);
+        $statementMock = Mockery::Mock(Statement::class);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('insert')->andReturn($insertMock);
+
+        $insertMock->shouldReceive('values')
+            ->with(Mockery::on(function ($data) use ($id, $details) {
+                if ($data['id'] !== $id) {
+                    return FALSE;
+                }
+
+                // check date times are formatted as strings;
+                // note that the field name for 'last_updated' in the db is 'updated'...
+                $dateFields = ['created', 'updated'];
+
+                $datePattern = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}\+0000$/';
+                foreach ($dateFields as $dateField) {
+                    if (!preg_match($datePattern, $data[$dateField])) {
+                        return FALSE;
+                    }
+                }
+
+                // check other field values (excluding dates) match the details passed in
+                foreach (array_diff(array_keys($details), ['created', 'last_updated']) as $key) {
+                    if ($details[$key] !== $data[$key]) {
+                        return FALSE;
+                    }
+                }
+
+                return TRUE;
+            }))
+            ->andReturn($insertMock);
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($insertMock)
+            ->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute');
+
+        // test method
+        $userData = new UserData($dbWrapperMock);
+        $actual = $userData->create($id, $details);
+
+        // assertions
+        $this->assertEquals($expected, $actual);
     }
 }
