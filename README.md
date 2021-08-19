@@ -11,7 +11,7 @@ Set up software on your machine required to run the application locally:
 * Install [docker-compose](https://docs.docker.com/compose/install/)
 * Install [homebrew](https://docs.brew.sh/) (mac only)
 
-### clone repo
+### Clone repo
 
 Download the repo via:
 
