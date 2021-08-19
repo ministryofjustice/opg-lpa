@@ -31,7 +31,7 @@ brew install phpstan
 pre-commit install
 ```
 
-This will install the precommit hooks for the repo. this covers:
+This will install the pre-commit hooks for the repo. This covers:
 
 * PHP code fixers
 * Terraform
