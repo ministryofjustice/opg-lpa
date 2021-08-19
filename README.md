@@ -9,10 +9,9 @@ Set up software on your machine required to run the application locally:
 * Install `make` using the native package manager (assuming you are on Mac or Linux)
 * Install [docker](https://docs.docker.com/get-docker/)
 * Install [docker-compose](https://docs.docker.com/compose/install/)
+* Install [homebrew](https://docs.brew.sh/) (mac only)
 
-### Running locally without 3rd party integrations
-
-**This is the recommended approach for developers outside the Ministry of Justice.**
+### clone repo
 
 Download the repo via:
 
@@ -20,6 +19,36 @@ Download the repo via:
 git clone https://github.com/ministryofjustice/opg-lpa.git
 cd opg-lpa
 ```
+
+### install pre-commit hooks (mac)
+
+please install the precommit hooks as follows in the root of the repo directory (Mac only):
+
+```bash
+brew install php-code-sniffer
+brew install php-cs-fixer
+brew install phpstan
+pre-commit install
+```
+
+This will install the precommit hooks for the repo. this covers:
+
+* PHP code fixers
+* Terraform
+* Secrets commit detection (AWS, general secrets)
+* Whitespace and end of file fixers
+
+Add more as needed to the `.pre-commit-config.yaml`.
+
+For linux users, revert to the instructions for installing phpcs, phpstan and precommit hooks:
+
+* <https://github.com/squizlabs/PHP_CodeSniffer>
+* <https://phpstan.org/user-guide/getting-started>
+* <https://pre-commit.com/index.html#install>
+
+### Running locally without 3rd party integrations
+
+**This is the recommended approach for developers outside the Ministry of Justice.**
 
 If you intend to run the application in tandem with 3rd party integrations, you currently require a Ministry of Justice AWS account. If you don't have one of these, you can still run the stack locally, minus these integrations, with:
 
@@ -46,8 +75,8 @@ The long-term plan is for these integrations to be mocked out locally so that a 
 
 To run the application with 3rd party integrations, set up the software needed to support a Ministry of Justice AWS account:
 
-* Install `awscli`: while this can be done via brew, [these instructions](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) may be more useful.
-* Install [homebrew](https://docs.brew.sh/)
+* Install `awscli`: while this can be done via Homebrew, [these instructions](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) may be more useful.
+
 * Install dependencies for the Makefile using brew: `brew install aws-vault jq`
 
 Set up access to Amazon with MFA.
