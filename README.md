@@ -20,7 +20,7 @@ git clone https://github.com/ministryofjustice/opg-lpa.git
 cd opg-lpa
 ```
 
-### install pre-commit hooks (mac)
+### Install pre-commit hooks (mac)
 
 Install the precommit hooks as follows in the root of the repo directory (Mac only):
 
