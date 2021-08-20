@@ -8,6 +8,7 @@ on:
 
 jobs:
   gitleaks:
+    name: Run gitleaks report
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
