@@ -6,7 +6,7 @@ use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
-use Laminas\Db\ResultSet;
+use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Sql;
 
@@ -51,9 +51,9 @@ class DbWrapper {
     /**
      * Perform a raw SQL query via the adapter.
      * @param string $query Raw SQL string to execute on adapter
-     * @return ResultSet
+     * @return ResultSet|Result
      */
-    public function rawQuery(string $query) : ResultSet
+    public function rawQuery(string $query)
     {
         return $this->adapter->query($query, $this->adapter::QUERY_MODE_EXECUTE);
     }
