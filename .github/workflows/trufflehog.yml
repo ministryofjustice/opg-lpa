@@ -11,6 +11,6 @@ jobs:
     name: Run trufflehog report
     runs-on: ubuntu-latest
     steps:
-     - uses: actions/checkout@master
+     - uses: actions/checkout@v1
      - name: trufflehog-actions-scan
        uses: edplato/trufflehog-actions-scan@master
