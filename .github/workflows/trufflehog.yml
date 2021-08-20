@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  run-trufflehog:
+  trufflehog:
     name: Run trufflehog report
     runs-on: ubuntu-latest
     steps:
