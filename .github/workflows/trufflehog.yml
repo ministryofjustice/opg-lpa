@@ -1,0 +1,16 @@
+name: trufflehog
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  run-trufflehog:
+    name: Run trufflehog report
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@master
+     - name: trufflehog-actions-scan
+       uses: edplato/trufflehog-actions-scan@master
