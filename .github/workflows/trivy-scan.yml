@@ -23,7 +23,7 @@ jobs:
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
           severity: 'HIGH,CRITICAL'
-          scan-ref: ./service-api
+          scan-ref: ./service-api/docker/app
           hide-progress: false
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
