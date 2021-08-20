@@ -51,7 +51,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     {
          $options = [
             'columns' => [
-                'count' => new Expression('count(*)')
+                'count' => new Expression('COUNT(*)')
             ]
         ];
 
@@ -631,7 +631,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             $where = [new IsNotNull('activated')];
         }
         else {
-            $where = [new Operator('activated', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $since->format('c'))];
+            $where = [new Operator('activated', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $since->format(DbWrapper::TIME_FORMAT))];
         }
 
         return $this->countRows($where);
