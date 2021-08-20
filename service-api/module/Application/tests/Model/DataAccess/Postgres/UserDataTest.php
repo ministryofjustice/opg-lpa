@@ -1,9 +1,9 @@
 <?php
+
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-
 use DateTime;
 use PDOException;
 use Application\Model\DataAccess\Postgres\ApplicationData;
@@ -12,26 +12,26 @@ use Application\Model\DataAccess\Postgres\DbWrapper;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Expression as SqlExpression;
 use Laminas\Db\Sql\Insert;
+use Laminas\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Select;
-use Laminas\Db\Sql\Statement;
 use Laminas\Db\Sql\Update;
-
 use ApplicationTest\Helpers;
 
-
-class UserDataTest extends MockeryTestCase
+class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 {
-    const DATE_PATTERN = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}\+0000$/';
+    public const DATE_PATTERN = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}\+0000$/';
 
-    // create a PDO Result mock to test queries which use getByField
+    // create a PDO Result mock to test queries which use DbWrapper->select()
     // $isQueryResult: bool
     // $count: int
     // $current: array representing single user result
-    private function makeGetByFieldResult($isQueryResult, $count, $current)
+    private function makeSelectResult($isQueryResult, $count, $current)
     {
         $result = Mockery::Mock(Result::class);
 
@@ -49,16 +49,16 @@ class UserDataTest extends MockeryTestCase
     public function getByUsernameDataProvider()
     {
         return [
-            [['isQueryResult' => FALSE, 'count' => -1]],
-            [['isQueryResult' => TRUE, 'count' => 0]],
-            [['isQueryResult' => TRUE, 'count' => 1]]
+            [['isQueryResult' => false, 'count' => -1]],
+            [['isQueryResult' => true, 'count' => 0]],
+            [['isQueryResult' => true, 'count' => 1]]
         ];
     }
 
     /**
      * @dataProvider getByUsernameDataProvider
      */
-    public function testGetByUsername($data) : void
+    public function testGetByUsername($data): void
     {
         $username = 'VictorFrankenstein';
 
@@ -67,7 +67,7 @@ class UserDataTest extends MockeryTestCase
 
         // mocks
         $dbWrapperMock = Mockery::Mock(DbWrapper::class);
-        $resultMock = $this->makeGetByFieldResult($isQueryResult, $count, []);
+        $resultMock = $this->makeSelectResult($isQueryResult, $count, []);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')
@@ -92,13 +92,12 @@ class UserDataTest extends MockeryTestCase
         // assertions
         if ($expected === null) {
             $this->assertEquals($expected, $actual);
-        }
-        else {
+        } else {
             $this->assertInstanceOf($expected, $actual);
         }
     }
 
-    public function testMatchUsers() : void
+    public function testMatchUsers(): void
     {
         $query = 'Alphonse';
         $offset = '20';
@@ -109,7 +108,7 @@ class UserDataTest extends MockeryTestCase
         $sqlMock = Mockery::Mock(Sql::class);
         $subselectMock = Mockery::Mock(Select::class);
         $selectMock = Mockery::Mock(Select::class);
-        $statementMock = Mockery::Mock(Statement::class);
+        $statementMock = Mockery::Mock(StatementInterface::class);
         $resultMock = $resultMock = Helpers::makePdoResultMock([[]]);
 
         // expectations
@@ -157,11 +156,11 @@ class UserDataTest extends MockeryTestCase
                 foreach ($likes->getPredicates() as $predicate) {
                     // check both predicates have an OR
                     if ($predicate[0] !== 'OR') {
-                        return FALSE;
+                        return false;
                     }
 
                     if ($predicate[1]->getIdentifier() !== 'u.identity') {
-                        return FALSE;
+                        return false;
                     }
 
                     // remove the LIKE clause for this predicate;
@@ -204,7 +203,7 @@ class UserDataTest extends MockeryTestCase
     // TODO failure path once exception handling has been refactored out (see LPAL-487)
     public function testCreate()
     {
-        $expected = TRUE;
+        $expected = true;
 
         $id = '1234';
 
@@ -212,7 +211,7 @@ class UserDataTest extends MockeryTestCase
             'identity' => 'foo',
             'password_hash' => 'hash',
             'activation_token' => 'act',
-            'active' => TRUE,
+            'active' => true,
             'created' => new DateTime(),
             'last_updated' => new DateTime(),
             'failed_login_attempts' => 0,
@@ -222,7 +221,7 @@ class UserDataTest extends MockeryTestCase
         $dbWrapperMock = Mockery::Mock(DbWrapper::class);
         $sqlMock = Mockery::Mock(Sql::class);
         $insertMock = Mockery::Mock(Insert::class);
-        $statementMock = Mockery::Mock(Statement::class);
+        $statementMock = Mockery::Mock(StatementInterface::class);
 
         // expectations
         $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
@@ -231,7 +230,7 @@ class UserDataTest extends MockeryTestCase
         $insertMock->shouldReceive('values')
             ->with(Mockery::on(function ($data) use ($id, $details) {
                 if ($data['id'] !== $id) {
-                    return FALSE;
+                    return false;
                 }
 
                 // check date times are formatted as strings;
@@ -240,18 +239,18 @@ class UserDataTest extends MockeryTestCase
 
                 foreach ($dateFields as $dateField) {
                     if (!preg_match(self::DATE_PATTERN, $data[$dateField])) {
-                        return FALSE;
+                        return false;
                     }
                 }
 
                 // check other field values (excluding dates) match the details passed in
                 foreach (array_diff(array_keys($details), ['created', 'last_updated']) as $key) {
                     if ($details[$key] !== $data[$key]) {
-                        return FALSE;
+                        return false;
                     }
                 }
 
-                return TRUE;
+                return true;
             }))
             ->andReturn($insertMock);
 
@@ -269,7 +268,7 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testUpdateEmailUsingToken() : void
+    public function testUpdateEmailUsingToken(): void
     {
         $id = 'ddddddd';
         $token = '1234';
@@ -279,12 +278,12 @@ class UserDataTest extends MockeryTestCase
         $dbWrapperMock = Mockery::Mock(DbWrapper::class);
         $sqlMock = Mockery::Mock(Sql::class);
         $updateMock = Mockery::Mock(Update::class);
-        $statementMock = Mockery::Mock(Statement::class);
+        $statementMock = Mockery::Mock(StatementInterface::class);
         $updateResultsMock = Mockery::Mock(Result::class);
 
         // query for token returns single user with matching token
-        $getByFieldResult1 = $this->makeGetByFieldResult(
-            TRUE,
+        $getByFieldResult1 = $this->makeSelectResult(
+            true,
             1,
             [
                 'id' => $id,
@@ -298,7 +297,7 @@ class UserDataTest extends MockeryTestCase
         );
 
         // query by email returns no matching user
-        $getByFieldResult2 = $this->makeGetByFieldResult(TRUE, 0, null);
+        $getByFieldResult2 = $this->makeSelectResult(true, 0, null);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')
@@ -333,5 +332,76 @@ class UserDataTest extends MockeryTestCase
 
         // assertions
         $this->assertInstanceOf(UpdateEmailUsingTokenResponse::class, $actual);
+    }
+
+    // $since: ?DateTime
+    // $queryResult: mock Result
+    // $expected: int; expected return value
+    public function countActivatedAccountsDataProvider()
+    {
+        $countResultWithFive = $this->makeSelectResult(true, 1, ['count' => 5]);
+        $countResultWithZero = $this->makeSelectResult(true, 1, ['count' => 0]);
+        $countResultNotQueryResult = $this->makeSelectResult(false, -1, []);
+        $countResultNoRecords = $this->makeSelectResult(true, 0, []);
+
+        return [
+            // specify a datetime; 5 rows returned
+            [new DateTime(), $countResultWithFive, 5],
+
+            // no datetime; 5 rows returned
+            [null, $countResultWithFive, 5],
+
+            // specify a datetime; 0 rows returned
+            [new DateTime(), $countResultWithZero, 0],
+
+            // no datetime; 0 rows returned
+            [null, $countResultWithZero, 0],
+
+            // query return value was not a query result
+            [null, $countResultNotQueryResult, 0],
+
+            // query return value had no records in it
+            [null, $countResultNoRecords, 0],
+        ];
+    }
+
+    /**
+     * @dataProvider countActivatedAccountsDataProvider
+     */
+    public function testCountActivatedAccounts($since, $resultMock, $expected)
+    {
+        // mocks
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('select')
+            ->with(
+                UserData::USERS_TABLE,
+                Mockery::on(function ($where) use ($since) {
+                    // check WHERE argument based on whether we passed a datetime
+                    // to countActivatedAccounts()
+                    $expression = $where[0];
+
+                    if (is_null($since)) {
+                        return is_a($expression, IsNotNull::class) &&
+                            $expression->getIdentifier() === 'activated';
+                    } else {
+                        return is_a($expression, Operator::class) &&
+                            preg_match(self::DATE_PATTERN, $expression->getRight()) &&
+                            $expression->getOperator() === '>=';
+                    }
+                }),
+                Mockery::on(function ($options) {
+                    return $options['columns']['count']->getExpression() === 'COUNT(*)';
+                })
+            )
+            ->andReturn($resultMock);
+
+        // test method
+        $userData = new UserData($dbWrapperMock);
+        $actual = $userData->countActivatedAccounts($since);
+
+        // assertions
+        $this->assertEquals($expected, $actual);
     }
 }
