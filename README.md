@@ -25,9 +25,11 @@ cd opg-lpa
 Install the precommit hooks as follows in the root of the repo directory (Mac only):
 
 ```bash
+brew install golang
 brew install php-code-sniffer
 brew install php-cs-fixer
 brew install phpstan
+brew install pre-commit
 pre-commit install
 ```
 
