@@ -25,8 +25,6 @@ use ApplicationTest\Helpers;
 
 class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 {
-    public const DATE_PATTERN = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}\+0000$/';
-
     // create a PDO Result mock to test queries which use DbWrapper->select()
     // $isQueryResult: bool
     // $count: int
@@ -238,7 +236,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
                 $dateFields = ['created', 'updated'];
 
                 foreach ($dateFields as $dateField) {
-                    if (!preg_match(self::DATE_PATTERN, $data[$dateField])) {
+                    if (!Helpers::isGmDateString($data[$dateField])) {
                         return false;
                     }
                 }
@@ -313,7 +311,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $updateMock->shouldReceive('set')
             ->with(Mockery::on(function ($data) use ($newEmail) {
                 return $data['identity'] === $newEmail &&
-                    preg_match(self::DATE_PATTERN, $data['updated']) &&
+                    Helpers::isGmDateString($data['updated']) &&
                     is_null($data['email_update_request']);
             }))
             ->andReturn($updateMock);
@@ -387,7 +385,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
                             $expression->getIdentifier() === 'activated';
                     } else {
                         return is_a($expression, Operator::class) &&
-                            preg_match(self::DATE_PATTERN, $expression->getRight()) &&
+                            Helpers::isGmDateString($expression->getRight()) &&
                             $expression->getOperator() === '>=';
                     }
                 }),

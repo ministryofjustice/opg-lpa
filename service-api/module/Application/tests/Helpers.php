@@ -1,10 +1,9 @@
 <?php
+
 namespace ApplicationTest;
 
 use Mockery;
-
 use Laminas\Db\Adapter\Driver\Pdo\Result;
-
 
 class Helpers
 {
@@ -19,7 +18,7 @@ class Helpers
      * Each record is an associate array.
      * @return Result Mock PDO Result object
      */
-    public static function makePdoResultMock(array $records) : Result
+    public static function makePdoResultMock(array $records): Result
     {
         $resultMock = Mockery::Mock(Result::class);
 
@@ -31,8 +30,8 @@ class Helpers
         // valid() is called once each time round the loop;
         // we return TRUE for this method call until we run out of records,
         // then return FALSE to stop traversal
-        $returnValuesForValid = array_pad([], $numRecords, TRUE);
-        $returnValuesForValid[] = FALSE;
+        $returnValuesForValid = array_pad([], $numRecords, true);
+        $returnValuesForValid[] = false;
         $resultMock->shouldReceive('valid')
             ->times(count($returnValuesForValid))
             ->andReturnValues($returnValuesForValid);
@@ -53,8 +52,8 @@ class Helpers
      * @param string $value Date string to test
      * @return bool
      */
-    public static function isGmDateString(string $value) : bool
+    public static function isGmDateString(string $value): bool
     {
-        return preg_match('/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}\+0000/', $value);
+        return preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}\+0000$/', $value);
     }
 }
