@@ -21,7 +21,6 @@ jobs:
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
-          severity: 'HIGH,CRITICAL'
           scan-ref: ./service-api
           hide-progress: false
       - name: Upload Trivy scan results to GitHub Security tab
@@ -44,7 +43,6 @@ jobs:
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
-          severity: 'HIGH,CRITICAL'
           scan-ref: ./service-front
           hide-progress: false
 
@@ -67,7 +65,6 @@ jobs:
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
-          severity: 'HIGH,CRITICAL'
           scan-ref: ./service-admin
           hide-progress: false
 
@@ -90,7 +87,6 @@ jobs:
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
-          severity: 'HIGH,CRITICAL'
           scan-ref: ./service-pdf
           hide-progress: false
 
@@ -114,7 +110,6 @@ jobs:
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
-          severity: 'HIGH,CRITICAL'
           scan-ref: ./service-perfplat
           hide-progress: false
 
