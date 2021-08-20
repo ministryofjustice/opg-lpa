@@ -29,4 +29,9 @@ class AbstractBase {
         $this->dbWrapper = $dbWrapper;
         $this->config = $config;
     }
+
+    public function config()
+    {
+        return $this->config;
+    }
 }
