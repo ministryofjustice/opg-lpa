@@ -19,7 +19,7 @@ jobs:
           - ./cypress
           - ./service-perfplat
           - ./terraform/account
-          - ./terraform/environment
+
     name: trivy-scan
     runs-on: ubuntu-latest
     steps:
