@@ -20,7 +20,7 @@ jobs:
 
       - name: Build an image from Dockerfile
         run: |
-          docker build -t service-perfplat-${{matrix.dockerfile-suffix}}:${{ github.sha }} -f Dockerfile-${{ matrix.dockerfile-suffix }}
+          docker build -t service-perfplat-${{matrix.dockerfile-suffix}}:${{ github.sha }} -f ./service-perfplat/Dockerfile-${{ matrix.dockerfile-suffix }} ./service-perfplat
 
       - name: Run Trivy vulnerability scanner on image
         uses: aquasecurity/trivy-action@master
