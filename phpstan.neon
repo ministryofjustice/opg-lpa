@@ -9,3 +9,6 @@ parameters:
     - service-pdf/src/
     - service-pdf/tests/
     - service-pdf/vendor/
+    - service-admin/src/
+    - service-admin/test/
+    - service-admin/vendor
