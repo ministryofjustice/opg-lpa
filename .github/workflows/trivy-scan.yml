@@ -6,6 +6,37 @@ on:
   pull_request:
 jobs:
 
+  trivy-scan-lambda:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dockerfile-suffix:
+          - config-dev
+          - worker-ci
+          - worker-dev
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t service-perfplat-${{matrix.dockerfile-suffix}}:${{ github.sha }} -f Dockerfile-${{ matrix.dockerfile-suffix }}
+
+      - name: Run Trivy vulnerability scanner on image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'service-perfplat-${{matrix.dockerfile-suffix}}:${{ github.sha }}'
+          ignore-unfixed: true
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          hide-progress: false
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+
   trivy-scan-config:
     strategy:
       matrix:
@@ -14,19 +45,16 @@ jobs:
           - ./service-admin
           - ./service-front
           - ./service-pdf
-          - ./service-perfplat
           - ./tests
           - ./cypress
-          - ./service-perfplat
           - ./terraform/account
-
     name: trivy-scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy vulnerability scanner for IaC
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
@@ -50,15 +78,13 @@ jobs:
           - ./service-front
           - ./service-pdf
           - ./service-perfplat
-          - ./service-perfplat
-
     name: trivy-scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy vulnerability scanner on codebase
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
