@@ -7,13 +7,12 @@ on:
 jobs:
   trivy-fs-scan:
     name: trivy-fs-scan
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-
-      - name: Run Trivy vulnerability scanner in service-api
+      - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
@@ -21,82 +20,14 @@ jobs:
           ignore-unfixed: true
           format: 'template'
           template: '@/contrib/sarif.tpl'
-          output: 'trivy-results-api.sarif'
+          output: 'trivy-results.sarif'
           severity: 'HIGH,CRITICAL'
-          scan-ref: ./service-api
+
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: 'trivy-results-api.sarif'
-
-      - name: Run Trivy vulnerability scanner in service-front
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          exit-code: '1'
-          ignore-unfixed: true
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results-front.sarif'
-          severity: 'HIGH,CRITICAL'
-          scan-ref: ./service-front
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: 'trivy-results-front.sarif'
-
-      - name: Run Trivy vulnerability scanner in service-admin
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          exit-code: '1'
-          ignore-unfixed: true
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results-admin.sarif'
-          severity: 'HIGH,CRITICAL'
-          scan-ref: ./service-admin
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: 'trivy-results-admin.sarif'
-
-      - name: Run Trivy vulnerability scanner in service-pdf
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          exit-code: '1'
-          ignore-unfixed: true
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results-pdf.sarif'
-          severity: 'HIGH,CRITICAL'
-          scan-ref: ./service-pdf
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: 'trivy-results-pdf.sarif'
-
-      - name: Run Trivy vulnerability scanner in service-perfplat
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          exit-code: '1'
-          ignore-unfixed: true
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results-perfplat.sarif'
-          severity: 'HIGH,CRITICAL'
-          scan-ref: ./service-perfplat
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: 'trivy-results-perfplat.sarif'
+          sarif_file: 'trivy-results.sarif'
 #  trivy-repo-scan:
 #    name: Build
 #    runs-on: ubuntu-18.04
