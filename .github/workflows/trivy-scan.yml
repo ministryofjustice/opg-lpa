@@ -24,12 +24,12 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'HIGH,CRITICAL'
           scan-ref: ./service-api
-
-
+          hide-progress: false
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: 'trivy-results.sarif'
+
   trivy-scan-front:
     name: trivy-scan-front
     runs-on: ubuntu-latest
@@ -48,6 +48,7 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'HIGH,CRITICAL'
           scan-ref: ./service-front
+          hide-progress: false
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
@@ -71,12 +72,37 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'HIGH,CRITICAL'
           scan-ref: ./service-admin
+          hide-progress: false
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: 'trivy-results.sarif'
+  trivy-scan-pdf:
+    name: trivy-scan-pdf
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          exit-code: '1'
+          ignore-unfixed: true
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+          scan-ref: ./service-pdf
+          hide-progress: false
+
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results.sarif'
   trivy-scan-perfplat:
     name: trivy-scan-perfplat
     runs-on: ubuntu-latest
@@ -95,6 +121,7 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'HIGH,CRITICAL'
           scan-ref: ./service-perfplat
+          hide-progress: false
 
 
       - name: Upload Trivy scan results to GitHub Security tab
