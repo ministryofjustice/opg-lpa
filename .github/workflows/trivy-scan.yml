@@ -40,7 +40,6 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
-          exit-code: '1'
           ignore-unfixed: true
           format: 'template'
           template: '@/contrib/sarif.tpl'
@@ -64,7 +63,6 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
-          exit-code: '1'
           ignore-unfixed: true
           format: 'template'
           template: '@/contrib/sarif.tpl'
@@ -88,7 +86,6 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
-          exit-code: '1'
           ignore-unfixed: true
           format: 'template'
           template: '@/contrib/sarif.tpl'
@@ -113,7 +110,6 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
-          exit-code: '1'
           ignore-unfixed: true
           format: 'template'
           template: '@/contrib/sarif.tpl'
