@@ -16,13 +16,13 @@ jobs:
       id: filter
       with:
         filters: |
-          service-api: ./service-api
-          service-admin: ./service-admin
-          service-front: ./service-front
-          service-pdf: ./service-pdf
-          tests: ./tests
-          cypress: ./cypress
-          terraform/account: ./terraform/account
+          service-api: './service-api/**'
+          service-admin: './service-admin/**'
+          service-front: './service-front/**'
+          service-pdf: './service-pdf/**'
+          tests: './tests/**'
+          cypress: './cypress/**'
+          terraform/account: './terraform/account/**'
 
   trivy-scan-config:
 
