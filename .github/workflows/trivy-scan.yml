@@ -4,102 +4,99 @@ on:
     branches:
       - main
   pull_request:
+    paths:
+      - './service-api/**'
+      - './service-admin/**'
+      - './service-front/**'
+      - './service-pdf/**'
+      - './tests/**'
+      - './cypress/**'
+      - './terraform/account/**'
+      - './local-ssl/**'
+      - './node-build-assets/**'
+
 jobs:
   filter-changes-config:
+
     runs-on: ubuntu-latest
-    outputs:
-      # Expose matched filters as job 'folders' output variable
-      folders-config: ${{ steps.filter-config.outputs.changes }}
+    strategy:
+      fail-fast: true
+      matrix:
+        scan:
+          - name: service-api
+            path: './service-api/**'
+            code-scan: true
+          - name: service-admin
+            path: './service-admin/**'
+            code-scan: true
+          - name: service-front
+            path: './service-front/**'
+            code-scan: true
+          - name: service-pdf
+            path: './service-pdf/**'
+            code-scan: true
+          - name: tests
+            path: './tests/**'
+            code-scan: true
+          - name: cypress
+            path: './cypress/**'
+            code-scan: true
+          - name: terraform-account
+            path: './terraform/account/**'
+            code-scan: false
+#          - name: terraform-environment
+#            path: './terraform/environment/**'
+#            code-scan: false
+          - name: local-ssl
+            path: './local-ssl/**'
+            code-scan: false
+          - name: node-build-assets
+            path: './node-build-assets/**'
+            code-scan: false
+
     steps:
     # For pull requests it's not necessary to checkout the code
     - uses: dorny/paths-filter@v2
-      id: filter-config
+      id: filter
       with:
-        filters: |
-          service-api: './service-api/**'
-          service-admin: './service-admin/**'
-          service-front: './service-front/**'
-          service-pdf: './service-pdf/**'
-          tests: './tests/**'
-          cypress: './cypress/**'
-          terraform/account: './terraform/account/**'
-          local-ssl: './local-ssl/**'
-          node-build-assets: './node-build-assets/**'
+        filter:  |
+          check: ${{matrix.scan.pattern }}
+    - name: Checkout code
+      if: steps.filter.output.check == 'true'
+      uses: actions/checkout@v2
 
-  trivy-scan-config:
-    name: trivy-scan-config
-    needs: filter-changes-config
-    #needs this guard as this matrix could be empty.
-    if: ${{ fromJSON(needs.filter-changes-config.outputs.folders-config)  }}
-    strategy:
-      matrix:
-        # Parse JSON array containing names of all filters matching any of changed files
-        # e.g. ['package1', 'package2'] if both folders contains changes
-        folder: ${{ fromJSON(needs.filter-changes-config.outputs.folders-config) }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Run Trivy vulnerability scanner for IaC
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'config'
-          ignore-unfixed: true
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
-          scan-ref: ./${{ matrix.folder }}
-          hide-progress: false
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: 'trivy-results.sarif'
-  filter-changes-code:
-    runs-on: ubuntu-latest
-    outputs:
-      # Expose matched filters as job 'folders' output variable
-      folders-code: ${{ steps.filter-code.outputs.changes }}
-    steps:
-    # For pull requests it's not necessary to checkout the code
-    - uses: dorny/paths-filter@v2
-      id: filter-code
+    - name: Run Trivy vulnerability scanner for IaC
+      if: steps.filter.output.check == 'true'
+      uses: aquasecurity/trivy-action@master
       with:
-        filters: |
-          service-api: './service-api/**'
-          service-admin: './service-admin/**'
-          service-front: './service-front/**'
-          service-pdf: './service-pdf/**'
-          service-perfplat: './service-perfplat/**'
-          tests: './tests/**'
-          cypress: './cypress/**'
+        scan-type: 'config'
+        ignore-unfixed: true
+        format: 'template'
+        template: '@/contrib/sarif.tpl'
+        output: '${{matrix.scan.name}}/trivy-results-config.sarif'
+        scan-ref: ./${{ matrix.scan.path }}
+        hide-progress: false
 
-  trivy-scan-filesystem:
-    name: trivy-scan-code
-    needs: filter-changes-code
-    #needs this guard as this matrix could be empty.
-    if: ${{ fromJSON(needs.filter-changes-code.outputs.folders-code) }}
-    strategy:
-      matrix:
-        # Parse JSON array containing names of all filters matching any of changed files
-        # e.g. ['package1', 'package2'] if both package folders contains changes
-        folder: ${{ fromJSON(needs.filter-changes-code.outputs.folders-code) }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Run Trivy vulnerability scanner for Code
+      if: steps.filter.output.check == 'true' && matrix.scan.code-scan == 'true'
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'code'
+        ignore-unfixed: true
+        format: 'template'
+        template: '@/contrib/sarif.tpl'
+        output: '${{matrix.scan.name}}/trivy-results-code.sarif'
+        scan-ref: ./${{ matrix.scan.path }}
+        hide-progress: false
 
-      - name: Run Trivy vulnerability scanner on codebase
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
-          scan-ref: ./${{ matrix.folder }}
-          hide-progress: false
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: 'trivy-results.sarif'
+    - name: Upload Trivy code scan results to GitHub Security tab
+      if: steps.filter.output.check == 'true' && matrix.scan.code-scan == 'true'
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: '${{ matrix.scan.name }}/trivy-results-code.sarif'
+
+    - name: Upload Trivy IaC scan results to GitHub Security tab
+      if: steps.filter.output.check == 'true'
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: '${{ matrix.scan.name }}/trivy-results-config.sarif'
