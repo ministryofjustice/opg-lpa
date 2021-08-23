@@ -23,6 +23,8 @@ jobs:
           tests: './tests/**'
           cypress: './cypress/**'
           terraform/account: './terraform/account/**'
+          local-ssl: './local-ssl/**'
+          node-build-assets: './node-build-assets/**'
 
   trivy-scan-config:
 
