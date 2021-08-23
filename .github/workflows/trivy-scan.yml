@@ -24,34 +24,34 @@ jobs:
       matrix:
         scan:
           - name: service-api
-            path: './service-api/**'
+            path: './service-api'
             code-scan: true
           - name: service-admin
-            path: './service-admin/**'
+            path: './service-admin'
             code-scan: true
           - name: service-front
-            path: './service-front/**'
+            path: './service-front'
             code-scan: true
           - name: service-pdf
-            path: './service-pdf/**'
+            path: './service-pdf'
             code-scan: true
           - name: tests
-            path: './tests/**'
+            path: './tests'
             code-scan: true
           - name: cypress
-            path: './cypress/**'
+            path: './cypress*'
             code-scan: true
           - name: terraform-account
-            path: './terraform/account/**'
+            path: './terraform/account'
             code-scan: false
 #          - name: terraform-environment
 #            path: './terraform/environment/**'
 #            code-scan: false
           - name: local-ssl
-            path: './local-ssl/**'
+            path: './local-ssl'
             code-scan: false
           - name: node-build-assets
-            path: './node-build-assets/**'
+            path: './node-build-assets'
             code-scan: false
 
     steps:
