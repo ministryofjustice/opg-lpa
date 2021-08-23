@@ -62,7 +62,7 @@ jobs:
         filters:  |
           check: ${{ matrix.scan.path }}
     - name: Checkout code
-      if: steps.filter.output.check == 'true'
+      if: steps.filter.check == 'true'
       uses: actions/checkout@v2
 
     - name: Run Trivy vulnerability scanner for IaC
