@@ -44,12 +44,11 @@ data "aws_ecr_repository" "performance_platform_api" {
 module "performance_platform_api" {
   source            = "./modules/lambda_function"
   count             = local.account.performance_platform_enabled == true ? 1 : 0
-  lambda_name       = "${local.environment}-perfplat-api" #limited to 32 chars hence shortened
+  lambda_name       = "${local.environment}-perfplat-api"
   description       = "Function to take requests via REST-API for data ingestion & presentation for Make an LPA"
   working_directory = "/var/task"
   image_uri = "${data.aws_ecr_repository.performance_platform_api.repository_url}:${var.lambda_container_version}"
 
   ecr_arn                     = data.aws_ecr_repository.performance_platform_api.arn
-  lambda_role_policy_document = data.aws_iam_policy_document.performance_platform_api_lambda_function_policy[0].json
   tags                        = merge(local.default_tags, local.performance_platform_component_tag)
 }
