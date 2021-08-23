@@ -41,3 +41,9 @@ service-front/public/assets/v2/css/govuk-template-print.css
 service-front/public/assets/v2/css/govuk-template.css
 .phpunit.result.cache
 cypress/integration/common/local_dev_only.js
+*.egg-info
+*.pyc
+__pycache__
+**/build
+.coverage
+.php-cs-fixer.cache

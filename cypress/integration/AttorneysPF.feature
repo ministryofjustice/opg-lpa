@@ -7,19 +7,20 @@ Feature: Add attorneys to a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with a donor
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add Attorneys
         When I log in as appropriate test user
         And I visit the primary attorney page for the test fixture lpa
         
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
         When I click "add-attorney"
-        Then I can see popup
+        And I opt not to re-use details if lpa is a clone
+        Then I can find "form-attorney"
         And I can find "form-cancel"
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
-        And I can find "use-my-details"
+        And I can find use-my-details if lpa is new
         And I can find "use-trust-corporation"
         And I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -66,6 +67,7 @@ Feature: Add attorneys to a Property and Finance LPA
         Then I am taken to the primary attorney page
         # Test adding same attorney twice
         When I click "add-attorney"
+        And I opt not to re-use details if lpa is a clone
         # line below is deliberately Mr rather than Mrs, as was done in Casper tests
         When I select "Mr" on "name-title"
         And I force fill out
@@ -108,15 +110,25 @@ Feature: Add attorneys to a Property and Finance LPA
         And I can find save pointing to replacement attorney page
         # Re-add 2cnd attorney, first with errors
         When I click "add-attorney"
+        And I opt not to re-use details if lpa is a clone
         And I click "use-trust-corporation"
+        And I type " " into "name"
         And I force fill out
-            | name | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | number | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | email-address| opglpademo+trustcorp@gmail.com |
             | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | address-address2 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | address-address3 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | address-postcode | SA2 8HT |
+        And I click "form-save"
+        Then I see in the page text
+            | There is a problem |
+            | Enter the company's name |
+            | Enter a registration number that's less than 76 characters long |
+            | Change address line 1 so that it has fewer than 51 characters |
+            | Change address line 2 so that it has fewer than 51 characters |
+            | Change address line 3 so that it has fewer than 51 characters |
+        When I type "qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB" into "name"
         And I click "form-save"
         Then I see in the page text
             | There is a problem |
@@ -141,7 +153,7 @@ Feature: Add attorneys to a Property and Finance LPA
         And I see "Standard Trust" in the page text
         # re-view 1st attorney
         When I click occurrence 0 of "view-change-attorney"
-        Then I can see popup
+        Then I can find "form-attorney"
         And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
             | name-first | Amy |

@@ -7,7 +7,7 @@ Feature: Add attorneys to a Health and Welfare LPA
         Given I ignore application exceptions
         And I create HW LPA test fixture with a donor
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add Attorneys
         When I log in as appropriate test user
         And I visit the primary attorney page for the test fixture lpa
@@ -15,7 +15,7 @@ Feature: Add attorneys to a Health and Welfare LPA
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
         
         When I click "add-attorney"
-        Then I can see popup
+        Then I can find "form-attorney"
         And I can find "form-cancel"
         And I can find "name-title" with 8 options
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
@@ -105,7 +105,7 @@ Feature: Add attorneys to a Health and Welfare LPA
         And I see "Mr David Wheeler" in the page text
         # re-view 2cnd attorney
         When I click occurrence 1 of "view-change-attorney"
-        Then I can see popup
+        Then I can find "form-attorney"
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
             | name-first | David |

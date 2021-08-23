@@ -7,7 +7,7 @@ Feature: Fee Reduction for a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Fee Reduction
         When I log in as appropriate test user
         And I visit the fee reduction page for the test fixture lpa
@@ -44,7 +44,7 @@ Feature: Fee Reduction for a Property and Finance LPA
         Then I am taken to the checkout page
         And I see "Application fee: £41 as you are not claiming a reduction" in the page text
 
-        When I click occurrence 16 of "cya-change"
+        When I click the last occurrence of "cya-change"
         When I check "reducedFeeLowIncome"
         And I click "save"
         Then I am taken to the checkout page

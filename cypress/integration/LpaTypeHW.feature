@@ -8,7 +8,7 @@ Feature: Health and Welfare LPA starting from the Type page
         And I log in as appropriate test user
         And If I am on dashboard I visit the type page
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Create LPA with error first
         When I click "save"
         Then I see in the page text
@@ -20,9 +20,9 @@ Feature: Health and Welfare LPA starting from the Type page
         Then I am taken to the donor page
         And I see "This LPA covers health and welfare" in the page text
         When I click "add-donor"
-        Then I can see popup
+        Then I can find "form-donor" 
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Choose Health and Welfare as Lpa Type
         When I choose Health and Welfare
         And I click "save"

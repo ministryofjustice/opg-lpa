@@ -8,4 +8,7 @@
   <testsuite name="ApplicationTest">
     <directory>./module/Application/tests/</directory>
   </testsuite>
+  <php>
+    <ini name="memory_limit" value="512M" />
+  </php>
 </phpunit>

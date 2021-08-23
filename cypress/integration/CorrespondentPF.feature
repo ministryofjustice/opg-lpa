@@ -7,7 +7,7 @@ Feature: Add a correspondent to a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Create LPA normal path
         When I log in as appropriate test user
         And I visit the correspondent page for the test fixture lpa
@@ -22,14 +22,14 @@ Feature: Add a correspondent to a Property and Finance LPA
         And I can find hidden "email-address"
         And I can find "change-correspondent" with data-inited
         When I click "change-correspondent"
-        Then I can see popup
+        Then I can find "form-reuse-details"
         And I see "Which details would you like to reuse?" in the page text
         # donor is correspondent as default
         And I see "Mrs Nancy Garrison" in the page text
         And "contactByEmail" is checked
         # choose new correspondent
-        When I check "reuse-details--1"
-        And I click "continue"
+        When I opt not to re-use details
+        Then I can find "form-correspondent"
         Then I see "Correspondent details" in the page text
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
@@ -53,11 +53,13 @@ Feature: Add a correspondent to a Property and Finance LPA
         # force click needed on line below as sometimes button obscured
         When I force click "form-back"
         # we are taken back to re-use details page
-        Then I see "Which details would you like to reuse?" in the page text
+        Then I can find "form-reuse-details"
+        And I see "Which details would you like to reuse?" in the page text
         # choose donor as correspondent
         When I check "reuse-details-1"
         And I click "continue"
-        Then I cannot see popup
+        # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
+        Then I cannot find "form-reuse-details"
         And I see "Mrs Nancy Garrison" in the page text
         When I uncheck "contactByEmail"
         And I click "save"

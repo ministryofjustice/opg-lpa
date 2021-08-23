@@ -7,7 +7,7 @@ Feature: Add donor to Health and Welfare LPA
         Given I ignore application exceptions
         And I create HW LPA test fixture
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add Donor to LPA
         When I log in as appropriate test user
         And I visit the donor page for the test fixture lpa
@@ -16,7 +16,7 @@ Feature: Add donor to Health and Welfare LPA
         # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
-        Then I can see popup
+        Then I can find "form-donor" 
         And accessibility checks should pass for "donorHW page with popup open"
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
@@ -27,7 +27,7 @@ Feature: Add donor to Health and Welfare LPA
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
         And I click element marked "Find UK address"
         # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
-        Then I can find old style id "#address-search-result" with 6 options
+        Then I can find "address-search-result" with 6 options
         When I select "Mrs" on "name-title"
         And I force fill out
             | name-first | Nancy |
@@ -47,7 +47,7 @@ Feature: Add donor to Health and Welfare LPA
         And I see "Mrs Nancy Garrison" in the page text
         # following line uses force click because view-change-donor button is partly obscured
         When I force click "view-change-donor"
-        Then I can see popup
+        Then I can find "form-donor" 
         And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
             | name-first | Nancy |
@@ -61,7 +61,9 @@ Feature: Add donor to Health and Welfare LPA
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
         When I click "form-cancel"
-        And I click "save-and-continue"
+        # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
+        Then I cannot find "form-donor" 
+        When I click "save-and-continue"
         Then I am taken to the life sustaining page
         And I see "Who does the donor want to make decisions about life-sustaining treatment?" in the page text
         # in this test we check CanSustainLife-0 (no option) exists, then a few lines down we actually click canSustainLife-1 (yes)

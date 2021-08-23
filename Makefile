@@ -57,6 +57,10 @@ dc-run:
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	sleep 20; docker-compose run pdf-composer | xargs -L1 echo pdf-composer:
 
+# This will make a docker network called "malpadev", used to communicate from
+# the perfplatworkerproxy lambda (running in localstack) to the perfplatworker
+# lambda (running as a docker container).
+# The name of the network created here must match the one in the docker-compose.yml.
 .PHONY: dc-up
 dc-up:
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
@@ -64,6 +68,7 @@ dc-up:
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	docker-compose up
 
 # target for users outside MoJ to run the stack without 3rd party integrations
@@ -73,13 +78,7 @@ dc-up-out:
 
 .PHONY: dc-build
 dc-build:
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
-
+	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
 
 # remove docker containers, volumes, images left by existing system, rebuild everything
 # with no-cache
@@ -87,12 +86,7 @@ dc-build:
 .PHONY: dc-build-clean
 dc-build-clean:
 	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker system prune -f --volumes; \
+	@docker system prune -f --volumes; \
 	docker rmi lpa-pdf-app || true; \
 	docker rmi lpa-admin-web || true; \
 	docker rmi lpa-admin-app || true; \
@@ -111,12 +105,7 @@ dc-build-clean:
 .PHONY: reset-front
 reset-front:
 	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker system prune -f --volumes; \
+	@docker system prune -f --volumes; \
 	docker rmi lpa-front-web || true; \
 	docker rmi lpa-front-app || true; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
@@ -131,12 +120,7 @@ reset-front:
 .PHONY: reset-api
 reset-api:
 	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker system prune -f --volumes; \
+	@docker system prune -f --volumes; \
 	docker rmi lpa-api-web || true; \
 	docker rmi lpa-api-app || true; \
 	rm -fr ./service-api/vendor; \
@@ -146,21 +130,11 @@ reset-api:
 
 .PHONY: dc-down
 dc-down:
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose down --remove-orphans
+	@docker-compose down --remove-orphans
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run front-app /app/vendor/bin/phpunit
+	@docker-compose run front-app /app/vendor/bin/phpunit
 
 .PHONY: dc-unit-tests
 dc-unit-tests:
@@ -199,12 +173,13 @@ integration-api-local:
 
 .PHONY: cypress-local
 cypress-local:
+	docker rm -f cypress_tests || true
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" --entrypoint ./cypress/start.sh --network="host" --rm cypress:latest
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" --entrypoint ./cypress/start.sh -v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests cypress:latest
 
 .PHONY: cypress-local-shell
 cypress-local-shell:
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint bash --network="host" -v `pwd`/cypress:/app/cypress cypress:latest
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" --entrypoint bash --network="host" -v `pwd`/cypress:/app/cypress --name cypress_tests cypress:latest
 
 .PHONY: cypress-gui-local
 UNAME_S := $(shell uname -s)
@@ -231,4 +206,4 @@ restitch:
 .PHONY: cypress-open
 cypress-open:
 	aws-vault exec moj-lpa-dev -- python3 cypress/S3Monitor.py &
-	CYPRESS_userNumber=`node cypress/userNumber.js` cypress open --project ./
+	CYPRESS_userNumber=`node cypress/userNumber.js` ./node_modules/.bin/cypress open --project ./

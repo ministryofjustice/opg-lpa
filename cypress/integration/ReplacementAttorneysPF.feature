@@ -7,7 +7,7 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with a donor and attorneys
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add Replacment Attorneys
         When I log in as appropriate test user
         And I visit the replacement attorney page for the test fixture lpa
@@ -18,8 +18,9 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         When I click occurrence 4 of "accordion-view-change"
         Then I am taken to the replacement attorney page
         When I click "add-replacement-attorney"
-        Then I can see popup
-        And I can find "use-my-details"
+        And I can find use-my-details if lpa is new
+        And I opt not to re-use details if lpa is a clone
+        Then I can find "form-attorney"
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
         When I force fill out
@@ -49,9 +50,12 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
             | address-address2 | Staplehay |
             | address-address3 | Trull, Taunton, Somerset |
         And I click "form-save"
+        Then I cannot find "form-attorney" 
         Then I see "Ms Isobel Ward" in the page text
         # Test adding same attorney twice
         When I click "add-replacement-attorney"
+        And I can find use-my-details if lpa is new
+        And I opt not to re-use details if lpa is a clone
         # deliberately Mrs instead of Ms this time
         When I select "Mrs" on "name-title"
         And I force fill out
@@ -77,6 +81,7 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
             | address-address3 | Trull, Taunton, Somerset |
             | address-postcode | TA3 7HF |
         When I click "form-save"
+        Then I cannot find "form-attorney" 
         Then I see "Ms Isobel Ward" in the page text
         And I see "Mr Ewan Adams" in the page text
         When I click occurrence 1 of "delete-attorney"
@@ -86,6 +91,8 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         Then I do not see "Mr Ewan Adams" in the page text
         # re-add 2cnd replacement attorney
         When I click "add-replacement-attorney"
+        And I can find use-my-details if lpa is new
+        And I opt not to re-use details if lpa is a clone
         And I select "Mr" on "name-title"
         And I force fill out
             | name-first | Ewan |
@@ -98,12 +105,13 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
             | address-address3 | Trull, Taunton, Somerset |
             | address-postcode | TA3 7HF |
         When I click "form-save"
+        Then I cannot find "form-attorney" 
         # both replacement attorneys can be seen again
         Then I see "Ms Isobel Ward" in the page text
         And I see "Mr Ewan Adams" in the page text
         # re-view 2cnd replacement attorney
         When I click occurrence 1 of "view-change-attorney"
-        Then I can see popup
+        Then I can find "form-attorney"
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
             | name-first | Ewan |
@@ -116,7 +124,8 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
             | address-address3 | Trull, Taunton, Somerset |
             | address-postcode | TA3 7HF |
         When I click "form-cancel"
-        Then I am taken to the replacement attorney page
+        # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
+        Then I cannot find "form-attorney" 
         When I click "save"
         Then I am taken to the when replacement attorneys step in page
 
