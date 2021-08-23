@@ -17,7 +17,6 @@ setup(
         'psycopg2',
         'Flask',
         'flask-lambda',
-        'flask-lambda-python36',
         'itsdangerous',
         'Werkzeug',
         'connexion',
