@@ -28,7 +28,7 @@ jobs:
 
     name: trivy-scan
     needs: filter-changes
-    if: ${{ fromJSON(needs.filter-changes.outputs.folders) != '[]'  }}
+    if: ${{ fromJSON(needs.filter-changes.outputs.folders)[0]  }}
     strategy:
       matrix:
         # Parse JSON array containing names of all filters matching any of changed files
