@@ -47,8 +47,8 @@ module "performance_platform_api" {
   lambda_name       = "${local.environment}-perfplat-api"
   description       = "Function to take requests via REST-API for data ingestion & presentation for Make an LPA"
   working_directory = "/var/task"
-  image_uri = "${data.aws_ecr_repository.performance_platform_api.repository_url}:${var.lambda_container_version}"
+  image_uri         = "${data.aws_ecr_repository.performance_platform_api.repository_url}:${var.lambda_container_version}"
 
-  ecr_arn                     = data.aws_ecr_repository.performance_platform_api.arn
-  tags                        = merge(local.default_tags, local.performance_platform_component_tag)
+  ecr_arn = data.aws_ecr_repository.performance_platform_api.arn
+  tags    = merge(local.default_tags, local.performance_platform_component_tag)
 }
