@@ -28,6 +28,7 @@ jobs:
 
     name: trivy-scan
     needs: filter-changes
+    #needs this guard as this matrix could be empty.
     if: ${{ fromJSON(needs.filter-changes.outputs.folders)[0]  }}
     strategy:
       matrix:
