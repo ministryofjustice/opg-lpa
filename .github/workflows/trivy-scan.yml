@@ -60,7 +60,7 @@ jobs:
       id: filter
       with:
         filters:  |
-          check: ${{matrix.scan.pattern }}
+          check: ${{ matrix.scan.path }}
     - name: Checkout code
       if: steps.filter.output.check == 'true'
       uses: actions/checkout@v2
