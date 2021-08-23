@@ -6,6 +6,7 @@ resource "aws_flow_log" "vpc_flow_logs" {
   tags            = local.default_tags
 }
 
+#tfsec:ignore:AWS089 cost to encrypt is expensive.
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name = "vpc_flow_logs"
   tags = merge(local.default_tags, local.shared_component_tag)
@@ -43,7 +44,8 @@ data "aws_iam_policy_document" "vpc_flow_logs_role_policy" {
       "logs:DescribeLogGroups",
       "logs:DescribeLogStreams"
     ]
-
+    # This is as defined in the AWS Documentation. See https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-cwl.html
+    #tfsec:ignore:aws-iam-no-policy-wildcards
     resources = ["*"]
     effect    = "Allow"
   }

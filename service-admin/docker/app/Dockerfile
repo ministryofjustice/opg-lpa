@@ -1,12 +1,13 @@
-FROM composer:2.1.3 AS composer
+FROM composer:2.1.5 AS composer
 
 COPY service-admin/composer.json /app/composer.json
 COPY service-admin/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:7.4.16-fpm-alpine3.12
-
+FROM php:7.4-fpm-alpine
+RUN apk add --upgrade apk-tools
+RUN apk upgrade --available
 RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \

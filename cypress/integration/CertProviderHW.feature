@@ -7,14 +7,14 @@ Feature: Add a Certificate Provider to a Health and Welfare LPA
         Given I ignore application exceptions
         And I create HW LPA test fixture with a donor, attorneys and replacement attorneys
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add Certificate Provider
         When I log in as appropriate test user
         And I visit the certificate provider page for the test fixture lpa
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
         When I click "add-certificate-provider"
-        Then I can see popup
+        Then I can find "form-certificate-provider"
         And I can find "form-cancel"
         And I can find "name-title" with 8 options
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
@@ -35,7 +35,7 @@ Feature: Add a Certificate Provider to a Health and Welfare LPA
         When I click "delete-certificate-provider"
         And I click "cancel"
         And I click "view-change-certificate-provider"
-        Then I can see popup
+        Then I can find "form-certificate-provider"
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
             | name-first | Reece |

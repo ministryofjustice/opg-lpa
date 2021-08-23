@@ -47,6 +47,7 @@ class CorrespondenceForm extends AbstractMainFlowForm
     public function init()
     {
         $this->setName('form-correspondence');
+        $this->setAttribute('data-cy', 'form-correspondence');
 
         parent::init();
     }

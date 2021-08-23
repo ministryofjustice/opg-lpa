@@ -2,14 +2,14 @@
 // Api ECS Service level config
 
 resource "aws_ecs_service" "api" {
-  name             = "api"
-  cluster          = aws_ecs_cluster.online-lpa.id
-  task_definition  = aws_ecs_task_definition.api.arn
-  desired_count    = local.account.autoscaling.api.minimum
-  launch_type      = "FARGATE"
-  platform_version = "1.3.0"
-  propagate_tags   = "TASK_DEFINITION"
-
+  name                  = "api"
+  cluster               = aws_ecs_cluster.online-lpa.id
+  task_definition       = aws_ecs_task_definition.api.arn
+  desired_count         = local.account.autoscaling.api.minimum
+  launch_type           = "FARGATE"
+  platform_version      = "1.3.0"
+  propagate_tags        = "TASK_DEFINITION"
+  wait_for_steady_state = true
   network_configuration {
     security_groups = [
       aws_security_group.api_ecs_service.id,
@@ -54,7 +54,7 @@ locals {
 
 //----------------------------------
 // The Api service's Security Groups
-
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
   vpc_id      = data.aws_vpc.default.id
@@ -63,7 +63,7 @@ resource "aws_security_group" "api_ecs_service" {
 
 //----------------------------------
 // 80 in from front ECS service
-
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -74,8 +74,8 @@ resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
 }
 
 //----------------------------------
-// 80 in from Actor ECS service
-
+// 80 in from Admin ECS service
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -87,11 +87,13 @@ resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
 
 //----------------------------------
 // Anything out
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_egress" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
+  #tfsec:ignore:AWS007 - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.api_ecs_service.id
 }

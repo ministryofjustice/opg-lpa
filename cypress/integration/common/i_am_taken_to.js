@@ -21,6 +21,11 @@ Then(`I am taken to the lpa type page`, () => {
     checkAccordionHeaderContains("What type of LPA do you want to make?");
 })
 
+Then(`I am taken to the type page for cloned lpa`, () => {
+    cy.url().should('contain','type');
+    checkAccordionHeaderContains("What type of LPA do you want to make?");
+})
+
 Then(`I am taken to the when lpa starts page`, () => {
     checkOnPageWithPath('when-lpa-starts');
     checkAccordionHeaderContains("When can the LPA be used?")
@@ -110,6 +115,10 @@ Then(`I am taken to the complete page`, () => {
     checkOnPageWithPath('complete');
     cy.contains('Last steps');
 });
+
+Then(`I am taken to the certificate provider page for the test fixture lpa`, () => {
+    checkOnPageWithPath('certificate-provider');
+})
  
 Then(`I am taken to the donor page`, () => {
     // We arrive at the donor page when we've just created an lpa through the web, so we store the lpaId for future use at this point

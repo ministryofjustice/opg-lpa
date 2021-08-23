@@ -6,4 +6,3 @@ def create_app(Flask):
     app.register_blueprint(api_blueprint)
 
     return app
-

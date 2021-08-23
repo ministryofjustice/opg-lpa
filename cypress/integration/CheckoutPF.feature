@@ -7,7 +7,7 @@ Feature: Checkout for a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Checkout
         When I log in as appropriate test user
         And I visit the checkout page for the test fixture lpa
@@ -52,13 +52,22 @@ Feature: Checkout for a Property and Finance LPA
             | Person to notify | | |
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
-        And I see "Application fee: £20.50 as the donor has an income of less than £12,000" in the page text
+            | Preferences | Neque porro quisquam | instructions |
+            | Instructions | Lorem Ipsum | instructions |
+            | Who is registering the LPA | Donor | applicant |
+            | Correspondent | | |
+            | Name | Mrs Nancy Garrison | correspondent |
+            | Email address | opglpademo+NancyGarrison@gmail.com | |
+            | Address | Bank End Farm House $ Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
+            | Repeat application | This is a repeat application with case number 12345678 | repeat-application |
+            | Application fee | Application fee: £20.50 as the donor has an income of less than £12,000 | fee-reduction |
         And I can find "confirm-and-pay-by-card"
         And I can find "confirm-and-pay-by-cheque"
 
         When I click "confirm-and-pay-by-cheque"
         Then I am taken to the complete page
         And I can find link pointing to "/lp1"
+        # /lp3 link is for person  to notify
         And I can find link pointing to "/lp3"
         # note that /lpa120 link only appears when fee reduction is requested
         And I can find link pointing to "/lpa120"

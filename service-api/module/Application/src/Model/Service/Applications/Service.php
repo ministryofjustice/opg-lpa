@@ -176,10 +176,7 @@ class Service extends AbstractService
                     $filter['id'] = (int)$ident;
                 } elseif (strlen($search) >= 3) {
                     // Otherwise assume it's a name, and only search if 3 chars or longer
-                    $filter['search'] = [
-                        '$regex' => '.*' . $search . '.*',
-                        '$options' => 'i',
-                    ];
+                    $filter['search'] = $search;
                 }
             }
         }

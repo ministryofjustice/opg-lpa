@@ -41,6 +41,7 @@ class ReuseDetailsForm extends AbstractLpaForm
     public function init()
     {
         $this->setName('form-reuse-details');
+        $this->setAttribute('data-cy', 'form-reuse-details');
 
         $this->setUseInputFilterDefaults(false);
 

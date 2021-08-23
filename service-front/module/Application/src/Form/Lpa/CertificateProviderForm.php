@@ -36,6 +36,7 @@ class CertificateProviderForm extends AbstractActorForm
     public function init()
     {
         $this->setName('form-certificate-provider');
+        $this->setAttribute('data-cy', 'form-certificate-provider');
 
         //  Set the actor model so it can be used during validation
         $this->actorModel = new CertificateProvider();

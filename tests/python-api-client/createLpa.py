@@ -10,6 +10,9 @@ parser.add_argument('-d', action='store_true',
 parser.add_argument('-a', action='store_true',
                     default=False,
                     help='Add attorneys')
+parser.add_argument('-asingle', action='store_true',
+                    default=False,
+                    help='Add single attorney only')
 parser.add_argument('-r', action='store_true',
                     default=False,
                     help='Add Replacement attorneys')
@@ -56,6 +59,9 @@ if args.a :
     addSecondPrimaryAttorney(lpaId, lpaType)
     # this keeps life-sustaining treatment set to true and allows attorneys to act jointly
     setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId, lpaType)
+if args.asingle :
+    addSecondPrimaryAttorney(lpaId, lpaType)
+    setReplacementAttorneysConfirmed(lpaId)
 if args.r :
     addReplacementAttorney(lpaId)
     addSecondReplacementAttorney(lpaId)

@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+"""
+Client for SQS queues, for testing purposes
+"""
+import json
+from argparse import ArgumentParser
+from datetime import datetime
+
+from perfplat.common.sqsclient import SqsClient
+
+
+parser = ArgumentParser(description='SQS queue client')
+parser.add_argument('queue_name', type=str, help='Name of the SQS queue')
+parser.add_argument('action', type=str, help='Action to apply to the SQS queue',
+    choices=['list', 'check', 'send'])
+parser.add_argument('--payload', type=str,
+    help='JSON payload to send in message to queue (defaults to {year: <current year>, month: <current month>})')
+args = parser.parse_args()
+
+queue_name = args.queue_name
+action = args.action
+payload = args.payload
+
+client = SqsClient(queue_name)
+
+if action == 'list':
+    print(client.list_queues())
+elif action == 'check':
+    print(f'Does queue {queue_name} exist? {client.queue_exists()}')
+elif action == 'send':
+    if payload is None:
+        now = datetime.now()
+        payload = {'year': now.year, 'month': now.month}
+    else:
+        payload = json.loads(payload)
+    print(client.send_message(payload))

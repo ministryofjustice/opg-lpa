@@ -1,0 +1,41 @@
+{% for item in results %}
+{
+    "type": "section",
+    "text": {
+        "type": "mrkdwn",
+        "text": ":{{ item.emoji }}: *Severity*:{{ item.severity }}"
+    }
+},
+{
+    "type": "section",
+    "text": {
+        "type": "mrkdwn",
+        "text": "*Image:* {{item.image }} *Tag*: {{ item.tag }}"
+    }
+},
+{
+    "type": "section",
+    "text": {
+        "type": "mrkdwn",
+        "text": "*CVE*: {{ item.cve_tag }}"
+    }
+},
+{
+    "type": "section",
+    "text": {
+        "type": "mrkdwn",
+        "text": "*Description*:\n {{ item.description }}"
+    }
+},
+{
+    "type": "section",
+    "text": {
+        "type": "mrkdwn",
+        "text": "*Link*: {{ item.cve_link }}"
+    }
+
+},
+{
+    "type": "divider"
+},
+{% endfor %}

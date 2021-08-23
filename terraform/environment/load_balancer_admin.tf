@@ -18,12 +18,13 @@ resource "aws_lb_target_group" "admin" {
 }
 
 resource "aws_lb" "admin" {
-  name               = "${local.environment}-admin"
-  internal           = false
-  load_balancer_type = "application"
-  subnets            = data.aws_subnet_ids.public.ids
-  tags               = merge(local.default_tags, local.admin_component_tag)
-
+  name = "${local.environment}-admin"
+  #tfsec:ignore:AWS005 - public facing load balancer
+  internal                   = false
+  load_balancer_type         = "application"
+  subnets                    = data.aws_subnet_ids.public.ids
+  tags                       = merge(local.default_tags, local.admin_component_tag)
+  drop_invalid_header_fields = true
   security_groups = [
     aws_security_group.admin_loadbalancer.id,
   ]
@@ -49,6 +50,7 @@ resource "aws_lb_listener" "admin_loadbalancer" {
   }
 }
 
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "admin_loadbalancer" {
   name        = "${local.environment}-admin-loadbalancer"
   description = "Allow inbound traffic"
@@ -56,6 +58,7 @@ resource "aws_security_group" "admin_loadbalancer" {
   tags        = merge(local.default_tags, local.admin_component_tag)
 }
 
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
   type              = "ingress"
   from_port         = 443
@@ -64,21 +67,26 @@ resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
   cidr_blocks       = module.allowed_ip_list.moj_sites
   security_group_id = aws_security_group.admin_loadbalancer.id
 }
+
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_loadbalancer_ingress_production" {
-  count             = local.environment == "production" ? 1 : 0
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
+  count     = local.environment == "production" ? 1 : 0
+  type      = "ingress"
+  from_port = 443
+  to_port   = 443
+  protocol  = "tcp"
+  #tfsec:ignore:AWS006 - public facing inbound rule
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_loadbalancer.id
 }
 
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_loadbalancer_egress" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
+  #tfsec:ignore:AWS007 - public facing load balancer
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_loadbalancer.id
 }

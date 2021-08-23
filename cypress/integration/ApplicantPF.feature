@@ -7,7 +7,7 @@ Feature: Add Applicant to a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences
 
-    @focus, @CleanupFixtures
+    @focus @CleanupFixtures
     Scenario: Add Applicant
         When I log in as appropriate test user
         And I visit the applicant page for the test fixture lpa
@@ -20,6 +20,6 @@ Feature: Add Applicant to a Property and Finance LPA
             | Select the person who is applying to register the LPA |
         And I see "Error" in the title
         # select the donor as applicant
-        When I check occurrence 0 of checkbox
+        When I check "whoIsRegistering-donor"
         And I click "save"
         Then I am taken to the correspondent page
