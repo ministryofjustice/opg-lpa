@@ -5,15 +5,15 @@ on:
       - main
   pull_request:
     paths:
-      - './service-api/**'
-      - './service-admin/**'
-      - './service-front/**'
-      - './service-pdf/**'
-      - './tests/**'
-      - './cypress/**'
-      - './terraform/account/**'
-      - './local-ssl/**'
-      - './node-build-assets/**'
+      - 'service-api/**'
+      - 'service-admin/**'
+      - 'service-front/**'
+      - 'service-pdf/**'
+      - 'tests/**'
+      - 'cypress/**'
+      - 'terraform/account/**'
+      - 'local-ssl/**'
+      - 'node-build-assets/**'
 
 jobs:
   filter-changes-config:
