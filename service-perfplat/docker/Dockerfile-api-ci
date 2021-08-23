@@ -25,7 +25,7 @@ RUN yum install -y postgresql && \
 COPY --from=base ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}
 
 # Copy lambda code to image
-COPY ./perfplat /service-perfplat/perfplat
+COPY service-perfplat/perfplat /service-perfplat/perfplat
 
 EXPOSE 4343
 
