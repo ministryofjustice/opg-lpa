@@ -59,7 +59,7 @@ jobs:
     - uses: dorny/paths-filter@v2
       id: filter
       with:
-        filter:  |
+        filters:  |
           check: ${{matrix.scan.pattern }}
     - name: Checkout code
       if: steps.filter.output.check == 'true'
