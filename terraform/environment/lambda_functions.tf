@@ -49,6 +49,11 @@ module "performance_platform_api" {
   working_directory = "/var/task"
   image_uri         = "${data.aws_ecr_repository.performance_platform_api.repository_url}:${var.lambda_container_version}"
 
-  ecr_arn = data.aws_ecr_repository.performance_platform_api.arn
-  tags    = merge(local.default_tags, local.performance_platform_component_tag)
+  ecr_arn                     = data.aws_ecr_repository.performance_platform_api.arn
+  lambda_role_policy_document = data.aws_iam_policy_document.performance_platform_api_lambda_function_policy[0].json
+  tags                        = merge(local.default_tags, local.performance_platform_component_tag)
+}
+
+data "aws_iam_policy_document" "performance_platform_api_lambda_function_policy" {
+  count = local.account.performance_platform_enabled == true ? 1 : 0
 }
