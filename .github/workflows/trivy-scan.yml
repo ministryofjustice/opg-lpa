@@ -29,8 +29,9 @@ jobs:
     name: trivy-scan
     needs: filter-changes
     if: |
-      ${{ needs.changes.outputs.folders != '' }}
+      ${{ fromJSON( needs.changes.outputs.folders).include[0]}}
     strategy:
+      fail-fast: false
       matrix:
         # Parse JSON array containing names of all filters matching any of changed files
         # e.g. ['package1', 'package2'] if both package folders contains changes
