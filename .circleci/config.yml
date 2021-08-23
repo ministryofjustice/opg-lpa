@@ -8,7 +8,7 @@ pr_build: &pr_build
 
     - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
-        filters: { branches: { ignore: [ main ] } }
+        filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
@@ -262,7 +262,7 @@ path_to_live: &path_to_live
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-api-build-preproduction
@@ -280,7 +280,7 @@ path_to_live: &path_to_live
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { only: [master] } }
+        filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-api-build-production
