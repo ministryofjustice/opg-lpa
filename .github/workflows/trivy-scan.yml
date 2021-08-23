@@ -28,7 +28,7 @@ jobs:
 
     name: trivy-scan
     needs: filter-changes
-    if: ${{ fromJSON(needs.changes.outputs.folders) !== [] }}
+    if: ${{ fromJSON(needs.changes.outputs.folders) != [] }}
     strategy:
       fail-fast: false
       matrix:
