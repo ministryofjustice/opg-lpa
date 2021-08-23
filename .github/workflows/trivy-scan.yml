@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       # Expose matched filters as job 'folders' output variable
-      folders: ${{ steps.filter.outputs.changes }}
+      folders-config: ${{ steps.filter-config.outputs.changes }}
     steps:
     # For pull requests it's not necessary to checkout the code
     - uses: dorny/paths-filter@v2
-      id: filter
+      id: filter-config
       with:
         filters: |
           service-api: './service-api/**'
@@ -30,11 +30,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       # Expose matched filters as job 'folders' output variable
-      folders: ${{ steps.filter.outputs.changes }}
+      folders-code: ${{ steps.filter-code.outputs.changes }}
     steps:
     # For pull requests it's not necessary to checkout the code
     - uses: dorny/paths-filter@v2
-      id: filter
+      id: filter-code
       with:
         filters: |
           service-api: './service-api/**'
@@ -50,12 +50,12 @@ jobs:
     name: trivy-scan-config
     needs: filter-changes-config
     #needs this guard as this matrix could be empty.
-    if: ${{ fromJSON(needs.filter-changes-config.outputs.folders)[0]  }}
+    if: ${{ fromJSON(needs.filter-changes-config.outputs.folders-config)[0]  }}
     strategy:
       matrix:
         # Parse JSON array containing names of all filters matching any of changed files
         # e.g. ['package1', 'package2'] if both folders contains changes
-        folder: ${{ fromJSON(needs.filter-changes-config.outputs.folders) }}
+        folder: ${{ fromJSON(needs.filter-changes-config.outputs.folders-config) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -80,12 +80,12 @@ jobs:
     name: trivy-scan-code
     needs: filter-changes-code
     #needs this guard as this matrix could be empty.
-    if: ${{ fromJSON(needs.filter-changes-code.outputs.folders)[0] }}
+    if: ${{ fromJSON(needs.filter-changes-code.outputs.folders-code)[0] }}
     strategy:
       matrix:
         # Parse JSON array containing names of all filters matching any of changed files
         # e.g. ['package1', 'package2'] if both package folders contains changes
-        folder: ${{ fromJSON(needs.filter-changes-code.output.folders) }}
+        folder: ${{ fromJSON(needs.filter-changes-code.output.folders-code) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
