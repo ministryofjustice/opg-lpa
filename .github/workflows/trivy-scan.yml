@@ -29,7 +29,7 @@ jobs:
     name: trivy-scan
     needs: filter-changes
     if: |
-      ${{ fromJSON( needs.changes.outputs.folders).include[0]}}
+      ${{ fromJSON( needs.changes.outputs.folders).include[0] }}
     strategy:
       fail-fast: false
       matrix:
