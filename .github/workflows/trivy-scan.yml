@@ -74,7 +74,7 @@ jobs:
         format: 'template'
         template: '@/contrib/sarif.tpl'
         output: '${{matrix.scan.name}}/trivy-results-config.sarif'
-        scan-ref: ./${{ matrix.scan.path }}
+        scan-ref: ${{ matrix.scan.path }}
         hide-progress: false
 
     - name: Run Trivy vulnerability scanner for Code
@@ -86,7 +86,7 @@ jobs:
         format: 'template'
         template: '@/contrib/sarif.tpl'
         output: '${{matrix.scan.name}}/trivy-results-code.sarif'
-        scan-ref: ./${{ matrix.scan.path }}
+        scan-ref: ${{ matrix.scan.path }}
         hide-progress: false
 
     - name: Upload Trivy code scan results to GitHub Security tab
