@@ -50,7 +50,7 @@ jobs:
     name: trivy-scan-config
     needs: filter-changes-config
     #needs this guard as this matrix could be empty.
-    if: ${{ fromJSON(needs.filter-changes-config.outputs.folders-config)[0]  }}
+    if: ${{ fromJSON(needs.filter-changes-config.outputs.folders-config)  }}
     strategy:
       matrix:
         # Parse JSON array containing names of all filters matching any of changed files
@@ -80,7 +80,7 @@ jobs:
     name: trivy-scan-code
     needs: filter-changes-code
     #needs this guard as this matrix could be empty.
-    if: ${{ fromJSON(needs.filter-changes-code.outputs.folders-code)[0] }}
+    if: ${{ fromJSON(needs.filter-changes-code.outputs.folders-code) }}
     strategy:
       matrix:
         # Parse JSON array containing names of all filters matching any of changed files
