@@ -26,9 +26,7 @@ jobs:
           local-ssl: './local-ssl/**'
           node-build-assets: './node-build-assets/**'
 
-
   trivy-scan-config:
-
     name: trivy-scan-config
     needs: filter-changes-config
     #needs this guard as this matrix could be empty.
@@ -47,6 +45,54 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
+          ignore-unfixed: true
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          scan-ref: ./${{ matrix.folder }}
+          hide-progress: false
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results.sarif'
+  filter-changes-code:
+    runs-on: ubuntu-latest
+    outputs:
+      # Expose matched filters as job 'folders' output variable
+      folders-code: ${{ steps.filter-code.outputs.changes }}
+    steps:
+    # For pull requests it's not necessary to checkout the code
+    - uses: dorny/paths-filter@v2
+      id: filter-code
+      with:
+        filters: |
+          service-api: './service-api/**'
+          service-admin: './service-admin/**'
+          service-front: './service-front/**'
+          service-pdf: './service-pdf/**'
+          service-perfplat: './service-perfplat/**'
+          tests: './tests/**'
+          cypress: './cypress/**'
+
+  trivy-scan-filesystem:
+    name: trivy-scan-code
+    needs: filter-changes-code
+    #needs this guard as this matrix could be empty.
+    if: ${{ fromJSON(needs.filter-changes-code.outputs.folders-code) }}
+    strategy:
+      matrix:
+        # Parse JSON array containing names of all filters matching any of changed files
+        # e.g. ['package1', 'package2'] if both package folders contains changes
+        folder: ${{ fromJSON(needs.filter-changes-code.outputs.folders-code) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Trivy vulnerability scanner on codebase
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
           ignore-unfixed: true
           format: 'template'
           template: '@/contrib/sarif.tpl'
