@@ -66,7 +66,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run Trivy vulnerability scanner for IaC
-      if: steps.filter.output.check == 'true'
+      if: steps.filter.outputs.check == 'true'
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'config'
@@ -78,7 +78,7 @@ jobs:
         hide-progress: false
 
     - name: Run Trivy vulnerability scanner for Code
-      if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == 'true'
+      if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == true
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'code'
@@ -90,7 +90,7 @@ jobs:
         hide-progress: false
 
     - name: Upload Trivy code scan results to GitHub Security tab
-      if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == 'true'
+      if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == true
       uses: github/codeql-action/upload-sarif@v1
       with:
         sarif_file: '${{ matrix.scan.name }}/trivy-results-code.sarif'
