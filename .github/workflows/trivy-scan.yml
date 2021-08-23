@@ -44,9 +44,10 @@ jobs:
           service-perfplat: './service-perfplat/**'
           tests: './tests/**'
           cypress: './cypress/**'
+
   trivy-scan-config:
 
-    name: trivy-scan
+    name: trivy-scan-config
     needs: filter-changes-config
     #needs this guard as this matrix could be empty.
     if: ${{ fromJSON(needs.filter-changes-config.outputs.folders)[0]  }}
@@ -76,7 +77,7 @@ jobs:
           sarif_file: 'trivy-results.sarif'
 
   trivy-scan-filesystem:
-    name: trivy-scan
+    name: trivy-scan-code
     needs: filter-changes-code
     #needs this guard as this matrix could be empty.
     if: ${{ fromJSON(needs.filter-changes-code.outputs.folders)[0] }}
