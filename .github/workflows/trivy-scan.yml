@@ -81,13 +81,13 @@ jobs:
       if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == true
       uses: aquasecurity/trivy-action@master
       with:
-        scan-type: 'code'
+        scan-type: 'fs'
         ignore-unfixed: true
+        hide-progress: false
         format: 'template'
         template: '@/contrib/sarif.tpl'
         output: '${{ matrix.scan.name }}/trivy-results-code.sarif'
         scan-ref: ${{ matrix.scan.path }}
-        hide-progress: false
 
     - name: Upload Trivy scan results to GitHub Security tab
       if: steps.filter.outputs.check == 'true'
