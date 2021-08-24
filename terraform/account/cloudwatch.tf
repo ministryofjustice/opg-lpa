@@ -1,4 +1,4 @@
-
+#tfsec:ignore:AWS089
 resource "aws_cloudwatch_log_group" "online-lpa" {
   name              = "online-lpa"
   retention_in_days = local.account.retention_in_days
