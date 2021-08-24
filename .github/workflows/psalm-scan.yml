@@ -1,4 +1,4 @@
-name: Psalm analysis - Admin
+name: Psalm analysis
 
 on:
   push:
