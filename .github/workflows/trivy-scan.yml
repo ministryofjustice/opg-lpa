@@ -1,4 +1,4 @@
-name: trivy-scan-config
+name: trivy-scan
 on:
   push:
     branches:
