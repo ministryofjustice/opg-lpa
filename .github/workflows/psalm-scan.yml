@@ -9,7 +9,7 @@ on:
       - 'service-admin/**'
       - 'service-api/**'
       - 'service-front/**'
-      - 'service-pdf/**'
+    #  - 'service-pdf/**' fix when more known about the error at https://github.com/vimeo/psalm/issues/6361
 jobs:
   psalm_admin:
 
