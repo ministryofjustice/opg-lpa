@@ -17,7 +17,7 @@ abstract class AbstractAggregator extends AbstractPdf
     protected $pdfs = [];
 
     /**
-     * Generate the aggregate PDF - this will save a copy to the file system
+     * Generate the aggregate PDF - this will save copy to the file system
      *
      * @param bool $protect
      * @return string
