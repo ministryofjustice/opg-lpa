@@ -1,0 +1,57 @@
+name: Psalm analysis
+
+on:
+  push:
+    branches: ["master", "main"]
+  pull_request:
+    branches: ["master", "main"]
+    paths:
+      - "service-admin/**"
+      - "service-api/**"
+      - "service-front/**"
+    #  - 'service-pdf/**' fix when more known about the error at https://github.com/vimeo/psalm/issues/6361
+jobs:
+  psalm_admin:
+    name: psalm-scan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        scan:
+          - name: service-api
+            path: "./service-api"
+          - name: service-admin
+            path: "./service-admin"
+          - name: service-front
+            path: "./service-front"
+    #         - name: service-pdf - fix when more known about the error at https://github.com/vimeo/psalm/issues/6361
+    #           path: './service-pdf'
+    defaults:
+      run:
+        working-directory: ${{ matrix.scan.path }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: path filters
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            check: '${{ matrix.scan.path }}/**'
+      - name: Setup PHP with tools
+        if: steps.filter.outputs.check == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+          tools: vimeo/psalm
+      - name: Composer install
+        if: steps.filter.outputs.check == 'true'
+        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts
+      - name: Run psalm
+        if: steps.filter.outputs.check == 'true'
+        run: psalm --output-format=github --taint-analysis --report=psalm-results.sarif
+      - name: Upload Security Analysis results to GitHub
+        if: steps.filter.outputs.check == 'true'
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
