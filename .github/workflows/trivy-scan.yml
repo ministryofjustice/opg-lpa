@@ -59,15 +59,15 @@ jobs:
             code-scan: false
 
     steps:
-    # For pull requests it's not necessary to checkout the code
+    - name: Checkout code
+      if: steps.filter.outputs.check == 'true'
+    - uses: actions/checkout@v2
     - uses: dorny/paths-filter@v2
       id: filter
       with:
         filters:  |
           check: '${{ matrix.scan.path }}/**'
-    - name: Checkout code
-      if: steps.filter.outputs.check == 'true'
-      uses: actions/checkout@v2
+
 
     - name: Run Trivy vulnerability scanner for IaC
       if: steps.filter.outputs.check == 'true'

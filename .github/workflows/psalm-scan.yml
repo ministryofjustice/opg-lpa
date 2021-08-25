@@ -31,14 +31,13 @@ jobs:
       run:
         working-directory: ${{ matrix.scan.path }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - uses: dorny/paths-filter@v2
         id: filter
         with:
           filters:  |
             check: '${{ matrix.scan.path }}/**'
-      - name: Checkout code
-        if: steps.filter.outputs.check == 'true'
-        uses: actions/checkout@v2
       - name: Setup PHP with tools
         if: steps.filter.outputs.check == 'true'
         uses: shivammathur/setup-php@v2
