@@ -2,17 +2,16 @@ name: Psalm analysis
 
 on:
   push:
-    branches: [ "master", "main" ]
+    branches: ["master", "main"]
   pull_request:
-    branches: [ "master", "main" ]
+    branches: ["master", "main"]
     paths:
-      - 'service-admin/**'
-      - 'service-api/**'
-      - 'service-front/**'
+      - "service-admin/**"
+      - "service-api/**"
+      - "service-front/**"
     #  - 'service-pdf/**' fix when more known about the error at https://github.com/vimeo/psalm/issues/6361
 jobs:
   psalm_admin:
-
     name: psalm-scan
     runs-on: ubuntu-latest
     strategy:
@@ -20,30 +19,30 @@ jobs:
       matrix:
         scan:
           - name: service-api
-            path: './service-api'
+            path: "./service-api"
           - name: service-admin
-            path: './service-admin'
+            path: "./service-admin"
           - name: service-front
-            path: './service-front'
-#         - name: service-pdf - fix when more known about the error at https://github.com/vimeo/psalm/issues/6361
-#           path: './service-pdf'
+            path: "./service-front"
+    #         - name: service-pdf - fix when more known about the error at https://github.com/vimeo/psalm/issues/6361
+    #           path: './service-pdf'
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
     steps:
-      - uses: dorny/paths-filter@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: path filters
+        uses: dorny/paths-filter@v2
         id: filter
         with:
-          filters:  |
+          filters: |
             check: '${{ matrix.scan.path }}/**'
-      - name: Checkout code
-        if: steps.filter.outputs.check == 'true'
-        uses: actions/checkout@v2
       - name: Setup PHP with tools
         if: steps.filter.outputs.check == 'true'
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: "7.4"
           tools: vimeo/psalm
       - name: Composer install
         if: steps.filter.outputs.check == 'true'
