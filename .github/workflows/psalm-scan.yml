@@ -33,7 +33,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - uses: dorny/paths-filter@v2
+      - name: path filters
+        uses: dorny/paths-filter@v2
         id: filter
         with:
           filters:  |
