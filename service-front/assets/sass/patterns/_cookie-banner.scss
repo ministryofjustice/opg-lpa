@@ -1,31 +1,76 @@
 #global-cookie-message {
-  .global-cookie-message__text {
-    font-size: 19px;
-    line-height: 1.315;
+  background-color: #f3f2f1;
+
+  .global-cookie-message__heading {
+    font-size: 24px;
+    max-width: 960px;
+    margin: 0 auto 20px auto;
+    font-weight: 700;
+  }
+
+  .global-cookie-message__content {
+    max-width: 960px;
+    margin: 0 auto;
+
+    .global-cookie-message__text {
+      font-size: 19px;
+      max-width: 66%;
+      line-height: 1.315;
+      margin: 0 auto 19px 0;
+    }
   }
 
   .global-cookie-message__buttons {
     max-width: 960px;
-    margin: 15px 15px;
+    margin: 0 auto 19px auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
   .global-cookie-message__button {
     margin-right: 15px;
+    font-size: 19px;
+  }
+
+  .global-cookie-message__button-link {
+    font-size: 19px;
+    display: block;
   }
 }
 
-@media (min-width: 641px) {
+@media (max-width: 1041px) {
   #global-cookie-message {
+    .global-cookie-message__heading,
+    .global-cookie-message__text,
     .global-cookie-message__buttons {
-      margin: 15px 30px;
+      margin-right: 19px;
+      margin-left: 19px;
+    }
+
+    .global-cookie-message__content {
+      .global-cookie-message__text {
+        margin: 0 19px 19px 19px;
+      }
     }
   }
 }
 
-@media (min-width: 1020px) {
+@media (max-width: 665px) {
   #global-cookie-message {
+    .global-cookie-message__content {
+      .global-cookie-message__text {
+        max-width: 100%;
+      }
+    }
+
     .global-cookie-message__buttons {
-      margin: 15px auto;
+      justify-content: center;
+    }
+
+    .global-cookie-message__button-link {
+      margin-top: 19px;
     }
   }
 }
