@@ -11,8 +11,8 @@ use Laminas\View\Model\ViewModel;
 class CookiesController extends AbstractBaseController
 {
     const COOKIE_POLICY_NAME = 'cookie_policy';
-    const SEEN_COOKIE_NAME   = 'seen_cookie_message';
-    const SUBMITTED_COOKIE_PAGE   = 'submitted_cookie_page';
+    const SEEN_COOKIE_NAME = 'seen_cookie_message';
+    const SUBMITTED_COOKIE_PAGE = 'submitted_cookie_page';
 
     public function indexAction()
     {
@@ -47,7 +47,7 @@ class CookiesController extends AbstractBaseController
                 ->setHttponly(false)
                 ->setSecure(true)
                 ->setPath('/')
-                ->setExpires(new \DateTime('+30 days'));
+                ->setExpires(new \DateTime('+365 days'));
             $this->getResponse()->getHeaders()->addHeaderLine($seenCookie->getFieldName(), $seenCookie->getFieldValue());
 
             return $this->redirect()->toRoute('cookies');
