@@ -28,7 +28,7 @@ resource "aws_lb" "admin" {
   security_groups = [
     aws_security_group.admin_loadbalancer.id,
   ]
-
+  enable_deletion_protection = local.account_name == "development" ? false : true
   access_logs {
     bucket  = data.aws_s3_bucket.access_log.bucket
     prefix  = "${local.environment}-admin"
