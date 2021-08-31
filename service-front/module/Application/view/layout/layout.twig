@@ -41,15 +41,30 @@
     <div id="skiplink-container">
         <div><a href="#main-content" class="skiplink" data-cy="skip-link">Skip to main content</a></div>
     </div>
-    <div id="global-cookie-message" role="region" aria-label="cookie banner" data-cy="cookie-message">
-        <p class="global-cookie-message__text">
-            GOV.UK uses cookies which are essential for the site to work. We also use non-essential cookies to help us
-            improve government digital services. Any data collected is anonymised.
-        </p>
-        <div class="global-cookie-message__buttons">
-            <div>
-                <button class="global-cookie-message__button global-cookie-message__button_accept button" type="submit">Accept all cookies</button>
-                <a class="global-cookie-message__button-link global-cookie-message__button-link_settings" role="button" href="/cookies" rel="noreferrer noopener" target="_blank">Cookie settings (opens in new tab)</a>
+    <div id="global-cookie-message" role="region" aria-label="cookie banner" data-cy="cookie-message" hidden="true">
+        <div id="cookie-preferences-form" hidden="true">
+            <h2 class="global-cookie-message__heading">Cookies on Make a lasting power of attorney</h2>
+            <div class="global-cookie-message__content">
+                <p class="global-cookie-message__text">
+                    We use some essential cookies to make this service work.
+                </p>
+                <p class="global-cookie-message__text">
+                    We’d also like to use analytics cookies so we can understand how you use the service and make improvements.
+                </p>
+            </div>
+            <div class="global-cookie-message__buttons">
+                <button class="global-cookie-message__button global-cookie-message__button_accept button" type="submit" data-cy="accept-analytics-cookies">Accept analytics cookies</button>
+                <button class="global-cookie-message__button global-cookie-message__button_reject button" type="submit" data-cy="reject-analytics-cookies">Reject analytics cookies</button>
+                <a class="global-cookie-message__button-link global-cookie-message__button-link_settings" role="button" href="/cookies" rel="noreferrer noopener" target="_blank">View cookies<span class="visually-hidden"> (opens in new tab)</span></a>
+            </div>
+        </div>
+
+        <div id="cookie-preferences-save-confirm" class="global-cookie-message__content" hidden="true" data-cy="cookie-preferences-save-confirm">
+            <p class="global-cookie-message__text">You’ve <span id="cookie-preferences-decision"></span> analytics cookies.
+            You can <a href="/cookies" rel="noreferrer noopener" target="_blank">change your
+            cookie settings<span class="visually-hidden"> (opens in new tab)</span></a> at any time.</p>
+            <div class="global-cookie-message__buttons">
+                <button class="global-cookie-message__button global-cookie-message__button_hide button" type="submit" data-cy="hide-cookies-banner">Hide this message</button>
             </div>
         </div>
     </div>
