@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\Service\Session;
 
 use Interop\Container\ContainerInterface;
@@ -16,7 +17,8 @@ use Aws\DynamoDb\DynamoDbClient;
  * Class SessionFactory
  * @package Application\Model\Service\Session
  */
-class SessionFactory implements FactoryInterface {
+class SessionFactory implements FactoryInterface
+{
     /**
      * Create an object
      *
@@ -50,14 +52,19 @@ class SessionFactory implements FactoryInterface {
         // Set the cookie domain
 
         // Only if it's not a Console request.
-        if(!($container->get('Request') instanceof ConsoleRequest)){
+        if (!($container->get('Request') instanceof ConsoleRequest)) {
             // This is requirement of the GDS service checker
 
             // Get the hostname of the current request
             $hostname = $container->get('Request')->getUri()->getHost();
 
-            // and set it as the domain cookie.
-            ini_set('session.cookie_domain', $hostname);
+            // ...and set it as the cookie domain.
+            // We don't do this on localhost, as cookie domains must have
+            // a dot, otherwise the associated cookie is ignored by some
+            // clients (like Python requests).
+            if ($hostname !== 'localhost') {
+                ini_set('session.cookie_domain', $hostname);
+            }
         }
 
         // use our own save handler on the SessionManager
