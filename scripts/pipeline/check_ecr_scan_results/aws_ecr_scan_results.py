@@ -4,6 +4,7 @@ import os
 import traceback
 
 import boto3
+import boto3.exceptions
 import jinja2
 from jinja2.loaders import FileSystemLoader
 from slack_sdk import WebClient
@@ -123,6 +124,7 @@ class ECRScanChecker:
     def wait_for_scans(self):
         print("Waiting for ECR scans to complete...")
         for image in self.images_to_check:
+            print(f"scanning for {image}")
             self.wait_for_scan_completion(image, self.tag)
         print("ECR image scans complete")
 
@@ -157,10 +159,13 @@ class ECRScanChecker:
                         findingResult["description"] = "None"
 
                         if "description" in finding:
-                            findingResult["description"] = finding["description"]
+                            # make json string,strip start and end quotes
+                            findingResult["description"] = json.dumps(finding["description"])[1:-1]
                         findingResults.append(findingResult)
-
                     self.report += self.render("finding.j2", {"results": findingResults})
+            except self.aws_ecr_client.exceptions.ImageNotFoundException as e:
+                print(f"skipping finding check for image: {image} tag: {self.tag} - no image present")
+                continue
 
             except Exception as e:
                 print(
@@ -186,7 +191,6 @@ class ECRScanChecker:
 
     def post_to_slack(self):
         message_content = {"blocks": self.report}
-
         message = json.loads(self.render("message.j2", message_content))
 
         if self.test_mode:

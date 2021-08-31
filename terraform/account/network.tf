@@ -12,9 +12,9 @@ resource "aws_default_vpc" "default" {
 data "aws_availability_zones" "default" {}
 
 resource "aws_default_subnet" "public" {
-  count             = 3
-  availability_zone = element(data.aws_availability_zones.default.names, count.index)
-
+  count                   = 3
+  availability_zone       = element(data.aws_availability_zones.default.names, count.index)
+  map_public_ip_on_launch = false
   tags = merge(
     local.default_tags,
     local.shared_component_tag,

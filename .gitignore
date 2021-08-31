@@ -46,3 +46,4 @@ cypress/integration/common/local_dev_only.js
 __pycache__
 **/build
 .coverage
+.php-cs-fixer.cache

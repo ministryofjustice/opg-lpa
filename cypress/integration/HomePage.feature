@@ -22,7 +22,7 @@ Feature: Homepage
     And I should not find links in the page which open in new tabs without notifying me
     # for now we must click back to home because cookies link behaves differently from privacy page
     When I click back
-    Then I visit link in new tab containing "Cookies"
+    Then I visit link in new tab containing "View cookies"
     And I am taken to "/cookies"
     And I see "Cookies" in the title
     And I should not find links in the page which open in new tabs without notifying me
