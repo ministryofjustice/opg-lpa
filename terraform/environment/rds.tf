@@ -51,6 +51,7 @@ module "api_aurora" {
   skip_final_snapshot           = !local.account.deletion_protection
   vpc_security_group_ids        = [aws_security_group.rds-api.id]
   tags                          = merge(local.default_tags, local.db_component_tag)
+  copy_tags_to_snapshot         = true
 }
 
 resource "aws_db_parameter_group" "postgres-db-params" {
