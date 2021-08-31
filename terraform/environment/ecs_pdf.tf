@@ -2,14 +2,14 @@
 // pdf ECS Service level config
 
 resource "aws_ecs_service" "pdf" {
-  name             = "pdf"
-  cluster          = aws_ecs_cluster.online-lpa.id
-  task_definition  = aws_ecs_task_definition.pdf.arn
-  desired_count    = local.account.autoscaling.pdf.minimum
-  launch_type      = "FARGATE"
-  platform_version = "1.3.0"
-  propagate_tags   = "TASK_DEFINITION"
-
+  name                  = "pdf"
+  cluster               = aws_ecs_cluster.online-lpa.id
+  task_definition       = aws_ecs_task_definition.pdf.arn
+  desired_count         = local.account.autoscaling.pdf.minimum
+  launch_type           = "FARGATE"
+  platform_version      = "1.3.0"
+  propagate_tags        = "TASK_DEFINITION"
+  wait_for_steady_state = true
   network_configuration {
     security_groups  = [aws_security_group.pdf_ecs_service.id]
     subnets          = data.aws_subnet_ids.private.ids
