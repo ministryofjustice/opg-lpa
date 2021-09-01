@@ -116,10 +116,10 @@ services:
     container_name: lpa-flask-app
     image: lpa-flask-app
     volumes:
-      - ./service-front/govuk-frontend-jinja-makelpa:/makelpa
+      - ./service-front-v2:/makelpa
     build:
       context: ./
-      dockerfile: service-front/docker/flask-app/Dockerfile
+      dockerfile: service-front-v2/docker/app/Dockerfile
     ports:
       - 8005:5000
 
