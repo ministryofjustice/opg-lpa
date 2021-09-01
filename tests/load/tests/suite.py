@@ -4,6 +4,7 @@ import sys
 import urllib3
 from uuid import uuid1
 
+from bs4 import BeautifulSoup
 from locust import HttpUser, SequentialTaskSet, task
 
 from tests.helpers import load_config
@@ -29,7 +30,6 @@ class VisitDashboardBehaviour(SequentialTaskSet):
     @task
     def go_to_login_page(self):
         response = self.client.get('/login')
-        print(f'{self.user.username}, {self.user.password}')
 
     @task
     def submit_credentials(self):
@@ -49,8 +49,12 @@ class VisitDashboardBehaviour(SequentialTaskSet):
             if not expected_text in response.text:
                 response.failure(f'expected LPA text {expected_text} was not found in response body')
 
-            # TODO load the DOM and check we only have one LPA listed
-            print(response.text)
+            # load the DOM and check we only have one LPA listed
+            soup = BeautifulSoup(response.text, features='html.parser')
+            lpa_list_items = soup.select('ul.track-my-lpa > li')
+            count_lpas = len(lpa_list_items)
+            if count_lpas > 1:
+                response.failure(f'expected one LPA in dashboard but found {count_lpas}')
 
     @task
     def logout(self):

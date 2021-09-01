@@ -19,8 +19,9 @@ setup(
     ],
     python_requires='>=3.6, <4',
     install_requires=[
-        'requests',
+        'beautifulsoup4',
         'locust',
+        'requests',
     ],
     scripts=[
         './bin/run_load_tests.sh',
