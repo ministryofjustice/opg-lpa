@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">GOV.UK Frontend Jinja</h1>
+      <p class="govuk-body-l">This is a simple <a href="https://www.python.org/" class="govuk-link">Python</a> application using the <a href="https://flask.palletsprojects.com/en/1.1.x/" class="govuk-link">Flask</a> framework that demonstrates the <a href="https://jinja.palletsprojects.com/en/2.11.x/" class="govuk-link">Jinja</a> port of <a href="https://frontend.design-system.service.gov.uk/" class="govuk-link">GOV.UK Frontend</a>.</p>
+      <p class="govuk-body"><a href="https://github.com/LandRegistry/govuk-frontend-jinja" class="govuk-link">GOV.UK Frontend Jinja</a> provides a complete set of reusable component Jinja macros, directly ported from the GOV.UK Frontend Nunjucks macros.</p>
+      <p class="govuk-body">An automated test suite makes use of the GOV.UK Frontend <a href="https://frontend.design-system.service.gov.uk/testing-your-html/#test-if-your-html-matches-gov-uk-frontend" class="govuk-link">test fixtures</a> to ensure 100% compliant HTML is output. This currently covers a total of 513 test scenarios against every component, which you can see in the <a href="https://github.com/LandRegistry/govuk-frontend-jinja/actions" class="govuk-link">build status</a>.</p>
+      <p class="govuk-body">Every visual test fixture is rendered in the pages linked below, along with the Jinja macro options and HTML used to create them. These can be used as examples, or for visual regression testing.</p>
+      {{ govukInsetText({'html': 'If you also need to generate forms in your Python project, check out <a href="https://govuk-frontend-wtf.herokuapp.com/" class="govuk-link">GOV.UK Frontend WTForms</a> which makes use of these Jinja macros.'} )}}
+
+      <h2 class="govuk-heading-l">Components</h2>
+      <ul class="govuk-list govuk-list--bullet">
+        {% for component in components %}
+        <li>
+          <a class="govuk-link" href="{{ url_for('component', component=component) }}">{{component | replace("-", " ") | capitalize}}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>  
+{% endblock %}
