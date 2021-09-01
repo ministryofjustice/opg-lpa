@@ -47,6 +47,11 @@ def createUser(username, password):
     data = {'username': username, 'password': password}
     return s.post(fullPath, data=data).json()
 
+def deleteUser(userId, username, password):
+    token, userId = authenticate(username, password)
+    fullPath = f'{apiRoot}/v2/user/{userId}'
+    return s.delete(fullPath, headers=token)
+
 def activateUser(activation_token):
     """ :return: dict {'success': <bool>} """
     fullPath = f'{apiRoot}/v2/users'
@@ -92,8 +97,8 @@ def makeNewLpa(username=None, password=None):
     #print(f'lpa Id : {id}')
     return id
 
-def deleteLpa(lpaId):
-    token, userId = authenticate()
+def deleteLpa(lpaId, username=None, password=None):
+    token, userId = authenticate(username, password)
     lpaPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}'
     emptyData = []
     r = s.delete(lpaPath, headers=token)
