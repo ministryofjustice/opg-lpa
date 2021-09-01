@@ -64,6 +64,16 @@ def createAndActivateUser(username, password):
 
     return response2
 
+def updateUserDetails(username, password, details):
+    """
+    :param: str; username
+    :param: str; password
+    :param: User; user details (for format, see user.py / User.build_details())
+    """
+    token, userId = authenticate(username, password)
+    fullPath = f'{apiRoot}/v2/user/{userId}'
+    return s.put(fullPath, json=details, headers=token)
+
 def authenticate(username = "seeded_test_user@digital.justice.gov.uk", password = "Pass1234"):
     # authenticate using the suppled creds, returning the resulting token and the userId
     credentials = {"username":username,"password":password}

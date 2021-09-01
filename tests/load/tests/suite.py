@@ -7,24 +7,21 @@ from uuid import uuid1
 from locust import HttpUser, SequentialTaskSet, task
 
 from tests.helpers import load_config
+from tests.user import User
 
 # put the lpaapi.py functions on the PYTHONPATH
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'python-api-client'))
 
-from lpaapi import createAndActivateUser, makeNewLpa
+from lpaapi import createAndActivateUser, makeNewLpa, updateUserDetails
 
 # globally prevent insecure request warnings caused by our self-signed cert
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+"""
+# TODO trigger from config
+# this block turns on verbose HTTP request logging
 import http.client as http_client
 http_client.HTTPConnection.debuglevel = 1
-
-"""
-logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
-requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
 """
 
 
@@ -44,11 +41,16 @@ class VisitDashboardBehaviour(SequentialTaskSet):
 
     @task
     def go_to_dashboard(self):
-        response = self.client.get('/user/dashboard')
+        with self.client.get('/user/dashboard', catch_response=True) as response:
+            # check the user's LPA is listed; expected text
+            # is in a visually-hidden element
+            expected_text = f'LPA A{self.user.lpa_id}'
 
-        print(response.text)
+            if not expected_text in response.text:
+                response.failure(f'expected LPA text {expected_text} was not found in response body')
 
-        # check the user's LPA is listed
+            # TODO load the DOM and check we only have one LPA listed
+            print(response.text)
 
     @task
     def logout(self):
@@ -63,33 +65,39 @@ class TasksUser(HttpUser):
     # wait time between requests by this user
     wait_time_secs = 1
 
+    password = 'Pass1234'
+
     def __init__(self, *args, **kwargs):
         self.config = load_config()
         self.host = self.config['host']
+
+        # create a random username
+        self.username = f'{uuid1()}@uat.justice.gov.uk'
+
         super().__init__(*args, **kwargs)
 
     def on_start(self):
         # turn off client cert verification
         self.client.verify = False
 
-        # create a random username
-        self.username = f'{uuid1()}@uat.justice.gov.uk'
-
-        self.password = 'Pass1234'
-
         # create the user on the back-end system
         response = createAndActivateUser(self.username, self.password)
         if not response['success']:
             raise Exception('Unable to create user')
-        self.user_id = response['user_id']
+        user_id = response['user_id']
 
-        # TODO set basic user data (otherwise user will be prompted
-        # for this after logging in)
+        # set basic user details (otherwise user will be prompted
+        # for this after logging in and won't be able to see their LPAs)
+        user = User(user_id, self.username)
+        updateUserDetails(self.username, self.password, user.build_details())
 
-        # add a fake LPA for this user
+        # add a fake LPA for this user; we store its ID so we can
+        # check for related text in dashboard HTML (and remove it on stop)
         self.lpa_id = makeNewLpa(self.username, self.password)
 
-    # TODO clean up generated user
+    def on_stop(self):
+        # TODO clean up generated user and LPA
+        pass
 
     def wait_time(self):
         return self.wait_time_secs
