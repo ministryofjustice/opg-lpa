@@ -80,8 +80,7 @@ class TasksUser(HttpUser):
     lpa_id = None
 
     def __init__(self, *args, **kwargs):
-        self.config = CONFIG
-        self.host = self.config['host']
+        self.host = CONFIG['host']
 
         # create a random username
         self.username = f'{uuid1()}@uat.justice.gov.uk'
