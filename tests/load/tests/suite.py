@@ -63,7 +63,7 @@ class VisitDashboardBehaviour(SequentialTaskSet):
         self.client.get('/logout', name='4. logout')
 
 
-class TasksUser(HttpUser):
+class MakeAnLpaUser(HttpUser):
     tasks = [
         VisitDashboardBehaviour,
     ]
