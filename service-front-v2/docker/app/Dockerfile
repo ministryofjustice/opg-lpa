@@ -4,7 +4,7 @@ FROM python:3.9-alpine
 RUN apk add build-base curl
 WORKDIR /makelpa
 
-COPY service-front/govuk-frontend-jinja-makelpa /makelpa
+COPY service-front-v2 /makelpa
 RUN pip install -r requirements.txt
 RUN ./build.sh
 
