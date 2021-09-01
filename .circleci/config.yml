@@ -20,7 +20,7 @@ pr_build: &pr_build
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: flask_docker_build
         ecr_repository_name_prefix: online-lpa/flask
-        service_path: service-flask
+        service_path: service-front-v2
         build_web: false
         filters: { branches: { ignore: [master] } }
 
