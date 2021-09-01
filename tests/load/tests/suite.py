@@ -18,18 +18,20 @@ from lpaapi import createAndActivateUser, deleteLpa, deleteUser, makeNewLpa, upd
 # globally prevent insecure request warnings caused by our self-signed cert
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-"""
-# TODO trigger from config
-# this block turns on verbose HTTP request logging
-import http.client as http_client
-http_client.HTTPConnection.debuglevel = 1
-"""
+
+CONFIG = load_config()
+
+# turn on verbose HTTP request logging; NB this is *very* verbose
+# but occasionally useful
+if CONFIG['requests_debugging']:
+    import http.client as http_client
+    http_client.HTTPConnection.debuglevel = 1
 
 
 class VisitDashboardBehaviour(SequentialTaskSet):
     @task
     def go_to_login_page(self):
-        response = self.client.get('/login')
+        response = self.client.get('/login', name='1. go to login page')
 
     @task
     def submit_credentials(self):
@@ -37,11 +39,11 @@ class VisitDashboardBehaviour(SequentialTaskSet):
             'email': self.user.username,
             'password': self.user.password,
         }
-        self.client.post('/login', data=data)
+        self.client.post('/login', data=data, name='2. submit credentials')
 
     @task
     def go_to_dashboard(self):
-        with self.client.get('/user/dashboard', catch_response=True) as response:
+        with self.client.get('/user/dashboard', catch_response=True, name='3. go to dashboard') as response:
             # check the user's LPA is listed; expected text
             # is in a visually-hidden element
             expected_text = f'LPA A{self.user.lpa_id}'
@@ -58,7 +60,7 @@ class VisitDashboardBehaviour(SequentialTaskSet):
 
     @task
     def logout(self):
-        self.client.get('/logout')
+        self.client.get('/logout', name='4. logout')
 
 
 class TasksUser(HttpUser):
@@ -78,7 +80,7 @@ class TasksUser(HttpUser):
     lpa_id = None
 
     def __init__(self, *args, **kwargs):
-        self.config = load_config()
+        self.config = CONFIG
         self.host = self.config['host']
 
         # create a random username
@@ -91,6 +93,7 @@ class TasksUser(HttpUser):
         self.client.verify = False
 
         # create the user on the back-end system
+        logging.info(f'creating and activating user: {self.username} / {self.password}')
         response = createAndActivateUser(self.username, self.password)
         if not response['success']:
             raise Exception('unable to create user')
@@ -104,6 +107,7 @@ class TasksUser(HttpUser):
 
         # add a fake LPA for this user; we store its ID so we can
         # check for related text in dashboard HTML (and remove it on stop)
+        logging.info(f'making LPA for user {self.username}')
         self.lpa_id = makeNewLpa(self.username, self.password)
 
     def on_stop(self):

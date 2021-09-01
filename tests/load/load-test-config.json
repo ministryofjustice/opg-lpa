@@ -1,5 +1,6 @@
 {
   "local": {
-    "host": "https://localhost:7002"
+    "host": "https://localhost:7002",
+    "requests_debugging": false
   }
 }
