@@ -53,9 +53,9 @@ class DbWrapper
     /**
      * Perform a raw SQL query via the adapter.
      * @param string $query Raw SQL string to execute on adapter
-     * @return ResultSet
+     * @return Driver\StatementInterface|ResultSet\ResultSet
      */
-    public function rawQuery(string $query): ResultSet
+    public function rawQuery(string $query)
     {
         return $this->adapter->query($query, $this->adapter::QUERY_MODE_EXECUTE);
     }
