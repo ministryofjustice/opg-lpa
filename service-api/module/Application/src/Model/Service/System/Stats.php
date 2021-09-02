@@ -170,48 +170,62 @@ class Stats extends AbstractService
         $pf = [];
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] = $pf['started'] = $this->getApplicationRepository()->countStartedForType(Document::LPA_TYPE_PF);
+        $summary['started'] = $pf['started'] =
+            $this->getApplicationRepository()->countStartedForType(Document::LPA_TYPE_PF);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] = $pf['created'] = $this->getApplicationRepository()->countCreatedForType(Document::LPA_TYPE_PF);
+        $summary['created'] = $pf['created'] =
+            $this->getApplicationRepository()->countCreatedForType(Document::LPA_TYPE_PF);
 
         // Count all the LPAs that have been received
-        $summary['waiting'] = $pf['waiting'] = $this->getApplicationRepository()->countWaitingForType(Document::LPA_TYPE_PF);
+        $summary['waiting'] = $pf['waiting'] =
+            $this->getApplicationRepository()->countWaitingForType(Document::LPA_TYPE_PF);
 
         // Count all the LPAs that have been received
-        $summary['checking'] = $pf['checking'] = $this->getApplicationRepository()->countCheckingForType(Document::LPA_TYPE_PF);
+        $summary['checking'] = $pf['checking'] =
+            $this->getApplicationRepository()->countCheckingForType(Document::LPA_TYPE_PF);
 
         // Count all the LPAs that have been received
-        $summary['received'] = $pf['received'] = $this->getApplicationRepository()->countReceivedForType(Document::LPA_TYPE_PF);
+        $summary['received'] = $pf['received'] =
+            $this->getApplicationRepository()->countReceivedForType(Document::LPA_TYPE_PF);
 
         // Count all the LPAs that have been processed
-        $summary['processed'] = $pf['processed'] = $this->getApplicationRepository()->countProcessedForType(Document::LPA_TYPE_PF);
+        $summary['processed'] = $pf['processed'] =
+            $this->getApplicationRepository()->countProcessedForType(Document::LPA_TYPE_PF);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] = $pf['completed'] = $this->getApplicationRepository()->countCompletedForType(Document::LPA_TYPE_PF);
+        $summary['completed'] = $pf['completed'] =
+            $this->getApplicationRepository()->countCompletedForType(Document::LPA_TYPE_PF);
 
         $hw = [];
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] += $hw['started'] = $this->getApplicationRepository()->countStartedForType(Document::LPA_TYPE_HW);
+        $summary['started'] += $hw['started'] =
+            $this->getApplicationRepository()->countStartedForType(Document::LPA_TYPE_HW);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] += $hw['created'] = $this->getApplicationRepository()->countCreatedForType(Document::LPA_TYPE_HW);
+        $summary['created'] += $hw['created'] =
+            $this->getApplicationRepository()->countCreatedForType(Document::LPA_TYPE_HW);
 
         // Count all the LPAs that have been received
-        $summary['waiting'] += $hw['waiting'] = $this->getApplicationRepository()->countWaitingForType(Document::LPA_TYPE_HW);
+        $summary['waiting'] += $hw['waiting'] =
+            $this->getApplicationRepository()->countWaitingForType(Document::LPA_TYPE_HW);
 
         // Count all the LPAs that have been received
-        $summary['checking'] += $hw['checking'] = $this->getApplicationRepository()->countCheckingForType(Document::LPA_TYPE_HW);
+        $summary['checking'] += $hw['checking'] =
+            $this->getApplicationRepository()->countCheckingForType(Document::LPA_TYPE_HW);
 
         // Count all the LPAs that have been received
-        $summary['received'] += $hw['received'] = $this->getApplicationRepository()->countReceivedForType(Document::LPA_TYPE_HW);
+        $summary['received'] += $hw['received'] =
+            $this->getApplicationRepository()->countReceivedForType(Document::LPA_TYPE_HW);
 
         // Count all the LPAs that have been processed
-        $summary['processed'] += $hw['processed'] = $this->getApplicationRepository()->countProcessedForType(Document::LPA_TYPE_HW);
+        $summary['processed'] += $hw['processed'] =
+            $this->getApplicationRepository()->countProcessedForType(Document::LPA_TYPE_HW);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] += $hw['completed'] = $this->getApplicationRepository()->countCompletedForType(Document::LPA_TYPE_HW);
+        $summary['completed'] += $hw['completed'] =
+            $this->getApplicationRepository()->countCompletedForType(Document::LPA_TYPE_HW);
 
         // Deleted LPAs have no 'document'...
         $summary['deleted'] = $this->getApplicationRepository()->countDeleted();
@@ -255,7 +269,8 @@ class Stats extends AbstractService
             $lastTimestamp = $ts;
         }
 
-        $results['all'] = $this->getWhoRepository()->getStatsForTimeRange(new DateTime("@0"), new DateTime(), WhoAreYou::options());
+        $results['all'] =
+            $this->getWhoRepository()->getStatsForTimeRange(new DateTime("@0"), new DateTime(), WhoAreYou::options());
 
         ksort($results['by-month']);
 
@@ -286,15 +301,20 @@ class Stats extends AbstractService
 
             $month['completed'] = $this->getApplicationRepository()->countCompletedBetween($start, $end);
 
-            $month['contactByEmail'] = $this->getApplicationRepository()->countCompletedBetweenCorrespondentEmail($start, $end);
+            $month['contactByEmail'] =
+                $this->getApplicationRepository()->countCompletedBetweenCorrespondentEmail($start, $end);
 
-            $month['contactByPhone'] = $this->getApplicationRepository()->countCompletedBetweenCorrespondentPhone($start, $end);
+            $month['contactByPhone'] =
+                $this->getApplicationRepository()->countCompletedBetweenCorrespondentPhone($start, $end);
 
-            $month['contactByPost'] = $this->getApplicationRepository()->countCompletedBetweenCorrespondentPost($start, $end);
+            $month['contactByPost'] =
+                $this->getApplicationRepository()->countCompletedBetweenCorrespondentPost($start, $end);
 
-            $month['contactInEnglish'] = $this->getApplicationRepository()->countCompletedBetweenCorrespondentEnglish($start, $end);
+            $month['contactInEnglish'] =
+                $this->getApplicationRepository()->countCompletedBetweenCorrespondentEnglish($start, $end);
 
-            $month['contactInWelsh'] = $this->getApplicationRepository()->countCompletedBetweenCorrespondentWelsh($start, $end);
+            $month['contactInWelsh'] =
+                $this->getApplicationRepository()->countCompletedBetweenCorrespondentWelsh($start, $end);
 
             $correspondenceStats[date('Y-m', $start->getTimestamp())] = $month;
 
@@ -332,9 +352,11 @@ class Stats extends AbstractService
 
             $month['completed'] = $this->getApplicationRepository()->countCompletedBetween($start, $end);
 
-            $month['preferencesStated'] = $this->getApplicationRepository()->countCompletedBetweenWithPreferences($start, $end);
+            $month['preferencesStated'] =
+                $this->getApplicationRepository()->countCompletedBetweenWithPreferences($start, $end);
 
-            $month['instructionsStated'] = $this->getApplicationRepository()->countCompletedBetweenWithInstructions($start, $end);
+            $month['instructionsStated'] =
+                $this->getApplicationRepository()->countCompletedBetweenWithInstructions($start, $end);
 
             $preferencesInstructionsStats[date('Y-m', $start->getTimestamp())] = $month;
 
@@ -373,8 +395,10 @@ class Stats extends AbstractService
             $month['completed'] = $this->getApplicationRepository()->countCompletedBetween($start, $end);
 
             $month['type'] = [
-                Document::LPA_TYPE_HW => $this->getApplicationRepository()->countCompletedBetweenByType($start, $end, Document::LPA_TYPE_HW),
-                Document::LPA_TYPE_PF => $this->getApplicationRepository()->countCompletedBetweenByType($start, $end, Document::LPA_TYPE_PF),
+                Document::LPA_TYPE_HW =>
+                    $this->getApplicationRepository()->countCompletedBetweenByType($start, $end, Document::LPA_TYPE_HW),
+                Document::LPA_TYPE_PF =>
+                    $this->getApplicationRepository()->countCompletedBetweenByType($start, $end, Document::LPA_TYPE_PF),
             ];
 
             $month['canSign'] = [
@@ -383,77 +407,250 @@ class Stats extends AbstractService
             ];
 
             $month['replacementAttorneys'] = [
-                'yes'       => $this->getApplicationRepository()->countCompletedBetweenHasActors($start, $end, 'replacementAttorneys'),
-                'no'        => $this->getApplicationRepository()->countCompletedBetweenHasNoActors($start, $end, 'replacementAttorneys'),
-                'multiple'  => $this->getApplicationRepository()->countCompletedBetweenHasMultipleActors($start, $end, 'replacementAttorneys'),
+                'yes' =>
+                    $this->getApplicationRepository()->countCompletedBetweenHasActors(
+                        $start,
+                        $end,
+                        'replacementAttorneys'
+                    ),
+                'no' =>
+                    $this->getApplicationRepository()->countCompletedBetweenHasNoActors(
+                        $start,
+                        $end,
+                        'replacementAttorneys'
+                    ),
+                'multiple' =>
+                    $this->getApplicationRepository()->countCompletedBetweenHasMultipleActors(
+                        $start,
+                        $end,
+                        'replacementAttorneys'
+                    ),
             ];
 
             $month['peopleToNotify'] = [
-                'yes'       => $this->getApplicationRepository()->countCompletedBetweenHasActors($start, $end, 'peopleToNotify'),
-                'no'        => $this->getApplicationRepository()->countCompletedBetweenHasNoActors($start, $end, 'peopleToNotify'),
-                'multiple'  => $this->getApplicationRepository()->countCompletedBetweenHasMultipleActors($start, $end, 'peopleToNotify'),
+                'yes' => $this->getApplicationRepository()->countCompletedBetweenHasActors(
+                    $start,
+                    $end,
+                    'peopleToNotify'
+                ),
+                'no' => $this->getApplicationRepository()->countCompletedBetweenHasNoActors(
+                    $start,
+                    $end,
+                    'peopleToNotify'
+                ),
+                'multiple' => $this->getApplicationRepository()->countCompletedBetweenHasMultipleActors(
+                    $start,
+                    $end,
+                    'peopleToNotify'
+                ),
             ];
 
             $month['whoIsRegistering'] = [
-                'donor'     => $this->getApplicationRepository()->countCompletedBetweenDonorRegistering($start, $end),
-                'attorneys' => $this->getApplicationRepository()->countCompletedBetweenAttorneyRegistering($start, $end),
+                'donor' => $this->getApplicationRepository()->countCompletedBetweenDonorRegistering($start, $end),
+                'attorneys' =>
+                    $this->getApplicationRepository()->countCompletedBetweenAttorneyRegistering($start, $end),
             ];
 
             $month['repeatCaseNumber'] = [
                 'yes' => $this->getApplicationRepository()->countCompletedBetweenCaseNumber($start, $end, true),
-                'no'  => $this->getApplicationRepository()->countCompletedBetweenCaseNumber($start, $end, false),
+                'no' => $this->getApplicationRepository()->countCompletedBetweenCaseNumber($start, $end, false),
             ];
 
             $month['payment'] = [
-                'reducedFeeReceivesBenefits' => $this->getApplicationRepository()->countCompletedBetweenFeeType($start, $end, true, true, null, null),
-                'reducedFeeUniversalCredit'  => $this->getApplicationRepository()->countCompletedBetweenFeeType($start, $end, false, null, false, true),
-                'reducedFeeLowIncome'        => $this->getApplicationRepository()->countCompletedBetweenFeeType($start, $end, false, null, true, false),
-                'notApply'                   => $this->getApplicationRepository()->countCompletedBetweenFeeType($start, $end, null, null, null, null),
-                Payment::PAYMENT_TYPE_CARD   => $this->getApplicationRepository()->countCompletedBetweenPaymentType($start, $end, Payment::PAYMENT_TYPE_CARD),
-                Payment::PAYMENT_TYPE_CHEQUE => $this->getApplicationRepository()->countCompletedBetweenPaymentType($start, $end, Payment::PAYMENT_TYPE_CHEQUE),
+                'reducedFeeReceivesBenefits' => $this->getApplicationRepository()->countCompletedBetweenFeeType(
+                    $start,
+                    $end,
+                    true,
+                    true,
+                    null,
+                    null
+                ),
+                'reducedFeeUniversalCredit' => $this->getApplicationRepository()->countCompletedBetweenFeeType(
+                    $start,
+                    $end,
+                    false,
+                    null,
+                    false,
+                    true
+                ),
+                'reducedFeeLowIncome' => $this->getApplicationRepository()->countCompletedBetweenFeeType(
+                    $start,
+                    $end,
+                    false,
+                    null,
+                    true,
+                    false
+                ),
+                'notApply' => $this->getApplicationRepository()->countCompletedBetweenFeeType(
+                    $start,
+                    $end,
+                    null,
+                    null,
+                    null,
+                    null
+                ),
+                Payment::PAYMENT_TYPE_CARD => $this->getApplicationRepository()->countCompletedBetweenPaymentType(
+                    $start,
+                    $end,
+                    Payment::PAYMENT_TYPE_CARD
+                ),
+                Payment::PAYMENT_TYPE_CHEQUE => $this->getApplicationRepository()->countCompletedBetweenPaymentType(
+                    $start,
+                    $end,
+                    Payment::PAYMENT_TYPE_CHEQUE
+                ),
             ];
 
             $month['primaryAttorneys'] = [
-                'multiple'  => $this->getApplicationRepository()->countCompletedBetweenHasMultipleActors($start, $end, 'primaryAttorneys'),
+                'multiple' => $this->getApplicationRepository()->countCompletedBetweenHasMultipleActors(
+                    $start,
+                    $end,
+                    'primaryAttorneys'
+                ),
             ];
 
             $month['primaryAttorneyDecisions'] = [
                 'when' => [
-                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW         => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'when', PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW),
-                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'when', PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY),
+                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW =>
+                        $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'primaryAttorneyDecisions',
+                            'when',
+                            PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW
+                        ),
+                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY =>
+                        $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'primaryAttorneyDecisions',
+                            'when',
+                            PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY
+                        ),
                 ],
                 'how' => [
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY),
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY               => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY),
-                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS               => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_DEPENDS),
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY =>
+                        $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'primaryAttorneyDecisions',
+                            'how',
+                            AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
+                        ),
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY =>
+                        $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'primaryAttorneyDecisions',
+                            'how',
+                            AbstractDecisions::LPA_DECISION_HOW_JOINTLY
+                        ),
+                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS =>
+                        $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'primaryAttorneyDecisions',
+                            'how',
+                            AbstractDecisions::LPA_DECISION_HOW_DEPENDS
+                        ),
                 ],
                 'canSustainLife' => [
-                    'true'  => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'canSustainLife', true),
-                    'false' => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'canSustainLife', false),
+                    'true' => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                        $start,
+                        $end,
+                        'primaryAttorneyDecisions',
+                        'canSustainLife',
+                        true
+                    ),
+                    'false' => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                        $start,
+                        $end,
+                        'primaryAttorneyDecisions',
+                        'canSustainLife',
+                        false
+                    ),
                 ]
             ];
 
             $month['replacementAttorneyDecisions'] = [
                 'when' => [
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST   => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST),
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST    => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST),
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS),
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST =>
+                        $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'replacementAttorneyDecisions',
+                            'when',
+                            ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST
+                        ),
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST =>
+                        $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'replacementAttorneyDecisions',
+                            'when',
+                            ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
+                        ),
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS =>
+                        $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'replacementAttorneyDecisions',
+                            'when',
+                            ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
+                        ),
                 ],
                 'how' => [
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY),
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY               => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY),
-                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS               => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_DEPENDS),
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY =>
+                        $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'replacementAttorneyDecisions',
+                            'how',
+                            AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
+                        ),
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY
+                        => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'replacementAttorneyDecisions',
+                            'how',
+                            AbstractDecisions::LPA_DECISION_HOW_JOINTLY
+                        ),
+                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS
+                        => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
+                            $start,
+                            $end,
+                            'replacementAttorneyDecisions',
+                            'how',
+                            AbstractDecisions::LPA_DECISION_HOW_DEPENDS
+                        ),
                 ]
             ];
 
             $month['trust'] = [
-                'primaryAttorneys'     => $this->getApplicationRepository()->countCompletedBetweenWithTrust($start, $end, 'primaryAttorneys'),
-                'replacementAttorneys' => $this->getApplicationRepository()->countCompletedBetweenWithTrust($start, $end, 'replacementAttorneys'),
+                'primaryAttorneys' => $this->getApplicationRepository()->countCompletedBetweenWithTrust(
+                    $start,
+                    $end,
+                    'primaryAttorneys'
+                ),
+                'replacementAttorneys' => $this->getApplicationRepository()->countCompletedBetweenWithTrust(
+                    $start,
+                    $end,
+                    'replacementAttorneys'
+                ),
             ];
 
             $month['certificateProviderSkipped'] = [
-                'yes' => $this->getApplicationRepository()->countCompletedBetweenCertificateProviderSkipped($start, $end, true),
-                'no'  => $this->getApplicationRepository()->countCompletedBetweenCertificateProviderSkipped($start, $end, false),
+                'yes' => $this->getApplicationRepository()->countCompletedBetweenCertificateProviderSkipped(
+                    $start,
+                    $end,
+                    true
+                ),
+                'no' => $this->getApplicationRepository()->countCompletedBetweenCertificateProviderSkipped(
+                    $start,
+                    $end,
+                    false
+                ),
             ];
 
             $optionStats[date('Y-m', $start->getTimestamp())] = $month;

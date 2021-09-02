@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\DataAccess\Postgres;
 
 use PDOException;
@@ -16,10 +17,9 @@ use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
-
 class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface
 {
-    const USERS_TABLE = 'users';
+    public const USERS_TABLE = 'users';
 
     //-----------------------------------------------------------
     // Helpers
@@ -30,7 +30,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param array $where
      * @return array|null
      */
-    private function getByField(array $where) : ?array
+    private function getByField(array $where): ?array
     {
         $result = $this->dbWrapper->select(self::USERS_TABLE, $where, ['limit' => 1]);
 
@@ -47,13 +47,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param array $where
      * @return int
      */
-    private function countRows(array $where) : int
+    private function countRows(array $where): int
     {
-         $options = [
+        $options = [
             'columns' => [
                 'count' => new Expression('COUNT(*)')
             ]
-        ];
+         ];
 
         $result = $this->dbWrapper->select(self::USERS_TABLE, $where, $options);
 
@@ -71,7 +71,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param array $set
      * @return bool
      */
-    private function updateRow(array $where, array $set) : bool
+    private function updateRow(array $where, array $set): bool
     {
         $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::USERS_TABLE);
@@ -93,7 +93,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $username
      * @return UserRepository\UserInterface|null
      */
-    public function getByUsername(string $username) : ?UserRepository\UserInterface
+    public function getByUsername(string $username): ?UserRepository\UserInterface
     {
         $user = $this->getByField(['identity' => $username]);
 
@@ -113,7 +113,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * 'offset' (int, default 0) and 'limit' (int, default 10)
      * @return iterable UserModel instances
      */
-    public function matchUsers(string $query, array $options = []) : iterable
+    public function matchUsers(string $query, array $options = []): iterable
     {
         $offset = 0;
         $limit = 10;
@@ -147,10 +147,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
         // invalid SQL; but this potentially locks the code to Postgres
         $select = $sql->select(['u' => self::USERS_TABLE])
-            ->join(['a' => $subselect],
-                  'u.id = a.user',
-                  ['numberOfLpas'],
-                  'FULL')
+            ->join(
+                ['a' => $subselect],
+                'u.id = a.user',
+                ['numberOfLpas'],
+                'FULL'
+            )
             ->where($likes)
             ->order('identity ASC')
             ->offset($offset)
@@ -167,7 +169,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $id
      * @return UserRepository\UserInterface|null
      */
-    public function getById(string $id) : ?UserRepository\UserInterface
+    public function getById(string $id): ?UserRepository\UserInterface
     {
         $user = $this->getByField(['id' => $id]);
 
@@ -182,7 +184,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $token
      * @return UserRepository\UserInterface|null
      */
-    public function getByAuthToken(string $token) : ?UserRepository\UserInterface
+    public function getByAuthToken(string $token): ?UserRepository\UserInterface
     {
         $user = $this->getByField([new Expression("auth_token ->> 'token' = ?", $token)]);
 
@@ -197,7 +199,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $token
      * @return UserRepository\UserInterface|null
      */
-    public function getByResetToken(string $token) : ?UserRepository\UserInterface
+    public function getByResetToken(string $token): ?UserRepository\UserInterface
     {
         $user = $this->getByField([new Expression("password_reset_token ->> 'token' = ?", $token)]);
 
@@ -212,7 +214,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $id
      * @return bool
      */
-    public function updateLastLoginTime(string $id) : bool
+    public function updateLastLoginTime(string $id): bool
     {
         return $this->updateRow(
             ['id' => $id],
@@ -229,7 +231,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $id
      * @return bool
      */
-    public function resetFailedLoginCounter(string $id) : bool
+    public function resetFailedLoginCounter(string $id): bool
     {
         return $this->updateRow(
             ['id' => $id],
@@ -245,7 +247,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $id
      * @return bool
      */
-    public function incrementFailedLoginCounter(string $id) : bool
+    public function incrementFailedLoginCounter(string $id): bool
     {
         return $this->updateRow(
             ['id' => $id],
@@ -266,7 +268,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @throws \Exception
      * @return bool
      */
-    public function create(string $id, array $details) : bool
+    public function create(string $id, array $details): bool
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::USERS_TABLE);
@@ -288,13 +290,15 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         try {
             $statement->execute();
-        }
-        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
+        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             // If it's a key clash, and not on the identity, re-try with new values.
             if ($e->getPrevious() instanceof PDOException) {
                 $pdoException = $e->getPrevious();
 
-                if ($pdoException->getCode() == 23505 && strpos($pdoException->getMessage(), 'users_identity') === false) {
+                if (
+                    $pdoException->getCode() == 23505 &&
+                    strpos($pdoException->getMessage(), 'users_identity') === false
+                ) {
                     return false;
                 }
             }
@@ -315,7 +319,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $id
      * @return bool|null
      */
-    public function delete(string $id) : bool
+    public function delete(string $id): bool
     {
         return $this->updateRow(
             ['id' => $id],
@@ -346,7 +350,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $token
      * @return bool|null
      */
-    public function activate(string $token) : bool
+    public function activate(string $token): bool
     {
         return $this->updateRow(
             ['activation_token' => $token],
@@ -366,7 +370,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $passwordHash
      * @return bool
      */
-    public function setNewPassword(string $userId, string $passwordHash) : bool
+    public function setNewPassword(string $userId, string $passwordHash): bool
     {
         return $this->updateRow(
             ['id' => $userId],
@@ -386,7 +390,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $token
      * @return bool
      */
-    public function setAuthToken(string $userId, DateTime $expires, string $token) : bool
+    public function setAuthToken(string $userId, DateTime $expires, string $token): bool
     {
         return $this->updateRow(
             ['id' => $userId],
@@ -408,7 +412,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param DateTime $expires
      * @return bool
      */
-    public function updateAuthTokenExpiry(string $userId, DateTime $expires) : bool
+    public function updateAuthTokenExpiry(string $userId, DateTime $expires): bool
     {
         return $this->updateRow(
             ['id' => $userId],
@@ -426,7 +430,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param array $token
      * @return bool
      */
-    public function addPasswordResetToken(string $id, array $token) : bool
+    public function addPasswordResetToken(string $id, array $token): bool
     {
         // Map DateTimes to Strings
         $token = array_map(function ($v) {
@@ -446,8 +450,10 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $passwordHash
      * @return UserRepository\UpdatePasswordUsingTokenError
      */
-    public function updatePasswordUsingToken(string $token, string $passwordHash) : ?UserRepository\UpdatePasswordUsingTokenError
-    {
+    public function updatePasswordUsingToken(
+        string $token,
+        string $passwordHash
+    ): ?UserRepository\UpdatePasswordUsingTokenError {
         $result = $this->updateRow(
             [new Expression("password_reset_token ->> 'token' = ?", $token)],
             [
@@ -472,7 +478,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $newEmail
      * @return bool
      */
-    public function addEmailUpdateTokenAndNewEmail(string $id, array $token, string $newEmail) : bool
+    public function addEmailUpdateTokenAndNewEmail(string $id, array $token, string $newEmail): bool
     {
         // Map DateTimes to Strings
         $token = array_map(function ($v) {
@@ -494,7 +500,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $token
      * @return UserRepository\UpdateEmailUsingTokenResponse
      */
-    public function updateEmailUsingToken(string $token) : UserRepository\UpdateEmailUsingTokenResponse
+    public function updateEmailUsingToken(string $token): UserRepository\UpdateEmailUsingTokenResponse
     {
         $user = $this->getByField([new Expression("email_update_request -> 'token' ->> 'token' = ?", $token)]);
 
@@ -548,7 +554,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param string $excludeFlag
      * @return iterable
      */
-    public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null) : iterable
+    public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null): iterable
     {
         $where = [
             new Operator('last_login', Operator::OPERATOR_LESS_THAN, $since->format('c'))
@@ -556,7 +562,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         // Exclude results that have already been actioned
         if (!is_null($excludeFlag)) {
-            $where[] = new Expression("inactivity_flags -> {$excludeFlag} IS NULL");
+            $where[] = new Expression("inactivity_flags -> '{$excludeFlag}' IS NULL");
         }
 
         $users = $this->dbWrapper->select(self::USERS_TABLE, $where);
@@ -573,7 +579,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $flag
      * @return bool
      */
-    public function setInactivityFlag(string $userId, string $flag) : bool
+    public function setInactivityFlag(string $userId, string $flag): bool
     {
         return $this->updateRow(
             ['id' => $userId],
@@ -593,7 +599,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param DateTime $olderThan
      * @return iterable
      */
-    public function getAccountsUnactivatedOlderThan(DateTime $olderThan) : iterable
+    public function getAccountsUnactivatedOlderThan(DateTime $olderThan): iterable
     {
         $where = [
             'active' => false,
@@ -612,7 +618,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      *
      * @return int Account count
      */
-    public function countAccounts() : int
+    public function countAccounts(): int
     {
         // All 'live' accounts have an identity
         return $this->countRows([new IsNotNull('identity')]);
@@ -624,14 +630,19 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param DateTime|null $since only include accounts activated $since
      * @return int Account count
      */
-    public function countActivatedAccounts(DateTime $since = null) : int
+    public function countActivatedAccounts(DateTime $since = null): int
     {
         if (is_null($since)) {
             // All activated accounts have an activation date.
             $where = [new IsNotNull('activated')];
-        }
-        else {
-            $where = [new Operator('activated', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $since->format(DbWrapper::TIME_FORMAT))];
+        } else {
+            $where = [
+                new Operator(
+                    'activated',
+                    Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+                    $since->format(DbWrapper::TIME_FORMAT)
+                )
+            ];
         }
 
         return $this->countRows($where);
@@ -642,7 +653,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      *
      * @return int Account count
      */
-    public function countDeletedAccounts() : int
+    public function countDeletedAccounts(): int
     {
         // Deleted accounts have a row, but no identity
         return $this->countRows([new IsNull('identity')]);
@@ -654,7 +665,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $id
      * @return ProfileUserModel
      */
-    public function getProfile($id) : ?ProfileUserModel
+    public function getProfile($id): ?ProfileUserModel
     {
         $user = $this->getByField(['id' => $id]);
 
@@ -678,7 +689,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param ProfileUserModel $user
      * @return bool
      */
-    public function saveProfile(ProfileUserModel $user) : bool
+    public function saveProfile(ProfileUserModel $user): bool
     {
         $data = $user->toArray();
 
