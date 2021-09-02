@@ -560,14 +560,14 @@ class Stats extends AbstractService
                         $end,
                         'primaryAttorneyDecisions',
                         'canSustainLife',
-                        true
+                        'true'
                     ),
                     'false' => $this->getApplicationRepository()->countCompletedBetweenWithAttorneyDecisions(
                         $start,
                         $end,
                         'primaryAttorneyDecisions',
                         'canSustainLife',
-                        false
+                        'false'
                     ),
                 ]
             ];
