@@ -12,7 +12,6 @@ class CookiesController extends AbstractBaseController
 {
     const COOKIE_POLICY_NAME = 'cookie_policy';
     const SEEN_COOKIE_NAME = 'seen_cookie_message';
-    const SUBMITTED_COOKIE_PAGE = 'submitted_cookie_page';
 
     public function indexAction()
     {
@@ -25,14 +24,16 @@ class CookiesController extends AbstractBaseController
         if ($request->isPost()) {
             $form->setData($request->getPost());
 
-            $cookiePolicyViewed = new SetCookie(self::SUBMITTED_COOKIE_PAGE);
-            $cookiePolicyViewed->setValue('true')
-                ->setHttponly(false)
-                ->setSecure(true)
-                ->setExpires(new \DateTime('+60 seconds'));
-            $this->getResponse()->getHeaders()->addHeaderLine($cookiePolicyViewed->getFieldName(), $cookiePolicyViewed->getFieldValue());
+            if ($form->get('usageCookies')->getValue() === 'yes') {
+                $cookiePolicy['usage'] = true;
+            } else {
+                $cookiePolicy['usage'] = false;
 
-            $cookiePolicy['usage'] = $form->get('usageCookies')->getValue() === 'yes' ? true : false;
+                //remove any GA cookies present
+                setcookie('_ga', null, -1, '/');
+                setcookie('_gid', null, -1, '/');
+                setcookie('_gat', null, -1, '/');
+            }
 
             $newCookiePolicy = new SetCookie(self::COOKIE_POLICY_NAME);
             $newCookiePolicy->setValue(json_encode($cookiePolicy))
