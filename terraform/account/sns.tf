@@ -11,9 +11,8 @@ resource "aws_sns_topic" "cloudwatch_to_slack_elasticache_alerts" {
 }
 
 resource "aws_sns_topic" "rds_events" {
-  name              = "${local.account_name}-rds-events"
-  tags              = merge(local.default_tags, local.db_component_tag)
-  kms_master_key_id = "alias/aws/sns"
+  name = "${local.account_name}-rds-events"
+  tags = merge(local.default_tags, local.db_component_tag)
 }
 
 
