@@ -31,3 +31,15 @@ Feature: Cookies
         And I can see a hide button to close the cookies banner
         When I click "hide-cookies-banner"
         Then the cookie banner is not visible
+
+    @focus
+    Scenario: Accepting analytics cookies then rejecting analytics cookies fully removes them (LPAL-486)
+        Given I visit "/home"
+        When I visit in new tab link named "Cookies"
+        Then I click "usageCookies-yes"
+        And I click "cookies-save"
+        And "usageCookie-yes" is checked
+        When I click "usageCookies-no"
+        Then I click "cookies-save"
+        And "usageCookie-no" is checked
+        Then analytics cookies are not set
