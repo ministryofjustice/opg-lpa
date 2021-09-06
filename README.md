@@ -159,7 +159,7 @@ To run the load tests:
 
 1.  Start the stack (see above).
 1.  Create a virtualenv: `virtualenv -p python3 ~/.loadtestsvenv` (substitute your preferred
-path for the virutal environment).
+path for the virtual environment).
 1.  Install dependencies:
     ```bash
     cd tests/load
