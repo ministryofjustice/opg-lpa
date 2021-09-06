@@ -1,0 +1,104 @@
+@startuml
+title Make an LPA API with embedded Performance Platform - Containers
+
+top to bottom direction
+
+skinparam {
+  shadowing false
+  arrowFontSize 10
+  defaultTextAlignment center
+  wrapWidth 200
+  maxMessageSize 100
+  PackageBorderColor<<group>> #cccccc
+  PackageFontColor<<group>> #cccccc
+}
+
+hide stereotype
+
+skinparam rectangle<<5>> {
+  BackgroundColor #999999
+  FontColor #ffffff
+  BorderColor #6b6b6b
+}
+skinparam rectangle<<3>> {
+  BackgroundColor #999999
+  FontColor #ffffff
+  BorderColor #6b6b6b
+}
+skinparam rectangle<<6>> {
+  BackgroundColor #999999
+  FontColor #ffffff
+  BorderColor #6b6b6b
+}
+skinparam rectangle<<7>> {
+  BackgroundColor #999999
+  FontColor #ffffff
+  BorderColor #6b6b6b
+}
+skinparam rectangle<<10>> {
+  BackgroundColor #999999
+  FontColor #ffffff
+  BorderColor #6b6b6b
+}
+skinparam rectangle<<9>> {
+  BackgroundColor #999999
+  FontColor #ffffff
+  BorderColor #6b6b6b
+}
+skinparam rectangle<<4>> {
+  BackgroundColor #999999
+  FontColor #ffffff
+  BorderColor #6b6b6b
+}
+skinparam rectangle<<11>> {
+  BackgroundColor #999999
+  FontColor #ffffff
+  BorderColor #6b6b6b
+}
+skinparam rectangle<<12>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+}
+skinparam rectangle<<13>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+}
+skinparam rectangle<<14>> {
+  BackgroundColor #1168bd
+  FontColor #ffffff
+  BorderColor #0b4884
+}
+
+rectangle "==Digital take-up system/manual process\n<size:10>[Software System]</size>" <<3>> as 3
+rectangle "==data.gov.uk website\n<size:10>[Software System]</size>" <<4>> as 4
+rectangle "==Admin\n<size:10>[Software System]</size>" <<5>> as 5
+rectangle "==Google Analytics\n<size:10>[Software System]</size>" <<6>> as 6
+rectangle "==Make an LPA front-end\n<size:10>[Software System]</size>" <<7>> as 7
+
+package "Make an LPA API with embedded Performance Platform\n[Software System]" <<8>> {
+  skinparam PackageBorderColor<<8>> #444444
+  skinparam PackageFontColor<<8>> #444444
+
+  rectangle "==api-app\n<size:10>[Container: php-fpm]</size>" <<10>> as 10
+  rectangle "==database\n<size:10>[Container: postgres]</size>" <<11>> as 11
+  rectangle "==perfplat-api\n<size:10>[Container: Python]</size>" <<12>> as 12
+  rectangle "==perfplat-queue\n<size:10>[Container: SQS]</size>" <<13>> as 13
+  rectangle "==perfplat-worker\n<size:10>[Container: Python lambda]</size>" <<14>> as 14
+  rectangle "==api-web\n<size:10>[Container: nginx]</size>" <<9>> as 9
+}
+
+7 .[#707070,thickness=2].> 9 : "<color:#707070>Posts user satisfaction data"
+4 .[#707070,thickness=2].> 9 : "<color:#707070>Gets perf data"
+5 .[#707070,thickness=2].> 9 : "<color:#707070>Initiates generation of perf data"
+9 .[#707070,thickness=2].> 10 : "<color:#707070>Proxies requests re: user satisfaction data"
+9 .[#707070,thickness=2].> 12 : "<color:#707070>Proxies requests re: perf data"
+10 .[#707070,thickness=2].> 11 : "<color:#707070>CRUD on perf data"
+12 .[#707070,thickness=2].> 13 : "<color:#707070>Manages perf data jobs"
+14 .[#707070,thickness=2].> 11 : "<color:#707070>Caches perf data"
+14 .[#707070,thickness=2].> 3 : "<color:#707070>Gets digital take-up data"
+13 .[#707070,thickness=2].> 14 : "<color:#707070>Triggers perf data collation job"
+14 .[#707070,thickness=2].> 9 : "<color:#707070>Gets user satisfaction data"
+14 .[#707070,thickness=2].> 6 : "<color:#707070>Gets completion rate data"
+@enduml
