@@ -183,7 +183,7 @@ locals {
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
           "awslogs-region" : "eu-west-1",
-          "awslogs-stream-prefix" : "${local.environment}.front-app.online-lpa"
+          "awslogs-stream-prefix" : "${local.environment}.front-v2-app.online-lpa"
         }
       },
       "secrets" : [
