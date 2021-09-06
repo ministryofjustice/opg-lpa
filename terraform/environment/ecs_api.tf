@@ -74,6 +74,18 @@ resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
 }
 
 //----------------------------------
+// 80 in from front ECS service
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
+resource "aws_security_group_rule" "api_ecs_service_front_v2_ingress" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.api_ecs_service.id
+  source_security_group_id = aws_security_group.front_v2_ecs_service.id
+}
+
+//----------------------------------
 // 80 in from Admin ECS service
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
