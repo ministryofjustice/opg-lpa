@@ -19,10 +19,13 @@ Feature: Cookies
         Then I click "usageCookies-yes"
         And I click "cookies-save"
         And "usageCookies-yes" is checked
+        Then I see "You’ve set your cookie preferences." in the page text
+        And analytics cookies are set
         When I click "usageCookies-no"
         Then I click "cookies-save"
         And "usageCookies-no" is checked
         Then I visit "/home"
+        And I see "You’ve set your cookie preferences." in the page text
         And analytics cookies are not set
 
     @focus

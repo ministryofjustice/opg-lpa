@@ -22,6 +22,7 @@ class CookiesController extends AbstractBaseController
         $cookiePolicy = $this->fetchPolicyCookie($request);
 
         if ($request->isPost()) {
+            $this->flashMessenger()->addSuccessMessage('You’ve set your cookie preferences.');
             $form->setData($request->getPost());
 
             if ($form->get('usageCookies')->getValue() === 'yes') {
