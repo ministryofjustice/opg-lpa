@@ -15,6 +15,12 @@ setup(
     install_requires=[
         'SQLAlchemy',
         'psycopg2',
+        'Flask',
+        'flask-lambda',
+        'itsdangerous',
+        'Werkzeug',
+        'connexion',
+        'swagger-ui-bundle'
     ],
     extras_require={
         'dev': [
@@ -22,7 +28,15 @@ setup(
             'localstack-client',
             'alembic',
             'nose',
+            'openapi-spec-validator',
+            'requests',
+            'moto',
             'coverage',
+            'pytest',
+            'pytest-cases',
+            'pytest-cov',
+            'pytest-ordering',
+            'pytest-env'
         ],
     },
     scripts=[
