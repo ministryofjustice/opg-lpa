@@ -429,7 +429,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 return 'address-already-registered';
             }
 
-            return $ex->getMessage();
+            return 'api-problem';
         }
 
         return 'unknown-error';
@@ -443,8 +443,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     public function resendActivateEmail($email)
     {
-        //  Trigger a request to reset the password in the API - this will return the activation token or throw
-        //  an exception
+        // Trigger a request to reset the password in the API - this will return the activation token or
+        // throw an exception
         try {
             $result = $this->apiClient->httpPost('/v2/users/password-reset', [
                 'username' => strtolower($email),
