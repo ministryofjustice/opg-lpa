@@ -11,11 +11,13 @@ use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Sql\Predicate\In as InPredicate;
+use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Library\DateTime as MillisecondDateTime;
 
-class ApplicationData implements ApplicationRepository\ApplicationRepositoryInterface
+
+class ApplicationData extends AbstractBase implements ApplicationRepository\ApplicationRepositoryInterface
 {
     const APPLICATIONS_TABLE = 'applications';
 
@@ -24,29 +26,6 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
      */
     const TABLE_COLUMNS = ['id', 'user', 'updatedAt', 'startedAt', 'createdAt', 'completedAt', 'lockedAt', 'locked',
                             'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document', 'payment', 'metadata'];
-
-    /**
-     * Wrapper around db adapter and SQL generation.
-     * @var DbWrapper
-     */
-    private $dbWrapper;
-
-    /**
-     * Application configuration.
-     * @var array
-     */
-    private $config;
-
-    /**
-     * Constructor.
-     * @param ZendDbAdapter $adapter
-     * @param array $config
-     */
-    public final function __construct(DbWrapper $dbWrapper, array $config)
-    {
-        $this->dbWrapper = $dbWrapper;
-        $this->config = $config;
-    }
 
     /**
      * Maps LPA object fields to Postgres' fields.
@@ -60,9 +39,9 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
         $data = array_intersect_key($lpa->toArray(), array_flip(self::TABLE_COLUMNS));
 
         // Convert these fields to JSON
-        $data['document']   = is_null($data['document']) ? null : json_encode($data['document']);
-        $data['payment']    = is_null($data['payment']) ? null : json_encode($data['payment']);
-        $data['metadata']   = is_null($data['metadata']) ? null : json_encode($data['metadata']);
+        $data['document'] = is_null($data['document']) ? null : json_encode($data['document']);
+        $data['payment'] = is_null($data['payment']) ? null : json_encode($data['payment']);
+        $data['metadata'] = is_null($data['metadata']) ? null : json_encode($data['metadata']);
 
         return $data;
     }
@@ -76,9 +55,9 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
     private function mapPostgresToLpaCompatible(array $data) : array
     {
         return array_merge($data,[
-            'document'  => is_null($data['document']) ? null : json_decode($data['document'], true),
-            'payment'   => is_null($data['payment']) ? null : json_decode($data['payment'], true),
-            'metadata'  => is_null($data['metadata']) ? null : json_decode($data['metadata'], true),
+            'document' => is_null($data['document']) ? null : json_decode($data['document'], true),
+            'payment' => is_null($data['payment']) ? null : json_decode($data['payment'], true),
+            'metadata' => is_null($data['metadata']) ? null : json_decode($data['metadata'], true),
         ]);
     }
 
@@ -184,11 +163,9 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
         $statement = $sql->prepareStatementForSqlObject($insert);
 
         try {
-
             $statement->execute();
-
-        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
-
+        }
+        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
             // If it's a key clash, re-try with new values.
             if ($e->getPrevious() instanceof PDOException) {
                 $pdoException = $e->getPrevious();
@@ -237,7 +214,8 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             if (!($lpa->getCreatedAt() instanceof DateTime)) {
                 $lpa->setCreatedAt(new MillisecondDateTime());
             }
-        } else {
+        }
+        else {
             $lpa->setCreatedAt(null);
         }
 
@@ -247,7 +225,8 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             if (!($lpa->getCompletedAt() instanceof DateTime) && $lpa->isLocked()) {
                 $lpa->setCompletedAt(new MillisecondDateTime());
             }
-        } else {
+        }
+        else {
             $lpa->setCompletedAt(null);
         }
 
@@ -258,7 +237,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             $searchField = (string)$lpa->getDocument()->getDonor()->getName();
         }
 
-        $lastUpdated = $lpa->getUpdatedAt()->format($this->dbWrapper::TIME_FORMAT);
+        $lastUpdated = $lpa->getUpdatedAt()->format(DbWrapper::TIME_FORMAT);
 
         if ($updateTimestamp === true) {
             // Record the time we updated the document.
@@ -299,8 +278,8 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
         $update = $sql->update(self::APPLICATIONS_TABLE);
 
         $update->where([
-            'id'    => $lpaId,
-            'user'  => $userId,
+            'id' => $lpaId,
+            'user' => $userId,
         ]);
 
         //---
@@ -320,7 +299,7 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
 
 
         unset($data['id']); // We want to keep this
-        $data['updatedAt'] = gmdate($this->dbWrapper::TIME_FORMAT); // We want to keep and update this.
+        $data['updatedAt'] = gmdate(DbWrapper::TIME_FORMAT); // We want to keep and update this.
 
         //--
 
@@ -756,7 +735,8 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             return $this->countCompletedBetween($start, $end, [
                 new IsNotNull('repeatCaseNumber')
             ]);
-        } else {
+        }
+        else {
             return $this->countCompletedBetween($start, $end, [
                 new IsNull('repeatCaseNumber')
             ]);
@@ -778,9 +758,9 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
     {
         // Map the values
         $reducedFeeReceivesBenefits = (is_null($reducedFeeReceivesBenefits)) ? 'IS NULL' : (($reducedFeeReceivesBenefits) ? '= TRUE' : '= FALSE');
-        $reducedFeeAwardedDamages   = (is_null($reducedFeeAwardedDamages)) ? 'IS NULL'   : (($reducedFeeAwardedDamages) ? '= TRUE' : '= FALSE');
-        $reducedFeeLowIncome        = (is_null($reducedFeeLowIncome)) ? 'IS NULL'        : (($reducedFeeLowIncome) ? '= TRUE' : '= FALSE');
-        $reducedFeeUniversalCredit  = (is_null($reducedFeeUniversalCredit)) ? 'IS NULL'  : (($reducedFeeUniversalCredit) ? '= TRUE' : '= FALSE');
+        $reducedFeeAwardedDamages = (is_null($reducedFeeAwardedDamages)) ? 'IS NULL'   : (($reducedFeeAwardedDamages) ? '= TRUE' : '= FALSE');
+        $reducedFeeLowIncome = (is_null($reducedFeeLowIncome)) ? 'IS NULL'        : (($reducedFeeLowIncome) ? '= TRUE' : '= FALSE');
+        $reducedFeeUniversalCredit = (is_null($reducedFeeUniversalCredit)) ? 'IS NULL'  : (($reducedFeeUniversalCredit) ? '= TRUE' : '= FALSE');
 
         return $this->countCompletedBetween($start, $end, [
             new Expression("(payment ->> 'reducedFeeReceivesBenefits')::BOOLEAN " . $reducedFeeReceivesBenefits),
@@ -960,11 +940,11 @@ class ApplicationData implements ApplicationRepository\ApplicationRepositoryInte
             return $this->countCompletedBetween($start, $end, [
                 new Expression("metadata @> ?", json_encode([Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => true]))
             ]);
-        } else {
+        }
+        else {
             return $this->countCompletedBetween($start, $end, [
                 new Expression("NOT(metadata @> ?)", json_encode([Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => true]))
             ]);
         }
     }
-
 }

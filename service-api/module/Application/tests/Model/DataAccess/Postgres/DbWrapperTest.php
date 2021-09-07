@@ -7,6 +7,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
@@ -34,6 +35,7 @@ class DbWrapperTest extends MockeryTestCase
         $adapterMock = Mockery::Mock(Adapter::class);
         $sqlMock = Mockery::Mock(Sql::class);
         $selectMock = Mockery::Mock(Select::class);
+        $statementMock = Mockery::Mock(StatementInterface::class);
         $resultMock = Mockery::Mock(Result::class);
 
         // expectations
@@ -64,8 +66,8 @@ class DbWrapperTest extends MockeryTestCase
 
         $sqlMock->shouldReceive('prepareStatementForSqlObject')
             ->with($selectMock)
-            ->andReturn($sqlMock);
-        $sqlMock->shouldReceive('execute')
+            ->andReturn($statementMock);
+        $statementMock->shouldReceive('execute')
             ->andReturn($resultMock);
 
         // patch the createSql() and quoteValue() methods of class under test;
