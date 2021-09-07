@@ -22,7 +22,6 @@ resource "pagerduty_service_integration" "cloudwatch_integration" {
 
 resource "pagerduty_service_integration" "db_alerts_integration" {
   name    = "${local.account_name} Account DB Alerts"
-  type    = "event_transformer_api_inbound_integration"
   service = data.pagerduty_service.pagerduty_db_alerts.id
   vendor  = data.pagerduty_vendor.custom_events.id
 }
