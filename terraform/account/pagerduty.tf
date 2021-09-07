@@ -43,6 +43,6 @@ resource "aws_sns_topic_subscription" "cloudwatch_elasticache_alerts_sns_subscri
 resource "aws_sns_topic_subscription" "rds_events_sns_subscription" {
   topic_arn              = aws_sns_topic.rds_events.arn
   protocol               = "https"
-  endpoint_auto_confirms = true
+  endpoint_auto_confirms = false
   endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.db_alerts_integration.integration_key}/enqueue"
 }
