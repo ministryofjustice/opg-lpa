@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "front_v2" {
   cpu                      = 256
   memory                   = 512
   container_definitions    = "[${local.front_v2_app}]"
-  task_role_arn            = aws_iam_role.front_v2_task_role.arn
+  task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = merge(local.default_tags, local.front_component_tag)
 
