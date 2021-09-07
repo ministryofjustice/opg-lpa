@@ -1,8 +1,8 @@
 //----------------------------------
 // front v2 ECS Service level config
 
-resource "aws_ecs_service" "front-v2" {
-  name                  = "front-v2"
+resource "aws_ecs_service" "front_v2" {
+  name                  = "front_v2"
   cluster               = aws_ecs_cluster.online-lpa.id
   task_definition       = aws_ecs_task_definition.front_v2.arn
   desired_count         = local.account.autoscaling.front.minimum
@@ -16,11 +16,12 @@ resource "aws_ecs_service" "front-v2" {
     assign_public_ip = false
   }
 
-  load_balancer {
+// there is no longer a load balancer for this
+  /*load_balancer {
     target_group_arn = aws_lb_target_group.front.arn
     container_name   = "web"
     container_port   = 80
-  }
+  }*/
 
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
   tags       = merge(local.default_tags, local.front_component_tag)
