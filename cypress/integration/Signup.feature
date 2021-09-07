@@ -3,6 +3,9 @@ Feature: Signup
 
     I want to be able to sign up
 
+    # Ensure that this file contains no scenarios which generate fixtures
+    # (typically marked with @CleanupFixtures)
+
     # NB these tests are order-sensitive, as some rely on the signup state
     # being established before they run
     Background:
@@ -12,14 +15,6 @@ Feature: Signup
     Scenario: Go to the create account page
         Given I visit "/signup"
         Then I should not find links in the page which open in new tabs without notifying me
-
-    @focus @CleanupFixtures
-    Scenario: Sign up with an email address already belonging to a user account (LPAL-485)
-        Given an existing user has the email "torrington.torponales@uat.digital.justice.gov.uk"
-        When I sign up with email "torrington.torponales@uat.digital.justice.gov.uk" and password "Pass1234"
-        Then I do not see "api-problem" in the page text
-        And I do not see "There is a problem" in the page text
-        And I see "Please check your email" in the page text
 
     @focus
     Scenario: Sign up with automatically generated test username and password
