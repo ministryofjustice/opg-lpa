@@ -6,6 +6,7 @@ Then('analytics cookies are set', () => {
 });
 
 Then('analytics cookies are not set', () => {
+  cy.clearCookies()
   cy.getCookie('_ga').should('be.null');
   cy.getCookie('_gid').should('be.null');
 });
