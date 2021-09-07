@@ -16,13 +16,6 @@ resource "aws_ecs_service" "front_v2" {
     assign_public_ip = false
   }
 
-// there is no longer a load balancer for this
-  /*load_balancer {
-    target_group_arn = aws_lb_target_group.front.arn
-    container_name   = "web"
-    container_port   = 80
-  }*/
-
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
   tags       = merge(local.default_tags, local.front_component_tag)
 }
