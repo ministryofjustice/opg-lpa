@@ -4,7 +4,7 @@
 resource "aws_ecs_service" "front-v2" {
   name                  = "front-v2"
   cluster               = aws_ecs_cluster.online-lpa.id
-  task_definition       = aws_ecs_task_definition.front.arn
+  task_definition       = aws_ecs_task_definition.front_v2.arn
   desired_count         = local.account.autoscaling.front.minimum
   launch_type           = "FARGATE"
   platform_version      = "1.3.0"
@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "front_v2" {
   cpu                      = 256
   memory                   = 512
   container_definitions    = "[${local.front_v2_app}]"
-  task_role_arn            = aws_iam_role.front_task_role.arn
+  task_role_arn            = aws_iam_role.front_v2_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = merge(local.default_tags, local.front_component_tag)
 
