@@ -41,16 +41,37 @@ def deleteViaAPI(lpaId, jsonData, pathSuffix = ''):
     r = s.delete(fullPath, headers=token)
     print(r,file=sys.stderr)
 
+def searchUser(username, password):
+    token, userId = authenticate()
+
+    fullPath = f'{apiRoot}/v2/users/search?email={username}'
+    r = s.get(fullPath, headers=token)
+
+    if r.status_code == 404 or r.json().get('isDeleted'):
+        return None
+
+    return r.json()
+
 def createUser(username, password):
     """ :return: dict {'userId': '...', 'activation_token': '...'} """
     fullPath = f'{apiRoot}/v2/users'
     data = {'username': username, 'password': password}
-    return s.post(fullPath, data=data).json()
 
-def deleteUser(userId, username, password):
+    result = s.post(fullPath, data=data).json()
+    result['username'] = username
+
+    return result
+
+def deleteUser(userIdToDelete, username, password):
     token, userId = authenticate(username, password)
-    fullPath = f'{apiRoot}/v2/user/{userId}'
-    return s.delete(fullPath, headers=token)
+
+    if userId is None:
+        return None
+
+    fullPath = f'{apiRoot}/v2/user/{userIdToDelete}'
+    r = s.delete(fullPath, headers=token)
+
+    return {'status_code': r.status_code, 'text': r.text}
 
 def activateUser(activation_token):
     """ :return: dict {'success': <bool>} """
@@ -84,6 +105,10 @@ def authenticate(username = "seeded_test_user@digital.justice.gov.uk", password 
     credentials = {"username":username,"password":password}
     authPath = f'{apiRoot}/v2/authenticate'
     r = requests.get(authPath, data=credentials)
+
+    if r.status_code == 401:
+        return {"Token": None}, None
+
     token = r.json()['token']
     userId = r.json()['userId']
     return {"Token": token}, userId
