@@ -58,29 +58,28 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 }
 
 resource "aws_rds_cluster" "cluster_serverless" {
-  count                               = var.aurora_serverless ? 1 : 0
-  cluster_identifier                  = "${var.cluster_identifier}-${var.environment}"
-  apply_immediately                   = var.apply_immediately
-  availability_zones                  = var.availability_zones
-  backup_retention_period             = var.backup_retention_period
-  copy_tags_to_snapshot               = var.copy_tags_to_snapshot
-  database_name                       = var.database_name
-  db_subnet_group_name                = var.db_subnet_group_name
-  deletion_protection                 = var.deletion_protection
-  engine                              = var.engine
-  engine_mode                         = "serverless"
-  final_snapshot_identifier           = "${var.database_name}-${var.environment}-final-snapshot"
-  kms_key_id                          = var.kms_key_id
-  master_username                     = var.master_username
-  master_password                     = var.master_password
-  preferred_backup_window             = "00:20-00:50"
-  preferred_maintenance_window        = "sun:01:00-sun:01:30"
-  storage_encrypted                   = var.storage_encrypted
-  skip_final_snapshot                 = var.skip_final_snapshot
-  vpc_security_group_ids              = var.vpc_security_group_ids
-  enabled_cloudwatch_logs_exports     = ["postgresql"]
-  tags                                = var.tags
-  iam_database_authentication_enabled = var.iam_database_authentication_enabled
+  count                           = var.aurora_serverless ? 1 : 0
+  cluster_identifier              = "${var.cluster_identifier}-${var.environment}"
+  apply_immediately               = var.apply_immediately
+  availability_zones              = var.availability_zones
+  backup_retention_period         = var.backup_retention_period
+  copy_tags_to_snapshot           = var.copy_tags_to_snapshot
+  database_name                   = var.database_name
+  db_subnet_group_name            = var.db_subnet_group_name
+  deletion_protection             = var.deletion_protection
+  engine                          = var.engine
+  engine_mode                     = "serverless"
+  final_snapshot_identifier       = "${var.database_name}-${var.environment}-final-snapshot"
+  kms_key_id                      = var.kms_key_id
+  master_username                 = var.master_username
+  master_password                 = var.master_password
+  preferred_backup_window         = "00:20-00:50"
+  preferred_maintenance_window    = "sun:01:00-sun:01:30"
+  storage_encrypted               = var.storage_encrypted
+  skip_final_snapshot             = var.skip_final_snapshot
+  vpc_security_group_ids          = var.vpc_security_group_ids
+  enabled_cloudwatch_logs_exports = ["postgresql"]
+  tags                            = var.tags
 
   scaling_configuration {
     auto_pause               = true
