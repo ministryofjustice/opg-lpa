@@ -22,7 +22,8 @@ Feature: Cookies
         When I click "usageCookies-no"
         Then I click "cookies-save"
         And "usageCookies-no" is checked
-        Then analytics cookies are not set
+        Then I visit "/home"
+        And analytics cookies are not set
 
     @focus
     Scenario: Accepting analytics cookies in banner sets analytics cookies on client (LPAL-480)
