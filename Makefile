@@ -80,7 +80,7 @@ dc-up-out:
 dc-build:
 	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
 
-# remove docker containers, volumes, images left by existing system, remove vendor folders, rebuild everything
+# remove docker containers, volumes, images left by existing system, rebuild everything
 # with no-cache
 # this leaves things in a state where make dc-run is needed again before starting back up
 .PHONY: dc-build-clean
@@ -96,8 +96,6 @@ dc-build-clean:
 	docker rmi lpa-front-app || true; \
 	docker rmi seeding || true; \
 	docker rmi opg-lpa_local-config; \
-	rm -fr ./service-admin/vendor; \
-	rm -fr ./service-api/vendor; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \

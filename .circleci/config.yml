@@ -8,7 +8,7 @@ pr_build: &pr_build
 
     - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
-        filters: { branches: { ignore: [ main ] } }
+        filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
@@ -59,6 +59,24 @@ pr_build: &pr_build
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
+        filters: { branches: { ignore: [main] } }
+
+    - build_containers_and_push_to_ecr/docker_build_lambda_image:
+        name: perfplat-lambda-docker-worker-build
+        account_id: "050256574573"
+        container_repo_account: development
+        lambda_name: perfplat-worker
+        dockerfile_path: service-perfplat/docker
+        dockerfile_name: Dockerfile-worker-ci
+        filters: { branches: { ignore: [main] } }
+
+    - build_containers_and_push_to_ecr/docker_build_lambda_image:
+        name: perfplat-lambda-docker-api-build
+        account_id: "050256574573"
+        container_repo_account: development
+        lambda_name: perfplat-api
+        dockerfile_path: service-perfplat/docker
+        dockerfile_name: Dockerfile-api-ci
         filters: { branches: { ignore: [main] } }
 
     - infrastructure_and_deployment/lint_account_terraform:
@@ -126,7 +144,8 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
-            perfplat-lambda-docker-build
+            perfplat-lambda-docker-worker-build,
+            perfplat-lambda-docker-api-build
           ]
 
     - ecr_scan_results:
@@ -140,7 +159,8 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
-            perfplat-lambda-docker-build
+            perfplat-lambda-docker-worker-build,
+            perfplat-lambda-docker-api-build
           ]
 
     - infrastructure_and_deployment/seed_environment_databases:
@@ -243,6 +263,42 @@ path_to_live: &path_to_live
         dockerfile_name: Dockerfile-worker-ci
         filters: { branches: { only: [main] } }
 
+    - build_containers_and_push_to_ecr/docker_build_lambda_image:
+        name: perfplat-lambda-docker-worker-build-preproduction
+        account_id: "987830934591"
+        container_repo_account: preproduction
+        lambda_name: perfplat-worker
+        dockerfile_path: service-perfplat/docker
+        dockerfile_name: Dockerfile-worker-ci
+        filters: { branches: { only: [main] } }
+
+    - build_containers_and_push_to_ecr/docker_build_lambda_image:
+        name: perfplat-lambda-docker-api-build-preproduction
+        account_id: "987830934591"
+        container_repo_account: preproduction
+        lambda_name: perfplat-api
+        dockerfile_path: service-perfplat/docker
+        dockerfile_name: Dockerfile-api-ci
+        filters: { branches: { only: [ master ] } }
+
+    - build_containers_and_push_to_ecr/docker_build_lambda_image:
+        name: perfplat-lambda-docker-worker-build-production
+        account_id: "980242665824"
+        container_repo_account: production
+        lambda_name: perfplat-worker
+        dockerfile_path: service-perfplat/docker
+        dockerfile_name: Dockerfile-worker-ci
+        filters: { branches: { only: [main] } }
+
+    - build_containers_and_push_to_ecr/docker_build_lambda_image:
+        name: perfplat-lambda-docker-api-build-production
+        account_id: "980242665824"
+        container_repo_account: production
+        lambda_name: perfplat-api
+        dockerfile_path: service-perfplat/docker
+        dockerfile_name: Dockerfile-api-ci
+        filters: { branches: { only: [ master ] } }
+
     - infrastructure_and_deployment/plan_check_terraform:
         name: preprod_account_plan_check_terraform_pr_build
         workspace: preproduction
@@ -289,8 +345,10 @@ path_to_live: &path_to_live
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
-            perfplat-lambda-docker-build-preproduction,
-            perfplat-lambda-docker-build-production,
+            perfplat-lambda-docker-worker-build-preproduction,
+            perfplat-lambda-docker-worker-build-production,
+            perfplat-lambda-docker-api-build-preproduction,
+            perfplat-lambda-docker-api-build-production,
           ]
 
     - ecr_scan_results:
@@ -303,8 +361,10 @@ path_to_live: &path_to_live
             admin_docker_build,
             api_docker_build,
             pdf_docker_build,
-            perfplat-lambda-docker-build-preproduction,
-            perfplat-lambda-docker-build-production,
+            perfplat-lambda-docker-worker-build-preproduction,
+            perfplat-lambda-docker-worker-build-production,
+            perfplat-lambda-docker-api-build-preproduction,
+            perfplat-lambda-docker-api-build-production,
           ]
 
     - infrastructure_and_deployment/seed_environment_databases:

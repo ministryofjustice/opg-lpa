@@ -114,7 +114,7 @@ stack. You should see something like the following:
 
 ```
 perfplatworker         | START RequestId: 38331752-2f8a-4529-9541-abe0f94fab95 Version: $LATEST
-perfplatworker         | [DEBUG] 2021-07-15T15:46:41.504Z        38331752-2f8a-4529-9541-abe0f94fab95    {'Records': [{'body': '{"year": 2021, "month": 7}', 'receiptHandle': 'xsiujrzblmyqjvktkvsocacbzuhoqtgkhijyfresgrybywoqexgfauqhnjzsulvvlomtwelghipcpikksyylljubhixqkmrgoourfkhadyfmpvxlgmxjlygfmujsxsotoymgkfxrdfzsmnhuizemhryfnrtiuxbnyldahlztinhmfbyhvksldeqlc', 'md5OfBody': '66ee22256fdea01163339803112a3e7b', 'eventSourceARN': 'arn:aws:sqs:eu-west-1:000000000000:perfplat-queue.fifo', 'eventSource': 'aws:sqs', 'awsRegion': 'eu-west-1', 'messageId': '019c7ee2-9b10-9665-fdf8-81b0db951e69', 'attributes': {}, 'messageAttributes': {}, 'md5OfMessageAttributes': None, 'sqs': True}]}
+perfplatworker         | [DEBUG] 2021-07-15T15:46:41.504Z        38331752-2f8a-4529-9541-abe0f94fab95    {'Records': [{'body': '{"year": 2021, "month": 7}', 'receiptHandle': '...', 'md5OfBody': '...', 'eventSourceARN': 'arn:aws:sqs:eu-west-1:000000000000:perfplat-queue.fifo', 'eventSource': 'aws:sqs', 'awsRegion': 'eu-west-1', 'messageId': '...', 'attributes': {}, 'messageAttributes': {}, 'md5OfMessageAttributes': None, 'sqs': True}]}
 perfplatworker         | END RequestId: 38331752-2f8a-4529-9541-abe0f94fab95
 perfplatworker         | REPORT RequestId: 38331752-2f8a-4529-9541-abe0f94fab95  Duration: 16.25 ms      Billed Duration: 100 ms Memory Size: 3008 MB    Max Memory Used: 3008 MB
 ```
