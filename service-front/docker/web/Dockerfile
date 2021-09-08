@@ -9,4 +9,6 @@ COPY service-front/public /web
 COPY service-front/docker/web/etc /etc
 
 CMD confd -onetime -backend env \
+  #&& sed -i "s|http://v2-url-should-be-substituted-here-on-container-startup|$OPG_LPA_ENDPOINTS_FRONT_V2|g" /etc/nginx/conf.d/default.conf \
+  && sed -i "s|\$front_v2_url|$OPG_LPA_ENDPOINTS_FRONT_V2|g" /etc/nginx/conf.d/default.conf \
   && nginx -g "daemon off;"
