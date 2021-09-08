@@ -1,11 +1,11 @@
-FROM composer:2.1.5 AS composer
+FROM composer:2.1.6 AS composer
 
 COPY tests/composer.json /app/composer.json
 COPY tests/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:7.4.16-cli
+FROM php:8.0.10-cli
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
