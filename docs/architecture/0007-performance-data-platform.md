@@ -60,7 +60,7 @@ We agreed that an **embedded** design for the solution's high-level architecture
 ![Data platform - container view](../images/structurizr-ContainerEmbedded.png)
 
 (The above diagrams use the [C4 model](https://c4model.com/). The [Structurizr](https://structurizr.com/)
-source is alongside the PNG files in the `images` directory.)
+source is in [the design directory](../design/0007-performance-data-platform-c4.structurizr).)
 
 This re-uses parts of the existing stack to implement ingress and storage for the data platform,
 in particular:
