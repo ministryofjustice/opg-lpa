@@ -1,13 +1,15 @@
 <?php
+
 namespace Application\Model\DataAccess\Postgres;
 
 use Application\Logging\LoggerTrait;
 use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\Pdo\Result;
+use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
-use Laminas\Db\ResultSet;
-use Laminas\Db\Sql\Predicate\Expression;
+use Laminas\Db\ResultSet\ResultSet;
+use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Sql;
 
 /**
@@ -16,11 +18,12 @@ use Laminas\Db\Sql\Sql;
  * See DataFactory.php which shows the pattern for creating instances
  * of *Data classes using DbWrapper.
  */
-class DbWrapper {
+class DbWrapper
+{
     /**
      * Time format to use when converting DateTime to a string.
      */
-    const TIME_FORMAT = 'Y-m-d\TH:i:s.uO'; // ISO8601 including microseconds
+    public const TIME_FORMAT = 'Y-m-d\TH:i:s.uO'; // ISO8601 including microseconds
 
     /**
      * @var Adapter
@@ -30,7 +33,6 @@ class DbWrapper {
     /**
      * Constructor.
      * @param Adapter $adapter
-     * @param string $tableName
      */
     public function __construct(Adapter $adapter)
     {
@@ -42,7 +44,7 @@ class DbWrapper {
      * @param string $tableName Name of table to retrieve metadata for
      * @return TableObject
      */
-    public function getTable(string $tableName) : TableObject
+    public function getTable(string $tableName): TableObject
     {
         $metadata = DbMetadataFactory::createSourceFromAdapter($this->adapter);
         return $metadata->getTable($tableName);
@@ -51,9 +53,9 @@ class DbWrapper {
     /**
      * Perform a raw SQL query via the adapter.
      * @param string $query Raw SQL string to execute on adapter
-     * @return ResultSet
+     * @return Driver\StatementInterface|ResultSet\ResultSet
      */
-    public function rawQuery(string $query) : ResultSet
+    public function rawQuery(string $query)
     {
         return $this->adapter->query($query, $this->adapter::QUERY_MODE_EXECUTE);
     }
@@ -65,7 +67,7 @@ class DbWrapper {
      * @param string $toQuote String to be quoted
      * @return string
      */
-    public function quoteValue(string $toQuote) : string
+    public function quoteValue(string $toQuote): string
     {
         return $this->adapter->getPlatform()->quoteValue($toQuote);
     }
@@ -74,7 +76,7 @@ class DbWrapper {
      * Create a SQL statement ready for addition of clauses etc.
      * @return Sql
      */
-    public function createSql() : Sql
+    public function createSql(): Sql
     {
         return new Sql($this->adapter);
     }
@@ -83,12 +85,28 @@ class DbWrapper {
      * Perform a SQL SELECT against the db.
      *
      * @param string $tableName Name of table to select against
-     * @param array $criteria Added to the WHERE clause; the "search" key is escaped
-     * and used for a regex match if present
-     * @param array $options Used to set columns, LIMIT, OFFSET and SORT
-     * @return Result
+     * @param array<string, string|ExpressionInterface> $criteria Added to the WHERE clause; the "search"
+     * key is escaped and used for a regex match if present
+     * @param array<string, array|int|string> $options Used to set columns, LIMIT, OFFSET and SORT
+     *
+     * Example options:
+     *
+     * $options = [
+     *     'sort' => [
+     *         'column1' => 1,   # ASC sort
+     *         'column2' => 0    # DESC sort
+     *     ],
+     *     'limit' => 1,
+     *     'skip' => 10,         # sets offset in SQL
+     *     'columns' => [
+     *         'column1',
+     *         'column2'
+     *     ],
+     * ]
+     *
+     * @return ResultInterface<mixed>
      */
-    public function select(string $tableName, array $criteria, array $options=[]) : Result
+    public function select(string $tableName, array $criteria = [], array $options = []): ResultInterface
     {
         $sql = $this->createSql();
 
@@ -100,7 +118,7 @@ class DbWrapper {
             unset($criteria['search']);
         }
 
-        if ($criteria !== [] && !is_null($criteria)) {
+        if ($criteria !== []) {
             $select->where($criteria);
         }
 
