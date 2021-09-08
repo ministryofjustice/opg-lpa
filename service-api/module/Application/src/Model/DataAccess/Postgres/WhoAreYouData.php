@@ -6,13 +6,13 @@ use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
+use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
+
 
 class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
 {
-
     const WHO_TABLE = 'who_are_you';
-
 
     /**
      * Insert a new 'Who Are You' response.
@@ -22,13 +22,13 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
      */
     public function insert(WhoAreYou $answer) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::WHO_TABLE);
 
         $data = [
-            'who'       => $answer->getWho(),
+            'who' => $answer->getWho(),
             'qualifier' => $answer->getQualifier(),
-            'logged'    => gmdate(self::TIME_FORMAT),
+            'logged' => gmdate(DbWrapper::TIME_FORMAT),
         ];
 
         $insert->columns(array_keys($data));
@@ -40,7 +40,6 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
 
         return $result->getAffectedRows() === 1;
     }
-
 
     /**
      * Return the WhoAreYou values for a specific date range.
@@ -54,7 +53,7 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
      */
     public function getStatsForTimeRange(DateTime $start, DateTime $end, array $options) : array
     {
-        $sql    = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::WHO_TABLE);
 
         $select->columns(['who','count' => new Expression('count(*)')]);
@@ -90,5 +89,4 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
 
         return $options;
     }
-
 }
