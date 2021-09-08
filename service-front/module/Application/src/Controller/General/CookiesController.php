@@ -30,7 +30,8 @@ class CookiesController extends AbstractBaseController
             } else {
                 $cookiePolicy['usage'] = false;
 
-                //remove any GA cookies present
+                // remove any GA cookies present. Making any additions or removals of cookies, will require manual testing
+                // see moj.cookie-functions.js also
                 setcookie('_ga', null, -1, '/');
                 setcookie('_gid', null, -1, '/');
                 setcookie('_gat', null, -1, '/');

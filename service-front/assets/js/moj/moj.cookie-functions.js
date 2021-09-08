@@ -10,7 +10,8 @@
         'essential': true,
         'usage': false
     }
-
+    // making any changes to the below will require manual test confirming everything is removed/set correctly
+    // see cookiesController.php also
     var COOKIE_CATEGORIES = {
         'cookie_policy': 'essential',
         'seen_cookie_message': 'essential',
