@@ -14,7 +14,13 @@ session data isn't accidentally shared between users
 
 Also, Make an LPA currently has no load tests. These are useful
 for capacity planning and finding bottlenecks which may be
-causing errors for users on the site.
+causing errors for users on the site. While we are auto-scaling,
+we don't have a way to verify that it is sufficient to manage
+expected load, which load testing can provide.
+
+Load testing can also provide a benchmark we can use to ensure
+that any new work we do does not degrade performance of the stack
+as a whole.
 
 ## Decision
 
