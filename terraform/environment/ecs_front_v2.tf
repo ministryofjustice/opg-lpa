@@ -20,6 +20,34 @@ resource "aws_ecs_service" "front_v2" {
   tags       = merge(local.default_tags, local.front_component_tag)
 }
 
+//-----------------------------------------------
+// Api service discovery
+
+resource "aws_service_discovery_service" "front_v2" {
+  name = "front_v2"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.internal.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+
+    routing_policy = "MULTIVALUE"
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
+//
+locals {
+  front_v2_service_fqdn = "${aws_service_discovery_service.front_v2.name}.${aws_service_discovery_private_dns_namespace.internal.name}"
+}
+
+
 //----------------------------------
 // The service's Security Groups
 
