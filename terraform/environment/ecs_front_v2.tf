@@ -17,6 +17,10 @@ resource "aws_ecs_service" "front_v2" {
   }
 
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
+
+  service_registries {
+    registry_arn = aws_service_discovery_service.front_v2.arn
+  }
   tags       = merge(local.default_tags, local.front_component_tag)
 }
 
