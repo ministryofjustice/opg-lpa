@@ -8,6 +8,7 @@ resource "aws_db_instance" "api" {
   identifier                  = lower("api-${local.environment}")
   name                        = "api2"
   allocated_storage           = 10
+  max_allocated_storage       = 100
   storage_type                = "gp2"
   storage_encrypted           = true
   skip_final_snapshot         = local.account.skip_final_snapshot
