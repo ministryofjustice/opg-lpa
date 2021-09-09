@@ -26,7 +26,7 @@ resource "aws_ecs_service" "front_v2" {
 }
 
 //-----------------------------------------------
-// Api service discovery
+// Service front v2 service discovery
 
 resource "aws_service_discovery_service" "front_v2" {
   name = "front_v2"
