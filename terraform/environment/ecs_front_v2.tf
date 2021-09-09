@@ -80,7 +80,7 @@ resource "aws_security_group_rule" "front_v2_ecs_service_front_ingress" {
   type                     = "ingress"
   from_port                = 8005
   to_port                  = 8005
-  protocol                 = "tcp"
+  protocol                 = "http"
   security_group_id        = aws_security_group.front_v2_ecs_service.id
   source_security_group_id = aws_security_group.front_ecs_service.id
 }
@@ -178,16 +178,13 @@ resource "aws_ecs_task_definition" "front_v2" {
   }
 }*/
 
-// this is like the one for front, but named v2
 data "aws_ecr_repository" "lpa_front_v2_app" {
   provider = aws.management
   name     = "online-lpa/front_v2_app"
 }
 
 //-----------------------------------------------
-// front ECS Service Task Container level config
-
-// have removed frontweb as doesn't apply
+// front v2 ECS Service Task Container level config
 
 locals {
   front_v2_app = jsonencode(
