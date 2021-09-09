@@ -3,11 +3,12 @@ namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
 use Laminas\Db\Sql\Sql;
+use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\User as UserRepository;
+
 
 class LogData extends AbstractBase implements UserRepository\LogRepositoryInterface
 {
-
     const DELETION_LOG_TABLE = 'deletion_log';
 
     /**
@@ -18,14 +19,14 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
      */
     public function addLog(array $details) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::DELETION_LOG_TABLE);
 
         $data = [
             'identity_hash' => $details['identity_hash'],
-            'type'          => $details['type'],
-            'reason'        => $details['reason'],
-            'loggedAt'      => $details['loggedAt']->format(self::TIME_FORMAT),
+            'type' => $details['type'],
+            'reason' => $details['reason'],
+            'loggedAt' => $details['loggedAt']->format(DbWrapper::TIME_FORMAT),
         ];
 
         $insert->columns(array_keys($data));
@@ -36,10 +37,9 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
 
         try {
             $statement->execute();
-
-        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
+        }
+        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
             return false;
-
         }
 
         return true;
@@ -53,7 +53,7 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
      */
     public function getLogByIdentityHash(string $identityHash) : ?array
     {
-        $sql    = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::DELETION_LOG_TABLE);
 
         $select->where(['identity_hash' => $identityHash]);
@@ -73,6 +73,4 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
 
         return $result;
     }
-
 }
-

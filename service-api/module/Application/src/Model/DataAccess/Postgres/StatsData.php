@@ -2,13 +2,13 @@
 namespace Application\Model\DataAccess\Postgres;
 
 use Laminas\Db\Sql\Sql;
+use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Stats as StatsRepository;
+
 
 class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryInterface
 {
-
     const STATS_TABLE = 'stats';
-
 
     /**
      * Insert a new set of stats into the cache.
@@ -18,7 +18,7 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
      */
     public function insert(array $stats) : bool
     {
-        $sql = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::STATS_TABLE);
 
         $data = [
@@ -35,7 +35,6 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
         return $result->getAffectedRows() === 1;
     }
 
-
     /**
      * Returns the current set of cached stats.
      *
@@ -43,7 +42,7 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
      */
     public function getStats() : ?array
     {
-        $sql    = new Sql($this->getZendDb());
+        $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::STATS_TABLE);
         $select->order('id DESC');  // Sense check; should be unnecessary
         $select->limit(1);
@@ -57,7 +56,6 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
         return json_decode($result->current()['data'], true);
     }
 
-
     /**
      * Delete all previously cached stats.
      *
@@ -66,11 +64,7 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
      */
     public function delete() : bool
     {
-        $adapter = $this->getZendDb();
-
-        $adapter->query('TRUNCATE TABLE '.self::STATS_TABLE, $adapter::QUERY_MODE_EXECUTE);
-
+        $this->dbWrapper->rawQuery('TRUNCATE TABLE ' . self::STATS_TABLE);
         return true;
     }
-
 }
