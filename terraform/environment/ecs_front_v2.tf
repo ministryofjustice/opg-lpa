@@ -58,7 +58,7 @@ locals {
 
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "front_v2_ecs_service" {
-  name_prefix = "${local.environment}-front-ecs-service"
+  name_prefix = "${local.environment}-front-v2-ecs-service"
   vpc_id      = data.aws_vpc.default.id
   tags        = merge(local.default_tags, local.front_component_tag)
 }
