@@ -83,3 +83,17 @@
     }
 
 }
+
+// simulate the newer design system layout for
+// warning blocks
+.govuk-warning-text {
+    position: relative;
+    padding: 10px 0;
+    margin-bottom: 30px;
+}
+
+.govuk-warning-text__text {
+    display: block;
+    padding-left: 45px;
+    font-weight: 700;
+}
