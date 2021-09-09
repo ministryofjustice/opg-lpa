@@ -42,7 +42,7 @@ we're just talking about modernising the code base for the Make an LPA tool.)
 * **Don't rewrite everything at once**
 
   Where possible, migrate part of an application to a new
-  components and split traffic coming into the domain so that some paths are diverted to that
+  component and split traffic coming into the domain so that some paths are diverted to that
   component. This will typically use nginx in dev, but may be done at the AWS level if
   appropriate (e.g in a load balancer or application gateway).
 
