@@ -11,7 +11,7 @@ resource "aws_ecs_service" "front_v2" {
   propagate_tags        = "TASK_DEFINITION"
   wait_for_steady_state = true
   network_configuration {
-    security_groups  = [aws_security_group.front_ecs_service.id]
+    security_groups  = [aws_security_group.front_v2_ecs_service.id]
     subnets          = data.aws_subnet_ids.private.ids
     assign_public_ip = false
   }
