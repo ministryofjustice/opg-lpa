@@ -51,6 +51,8 @@ class CookiesController extends AbstractBaseController
                         $cookie->getFieldName(),
                         $cookie->getFieldValue()
                     );
+
+                    return $this->redirect()->toRoute('cookies');
                 }
             }
 
