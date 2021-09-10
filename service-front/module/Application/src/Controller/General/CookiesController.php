@@ -37,8 +37,6 @@ class CookiesController extends AbstractBaseController
                 $this->removeCookie('_ga', $domain);
                 $this->removeCookie('_gid', $domain);
                 $this->removeCookie('_gat', $domain);
-
-                return $this->redirect()->toRoute('cookies');
             }
 
             $newCookiePolicy = new SetCookie(self::COOKIE_POLICY_NAME);
