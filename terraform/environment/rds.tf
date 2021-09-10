@@ -3,6 +3,10 @@ data "aws_kms_key" "rds" {
   key_id = "alias/aws/rds"
 }
 
+data "aws_sns_topic" "rds_events" {
+  name = "${local.account_name}-rds-events"
+}
+
 resource "aws_db_instance" "api" {
   count                               = local.account.always_on ? 1 : 0
   identifier                          = lower("api-${local.environment}")
@@ -25,12 +29,30 @@ resource "aws_db_instance" "api" {
   multi_az                            = true
   backup_retention_period             = local.account.backup_retention_period
   deletion_protection                 = local.account.deletion_protection
-  tags                                = merge(local.default_tags, local.db_component_tag)
   allow_major_version_upgrade         = true
   monitoring_interval                 = 30
   monitoring_role_arn                 = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/rds-enhanced-monitoring"
   enabled_cloudwatch_logs_exports     = ["postgresql", "upgrade"]
   iam_database_authentication_enabled = true
+  tags                                = merge(local.default_tags, local.db_component_tag)
+}
+
+// setup a bunch of alarms that are useful for our needs
+//see https://github.com/lorenzoaiello/terraform-aws-rds-alarms
+// since aurora is not in use yet for pre and production,
+// we'll revisit alarms as the serverless setup is different
+module "aws_rds_api_alarms" {
+  count                                     = local.account.always_on ? 1 : 0
+  source                                    = "lorenzoaiello/rds-alarms/aws"
+  version                                   = "2.1.0"
+  db_instance_id                            = aws_db_instance.api[0].id
+  actions_alarm                             = [data.aws_sns_topic.rds_events.arn]
+  actions_ok                                = [data.aws_sns_topic.rds_events.arn]
+  disk_free_storage_space_too_low_threshold = "1000000000" #configured to 1GB
+  cpu_utilization_too_high_threshold        = "95"
+  db_instance_class                         = "db.m3.medium"
+  prefix                                    = "${local.environment}-"
+  tags                                      = merge(local.default_tags, local.db_component_tag)
 }
 
 module "api_aurora" {
