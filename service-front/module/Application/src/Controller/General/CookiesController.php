@@ -43,6 +43,8 @@ class CookiesController extends AbstractBaseController
 
             $this->addCookie(self::COOKIE_POLICY_NAME, json_encode($cookiePolicy, true), $dateTime);
             $this->addCookie(self::SEEN_COOKIE_NAME, 'true', $dateTime);
+
+            return $this->redirect()->toRoute('cookies');
         }
 
         if (!is_null($cookiePolicy)) {
@@ -68,7 +70,7 @@ class CookiesController extends AbstractBaseController
         return null;
     }
 
-    private function addCookie(String $cookieName, $value, \DateTimeInterface $dateTime)
+    private function addCookie(string $cookieName, $value, \DateTimeInterface $dateTime)
     {
         $cookie = new SetCookie($cookieName);
         $cookie->setValue($value)
@@ -82,7 +84,7 @@ class CookiesController extends AbstractBaseController
         );
     }
 
-    private function removeCookie(String $cookieName, String $domain)
+    private function removeCookie(string $cookieName, string $domain)
     {
         $cookie = new SetCookie($cookieName);
         $cookie->setValue('')
