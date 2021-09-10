@@ -1,5 +1,5 @@
 {
-    "baseUrl": "https://616lpal486coo.development.lastingpowerofattorney.service.gov.uk",
+    "baseUrl": "https://localhost:7002",
     "testFiles": "**/*.feature",
     "postLogoutUrl": "https://www.gov.uk/done/lasting-power-of-attorney",
     "rootRedirectUrl": "https://www.gov.uk/power-of-attorney/make-lasting-power",
