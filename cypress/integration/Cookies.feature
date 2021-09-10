@@ -37,6 +37,8 @@ Feature: Cookies
         And I can see a hide button to close the cookies banner
         When I click "hide-cookies-banner"
         Then the cookie banner is not visible
+        When I visit "/cookies"
+        Then "usageCookies-yes" is checked
 
     @focus
     Scenario: Rejecting analytics cookies in banner does not set analytics cookies on client (LPAL-480)
@@ -47,3 +49,5 @@ Feature: Cookies
         And I can see a hide button to close the cookies banner
         When I click "hide-cookies-banner"
         Then the cookie banner is not visible
+        When I visit "/cookies"
+        Then "usageCookies-no" is checked
