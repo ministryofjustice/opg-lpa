@@ -60,6 +60,8 @@ class CookiesController extends AbstractBaseController
                 $seenCookie->getFieldName(),
                 $seenCookie->getFieldValue()
             );
+
+            return $this->redirect()->toRoute('cookies');
         }
 
         if (!is_null($cookiePolicy)) {
@@ -85,7 +87,7 @@ class CookiesController extends AbstractBaseController
         return null;
     }
 
-    private function removeCookie(String $cookieName, String $domain)
+    private function removeCookie(string $cookieName, string $domain)
     {
         $cookie = new SetCookie($cookieName);
         $cookie->setValue('')
