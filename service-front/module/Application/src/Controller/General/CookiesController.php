@@ -10,8 +10,8 @@ use Laminas\View\Model\ViewModel;
 
 class CookiesController extends AbstractBaseController
 {
-    const COOKIE_POLICY_NAME = 'cookie_policy';
-    const SEEN_COOKIE_NAME = 'seen_cookie_message';
+    public const COOKIE_POLICY_NAME = 'cookie_policy';
+    public const SEEN_COOKIE_NAME = 'seen_cookie_message';
 
     public function indexAction()
     {
@@ -30,20 +30,40 @@ class CookiesController extends AbstractBaseController
             } else {
                 $cookiePolicy['usage'] = false;
 
-                // remove any GA cookies present. Making any additions or removals of cookies, will require manual testing
-                // see moj.cookie-functions.js also
-                setcookie('_ga', null, -1, '/');
-                setcookie('_gid', null, -1, '/');
-                setcookie('_gat', null, -1, '/');
+                // remove any GA cookies present. Making any additions or removals of cookies, will require
+                // manual testing; see moj.cookie-functions.js also
+                $cookies = $request->getCookie();
+                $domain = $request->getUri()->getHost();
+
+                foreach (['_ga', '_gid', '_gat'] as $cookieName) {
+                    $cookie = new SetCookie($cookieName);
+                    $cookie->setValue('')
+                        ->setHttponly(false)
+                        ->setSecure(false)
+                        ->setPath('/')
+                        ->setExpires(new \DateTime('-1 day'));
+
+                    if ($domain !== 'localhost') {
+                        $cookie->setDomain('.' . $domain);
+                    }
+
+                    $this->getResponse()->getHeaders()->addHeaderLine(
+                        $cookie->getFieldName(),
+                        $cookie->getFieldValue()
+                    );
+                }
             }
 
             $newCookiePolicy = new SetCookie(self::COOKIE_POLICY_NAME);
-            $newCookiePolicy->setValue(json_encode($cookiePolicy))
+            $newCookiePolicy->setValue(json_encode($cookiePolicy, true))
                 ->setHttponly(false)
                 ->setSecure(true)
                 ->setPath('/')
                 ->setExpires(new \DateTime('+365 days'));
-            $this->getResponse()->getHeaders()->addHeaderLine($newCookiePolicy->getFieldName(), $newCookiePolicy->getFieldValue());
+            $this->getResponse()->getHeaders()->addHeaderLine(
+                $newCookiePolicy->getFieldName(),
+                $newCookiePolicy->getFieldValue()
+            );
 
             $seenCookie = new SetCookie(self::SEEN_COOKIE_NAME);
             $seenCookie->setValue('true')
@@ -51,9 +71,10 @@ class CookiesController extends AbstractBaseController
                 ->setSecure(true)
                 ->setPath('/')
                 ->setExpires(new \DateTime('+365 days'));
-            $this->getResponse()->getHeaders()->addHeaderLine($seenCookie->getFieldName(), $seenCookie->getFieldValue());
-
-            return $this->redirect()->toRoute('cookies');
+            $this->getResponse()->getHeaders()->addHeaderLine(
+                $seenCookie->getFieldName(),
+                $seenCookie->getFieldValue()
+            );
         }
 
         if (!is_null($cookiePolicy)) {
@@ -65,7 +86,7 @@ class CookiesController extends AbstractBaseController
         return new ViewModel(['form' => $form]);
     }
 
-    private function fetchPolicyCookie(RequestInterface $request) : ?array
+    private function fetchPolicyCookie(RequestInterface $request): ?array
     {
         $cookies = $request->getCookie();
         if ($cookies !== false && $cookies->offsetExists(self::COOKIE_POLICY_NAME)) {
