@@ -39,29 +39,10 @@ class CookiesController extends AbstractBaseController
                 $this->removeCookie('_gat', $domain);
             }
 
-            $newCookiePolicy = new SetCookie(self::COOKIE_POLICY_NAME);
-            $newCookiePolicy->setValue(json_encode($cookiePolicy, true))
-                ->setHttponly(false)
-                ->setSecure(true)
-                ->setPath('/')
-                ->setExpires(new \DateTime('+365 days'));
-            $this->getResponse()->getHeaders()->addHeaderLine(
-                $newCookiePolicy->getFieldName(),
-                $newCookiePolicy->getFieldValue()
-            );
+            $dateTime = new \DateTime('+365 days');
 
-            $seenCookie = new SetCookie(self::SEEN_COOKIE_NAME);
-            $seenCookie->setValue('true')
-                ->setHttponly(false)
-                ->setSecure(true)
-                ->setPath('/')
-                ->setExpires(new \DateTime('+365 days'));
-            $this->getResponse()->getHeaders()->addHeaderLine(
-                $seenCookie->getFieldName(),
-                $seenCookie->getFieldValue()
-            );
-
-            return $this->redirect()->toRoute('cookies');
+            $this->addCookie(self::COOKIE_POLICY_NAME, json_encode($cookiePolicy, true), $dateTime);
+            $this->addCookie(self::SEEN_COOKIE_NAME, 'true', $dateTime);
         }
 
         if (!is_null($cookiePolicy)) {
@@ -87,7 +68,21 @@ class CookiesController extends AbstractBaseController
         return null;
     }
 
-    private function removeCookie(string $cookieName, string $domain)
+    private function addCookie(String $cookieName, $value, \DateTimeInterface $dateTime)
+    {
+        $cookie = new SetCookie($cookieName);
+        $cookie->setValue($value)
+            ->setHttponly(false)
+            ->setSecure(true)
+            ->setPath('/')
+            ->setExpires($dateTime);
+        $this->getResponse()->getHeaders()->addHeaderLine(
+            $cookie->getFieldName(),
+            $cookie->getFieldValue()
+        );
+    }
+
+    private function removeCookie(String $cookieName, String $domain)
     {
         $cookie = new SetCookie($cookieName);
         $cookie->setValue('')
