@@ -22,8 +22,8 @@ def publish_route():
 
     return jsonify(result), status_code
 
-@api.route("/retreive", methods=["GET"])
-def retreive_route():
+@api.route("/retrieve", methods=["GET"])
+def retrieve_route():
     result, status_code = handle_dummy()
 
     return jsonify(result), status_code

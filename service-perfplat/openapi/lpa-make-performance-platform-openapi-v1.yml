@@ -25,7 +25,7 @@ paths:
   /retrieve:
     get:
       summary: "Retrieve job from dataplatform"
-      operationId: api.resources.retreive_route
+      operationId: api.resources.retrieve_route
       responses:
         200:
           description: OK

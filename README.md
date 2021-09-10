@@ -133,13 +133,23 @@ In this mode, the `Makefile` will fetch secrets using `aws secretsmanager` and `
 
 ### Tests
 
-To run the unit tests
+To run the unit tests for the PHP applications:
 
 ```bash
 make dc-unit-tests
 ```
 
-For how to run the functional tests, please see seperate README in tests/functional directory
+To run the unit tests for the performance platform (Python):
+
+```zsh
+virtualenv -p python3 ~/venv/perfplat
+source ~/venv/perfplat/bin/activate
+cd service-perfplat
+pip install -e.\[dev\]
+pytest
+```
+
+For how to run the functional tests, please see seperate README in tests/functional directory.
 
 ### Cypress functional tests
 
