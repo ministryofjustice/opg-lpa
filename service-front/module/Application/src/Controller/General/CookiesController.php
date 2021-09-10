@@ -32,28 +32,13 @@ class CookiesController extends AbstractBaseController
 
                 // remove any GA cookies present. Making any additions or removals of cookies, will require
                 // manual testing; see moj.cookie-functions.js also
-                $cookies = $request->getCookie();
                 $domain = $request->getUri()->getHost();
 
-                foreach (['_ga', '_gid', '_gat'] as $cookieName) {
-                    $cookie = new SetCookie($cookieName);
-                    $cookie->setValue('')
-                        ->setHttponly(false)
-                        ->setSecure(false)
-                        ->setPath('/')
-                        ->setExpires(new \DateTime('-1 day'));
+                $this->removeCookie('_ga', $domain);
+                $this->removeCookie('_gid', $domain);
+                $this->removeCookie('_gat', $domain);
 
-                    if ($domain !== 'localhost') {
-                        $cookie->setDomain('.' . $domain);
-                    }
-
-                    $this->getResponse()->getHeaders()->addHeaderLine(
-                        $cookie->getFieldName(),
-                        $cookie->getFieldValue()
-                    );
-
-                    return $this->redirect()->toRoute('cookies');
-                }
+                return $this->redirect()->toRoute('cookies');
             }
 
             $newCookiePolicy = new SetCookie(self::COOKIE_POLICY_NAME);
@@ -100,5 +85,24 @@ class CookiesController extends AbstractBaseController
         }
 
         return null;
+    }
+
+    private function removeCookie(String $cookieName, String $domain)
+    {
+        $cookie = new SetCookie($cookieName);
+        $cookie->setValue('')
+            ->setHttponly(false)
+            ->setSecure(false)
+            ->setPath('/')
+            ->setExpires(new \DateTime('-1 day'));
+
+        if ($domain !== 'localhost') {
+            $cookie->setDomain('.' . $domain);
+        }
+
+        $this->getResponse()->getHeaders()->addHeaderLine(
+            $cookie->getFieldName(),
+            $cookie->getFieldValue()
+        );
     }
 }
