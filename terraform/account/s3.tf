@@ -2,14 +2,6 @@ data "aws_elb_service_account" "main" {
   region = "eu-west-1"
 }
 
-resource "aws_s3_account_public_access_block" "block_all" {
-  count                   = local.account_name == "development" ? 1 : 0
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
 data "aws_iam_policy_document" "loadbalancer_logging" {
   statement {
     sid = "accessLogBucketAccess"
