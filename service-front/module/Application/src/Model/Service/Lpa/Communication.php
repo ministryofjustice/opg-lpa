@@ -6,6 +6,7 @@ use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Exception;
+use Laminas\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
 
 /**
@@ -48,8 +49,10 @@ class Communication extends AbstractEmailService
         ];
 
         try {
-            $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_LPA_REGISTRATION, $data);
-        } catch (Exception $e) {
+            $message = $this->createMessage($to, AbstractEmailService::EMAIL_LPA_REGISTRATION, $data);
+            $this->getMailTransport()->send($message);
+        } catch (InvalidArgumentException $ex) {
+            $this->getLogger()->err($ex);
             return "failed-sending-email";
         }
 

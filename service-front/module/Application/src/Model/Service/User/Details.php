@@ -2,13 +2,14 @@
 
 namespace Application\Model\Service\User;
 
+use Application\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\User\User;
-use Application\Logging\LoggerTrait;
+use Laminas\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
 use Exception;
 use RuntimeException;
@@ -30,7 +31,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     {
         try {
             return new User($this->apiClient->httpGet('/v2/user/' . $this->getUserId()));
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+            $this->getLogger()->err($ex);
+        }
 
         return false;
     }
@@ -92,19 +95,34 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             ]);
 
             if (is_array($result) && isset($result['token'])) {
-                //  Send the new email address received notification - ignore any failures
+                //  Send the new email address received notification - log any failures
                 try {
-                    $this->getMailTransport()->sendMessageFromTemplate($currentAddress, MailTransport::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY, [
-                        'newEmailAddress' => $email,
-                    ]);
-                } catch (Exception $ignore) {}
+                    $message = $this->createMessage(
+                        $currentAddress,
+                        AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY,
+                        [
+                            'newEmailAddress' => $email,
+                        ]
+                    );
+
+                    $this->getMailTransport()->send($message);
+                } catch (InvalidArgumentException $ex) {
+                    $this->getLogger()->err($ex);
+                }
 
                 //  Send the new email address verify email
                 try {
-                    $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_NEW_EMAIL_ADDRESS_VERIFY, [
-                        'token' => $result['token'],
-                    ]);
-                } catch (Exception $e) {
+                    $message = $this->createMessage(
+                        $email,
+                        AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY,
+                        [
+                            'token' => $result['token'],
+                        ]
+                    );
+
+                    $this->getMailTransport()->send($message);
+                } catch (InvalidArgumentException $ex) {
+                    $this->getLogger()->err($ex);
                     return "failed-sending-email";
                 }
 
@@ -133,7 +151,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             ]);
 
             return true;
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+            $this->getLogger()->err($ex);
+        }
 
         return false;
     }
@@ -163,12 +183,17 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             if (is_array($result) && isset($result['token'])) {
                 $email = $this->userDetailsSession->user->email->address;
 
+                $message = $this->createMessage($email, AbstractEmailService::EMAIL_PASSWORD_CHANGED, [
+                    'email' => $email
+                ]);
+
+
                 //  Send the password changed email - ignore any errors
                 try {
-                    $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_CHANGED, [
-                        'email' => $email
-                    ]);
-                } catch (Exception $ignore) {}
+                    $this->getMailTransport()->send($message);
+                } catch (InvalidArgumentException $ex) {
+                    $this->getLogger()->err($ex);
+                }
 
                 // Update the identity with the new token to avoid being
                 // logged out after the redirect. We don't need to update the token
@@ -178,7 +203,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 return true;
             }
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+            $this->getLogger()->err($ex);
+        }
 
         return 'unknown-error';
     }
@@ -195,7 +222,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             return $this->apiClient->httpPost('/v2/authenticate', [
                 'authToken' => $token,
             ]);
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+            $this->getLogger()->err($ex);
+        }
 
         return false;
     }
@@ -207,11 +236,15 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     public function delete()
     {
-        $this->getLogger()->info('Deleting user and all their LPAs', $this->getAuthenticationService()->getIdentity()->toArray());
+        $this->getLogger()->info(
+            'Deleting user and all their LPAs',
+            $this->getAuthenticationService()->getIdentity()->toArray()
+        );
 
         try {
             $this->apiClient->httpDelete('/v2/user/' . $this->getUserId());
         } catch (ApiException $ex) {
+            $this->getLogger()->err($ex);
             return false;
         }
 
@@ -233,25 +266,27 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 'username' => strtolower($email),
             ]);
 
-            if (!is_array($result)) {
-                return "unknown-error";
-            }
-
             //  If there is an activation token then the account isn't active yet
-            if (isset($result['activation_token'])) {
-                return $this->sendAccountActivateEmail($email, $result['activation_token']);
-            } elseif (isset($result['token'])) {
-                try {
-                    $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET, [
-                        'token' => $result['token'],
-                    ]);
-                } catch (Exception $e) {
-                    return "failed-sending-email";
+            if (is_array($result)) {
+                if (isset($result['activation_token'])) {
+                    return $this->sendAccountActivateEmail($email, $result['activation_token']);
                 }
 
-                $logger->info('Password reset email sent to ' . $email);
+                if (isset($result['token'])) {
+                    try {
+                        $message = $this->createMessage($email, AbstractEmailService::EMAIL_PASSWORD_RESET, [
+                            'token' => $result['token'],
+                        ]);
+                        $this->getMailTransport()->send($message);
+                    } catch (InvalidArgumentException $ex) {
+                        $this->getLogger()->err($ex);
+                        return "failed-sending-email";
+                    }
 
-                return true;
+                    $logger->info('Password reset email sent to ' . $email);
+
+                    return true;
+                }
             }
 
             return 'unknown-error';
@@ -259,8 +294,10 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             // 404 response means user not found...
             if ($ex->getCode() == 404) {
                 try {
-                    $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET_NO_ACCOUNT);
-                } catch (Exception $e) {
+                    $message = $this->createMessage($email, AbstractEmailService::EMAIL_PASSWORD_RESET_NO_ACCOUNT);
+                    $this->getMailTransport()->send($message);
+                } catch (InvalidArgumentException $ex) {
+                    $this->getLogger()->err($ex);
                     return "failed-sending-email";
                 }
 
@@ -279,10 +316,12 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     private function sendAccountActivateEmail($email, $activationToken)
     {
         try {
-            $this->getMailTransport()->sendMessageFromTemplate(strtolower($email), MailTransport::EMAIL_ACCOUNT_ACTIVATE, [
+            $message = $this->createMessage(strtolower($email), AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE, [
                 'token' => $activationToken,
             ]);
-        } catch (Exception $e) {
+            $this->getMailTransport()->send($message);
+        } catch (InvalidArgumentException $ex) {
+            $this->getLogger()->err($ex);
             return 'failed-sending-email';
         }
 
@@ -309,6 +348,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 return true;
             }
         } catch (ApiException $ex) {
+            $this->getLogger()->err($ex);
             if ($ex->getMessage() == 'Invalid passwordToken') {
                 return 'invalid-token';
             } elseif ($ex->getMessage() != null) {
@@ -338,10 +378,12 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
             if (isset($result['activation_token'])) {
                 try {
-                    $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_ACCOUNT_ACTIVATE, [
+                    $message = $this->createMessage($email, AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE, [
                         'token' => $result['activation_token'],
                     ]);
-                } catch (Exception $e) {
+                    $this->getMailTransport()->send($message);
+                } catch (InvalidArgumentException $ex) {
+                    $this->getLogger()->err($ex);
                     return "failed-sending-email";
                 }
 
@@ -349,9 +391,15 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             }
         } catch (ApiException $ex) {
             if ($ex->getMessage() == 'username-already-exists') {
-                try{
-                    $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_ACCOUNT_DUPLICATION_WARNING, []);
-                }catch (Exception $e) {
+                try {
+                    $message = $this->createMessage(
+                        $email,
+                        AbstractEmailService::EMAIL_ACCOUNT_DUPLICATION_WARNING,
+                        []
+                    );
+                    $this->getMailTransport()->send($message);
+                } catch (InvalidArgumentException $ex) {
+                    $this->getLogger()->err($ex);
                     return "failed-sending-warning-email";
                 }
                 return 'address-already-registered';
@@ -371,7 +419,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     public function resendActivateEmail($email)
     {
-        //  Trigger a request to reset the password in the API - this will return the activation token or throw an exception
+        //  Trigger a request to reset the password in the API - this will return the activation token or throw
+        //  an exception
         try {
             $result = $this->apiClient->httpPost('/v2/users/password-reset', [
                 'username' => strtolower($email),
@@ -380,7 +429,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             if (isset($result['activation_token'])) {
                 return $this->sendAccountActivateEmail($email, $result['activation_token']);
             }
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+            $this->getLogger()->err($ex);
+        }
 
         //  If a proper reset token was returned, or the exception thrown was NOT account-not-activated then
         //  something has gone wrong so return false - when using this function the account should existing
@@ -406,7 +457,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $logger->info('Account activation attempt with token was successful');
 
             return true;
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+            $this->getLogger()->err($ex);
+        }
 
         $logger->info('Account activation attempt with token failed, or was already activated');
 
