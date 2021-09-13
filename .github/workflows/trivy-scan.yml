@@ -35,7 +35,7 @@ jobs:
           - name: service-pdf
             path: "./service-pdf"
             code-scan: true
-          - name: service-perfplat'
+          - name: service-perfplat
             path: "./service-perfplat"
             code-scan: true
           - name: tests

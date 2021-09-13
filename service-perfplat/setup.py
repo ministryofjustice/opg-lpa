@@ -17,29 +17,21 @@ setup(
         'psycopg2',
         'Flask',
         'flask-lambda',
-        'itsdangerous',
         'Werkzeug',
         'connexion',
-        'swagger-ui-bundle'
     ],
     extras_require={
         'dev': [
             'boto3',
             'localstack-client',
-            'alembic',
-            'nose',
-            'openapi-spec-validator',
-            'requests',
-            'moto',
-            'coverage',
             'pytest',
             'pytest-cases',
             'pytest-cov',
             'pytest-ordering',
-            'pytest-env'
+            'requests',
         ],
     },
     scripts=[
-        './bin/queuecli'
+        './bin/queuecli',
     ],
 )
