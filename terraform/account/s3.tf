@@ -20,6 +20,27 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
       type = "AWS"
     }
   }
+
+  statement {
+    sid    = "AllowSSLRequestsOnly"
+    effect = "Deny"
+
+    resources = [
+      aws_s3_bucket.access_log.arn,
+      "${aws_s3_bucket.access_log.arn}/*",
+    ]
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
 }
 
 #versioning not required for a logging bucket bucket logging not needed
@@ -78,6 +99,12 @@ resource "aws_s3_bucket" "lpa_pdf_cache" {
   tags = local.default_tags
 }
 
+resource "aws_s3_bucket_policy" "lpa_pdf_cache" {
+  bucket = aws_s3_bucket.lpa_pdf_cache.id
+  policy = data.aws_iam_policy_document.lpa_pdf_cache_policy.json
+
+}
+
 resource "aws_s3_bucket_public_access_block" "lpa_pdf_cache" {
   bucket = aws_s3_bucket.lpa_pdf_cache.id
 
@@ -97,4 +124,29 @@ resource "aws_kms_key" "lpa_pdf_cache" {
 resource "aws_kms_alias" "lpa_pdf_cache" {
   name          = "alias/lpa_pdf_cache-${terraform.workspace}"
   target_key_id = aws_kms_key.lpa_pdf_cache.key_id
+}
+
+data "aws_iam_policy_document" "lpa_pdf_cache_policy" {
+  statement {
+    sid    = "AllowSSLRequestsOnly"
+    effect = "Deny"
+
+    resources = [
+      aws_s3_bucket.lpa_pdf_cache,
+      "${aws_s3_bucket.lpa_pdf_cache}/*",
+    ]
+
+    actions = ["s3:*"]
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
 }
