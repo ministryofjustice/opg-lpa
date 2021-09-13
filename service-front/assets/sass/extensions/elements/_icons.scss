@@ -130,3 +130,23 @@
         background-size: contain;
     }
 }
+
+// taken from the latest GDS; the version of the
+// design system we're using doesn't have a warning icon
+.govuk-warning-text__icon {
+    font-weight: 700;
+    box-sizing: border-box;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    min-width: 35px;
+    min-height: 35px;
+    border: 3px solid #0b0c0c;
+    border-radius: 50%;
+    color: #fff;
+    background: #0b0c0c;
+    line-height: 29px;
+    text-align: center;
+    user-select: none;
+    font-size: 30px;
+}
