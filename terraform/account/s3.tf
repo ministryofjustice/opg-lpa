@@ -132,8 +132,8 @@ data "aws_iam_policy_document" "lpa_pdf_cache_policy" {
     effect = "Deny"
 
     resources = [
-      aws_s3_bucket.lpa_pdf_cache,
-      "${aws_s3_bucket.lpa_pdf_cache}/*",
+      aws_s3_bucket.lpa_pdf_cache.arn,
+      "${aws_s3_bucket.lpa_pdf_cache.arn}/*",
     ]
 
     actions = ["s3:*"]
