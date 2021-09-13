@@ -14,7 +14,6 @@ resource "aws_sns_topic" "rds_events" {
   tags = merge(local.default_tags, local.db_component_tag)
 }
 
-
 resource "aws_db_event_subscription" "rds_events" {
   name      = "${local.account_name}-rds-event-sub"
   sns_topic = aws_sns_topic.rds_events.arn
