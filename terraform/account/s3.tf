@@ -30,6 +30,8 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
       "${aws_s3_bucket.access_log.arn}/*",
     ]
 
+    actions = ["s3:*"]
+
     condition {
       test     = "Bool"
       variable = "aws:SecureTransport"
