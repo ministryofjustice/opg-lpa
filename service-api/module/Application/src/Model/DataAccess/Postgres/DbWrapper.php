@@ -2,7 +2,6 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
-use Application\Logging\LoggerTrait;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Metadata\Object\TableObject;
