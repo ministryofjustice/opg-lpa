@@ -32,7 +32,7 @@ resource "aws_db_instance" "api" {
   deletion_protection                 = local.account.deletion_protection
   tags                                = merge(local.default_tags, local.db_component_tag)
   monitoring_interval                 = 30
-  monitoring_role_arn                 = "arn:aws:iam::${var.account_id}:role/rds-enhanced-monitoring"
+  monitoring_role_arn                 = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/rds-enhanced-monitoring"
   enabled_cloudwatch_logs_exports     = ["postgresql", "upgrade"]
   iam_database_authentication_enabled = true
   performance_insights_enabled        = true
