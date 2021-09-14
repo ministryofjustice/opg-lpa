@@ -38,6 +38,7 @@ resource "aws_db_instance" "api" {
   iam_database_authentication_enabled = true
   performance_insights_enabled        = true
   performance_insights_kms_key_id     = data.aws_kms_key.rds.arn
+  copy_tags_to_snapshot               = true
 }
 
 // setup a bunch of alarms that are useful for our needs
