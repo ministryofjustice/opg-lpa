@@ -1,9 +1,9 @@
 <?php
+
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-
 use Application\Model\DataAccess\Postgres\DbWrapper;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
@@ -12,10 +12,9 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 
-
 class DbWrapperTest extends MockeryTestCase
 {
-    public function testSelect() : void
+    public function testSelect(): void
     {
         $tableName = 'foo';
 
@@ -43,16 +42,9 @@ class DbWrapperTest extends MockeryTestCase
             ->with($tableName)
             ->andReturn($selectMock);
 
-        // confirm the expression passed to where() has the escaped string
-        $selectMock->shouldReceive('where')
-            ->with(Mockery::on(function ($args) {
-                return $args[0]->getExpression() === "search ~* 'o''connor'";
-            }))
-            ->once();
-
         // confirm additional criteria are appended to where
         $selectMock->shouldReceive('where')
-            ->with(['user' => '2']);
+            ->with(['user' => '2', "search ~* 'o''connor'"]);
 
         // additional LIMIT, OFFSET, SORT and COLUMNS settings
         $selectMock->shouldReceive('offset')
@@ -80,6 +72,6 @@ class DbWrapperTest extends MockeryTestCase
             ->with("o'connor")
             ->andReturn("'o''connor'");
 
-        $count = $dbWrapper->select($tableName, $criteria, $options);
+        $dbWrapper->select($tableName, $criteria, $options);
     }
 }
