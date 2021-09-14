@@ -2,7 +2,6 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
-use Application\Logging\LoggerTrait;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Metadata\Object\TableObject;
@@ -114,7 +113,7 @@ class DbWrapper
 
         if (isset($criteria['search'])) {
             $quoted = $this->quoteValue($criteria['search']);
-            $select->where([new Expression("search ~* {$quoted}")]);
+            $criteria[] = "search ~* {$quoted}";
             unset($criteria['search']);
         }
 
