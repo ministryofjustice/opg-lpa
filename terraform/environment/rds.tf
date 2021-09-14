@@ -36,7 +36,7 @@ resource "aws_db_instance" "api" {
   enabled_cloudwatch_logs_exports     = ["postgresql", "upgrade"]
   iam_database_authentication_enabled = true
   performance_insights_enabled        = true
-  performance_insights_kms_key_id     = data.aws_kms_key.rds.id
+  performance_insights_kms_key_id     = data.aws_kms_key.rds.arn
 }
 
 // setup a bunch of alarms that are useful for our needs
