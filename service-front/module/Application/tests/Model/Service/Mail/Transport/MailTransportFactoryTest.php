@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service\Mail\Transport;
 
-use Application\Model\Service\Mail\Transport\MailTransport;
+use Application\Model\Service\Mail\Transport\SendGridMailTransport;
 use Application\Model\Service\Mail\Transport\MailTransportFactory;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -17,7 +17,7 @@ class MailTransportFactoryTest extends MockeryTestCase
     /**
      * @throws ContainerException
      */
-    public function testMailTransportFactory() : void
+    public function testMailTransportFactorySendGrid(): void
     {
         /** @var ContainerInterface|MockInterface $container */
         $container = Mockery::Mock(ContainerInterface::class);
@@ -25,18 +25,13 @@ class MailTransportFactoryTest extends MockeryTestCase
             ->withArgs(['Config'])
             ->once()
             ->andReturn(['email' => ['sendgrid' => ['key' => 'value']]]);
-        $container->shouldReceive('get')
-            ->withArgs(['TwigEmailRenderer'])
-            ->once()
-            ->andReturn(Mockery::mock(Environment::class));
 
-        $factory = new MailTransportFactory();
-        $result = $factory($container, null, null);
+        $result = (new MailTransportFactory())($container, null, null);
 
-        $this->assertInstanceOf(MailTransport::class, $result);
+        $this->assertInstanceOf(SendGridMailTransport::class, $result);
     }
 
-    public function testMailTransportFactoryNoSendgridConfig() : void
+    public function testMailTransportFactoryNoSendgridConfig(): void
     {
         /** @var ContainerInterface|MockInterface $container */
         $container = Mockery::Mock(ContainerInterface::class);
@@ -50,6 +45,6 @@ class MailTransportFactoryTest extends MockeryTestCase
 
         $factory = new MailTransportFactory();
         $result = $factory($container, null, null);
-        $this->assertInstanceOf(MailTransport::class, $result);
+        $this->assertInstanceOf(SendGridMailTransport::class, $result);
     }
 }

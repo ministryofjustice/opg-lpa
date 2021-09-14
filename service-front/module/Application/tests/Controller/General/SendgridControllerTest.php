@@ -3,12 +3,12 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\SendgridController;
-use Application\Model\Service\Mail\Transport\MailTransport;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\Http\Response;
+use Laminas\Mail\Transport\TransportInterface;
 use Laminas\View\Model\ViewModel;
 
 class SendgridControllerTest extends AbstractControllerTest
@@ -22,15 +22,15 @@ class SendgridControllerTest extends AbstractControllerTest
     ];
 
     /**
-     * @var MockInterface|MailTransport
+     * @var MockInterface|TransportInterface
      */
     private $mailTransport;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->mailTransport = Mockery::mock(MailTransport::class);
+        $this->mailTransport = Mockery::mock(TransportInterface::class);
     }
 
     public function testIndexAction()
@@ -66,7 +66,9 @@ class SendgridControllerTest extends AbstractControllerTest
             'sent-from-windows-10'  => false,
         ];
 
-        $this->logger->shouldReceive('err')->withArgs(['Sender or recipient missing, or email sent to blackhole@lastingpowerofattorney.service.gov.uk - the message message will not be sent to SendGrid', $loggingData])->once();
+        $this->logger->shouldReceive('err')->withArgs(['Sender or recipient missing, or email sent to ' .
+            'blackhole@lastingpowerofattorney.service.gov.uk - the message message will not be sent to SendGrid',
+            $loggingData])->once();
 
         /** @var Response $result */
         $result = $controller->bounceAction();
@@ -181,7 +183,8 @@ class SendgridControllerTest extends AbstractControllerTest
             ->withArgs(['Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData])
             ->andThrow($exception)->once();
         $this->logger->shouldReceive('alert')
-            ->withArgs(["Failed to send Sendgrid bounce email due to:\n" . $exception->getMessage(), $alertLoggingData])->once();
+            ->withArgs(["Failed to send Sendgrid bounce email due to:\n" . $exception->getMessage(),
+                $alertLoggingData])->once();
 
         $result = $controller->bounceAction();
 

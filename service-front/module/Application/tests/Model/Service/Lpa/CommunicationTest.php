@@ -4,11 +4,15 @@ namespace ApplicationTest\Model\Service\Lpa;
 
 use Application\Model\Service\Lpa\Communication;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
-use Exception;
+use Hamcrest\MatcherAssert;
+use Hamcrest\Matchers;
+use Mockery;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Laminas\Mail\Exception\InvalidArgumentException;
+use Laminas\Mail\Message;
 use Laminas\Session\Container;
 
 class CommunicationTest extends AbstractEmailServiceTest
@@ -18,20 +22,22 @@ class CommunicationTest extends AbstractEmailServiceTest
      */
     private $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->service = new Communication(
             $this->authenticationService,
-            [],
-            $this->twigEmailRenderer,
+            $this->config,
+            $this->localViewRenderer,
             $this->mailTransport
         );
     }
 
-    public function testSendRegistrationCompleteEmail() : void
+    public function testSendRegistrationCompleteWithPaymentEmail(): void
     {
+        $expectedAddresses = ['payment@email.com', 'test@email.com'];
+
         $lpa = new Lpa([
             'payment' => new Payment([
                 'amount' => '20.00',
@@ -42,15 +48,34 @@ class CommunicationTest extends AbstractEmailServiceTest
             ])
         ]);
 
+        $data = [
+            'lpa' => $lpa,
+            'paymentAmount' => '20.00',
+            'isHealthAndWelfare' => true,
+        ];
+
+        $this->localViewRenderer->shouldReceive('renderTemplate')
+            ->with('lpa-registration.twig', $data)
+            ->andReturn('<!-- SUBJECT: LPA registration --><p>message content</p>');
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Mockery::on(function ($email) use ($expectedAddresses) {
+                // Should be sent to two email addresses
+                $actualAddresses = array_map(function ($toAddress) {
+                    return $toAddress->getEmail();
+                }, iterator_to_array($email->getTo()));
+
+                MatcherAssert::assertThat(
+                    $expectedAddresses,
+                    Matchers::arrayContainingInAnyOrder($actualAddresses)
+                );
+
+                return true;
+            }))
+            ->once();
+
         $userDetailSession = new Container();
         $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
-
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                ['test@email.com', 'payment@email.com'],
-                'email-lpa-registration',
-                ['lpa' => $lpa, 'paymentAmount' => '20.00', 'isHealthAndWelfare' => true]
-            ])->once();
 
         $this->service->setUserDetailsSession($userDetailSession);
 
@@ -59,7 +84,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         $this->assertTrue($result);
     }
 
-    public function testSendRegistrationCompleteEmailNoPaymentEmail() : void
+    public function testSendRegistrationCompleteEmailNoPaymentEmail(): void
     {
         $lpa = new Lpa([
             'payment' => new Payment([
@@ -73,12 +98,20 @@ class CommunicationTest extends AbstractEmailServiceTest
         $userDetailSession = new Container();
         $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                ['test@email.com'],
-                'email-lpa-registration',
-                ['lpa' => $lpa, 'paymentAmount' => '20.00', 'isHealthAndWelfare' => true]
-            ])->once();
+        $data = [
+            'lpa' => $lpa,
+            'paymentAmount' => '20.00',
+            'isHealthAndWelfare' => true
+        ];
+
+        $this->localViewRenderer->shouldReceive('renderTemplate')
+            ->with('lpa-registration.twig', $data)
+            ->once()
+            ->andReturn('<!-- SUBJECT: LPA registration --><p>message content</p>');
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(Message::class))
+            ->once();
 
         $this->service->setUserDetailsSession($userDetailSession);
 
@@ -87,7 +120,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         $this->assertTrue($result);
     }
 
-    public function testSendRegistrationCompleteEmailInvalidPaymentAmount() : void
+    public function testSendRegistrationCompleteEmailInvalidPaymentAmount(): void
     {
         $lpa = new Lpa([
             'payment' => new Payment([
@@ -98,15 +131,22 @@ class CommunicationTest extends AbstractEmailServiceTest
             ])
         ]);
 
+        $data = [
+            'lpa' => $lpa,
+            'paymentAmount' => null,
+            'isHealthAndWelfare' => true,
+        ];
+
+        $this->localViewRenderer->shouldReceive('renderTemplate')
+            ->with('lpa-registration.twig', $data)
+            ->andReturn('<!-- SUBJECT: LPA registration --><p>message content</p>');
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(Message::class))
+            ->once();
+
         $userDetailSession = new Container();
         $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
-
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                ['test@email.com'],
-                'email-lpa-registration',
-                ['lpa' => $lpa, 'paymentAmount' => null, 'isHealthAndWelfare' => true]
-            ])->once();
 
         $this->service->setUserDetailsSession($userDetailSession);
 
@@ -115,7 +155,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         $this->assertTrue($result);
     }
 
-    public function testSendRegistrationCompleteEmailNotHealthAndWelfare() : void
+    public function testSendRegistrationCompleteEmailNotHealthAndWelfare(): void
     {
         $lpa = new Lpa([
             'payment' => new Payment([
@@ -126,23 +166,31 @@ class CommunicationTest extends AbstractEmailServiceTest
             ])
         ]);
 
+        $data = [
+            'lpa' => $lpa,
+            'paymentAmount' => '20.00',
+            'isHealthAndWelfare' => false,
+        ];
+
+        $this->localViewRenderer->shouldReceive('renderTemplate')
+            ->with('lpa-registration.twig', $data)
+            ->andReturn('<!-- SUBJECT: LPA registration --><p>message content</p>');
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(Message::class))
+            ->once();
+
         $userDetailSession = new Container();
         $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
-        $this->service->setUserDetailsSession($userDetailSession);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                ['test@email.com'],
-                'email-lpa-registration',
-                ['lpa' => $lpa, 'paymentAmount' => '20.00', 'isHealthAndWelfare' => false]
-            ])->once();
+        $this->service->setUserDetailsSession($userDetailSession);
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
     }
 
-    public function testSendRegistrationCompleteEmailException() : void
+    public function testSendRegistrationCompleteEmailException(): void
     {
         $lpa = new Lpa([
             'payment' => new Payment([
@@ -153,13 +201,20 @@ class CommunicationTest extends AbstractEmailServiceTest
             ])
         ]);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                ['test@email.com'],
-                'email-lpa-registration',
-                ['lpa' => $lpa, 'paymentAmount' => '20.00', 'isHealthAndWelfare' => false]
-            ])->once()
-            ->andThrow(new Exception('Test exception'));
+        $data = [
+            'lpa' => $lpa,
+            'paymentAmount' => '20.00',
+            'isHealthAndWelfare' => false,
+        ];
+
+        $this->localViewRenderer->shouldReceive('renderTemplate')
+            ->with('lpa-registration.twig', $data)
+            ->andReturn('<!-- SUBJECT: LPA registration --><p>message content</p>');
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(Message::class))
+            ->once()
+            ->andThrow(new InvalidArgumentException('Test exception'));
 
         $userDetailSession = new Container();
         $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
