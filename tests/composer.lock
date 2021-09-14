@@ -58,20 +58,20 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.192.0",
+            "version": "3.193.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3f3026ecd3ef534701499ce98c8e3393604fca8b"
+                "reference": "d5080f7a1bb63569c19b8de06f787808eca70cc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3f3026ecd3ef534701499ce98c8e3393604fca8b",
-                "reference": "3f3026ecd3ef534701499ce98c8e3393604fca8b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d5080f7a1bb63569c19b8de06f787808eca70cc6",
+                "reference": "d5080f7a1bb63569c19b8de06f787808eca70cc6",
                 "shasum": ""
             },
             "require": {
-                "aws/aws-crt-php": "^1.0.1",
+                "aws/aws-crt-php": "^1.0.2",
                 "ext-json": "*",
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
@@ -143,9 +143,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.192.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.193.2"
             },
-            "time": "2021-09-03T18:13:44+00:00"
+            "time": "2021-09-10T18:21:27+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
