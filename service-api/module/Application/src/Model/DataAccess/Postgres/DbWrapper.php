@@ -113,7 +113,7 @@ class DbWrapper
 
         if (isset($criteria['search'])) {
             $quoted = $this->quoteValue($criteria['search']);
-            $select->where([new Expression("search ~* {$quoted}")]);
+            $criteria[] = "search ~* {$quoted}";
             unset($criteria['search']);
         }
 
