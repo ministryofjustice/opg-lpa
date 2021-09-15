@@ -93,6 +93,7 @@ services:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
 
       OPG_LPA_COMMON_LAMBDA_ENDPOINT: localstack:4566
+      FRONT_DOMAIN: localhost:7002
 
   # ---------------------------
   # Front
