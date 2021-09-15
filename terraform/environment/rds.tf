@@ -57,6 +57,7 @@ module "aws_rds_api_alarms" {
   actions_alarm                             = [data.aws_sns_topic.rds_events.arn]
   actions_ok                                = [data.aws_sns_topic.rds_events.arn]
   disk_free_storage_space_too_low_threshold = "1000000000" #configured to 1GB
+  disk_burst_balance_too_low_threshold      = "50"
   cpu_utilization_too_high_threshold        = "95"
   db_instance_class                         = "db.m3.medium"
   prefix                                    = "${local.environment}-"
