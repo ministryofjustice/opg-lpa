@@ -3,6 +3,11 @@ data "aws_kms_key" "rds" {
   key_id = "alias/aws/rds"
 }
 
+data "aws_iam_role" "rds_enhanced_monitoring" {
+  name = "rds-enhanced-moniroting"
+}
+
+
 resource "aws_db_instance" "api" {
   count                               = local.account.always_on ? 1 : 0
   identifier                          = lower("api-${local.environment}")
@@ -29,7 +34,7 @@ resource "aws_db_instance" "api" {
   tags                                = merge(local.default_tags, local.db_component_tag)
   allow_major_version_upgrade         = true
   monitoring_interval                 = 30
-  monitoring_role_arn                 = aws_iam_role.rds_enhanced_monitoring.arn
+  monitoring_role_arn                 = data.aws_iam_role.rds_enhanced_monitoring.arn
   enabled_cloudwatch_logs_exports     = ["postgresql", "upgrade"]
   iam_database_authentication_enabled = true
   performance_insights_enabled        = true
