@@ -25,3 +25,5 @@ variable "skip_final_snapshot" {}
 variable "storage_encrypted" { default = true }
 variable "vpc_security_group_ids" {}
 variable "replication_source_identifier" {}
+variable "copy_tags_to_snapshot" { default = true }
+variable "iam_database_authentication_enabled" { default = true }
