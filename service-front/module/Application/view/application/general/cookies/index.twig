@@ -15,41 +15,66 @@
         pages you visit.
     </p>
 
+    <h2 class="heading-medium">Essential cookies</h2>
+    <p>
+        Essential cookies keep your information secure while you use this service.
+        We do not need to ask permission use them
+    </p>
+
+    <div class="mobile-scroll">
+        <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Purpose</th>
+                <th>Expires</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>lpa1</td>
+                <td>Used to keep you signed in</td>
+                <td>2 hours</td>
+            </tr>
+            <tr>
+                <td>cookie_policy</td>
+                <td>Saves your cookie consent settings</td>
+                <td>1 year</td>
+            </tr>
+            <tr>
+                <td>seen_cookie_message</td>
+                <td>Confirms you have seen cookie options</td>
+                <td>1 year</td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+
+    <h2 class="heading-medium">Analytics cookies (optional)</h2>
+
+    <p>
+        OPG and Government Digital Services use Google Analytics to measure how you use the service so we can improve it
+        based on user needs. Google Analytics sets cookies that store anonymised information about:
+    </p>
+    <p>Google is not allowed to use or share our analytics data with anyone.</p>
+    <p>Google Analytics stores anonymised information about:</p>
+    <ul class="list list-bullet">
+        <li>What pages you visit and how long you spend on each</li>
+        <li>What you click on while you're visiting the site</li>
+    </ul>
 
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
-        {{ formElement(form.getCsrf) }}
-
-        <h2 class="heading-large">Cookie settings</h2>
-
-        <p>We use two types of cookie. One type is strictly necessary and the other type of cookie is optional.</p>
-
-        <h3 class="heading-medium">Cookies that measure website use</h3>
-
-        <p>
-            OPG and Government Digital Services use Google Analytics to measure how you use the service so we can improve it
-            based on user needs. Google Analytics sets cookies that store anonymised information about:
-        </p>
-
-        <ul class="list list-bullet">
-            <li>what pages you visit and how long you spend on each</li>
-            <li>what you click on while you're visiting the site</li>
-        </ul>
-
-        <p>We do not allow Google to use or share the data about how you use this site.</p>
-
+    {{ formElement(form.getCsrf) }}
         <div class="form-group">
             <fieldset data-cy="cookies-fieldset">
                 <legend id="id-usage-cookies">
-                    <span class="visually-hidden question-text">Allow use of non-essential Cookies?</span>
+                    <span class="visually-hidden question-text">Allow use of analytics Cookies?</span>
                 </legend>
                 {{ formRadio(usageCookies) }}
             </fieldset>
         </div>
-
-        <h3 class="heading-medium">Strictly necessary cookies</h3>
-        <p>These essential cookies allow you to log in to the service. They always need to be on.</p>
 
         <div class="form-group">
             <input class="button" type="submit" value="Save changes">
