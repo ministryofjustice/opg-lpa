@@ -3,16 +3,19 @@
 namespace Application\Model\Service\Mail\Transport;
 
 use Html2Text\Html2Text;
-use Application\Logging\LoggerTrait;
 use SendGrid;
+use SendGrid\Exception\InvalidRequest;
 use Laminas\Mail\Exception\InvalidArgumentException;
 use Laminas\Mail\Header\GenericHeader;
 use Laminas\Mail\Message as LaminasMessage;
 use Laminas\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
+use Laminas\Mail\Transport\Exception\RuntimeException;
 use Laminas\Mail\Transport\TransportInterface;
 use Laminas\Mime\Message as MimeMessage;
 use DateTime;
 use Exception;
+use Application\Logging\LoggerTrait;
+use Application\Model\Service\Mail\Mail;
 use Application\View\Helper\RendererInterface as RendererInterface;
 
 /**
@@ -46,14 +49,12 @@ class SendGridMailTransport implements TransportInterface
      * Send a mail message
      *
      * @param  LaminasMessage $message
-     * @throws Laminas\Mail\Exception\ExceptionInterface
-     *
-     * TODO any classes which reference this method should either catch ExceptionInterface
-     * or specific exception types
+     * @throws Laminas\Mail\Exception\ExceptionInterface (InvalidArgumentException |
+     * TransportInvalidArgumentException | RuntimeException)
      */
     public function send(LaminasMessage $message)
     {
-        //  Determine the categories being used in the message
+        // Determine the categories being used in the message
         $categories = ($message instanceof Message ? $message->getCategories() : []);
 
         try {
@@ -61,31 +62,24 @@ class SendGridMailTransport implements TransportInterface
                 throw new InvalidArgumentException('Mail\Message returns as invalid');
             }
 
-            //  Get the "from" address
-            $from = $this->getFrom($message);
-
-            //  Get the "to" address(es)
-            $toEmails = [];
+            // Get the "to" address(es)
             $toAddressList = $message->getTo();
 
             if (count($toAddressList) < 1) {
                 throw new InvalidArgumentException('SendGrid requires at least one TO address');
             }
 
+            $toEmails = [];
             foreach ($toAddressList as $address) {
                 $toEmails[] = $address->getEmail();
             }
 
-            //  Log the attempt to send the message
-            $this->getLogger()->info('Attempting to send email via SendGrid', [
-                'from-address' => $from->getEmail(),
-                'to-address'   => $toEmails,
-                'categories'   => $categories
-            ]);
+            // Get the "from" address
+            $from = $this->getFrom($message);
 
             $from = new SendGrid\Email($from->getName(), $from->getEmail());
 
-            //  Parse the message content to get the HTML and plain text versions
+            // Parse the message content to get the HTML and plain text versions
             $messagePlainText = null;
             $messageHtml = null;
 
@@ -95,42 +89,38 @@ class SendGridMailTransport implements TransportInterface
             if (is_string($messageBody)) {
                 $messagePlainText = $messageBody;
             } elseif ($messageBody instanceof MimeMessage) {
+                // If multiple text/plain and/or text/html parts are present, the last of each used;
+                // if text/html is present and text/plain is not set at the point when it
+                // is encountered, text/plain content is overridden with the plain text
+                // version of what's in text/html.
+                //
+                // If a mime part is not text/plain or text/html, it's ignored, as SendGrid doesn't
+                // support it.
                 foreach ($messageBody->getParts() as $part) {
-                    switch ($part->type) {
-                        case 'text/plain':
-                            if (!is_null($messagePlainText)) {
-                                throw new InvalidArgumentException("SendGrid only supports a single plain text body");
-                            }
+                    $type = $part->type;
 
-                            $messagePlainText = new SendGrid\Content($part->type, $part->getRawContent());
-                            break;
-                        case 'text/html':
-                            if (!is_null($messageHtml)) {
-                                throw new InvalidArgumentException("SendGrid only supports a single HTML body");
-                            }
+                    if ($type === 'text/plain') {
+                        $messagePlainText = new SendGrid\Content($part->type, $part->getRawContent());
+                    } elseif ($type === 'text/html') {
+                        if (is_null($messagePlainText)) {
+                            $messagePlainText = new SendGrid\Content(
+                                'text/plain',
+                                Html2Text::convert($part->getRawContent())
+                            );
+                        }
 
-                            if (is_null($messagePlainText)) {
-                                $messagePlainText = new SendGrid\Content(
-                                    'text/plain',
-                                    Html2Text::convert($part->getRawContent())
-                                );
-                            }
-
-                            $messageHtml = new SendGrid\Content($part->type, $part->getRawContent());
-                            break;
-                        default:
-                            throw new InvalidArgumentException("Unimplemented content part found: {$part->type}");
+                        $messageHtml = new SendGrid\Content($part->type, $part->getRawContent());
                     }
                 }
             }
 
-            //  Ensure some content was set
+            // Ensure some content was set
             if (is_null($messagePlainText) && is_null($messageHtml)) {
                 throw new InvalidArgumentException("No message content has been set");
             }
 
-            //  Create the email message using the plain text initially
-            $mainRecipient = array_shift($toEmails);
+            // Create the email message using the plain text initially
+            $mainRecipient = $toEmails[0];
             $email = new SendGrid\Mail(
                 $from,
                 $message->getSubject(),
@@ -138,84 +128,65 @@ class SendGridMailTransport implements TransportInterface
                 $messagePlainText
             );
 
-            //  Add the HTML content
+            // Add the HTML content
             $email->addContent($messageHtml);
 
-            //  Add other "to" email addresses
-            foreach ($toEmails as $toEmail) {
+            // Add other "to" email addresses
+            foreach (array_slice($toEmails, 1) as $toEmail) {
                 $email->personalization[0]->addTo(new SendGrid\Email(null, $toEmail));
             }
 
-            //  Get the reply to address
-            $replyTo = $message->getReplyTo();
-
-            if (count($replyTo) == 1) {
-                //  Extract the Address object
-                $replyTo = array_pop(current($replyTo));
-                $replyTo = new SendGrid\Email(null, $replyTo->getEmail());
-
-                $email->setReplyTo($replyTo);
-            } elseif (count($replyTo) > 1) {
-                throw new InvalidArgumentException('SendGrid only supports a single REPLY TO address');
-            }
-
-            // Custom Headers
-            foreach ($message->getHeaders() as $header) {
-                if ($header instanceof GenericHeader) {
-                    $email->addHeader($header->getFieldName(), $header->getFieldValue());
-                }
-            }
-
-            //  Add the categories to the email
+            // Add the categories to the email
             foreach ($categories as $category) {
                 if (is_string($category)) {
                     $email->addCategory($category);
                 }
             }
 
-            //  If supported and required set send at
-            if ($message instanceof Message) {
-                $sendAt = $message->getSendAt();
-
-                if ($sendAt) {
-                    $email->setSendAt($sendAt);
-                }
-            }
-
-            //  Send message
-            //  TODO catch SendGrid\Exception\InvalidRequest;
-            //  convert into Laminas\Mail\Transport\Exception\RuntimeException
-            //  (which extends Laminas\Mail\Exception\ExceptionInterface)
-            $result = $this->client->mail()->send()->post($email);
-
-            if (!in_array($result->statusCode(), [200, 202])) {
-                // TODO this exception type doesn't seem wholly appropriate
-                throw new TransportInvalidArgumentException('Email sending failed: ' . $result->body());
-            }
-        } catch (InvalidArgumentException $iae) {
-            //  Log an appropriate error message and rethrow the exception
-            $this->getLogger()->err('SendGrid transport error: ' . $iae->getMessage(), [
+            // Log the attempt to send the message
+            $this->getLogger()->info('Attempting to send email via SendGrid', [
+                'from-address' => $from->getEmail(),
+                'to-address' => $toEmails,
                 'categories' => $categories
             ]);
 
-            throw $iae;
+            // Send message
+            // May throw SendGrid\Exception\InvalidRequest exception (undocumented)
+            $result = $this->client->mail()->send()->post($email);
+
+            if (!in_array($result->statusCode(), [200, 202])) {
+                throw new TransportInvalidArgumentException('Email sending failed: ' . $result->body());
+            }
+        } catch (InvalidRequest $ex) {
+            $this->getLogger()->err(
+                'SendGrid transport error; likely to be networking or auth related: ' . $ex->getMessage(),
+                [
+                    'categories' => $categories
+                ]
+            );
+
+            // throw as an exception which extends ExceptionInterface
+            throw new RuntimeException($ex);
+        } catch (InvalidArgumentException $ex) {
+            // Log error and rethrow the exception
+            $this->getLogger()->err('SendGrid transport error: ' . $ex->getMessage(), [
+                'categories' => $categories
+            ]);
+
+            throw $ex;
         }
     }
 
     /**
-     * Get the from address object from the message
+     * Get the from address object from the message.
+     * If multiple from addresses are provided, the first is used.
      *
      * @param  LaminasMessage $message
      * @return mixed|\Laminas\Mail\Address
-     * @throws InvalidArgumentException
      */
     private function getFrom(LaminasMessage $message)
     {
         $from = $message->getFrom();
-
-        if (count($from) > 1) {
-            throw new InvalidArgumentException('SendGrid only supports a single FROM address');
-        }
 
         //  Extract the Address object
         $from = current(current($from));

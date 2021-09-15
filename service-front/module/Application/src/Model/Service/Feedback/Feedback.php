@@ -6,7 +6,7 @@ use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\Mail\Transport\MailTransport;
-use Laminas\Mail\Exception\InvalidArgumentException;
+use Laminas\Mail\Exception\ExceptionInterface;
 
 class Feedback extends AbstractEmailService implements ApiClientAwareInterface
 {
@@ -30,10 +30,9 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
             $this->getMailTransport()->send($message);
 
             return true;
-        } catch (InvalidArgumentException $e) {
-            $this->getLogger()->err('Exception while adding feedback from Feedback service');
-            $this->getLogger()->err($e->getMessage());
-            $this->getLogger()->err($e->getTraceAsString());
+        } catch (ExceptionInterface $ex) {
+            $this->getLogger()->err("Exception while adding feedback from Feedback service\n" .
+                $ex->getMessage() . "\n" . $ex->getTraceAsString());
         }
 
         return false;

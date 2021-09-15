@@ -152,6 +152,26 @@ abstract class AbstractEmailService extends AbstractService
     }
 
     /**
+     * Map a template name to a template file name and categories.
+     *
+     * @param string $emailRef A key of $this->emailTemplatesConfig.
+     * @return ?array with template and categories; null if template ref
+     * is not found
+     */
+    private function getTemplate($emailRef): ?array
+    {
+        if (
+            !isset($this->emailTemplatesConfig[$emailRef])
+            || !isset($this->emailTemplatesConfig[$emailRef]['template'])
+            || !isset($this->emailTemplatesConfig[$emailRef]['categories'])
+        ) {
+            return null;
+        }
+
+        return $this->emailTemplatesConfig[$emailRef];
+    }
+
+    /**
      * @return TransportInterface
      */
     public function getMailTransport(): TransportInterface
@@ -165,11 +185,10 @@ abstract class AbstractEmailService extends AbstractService
      * @param $to
      * @param $emailRef
      * @param array $data
-     * @param DateTime|null $sendAt
      * @return Message
      * @throws InvalidArgumentException
      */
-    public function createMessage($to, $emailRef, array $data = [], DateTime $sendAt = null): Message
+    public function createMessage($to, $emailRef, array $data = []): Message
     {
         //  Ensure the TO address/addresses are an array
         if (!is_array($to)) {
@@ -178,18 +197,13 @@ abstract class AbstractEmailService extends AbstractService
 
         $this->getLogger()->info(sprintf('Sending %s email to %s', $emailRef, implode(',', $to)));
 
-        //  Get the categories for this email template
-        if (
-            !isset($this->emailTemplatesConfig[$emailRef])
-            || !isset($this->emailTemplatesConfig[$emailRef]['template'])
-            || !isset($this->emailTemplatesConfig[$emailRef]['categories'])
-        ) {
+        $template = $this->getTemplate($emailRef);
+        if (is_null($template)) {
             throw new InvalidArgumentException('Missing template config for ' . $emailRef);
         }
 
         //  Get the HTML content from the template and the data
-        $tpl = $this->emailTemplatesConfig[$emailRef]['template'];
-        $emailHtml = $this->localViewRenderer->renderTemplate($tpl, $data);
+        $emailHtml = $this->localViewRenderer->renderTemplate($template['template'], $data);
 
         //  Construct the message to send
         $message = new Message();
@@ -214,9 +228,7 @@ abstract class AbstractEmailService extends AbstractService
         $message->addFrom($from, $fromName);
 
         //  Add the categories for this message
-        $categories = $this->emailTemplatesConfig[$emailRef]['categories'];
-
-        foreach ($categories as $category) {
+        foreach ($template['categories'] as $category) {
             $message->addCategory($category);
         }
 
@@ -234,12 +246,6 @@ abstract class AbstractEmailService extends AbstractService
         $mimeMessage->setParts([$html]);
 
         $message->setBody($mimeMessage);
-
-        //  If a send time has been passed then apply that now
-        if ($sendAt instanceof DateTime) {
-            //  If a send time has been provided apply it now
-            $message->setSendAt($sendAt->getTimestamp());
-        }
 
         return $message;
     }
