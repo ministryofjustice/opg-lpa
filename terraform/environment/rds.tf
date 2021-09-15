@@ -4,9 +4,12 @@ data "aws_kms_key" "rds" {
 }
 
 data "aws_iam_role" "rds_enhanced_monitoring" {
-  name = "rds-enhanced-moniroting"
+  name = "rds-enhanced-monitoring"
 }
 
+data "aws_sns_topic" "rds_events" {
+  name = "${local.account_name}-rds-events"
+}
 
 resource "aws_db_instance" "api" {
   count                               = local.account.always_on ? 1 : 0
