@@ -59,6 +59,7 @@ module "aws_rds_api_alarms" {
   disk_free_storage_space_too_low_threshold = "1000000000" #configured to 1GB
   disk_burst_balance_too_low_threshold      = "50"
   cpu_utilization_too_high_threshold        = "95"
+  anomaly_band_width                        = "5"
   db_instance_class                         = "db.m3.medium"
   prefix                                    = "${local.environment}-"
   tags                                      = merge(local.default_tags, local.db_component_tag)
