@@ -106,7 +106,10 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
                     return $toAddress->getEmailAddress();
                 }, $email->getPersonalizations()[0]->getTos());
 
-                MatcherAssert::assertThat($expectedAddresses, Matchers::equalTo($actualAddresses));
+                MatcherAssert::assertThat(
+                    $expectedAddresses,
+                    Matchers::arrayContainingInAnyOrder($actualAddresses)
+                );
 
                 return true;
             }))
