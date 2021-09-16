@@ -221,8 +221,6 @@ abstract class AbstractEmailService extends AbstractService
         if ($emailRef == self::EMAIL_FEEDBACK) {
             $from = $emailConfig['sender']['feedback']['address'];
             $fromName = $emailConfig['sender']['feedback']['name'];
-        } elseif ($emailRef == self::EMAIL_SENDGRID_BOUNCE) {
-            $from = 'blackhole@lastingpowerofattorney.service.gov.uk';
         }
 
         $message->addFrom($from, $fromName);

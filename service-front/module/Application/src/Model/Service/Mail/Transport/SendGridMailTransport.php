@@ -82,7 +82,7 @@ class SendGridMailTransport implements TransportInterface
             }
 
             // Get the "from" address
-            $from = $this->getFrom($message);
+            $from = current(current($message->getFrom()));
 
             // Parse the message content to get the HTML and plain text versions
             $messagePlainText = null;
@@ -185,27 +185,5 @@ class SendGridMailTransport implements TransportInterface
 
             throw $ex;
         }
-    }
-
-    /**
-     * Get the from address object from the message.
-     * If multiple from addresses are provided, the first is used.
-     *
-     * @param  LaminasMessage $message
-     * @return mixed|\Laminas\Mail\Address
-     */
-    private function getFrom(LaminasMessage $message)
-    {
-        $from = $message->getFrom();
-
-        //  Extract the Address object
-        $from = current(current($from));
-
-        //  However (due to crazy RFC822-ness) if a 'sender' has been set, this should be used instead.
-        if ($message->getSender() != null) {
-            $from = $message->getSender();
-        }
-
-        return $from;
     }
 }

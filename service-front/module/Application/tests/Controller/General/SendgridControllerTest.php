@@ -145,49 +145,4 @@ class SendgridControllerTest extends AbstractControllerTest
         $this->assertEquals(200, $result->getStatusCode());
         $this->assertEquals('', $result->getContent());
     }
-
-    public function testBounceActionSendEmailException()
-    {
-        /** @var SendgridController $controller */
-        $controller = $this->getController(SendgridController::class);
-
-        $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn($this->postData['from'])->once();
-        $this->request->shouldReceive('getPost')->withArgs(['to'])->andReturn($this->postData['to'])->once();
-        $this->request->shouldReceive('getPost')->withArgs(['subject'])->andReturn($this->postData['subject'])->once();
-        $this->request->shouldReceive('getPost')
-            ->withArgs(['spam_score'])->andReturn($this->postData['spam_score'])->once();
-        $this->request->shouldReceive('getPost')->withArgs(['text'])->andReturn($this->postData['text'])->once();
-
-        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')->never();
-
-        $loggingData = [
-            'from-address'          => $this->postData['from'],
-            'to-address'            => $this->postData['to'],
-            'subject'               => $this->postData['subject'],
-            'spam-score'            => $this->postData['spam_score'],
-            'sent-from-windows-10'  => false
-        ];
-
-        $alertLoggingData = [
-            'from-address'          => $this->postData['from'],
-            'to-address'            => $this->postData['to'],
-            'subject'               => $this->postData['subject'],
-            'spam-score'            => $this->postData['spam_score'],
-            'sent-from-windows-10'  => false,
-            'token'                 => 'ValidToken'
-        ];
-
-        $exception = new Exception('Unit Test Exception');
-        $this->logger->shouldReceive('info')
-            ->withArgs(['Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData])
-            ->andThrow($exception)->once();
-        $this->logger->shouldReceive('alert')
-            ->withArgs(["Failed to send Sendgrid bounce email due to:\n" . $exception->getMessage(),
-                $alertLoggingData])->once();
-
-        $result = $controller->bounceAction();
-
-        $this->assertEquals('failed-sending-email', $result);
-    }
 }
