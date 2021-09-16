@@ -13,10 +13,12 @@ use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\Mail\Message as LaminasMessage;
+use Laminas\Mail\Transport\Exception\RuntimeException;
 use Laminas\Mail\Transport\TransportInterface;
 use Laminas\Mime\Mime;
 use Laminas\Mime\Part;
-use SendGrid\Mail\Client as SendGridClient;
+use SendGrid\Client as SendGridClient;
+use SendGrid\Exception\InvalidRequest;
 use SendGrid\Mail\HtmlContent as SendGridHtmlContent;
 use SendGrid\Mail\From as SendGridFromEmailAddress;
 use SendGrid\Mail\Mail as SendGridMail;
@@ -44,7 +46,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $this->service = new SendGridMailTransport($this->sendgridClient);
     }
 
-    private function createSendGridEmail($html = null, $text = 'Text content'): SendGridMail
+    private function createSendGridEmail($html = null, $text = 'Text content', $categories = []): SendGridMail
     {
         $from = new SendGridFromEmailAddress('from@test.com');
         $to = new SendGridToEmailAddress('to@test.com');
@@ -57,6 +59,10 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
 
         if (!is_null($html)) {
             $email->addContent(new SendGridHtmlContent($html));
+        }
+
+        foreach ($categories as $category) {
+            $email->addCategory($category);
         }
 
         return $email;
@@ -88,12 +94,20 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
 
     public function testSendMultipleToAddresses(): void
     {
+        $expectedAddresses = ['to1@test.com', 'to2@test.com'];
+
         $postResult = Mockery::mock();
         $postResult->shouldReceive('statusCode')->once()->andReturn(200);
 
         $send = Mockery::mock();
         $send->shouldReceive('post')
-            ->with(Mockery::on(function ($email) {
+            ->with(Mockery::on(function ($email) use ($expectedAddresses) {
+                $actualAddresses = array_map(function ($toAddress) {
+                    return $toAddress->getEmailAddress();
+                }, $email->getPersonalizations()[0]->getTos());
+
+                MatcherAssert::assertThat($expectedAddresses, Matchers::equalTo($actualAddresses));
+
                 return true;
             }))
             ->once()
@@ -106,8 +120,46 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
 
         $message = new LaminasMessage();
         $message->setFrom('from@test.com');
-        $message->setTo(['to1@test.com', 'to2@test.com']);
+        $message->setTo($expectedAddresses);
         $message->setBody('Text content');
+
+        $this->service->send($message);
+    }
+
+    public function testSendWithCategories(): void
+    {
+        $expectedCategories = ['foo', 'bar'];
+
+        $postResult = Mockery::mock();
+        $postResult->shouldReceive('statusCode')->once()->andReturn(200);
+
+        $send = Mockery::mock();
+        $send->shouldReceive('post')
+            ->with(Mockery::on(function ($email) use ($expectedCategories) {
+                $actualCategories = array_map(function ($category) {
+                    return $category->getCategory();
+                }, $email->getCategories());
+
+                MatcherAssert::assertThat($expectedCategories, Matchers::equalTo($actualCategories));
+
+                return true;
+            }))
+            ->once()
+            ->andReturn($postResult);
+
+        $mail = Mockery::mock();
+        $mail->shouldReceive('send')->once()->andReturn($send);
+
+        $this->sendgridClient->shouldReceive('mail')->once()->andReturn($mail);
+
+        $message = new Message();
+        $message->setFrom('from@test.com');
+        $message->setTo('to@test.com');
+        $message->setBody('Text content');
+
+        foreach ($expectedCategories as $expectedCategory) {
+            $message->addCategory($expectedCategory);
+        }
 
         $this->service->send($message);
     }
@@ -248,6 +300,32 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('No message content has been set');
 
+        $this->service->send($message);
+    }
+
+    public function testSendInvalidRequestException(): void
+    {
+        $send = Mockery::mock();
+        $send->shouldReceive('post')
+            ->withArgs([Matchers::equalTo($this->createSendGridEmail())])
+            ->once()
+            ->andThrow(new InvalidRequest());
+
+        $mail = Mockery::mock();
+        $mail->shouldReceive('send')
+            ->once()
+            ->andReturn($send);
+
+        $this->sendgridClient->shouldReceive('mail')
+            ->once()
+            ->andReturn($mail);
+
+        $message = new LaminasMessage();
+        $message->setFrom('from@test.com');
+        $message->setTo('to@test.com');
+        $message->setBody('Text content');
+
+        $this->expectException(RuntimeException::class);
         $this->service->send($message);
     }
 }

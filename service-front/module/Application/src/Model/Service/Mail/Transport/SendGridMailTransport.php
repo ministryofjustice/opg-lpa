@@ -3,8 +3,6 @@
 namespace Application\Model\Service\Mail\Transport;
 
 use Html2Text\Html2Text;
-use SendGrid;
-use SendGrid\Exception\InvalidRequest;
 use Laminas\Mail\Exception\InvalidArgumentException;
 use Laminas\Mail\Header\GenericHeader;
 use Laminas\Mail\Message as LaminasMessage;
@@ -12,10 +10,17 @@ use Laminas\Mail\Transport\Exception\InvalidArgumentException as TransportInvali
 use Laminas\Mail\Transport\Exception\RuntimeException;
 use Laminas\Mail\Transport\TransportInterface;
 use Laminas\Mime\Message as MimeMessage;
+use SendGrid\Exception\InvalidRequest;
+use SendGrid\Client as SendGridClient;
+use SendGrid\Mail\From as SendGridFromEmailAddress;
+use SendGrid\Mail\HtmlContent as SendGridHtmlContent;
+use SendGrid\Mail\Mail as SendGridMail;
+use SendGrid\Mail\PlainTextContent as SendGridPlainTextContent;
+use SendGrid\Mail\To as SendGridToEmailAddress;
 use DateTime;
 use Exception;
 use Application\Logging\LoggerTrait;
-use Application\Model\Service\Mail\Mail;
+use Application\Model\Service\Mail\Message;
 use Application\View\Helper\RendererInterface as RendererInterface;
 
 /**
@@ -38,9 +43,9 @@ class SendGridMailTransport implements TransportInterface
     /**
      * MailTransport constructor
      *
-     * @param SendGrid\Client $client
+     * @param SendGridClient $client
      */
-    public function __construct(SendGrid\Client $client)
+    public function __construct(SendGridClient $client)
     {
         $this->client = $client;
     }
@@ -59,8 +64,10 @@ class SendGridMailTransport implements TransportInterface
 
         try {
             if (!$message->isValid()) {
-                throw new InvalidArgumentException('Mail\Message returns as invalid');
+                throw new InvalidArgumentException('LaminasMessage returns as invalid');
             }
+
+            // === Extract data we want from the LaminasMessage
 
             // Get the "to" address(es)
             $toAddressList = $message->getTo();
@@ -76,8 +83,6 @@ class SendGridMailTransport implements TransportInterface
 
             // Get the "from" address
             $from = $this->getFrom($message);
-
-            $from = new SendGrid\Email($from->getName(), $from->getEmail());
 
             // Parse the message content to get the HTML and plain text versions
             $messagePlainText = null;
@@ -98,18 +103,16 @@ class SendGridMailTransport implements TransportInterface
                 // support it.
                 foreach ($messageBody->getParts() as $part) {
                     $type = $part->type;
+                    $content = $part->getRawContent();
 
                     if ($type === 'text/plain') {
-                        $messagePlainText = new SendGrid\Content($part->type, $part->getRawContent());
+                        $messagePlainText = $content;
                     } elseif ($type === 'text/html') {
-                        if (is_null($messagePlainText)) {
-                            $messagePlainText = new SendGrid\Content(
-                                'text/plain',
-                                Html2Text::convert($part->getRawContent())
-                            );
-                        }
+                        $messageHtml = $content;
 
-                        $messageHtml = new SendGrid\Content($part->type, $part->getRawContent());
+                        if (is_null($messagePlainText)) {
+                            $messagePlainText = Html2Text::convert($content);
+                        }
                     }
                 }
             }
@@ -119,21 +122,28 @@ class SendGridMailTransport implements TransportInterface
                 throw new InvalidArgumentException("No message content has been set");
             }
 
-            // Create the email message using the plain text initially
-            $mainRecipient = $toEmails[0];
-            $email = new SendGrid\Mail(
-                $from,
-                $message->getSubject(),
-                new SendGrid\Email(null, $mainRecipient),
-                $messagePlainText
+            // === Translate to SendGrid API
+
+            // Make all the to addresses as an array
+            $toAddresses = array_map(function ($toEmail) {
+                return new SendGridToEmailAddress($toEmail);
+            }, $toEmails);
+
+            // Create the email message
+            $email = new SendGridMail(
+                new SendGridFromEmailAddress($from->getEmail(), $from->getName()),
+                $toAddresses,
+                $message->getSubject()
             );
 
-            // Add the HTML content
-            $email->addContent($messageHtml);
+            // Add plaintext
+            if (!is_null($messagePlainText)) {
+                $email->addContent(new SendGridPlainTextContent($messagePlainText));
+            }
 
-            // Add other "to" email addresses
-            foreach (array_slice($toEmails, 1) as $toEmail) {
-                $email->personalization[0]->addTo(new SendGrid\Email(null, $toEmail));
+            // Add HTML
+            if (!is_null($messageHtml)) {
+                $email->addContent(new SendGridHtmlContent($messageHtml));
             }
 
             // Add the categories to the email

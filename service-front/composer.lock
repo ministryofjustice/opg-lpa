@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "90f69e597111d594b7e31973b337c969",
+    "content-hash": "3c7c464d3128ffb70cac92bf6602ddca",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
@@ -3947,55 +3947,68 @@
         },
         {
             "name": "sendgrid/sendgrid",
-            "version": "6.2.0",
+            "version": "7.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/sendgrid-php.git",
-                "reference": "4d500a972739ef2c596299f3ad822dd231aab4df"
+                "reference": "ab0023a6233f39e408b5eb8c4299f20790f5f5a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/4d500a972739ef2c596299f3ad822dd231aab4df",
-                "reference": "4d500a972739ef2c596299f3ad822dd231aab4df",
+                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/ab0023a6233f39e408b5eb8c4299f20790f5f5a7",
+                "reference": "ab0023a6233f39e408b5eb8c4299f20790f5f5a7",
                 "shasum": ""
             },
             "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-openssl": "*",
                 "php": ">=5.6",
-                "sendgrid/php-http-client": "~3.7"
+                "sendgrid/php-http-client": "~3.10",
+                "starkbank/ecdsa": "0.*"
             },
             "replace": {
                 "sendgrid/sendgrid-php": "*"
             },
             "require-dev": {
                 "phpunit/phpunit": "^5.7.9 || ^6.4.3",
-                "squizlabs/php_codesniffer": "2.*"
+                "squizlabs/php_codesniffer": "3.*",
+                "swaggest/json-diff": "^3.4"
             },
             "type": "library",
             "autoload": {
-                "files": [
+                "psr-4": {
+                    "SendGrid\\Contacts\\": "lib/contacts/",
+                    "SendGrid\\EventWebhook\\": "lib/eventwebhook/",
+                    "SendGrid\\Helper\\": "lib/helper/",
+                    "SendGrid\\Mail\\": "lib/mail/",
+                    "SendGrid\\Stats\\": "lib/stats/"
+                },
+                "classmap": [
+                    "lib/BaseSendGridClientInterface.php",
                     "lib/SendGrid.php",
-                    "lib/helpers/mail/Mail.php",
-                    "lib/helpers/contacts/Recipients.php",
-                    "lib/helpers/stats/Stats.php"
+                    "lib/TwilioEmail.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "description": "This library allows you to quickly and easily send emails through SendGrid using PHP.",
+            "description": "This library allows you to quickly and easily send emails through Twilio SendGrid using PHP.",
             "homepage": "http://github.com/sendgrid/sendgrid-php",
             "keywords": [
                 "email",
                 "grid",
                 "send",
-                "sendgrid"
+                "sendgrid",
+                "twilio sendgrid"
             ],
             "support": {
                 "issues": "https://github.com/sendgrid/sendgrid-php/issues",
-                "source": "https://github.com/sendgrid/sendgrid-php/tree/master"
+                "source": "https://github.com/sendgrid/sendgrid-php/tree/7.9.2"
             },
-            "time": "2018-03-29T00:08:28+00:00"
+            "time": "2021-01-27T20:19:06+00:00"
         },
         {
             "name": "soundasleep/html2text",
@@ -4051,6 +4064,49 @@
                 "source": "https://github.com/soundasleep/html2text/tree/master"
             },
             "time": "2017-04-19T22:01:50+00:00"
+        },
+        {
+            "name": "starkbank/ecdsa",
+            "version": "0.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/starkbank/ecdsa-php.git",
+                "reference": "484bedac47bac4012dc73df91da221f0a66845cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/starkbank/ecdsa-php/zipball/484bedac47bac4012dc73df91da221f0a66845cb",
+                "reference": "484bedac47bac4012dc73df91da221f0a66845cb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/ellipticcurve.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "StarkBank",
+                    "email": "developers@starkbank.com",
+                    "homepage": "https://starkbank.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "fast openSSL-compatible implementation of the Elliptic Curve Digital Signature Algorithm (ECDSA)",
+            "homepage": "https://github.com/starkbank/ecdsa-php",
+            "support": {
+                "issues": "https://github.com/starkbank/ecdsa-php/issues",
+                "source": "https://github.com/starkbank/ecdsa-php/tree/v0.0.5"
+            },
+            "time": "2021-06-06T22:24:49+00:00"
         },
         {
             "name": "symfony/console",

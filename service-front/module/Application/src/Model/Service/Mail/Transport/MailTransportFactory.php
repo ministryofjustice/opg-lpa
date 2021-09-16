@@ -7,7 +7,7 @@ use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use SendGrid as SendGridClient;
+use SendGrid;
 use Twig\Environment as TwigEnvironment;
 use RuntimeException;
 
@@ -34,7 +34,7 @@ class MailTransportFactory implements FactoryInterface
             throw new RuntimeException('Sendgrid settings not found');
         }
 
-        $client = new SendGridClient($sendGridConfig['key']);
+        $client = new SendGrid($sendGridConfig['key']);
 
         return new SendGridMailTransport($client->client);
     }
