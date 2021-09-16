@@ -65,8 +65,8 @@
                 <fieldset>
                     <legend class="visually-hidden">Search for LPAs</legend>
                     <label for="search" class="search-label">Search for an LPA or donor</label>
-                    <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="js-search-focus search-input form-control"/>
-                    <input class="search-button button" type="submit" value="Search"/>
+                    <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="js-search-focus search-input form-control" data-cy="dashboard-search-box"/>
+                    <input class="search-button button" type="submit" data-cy="dashboard-search-icon" value="Search"/>
                 </fieldset>
             </form>
         </div>
