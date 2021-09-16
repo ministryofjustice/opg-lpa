@@ -24,7 +24,7 @@ class MailTransportFactoryTest extends MockeryTestCase
         $container->shouldReceive('get')
             ->withArgs(['Config'])
             ->once()
-            ->andReturn(['email' => ['sendgrid' => ['key' => 'value']]]);
+            ->andReturn(['email' => ['transport' => 'sendgrid', 'sendgrid' => ['key' => 'value']]]);
 
         $result = (new MailTransportFactory())($container, null, null);
 
@@ -38,7 +38,7 @@ class MailTransportFactoryTest extends MockeryTestCase
         $container->shouldReceive('get')
             ->withArgs(['Config'])
             ->once()
-            ->andReturn(['email' => ['sendgrid' => []]]);
+            ->andReturn(['email' => ['transport' => 'sendgrid', 'sendgrid' => []]]);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Sendgrid settings not found');
@@ -46,5 +46,18 @@ class MailTransportFactoryTest extends MockeryTestCase
         $factory = new MailTransportFactory();
         $result = $factory($container, null, null);
         $this->assertInstanceOf(SendGridMailTransport::class, $result);
+    }
+
+    public function testMailTransportFactoryNotTransportInConfig(): void
+    {
+        /** @var ContainerInterface|MockInterface $container */
+        $container = Mockery::Mock(ContainerInterface::class);
+        $container->shouldReceive('get')
+            ->withArgs(['Config'])
+            ->once()
+            ->andReturn(['email' => ['sendgrid' => ['key' => 'value']]]);
+
+        $this->expectException(RuntimeException::class);
+        (new MailTransportFactory())($container, null, null);
     }
 }
