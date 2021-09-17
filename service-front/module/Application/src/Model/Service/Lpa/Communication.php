@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractEmailService;
+use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Exception;
@@ -47,8 +48,8 @@ class Communication extends AbstractEmailService
         ];
 
         try {
-            $message = $this->createMessage($to, AbstractEmailService::EMAIL_LPA_REGISTRATION, $data);
-            $this->getMailTransport()->send($message);
+            $mailParameters = new MailParameters($to, AbstractEmailService::EMAIL_LPA_REGISTRATION, $data);
+            $this->getMailTransport()->send($mailParameters);
         } catch (ExceptionInterface $ex) {
             $this->getLogger()->err($ex);
             return "failed-sending-email";

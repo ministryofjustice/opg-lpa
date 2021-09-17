@@ -4,11 +4,9 @@ namespace Application\Model\Service\Mail\Transport;
 
 use Html2Text\Html2Text;
 use Laminas\Mail\Exception\InvalidArgumentException;
-use Laminas\Mail\Header\GenericHeader;
 use Laminas\Mail\Message as LaminasMessage;
 use Laminas\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
 use Laminas\Mail\Transport\Exception\RuntimeException;
-use Laminas\Mail\Transport\TransportInterface;
 use Laminas\Mime\Message as MimeMessage;
 use SendGrid\Exception\InvalidRequest;
 use SendGrid\Client as SendGridClient;
@@ -18,18 +16,16 @@ use SendGrid\Mail\Mail as SendGridMail;
 use SendGrid\Mail\PlainTextContent as SendGridPlainTextContent;
 use SendGrid\Mail\To as SendGridToEmailAddress;
 use DateTime;
-use Exception;
 use Application\Logging\LoggerTrait;
 use Application\Model\Service\Mail\Message;
-use Application\View\Helper\RendererInterface as RendererInterface;
+use Application\Model\Service\Mail\MessageFactory;
+use Application\Model\Service\Mail\MailParameters;
+use Application\Model\Service\Mail\Transport\MailTransportInterface;
 
 /**
  * Sends an email out via SendGrid's HTTP interface.
- *
- * Class MailTransport
- * @package Application\Model\Mail\Transport
  */
-class SendGridMailTransport implements TransportInterface
+class SendGridMailTransport implements MailTransportInterface
 {
     use LoggerTrait;
 
@@ -41,24 +37,32 @@ class SendGridMailTransport implements TransportInterface
     private $client;
 
     /**
+     * @var MessageFactory
+     */
+    private $messageFactory;
+
+    /**
      * MailTransport constructor
      *
      * @param SendGridClient $client
      */
-    public function __construct(SendGridClient $client)
+    public function __construct(SendGridClient $client, MessageFactory $messageFactory)
     {
         $this->client = $client;
+        $this->messageFactory = $messageFactory;
     }
 
     /**
      * Send a mail message
      *
-     * @param  LaminasMessage $message
+     * @param  MailParameters $message
      * @throws Laminas\Mail\Exception\ExceptionInterface (InvalidArgumentException |
      * TransportInvalidArgumentException | RuntimeException)
      */
-    public function send(LaminasMessage $message)
+    public function send(MailParameters $mailParams): void
     {
+        $message = $this->messageFactory->createMessage($mailParams);
+
         // Determine the categories being used in the message
         $categories = ($message instanceof Message ? $message->getCategories() : []);
 

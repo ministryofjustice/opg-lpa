@@ -42,8 +42,9 @@ class MailTransportFactory implements FactoryInterface
             }
 
             $client = new SendGrid($sendGridConfig['key']);
+            $messageFactory = $container->get('MessageFactory');
 
-            return new SendGridMailTransport($client->client);
+            return new SendGridMailTransport($client->client, $messageFactory);
         }
 
         throw new RuntimeException('Unable to instantiate email transport; transport is set to ' . $transport);

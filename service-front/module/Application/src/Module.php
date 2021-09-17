@@ -8,6 +8,7 @@ use Application\Logging\LoggerTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Model\Service\Mail\MessageFactory;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\System\DynamoCronLock;
 use Application\View\Helper\LocalViewRenderer;
@@ -210,9 +211,9 @@ class Module implements FormElementProviderInterface
                     ]);
                 },
 
-                'LocalViewRenderer' => function (ServiceLocatorInterface $sm) {
-                    $twigEmailRenderer = $sm->get('TwigEmailRenderer');
-                    return new LocalViewRenderer($twigEmailRenderer);
+                'MessageFactory' => function (ServiceLocatorInterface $sm) {
+                    $localViewRenderer = new LocalViewRenderer($sm->get('TwigEmailRenderer'));
+                    return new MessageFactory($sm->get('config'), $localViewRenderer);
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {

@@ -5,6 +5,7 @@ namespace Application\Model\Service\Feedback;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
+use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Laminas\Mail\Exception\ExceptionInterface;
 
@@ -17,17 +18,18 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
      *
      * @param array $data
      * @return bool|string
+     * @throws ExceptionInterface
      */
     public function add(array $data)
     {
         try {
             $this->apiClient->httpPost('/user-feedback', $data);
 
-            //  Send the feedback via email also
+            // Send the feedback via email also
             $to = $this->getConfig()['sendFeedbackEmailTo'];
 
-            $message = $this->createMessage($to, AbstractEmailService::EMAIL_FEEDBACK, $data);
-            $this->getMailTransport()->send($message);
+            $mailParameters = new MailParameters($to, AbstractEmailService::EMAIL_FEEDBACK, $data);
+            $this->getMailTransport()->send($mailParameters);
 
             return true;
         } catch (ExceptionInterface $ex) {
