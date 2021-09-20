@@ -2,22 +2,32 @@
 
 namespace Application\Model\Service\Mail;
 
+use Application\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Message;
 use Application\View\Helper\LocalViewRenderer;
 use Laminas\Mail\Exception\InvalidArgumentException;
+use Laminas\Mime;
 
 /**
  * Create Message instances, setting the body via a rendered Twig template.
  */
 class MessageFactory
 {
+    use LoggerTrait;
+
     /**
      * @var LocalViewRenderer
      */
     private $localViewRenderer;
 
-    private $emailTemplatesConfig = [
+    /**
+     * @var array
+     */
+
+    private $emailTemplatesConfig;
+
+    private $defaultMailTemplatesConfig = [
         AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE => [
             'template' => 'registration.twig',
             'categories' => [
@@ -117,13 +127,21 @@ class MessageFactory
      *
      * @param array $config Config for the whole app; should contain
      * @param LocalViewRenderer $localViewRenderer
+     * @param array $emailTemplatesConfig Configuration for email
+     * templates; if not set, default config is used
      */
     public function __construct(
         array $config,
-        LocalViewRenderer $localViewRenderer
+        LocalViewRenderer $localViewRenderer,
+        array $emailTemplatesConfig = null
     ) {
         $this->config = $config;
         $this->localViewRenderer = $localViewRenderer;
+
+        if (is_null($emailTemplatesConfig)) {
+            $emailTemplatesConfig = $this->defaultMailTemplatesConfig;
+        }
+        $this->emailTemplatesConfig = $emailTemplatesConfig;
     }
 
     /**
@@ -166,10 +184,10 @@ class MessageFactory
             throw new InvalidArgumentException('Missing template config for ' . $templateRef);
         }
 
-        //  Get the HTML content from the template and the data
+        // Get the HTML content from the template and the data
         $emailHtml = $this->localViewRenderer->renderTemplate($template['template'], $data);
 
-        //  Construct the message to send
+        // Construct the message to send
         $message = new Message();
 
         foreach ($to as $toEmails) {
@@ -181,23 +199,24 @@ class MessageFactory
         // rather than globally here
         $emailConfig = $this->config['email'];
 
-        //  Set the FROM address - override where necessary for certain email types
+        // Set the FROM address - override where necessary for certain email types
         $from = $emailConfig['sender']['default']['address'];
         $fromName = $emailConfig['sender']['default']['name'];
 
-        if ($templateRef == self::EMAIL_FEEDBACK) {
+        if ($templateRef == AbstractEmailService::EMAIL_FEEDBACK) {
             $from = $emailConfig['sender']['feedback']['address'];
             $fromName = $emailConfig['sender']['feedback']['name'];
         }
 
+        // If config is broken, may throw InvalidArgumentException
         $message->addFrom($from, $fromName);
 
-        //  Add the categories for this message
+        // Add the categories for this message
         foreach ($template['categories'] as $category) {
             $message->addCategory($category);
         }
 
-        //  Get the subject from the template content and set it in the message
+        // Get the subject from the template content and set it in the message
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $emailHtml, $matches) === 1) {
             $message->setSubject($matches[1]);
         } else {
