@@ -2,7 +2,9 @@
 
 namespace ApplicationTest\Model\Service\Mail\Transport;
 
+use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Message;
+use Application\Model\Service\Mail\MessageFactory;
 use Application\Model\Service\Mail\Transport\SendGridMailTransport;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use DateTime;
@@ -12,7 +14,6 @@ use Hamcrest\MatcherAssert;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\Mail\Message as LaminasMessage;
 use Laminas\Mail\Transport\Exception\RuntimeException;
 use Laminas\Mail\Transport\TransportInterface;
 use Laminas\Mime\Mime;
@@ -42,8 +43,9 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         parent::setUp();
 
         $this->sendgridClient = Mockery::mock(SendGridClient::class);
+        $this->messageFactory = Mockery::mock(MessageFactory::class);
 
-        $this->service = new SendGridMailTransport($this->sendgridClient);
+        $this->service = new SendGridMailTransport($this->sendgridClient, $this->messageFactory);
     }
 
     private function createSendGridEmail($html = null, $text = 'Text content', $categories = []): SendGridMail
@@ -80,16 +82,21 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
             ->andReturn($postResult);
 
         $mail = Mockery::mock();
-        $mail->shouldReceive('send')->once()->andReturn($send);
+        $mail->shouldReceive('send')
+            ->once()
+            ->andReturn($send);
 
         $this->sendgridClient->shouldReceive('mail')->once()->andReturn($mail);
 
-        $message = new LaminasMessage();
+        $message = new Message();
         $message->setFrom('from@test.com');
         $message->setTo('to@test.com');
         $message->setBody('Text content');
 
-        $this->service->send($message);
+        $this->messageFactory->shouldReceive('createMessage')
+            ->andReturn($message);
+
+        $this->service->send(new MailParameters('to@test.com'));
     }
 
     public function testSendMultipleToAddresses(): void
@@ -121,12 +128,18 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
 
         $this->sendgridClient->shouldReceive('mail')->once()->andReturn($mail);
 
-        $message = new LaminasMessage();
+        $message = new Message();
         $message->setFrom('from@test.com');
         $message->setTo($expectedAddresses);
         $message->setBody('Text content');
 
-        $this->service->send($message);
+        $mailParameters = new MailParameters($expectedAddresses);
+
+        $this->messageFactory->shouldReceive('createMessage')
+            ->with($mailParameters)
+            ->andReturn($message);
+
+        $this->service->send($mailParameters);
     }
 
     public function testSendWithCategories(): void
@@ -139,6 +152,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $send = Mockery::mock();
         $send->shouldReceive('post')
             ->with(Mockery::on(function ($email) use ($expectedCategories) {
+                print_r($email->getCategories());
                 $actualCategories = array_map(function ($category) {
                     return $category->getCategory();
                 }, $email->getCategories());
@@ -164,7 +178,13 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
             $message->addCategory($expectedCategory);
         }
 
-        $this->service->send($message);
+        $mailParameters = new MailParameters('to@test.com');
+
+        $this->messageFactory->shouldReceive('createMessage')
+            ->with($mailParameters)
+            ->andReturn($message);
+
+        $this->service->send($mailParameters);
     }
 
     public function testSendHtmlOnlySetsPlainText(): void
@@ -173,17 +193,6 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
             ['type' => 'text/html', 'value' => '<HTML><body>Test html</body></HTML>'],
             ['type' => 'text/plain', 'value' => 'Test html']
         ];
-
-        $textHtml = new Part('<HTML><body>Test html</body></HTML>');
-        $textHtml->setType(Mime::TYPE_HTML);
-
-        $content = new \Laminas\Mime\Message();
-        $content->setParts([$textHtml]);
-
-        $message = new LaminasMessage();
-        $message->setFrom('from@test.com');
-        $message->setTo('to@test.com');
-        $message->setBody($content);
 
         $postResult = Mockery::mock();
         $postResult->shouldReceive('statusCode')->once()->andReturn(200);
@@ -212,25 +221,28 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
 
         $this->sendgridClient->shouldReceive('mail')->once()->andReturn($mail);
 
-        $this->service->send($message);
-    }
-
-    public function testSendPlainTextAndHtml(): void
-    {
-        $textContent = new Part('Text content');
-        $textContent->setType(Mime::TYPE_TEXT);
-
         $textHtml = new Part('<HTML><body>Test html</body></HTML>');
         $textHtml->setType(Mime::TYPE_HTML);
 
         $content = new \Laminas\Mime\Message();
-        $content->setParts([$textContent, $textHtml]);
+        $content->setParts([$textHtml]);
 
-        $message = new LaminasMessage();
+        $message = new Message();
         $message->setFrom('from@test.com');
         $message->setTo('to@test.com');
         $message->setBody($content);
 
+        $mailParameters = new MailParameters('to@test.com');
+
+        $this->messageFactory->shouldReceive('createMessage')
+            ->with($mailParameters)
+            ->andReturn($message);
+
+        $this->service->send($mailParameters);
+    }
+
+    public function testSendPlainTextAndHtml(): void
+    {
         $postResult = Mockery::mock();
         $postResult->shouldReceive('statusCode')->once()->andReturn(200);
 
@@ -245,16 +257,31 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
 
         $this->sendgridClient->shouldReceive('mail')->once()->andReturn($mail);
 
-        $this->service->send($message);
+        $textContent = new Part('Text content');
+        $textContent->setType(Mime::TYPE_TEXT);
+
+        $textHtml = new Part('<HTML><body>Test html</body></HTML>');
+        $textHtml->setType(Mime::TYPE_HTML);
+
+        $content = new \Laminas\Mime\Message();
+        $content->setParts([$textContent, $textHtml]);
+
+        $message = new Message();
+        $message->setFrom('from@test.com');
+        $message->setTo('to@test.com');
+        $message->setBody($content);
+
+        $mailParameters = new MailParameters('to@test.com');
+
+        $this->messageFactory->shouldReceive('createMessage')
+            ->with($mailParameters)
+            ->andReturn($message);
+
+        $this->service->send($mailParameters);
     }
 
     public function testSendPostReturns500(): void
     {
-        $message = new LaminasMessage();
-        $message->setFrom('from@test.com');
-        $message->setTo('to@test.com');
-        $message->setBody('Text content');
-
         $postResult = Mockery::mock();
         $postResult->shouldReceive('statusCode')->once()->andReturn(500);
         $postResult->shouldReceive('body')->once()->andReturn('Test error');
@@ -267,43 +294,72 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
 
         $this->sendgridClient->shouldReceive('mail')->once()->andReturn($mail);
 
+        $message = new Message();
+        $message->setFrom('from@test.com');
+        $message->setTo('to@test.com');
+        $message->setBody('Text content');
+
+        $mailParameters = new MailParameters('to@test.com');
+
+        $this->messageFactory->shouldReceive('createMessage')
+            ->with($mailParameters)
+            ->andReturn($message);
+
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Email sending failed: Test error');
 
-        $this->service->send($message);
+        $this->service->send($mailParameters);
     }
 
     public function testSendNoFrom(): void
     {
-        $message = new LaminasMessage();
+        $message = new Message();
+
+        $mailParameters = new MailParameters('to@test.com');
+
+        $this->messageFactory->shouldReceive('createMessage')
+            ->with($mailParameters)
+            ->andReturn($message);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('LaminasMessage returns as invalid');
+        $this->expectExceptionMessage('Message returns as invalid');
 
-        $this->service->send($message);
+        $this->service->send($mailParameters);
     }
 
     public function testSendNoTo(): void
     {
-        $message = new LaminasMessage();
+        $message = new Message();
         $message->setFrom('from@test.com');
+
+        $mailParameters = new MailParameters('to@test.com');
+
+        $this->messageFactory->shouldReceive('createMessage')
+            ->with($mailParameters)
+            ->andReturn($message);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('SendGrid requires at least one TO address');
 
-        $this->service->send($message);
+        $this->service->send($mailParameters);
     }
 
     public function testSendNoMessage(): void
     {
-        $message = new LaminasMessage();
+        $message = new Message();
         $message->setFrom('from@test.com');
         $message->setTo('to@test.com');
+
+        $mailParameters = new MailParameters('to@test.com');
+
+        $this->messageFactory->shouldReceive('createMessage')
+            ->with($mailParameters)
+            ->andReturn($message);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('No message content has been set');
 
-        $this->service->send($message);
+        $this->service->send($mailParameters);
     }
 
     public function testSendInvalidRequestException(): void
@@ -323,12 +379,19 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn($mail);
 
-        $message = new LaminasMessage();
+        $message = new Message();
         $message->setFrom('from@test.com');
         $message->setTo('to@test.com');
         $message->setBody('Text content');
 
+        $mailParameters = new MailParameters('to@test.com');
+
+        $this->messageFactory->shouldReceive('createMessage')
+            ->with($mailParameters)
+            ->andReturn($message);
+
         $this->expectException(RuntimeException::class);
-        $this->service->send($message);
+
+        $this->service->send($mailParameters);
     }
 }

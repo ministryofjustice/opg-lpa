@@ -4,21 +4,16 @@ namespace ApplicationTest\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Mail\Transport\MailTransport;
+use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use Application\View\Helper\LocalViewRenderer;
 use Laminas\Mail\Exception\InvalidArgumentException;
-use Laminas\Mail\Transport\TransportInterface;
 use Mockery;
 use Mockery\MockInterface;
 
 class AbstractEmailServiceTest extends AbstractServiceTest
 {
     /**
-     * @var $localViewRenderer LocalViewRenderer|MockInterface
-     */
-    protected $localViewRenderer;
-
-    /**
-     * @var $mailTransport TransportInterface|MockInterface
+     * @var $mailTransport MailTransportInterface
      */
     protected $mailTransport;
 
@@ -26,9 +21,7 @@ class AbstractEmailServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->localViewRenderer = Mockery::mock(LocalViewRenderer::class);
-
-        $this->mailTransport = Mockery::mock(TransportInterface::class);
+        $this->mailTransport = Mockery::mock(MailTransportInterface::class);
 
         $this->config = [
             'email' => [
@@ -52,43 +45,11 @@ class AbstractEmailServiceTest extends AbstractServiceTest
         $service = new TestableAbstractEmailService(
             $this->authenticationService,
             $this->config,
-            $this->localViewRenderer,
             $this->mailTransport
         );
 
         $this->assertEquals($this->authenticationService, $service->getAuthenticationService());
         $this->assertEquals($this->config, $service->getConfig());
         $this->assertEquals($this->mailTransport, $service->getMailTransport());
-    }
-
-    public function testCreateMessageIllegalTemplateRef(): void
-    {
-        $service = new TestableAbstractEmailService(
-            $this->authenticationService,
-            $this->config,
-            $this->localViewRenderer,
-            $this->mailTransport
-        );
-
-        $this->expectException(InvalidArgumentException::class);
-        $service->createMessage('to@test.com', null);
-    }
-
-    public function testCreateMessageBadTemplate(): void
-    {
-        // Partial mock, so we can return a bad template from getTemplate()
-        $service = new TestableAbstractEmailService(
-            $this->authenticationService,
-            $this->config,
-            $this->localViewRenderer,
-            $this->mailTransport
-        );
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('feedback.twig', [])
-            ->andReturn('bad html');
-
-        $service->createMessage('to@test.com', 'email-feedback');
     }
 }

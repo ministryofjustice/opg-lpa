@@ -4,6 +4,7 @@ namespace ApplicationTest\Model\Service\Feedback;
 
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Feedback\Feedback;
+use Application\Model\Service\Mail\MailParameters;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use Laminas\Mail\Exception\InvalidArgumentException;
 use Laminas\Mail\Message;
@@ -31,7 +32,6 @@ class FeedbackTest extends AbstractEmailServiceTest
         $this->service = new Feedback(
             $this->authenticationService,
             $this->config,
-            $this->localViewRenderer,
             $this->mailTransport
         );
 
@@ -43,11 +43,8 @@ class FeedbackTest extends AbstractEmailServiceTest
     {
         $this->apiClient->shouldReceive('httpPost')->andReturnTrue();
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->andReturn('<!-- SUBJECT: Delightful feedback time --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once();
 
         $result = $this->service->add(['test' => 'data']);
@@ -59,11 +56,8 @@ class FeedbackTest extends AbstractEmailServiceTest
     {
         $this->apiClient->shouldReceive('httpPost')->andReturnTrue();
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->andReturn('<!-- SUBJECT: Broken feedback time --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException('Test exception'));
 

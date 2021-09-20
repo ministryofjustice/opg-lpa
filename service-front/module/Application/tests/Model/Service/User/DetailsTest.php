@@ -3,12 +3,13 @@
 namespace ApplicationTest\Model\Service\User;
 
 use Laminas\Mail\Exception\InvalidArgumentException;
-use Laminas\Mail\Message;
 use Laminas\Session\Container;
 use Exception;
 use RuntimeException;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
+use Application\Model\Service\AbstractEmailService;
+use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use ApplicationTest\Model\Service\ServiceTestHelper;
@@ -39,7 +40,6 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->service = new Details(
             $this->authenticationService,
             $this->config,
-            $this->localViewRenderer,
             $this->mailTransport
         );
         $this->service->setApiClient($this->apiClient);
@@ -205,18 +205,23 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
-        $data = ['newEmailAddress' => 'new@email.address'];
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('new-email-notify.twig', $data)
-            ->andReturn('<!-- SUBJECT: Email notify --><p>message content</p>');
-
-        $data = ['token' => 'test-token'];
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('new-email-verify.twig', $data)
-            ->andReturn('<!-- SUBJECT: Email verify --><p>message content</p>');
+        $expectedOldMailParameters = new MailParameters(
+            'old@email.address',
+            AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY,
+            ['newEmailAddress' => 'new@email.address']
+        );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class));
+            ->with(Matchers::equalTo($expectedOldMailParameters));
+
+        $expectedNewMailParameters = new MailParameters(
+            'new@email.address',
+            AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY,
+            ['token' => 'test-token']
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedNewMailParameters));
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
@@ -245,31 +250,24 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
-        $data = ['newEmailAddress' => 'new@email.address'];
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('new-email-notify.twig', $data)
-            ->andReturn('<!-- SUBJECT: Email notify --><p>message content</p>');
-
+        // Email to the old address fails
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($message) {
-                return $message->getSubject() === 'Email notify';
+            ->with(Mockery::on(function ($mailParameters) {
+                return $mailParameters->getToAddresses() === ['old@email.address'];
             }))
             ->once()
             ->andThrow(Mockery::mock(InvalidArgumentException::class));
 
-        $data = ['token' => 'test-token'];
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('new-email-verify.twig', $data)
-            ->andReturn('<!-- SUBJECT: Email verify --><p>message content</p>');
-
+        // Email to new address succeeds
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($message) {
-                return $message->getSubject() === 'Email verify';
+            ->with(Mockery::on(function ($mailParameters) {
+                return $mailParameters->getToAddresses() === ['new@email.address'];
             }))
             ->once();
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
+        // We treat this as a success, because confirmation arrived at new address
         $this->assertEquals(true, $result);
     }
 
@@ -283,30 +281,24 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
-        $data = ['newEmailAddress' => 'new@email.address'];
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('new-email-notify.twig', $data)
-            ->andReturn('<!-- SUBJECT: Email notify --><p>message content</p>');
-
+        // Email to the old address succeeds
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($message) {
-                return $message->getSubject() === 'Email notify';
+            ->with(Mockery::on(function ($mailParameters) {
+                return $mailParameters->getToAddresses() === ['old@email.address'];
             }))
             ->once();
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('new-email-verify.twig', ['token' => 'test-token'])
-            ->andReturn('<!-- SUBJECT: Email verify --><p>message content</p>');
-
+        // Email to new address fails
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($message) {
-                return $message->getSubject() === 'Email verify';
+            ->with(Mockery::on(function ($mailParameters) {
+                return $mailParameters->getToAddresses() === ['new@email.address'];
             }))
             ->once()
             ->andThrow(Mockery::mock(InvalidArgumentException::class));
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
+        // Treat this as a failure, as new address didn't receive the email
         $this->assertEquals('failed-sending-email', $result);
     }
 
@@ -398,15 +390,16 @@ class DetailsTest extends AbstractEmailServiceTest
         $userDetailSession = new Container();
         $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
 
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_PASSWORD_CHANGED,
+            ['email' => 'test@email.com']
+        );
+
         $this->service->setUserDetailsSession($userDetailSession);
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('password-changed.twig', ['email' => 'test@email.com'])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Password changed --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->updatePassword('old-password', 'new-password');
@@ -433,13 +426,8 @@ class DetailsTest extends AbstractEmailServiceTest
 
         $this->service->setUserDetailsSession($userDetailSession);
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('password-changed.twig', ['email' => 'test@email.com'])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Password updated --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -541,13 +529,14 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('password-reset.twig', ['token' => 'test-token'])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Password reset --><p>message content</p>');
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_PASSWORD_RESET,
+            ['token' => 'test-token']
+        );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
@@ -574,13 +563,14 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('registration.twig', ['token' => 'test-token'])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Password reset --><p>message content</p>');
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
+            ['token' => 'test-token']
+        );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
@@ -607,13 +597,8 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('Not found', 404));
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('password-reset-no-account.twig', [])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Password reset email not found --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once();
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
@@ -628,13 +613,8 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('Not found', 404));
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('password-reset-no-account.twig', [])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Password reset email not found --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -650,13 +630,8 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('password-reset.twig', ['token' => 'test-token'])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Password reset --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -672,13 +647,8 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('registration.twig', ['token' => 'test-token'])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Account activation --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -741,13 +711,14 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('registration.twig', ['token' => 'test-token'])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Account activation --><p>message content</p>');
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
+            ['token' => 'test-token']
+        );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
@@ -774,13 +745,8 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('registration.twig', ['token' => 'test-token'])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Account activation --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -808,13 +774,8 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('username-already-exists'));
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('email-duplication-warning.twig', [])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Account duplication --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once();
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
@@ -829,13 +790,8 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('username-already-exists'));
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('email-duplication-warning.twig', [])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Account duplication --><p>message content</p>');
-
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -851,13 +807,14 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
-        $this->localViewRenderer->shouldReceive('renderTemplate')
-            ->with('registration.twig', ['token' => 'test-token'])
-            ->once()
-            ->andReturn('<!-- SUBJECT: Account activation resend --><p>message content</p>');
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
+            ['token' => 'test-token']
+        );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(Message::class))
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->resendActivateEmail('test@email.com');

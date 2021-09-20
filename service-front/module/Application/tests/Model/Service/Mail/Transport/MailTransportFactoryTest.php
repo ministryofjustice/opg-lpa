@@ -2,8 +2,10 @@
 
 namespace ApplicationTest\Model\Service\Mail\Transport;
 
+use Application\Model\Service\Mail\MessageFactory;
 use Application\Model\Service\Mail\Transport\SendGridMailTransport;
 use Application\Model\Service\Mail\Transport\MailTransportFactory;
+use Hamcrest\Matchers;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Mockery;
@@ -21,10 +23,15 @@ class MailTransportFactoryTest extends MockeryTestCase
     {
         /** @var ContainerInterface|MockInterface $container */
         $container = Mockery::Mock(ContainerInterface::class);
+
         $container->shouldReceive('get')
             ->withArgs(['Config'])
             ->once()
             ->andReturn(['email' => ['transport' => 'sendgrid', 'sendgrid' => ['key' => 'value']]]);
+
+        $container->shouldReceive('get')
+            ->with('MessageFactory')
+            ->andReturn(Mockery::Mock(MessageFactory::class));
 
         $result = (new MailTransportFactory())($container, null, null);
 
@@ -48,7 +55,7 @@ class MailTransportFactoryTest extends MockeryTestCase
         $this->assertInstanceOf(SendGridMailTransport::class, $result);
     }
 
-    public function testMailTransportFactoryNotTransportInConfig(): void
+    public function testMailTransportFactoryNoTransportInConfig(): void
     {
         /** @var ContainerInterface|MockInterface $container */
         $container = Mockery::Mock(ContainerInterface::class);
