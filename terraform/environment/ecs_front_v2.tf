@@ -196,8 +196,8 @@ locals {
       "name" : "app",
       "portMappings" : [
         {
-          "containerPort" : 8005,
-          "hostPort" : 8005,
+          "containerPort" : 80,
+          "hostPort" : 80,
           "protocol" : "tcp"
         }
       ],
