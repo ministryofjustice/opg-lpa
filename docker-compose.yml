@@ -123,7 +123,7 @@ services:
       context: ./
       dockerfile: service-front-v2/docker/app/Dockerfile
     ports:
-      - 8005:80
+      - 8005:8005
 
   front-app:
     container_name: lpa-front-app
