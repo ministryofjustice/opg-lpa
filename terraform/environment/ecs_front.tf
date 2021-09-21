@@ -185,7 +185,7 @@ locals {
     "dependsOn" : [
       {
         "containerName" : "app_v2",
-        "condition" : "HEALTHY"
+        "condition" : "START"
       }
     ]
     "volumesFrom" : [],
