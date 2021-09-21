@@ -182,10 +182,10 @@ locals {
         "protocol" : "tcp"
       }
     ],
-    "dependsOn": [
+    "dependsOn" : [
       {
-        "containerName": "app_v2",
-        "condition": "HEALTHY"
+        "containerName" : "app_v2",
+        "condition" : "HEALTHY"
       }
     ]
     "volumesFrom" : [],
