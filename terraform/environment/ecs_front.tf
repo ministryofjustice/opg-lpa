@@ -268,7 +268,7 @@ locals {
       "essential" : true,
       "image" : "${data.aws_ecr_repository.lpa_front_v2_app.repository_url}:${var.container_version}",
       "mountPoints" : [],
-      "name" : "app",
+      "name" : "app_v2",
       "portMappings" : [
         {
           "containerPort" : 8005,
