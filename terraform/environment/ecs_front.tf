@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "front" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app]"
+  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = merge(local.default_tags, local.front_component_tag)
@@ -197,7 +197,7 @@ locals {
       { "name" : "TIMEOUT", "value" : "60" },
       { "name" : "CONTAINER_VERSION", "value" : var.container_version },
       { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name },
-      { "name" : "OPG_LPA_ENDPOINTS_FRONT_V2", "value" : "http://${local.front_v2_service_fqdn}" }
+      { "name" : "OPG_LPA_ENDPOINTS_FRONT_V2", "value" : "http://127.0.0.1:8005" }
     ]
     }
   )
@@ -271,8 +271,8 @@ locals {
       "name" : "app",
       "portMappings" : [
         {
-          "containerPort" : 80,
-          "hostPort" : 80,
+          "containerPort" : 8005,
+          "hostPort" : 8005,
           "protocol" : "tcp"
         }
       ],
