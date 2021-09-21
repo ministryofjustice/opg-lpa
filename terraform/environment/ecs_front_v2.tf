@@ -79,7 +79,7 @@ resource "aws_security_group_rule" "front_v2_ecs_service_ingress" {
 resource "aws_security_group_rule" "front_v2_ecs_service_front_ingress" {
   type                     = "ingress"
   from_port                = 80
-  to_port                  = 8005
+  to_port                  = 80
   protocol                 = "tcp"
   security_group_id        = aws_security_group.front_v2_ecs_service.id
   source_security_group_id = aws_security_group.front_ecs_service.id
