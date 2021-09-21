@@ -78,7 +78,7 @@ resource "aws_security_group_rule" "front_v2_ecs_service_ingress" {
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_v2_ecs_service_front_ingress" {
   type                     = "ingress"
-  from_port                = 8005
+  from_port                = 80
   to_port                  = 8005
   protocol                 = "tcp"
   security_group_id        = aws_security_group.front_v2_ecs_service.id
