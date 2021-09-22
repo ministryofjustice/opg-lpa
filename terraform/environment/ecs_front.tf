@@ -203,7 +203,7 @@ locals {
       { "name" : "TIMEOUT", "value" : "60" },
       { "name" : "CONTAINER_VERSION", "value" : var.container_version },
       { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name },
-      { "name" : "APP_V2_HOST", "value" : "127.0.0.1" }
+      { "name" : "APP_V2_HOST", "value" : "127.0.0.1" },
       { "name" : "APP_V2_PORT", "value" : "8005" },
     ]
     }
