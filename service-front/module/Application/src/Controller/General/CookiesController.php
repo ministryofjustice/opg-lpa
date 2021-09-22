@@ -11,8 +11,6 @@ use Laminas\View\Model\ViewModel;
 class CookiesController extends AbstractBaseController
 {
     const COOKIE_POLICY_NAME = 'cookie_policy';
-    const SEEN_COOKIE_NAME = 'seen_cookie_message';
-    const SUBMITTED_COOKIE_PAGE = 'submitted_cookie_page';
 
     public function indexAction()
     {
@@ -21,37 +19,6 @@ class CookiesController extends AbstractBaseController
 
         $request = $this->getRequest();
         $cookiePolicy = $this->fetchPolicyCookie($request);
-
-        if ($request->isPost()) {
-            $form->setData($request->getPost());
-
-            $cookiePolicyViewed = new SetCookie(self::SUBMITTED_COOKIE_PAGE);
-            $cookiePolicyViewed->setValue('true')
-                ->setHttponly(false)
-                ->setSecure(true)
-                ->setExpires(new \DateTime('+60 seconds'));
-            $this->getResponse()->getHeaders()->addHeaderLine($cookiePolicyViewed->getFieldName(), $cookiePolicyViewed->getFieldValue());
-
-            $cookiePolicy['usage'] = $form->get('usageCookies')->getValue() === 'yes' ? true : false;
-
-            $newCookiePolicy = new SetCookie(self::COOKIE_POLICY_NAME);
-            $newCookiePolicy->setValue(json_encode($cookiePolicy))
-                ->setHttponly(false)
-                ->setSecure(true)
-                ->setPath('/')
-                ->setExpires(new \DateTime('+365 days'));
-            $this->getResponse()->getHeaders()->addHeaderLine($newCookiePolicy->getFieldName(), $newCookiePolicy->getFieldValue());
-
-            $seenCookie = new SetCookie(self::SEEN_COOKIE_NAME);
-            $seenCookie->setValue('true')
-                ->setHttponly(false)
-                ->setSecure(true)
-                ->setPath('/')
-                ->setExpires(new \DateTime('+365 days'));
-            $this->getResponse()->getHeaders()->addHeaderLine($seenCookie->getFieldName(), $seenCookie->getFieldValue());
-
-            return $this->redirect()->toRoute('cookies');
-        }
 
         if (!is_null($cookiePolicy)) {
             /** @var Radio $ucElement */
