@@ -9,5 +9,5 @@ RUN ./build.sh
 
 # we run on 8005 so that when running locally we do not clash with dynamodb, which uses 8000
 EXPOSE 8005
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:8005", "--log-file", "-"]
+CMD ["gunicorn", "app:app", "--bind", "127.0.0.1:8005", "--log-file", "-"]
 #CMD ["flask", "run", "--host=0.0.0.0"]
