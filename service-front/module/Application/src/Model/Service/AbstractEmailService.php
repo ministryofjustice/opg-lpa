@@ -27,7 +27,6 @@ abstract class AbstractEmailService extends AbstractService
      * template IDs)
      */
     public const EMAIL_ACCOUNT_ACTIVATE                = 'email-account-activate';
-    public const EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET = 'email-account-activate-reset-password';
     public const EMAIL_FEEDBACK                        = 'email-feedback';
     public const EMAIL_LPA_REGISTRATION                = 'email-lpa-registration';
     public const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY        = 'email-new-email-address-notify';

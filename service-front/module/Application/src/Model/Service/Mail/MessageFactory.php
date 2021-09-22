@@ -36,15 +36,6 @@ class MessageFactory
                 'opg-lpa-signup',
             ],
         ],
-        AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET => [
-            'template' => 'password-reset-not-active.twig',
-            'categories' => [
-                'opg',
-                'opg-lpa',
-                'opg-lpa-passwordreset',
-                'opg-lpa-passwordreset-activate',
-            ],
-        ],
         AbstractEmailService::EMAIL_FEEDBACK => [
             'template' => 'feedback.twig',
             'categories' => [
