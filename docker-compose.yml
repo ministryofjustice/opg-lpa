@@ -112,7 +112,8 @@ services:
       APP_HOST: front-app
       APP_PORT: 9000
       NGINX_LOG_LEVEL: warn
-      OPG_LPA_ENDPOINTS_FRONT_V2: "flask-app"
+      APP_V2_HOST: flask-app
+      APP_V2_PORt: 8005
 
   flask-app:
     container_name: lpa-flask-app
