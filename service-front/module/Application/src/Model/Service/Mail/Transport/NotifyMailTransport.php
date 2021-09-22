@@ -43,7 +43,12 @@ class NotifyMailTransport implements MailTransportInterface
 
         foreach ($mailParams->getToAddresses() as $toAddress) {
             // hard-coded to Notify template email-account-activate (for account activation)
-            $response = $this->client->sendEmail($toAddress, '32aea199-3b82-4e2d-8228-f2cd8b58c40a');
+            $response = $this->client->sendEmail(
+                $toAddress,
+                '32aea199-3b82-4e2d-8228-f2cd8b58c40a',
+                $mailParams->getData()
+            );
+
             $this->getLogger()->debug(print_r($response, true));
         }
     }

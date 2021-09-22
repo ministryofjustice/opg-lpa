@@ -328,10 +328,16 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     private function sendAccountActivateEmail($email, $activationToken)
     {
+        $activateAccountUrl = $this->url(
+            'register/confirm',
+            ['token' => $activationToken],
+            ['force_canonical' => true]
+        );
+
         $mailParameters = new MailParameters(
-            strtolower($email),
+            $email,
             AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
-            ['token' => $activationToken]
+            ['activateAccountUrl' => $activateAccountUrl]
         );
 
         try {
@@ -398,10 +404,16 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             ]);
 
             if (isset($result['activation_token'])) {
+                $activateAccountUrl = $this->url(
+                    'register/confirm',
+                    ['token' => $result['activation_token']],
+                    ['force_canonical' => true]
+                );
+
                 $mailParameters = new MailParameters(
                     $email,
                     AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
-                    ['token' => $result['activation_token']]
+                    ['activateAccountUrl' => $activateAccountUrl]
                 );
 
                 try {

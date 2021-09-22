@@ -4,6 +4,7 @@ namespace Application\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
+use Laminas\View\HelperPluginManager;
 
 abstract class AbstractEmailService extends AbstractService
 {
@@ -11,6 +12,13 @@ abstract class AbstractEmailService extends AbstractService
      * @var MailTransportInterface
      */
     private $mailTransport;
+
+    /**
+     * This is used to get at view helpers such as the URL renderer.
+     *
+     * @var HelperPluginManager
+     */
+    private $helperPluginManager;
 
     /**
      * Email template references. Individual MailTransportInterface
@@ -35,14 +43,17 @@ abstract class AbstractEmailService extends AbstractService
      * @param AuthenticationService $authenticationService
      * @param array $config
      * @param MailTransportInterface $mailTransport
+     * @param HelperPluginManager $helperPluginManager
      */
     public function __construct(
         AuthenticationService $authenticationService,
         array $config,
-        MailTransportInterface $mailTransport
+        MailTransportInterface $mailTransport,
+        HelperPluginManager $helperPluginManager
     ) {
         parent::__construct($authenticationService, $config);
         $this->mailTransport = $mailTransport;
+        $this->helperPluginManager = $helperPluginManager;
     }
 
     /**
@@ -51,5 +62,19 @@ abstract class AbstractEmailService extends AbstractService
     public function getMailTransport(): MailTransportInterface
     {
         return $this->mailTransport;
+    }
+
+    /**
+     * Call the URL view helper
+     *
+     * @param string $name
+     * @param array $params
+     * @param array $options
+     * @returns string
+     */
+    public function url($name = null, $params = [], $options = [])
+    {
+        $urlHelper = $this->helperPluginManager->get('url');
+        return $urlHelper($name, $params, $options);
     }
 }
