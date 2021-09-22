@@ -13,6 +13,24 @@ Feature: Cookies
         And there are "two" "input[type=radio]" elements inside "cookies-fieldset"
 
     @focus
+    Scenario: Accepting analytics cookies then rejecting them removes them from client (LPAL-486)
+        Given I visit "/home"
+        When I visit link in new tab containing "View cookies"
+        And I click "usageCookies-yes"
+        And I click "cookies-save"
+        And I see "You’ve set your cookie preferences." in the page text
+        Then I visit "/cookies"
+        And "usageCookies-yes" is checked
+        And analytics cookies are set
+
+        When I click "usageCookies-no"
+        And I click "cookies-save"
+        And I see "You’ve set your cookie preferences." in the page text
+        Then I visit "/cookies"
+        And "usageCookies-no" is checked
+        And analytics cookies are not set
+
+    @focus
     Scenario: Accepting analytics cookies in banner sets analytics cookies on client (LPAL-480)
         Given I visit "/home"
         When I click "accept-analytics-cookies"
