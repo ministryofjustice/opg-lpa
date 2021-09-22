@@ -129,6 +129,10 @@ return [
             ],
         ], //sendgrid
 
+        'notify' => [
+            'key' => getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: null,
+        ],
+
         'sender' => [
                 'default' => [
                         'name' => 'Office of the Public Guardian',
