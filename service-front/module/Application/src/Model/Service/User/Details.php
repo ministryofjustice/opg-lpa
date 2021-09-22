@@ -109,10 +109,16 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                     $logger->err($ex);
                 }
 
+                $changeEmailAddressUrl = $this->url(
+                    'user/change-email-address/verify',
+                    ['token' => $result['token']],
+                    ['force_canonical' => true]
+                );
+
                 $mailParameters = new MailParameters(
                     $email,
                     AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY,
-                    ['token' => $result['token']]
+                    ['changeEmailAddressUrl' => $changeEmailAddressUrl]
                 );
 
                 //  Send the new email address verify email
