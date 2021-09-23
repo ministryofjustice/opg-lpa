@@ -10,6 +10,7 @@ use Application\Model\Service\Mail\Transport\MailTransportInterface;
 
 /**
  * Sends an email via the Notify API.
+ * See https://docs.notifications.service.gov.uk/php.html
  */
 class NotifyMailTransport implements MailTransportInterface
 {
@@ -23,7 +24,7 @@ class NotifyMailTransport implements MailTransportInterface
      */
     private $templateMap;
 
-    // Default values for $templateMap
+    // Default values for $templateMap; values are Notify template IDs
     private $defaultTemplateMap = [
        AbstractEmailService::EMAIL_FEEDBACK => '3fb12879-7665-4ffe-a76f-ed90cde7a35d',
        AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE => '32aea199-3b82-4e2d-8228-f2cd8b58c40a',
@@ -32,6 +33,7 @@ class NotifyMailTransport implements MailTransportInterface
        AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY => '85a14f80-813e-4e72-8dc5-5549d958a592',
        AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY => '1dd980a2-deab-4a5b-802b-61566188496d',
        AbstractEmailService::EMAIL_PASSWORD_CHANGED => '856f6b93-a248-42ae-9580-5d0ff24b595e',
+       AbstractEmailService::EMAIL_PASSWORD_RESET => 'a4f2c358-0484-431f-8148-6d1280d79f44',
     ];
 
     /**
