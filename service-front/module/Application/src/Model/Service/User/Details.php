@@ -96,7 +96,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             ]);
 
             if (is_array($result) && isset($result['token'])) {
-                //  Send the new email address received notification - log any failures
+                // Send notification to old email address that a new email address
+                // has been set
                 $mailParameters = new MailParameters(
                     $currentAddress,
                     AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY,
@@ -109,6 +110,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                     $logger->err($ex);
                 }
 
+                // Send the new email address an email with link to verify that
+                // the new email address is correct
                 $changeEmailAddressUrl = $this->url(
                     'user/change-email-address/verify',
                     ['token' => $result['token']],
@@ -121,7 +124,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                     ['changeEmailAddressUrl' => $changeEmailAddressUrl]
                 );
 
-                //  Send the new email address verify email
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex) {

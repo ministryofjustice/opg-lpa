@@ -7,6 +7,7 @@ use Application\Model\Service\Mail\Transport\MailTransport;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use Application\View\Helper\LocalViewRenderer;
 use Laminas\Mail\Exception\InvalidArgumentException;
+use Laminas\View\HelperPluginManager;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -38,6 +39,8 @@ class AbstractEmailServiceTest extends AbstractServiceTest
             ],
             'sendFeedbackEmailTo' => 'FeedbackReceiver@uat.digital.justice.gov.uk'
         ];
+
+        $this->helperPluginManager = Mockery::mock(HelperPluginManager::class);
     }
 
     public function testConstructor(): void
@@ -45,7 +48,8 @@ class AbstractEmailServiceTest extends AbstractServiceTest
         $service = new TestableAbstractEmailService(
             $this->authenticationService,
             $this->config,
-            $this->mailTransport
+            $this->mailTransport,
+            $this->helperPluginManager
         );
 
         $this->assertEquals($this->authenticationService, $service->getAuthenticationService());

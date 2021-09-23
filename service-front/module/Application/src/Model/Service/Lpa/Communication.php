@@ -4,7 +4,6 @@ namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
-use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use DateTime;
 use DateTimeZone;
@@ -27,10 +26,8 @@ class Communication extends AbstractEmailService
 
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
-        //  Get the user email address
+        // Get the signed in user's email address.
         $userEmailAddress = $this->userDetailsSession->user->email->address;
-
-        // Add the signed in user's email address.
         $to = [$userEmailAddress];
 
         $lpaTypeTitleCase = 'Health and welfare';
@@ -38,8 +35,13 @@ class Communication extends AbstractEmailService
             $lpaTypeTitleCase = 'Property and financial affairs';
         }
 
+        $donorName = '';
+        if (isset($lpa->document->donor)) {
+            $donorName = '' . $lpa->document->donor->name;
+        }
+
         $data = [
-            'donorName' => '' . $lpa->document->donor->name,
+            'donorName' => $donorName,
             'lpaType' => strtolower($lpaTypeTitleCase),
             'lpaId' => $this->formatLpaId($lpa->id),
             'viewDocsUrl' => $this->url('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]),
@@ -48,23 +50,27 @@ class Communication extends AbstractEmailService
 
         // The template we use depends on whether we have a payment or not
         $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION;
-        if (!is_null($lpa->payment->reference)) {
+        if (!is_null($lpa->payment)) {
             $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT;
 
             // Add extra data to the LPA registration email if a payment was made
-            $amount = $lpa->payment->amount;
-            if (!is_numeric($amount)) {
-                $amount = null;
+            $amount = '';
+            if (isset($lpa->payment->amount)) {
+                $amount = $this->moneyFormat($lpa->payment->amount);
             }
 
             // Assume datetimes are in Europe/London timezone as all our users are in the UK
-            $lpa->payment->date->setTimezone(new DateTimeZone('Europe/London'));
+            $paymentDate = '';
+            if (isset($lpa->payment->date)) {
+                $lpa->payment->date->setTimezone(new DateTimeZone('Europe/London'));
+                $paymentDate = $lpa->payment->date->format('j F Y - g:ia');
+            }
 
             $data = array_merge($data, [
                 'lpaTypeTitleCase' => $lpaTypeTitleCase,
                 'lpaPaymentReference' => $lpa->payment->reference,
-                'lpaPaymentDate' => $lpa->payment->date->format('j F Y - g:ia'),
-                'paymentAmount' => $this->moneyFormat($amount),
+                'lpaPaymentDate' => $paymentDate,
+                'paymentAmount' => $amount,
             ]);
 
             // If we have a separate payment address, send the email to that also
