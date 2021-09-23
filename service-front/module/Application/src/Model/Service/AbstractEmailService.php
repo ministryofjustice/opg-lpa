@@ -35,8 +35,8 @@ abstract class AbstractEmailService extends AbstractService
     public const EMAIL_PASSWORD_CHANGED                = 'email-password-changed';
     public const EMAIL_PASSWORD_RESET                  = 'email-password-reset';
     public const EMAIL_PASSWORD_RESET_NO_ACCOUNT       = 'email-password-reset-no-account';
-    public const EMAIL_SENDGRID_BOUNCE                 = 'email-sendgrid-bounce';
     public const EMAIL_ACCOUNT_DUPLICATION_WARNING     = 'email-account-duplication-warning';
+    public const EMAIL_SENDGRID_BOUNCE                 = 'email-sendgrid-bounce';
 
     /**
      * AbstractEmailService constructor.

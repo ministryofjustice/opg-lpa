@@ -31,6 +31,7 @@ class NotifyMailTransport implements MailTransportInterface
        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT => '1657a34a-b61b-4dfa-a530-153462d45dc5',
        AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY => '85a14f80-813e-4e72-8dc5-5549d958a592',
        AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY => '1dd980a2-deab-4a5b-802b-61566188496d',
+       AbstractEmailService::EMAIL_PASSWORD_CHANGED => '856f6b93-a248-42ae-9580-5d0ff24b595e',
     ];
 
     /**
