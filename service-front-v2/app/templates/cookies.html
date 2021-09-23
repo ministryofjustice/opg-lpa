@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
+{%- from 'govuk_frontend_jinja/components/table/macro.html' import govukTable -%}
+
+{% block pageTitle %}{%- if form.errors %}Error: {% endif -%}Cookies – GOV.UK Frontend WTForms Demo{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    'text': "Back",
+    'href': url_for('index')
+  }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{ super() }}
+    <span class="govuk-caption-xl">Example form</span>
+    <h1 class="govuk-heading-xl">Cookies</h1>
+    <p class="govuk-body">Cookies are small files saved on your phone, tablet or computer when you visit a website.
+    </p>
+    <p class="govuk-body">We use cookies to make this site work and collect information about how you use our
+      service.</p>
+
+    <h2 class="govuk-heading-l">Essential cookies</h2>
+    <p class="govuk-body">Essential cookies keep your information secure while you use this service. We do not need
+      to ask permission to use them.</p>
+    {{ govukTable(
+      {
+        'head': [{'text': 'Name'}, {'text': 'Purpose'}, {'text': 'Expires'}],
+        'rows': [
+          [{'text': 'cookie_policy'}, {'text': 'Saves your cookie consent settings'}, {'text': '1 year'}]
+        ]
+      }
+    )}}
+
+    <h2 class="govuk-heading-l">Functional cookies</h2>
+    <p class="govuk-body">Functional cookies allow you to take advantage of some functionality, for example remembering
+      settings between visits. The service will work without them.</p>
+    {{ govukTable(
+      {
+        'head': [{'text': 'Name'}, {'text': 'Purpose'}, {'text': 'Expires'}],
+        'rows': [
+          [{'text': 'foo'}, {'text': 'bar'}, {'text': 'baz'}]
+        ]
+      }
+    )}}
+
+    <h2 class="govuk-heading-l">Analytics cookies</h2>
+    <p class="govuk-body">With your permission, we use Google Analytics to collect data about how you use this service. This
+      information helps us to improve our service.</p>
+    <p class="govuk-body">Google is not allowed to use or share our analytics data with anyone.</p>
+    <p class="govuk-body">Google Analytics stores anonymised information about:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>how you got to this service</li>
+      <li>the pages you visit on this service and how long you spend on them</li>
+      <li>any errors you see while using this service</li>
+    </ul>
+    {{ govukTable(
+      {
+        'head': [{'text': 'Name'}, {'text': 'Purpose'}, {'text': 'Expires'}],
+        'rows': [
+          [{'text': 'foo'}, {'text': 'bar'}, {'text': 'baz'}]
+        ]
+      }
+    )}}
+
+    <h2 class="govuk-heading-l">Change your cookie settings</h2>
+    <form action="" method="post" novalidate>
+      {{ form.csrf_token }}
+
+      {{ form.functional(params={
+        'fieldset': {
+          'legend': {
+            'text': form.functional.label, 
+            'classes': 'govuk-fieldset__legend--s'
+          }
+        }
+      }) }}
+
+      {{ form.analytics(params={
+        'fieldset': {
+          'legend': {
+            'text': form.analytics.label, 
+            'classes': 'govuk-fieldset__legend--s'
+          }
+        }
+      }) }}
+
+      {{ form.save }}
+    </form>
+  </div>
+</div>
+{% endblock %}

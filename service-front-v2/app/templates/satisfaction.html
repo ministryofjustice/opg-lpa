@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
+
+{% block pageTitle %}{%- if form.errors %}Error: {% endif -%}Satisfaction Survey{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    'text': "Back",
+    'href': url_for('index')
+  }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{ super() }}
+    <h1 class="govuk-heading-xl">Thank you</h1>
+    <h1 class="govuk-heading-medium">Satisfaction Survey</h1>
+
+    <form action="" method="post" novalidate>
+        {{ form.csrf_token }}
+        {{ form.radio_field }}
+        {{ form.textarea_field }}
+        {{ form.submit_button}}
+    </form>
+  </div>
+</div>
+{% endblock %}

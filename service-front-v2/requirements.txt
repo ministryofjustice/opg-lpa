@@ -8,32 +8,59 @@ brotli==1.0.9
     # via flask-compress
 click==7.1.2
     # via flask
+deepmerge==0.3.0
+    # via govuk-frontend-wtf
+dnspython==2.1.0
+    # via email-validator
+email_validator==1.1.2
+    # via -r requirements.in
+flask-assets==2.0
+    # via -r requirements.in
 flask-compress==1.9.0
     # via -r requirements.in
 flask-talisman==0.7.0
     # via -r requirements.in
-flask==1.1.2
+flask-wtf==0.14.3
+    # via govuk-frontend-wtf
+flask==2.0.0
     # via
-    #   -r requirements.in
+    #   flask-assets
     #   flask-compress
+    #   flask-wtf
+    #   govuk-frontend-wtf
 govuk-frontend-jinja==1.2.1
+    # via govuk-frontend-wtf
+govuk-frontend-wtf==0.3.0
     # via -r requirements.in
-gunicorn==20.0.4
+gunicorn==20.1.0
     # via -r requirements.in
-itsdangerous==1.1.0
-    # via flask
-jinja2==2.11.3
+idna==3.1
+    # via email-validator
+itsdangerous==2.0.0
+    # via
+    #   flask
+    #   flask-wtf
+jinja2==3.0.0
     # via
     #   flask
     #   govuk-frontend-jinja
-markupsafe==1.1.1
-    # via jinja2
-python-dotenv==0.15.0
+    #   govuk-frontend-wtf
+jsmin==2.2.2
     # via -r requirements.in
-six==1.15.0
+markupsafe==2.0.0
+    # via jinja2
+python-dotenv==0.17.1
+    # via -r requirements.in
+six==1.16.0
     # via flask-talisman
-werkzeug==1.0.1
+webassets==2.0
+    # via flask-assets
+werkzeug==2.0.0
     # via flask
+wtforms==2.3.3
+    # via
+    #   flask-wtf
+    #   govuk-frontend-wtf
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

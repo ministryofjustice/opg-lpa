@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
+
+{% block pageTitle %}{%- if form.errors %}Error: {% endif -%}Create an account – GOV.UK Frontend WTForms Demo{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    'text': "Back",
+    'href': url_for('index')
+  }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{ super() }}
+    <span class="govuk-caption-xl">Example form</span>
+    <h1 class="govuk-heading-xl">Create an account</h1>
+
+    <form action="" method="post" novalidate>
+        {{ form.csrf_token }}
+
+        {{ form.first_name(params={
+          'spellcheck': false, 
+          'autocomplete': 'given-name'
+        }) }}
+
+        {{ form.last_name(params={
+          'spellcheck': false, 
+          'autocomplete': 'family-name'
+        }) }}
+
+        {{ form.date_of_birth(params={
+          'hint': {
+            'text': form.date_of_birth.description
+          }
+        }) }}
+
+        {{ form.national_insurance_number(params={
+          'classes': 'govuk-input--width-10', 
+          'hint': {
+            'text': form.national_insurance_number.description
+          }, 
+          'spellcheck': false
+        }) }}
+
+        {{ form.email_address(params={
+          'hint': {
+            'text': form.email_address.description
+          }, 
+          'type': 'email', 
+          'spellcheck': false, 
+          'autocomplete': 'email'
+        }) }}
+
+        {{ form.telephone_number(params={
+          'classes': 'govuk-input--width-20', 
+          'type': 'tel', 
+          'spellcheck': false, 
+          'autocomplete': 'tel'
+        }) }}
+
+        {{ form.password(params={
+          'hint': {
+            'text': form.password.description
+          }, 
+          'spellcheck': false
+        }) }}
+
+        {{ form.confirm_password(params={
+          'spellcheck': false
+        }) }}
+        
+        {{ form.terms_and_conditions(params={
+          'fieldset': {
+            'legend': {
+              'text': 'Terms and conditions'
+            }
+          }
+        }) }}
+        
+        {{ form.submit}}
+    </form>
+  </div>
+</div>
+{% endblock %}

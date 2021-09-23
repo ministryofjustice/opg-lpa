@@ -1,0 +1,6 @@
+flask-compress==1.9.0
+flask-talisman==0.7.0
+flask==1.1.2
+govuk-frontend-jinja==1.2.1
+gunicorn==20.0.4
+python-dotenv==0.15.0
