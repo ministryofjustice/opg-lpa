@@ -13,7 +13,6 @@ MESSAGE:
 Thank you for registering to use the digital LPA service.
 
 Please activate your account using the link below:
-
 ((activateAccountUrl))
 
 If the link does not work, copy it into your browser's address bar.  The link will expire in 24 hours.

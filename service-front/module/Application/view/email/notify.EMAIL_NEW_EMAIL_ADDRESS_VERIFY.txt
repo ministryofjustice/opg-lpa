@@ -15,5 +15,4 @@ You've asked us to update your email address.
 If you do not want to change your email address, just ignore this email.
 
 To continue with the change, click the following link to make your new email address active:
-
 ((changeEmailAddressUrl))
