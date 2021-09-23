@@ -69,11 +69,33 @@ abstract class AbstractEmailService extends AbstractService
      * @param string $name
      * @param array $params
      * @param array $options
-     * @returns string
+     * @return string
      */
     public function url($name = null, $params = [], $options = [])
     {
         $urlHelper = $this->helperPluginManager->get('url');
         return $urlHelper($name, $params, $options);
+    }
+
+    /**
+     * Format an LPA ID using the helper
+     * @param string $lpaId
+     * @return string Formatted LPA ID
+     */
+    public function formatLpaId($lpaId)
+    {
+        $formatLpaIdHelper = $this->helperPluginManager->get('formatLpaId');
+        return $formatLpaIdHelper($lpaId);
+    }
+
+    /**
+     * Format a money string with decimal points etc.
+     * @param string $money
+     * @return string Formatted money
+     */
+    public function moneyFormat($money)
+    {
+        $moneyFormatHelper = $this->helperPluginManager->get('moneyFormat');
+        return $moneyFormatHelper($money);
     }
 }

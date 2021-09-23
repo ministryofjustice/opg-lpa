@@ -6,6 +6,8 @@ use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use DateTime;
+use DateTimeZone;
 use Exception;
 use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Session\Container;
@@ -41,10 +43,25 @@ class Communication extends AbstractEmailService
             $amount = null;
         }
 
+        $lpaTypeTitleCase = 'Health and welfare';
+        if ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_PF) {
+            $lpaTypeTitleCase = 'Property and financial affairs';
+        }
+
+        // Assume datetimes are in Europe/London timezone as all our users are in the UK
+        $lpa->payment->date->setTimezone(new DateTimeZone('Europe/London'));
+
         $data = [
-            'lpa' => $lpa,
-            'paymentAmount' => $amount,
-            'isHealthAndWelfare' => ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW),
+            'donorName' => $lpa->document->donor->name,
+            'lpaType' => strtolower($lpaTypeTitleCase),
+            'lpaTypeTitleCase' => $lpaTypeTitleCase,
+            'lpaId' => $this->formatLpaId($lpa->id),
+            'lpaHasPaymentReference' => (!is_null($lpa->payment->reference)),
+            'lpaPaymentReference' => $lpa->payment->reference,
+            'lpaPaymentDate' => $lpa->payment->date->format('j F Y - g:ia'),
+            'paymentAmount' => $this->moneyFormat($amount),
+            'viewDocsUrl' => $this->url('lpa/view-docs', ['lpa-id' => $lpa->id], ['force_canonical' => true]),
+            'checkDatesUrl' => $this->url('lpa/date-check', ['lpa-id' => $lpa->id], ['force_canonical' => true]),
         ];
 
         try {

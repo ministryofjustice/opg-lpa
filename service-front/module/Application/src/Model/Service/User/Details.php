@@ -285,10 +285,16 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 }
 
                 if (isset($result['token'])) {
+                    $forgotPasswordUrl = $this->url(
+                        'forgot-password/callback',
+                        ['token' => $result['token']],
+                        ['force_canonical' => true]
+                    );
+
                     $mailParameters = new MailParameters(
                         $email,
                         AbstractEmailService::EMAIL_PASSWORD_RESET,
-                        ['token' => $result['token']]
+                        ['forgotPasswordUrl' => $forgotPasswordUrl]
                     );
 
                     try {
@@ -308,9 +314,12 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             // 404 response means user not found...
             if ($ex->getCode() == 404) {
+                $signUpUrl = $this->url('register', [], ['force_canonical' => true]);
+
                 $mailParameters = new MailParameters(
                     $email,
-                    AbstractEmailService::EMAIL_PASSWORD_RESET_NO_ACCOUNT
+                    AbstractEmailService::EMAIL_PASSWORD_RESET_NO_ACCOUNT,
+                    ['signUpUrl' => $signUpUrl]
                 );
 
                 try {

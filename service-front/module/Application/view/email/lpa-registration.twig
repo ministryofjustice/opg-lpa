@@ -2,43 +2,40 @@
 
 {% block content %}
 
-<!-- SUBJECT: Lasting power of attorney for {{ lpa.document.donor.name }} is ready to register -->
+<!-- SUBJECT: Lasting power of attorney for {{ donorName }} is ready to register -->
 
 <h1 style="font-size: 36px; line-height: 1.315; font-weight: 700; margin: 20px 0 26px 0; color: #0b0c0c">
     LPA is ready for registration
 </h1>
 
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
-	Thank you for completing the LPA online for <strong>{{ lpa.document.donor.name }}'s lasting power of attorney (LPA) for
-    {% if isHealthAndWelfare %}health and welfare{% else %}property and financial affairs{% endif %}</strong>.
+	Thank you for completing the LPA online for <strong>{{ donorName }}'s lasting power of attorney (LPA) for
+    {{ lpaType }}</strong>.
 </p>
 
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
-	Online LPA ID: {{ formatLpaId(lpa.id) }}
+	Online LPA ID: {{ lpaId }}
 </p>
 
-{% if lpa.payment.reference != null %}
+{% if lpaHasPaymentReference %}
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
 	<strong>Your payment summary:</strong><br/>
-	Payment reference number: {{ lpa.payment.reference }}<br/>
-	Date of payment: {{ lpa.payment.date|date('j F Y - g:ia', 'Europe/London') }}<br/>
-	Description: {{ (( lpa.document.type == 'property-and-financial' ) ? 'Property and financial affairs' : 'Health and welfare' ) }} LPA for {{ lpa.document.donor.name }}<br/>
-	Amount paid: £{{ moneyFormat(paymentAmount) }}
+	Payment reference number: {{ lpaPaymentReference }}<br/>
+	Date of payment: {{ lpaPaymentDate }}<br/>
+	Description: {{ lpaTypeTitleCase }} LPA for {{ donorName }}<br/>
+	Amount paid: £{{ paymentAmount }}
 </p>
 {% endif %}
-
 
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
 	If you have not already, you should print off the LPA and sign before sending it to OPG. Instructions on the order people must sign are on the cover sheet of the LPA.
 </p>
 
-{% set viewDocsUrl = url('lpa/view-docs', {'lpa-id': lpa.id}, {'force_canonical': true}) %}
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
 	<a href="{{ viewDocsUrl }}" style="white-space: nowrap; color: #005ea5">Sign in to download and print the LPA form</a><br>
 	<span style="font-size: 14px; color: #0b0c0c">{{ viewDocsUrl }}</span>
 </p>
 
-{% set checkDatesUrl = url('lpa/date-check', {'lpa-id': lpa.id}, {'force_canonical': true}) %}
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
 	<a href="{{ checkDatesUrl }}" style="white-space: nowrap; color: #005ea5">Sign in to check your signing dates</a><br>
 	<span style="font-size: 14px; color: #0b0c0c">{{ checkDatesUrl }}</span>
