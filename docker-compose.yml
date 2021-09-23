@@ -103,6 +103,7 @@ services:
     image: lpa-front-web
     depends_on:
       - front-app
+      - flask-app
     volumes:
       - ./service-front/public:/web
     build:
