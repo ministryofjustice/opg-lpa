@@ -18,7 +18,7 @@ class NotifyMailTransport implements MailTransportInterface
     /**
      * Map from internal template IDs to Notify template IDs
      *
-     * @var array Keys are local template IDs, as passed in a MailParameters object;
+     * @var array Keys are local template IDs, as passed to send() via a MailParameters object;
      * values are Notify template IDs
      */
     private $templateMap;
@@ -29,6 +29,8 @@ class NotifyMailTransport implements MailTransportInterface
        AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE => '32aea199-3b82-4e2d-8228-f2cd8b58c40a',
        AbstractEmailService::EMAIL_LPA_REGISTRATION => '10cde4ec-ca11-4e92-8396-782e3e8dc9b1',
        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT => '1657a34a-b61b-4dfa-a530-153462d45dc5',
+       AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY => '85a14f80-813e-4e72-8dc5-5549d958a592',
+       AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY => '1dd980a2-deab-4a5b-802b-61566188496d',
     ];
 
     /**

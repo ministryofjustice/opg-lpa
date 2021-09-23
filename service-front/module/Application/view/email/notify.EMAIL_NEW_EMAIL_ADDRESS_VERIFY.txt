@@ -1,0 +1,19 @@
+NOTIFY SERVICE EMAIL TEMPLATE: EMAIL_NEW_EMAIL_ADDRESS_VERIFY
+
+DERIVED FROM TWIG TEMPLATE: new-email-verift.twig
+
+NOTIFY TEMPLATE ID: 1dd980a2-deab-4a5b-802b-61566188496d
+
+SUBJECT: Please verify your new email address
+
+MESSAGE:
+
+# Updating your email address
+
+You've asked us to update your email address.
+
+If you do not want to change your email address, just ignore this email.
+
+To continue with the change, click the following link to make your new email address active:
+
+((changeEmailAddressUrl))
