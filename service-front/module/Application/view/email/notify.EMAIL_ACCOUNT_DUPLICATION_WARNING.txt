@@ -1,0 +1,21 @@
+NOTIFY SERVICE EMAIL TEMPLATE: EMAIL_ACCOUNT_DUPLICATION_WARNING
+
+DERIVED FROM TWIG TEMPLATE: email-duplication-warning.twig
+
+NOTIFY TEMPLATE ID: 4c99eeff-6af9-4753-aae1-a5d46ea06815
+
+SUBJECT: About your Make a Lasting Power of Attorney account
+
+MESSAGE:
+
+# About your Make a Lasting Power of Attorney account
+
+An attempt has been made to create a new account on the Make a Lasting Power of Attorney service using your email address.
+
+If you tried to create the account, you already have an account using this email address. You can sign in to it at:
+https://www.lastingpowerofattorney.service.gov.uk/login
+
+If you have forgotten your password, you can reset it by going to:
+https://www.lastingpowerofattorney.service.gov.uk/forgot-password
+
+^ If you did not try to create the account, there’s nothing you need to do. The new account has not been created. If you have any concerns or notice any suspicious behaviour on your account, please contact us.
