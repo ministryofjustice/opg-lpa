@@ -2,18 +2,22 @@
 
 namespace ApplicationTest\Model\Service\User;
 
+use Laminas\Mail\Exception\InvalidArgumentException;
+use Laminas\Session\Container;
+use Exception;
+use RuntimeException;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
+use Application\Model\Service\AbstractEmailService;
+use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use ApplicationTest\Model\Service\ServiceTestHelper;
-use Exception;
-use Mockery;
-use Mockery\MockInterface;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
-use RuntimeException;
-use Laminas\Session\Container;
+use Hamcrest\Matchers;
+use Mockery;
+use Mockery\MockInterface;
 
 class DetailsTest extends AbstractEmailServiceTest
 {
@@ -27,13 +31,17 @@ class DetailsTest extends AbstractEmailServiceTest
      */
     private $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->apiClient = Mockery::mock(Client::class);
 
-        $this->service = new Details($this->authenticationService, [], $this->twigEmailRenderer, $this->mailTransport);
+        $this->service = new Details(
+            $this->authenticationService,
+            $this->config,
+            $this->mailTransport
+        );
         $this->service->setApiClient($this->apiClient);
     }
 
@@ -45,7 +53,7 @@ class DetailsTest extends AbstractEmailServiceTest
         ?string $id = 'test-id',
         ?array $toArray = [],
         ?string $token = 'test-token'
-    ) : MockInterface {
+    ): MockInterface {
         $identity = Mockery::mock();
         $identity->shouldReceive('id')->times($idTimes)->andReturn($id);
         $identity->shouldReceive('toArray')->times($toArrayTimes)->andReturn($toArray);
@@ -56,7 +64,7 @@ class DetailsTest extends AbstractEmailServiceTest
         return $identity;
     }
 
-    public function testGetUserDetails() : void
+    public function testGetUserDetails(): void
     {
         $this->setUpIdentity(1, 1, 0, 0);
 
@@ -70,7 +78,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(new User('{"test": "response"}'), $result);
     }
 
-    public function testGetUserDetailsError() : void
+    public function testGetUserDetailsError(): void
     {
         $this->setUpIdentity(1, 1, 0, 0);
 
@@ -84,7 +92,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(false, $result);
     }
 
-    public function testUpdateAllDetailsUpdateAll() : void
+    public function testUpdateAllDetailsUpdateAll(): void
     {
         $this->setUpIdentity(3, 2, 1, 0);
 
@@ -144,7 +152,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('test response', $result);
     }
 
-    public function testUpdateAllDetailsEmptyAll() : void
+    public function testUpdateAllDetailsEmptyAll(): void
     {
         $this->setUpIdentity(3, 2, 1, 0);
 
@@ -168,13 +176,16 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('test response', $result);
     }
 
-    public function testUpdateAllInvalidData() : void
+    public function testUpdateAllInvalidData(): void
     {
         $this->setUpIdentity(2, 1, 1, 0);
 
         $currentUserJson = FixturesData::getUserJson();
 
-        $this->apiClient->shouldReceive('httpGet')->withArgs(['/v2/user/test-id'])->once()->andReturn($currentUserJson);
+        $this->apiClient->shouldReceive('httpGet')
+            ->withArgs(['/v2/user/test-id'])
+            ->once()
+            ->andReturn($currentUserJson);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to save details');
@@ -184,7 +195,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('test response', $result);
     }
 
-    public function testRequestEmailUpdate() : void
+    public function testRequestEmailUpdate(): void
     {
         $this->setUpIdentity(2, 1, 1, 1);
 
@@ -194,25 +205,30 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                'old@email.address',
-                'email-new-email-address-notify',
-                ['newEmailAddress' => 'new@email.address']
-            ])->once();
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                'new@email.address',
-                'email-new-email-address-verify',
-                ['token' => 'test-token']
-            ])->once();
+        $expectedOldMailParameters = new MailParameters(
+            'old@email.address',
+            AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY,
+            ['newEmailAddress' => 'new@email.address']
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedOldMailParameters));
+
+        $expectedNewMailParameters = new MailParameters(
+            'new@email.address',
+            AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY,
+            ['token' => 'test-token']
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedNewMailParameters));
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
         $this->assertEquals(true, $result);
     }
 
-    public function testRequestEmailUpdateNoToken() : void
+    public function testRequestEmailUpdateNoToken(): void
     {
         $this->setUpIdentity(2, 1, 1, 1, 'test-id', [], null);
 
@@ -224,7 +240,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('unknown-error', $result);
     }
 
-    public function testRequestEmailUpdateErrorSendingNewEmailReceived() : void
+    public function testRequestEmailUpdateErrorSendingNewEmailReceived(): void
     {
         $this->setUpIdentity(2, 1, 1, 1);
 
@@ -234,26 +250,28 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                'old@email.address',
-                'email-new-email-address-notify',
-                ['newEmailAddress' => 'new@email.address']
-            ])->once()
-            ->andThrow(Mockery::mock(Exception::class));
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                'new@email.address',
-                'email-new-email-address-verify',
-                ['token' => 'test-token']
-            ])->once();
+        // Email to the old address fails
+        $this->mailTransport->shouldReceive('send')
+            ->with(Mockery::on(function ($mailParameters) {
+                return $mailParameters->getToAddresses() === ['old@email.address'];
+            }))
+            ->once()
+            ->andThrow(Mockery::mock(InvalidArgumentException::class));
+
+        // Email to new address succeeds
+        $this->mailTransport->shouldReceive('send')
+            ->with(Mockery::on(function ($mailParameters) {
+                return $mailParameters->getToAddresses() === ['new@email.address'];
+            }))
+            ->once();
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
+        // We treat this as a success, because confirmation arrived at new address
         $this->assertEquals(true, $result);
     }
 
-    public function testRequestEmailUpdateErrorSendingVerifyEmail() : void
+    public function testRequestEmailUpdateErrorSendingVerifyEmail(): void
     {
         $this->setUpIdentity(2);
 
@@ -263,26 +281,28 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                'old@email.address',
-                'email-new-email-address-notify',
-                ['newEmailAddress' => 'new@email.address']
-            ])->once();
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs([
-                'new@email.address',
-                'email-new-email-address-verify',
-                ['token' => 'test-token']
-            ])->once()
-            ->andThrow(Mockery::mock(Exception::class));
+        // Email to the old address succeeds
+        $this->mailTransport->shouldReceive('send')
+            ->with(Mockery::on(function ($mailParameters) {
+                return $mailParameters->getToAddresses() === ['old@email.address'];
+            }))
+            ->once();
+
+        // Email to new address fails
+        $this->mailTransport->shouldReceive('send')
+            ->with(Mockery::on(function ($mailParameters) {
+                return $mailParameters->getToAddresses() === ['new@email.address'];
+            }))
+            ->once()
+            ->andThrow(Mockery::mock(InvalidArgumentException::class));
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
+        // Treat this as a failure, as new address didn't receive the email
         $this->assertEquals('failed-sending-email', $result);
     }
 
-    public function testRequestEmailUpdateErrorEmailNotChanged() : void
+    public function testRequestEmailUpdateErrorEmailNotChanged(): void
     {
         $this->setUpIdentity(2);
 
@@ -298,7 +318,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('user-already-has-email', $result);
     }
 
-    public function testRequestEmailUpdateErrorEmailOfAnotherUser() : void
+    public function testRequestEmailUpdateErrorEmailOfAnotherUser(): void
     {
         $this->setUpIdentity(2);
 
@@ -314,7 +334,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('email-already-exists', $result);
     }
 
-    public function testRequestEmailUpdateUnknownApiException() : void
+    public function testRequestEmailUpdateUnknownApiException(): void
     {
         $this->setUpIdentity(2);
 
@@ -330,7 +350,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('unknown-error', $result);
     }
 
-    public function testUpdateEmailUsingToken() : void
+    public function testUpdateEmailUsingToken(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/email', ['emailUpdateToken' => 'test-token']])
@@ -341,7 +361,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testUpdateEmailUsingTokenApiError() : void
+    public function testUpdateEmailUsingTokenApiError(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/email', ['emailUpdateToken' => 'test-token']])
@@ -353,7 +373,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(false, $result);
     }
 
-    public function testUpdatePassword() : void
+    public function testUpdatePassword(): void
     {
         $identity = $this->setUpIdentity(2);
         $identity->shouldReceive('setToken')->withArgs(['test-token'])->once();
@@ -370,10 +390,16 @@ class DetailsTest extends AbstractEmailServiceTest
         $userDetailSession = new Container();
         $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
 
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_PASSWORD_CHANGED,
+            ['email' => 'test@email.com']
+        );
+
         $this->service->setUserDetailsSession($userDetailSession);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-password-changed', ['email' => 'test@email.com']])
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->updatePassword('old-password', 'new-password');
@@ -381,7 +407,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testUpdatePasswordTemplateError() : void
+    public function testUpdatePasswordTemplateError(): void
     {
         $identity = $this->setUpIdentity(2);
         $identity->shouldReceive('setToken')->withArgs(['test-token'])->once();
@@ -400,27 +426,30 @@ class DetailsTest extends AbstractEmailServiceTest
 
         $this->service->setUserDetailsSession($userDetailSession);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-password-changed', ['email' => 'test@email.com']])
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
-            ->andThrow(new Exception());
+            ->andThrow(new InvalidArgumentException());
 
         $result = $this->service->updatePassword('old-password', 'new-password');
 
         $this->assertEquals(true, $result);
     }
 
-    public function testUpdatePasswordNoToken() : void
+    public function testUpdatePasswordNoToken(): void
     {
         $this->setUpIdentity(2);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
         $this->apiClient->shouldReceive('httpPost')
-            ->withArgs([
+            ->with(
                 '/v2/users/test-id/password',
-                ['currentPassword' => 'old-password',
-                    'newPassword' => 'new-password']
-            ])->once()
+                [
+                    'currentPassword' => 'old-password',
+                    'newPassword' => 'new-password'
+                ]
+            )
+            ->once()
             ->andReturn(null);
 
         $result = $this->service->updatePassword('old-password', 'new-password');
@@ -428,12 +457,12 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('unknown-error', $result);
     }
 
-    public function testUpdatePasswordTemplateApiException() : void
+    public function testUpdatePasswordTemplateApiException(): void
     {
         $this->setUpIdentity(1, 0);
 
         $this->apiClient->shouldReceive('updateToken')
-            ->withArgs(['test-token'])
+            ->with('test-token')
             ->once()
             ->andThrow(ServiceTestHelper::createApiException());
 
@@ -442,7 +471,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('unknown-error', $result);
     }
 
-    public function testGetTokenInfo() : void
+    public function testGetTokenInfo(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/authenticate', ['authToken' => 'test-token']])
@@ -454,7 +483,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(['test' => 'response'], $result);
     }
 
-    public function testGetTokenInfoApiException() : void
+    public function testGetTokenInfoApiException(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/authenticate', ['authToken' => 'test-token']])
@@ -466,7 +495,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(false, $result);
     }
 
-    public function testDelete() : void
+    public function testDelete(): void
     {
         $this->setUpIdentity(2, 1, 1, 0);
 
@@ -479,7 +508,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testDeleteApiException() : void
+    public function testDeleteApiException(): void
     {
         $this->setUpIdentity(2, 1, 1, 0);
 
@@ -493,15 +522,21 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(false, $result);
     }
 
-    public function testRequestPasswordResetEmail() : void
+    public function testRequestPasswordResetEmail(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
             ->andReturn(['token' => 'test-token']);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-password-reset', ['token' => 'test-token']])
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_PASSWORD_RESET,
+            ['token' => 'test-token']
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
@@ -509,7 +544,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testRequestPasswordResetEmailPostReturnsIncorrectType() : void
+    public function testRequestPasswordResetEmailPostReturnsIncorrectType(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
@@ -521,15 +556,21 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('unknown-error', $result);
     }
 
-    public function testRequestPasswordResetEmailAccountNotActivated() : void
+    public function testRequestPasswordResetEmailAccountNotActivated(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-account-activate', ['token' => 'test-token']])
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
+            ['token' => 'test-token']
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
@@ -537,7 +578,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testRequestPasswordResetEmailApiException() : void
+    public function testRequestPasswordResetEmailApiException(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
@@ -549,15 +590,15 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(false, $result);
     }
 
-    public function testRequestPasswordResetEmailNotFoundApiException() : void
+    public function testRequestPasswordResetEmailNotFoundApiException(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('Not found', 404));
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-password-reset-no-account'])
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once();
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
@@ -565,24 +606,58 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testRequestPasswordResetEmailApiExceptionCausesException() : void
+    public function testRequestPasswordResetEmailApiExceptionCausesException(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('Not found', 404));
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-password-reset-no-account'])
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
-            ->andThrow(new Exception());
+            ->andThrow(new InvalidArgumentException());
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
 
         $this->assertEquals('failed-sending-email', $result);
     }
 
-    public function testSetNewPassword() : void
+    public function testRequestPasswordResetSendingResetSendApiException(): void
+    {
+        $this->apiClient->shouldReceive('httpPost')
+            ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
+            ->once()
+            ->andReturn(['token' => 'test-token']);
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->once()
+            ->andThrow(new InvalidArgumentException());
+
+        $result = $this->service->requestPasswordResetEmail('test@email.com');
+
+        $this->assertEquals('failed-sending-email', $result);
+    }
+
+    public function testAccountActivateEmailSendApiException(): void
+    {
+        $this->apiClient->shouldReceive('httpPost')
+            ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
+            ->once()
+            ->andReturn(['activation_token' => 'test-token']);
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->once()
+            ->andThrow(new InvalidArgumentException());
+
+        $result = $this->service->requestPasswordResetEmail('test@email.com');
+
+        $this->assertEquals('failed-sending-email', $result);
+    }
+
+    public function testSetNewPassword(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
@@ -593,7 +668,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testSetNewPasswordResponseNotEmpty() : void
+    public function testSetNewPasswordResponseNotEmpty(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
@@ -605,7 +680,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('unknown-error', $result);
     }
 
-    public function testSetNewPasswordApiException() : void
+    public function testSetNewPasswordApiException(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
@@ -617,7 +692,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('Test error', $result);
     }
 
-    public function testSetNewPasswordApiExceptionInvalidToken() : void
+    public function testSetNewPasswordApiExceptionInvalidToken(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
@@ -629,15 +704,21 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('invalid-token', $result);
     }
 
-    public function testRegisterAccount() : void
+    public function testRegisterAccount(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-account-activate', ['token' => 'test-token']])
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
+            ['token' => 'test-token']
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
@@ -645,7 +726,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testRegisterAccountNoActivationToken() : void
+    public function testRegisterAccountNoActivationToken(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
@@ -657,24 +738,24 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('unknown-error', $result);
     }
 
-    public function testRegisterAccountFailedSendingEmail() : void
+    public function testRegisterAccountFailedSendingEmail(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-account-activate', ['token' => 'test-token']])
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
-            ->andThrow(new Exception());
+            ->andThrow(new InvalidArgumentException());
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
 
         $this->assertEquals('failed-sending-email', $result);
     }
 
-    public function testRegisterAccountApiException() : void
+    public function testRegisterAccountApiException(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
@@ -686,15 +767,15 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('Test error', $result);
     }
 
-    public function testDuplicateRegisterAccountWarningEmailSend() : void
+    public function testDuplicateRegisterAccountWarningEmailSend(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('username-already-exists'));
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-account-duplication-warning', []])
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once();
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
@@ -702,29 +783,38 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('address-already-registered', $result);
     }
 
-    public function testDuplicateRegisterAccountWarningEmailSendApiException() : void
+    public function testDuplicateRegisterAccountWarningEmailSendApiException(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('username-already-exists'));
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-account-duplication-warning', []])
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
-            ->andThrow(new Exception());
+            ->andThrow(new InvalidArgumentException());
+
         $result = $this->service->registerAccount('test@email.com', 'test-password');
+
         $this->assertEquals('failed-sending-warning-email', $result);
     }
 
-    public function testResendActivationEmail() : void
+    public function testResendActivationEmail(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-account-activate', ['token' => 'test-token']])
+        $expectedMailParameters = new MailParameters(
+            'test@email.com',
+            AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
+            ['token' => 'test-token']
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->resendActivateEmail('test@email.com');
@@ -732,7 +822,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testResendActivationEmailNoActivationToken() : void
+    public function testResendActivationEmailNoActivationToken(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
@@ -744,7 +834,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(false, $result);
     }
 
-    public function testResendActivationEmailApiException() : void
+    public function testResendActivationEmailApiException(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
@@ -756,7 +846,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(false, $result);
     }
 
-    public function testActivateAccount() : void
+    public function testActivateAccount(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['activationToken' => 'test-token']])
@@ -768,7 +858,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals(true, $result);
     }
 
-    public function testActivateAccountApiException() : void
+    public function testActivateAccountApiException(): void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['activationToken' => 'test-token']])

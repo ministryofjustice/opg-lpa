@@ -23,7 +23,7 @@ class AccountInfo extends AbstractHelper
      */
     private $userDetailsSession;
 
-    /** 
+    /**
      * @var ViewModel
      */
     private $viewModel;
@@ -32,14 +32,14 @@ class AccountInfo extends AbstractHelper
      * @var RouteMatch
      */
     private $routeMatch;
- 
+
     /**
      * @var LpaApplicationService
      */
     private $lpaApplicationService;
 
     /**
-     * @var RendererInterface
+     * @var LocalViewRenderer
      */
     private $localViewRenderer;
 
@@ -50,8 +50,14 @@ class AccountInfo extends AbstractHelper
      * @param RouteMatch $routeMatch
      * @param LpaApplicationService $lpaApplicationService
      */
-    public function __construct(AuthenticationService $authenticationService, Container $userDetailsSession, ViewModel $viewModel, ?RouteMatch $routeMatch, LpaApplicationService $lpaApplicationService, RendererInterface $localViewRenderer)
-    {
+    public function __construct(
+        AuthenticationService $authenticationService,
+        Container $userDetailsSession,
+        ViewModel $viewModel,
+        ?RouteMatch $routeMatch,
+        LpaApplicationService $lpaApplicationService,
+        LocalViewRenderer $localViewRenderer
+    ) {
         $this->authenticationService = $authenticationService;
         $this->userDetailsSession = $userDetailsSession;
         $this->viewModel = $viewModel;
@@ -71,7 +77,8 @@ class AccountInfo extends AbstractHelper
             'view' => $this->view,
         ];
 
-        //  Only include name (and user links) if the user has set their name - i.e. they've completed the first About You step
+        //  Only include name (and user links) if the user has set their name - i.e. they've completed the
+        //  first About You step
         if ($this->userDetailsSession->user instanceof User & $this->userDetailsSession->user->name instanceof Name) {
             $sessionUserName = $this->userDetailsSession->user->getName();
 
@@ -98,15 +105,16 @@ class AccountInfo extends AbstractHelper
 
         // Check if the user has one or more LPAs
         // Once a user has more than one, we cache the result in the session to save a lookup for every page load.
-        if (!isset($this->userDetailsSession->hasOneOrMoreLPAs) || $this->userDetailsSession->hasOneOrMoreLPAs == false) {
+        if (
+            !isset($this->userDetailsSession->hasOneOrMoreLPAs) ||
+            $this->userDetailsSession->hasOneOrMoreLPAs == false
+        ) {
             $lpasSummaries = $this->lpaApplicationService->getLpaSummaries();
             $this->userDetailsSession->hasOneOrMoreLPAs = ($lpasSummaries['total'] > 0);
         }
 
         $params['hasOneOrMoreLPAs'] = $this->userDetailsSession->hasOneOrMoreLPAs;
 
-        $template = $this->localViewRenderer->loadTemplate('account-info/account-info.twig');
-
-        echo $template->render($params);
+        echo $this->localViewRenderer->renderTemplate('account-info/account-info.twig', $params);
     }
 }

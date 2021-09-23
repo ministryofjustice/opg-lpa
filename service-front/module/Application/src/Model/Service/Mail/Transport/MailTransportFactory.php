@@ -7,9 +7,8 @@ use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use SendGrid as SendGridClient;
+use SendGrid;
 use Twig\Environment as TwigEnvironment;
-use Application\View\Helper\LocalViewRenderer as LocalViewRenderer;
 use RuntimeException;
 
 class MailTransportFactory implements FactoryInterface
@@ -29,17 +28,25 @@ class MailTransportFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $emailConfig = $container->get('Config')['email'];
-        $sendGridConfig = $emailConfig['sendgrid'];
 
-        if (!isset($sendGridConfig['key'])) {
-            throw new RuntimeException('Sendgrid settings not found');
+        $transport = null;
+        if (isset($emailConfig['transport'])) {
+            $transport = $emailConfig['transport'];
         }
 
-        $client = new SendGridClient($sendGridConfig['key']);
+        if ($transport === 'sendgrid') {
+            $sendGridConfig = $emailConfig['sendgrid'];
 
-        /** @var TwigEnvironment $emailRenderer */
-        $emailRenderer = $container->get('TwigEmailRenderer');
+            if (!isset($sendGridConfig['key'])) {
+                throw new RuntimeException('Sendgrid settings not found');
+            }
 
-        return new MailTransport($client->client, new LocalViewRenderer($emailRenderer), $emailConfig);
+            $client = new SendGrid($sendGridConfig['key']);
+            $messageFactory = $container->get('MessageFactory');
+
+            return new SendGridMailTransport($client->client, $messageFactory);
+        }
+
+        throw new RuntimeException('Unable to instantiate email transport; transport is set to ' . $transport);
     }
 }

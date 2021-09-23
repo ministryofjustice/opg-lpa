@@ -1,9 +1,15 @@
 <?php
 
+$DYNAMO_DB_CONFIG = [
+    'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
+    'version' => '2012-08-10',
+    'region' => 'eu-west-1',
+];
+
 return [
 
     'version' => [
-        'cache' => ( getenv('OPG_DOCKER_TAG') !== false ) ? abs( crc32( getenv('OPG_DOCKER_TAG') ) ) : time(),
+        'cache' => (getenv('OPG_DOCKER_TAG') !== false) ? abs(crc32(getenv('OPG_DOCKER_TAG'))) : time(),
         'tag' => getenv('OPG_DOCKER_TAG'),
     ],
 
@@ -26,7 +32,7 @@ return [
     'admin' => [
 
         'dynamodb' => [
-            'client' => getDynamoClientConfig(),
+            'client' => $DYNAMO_DB_CONFIG,
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
             ],
@@ -40,7 +46,7 @@ return [
         'lock' => [
 
             'dynamodb' => [
-                'client' => getDynamoClientConfig(),
+                'client' => $DYNAMO_DB_CONFIG,
                 'settings' => [
                     'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
@@ -83,7 +89,7 @@ return [
         ],
 
         'dynamodb' => [
-            'client' => getDynamoClientConfig(),
+            'client' => $DYNAMO_DB_CONFIG,
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
                 // Whether Time To Live is enabled on the sesson table
@@ -92,7 +98,8 @@ return [
                 'ttl_attribute' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ATTRIBUTE') ?: 'expires',
                 'batch_config' => [
                     // Sleep before each flush to rate limit the garbage collection.
-                    'before' => function(){ },
+                    'before' => function () {
+                    },
                 ]
             ],
             'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
@@ -111,6 +118,9 @@ return [
     ],
 
     'email' => [
+        // should reference a key within this array which provides
+        // implementation-specific configuration
+        'transport' => getenv('OPG_LPA_FRONT_EMAIL_TRANSPORT') ?: 'sendgrid',
 
         'sendgrid' => [
             'key'     => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY') ?: null,
@@ -166,12 +176,3 @@ return [
         'expected-working-days-before-receipt' => 15,
     ],
 ];
-
-function getDynamoClientConfig()
-{
-    return [
-        'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
-        'version' => '2012-08-10',
-        'region' => 'eu-west-1',
-    ];
-}
