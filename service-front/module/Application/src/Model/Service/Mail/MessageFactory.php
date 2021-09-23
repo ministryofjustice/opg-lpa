@@ -103,20 +103,20 @@ class MessageFactory
                 'opg-lpa-passwordreset-noaccount',
             ],
         ],
-        AbstractEmailService::EMAIL_SENDGRID_BOUNCE => [
-            'template' => 'bounce.twig',
-            'categories' => [
-                'opg',
-                'opg-lpa',
-                'opg-lpa-autoresponse',
-            ],
-        ],
         AbstractEmailService::EMAIL_ACCOUNT_DUPLICATION_WARNING => [
             'template' => 'email-duplication-warning.twig',
             'categories' => [
                 'opg',
                 'opg-lpa',
                 'opg-lpa-signup-email-duplication',
+            ],
+        ],
+        AbstractEmailService::EMAIL_SENDGRID_BOUNCE => [
+            'template' => 'bounce.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-autoresponse',
             ],
         ],
     ];

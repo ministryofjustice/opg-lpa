@@ -34,6 +34,7 @@ class NotifyMailTransport implements MailTransportInterface
        AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY => '1dd980a2-deab-4a5b-802b-61566188496d',
        AbstractEmailService::EMAIL_PASSWORD_CHANGED => '856f6b93-a248-42ae-9580-5d0ff24b595e',
        AbstractEmailService::EMAIL_PASSWORD_RESET => 'a4f2c358-0484-431f-8148-6d1280d79f44',
+       AbstractEmailService::EMAIL_PASSWORD_RESET_NO_ACCOUNT => '4f57dea9-5433-4c49-9a69-365ab60a3b95',
     ];
 
     /**
