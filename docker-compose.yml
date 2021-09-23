@@ -113,7 +113,7 @@ services:
       APP_PORT: 9000
       NGINX_LOG_LEVEL: warn
       APP_V2_HOST: flask-app
-      APP_V2_PORt: 8005
+      APP_V2_PORT: 8005
 
   flask-app:
     container_name: lpa-flask-app

@@ -21,11 +21,6 @@ module "dev_weekdays" {
       scale_up_to   = local.account.autoscaling.front.maximum
       target        = module.front_ecs_autoscaling.appautoscaling_target
     }
-    # tostring(aws_ecs_service.front_v2.name) = {
-    #   scale_down_to = 0
-    #   scale_up_to   = local.account.autoscaling.front.maximum
-    #   target        = module.front_ecs_autoscaling.appautoscaling_target
-    # }
     tostring(aws_ecs_service.pdf.name) = {
       scale_down_to = 0
       scale_up_to   = local.account.autoscaling.pdf.maximum
