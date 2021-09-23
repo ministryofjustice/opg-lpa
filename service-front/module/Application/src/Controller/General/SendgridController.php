@@ -3,18 +3,11 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Application\Model\Service\Mail\Transport\MailTransport;
-use Exception;
 
 class SendgridController extends AbstractBaseController
 {
     /**
-     * @var MailTransport
-     */
-    private $mailTransport;
-
-    /**
-     * No reply email address to use
+     * No reply email address
      *
      * @var string
      */
@@ -31,7 +24,7 @@ class SendgridController extends AbstractBaseController
         $emailText = $this->request->getPost('text');
 
         //  Check the email text to see if the message contains the text "Sent from Mail for Windows 10"
-        $sentFromMailForWindows10 = null;   //  null means that we can't make a determination for this
+        $sentFromMailForWindows10 = null;   // null means that we can't make a determination for this
 
         if (is_string($emailText)) {
             $sentFromMailForWindows10 = !(strpos($emailText, 'Sent from Mail for Windows 10') === false);
@@ -47,8 +40,14 @@ class SendgridController extends AbstractBaseController
         ];
 
         //  If there is no from email address, or the user has responded to the blackhole email address then do nothing
-        if (!is_string($fromAddress) || !is_string($originalToAddress) || strpos(strtolower($originalToAddress), $this->blackHoleAddress) !== false) {
-            $this->getLogger()->err('Sender or recipient missing, or email sent to ' . $this->blackHoleAddress . ' - the message message will not be sent to SendGrid', $loggingData);
+        if (
+            !is_string($fromAddress) || !is_string($originalToAddress) || strpos(
+                strtolower($originalToAddress),
+                $this->blackHoleAddress
+            ) !== false
+        ) {
+            $this->getLogger()->err('Sender or recipient missing, or email sent to ' .
+                $this->blackHoleAddress . ' - the message message will not be sent to SendGrid', $loggingData);
 
             return $this->getResponse();
         }
@@ -68,32 +67,13 @@ class SendgridController extends AbstractBaseController
             return $response;
         }
 
-        try {
-            //  Unmonitored mailbox emails will not be sent temporarily while we monitor the usage (and abuse!) of this end point - for now just log the data from the email
-            //  $this->mailTransport->sendMessageFromTemplate($fromAddress, MailTransport::EMAIL_SENDGRID_BOUNCE);
-            //  echo 'Email sent';
-
-            $this->getLogger()->info('Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData);
-
-            echo 'Email not sent - data gathering';
-        } catch (Exception $e) {
-            //  Add some info to the logging data
-            $loggingData['token'] = $token;
-            $loggingData['subject'] = $subject;
-
-            $this->getLogger()->alert("Failed to send Sendgrid bounce email due to:\n" . $e->getMessage(), $loggingData);
-
-            return "failed-sending-email";
-        }
+        //  Log unmonitored mailbox emails
+        $this->getLogger()->info('Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData);
+        echo 'Email not sent - data gathering';
 
         $response = $this->getResponse();
         $response->setStatusCode(200);
 
         return $response;
-    }
-
-    public function setMailTransport(MailTransport $mailTransport)
-    {
-        $this->mailTransport = $mailTransport;
     }
 }
