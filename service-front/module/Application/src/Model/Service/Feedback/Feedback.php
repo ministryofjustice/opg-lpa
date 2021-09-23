@@ -8,6 +8,7 @@ use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use DateTime;
+use DateTimeZone;
 use Laminas\Mail\Exception\ExceptionInterface;
 
 class Feedback extends AbstractEmailService implements ApiClientAwareInterface
@@ -36,9 +37,12 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
                 $phone = $data['phone'];
             }
 
+            $now = new DateTime('now');
+            $now->setTimezone(new DateTimeZone('Europe/London'));
+
             // Send the feedback via email also
             $templateData = [
-                'currentDateTime' => (new DateTime('now', 'Europe/London'))->format('Y/m/d H:i:s'),
+                'currentDateTime' => $now->format('Y/m/d H:i:s'),
                 'rating' => $data['rating'],
                 'details' => $data['details'],
                 'email' => $email,

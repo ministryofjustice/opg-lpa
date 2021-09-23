@@ -1,0 +1,21 @@
+NOTIFY SERVICE EMAIL TEMPLATE: EMAIL_ACCOUNT_ACTIVATE
+
+DERIVED FROM TWIG TEMPLATE: registration.twig
+
+NOTIFY TEMPLATE ID: 32aea199-3b82-4e2d-8228-f2cd8b58c40a
+
+SUBJECT: Activate your lasting power of attorney account
+
+MESSAGE:
+
+#  Activate your account
+
+Thank you for registering to use the digital LPA service.
+
+Please activate your account using the link below:
+
+((activateAccountUrl))
+
+If the link does not work, copy it into your browser's address bar.  The link will expire in 24 hours.
+
+^ You must activate your account before you can create a lasting power of attorney.

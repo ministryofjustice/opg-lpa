@@ -29,6 +29,7 @@ abstract class AbstractEmailService extends AbstractService
     public const EMAIL_ACCOUNT_ACTIVATE                = 'email-account-activate';
     public const EMAIL_FEEDBACK                        = 'email-feedback';
     public const EMAIL_LPA_REGISTRATION                = 'email-lpa-registration';
+    public const EMAIL_LPA_REGISTRATION_WITH_PAYMENT   = 'email-lpa-registration-with-payment';
     public const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY        = 'email-new-email-address-notify';
     public const EMAIL_NEW_EMAIL_ADDRESS_VERIFY        = 'email-new-email-address-verify';
     public const EMAIL_PASSWORD_CHANGED                = 'email-password-changed';

@@ -52,6 +52,14 @@ class MessageFactory
                 'opg-lpa-complete-registration',
             ],
         ],
+        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT => [
+            'template' => 'lpa-registration-with-payment.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-complete-registration',
+            ],
+        ],
         AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY => [
             'template' => 'new-email-notify.twig',
             'categories' => [
