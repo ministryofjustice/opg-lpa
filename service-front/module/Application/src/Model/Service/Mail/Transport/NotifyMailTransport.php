@@ -3,10 +3,13 @@
 namespace Application\Model\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
+use Alphagov\Notifications\Exception\NotifyException;
 use Application\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
+use Laminas\Mail\Exception\InvalidArgumentException;
+use Laminas\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
 
 /**
  * Sends an email via the Notify API.
@@ -64,26 +67,44 @@ class NotifyMailTransport implements MailTransportInterface
     }
 
     /**
-     * Send a mail message
+     * Send a mail message.
      *
-     * @param  MailParameters $message
+     * If $mailParams contains multiple email addresses and sending
+     * to one throws an exception, subsequent emails will not be sent.
+     *
+     * @param  MailParameters $mailParams
      * @throws Laminas\Mail\Exception\ExceptionInterface
      */
     public function send(MailParameters $mailParams): void
     {
-        $this->getLogger()->debug('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ EMAIL VIA NOTIFY: ' . print_r($mailParams, true));
-
-        // TODO check for invalid template ref
-        $notifyTemplateId = $this->templateMap[$mailParams->getTemplateRef()];
-
-        foreach ($mailParams->getToAddresses() as $toAddress) {
-            $response = $this->client->sendEmail(
-                $toAddress,
-                $notifyTemplateId,
-                $mailParams->getData()
+        $templateRef = $mailParams->getTemplateRef();
+        if (!array_key_exists($templateRef, $this->templateMap)) {
+            throw new InvalidArgumentException(
+                'Could not find Notify template for template reference ' . $templateRef
             );
+        }
 
-            $this->getLogger()->debug(print_r($response, true));
+        $notifyTemplateId = $this->templateMap[$templateRef];
+        $data = $mailParams->getData();
+
+        // We could get clever and send these in parallel, but as we're only
+        // likely to have a maximum of 2 email addresses to send to,
+        // we just fire them off in serial
+        foreach ($mailParams->getToAddresses() as $toAddress) {
+            // sendEmail() may throw one of the following:
+            // - Alphagov\Notifications\Exception\NotifyException
+            // - Alphagov\Notifications\Exception\ApiException
+            // ApiException extends NotifyException, so we can just catch that
+            // and turn it into an instance of a Laminas\Mail\Exception\ExceptionInterface
+            try {
+                $this->client->sendEmail($toAddress, $notifyTemplateId, $data);
+            } catch (NotifyException $ex) {
+                $this->getLogger()->err(
+                    'Failed sending email via Notify: ' . $ex->getMessage() . '\n' . $ex->getTraceAsString()
+                );
+
+                throw new TransportInvalidArgumentException($ex);
+            }
         }
     }
 }
