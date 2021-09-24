@@ -17,11 +17,32 @@ use Psr\Http\Message\RequestInterface;
  * the adapter being passed to its constructor. It also fixes the signature
  * for the method to match the one required by HttpClientInterface.
  */
-class Guzzle6Wrapper extends Guzzle6Adapter implements HttpClientInterface
+class Guzzle6Wrapper implements HttpClientInterface
 {
+    /**
+     * Wrapped Guzzle 6 adapter instance
+     *
+     * @var Guzzle6Adapter
+     */
+    private $adapter;
+
+    /**
+     * Constructor
+     *
+     * @param Guzzle6Adapter $adapter Guzzle 6 adapter to wrap; if set, $config
+     * is ignored
+     */
+    public function __construct(Guzzle6Adapter $adapter = null)
+    {
+        if (is_null($adapter)) {
+            $adapter = new Guzzle6Adapter();
+        }
+        $this->adapter = $adapter;
+    }
+
     // Fix method signature so interface is implemented
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
-        return parent::sendRequest($request);
+        return $this->adapter->sendRequest($request);
     }
 }
