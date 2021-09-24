@@ -15,3 +15,22 @@ You have asked us to change your email address to ((newEmailAddress)).
 We have sent an email to the new address - please follow the link in the email to complete the update.
 
 Until then, your current email address will remain the active one for your account.
+
+---
+
+This is an automatic email - please do not reply to this address.
+
+# Contact us
+
+Email: customerservices@publicguardian.gov.uk
+
+Call: 0300 456 0300
+Monday to Friday (except Wednesday) 9.30am to 5pm
+Wednesday 10am to 5pm
+
+Textphone: 0115 934 2778
+
+Office of the Public Guardian
+PO Box 16185
+Birmingham B2 2WH
+https://www.lastingpowerofattorney.service.gov.uk/home
