@@ -67,9 +67,9 @@ abstract class AbstractEmailService extends AbstractService
     /**
      * Call the URL view helper
      *
-     * @param string $name
-     * @param array $params
-     * @param array $options
+     * @param string $name Name of the route
+     * @param array $params Parameters to include in the URL
+     * @param array $options Options for generating the URL
      * @return string
      */
     public function url($name = null, $params = [], $options = [])
