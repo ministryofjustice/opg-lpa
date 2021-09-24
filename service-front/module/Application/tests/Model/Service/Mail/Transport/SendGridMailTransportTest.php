@@ -152,7 +152,6 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $send = Mockery::mock();
         $send->shouldReceive('post')
             ->with(Mockery::on(function ($email) use ($expectedCategories) {
-                print_r($email->getCategories());
                 $actualCategories = array_map(function ($category) {
                     return $category->getCategory();
                 }, $email->getCategories());
