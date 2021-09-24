@@ -48,9 +48,11 @@ class Communication extends AbstractEmailService
             'checkDatesUrl' => $this->url('lpa/date-check', ['lpa-id' => $lpa->id], ['force_canonical' => true]),
         ];
 
-        // The template we use depends on whether we have a payment or not
+        // The template we use depends on whether we have a payment reference or not;
+        // note that $lpa->payment is not null when we create an LPA through the site,
+        // even if there was no fee paid (presumably there's a payment with amount 0)
         $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION;
-        if (!is_null($lpa->payment)) {
+        if (!is_null($lpa->payment) && !is_null($lpa->payment->reference)) {
             $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT;
 
             // Add extra data to the LPA registration email if a payment was made
