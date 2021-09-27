@@ -23,7 +23,7 @@
 
     bindEvents: function() {
       moj.Events.on('Analytics.start', this.setup)
-      moj.Events.on('Analytics.end', this.breakDown)
+      // moj.Events.on('Analytics.end', this.breakDown)
     },
 
     setup: function() {
@@ -66,8 +66,8 @@
       var prodDomain = new RegExp('^(www\.)*lastingpowerofattorney\.service\.gov\.uk$')
       var cookieDomain = prodDomain.test(document.domain) ? '.lastingpowerofattorney.service.gov.uk' : document.domain;
 
-      document.cookie = '_ga=; path=/; domain='+ cookieDomain +'; expires=' + new Date(0).toUTCString();
-      document.cookie = '_gid=; path=/; domain='+ cookieDomain +'; expires=' + new Date(0).toUTCString();
+      // document.cookie = '_ga=; path=/; domain='+ cookieDomain +'; expires=' + new Date(0).toUTCString();
+      // document.cookie = '_gid=; path=/; domain='+ cookieDomain +'; expires=' + new Date(0).toUTCString();
     }
   };
 })();

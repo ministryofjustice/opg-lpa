@@ -88,9 +88,10 @@
             if (usage) {
                 // enable analytics and fire off a pageview
                 moj.Events.trigger('Analytics.start');
-            } else {
-                moj.Events.trigger('Analytics.end');
             }
+            // else {
+            //     moj.Events.trigger('Analytics.end');
+            // }
         },
 
         closeSaveConfirmation: function (evt) {
