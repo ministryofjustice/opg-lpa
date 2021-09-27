@@ -171,9 +171,7 @@ return [
         'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
     ], // log
 
-    //'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
-
-    'sendFeedbackEmailTo' => 'elliot.smith@digital.justice.gov.uk',
+    'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
 
     'processing-status' => [
         'track-from-date' => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2019-04-01',
