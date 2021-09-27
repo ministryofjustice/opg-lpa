@@ -93,3 +93,44 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
     CacheClusterId = each.value
   }
 }
+
+resource "aws_cloudwatch_event_rule" "tasks_stopped" {
+  name        = "${local.account_name}-capture-ecs-task-stopped"
+  description = "Capture each task-stopped event in ECS"
+
+  event_pattern = jsonencode({
+    source = ["aws.ecs"]
+
+    detail-type = ["ECS Task State Change"]
+
+    detail = {
+      lastStatus = ["STOPPED"]
+      stopCode   = ["TaskFailedToStart"]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "tasks_stopped" {
+  rule      = aws_cloudwatch_event_rule.tasks_stopped.name
+  target_id = "SendToSNS"
+  arn       = aws_sns_topic.cloudwatch_to_pagerduty_ops.arn
+}
+
+resource "aws_sns_topic_policy" "task_stopped_policy" {
+  arn    = aws_sns_topic.cloudwatch_to_pagerduty_ops.arn
+  policy = data.aws_iam_policy_document.sns_topic_policy.json
+}
+
+data "aws_iam_policy_document" "stopped_tasks_topic_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["SNS:Publish"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+
+    resources = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+  }
+}
