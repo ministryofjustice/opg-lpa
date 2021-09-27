@@ -120,11 +120,11 @@ resource "aws_cloudwatch_event_rule" "tasks_stopped" {
 resource "aws_cloudwatch_event_target" "tasks_stopped" {
   rule      = aws_cloudwatch_event_rule.tasks_stopped.name
   target_id = "SendToSNS"
-  arn       = aws_sns_topic.cloudwatch_to_pagerduty_ops.arn
+  arn       = aws_sns_topic.cloudwatch_to_account_ops_alerts.arn
 }
 
 resource "aws_sns_topic_policy" "task_stopped_policy" {
-  arn    = aws_sns_topic.cloudwatch_to_pagerduty_ops.arn
+  arn    = aws_sns_topic.cloudwatch_to_account_ops_alerts.arn
   policy = data.aws_iam_policy_document.task_stopped_topic_policy.json
 }
 
@@ -138,6 +138,6 @@ data "aws_iam_policy_document" "task_stopped_topic_policy" {
       identifiers = ["events.amazonaws.com"]
     }
 
-    resources = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+    resources = [aws_sns_topic.cloudwatch_to_account_ops_alerts.arn]
   }
 }
