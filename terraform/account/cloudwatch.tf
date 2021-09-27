@@ -125,10 +125,10 @@ resource "aws_cloudwatch_event_target" "tasks_stopped" {
 
 resource "aws_sns_topic_policy" "task_stopped_policy" {
   arn    = aws_sns_topic.cloudwatch_to_pagerduty_ops.arn
-  policy = data.aws_iam_policy_document.sns_topic_policy.json
+  policy = data.aws_iam_policy_document.task_stopped_topic_policy.json
 }
 
-data "aws_iam_policy_document" "stopped_tasks_topic_policy" {
+data "aws_iam_policy_document" "task_stopped_topic_policy" {
   statement {
     effect  = "Allow"
     actions = ["SNS:Publish"]
