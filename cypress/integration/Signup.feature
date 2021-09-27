@@ -26,6 +26,7 @@ Feature: Signup
     @focus
     Scenario: Cancel button is not shown on "Your details" the first time the user logs in (LPAL-210)
         Given I log in as standard test user
+        When I am taken to the your details page for a new user
         Then I do not see "Cancel" in the page text
 
     @focus
