@@ -12,11 +12,6 @@
             sendToGa('create', trackingId, fieldsObject)
         }
 
-        function removeProfile () {
-            // https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#remove
-            sendToGa('remove')
-        }
-
         function anonymizeIp () {
             // https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced#anonymizeip
             sendToGa('set', 'anonymizeIp', true)
@@ -32,13 +27,9 @@
             fieldsObject = { cookieDomain: fieldsObject }
         }
 
-        if (fieldsObject.stopTracking) {
-            removeProfile()
-        } else {
-            configureProfile()
-            anonymizeIp()
-            disableAdTracking()
-        }
+        configureProfile()
+        anonymizeIp()
+        disableAdTracking()
     }
 
     GoogleAnalyticsUniversalTracker.load = function () {

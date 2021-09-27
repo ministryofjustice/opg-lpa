@@ -23,7 +23,6 @@
 
     bindEvents: function() {
       moj.Events.on('Analytics.start', this.setup)
-      // moj.Events.on('Analytics.end', this.breakDown)
     },
 
     setup: function() {
@@ -58,16 +57,6 @@
       else {
         GOVUK.analytics.trackPageview();
       }
-    },
-
-    breakDown: function() {
-      // Use document.domain in dev, preview and staging so that tracking works
-      // Otherwise explicitly set the domain as lastingpowerofattorney.service.justice.gov.uk.
-      var prodDomain = new RegExp('^(www\.)*lastingpowerofattorney\.service\.gov\.uk$')
-      var cookieDomain = prodDomain.test(document.domain) ? '.lastingpowerofattorney.service.gov.uk' : document.domain;
-
-      // document.cookie = '_ga=; path=/; domain='+ cookieDomain +'; expires=' + new Date(0).toUTCString();
-      // document.cookie = '_gid=; path=/; domain='+ cookieDomain +'; expires=' + new Date(0).toUTCString();
     }
   };
 })();
