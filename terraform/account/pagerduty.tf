@@ -40,6 +40,14 @@ resource "aws_sns_topic_subscription" "cloudwatch_elasticache_alerts_sns_subscri
   endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.cloudwatch_integration.integration_key}/enqueue"
 }
 
+resource "aws_sns_topic_subscription" "cloudwatch_account_ops_sns_subscription" {
+  topic_arn              = aws_sns_topic.cloudwatch_to_account_ops_alerts.arn
+  protocol               = "https"
+  endpoint_auto_confirms = true
+  endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.cloudwatch_integration.integration_key}/enqueue"
+}
+
+
 resource "aws_sns_topic_subscription" "rds_events_sns_subscription" {
   topic_arn              = aws_sns_topic.rds_events.arn
   protocol               = "https"

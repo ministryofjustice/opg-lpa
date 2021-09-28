@@ -3,9 +3,11 @@
 namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractEmailService;
+use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Exception;
+use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Session\Container;
 
 /**
@@ -27,9 +29,7 @@ class Communication extends AbstractEmailService
         $userEmailAddress = $this->userDetailsSession->user->email->address;
 
         // Add the signed in user's email address.
-        $to = [
-            $userEmailAddress,
-        ];
+        $to = [$userEmailAddress];
 
         // If we have a separate payment address, send the email to that also.
         if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userEmailAddress))) {
@@ -48,8 +48,10 @@ class Communication extends AbstractEmailService
         ];
 
         try {
-            $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_LPA_REGISTRATION, $data);
-        } catch (Exception $e) {
+            $mailParameters = new MailParameters($to, AbstractEmailService::EMAIL_LPA_REGISTRATION, $data);
+            $this->getMailTransport()->send($mailParameters);
+        } catch (ExceptionInterface $ex) {
+            $this->getLogger()->err($ex);
             return "failed-sending-email";
         }
 
