@@ -83,6 +83,8 @@
 
     GOVUK.setConsentCookie = function (options) {
         var cookieConsent = GOVUK.getConsentCookie()
+        var regEx = new RegExp('^www\.')
+        var cookieDomain = regEx.test(document.domain) ? document.domain.replace(regEx, '.') : document.domain;
 
         if (!cookieConsent) {
             cookieConsent = JSON.parse(JSON.stringify(DEFAULT_COOKIE_CONSENT))
@@ -95,7 +97,7 @@
             if (!options[cookieType]) {
                 for (var cookie in COOKIE_CATEGORIES) {
                     if (COOKIE_CATEGORIES[cookie] === cookieType) {
-                        GOVUK.cookie(cookie, null, {days: -1, domain: document.domain})
+                        GOVUK.cookie(cookie, null, {days: -1, domain: cookieDomain})
                     }
                 }
             }
