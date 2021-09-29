@@ -3,6 +3,9 @@ Feature: Signup
 
     I want to be able to sign up
 
+    # Ensure that this file contains no scenarios which generate fixtures
+    # (typically marked with @CleanupFixtures)
+
     # NB these tests are order-sensitive, as some rely on the signup state
     # being established before they run
     Background:
