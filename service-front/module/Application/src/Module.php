@@ -9,6 +9,8 @@ use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Mail\MessageFactory;
+use Application\Model\Service\RedisClient\RedisClient;
+use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\System\DynamoCronLock;
 use Application\View\Helper\LocalViewRenderer;
@@ -23,6 +25,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Redis;
 use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
@@ -214,6 +217,32 @@ class Module implements FormElementProviderInterface
                 'MessageFactory' => function (ServiceLocatorInterface $sm) {
                     $localViewRenderer = new LocalViewRenderer($sm->get('TwigEmailRenderer'));
                     return new MessageFactory($sm->get('config'), $localViewRenderer);
+                },
+
+                'SaveHandler' => function (ServiceLocatorInterface $sm) {
+                    $config = $sm->get('config');
+
+                    $redisUrl = $config['session']['redis']['url'];
+                    $ttlMs = $config['session']['redis']['ttlMs'];
+
+                    $request = $sm->get('Request');
+                    $logger = $this->getLogger();
+
+                    $filter = function () use ($request, $logger) {
+                        $shouldWrite = !$request->getHeaders()->has('X-SessionReadOnly');
+
+                        if ($shouldWrite) {
+                            $msg = 'Writing session for request';
+                        }
+                        else {
+                            $msg = 'IGNORING session write for request marked with X-SessionReadOnly';
+                        }
+                        $logger->debug('XXXXXXXXXXXXXXXXXXXXXXXXXXX ' . $msg . '; path = ' . $request->getUri()->getPath());
+
+                        return $shouldWrite;
+                    };
+
+                    return new FilteringSaveHandler($redisUrl, $ttlMs, [$filter], new Redis());
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
