@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\Authentication\Adapter;
 
+use Application\Logging\LoggerTrait;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\ApiClient\Response\AuthResponse;
@@ -17,6 +18,8 @@ use DateTime;
  */
 class LpaAuthAdapter implements AdapterInterface
 {
+    use LoggerTrait;
+
     private $client;
     private $email;
     private $password;
@@ -82,13 +85,15 @@ class LpaAuthAdapter implements AdapterInterface
 
             $response = AuthResponse::buildFromResponse($result);
         } catch (ApiException $ex) {
-            switch ($ex->getMessage()) {
-                case 'account-locked/max-login-attempts':
+            if ($ex->getCode() === 500) {
+                $response->setErrorDescription('api-error');
+            } else {
+                $msg = $ex->getMessage();
+                if ($msg === 'account-locked/max-login-attempts') {
                     $response->setErrorDescription('locked');
-                    break;
-                case 'account-not-active':
+                } elseif ($msg === 'account-not-active') {
                     $response->setErrorDescription('not-activated');
-                    break;
+                }
             }
         }
 
@@ -121,7 +126,6 @@ class LpaAuthAdapter implements AdapterInterface
      */
     public function getSessionExpiry(string $token)
     {
-
         try {
             $result = $this->client->httpGet(
                 '/v2/session-expiry',
@@ -145,7 +149,6 @@ class LpaAuthAdapter implements AdapterInterface
      */
     public function setSessionExpiry(string $token, int $expireInSeconds)
     {
-
         try {
             $result = $this->client->httpPost(
                 '/v2/session-set-expiry',
