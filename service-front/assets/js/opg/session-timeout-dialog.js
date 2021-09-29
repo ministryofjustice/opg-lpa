@@ -104,6 +104,9 @@ var SessionTimeoutDialog = function (options) {
         // Fetch the session data from the API
         $.ajax({
             url: that.remainingTimeUrl,
+            headers: {
+                'X-SessionReadOnly': 'true'
+            },
             data: {},
             complete: function (data) {
                 var remainingSeconds = 0;

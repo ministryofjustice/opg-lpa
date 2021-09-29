@@ -151,6 +151,28 @@ pytest
 
 For how to run the functional tests, please see seperate README in tests/functional directory.
 
+### Load tests
+
+The load tests are located in `tests/load`. They are written using [locust](https://locust.io/).
+
+To run the load tests:
+
+1.  Start the stack (see above).
+1.  Create a virtualenv: `virtualenv -p python3 ~/.loadtestsvenv` (substitute your preferred
+path for the virtual environment).
+1.  Install dependencies:
+    ```bash
+    cd tests/load
+    pip install -e .
+    ```
+1.  Run the test suite: `run_load_tests.sh tests/suite.py`
+    The tests run indefinitely until you interrupt them. Reports are written to `build/load_tests`.
+    Running `run_load_tests.sh` without arguments shows the available switches.
+
+When working on the tests, it can be useful to debug HTTP requests made by the requests library.
+To enable this, edit the `tests/load/load-test-config.json` file and set `"requests_debugging": true`.
+The output is very verbose but can be useful for a low-level view of the HTTP layer.
+
 ### Cypress functional tests
 
 The cypress functional tests can be run with:

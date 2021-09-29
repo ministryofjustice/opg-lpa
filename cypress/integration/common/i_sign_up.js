@@ -1,8 +1,12 @@
 import { Given } from "cypress-cucumber-preprocessor/steps";
- 
+
 Given(`I sign up standard test user`, () => {
     signUp(Cypress.env("email"),Cypress.env("password"));
 })
+
+Given(`I sign up with email {string} and password {string}`, (email, password) => {
+    signUp(email, password);
+});
 
 function signUp(user, password){
     cy.visit("/signup").title().should('include','Create an account');
