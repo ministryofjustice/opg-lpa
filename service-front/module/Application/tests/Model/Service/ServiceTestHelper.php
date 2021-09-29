@@ -13,14 +13,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class ServiceTestHelper
 {
-    public static function disableRedisSaveHandler()
-    {
-        // This prevents PHP defaulting to the Redis save handler while
-        // running unit tests
-        ini_set('session.save_handler', 'files');
-        ini_set('session.save_path', '/tmp/');
-    }
-
     public static function createApiException(
         string $message = 'Test error',
         int $status = 500,
