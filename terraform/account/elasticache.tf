@@ -22,6 +22,7 @@ resource "aws_elasticache_replication_group" "front_cache" {
   transit_encryption_enabled    = true
   at_rest_encryption_enabled    = true
   automatic_failover_enabled    = true
+  maintenance_window            = "wed:05:00-wed:09:00"
 
   subnet_group_name  = aws_elasticache_subnet_group.private_subnets.name
   security_group_ids = [aws_security_group.front_cache.id]
