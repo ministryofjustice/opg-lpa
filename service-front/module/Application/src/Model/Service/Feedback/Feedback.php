@@ -5,8 +5,9 @@ namespace Application\Model\Service\Feedback;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
+use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransport;
-use Exception;
+use Laminas\Mail\Exception\ExceptionInterface;
 
 class Feedback extends AbstractEmailService implements ApiClientAwareInterface
 {
@@ -17,22 +18,23 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
      *
      * @param array $data
      * @return bool|string
+     * @throws ExceptionInterface
      */
     public function add(array $data)
     {
         try {
             $this->apiClient->httpPost('/user-feedback', $data);
 
-            //  Send the feedback via email also
+            // Send the feedback via email also
             $to = $this->getConfig()['sendFeedbackEmailTo'];
 
-            $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_FEEDBACK, $data);
+            $mailParameters = new MailParameters($to, AbstractEmailService::EMAIL_FEEDBACK, $data);
+            $this->getMailTransport()->send($mailParameters);
 
             return true;
-        } catch (Exception $e) {
-            $this->getLogger()->err('Exception while adding feedback from Feedback service');
-            $this->getLogger()->err($e->getMessage());
-            $this->getLogger()->err($e->getTraceAsString());
+        } catch (ExceptionInterface $ex) {
+            $this->getLogger()->err("Exception while adding feedback from Feedback service\n" .
+                $ex->getMessage() . "\n" . $ex->getTraceAsString());
         }
 
         return false;

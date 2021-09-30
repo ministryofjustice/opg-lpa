@@ -92,7 +92,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             $service = new $serviceName(
                 $authenticationService,
                 $config,
-                $container->get('TwigEmailRenderer'),
                 $container->get('MailTransport')
             );
         } else {
@@ -110,8 +109,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         }
 
         //  If required load any additional services into the resource
-        if (array_key_exists($serviceName, $this->additionalServices)
-            && is_array($this->additionalServices[$serviceName])) {
+        if (
+            array_key_exists($serviceName, $this->additionalServices)
+            && is_array($this->additionalServices[$serviceName])
+        ) {
             foreach ($this->additionalServices[$serviceName] as $setterMethod => $additionalService) {
                 if (!method_exists($service, $setterMethod)) {
                     throw new Exception(sprintf(
