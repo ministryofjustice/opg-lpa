@@ -76,6 +76,7 @@ class LpaAuthAdapter implements AdapterInterface
         //  Initially assume the authentication failed
         $response = new AuthResponse();
         $response->setErrorDescription('authentication-failed');
+        $failureCode = Result::FAILURE_CREDENTIAL_INVALID;
 
         try {
             $result = $this->client->httpPost('/v2/authenticate', [
@@ -87,6 +88,10 @@ class LpaAuthAdapter implements AdapterInterface
         } catch (ApiException $ex) {
             if ($ex->getCode() === 500) {
                 $response->setErrorDescription('api-error');
+
+                // change failure code so that we can distinguish
+                // API errors from credential failures
+                $failureCode = Result::FAILURE;
             } else {
                 $msg = $ex->getMessage();
                 if ($msg === 'account-locked/max-login-attempts') {
@@ -101,7 +106,7 @@ class LpaAuthAdapter implements AdapterInterface
         unset($this->password);
 
         if (!$response->isAuthenticated()) {
-            return new Result(Result::FAILURE, null, [
+            return new Result($failureCode, null, [
                 $response->getErrorDescription()
             ]);
         }

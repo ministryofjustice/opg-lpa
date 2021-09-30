@@ -7,6 +7,7 @@ use Application\Logging\LoggerTrait;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Adapter\AdapterInterface;
+use Laminas\Db\Exception\ExceptionInterface as LaminasExceptionInterface;
 
 /**
  * Class LpaAuth
@@ -48,15 +49,17 @@ class LpaAuth implements AdapterInterface
      */
     public function authenticate()
     {
-        $this->getLogger()->debug('++++++++++++++++++ WELL, HERE WE ARE IN LpaAuth->authenticate; SO FAR, SO GOOD');
-        $user = null;
-
+        // Database errors during authentication are converted into a general 500 response from the API
         try {
             $data = $this->authenticationService->withToken($this->token, true);
-        } catch (\Exception $ex) {
-            $this->getLogger()->err('_____________________ OH NO CANNOT LOOK UP USER');
-            $this->getLogger()->err($ex);
+        } catch (LaminasExceptionInterface $ex) {
+            $this->getLogger()->err(
+                'Unable to get user with token; possible database issue; message: ' . $ex->getMessage()
+            );
+            return new Result(Result::FAILURE, null);
         }
+
+        $user = null;
 
         //  Clear up the token
         unset($this->token);
@@ -72,6 +75,6 @@ class LpaAuth implements AdapterInterface
             }
         }
 
-        return new Result(is_null($user) ? Result::FAILURE : Result::SUCCESS, $user);
+        return new Result(is_null($user) ? Result::FAILURE_CREDENTIAL_INVALID : Result::SUCCESS, $user);
     }
 }
