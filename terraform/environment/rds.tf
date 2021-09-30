@@ -30,7 +30,7 @@ resource "aws_db_instance" "api" {
   parameter_group_name                = aws_db_parameter_group.postgres-db-params.name
   vpc_security_group_ids              = [aws_security_group.rds-api.id]
   auto_minor_version_upgrade          = true
-  maintenance_window                  = "sun:01:00-sun:01:30"
+  maintenance_window                  = "wed:05:00-wed:09:00"
   multi_az                            = true
   backup_retention_period             = local.account.backup_retention_period
   deletion_protection                 = local.account.deletion_protection
