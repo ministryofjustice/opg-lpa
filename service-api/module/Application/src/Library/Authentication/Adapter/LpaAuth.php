@@ -3,6 +3,7 @@
 namespace Application\Library\Authentication\Adapter;
 
 use Application\Library\Authentication\Identity;
+use Application\Logging\LoggerTrait;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Adapter\AdapterInterface;
@@ -13,6 +14,8 @@ use Laminas\Authentication\Adapter\AdapterInterface;
  */
 class LpaAuth implements AdapterInterface
 {
+    use LoggerTrait;
+
     /**
      * @var AuthenticationService
      */
@@ -45,9 +48,15 @@ class LpaAuth implements AdapterInterface
      */
     public function authenticate()
     {
+        $this->getLogger()->debug('++++++++++++++++++ WELL, HERE WE ARE IN LpaAuth->authenticate; SO FAR, SO GOOD');
         $user = null;
 
-        $data = $this->authenticationService->withToken($this->token, true);
+        try {
+            $data = $this->authenticationService->withToken($this->token, true);
+        } catch (\Exception $ex) {
+            $this->getLogger()->err('_____________________ OH NO CANNOT LOOK UP USER');
+            $this->getLogger()->err($ex);
+        }
 
         //  Clear up the token
         unset($this->token);
