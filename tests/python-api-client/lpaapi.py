@@ -41,17 +41,80 @@ def deleteViaAPI(lpaId, jsonData, pathSuffix = ''):
     r = s.delete(fullPath, headers=token)
     print(r,file=sys.stderr)
 
+def searchUser(username, password):
+    token, userId = authenticate()
+
+    fullPath = f'{apiRoot}/v2/users/search?email={username}'
+    r = s.get(fullPath, headers=token)
+
+    if r.status_code == 404 or r.json().get('isDeleted'):
+        return None
+
+    return r.json()
+
+def createUser(username, password):
+    """ :return: dict {'userId': '...', 'activation_token': '...'} """
+    fullPath = f'{apiRoot}/v2/users'
+    data = {'username': username, 'password': password}
+
+    result = s.post(fullPath, data=data).json()
+    result['username'] = username
+
+    return result
+
+def deleteUser(userIdToDelete, username, password):
+    token, userId = authenticate(username, password)
+
+    if userId is None:
+        return None
+
+    fullPath = f'{apiRoot}/v2/user/{userIdToDelete}'
+    r = s.delete(fullPath, headers=token)
+
+    return {'status_code': r.status_code, 'text': r.text}
+
+def activateUser(activation_token):
+    """ :return: dict {'success': <bool>} """
+    fullPath = f'{apiRoot}/v2/users'
+    data = {'activationToken': activation_token}
+    r = s.post(fullPath, data=data)
+    return {'success': r.status_code == 204}
+
+def createAndActivateUser(username, password):
+    """ :return: dict {'user_id': '...', 'success': <bool>} """
+    response1 = createUser(username, password)
+    user_id = response1['userId']
+
+    response2 = activateUser(response1['activation_token'])
+    response2['user_id'] = user_id
+
+    return response2
+
+def updateUserDetails(username, password, details):
+    """
+    :param: str; username
+    :param: str; password
+    :param: User; user details (for format, see user.py / User.build_details())
+    """
+    token, userId = authenticate(username, password)
+    fullPath = f'{apiRoot}/v2/user/{userId}'
+    return s.put(fullPath, json=details, headers=token)
+
 def authenticate(username = "seeded_test_user@digital.justice.gov.uk", password = "Pass1234"):
     # authenticate using the suppled creds, returning the resulting token and the userId
     credentials = {"username":username,"password":password}
     authPath = f'{apiRoot}/v2/authenticate'
     r = requests.get(authPath, data=credentials)
+
+    if r.status_code == 401:
+        return {"Token": None}, None
+
     token = r.json()['token']
     userId = r.json()['userId']
     return {"Token": token}, userId
 
-def makeNewLpa():
-    token, userId = authenticate()
+def makeNewLpa(username=None, password=None):
+    token, userId = authenticate(username, password)
     applicationPath = f'{apiRoot}/v2/user/{userId}/applications'
     emptyData = []
     r = s.post(applicationPath, headers=token, data=emptyData)
@@ -59,8 +122,8 @@ def makeNewLpa():
     #print(f'lpa Id : {id}')
     return id
 
-def deleteLpa(lpaId):
-    token, userId = authenticate()
+def deleteLpa(lpaId, username=None, password=None):
+    token, userId = authenticate(username, password)
     lpaPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}'
     emptyData = []
     r = s.delete(lpaPath, headers=token)
@@ -75,8 +138,8 @@ def setDonor(lpaId):
     putToAPI(lpaId, donorDetails, 'donor')
 
 def setPrimaryAttorneyDecisions(lpaId, lpaType = 'health-and-welfare'):
-    # "when"  is when LPA starts (PF only) 
-    # canSustainLife is for life-sustaining treatment (HW only) 
+    # "when"  is when LPA starts (PF only)
+    # canSustainLife is for life-sustaining treatment (HW only)
     # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney but there isn't yet at this stage
     if lpaType == 'health-and-welfare' :
         primaryAttorneyDecisionDetails = {"canSustainLife":True,"how":None,"when":None,"howDetails":None}
@@ -85,8 +148,8 @@ def setPrimaryAttorneyDecisions(lpaId, lpaType = 'health-and-welfare'):
     putToAPI(lpaId, primaryAttorneyDecisionDetails, 'primary-attorney-decisions')
 
 def setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId, lpaType = 'health-and-welfare'):
-    # canSustainLife is for life-sustaining treatment (HW only) 
-    # "when"  is when LPA starts (PF only) 
+    # canSustainLife is for life-sustaining treatment (HW only)
+    # "when"  is when LPA starts (PF only)
     # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney
     if lpaType == 'health-and-welfare' :
         primaryAttorneyDecisionDetails = {"canSustainLife":True,"how":"jointly-attorney-severally","when":None,"howDetails":None}
@@ -104,8 +167,8 @@ def setReplacementAttorneyDecisions(lpaId, lpaType = 'health-and-welfare'):
     putToAPI(lpaId, replacementAttorneyDecisionDetails, 'replacement-attorney-decisions')
 
 def setReplacementAttorneyDecisionsMultipleAttorneys(lpaId, lpaType = 'health-and-welfare'):
-    # canSustainLife is for life-sustaining treatment (HW only) 
-    # "when"  is when LPA starts (PF only) 
+    # canSustainLife is for life-sustaining treatment (HW only)
+    # "when"  is when LPA starts (PF only)
     # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney
     if lpaType == 'health-and-welfare' :
         replacementAttorneyDecisionDetails = {"canSustainLife":True,"how":"jointly-attorney-severally","when":"last","howDetails":None}

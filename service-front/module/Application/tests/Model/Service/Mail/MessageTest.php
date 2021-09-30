@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ApplicationTest\Model\Service\Mail;
 
 use Application\Model\Service\Mail\Message;
@@ -13,7 +12,7 @@ class MessageTest extends TestCase
      */
     private $message;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->message = new Message();
     }
@@ -29,12 +28,5 @@ class MessageTest extends TestCase
         $this->message->addCategory('Cat B');
 
         $this->assertEquals(['Cat A', 'Cat B'], $this->message->getCategories());
-    }
-
-    public function testSetSendAt()
-    {
-        $this->message->setSendAt('Send At');
-
-        $this->assertEquals('Send At', $this->message->getSendAt());
     }
 }

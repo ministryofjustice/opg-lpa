@@ -3,51 +3,52 @@
 namespace Application\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Mail\Transport\MailTransport;
-use Twig\Environment;
+use Application\Model\Service\Mail\Transport\MailTransportInterface;
 
 abstract class AbstractEmailService extends AbstractService
 {
     /**
-     * @var Environment
-     */
-    private $twigEmailRenderer;
-
-    /**
-     * @var MailTransport
+     * @var MailTransportInterface
      */
     private $mailTransport;
+
+    /**
+     * Email template references. Individual MailTransportInterface
+     * implementations may map these to different rendering mechanisms (e.g. Twig
+     * to create HTML bodies for SendGrid) or 3rd party identifiers (e.g. Notify
+     * template IDs)
+     */
+    public const EMAIL_ACCOUNT_ACTIVATE                = 'email-account-activate';
+    public const EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET = 'email-account-activate-reset-password';
+    public const EMAIL_FEEDBACK                        = 'email-feedback';
+    public const EMAIL_LPA_REGISTRATION                = 'email-lpa-registration';
+    public const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY        = 'email-new-email-address-notify';
+    public const EMAIL_NEW_EMAIL_ADDRESS_VERIFY        = 'email-new-email-address-verify';
+    public const EMAIL_PASSWORD_CHANGED                = 'email-password-changed';
+    public const EMAIL_PASSWORD_RESET                  = 'email-password-reset';
+    public const EMAIL_PASSWORD_RESET_NO_ACCOUNT       = 'email-password-reset-no-account';
+    public const EMAIL_SENDGRID_BOUNCE                 = 'email-sendgrid-bounce';
+    public const EMAIL_ACCOUNT_DUPLICATION_WARNING     = 'email-account-duplication-warning';
 
     /**
      * AbstractEmailService constructor.
      * @param AuthenticationService $authenticationService
      * @param array $config
-     * @param Environment $twigEmailRenderer
-     * @param MailTransport $mailTransport
+     * @param MailTransportInterface $mailTransport
      */
     public function __construct(
         AuthenticationService $authenticationService,
         array $config,
-        Environment $twigEmailRenderer,
-        MailTransport $mailTransport
+        MailTransportInterface $mailTransport
     ) {
         parent::__construct($authenticationService, $config);
-        $this->twigEmailRenderer = $twigEmailRenderer;
         $this->mailTransport = $mailTransport;
     }
 
     /**
-     * @return Environment
+     * @return MailTransportInterface
      */
-    public function getTwigEmailRenderer(): Environment
-    {
-        return $this->twigEmailRenderer;
-    }
-
-    /**
-     * @return MailTransport
-     */
-    public function getMailTransport(): MailTransport
+    public function getMailTransport(): MailTransportInterface
     {
         return $this->mailTransport;
     }

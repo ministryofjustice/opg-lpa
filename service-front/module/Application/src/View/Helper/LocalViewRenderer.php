@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @inheritDoc
  */
@@ -7,7 +8,7 @@ namespace Application\View\Helper;
 
 use Twig\Environment as TwigEnvironment;
 
-class LocalViewRenderer implements RendererInterface
+class LocalViewRenderer
 {
     /**
      * @param TwigEnvironment $viewRenderer
@@ -17,8 +18,12 @@ class LocalViewRenderer implements RendererInterface
         $this->viewRenderer = $viewRenderer;
     }
 
-    public function LoadTemplate(string $templateName)
+    /**
+     * @return string
+     */
+    public function renderTemplate(string $templateName, array $data)
     {
-         return $this->viewRenderer->load($templateName)->unwrap();
+        $template = $this->viewRenderer->load($templateName)->unwrap();
+        return $template->render($data);
     }
 }

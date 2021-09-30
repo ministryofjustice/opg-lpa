@@ -1,4 +1,4 @@
-FROM composer:2.0.14 AS composer
+FROM composer:2.1.8 AS composer
 
 COPY service-pdf/composer.json /app/composer.json
 COPY service-pdf/composer.lock /app/composer.lock
