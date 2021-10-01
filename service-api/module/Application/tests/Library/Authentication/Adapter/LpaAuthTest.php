@@ -17,12 +17,12 @@ class LpaAuthTest extends MockeryTestCase
      */
     private $authenticationService;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->authenticationService = Mockery::mock(Service::class);
     }
 
-    public function testAuthenticateStandardUser() : void
+    public function testAuthenticateStandardUser(): void
     {
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)
             ->andReturn(['userId' => 'ID', 'username' => 'user name']);
@@ -41,7 +41,7 @@ class LpaAuthTest extends MockeryTestCase
         $this->assertEquals([0 => 'user'], $user->getRoles());
     }
 
-    public function testAuthenticateAdminUser() : void
+    public function testAuthenticateAdminUser(): void
     {
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)
             ->andReturn(['userId' => 'ID', 'username' => 'user name']);
@@ -60,7 +60,7 @@ class LpaAuthTest extends MockeryTestCase
         $this->assertEquals([0 => 'user', 1 => 'admin'], $user->getRoles());
     }
 
-    public function testAuthenticateFailed() : void
+    public function testAuthenticateFailed(): void
     {
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)
             ->andReturn(null);
@@ -70,7 +70,7 @@ class LpaAuthTest extends MockeryTestCase
 
         $this->assertNotNull($result);
         $this->assertInstanceOf(Result::class, $result);
-        $this->assertEquals(Result::FAILURE, $result->getCode());
+        $this->assertEquals(Result::FAILURE_CREDENTIAL_INVALID, $result->getCode());
         $this->assertNull($result->getIdentity());
     }
 }

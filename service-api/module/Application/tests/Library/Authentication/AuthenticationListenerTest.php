@@ -92,7 +92,9 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->request->shouldReceive('getHeader')->with('Token')->andReturn($header)->once();
 
         $authenticationResult = Mockery::mock(Result::class);
-        $authenticationResult->shouldReceive('getCode')->andReturn(Result::FAILURE)->once();
+        $authenticationResult->shouldReceive('getCode')
+            ->andReturn(Result::FAILURE_CREDENTIAL_INVALID)
+            ->once();
 
         $this->authService->shouldReceive('authenticate')->andReturn($authenticationResult)->once();
 
@@ -112,7 +114,9 @@ class AuthenticationListenerTest extends MockeryTestCase
             ['type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
                 'title' => 'Unauthorized',
                 'status' => 401,
-                'detail' => 'Invalid authentication token'], $apiProblem->toArray());
+            'detail' => 'Invalid authentication token'],
+            $apiProblem->toArray()
+        );
     }
 
     public function testAuthenticationNoToken(): void
