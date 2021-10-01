@@ -203,8 +203,18 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
                 $preAuthRequest->url = (string)$this->getRequest()->getUri();
             }
 
+            // If the user's identity was cleared because of a genuine timeout,
+            // redirect to the login page with session timeout; otherwise,
+            // redirect to the login page and show the "service unavailable" message.
+            $authFailureReason = new Container('AuthFailureReason');
+            if (is_null($authFailureReason->code)) {
+                return $this->redirect()->toRoute('login', [
+                    'state' => 'timeout'
+                ]);
+            }
+
             return $this->redirect()->toRoute('login', [
-                'state' => 'timeout'
+                'state' => 'internalSystemError'
             ]);
         }
 

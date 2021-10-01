@@ -16,6 +16,13 @@
           <p data-tracking-summary="Session timed out">Sorry, your session has timed out due to inactivity or because you have signed in on another browser. Please sign in again.</p>
       </div>
     </div>
+{% elseif isInternalSystemError %}
+    <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
+      <h2 class="heading-medium error-summary-heading" id="error-heading">There is a problem</h2>
+      <div class="error-summary-text" data-tracking-context="Session">
+          <p data-tracking-summary="Internal error">Sorry, the service is unavailable. Please try again later.</p>
+      </div>
+    </div>
 {% endif %}
 
 {% if authError %}
