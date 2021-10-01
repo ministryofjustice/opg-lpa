@@ -29,9 +29,9 @@
       GOVUK.Analytics.load();
 
       // Use document.domain in dev, preview and staging so that tracking works
-      // Otherwise explicitly set the domain as lastingpowerofattorney.service.justice.gov.uk.
-      var prodDomain = new RegExp('^(www\.)*lastingpowerofattorney\.service\.gov\.uk$')
-      var cookieDomain = prodDomain.test(document.domain) ? '.lastingpowerofattorney.service.gov.uk' : document.domain;
+      // Otherwise remove proceeding www, as only prod will append www to the URL
+      var regEx = new RegExp('^www\.')
+      var cookieDomain = regEx.test(document.domain) ? document.domain.replace(regEx, '.') : document.domain;
 
       // Configure profiles and make interface public
       // for custom dimensions, virtual pageviews and events
@@ -46,7 +46,7 @@
         stripDatePII: true
       });
 
-      if (prodDomain.test(document.domain)) {
+      if (regEx.test(document.domain)) {
         GOVUK.analytics.addLinkedTrackerDomain(gaConfig.govId, 'govuk_shared', ['www.gov.uk', '.payments.service.gov.uk']);
       }
 

@@ -25,6 +25,22 @@
 
             var hideConfirmationButton = document.querySelector('.global-cookie-message__button_hide');
             hideConfirmationButton.addEventListener('click', this.closeSaveConfirmation.bind(this));
+
+            if (this.isInCookiesPage()) {
+                var noJsMessage = document.querySelector('#js-warning');
+                noJsMessage.setAttribute('hidden', true);
+
+                var submit = document.querySelector('input[type="submit"]');
+                submit.addEventListener('click', function(evt) {
+                    var flashBanner = document.querySelector('#govuk-notification-banner-title');
+                    var input = document.querySelector('#usageCookies-yes');
+
+                    saveCookieConsent(input.checked);
+                    flashBanner.removeAttribute('hidden');
+
+                    return flashBanner.scrollIntoView();
+                });
+            }
         },
 
         displayElement: function (elt, show) {
