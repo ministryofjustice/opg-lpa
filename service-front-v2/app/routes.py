@@ -14,7 +14,7 @@ def index():
 
     return render_template("index.html", components=components)
 
-@app.route("/feedback")
+@app.route("/completed-feedback")
 def feedback():
     return render_template("feedback.html")
 
