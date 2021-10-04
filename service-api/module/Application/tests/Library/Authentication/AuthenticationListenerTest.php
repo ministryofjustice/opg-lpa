@@ -5,7 +5,6 @@ namespace ApplicationTest\Library\Authentication;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Model\Service\Authentication\Service;
-use JetBrains\PhpStorm\ArrayShape;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
