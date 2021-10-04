@@ -26,8 +26,9 @@ return [
 
     'redirects' => [
         'index' => 'https://www.gov.uk/power-of-attorney/make-lasting-power',
-        //'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
-        'logout' => getenv('FRONT_DOMAIN').'/completed-feedback',
+        'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
+        // Once feedback form is live, this will become:
+        //'logout' => getenv('FRONT_DOMAIN').'/completed-feedback',
     ],
 
     'admin' => [
