@@ -14,4 +14,8 @@ $status-checking-colour: #2b8cc4;
 $status-processed-colour: #28a197;
 
 $progress-bar-background: #dadada;
-$progress-bar-font-default: #555;
+$progress-bar-font-default: #555555;
+
+// Need to be set for latest Govuk Frontend, legacy settings
+$govuk-compatibility-govukfrontendtoolkit: true;
+$govuk-compatibility-govukelements: true;
