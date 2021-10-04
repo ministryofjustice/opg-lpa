@@ -127,7 +127,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
     public function testOnDispatchDatabaseDown()
     {
         // Simulate the database being unavailable, which results in a marker in the session;
-        // see Module.php, where this marker is added before the session is handed over to the controller.
+        // see Module.php, where this marker is added before the session is handed over to the controller
         $authFailureReason = new Container('AuthFailureReason');
         $authFailureReason->reason = 'Internal system error';
         $authFailureReason->code = 500;
