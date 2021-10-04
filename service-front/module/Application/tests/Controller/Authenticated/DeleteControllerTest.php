@@ -59,12 +59,11 @@ class DeleteControllerTest extends AbstractControllerTest
 
         $response = new Response();
 
-        $this->sessionManager->shouldReceive('start')->never();
-        $preAuthRequest = new ArrayObject(['url' => 'https://localhost/user/about-you']);
+        $this->sessionManager->shouldReceive('start')->once();
         $this->request->shouldReceive('getUri')->never();
 
         $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', [ 'state'=>'timeout' ]])->andReturn($response)->once();
+            ->withArgs(['login', [ 'state' => 'timeout' ]])->andReturn($response)->once();
 
         Container::setDefaultManager($this->sessionManager);
         $result = $controller->testCheckAuthenticated(true);
