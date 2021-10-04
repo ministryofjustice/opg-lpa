@@ -15,8 +15,7 @@
         'cookie_policy': 'essential',
         'seen_cookie_message': 'essential',
         '_ga': 'usage',
-        '_gid': 'usage',
-        '_gat': 'usage'
+        '_gid': 'usage'
     }
 
     /*
@@ -37,7 +36,10 @@
     GOVUK.cookie = function (name, value, options) {
         if (typeof value !== 'undefined') {
             if (value === false || value === null) {
-                return GOVUK.setCookie(name, '', { days: -1 })
+                if (typeof options === 'undefined') {
+                    options = { days: -1 }
+                }
+                return GOVUK.setCookie(name, '', options)
             }
             else {
                 // Default expiry date of 30 days
@@ -81,6 +83,8 @@
 
     GOVUK.setConsentCookie = function (options) {
         var cookieConsent = GOVUK.getConsentCookie()
+        var regEx = new RegExp('^www\.')
+        var cookieDomain = regEx.test(document.domain) ? document.domain.replace(regEx, '.') : document.domain;
 
         if (!cookieConsent) {
             cookieConsent = JSON.parse(JSON.stringify(DEFAULT_COOKIE_CONSENT))
@@ -93,12 +97,11 @@
             if (!options[cookieType]) {
                 for (var cookie in COOKIE_CATEGORIES) {
                     if (COOKIE_CATEGORIES[cookie] === cookieType) {
-                        GOVUK.cookie(cookie, null)
+                        GOVUK.cookie(cookie, null, {days: -1, domain: cookieDomain})
                     }
                 }
             }
         }
-
         GOVUK.setCookie('cookie_policy', JSON.stringify(cookieConsent), { days: 365 })
     }
 
@@ -147,6 +150,9 @@
                 var date = new Date()
                 date.setTime(date.getTime() + (options.days * 24 * 60 * 60 * 1000))
                 cookieString = cookieString + '; expires=' + date.toGMTString()
+            }
+            if (options.domain) {
+                cookieString = cookieString + '; domain='+ options.domain
             }
             if (document.location.protocol === 'https:') {
                 cookieString = cookieString + '; Secure'

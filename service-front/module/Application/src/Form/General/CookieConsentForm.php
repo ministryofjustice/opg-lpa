@@ -18,11 +18,11 @@ class CookieConsentForm extends AbstractCsrfForm
             'options'    => [
                 'value_options' => [
                     'yes' => [
-                        'label' => 'Yes, allow usage cookies',
+                        'label' => 'Yes',
                         'value' => 'yes',
                     ],
                     'no' => [
-                        'label' => 'No, do not allow usage cookies ',
+                        'label' => 'No',
                         'value' => 'no',
                     ],
                 ],

@@ -30,7 +30,7 @@ resource "aws_db_instance" "api" {
   parameter_group_name                = aws_db_parameter_group.postgres-db-params.name
   vpc_security_group_ids              = [aws_security_group.rds-api.id]
   auto_minor_version_upgrade          = true
-  maintenance_window                  = "sun:01:00-sun:01:30"
+  maintenance_window                  = "wed:05:00-wed:09:00"
   multi_az                            = true
   backup_retention_period             = local.account.backup_retention_period
   deletion_protection                 = local.account.deletion_protection
@@ -59,7 +59,8 @@ module "aws_rds_api_alarms" {
   disk_free_storage_space_too_low_threshold = "1000000000" #configured to 1GB
   disk_burst_balance_too_low_threshold      = "50"
   cpu_utilization_too_high_threshold        = "95"
-  anomaly_band_width                        = "5"
+  anomaly_band_width                        = "10"
+  evaluation_period                         = "10"
   db_instance_class                         = "db.m3.medium"
   prefix                                    = "${local.environment}-"
   tags                                      = merge(local.default_tags, local.db_component_tag)
