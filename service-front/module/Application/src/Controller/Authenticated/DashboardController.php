@@ -144,7 +144,7 @@ class DashboardController extends AbstractAuthenticatedController
             }
 
             // Redirect them to the first page...
-            return $this->redirect()->toRoute('lpa/form-type', [ 'lpa-id'=>$lpa->id ]);
+            return $this->redirect()->toRoute('lpa/form-type', [ 'lpa-id' => $lpa->id ]);
         }
 
         //---
@@ -160,7 +160,7 @@ class DashboardController extends AbstractAuthenticatedController
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
 
         if ($this->getLpaApplicationService()->deleteApplication($lpaId) !== true) {
-            throw new \RuntimeException('API client failed to delete LPA for id: '.$lpaId);
+            throw new \RuntimeException('API client failed to delete LPA for id: ' . $lpaId);
         }
 
         $target = 'user/dashboard';
@@ -213,7 +213,7 @@ class DashboardController extends AbstractAuthenticatedController
     //------------------------------------------------------------------
 
     /**
-     * This is overridden to prevent people being (accidently?) directed to this controller post-auth.
+     * This is overridden to prevent people being (accidentally?) directed to this controller post-auth.
      *
      * @return bool|\Laminas\Http\Response
      */
