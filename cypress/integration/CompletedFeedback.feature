@@ -8,4 +8,4 @@ Feature: Completed Feedback
   @focus
   Scenario: Visit completed feedback page
     Given I visit "/completed-feedback"
-    Then I see "Send Us feedback" in the page text
+    Then I see "Send us feedback" in the page text
