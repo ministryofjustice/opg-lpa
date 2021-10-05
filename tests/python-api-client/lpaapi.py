@@ -1,6 +1,9 @@
 import requests
 import sys
 
+DEFAULT_USER = "seeded_test_user@digital.justice.gov.uk"
+DEFAULT_PASSWORD = "Pass1234"
+
 apiRoot = "http://localhost:7001"
 s = requests.Session()
 
@@ -100,20 +103,21 @@ def updateUserDetails(username, password, details):
     fullPath = f'{apiRoot}/v2/user/{userId}'
     return s.put(fullPath, json=details, headers=token)
 
-def authenticate(username = "seeded_test_user@digital.justice.gov.uk", password = "Pass1234"):
-    # authenticate using the suppled creds, returning the resulting token and the userId
+def authenticate(username=DEFAULT_USER, password=DEFAULT_PASSWORD):
+    # authenticate using the supplied creds, returning the resulting token and the userId
     credentials = {"username":username,"password":password}
     authPath = f'{apiRoot}/v2/authenticate'
-    r = requests.get(authPath, data=credentials)
 
-    if r.status_code == 401:
+    r = requests.post(authPath, json=credentials)
+
+    if r.status_code >= 400:
         return {"Token": None}, None
 
     token = r.json()['token']
     userId = r.json()['userId']
     return {"Token": token}, userId
 
-def makeNewLpa(username=None, password=None):
+def makeNewLpa(username=DEFAULT_USER, password=DEFAULT_PASSWORD):
     token, userId = authenticate(username, password)
     applicationPath = f'{apiRoot}/v2/user/{userId}/applications'
     emptyData = []
@@ -122,7 +126,7 @@ def makeNewLpa(username=None, password=None):
     #print(f'lpa Id : {id}')
     return id
 
-def deleteLpa(lpaId, username=None, password=None):
+def deleteLpa(lpaId, username=DEFAULT_USER, password=DEFAULT_PASSWORD):
     token, userId = authenticate(username, password)
     lpaPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}'
     emptyData = []
