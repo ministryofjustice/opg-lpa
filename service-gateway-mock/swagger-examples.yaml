@@ -83,3 +83,14 @@ paths:
                     invalidDate: null
                     withdrawnDate: null
                     status: Perfect
+                received_payment_pending:
+                  value:
+                    onlineLpaId: A48218451245
+                    receiptDate: '2021-10-03'
+                    rejectedDate: null
+                    dispatchDate: null
+                    registrationDate: null
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: null
+                    status: Payment Pending
