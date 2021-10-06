@@ -177,19 +177,6 @@ services:
 
       OPG_LPA_OS_PLACES_HUB_ENDPOINT : "https://api.os.uk/search/places/v1/postcode"
 
-  front-composer:
-    image: composer:latest
-    volumes:
-      - ./service-front:/app
-      - ./shared/logging:/shared/logging
-    command:
-      - install
-      - --prefer-dist
-      - --no-interaction
-      - --no-scripts
-      - --optimize-autoloader
-      - --ignore-platform-reqs
-
   front-ssl:
     container_name: lpa-front-ssl
     depends_on:
@@ -281,19 +268,6 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
 
-  api-composer:
-    image: composer:latest
-    volumes:
-      - ./service-api:/app
-      - ./shared/logging:/shared/logging
-    command:
-      - install
-      - --prefer-dist
-      - --no-interaction
-      - --no-scripts
-      - --optimize-autoloader
-      - --ignore-platform-reqs
-
   # ---------------------------
   # Admin
 
@@ -351,19 +325,6 @@ services:
       PHP_IDE_CONFIG: serverName=lpa-admin-app
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
-  admin-composer:
-    image: composer:latest
-    volumes:
-      - ./service-admin:/app
-      - ./shared/logging:/shared/logging
-    command:
-      - install
-      - --prefer-dist
-      - --no-interaction
-      - --no-scripts
-      - --optimize-autoloader
-      - --ignore-platform-reqs
-
   admin-ssl:
     container_name: lpa-admin-ssl
     depends_on:
@@ -407,19 +368,6 @@ services:
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
 
-  pdf-composer:
-    image: composer:latest
-    volumes:
-      - ./service-pdf:/app
-      - ./shared/logging:/shared/logging
-    command:
-      - install
-      - --prefer-dist
-      - --no-interaction
-      - --no-scripts
-      - --optimize-autoloader
-      - --ignore-platform-reqs
-
   # ---------------------------
   # Seeding
   seeding:
@@ -433,7 +381,6 @@ services:
       - local-config
       - api-app
       - postgres
-      - api-composer
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -444,7 +391,7 @@ services:
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
   # ---------------------------
-  # Create feedback table and db user for PerfPlat 
+  # Create feedback table and db user for PerfPlat
   feedbackdb:
     container_name: feedbackdb
     image: feedbackdb

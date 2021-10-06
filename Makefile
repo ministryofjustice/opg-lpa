@@ -21,40 +21,34 @@ all:
 .PHONY: reset
 reset:
 	@${MAKE} dc-build-clean
-	@${MAKE} dc-run
+	@${MAKE} run-composers
 
-.PHONY: dc-run
-dc-run:
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run front-composer | xargs -L1 echo front-composer: &
+.PHONY: run-front-composer
+run-front-composer:
+	@docker run -v `pwd`/service-front/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	sleep 20; docker-compose run admin-composer | xargs -L1 echo admin-composer: &
+.PHONY: run-pdf-composer
+run-pdf-composer:
+	@docker run -v `pwd`/service-pdf/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	sleep 20; docker-compose run api-composer | xargs -L1 echo api-composer: &
+.PHONY: run-api-composer
+run-api-composer:
+	@docker run -v `pwd`/service-api/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	sleep 20; docker-compose run pdf-composer | xargs -L1 echo pdf-composer:
+.PHONY: run-admin-composer
+run-admin-composer:
+	@docker run -v `pwd`/service-admin/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+
+.PHONY: run-composers
+run-composers:
+	@${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
 
 # This will make a docker network called "malpadev", used to communicate from
 # the perfplatworkerproxy lambda (running in localstack) to the perfplatworker
 # lambda (running as a docker container).
 # The name of the network created here must match the one in the docker-compose.yml.
 .PHONY: dc-up
-dc-up:
+dc-up: run-composers
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
@@ -64,7 +58,7 @@ dc-up:
 
 # target for users outside MoJ to run the stack without 3rd party integrations
 .PHONY: dc-up-out
-dc-up-out:
+dc-up-out: run-composers
 	@${MAKE} dc-up GOVPAY=- NOTIFY=- ORDNANCESURVEY=-
 
 .PHONY: dc-build
@@ -73,7 +67,6 @@ dc-build:
 
 # remove docker containers, volumes, images left by existing system, rebuild everything
 # with no-cache
-# this leaves things in a state where make dc-run is needed again before starting back up
 .PHONY: dc-build-clean
 dc-build-clean:
 	@${MAKE} dc-down
@@ -122,7 +115,7 @@ hard-reset-front:
 	docker-compose build --no-cache front-app
 
 .PHONY: soft-reset-front
-# soft reset only the front app container without no-cache option.  quickest rebuild but runs risk of some staleness if not every change is picked up 
+# soft reset only the front app container without no-cache option.  quickest rebuild but runs risk of some staleness if not every change is picked up
 soft-reset-front:
 	@${MAKE} dc-down
 	docker-compose build front-app
