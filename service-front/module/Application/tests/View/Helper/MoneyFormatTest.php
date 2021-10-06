@@ -7,21 +7,64 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class MoneyFormatTest extends MockeryTestCase
 {
-    public function testInvokeWithWholePounds():void
+    public function testInvokeWithWholePoundsAsInt(): void
     {
         $amount = 50;
         $moneyFormat = new MoneyFormat();
         $result = $moneyFormat($amount);
 
-        $this->assertEquals($amount, $result);
+        $this->assertEquals('50', $result);
     }
 
-    public function testInvokeWithPoundsAndPence():void
+    public function testInvokeWithPoundsAsString(): void
+    {
+        $amount = '50.00';
+        $moneyFormat = new MoneyFormat();
+        $result = $moneyFormat($amount);
+
+        $this->assertEquals('50', $result);
+    }
+
+    public function testInvokeWithPoundsAndPenceAsFloat(): void
     {
         $amount = 50.55;
         $moneyFormat = new MoneyFormat();
         $result = $moneyFormat($amount);
 
-        $this->assertEquals($amount, $result);
+        $this->assertEquals('50.55', $result);
+    }
+
+    public function testInvokeWithPoundsAndPenceAsString(): void
+    {
+        $amount = '50.55';
+        $moneyFormat = new MoneyFormat();
+        $result = $moneyFormat($amount);
+
+        $this->assertEquals('50.55', $result);
+    }
+
+    public function testInvokeWithLoadsOfPounds(): void
+    {
+        $moneyFormat = new MoneyFormat();
+
+        $amount = '500000000.55';
+        $this->assertEquals('500,000,000.55', $moneyFormat($amount));
+
+        $amount = 500000000.55;
+        $this->assertEquals('500,000,000.55', $moneyFormat($amount));
+
+        $amount = '500000000';
+        $this->assertEquals('500,000,000', $moneyFormat($amount));
+
+        $amount = 500000000;
+        $this->assertEquals('500,000,000', $moneyFormat($amount));
+    }
+
+    public function testInvokeWithNonNumeric(): void
+    {
+        $moneyFormat = new MoneyFormat();
+
+        $amount = 'a';
+        $this->assertEquals('a', $moneyFormat($amount));
     }
 }

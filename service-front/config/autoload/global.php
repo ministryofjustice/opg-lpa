@@ -130,6 +130,10 @@ return [
             ],
         ], //sendgrid
 
+        'notify' => [
+            'key' => getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: null,
+        ],
+
         'sender' => [
                 'default' => [
                         'name' => 'Office of the Public Guardian',
@@ -169,6 +173,7 @@ return [
     ], // log
 
     'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
+
     'processing-status' => [
         'track-from-date' => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2019-04-01',
 

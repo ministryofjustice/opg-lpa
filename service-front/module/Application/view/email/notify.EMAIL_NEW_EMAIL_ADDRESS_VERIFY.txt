@@ -1,0 +1,37 @@
+NOTIFY SERVICE EMAIL TEMPLATE: EMAIL_NEW_EMAIL_ADDRESS_VERIFY
+
+DERIVED FROM TWIG TEMPLATE: new-email-verift.twig
+
+NOTIFY TEMPLATE ID: 1dd980a2-deab-4a5b-802b-61566188496d
+
+SUBJECT: Please verify your new email address
+
+MESSAGE:
+
+# Updating your email address
+
+You've asked us to update your email address.
+
+If you do not want to change your email address, just ignore this email.
+
+To continue with the change, click the following link to make your new email address active:
+((changeEmailAddressUrl))
+
+---
+
+This is an automatic email - please do not reply to this address.
+
+# Contact us
+
+Email: customerservices@publicguardian.gov.uk
+
+Call: 0300 456 0300
+Monday to Friday (except Wednesday) 9.30am to 5pm
+Wednesday 10am to 5pm
+
+Textphone: 0115 934 2778
+
+Office of the Public Guardian
+PO Box 16185
+Birmingham B2 2WH
+https://www.lastingpowerofattorney.service.gov.uk/home
