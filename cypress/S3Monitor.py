@@ -52,13 +52,13 @@ def parseBody(bodyContent, subject, thetype, linkRegex):
 
     match = re.search(regex, bodyContent)
 
-    if match is not None: 
+    if match is not None:
         s = match.start()
         e = match.end()
         activationLink = bodyContent[s:e]
         printIfVerbose(f'{ thetype } link { activationLink }')
 
-        emailRegex = 'To: (.+)'
+        emailRegex = 'To: (.+\\+.+)\\n'
 
         emailMatch = re.search(emailRegex, bodyContent)
         if emailMatch is not None:
@@ -66,33 +66,50 @@ def parseBody(bodyContent, subject, thetype, linkRegex):
 
             userId = getPlusPartFromEmailAddress(toEmail)
             printIfVerbose(f'userId {userId}')
-            contents = f'{toEmail[:-1]},{activationLink}'
-            filePath = f'{activation_emails_path}/{userId}.{thetype}'
-            emailFile = open(filePath,'w')
-            emailFile.write(contents)
-            emailFile.close()
+
+            if userId != '':
+                contents = f'{toEmail[:-1]},{activationLink}'
+                filePath = f'{activation_emails_path}/{userId}.{thetype}'
+                emailFile = open(filePath,'w')
+                emailFile.write(contents)
+                emailFile.close()
+                printIfVerbose(f'wrote file for {thetype} email to {filePath}')
+            else:
+                printIfVerbose(f'could not get valid user ID from email address {toEmail}')
+        else:
+            printIfVerbose('unable to find email regex to derive the To: field')
     else:
-        printIfVerbose(f'Message: {subject} does not match regex {regex}') 
-        printIfVerbose('----------------------------------------------------------------------------------')
+        printIfVerbose(f'Message: {subject} does not match regex {regex}')
 
 def parse_email(bodyContent, s3Key):
-    activate_subject = 'Activate your lasting power of attorney account'
-    reset_password_subject = 'Password reset request'
-    reset_password_no_account_subject = 'Request to reset password' 
-    if re.search(activate_subject, bodyContent) is not None:
-        return parseBody(bodyContent, activate_subject, 'activation', 'signup\/confirm')
+    printIfVerbose('\n-------- START PARSE EMAIL')
 
-    if re.search(reset_password_subject, bodyContent) is not None:
+    activate_subject = 'Subject: Activate your lasting power of attorney account'
+    reset_password_subject = 'Subject: Password reset request'
+    reset_password_no_account_subject = 'Subject: Request to reset password'
+
+    if re.search(activate_subject, bodyContent, re.IGNORECASE) is not None:
+        return parseBody(bodyContent, activate_subject, 'activation', 'signup\/confirm')
+    else:
+        printIfVerbose('email is not an activation email')
+
+    if re.search(reset_password_subject, bodyContent, re.IGNORECASE) is not None:
         return parseBody(bodyContent, reset_password_subject, 'passwordreset', 'forgot-password\/reset')
+    else:
+        printIfVerbose('email is not a forgotten password email')
 
     # handle password resets where the account doesn't exist yet. We may need to test this too ultimately
-    if re.search(reset_password_no_account_subject, bodyContent) is not None:
+    if re.search(reset_password_no_account_subject, bodyContent, re.IGNORECASE) is not None:
         printIfVerbose("Found Password reset for a non-existent account. This shouldn't happen during tests, one explanation can be running password reset test before test that signs user up")
         return write_unrecognized_file(s3Key, bodyContent, 'noaccountpasswordreset')
+    else:
+        printIfVerbose('email is not to reset password for non-active account')
 
     # handle other emails. Ultimately, we should be testing these other emails as well
     printIfVerbose("Found an email that is not an Activate or Password reset. Don't know what to do with it")
     write_unrecognized_file(s3Key, bodyContent, 'unrecognized')
+
+    printIfVerbose('-------- END PARSE EMAIL\n')
 
 def write_unrecognized_file(s3Key, bodyContent, filePrefix):
     fileSuffix = s3Key[s3Key.rfind('/')+1:]
@@ -130,4 +147,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -7,6 +7,8 @@ use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransport;
+use DateTime;
+use DateTimeZone;
 use Laminas\Mail\Exception\ExceptionInterface;
 
 class Feedback extends AbstractEmailService implements ApiClientAwareInterface
@@ -25,10 +27,36 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
         try {
             $this->apiClient->httpPost('/user-feedback', $data);
 
-            // Send the feedback via email also
-            $to = $this->getConfig()['sendFeedbackEmailTo'];
+            $email = 'No email given';
+            if (isset($data['email'])) {
+                $email = $data['email'];
+            }
 
-            $mailParameters = new MailParameters($to, AbstractEmailService::EMAIL_FEEDBACK, $data);
+            $phone = 'No phone number given';
+            if (isset($data['phone'])) {
+                $phone = $data['phone'];
+            }
+
+            $now = new DateTime('now');
+            $now->setTimezone(new DateTimeZone('Europe/London'));
+
+            // Send the feedback via email also
+            $templateData = [
+                'currentDateTime' => $now->format('Y/m/d H:i:s'),
+                'rating' => $data['rating'],
+                'details' => $data['details'],
+                'email' => $email,
+                'phone' => $phone,
+                'fromPage' => $data['fromPage'],
+                'agent' => $data['agent'],
+            ];
+
+            $mailParameters = new MailParameters(
+                $this->getConfig()['sendFeedbackEmailTo'],
+                AbstractEmailService::EMAIL_FEEDBACK,
+                $templateData
+            );
+
             $this->getMailTransport()->send($mailParameters);
 
             return true;
