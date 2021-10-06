@@ -16,6 +16,10 @@ Then(`I am taken to the dashboard page`, () => {
     cy.url().should('eq',dashboard);
 })
 
+Then(`I am taken to the your details page for a new user`, () => {
+    cy.url().should('eq',Cypress.config().baseUrl + '/user/about-you/new');
+})
+
 Then(`I am taken to the lpa type page`, () => {
     cy.url().should('eq',lpaType);
     checkAccordionHeaderContains("What type of LPA do you want to make?");
@@ -95,17 +99,17 @@ Then(`I am taken to the who are you page`, () => {
     checkOnPageWithPath('who-are-you');
     checkAccordionHeaderContains('Who was using the LPA service?');
 });
- 
+
 Then(`I am taken to the repeat application page`, () => {
     checkOnPageWithPath('repeat-application');
     checkAccordionHeaderContains('Is the donor making a repeat application to register their LPA?');
 });
- 
+
 Then(`I am taken to the fee reduction page`, () => {
     checkOnPageWithPath('fee-reduction');
     checkAccordionHeaderContains('Does the donor want to apply to pay a reduced fee?');
 });
- 
+
 Then(`I am taken to the checkout page`, () => {
     checkOnPageWithPath('checkout');
     cy.contains('Final check: LPA details');
@@ -119,7 +123,7 @@ Then(`I am taken to the complete page`, () => {
 Then(`I am taken to the certificate provider page for the test fixture lpa`, () => {
     checkOnPageWithPath('certificate-provider');
 })
- 
+
 Then(`I am taken to the donor page`, () => {
     // We arrive at the donor page when we've just created an lpa through the web, so we store the lpaId for future use at this point
     cy.url().should('contain','donor').then((donorPageUrl) => {

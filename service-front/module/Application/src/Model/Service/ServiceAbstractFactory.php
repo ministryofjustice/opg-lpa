@@ -92,7 +92,8 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             $service = new $serviceName(
                 $authenticationService,
                 $config,
-                $container->get('MailTransport')
+                $container->get('MailTransport'),
+                $container->get('ViewHelperManager')
             );
         } else {
             $service = new $serviceName(

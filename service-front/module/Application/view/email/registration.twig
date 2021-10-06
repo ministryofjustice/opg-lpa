@@ -15,7 +15,6 @@
 	Please activate your account using the link below:
 </p>
 
-{% set activateAccountUrl = url('register/confirm', {'token': token}, {'force_canonical': true}) %}
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
 	<a href="{{ activateAccountUrl }}" style="white-space: nowrap; color: #005ea5">Activate my account now</a><br>
 	<span style="font-size: 14px; color: #0b0c0c">{{ activateAccountUrl }}</span>
