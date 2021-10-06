@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_compress import Compress
 from flask_talisman import Talisman
+from flask_wtf.csrf import CSRFProtect
 from jinja2 import ChoiceLoader, PackageLoader, PrefixLoader
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
@@ -31,5 +32,6 @@ csp = {
 
 Compress(app)
 Talisman(app, content_security_policy=csp, force_https=False)
+csrf = CSRFProtect(app)
 
 from app import routes
