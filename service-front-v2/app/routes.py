@@ -6,14 +6,6 @@ from werkzeug.exceptions import NotFound
 
 from app import app
 
-
-@app.route("/")
-def index():
-    components = os.listdir("govuk_components")
-    components.sort()
-
-    return render_template("index.html", components=components)
-
 @app.route("/completed-feedback")
 def feedback():
     return render_template("feedback.html")
