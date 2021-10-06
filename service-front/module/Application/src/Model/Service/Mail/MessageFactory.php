@@ -36,15 +36,6 @@ class MessageFactory
                 'opg-lpa-signup',
             ],
         ],
-        AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET => [
-            'template' => 'password-reset-not-active.twig',
-            'categories' => [
-                'opg',
-                'opg-lpa',
-                'opg-lpa-passwordreset',
-                'opg-lpa-passwordreset-activate',
-            ],
-        ],
         AbstractEmailService::EMAIL_FEEDBACK => [
             'template' => 'feedback.twig',
             'categories' => [
@@ -55,6 +46,14 @@ class MessageFactory
         ],
         AbstractEmailService::EMAIL_LPA_REGISTRATION => [
             'template' => 'lpa-registration.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-complete-registration',
+            ],
+        ],
+        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT => [
+            'template' => 'lpa-registration-with-payment.twig',
             'categories' => [
                 'opg',
                 'opg-lpa',
@@ -104,20 +103,20 @@ class MessageFactory
                 'opg-lpa-passwordreset-noaccount',
             ],
         ],
-        AbstractEmailService::EMAIL_SENDGRID_BOUNCE => [
-            'template' => 'bounce.twig',
-            'categories' => [
-                'opg',
-                'opg-lpa',
-                'opg-lpa-autoresponse',
-            ],
-        ],
         AbstractEmailService::EMAIL_ACCOUNT_DUPLICATION_WARNING => [
             'template' => 'email-duplication-warning.twig',
             'categories' => [
                 'opg',
                 'opg-lpa',
                 'opg-lpa-signup-email-duplication',
+            ],
+        ],
+        AbstractEmailService::EMAIL_SENDGRID_BOUNCE => [
+            'template' => 'bounce.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-autoresponse',
             ],
         ],
     ];

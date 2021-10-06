@@ -222,6 +222,7 @@ locals {
         { "name" : "OPG_LPA_FRONT_CSRF_SALT", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.name}" },
         { "name" : "OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_webhook_token.name}" },
         { "name" : "OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_api_key.name}" },
+        { "name" : "OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
         { "name" : "OPG_LPA_FRONT_GOV_PAY_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.name}" },
         { "name" : "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
         { "name" : "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
@@ -249,7 +250,8 @@ locals {
         { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : aws_sqs_queue.pdf_fifo_queue.id },
         { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
         { "name" : "OPG_LPA_OS_PLACES_HUB_ENDPOINT", "value" : "https://api.os.uk/search/places/v1/postcode" },
-        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache.primary_endpoint_address}" }
+        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache.primary_endpoint_address}" },
+        { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" }
       ]
     }
   )

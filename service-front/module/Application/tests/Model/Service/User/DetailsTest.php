@@ -41,7 +41,8 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->service = new Details(
             $this->authenticationService,
             $this->config,
-            $this->mailTransport
+            $this->mailTransport,
+            $this->helperPluginManager
         );
         $this->service->setApiClient($this->apiClient);
     }
@@ -206,6 +207,14 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
+        // Stub out the url() view helper
+        $verifyEmailUrl = 'https://verify.email.url';
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () use ($verifyEmailUrl) {
+                return $verifyEmailUrl;
+            });
+
         $expectedOldMailParameters = new MailParameters(
             'old@email.address',
             AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY,
@@ -218,7 +227,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $expectedNewMailParameters = new MailParameters(
             'new@email.address',
             AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY,
-            ['token' => 'test-token']
+            ['changeEmailAddressUrl' => $verifyEmailUrl]
         );
 
         $this->mailTransport->shouldReceive('send')
@@ -251,6 +260,13 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
+        // Stub out the url() view helper
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () {
+                return 'https://foo.bar';
+            });
+
         // Email to the old address fails
         $this->mailTransport->shouldReceive('send')
             ->with(Mockery::on(function ($mailParameters) {
@@ -281,6 +297,13 @@ class DetailsTest extends AbstractEmailServiceTest
             ->withArgs(['/v2/users/test-id/email', ['newEmail' => 'new@email.address']])
             ->once()
             ->andReturn(['token' => 'test-token']);
+
+        // Stub out the url() view helper
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () {
+                return 'https://verify.email.url/';
+            });
 
         // Email to the old address succeeds
         $this->mailTransport->shouldReceive('send')
@@ -538,10 +561,18 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
+        // stub out the url() view helper
+        $forgotPasswordUrl = 'https://forgot.password.url/';
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () use ($forgotPasswordUrl) {
+                return $forgotPasswordUrl;
+            });
+
         $expectedMailParameters = new MailParameters(
             'test@email.com',
             AbstractEmailService::EMAIL_PASSWORD_RESET,
-            ['token' => 'test-token']
+            ['forgotPasswordUrl' => $forgotPasswordUrl]
         );
 
         $this->mailTransport->shouldReceive('send')
@@ -572,10 +603,18 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
+        // stub out the url() view helper
+        $activateAccountUrl = 'https://activate.account.url/';
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () use ($activateAccountUrl) {
+                return $activateAccountUrl;
+            });
+
         $expectedMailParameters = new MailParameters(
             'test@email.com',
             AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
-            ['token' => 'test-token']
+            ['activateAccountUrl' => $activateAccountUrl]
         );
 
         $this->mailTransport->shouldReceive('send')
@@ -606,6 +645,13 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('Not found', 404));
 
+        // stub out the url() view helper
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () {
+                return 'https://foo.bar/';
+            });
+
         $this->mailTransport->shouldReceive('send')
             ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once();
@@ -621,6 +667,13 @@ class DetailsTest extends AbstractEmailServiceTest
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('Not found', 404));
+
+        // stub out the url() view helper
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () {
+                return 'https://foo.bar/';
+            });
 
         $this->mailTransport->shouldReceive('send')
             ->with(Matchers::anInstanceOf(MailParameters::class))
@@ -639,6 +692,13 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['token' => 'test-token']);
 
+        // stub out the url() view helper
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () {
+                return 'https://foo.bar/';
+            });
+
         $this->mailTransport->shouldReceive('send')
             ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
@@ -655,6 +715,13 @@ class DetailsTest extends AbstractEmailServiceTest
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
+
+        // stub out the url() view helper
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () {
+                return 'https://foo.bar/';
+            });
 
         $this->mailTransport->shouldReceive('send')
             ->with(Matchers::anInstanceOf(MailParameters::class))
@@ -720,10 +787,19 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
+        $activateAccountUrl = 'https://activate.account.url/';
+
+        // stub out the url() view helper
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () use ($activateAccountUrl) {
+                return $activateAccountUrl;
+            });
+
         $expectedMailParameters = new MailParameters(
             'test@email.com',
             AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
-            ['token' => 'test-token']
+            ['activateAccountUrl' => $activateAccountUrl]
         );
 
         $this->mailTransport->shouldReceive('send')
@@ -753,6 +829,14 @@ class DetailsTest extends AbstractEmailServiceTest
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
+
+        // stub out the url() view helper
+        $activateAccountUrl = 'https://activate.account.url/';
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () use ($activateAccountUrl) {
+                return $activateAccountUrl;
+            });
 
         $this->mailTransport->shouldReceive('send')
             ->with(Matchers::anInstanceOf(MailParameters::class))
@@ -816,10 +900,18 @@ class DetailsTest extends AbstractEmailServiceTest
             ->once()
             ->andReturn(['activation_token' => 'test-token']);
 
+        // stub out the url() view helper
+        $activateAccountUrl = 'https://activate.account.url/';
+        $this->helperPluginManager->shouldReceive('get')
+            ->with('url')
+            ->andReturn(function () use ($activateAccountUrl) {
+                return $activateAccountUrl;
+            });
+
         $expectedMailParameters = new MailParameters(
             'test@email.com',
             AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
-            ['token' => 'test-token']
+            ['activateAccountUrl' => $activateAccountUrl]
         );
 
         $this->mailTransport->shouldReceive('send')

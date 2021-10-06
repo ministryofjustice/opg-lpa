@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -11,12 +12,10 @@
  * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *
- *
- *
  */
 
 require_once '/mnt/test/vendor/autoload.php';
+require_once dirname(__FILE__) . '/S3MonitorHelpers.php';
 
 use Aws\Sts\StsClient;
 use Aws\Exception\AwsException;
@@ -38,12 +37,11 @@ try {
 
     if (getenv('CI')) {
         $roleToAssumeArn = 'arn:aws:iam::050256574573:role/opg-lpa-ci';
-    }
-    else{
+    } else {
         $roleToAssumeArn = 'arn:aws:iam::050256574573:role/operator';
     }
 
-    try{
+    try {
         $result = $client->assumeRole([
             'RoleArn' => $roleToAssumeArn,
             'RoleSessionName' => 'session1'
@@ -60,16 +58,16 @@ try {
                 'token'  => $result['Credentials']['SessionToken']
             ]
         ]);
-    }catch (Exception $e) {
+    } catch (Exception $e) {
         exit($e->getMessage());
     }
 
     $bucketName = 'opg-lpa-casper-mailbox';
 
-    while(true) {
+    while (true) {
         $iterator = $s3Client->getIterator('ListObjects', array('Bucket' => $bucketName));
 
-        echo "Checking objects in S3.......". "\n";
+        echo "Checking objects in S3......." . "\n";
 
         foreach ($iterator as $object) {
             if (in_array($object['Key'], $seenKeys)) {
@@ -80,7 +78,8 @@ try {
                 'Key' => $object['Key'],
             ]);
 
-            //The content of email is in Quoted-Printable encoding and uses = as an escape character. Hence decoding to match regex
+            // The content of email is in Quoted-Printable encoding and uses = as an escape
+            // character. Hence decoding to match regex
             $bodyContent = quoted_printable_decode($result["Body"]);
 
             parseBody(
@@ -101,67 +100,7 @@ try {
         }
         sleep(5);
     }
-
 } catch (AwsException $e) {
     // output error message if fails
     error_log($e->getMessage());
-}
-
-/**
- * @param inbox
- * @param subject
- * @param directory
- * @param overview
- * @param message
- * @param activationLink
- * @param toEmail
- * @param userId
- * @param contents
- */
-
-function parseBody($bodyContent, $subject, $type, $linkRegex)
-{
-    $regex = '|(https:\/\/\S+' . $linkRegex . '\/[a-zA-Z0-9]+)|sim';
-
-    if (preg_match($regex, $bodyContent, $matches) > 0) {
-        $activationLink = $matches[1];
-
-        if (!is_null($activationLink)) {
-            $emailRegex = '|To: (.+)|m'; //to change and add regex
-
-            if (preg_match($emailRegex, $bodyContent, $emailMatches) > 0) {
-                $toEmail = $emailMatches[1];
-            }
-
-            $userId = getPlusPartFromEmailAddress($toEmail);
-            $contents = $toEmail . ',' . $activationLink;
-
-            if (!is_null($contents)) {
-                //TO-DO : CORRECT PATH HERE
-                file_put_contents('/mnt/test/functional/activation_emails/' . $userId . '.' . $type, $contents);
-            }
-            echo 'Found email for user ' . $userId . PHP_EOL;
-
-        } else {
-            echo 'Message: "' . $subject . '" does not match regex ' . $regex . PHP_EOL;
-            echo '----------------------------------------------------------------------------------';
-            //echo $bodyContent . PHP_EOL;
-            echo '----------------------------------------------------------------------------------';
-        }
-    }
-}
-/**
- * Extract the plus part from emails of the form:
- * basename+pluspart@example.com
- *
- * @param string $email
- */
-function getPlusPartFromEmailAddress($email)
-{
-    $plusPos = strpos($email, '+');
-    $atPos = strpos($email, '@');
-    $userIdLength = $atPos - $plusPos - 1;
-    $userId = substr($email, $plusPos + 1, $userIdLength);
-
-    return $userId;
 }

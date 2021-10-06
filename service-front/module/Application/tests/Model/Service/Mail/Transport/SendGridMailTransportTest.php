@@ -6,13 +6,13 @@ use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Message;
 use Application\Model\Service\Mail\MessageFactory;
 use Application\Model\Service\Mail\Transport\SendGridMailTransport;
-use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use DateTime;
 use Exception;
 use Hamcrest\Matchers;
 use Hamcrest\MatcherAssert;
 use InvalidArgumentException;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\Mail\Transport\Exception\RuntimeException;
 use Laminas\Mail\Transport\TransportInterface;
@@ -26,7 +26,7 @@ use SendGrid\Mail\Mail as SendGridMail;
 use SendGrid\Mail\PlainTextContent as SendGridPlainTextContent;
 use SendGrid\Mail\To as SendGridToEmailAddress;
 
-class SendGridMailTransportTest extends AbstractEmailServiceTest
+class SendGridMailTransportTest extends MockeryTestCase
 {
     /**
      * @var $sendgridClient Client|MockInterface
@@ -40,12 +40,10 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
 
     public function setUp(): void
     {
-        parent::setUp();
-
         $this->sendgridClient = Mockery::mock(SendGridClient::class);
         $this->messageFactory = Mockery::mock(MessageFactory::class);
 
-        $this->service = new SendGridMailTransport($this->sendgridClient, $this->messageFactory);
+        $this->transport = new SendGridMailTransport($this->sendgridClient, $this->messageFactory);
     }
 
     private function createSendGridEmail($html = null, $text = 'Text content', $categories = []): SendGridMail
@@ -96,7 +94,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $this->messageFactory->shouldReceive('createMessage')
             ->andReturn($message);
 
-        $this->service->send(new MailParameters('to@test.com'));
+        $this->transport->send(new MailParameters('to@test.com'));
     }
 
     public function testSendMultipleToAddresses(): void
@@ -139,7 +137,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
             ->with($mailParameters)
             ->andReturn($message);
 
-        $this->service->send($mailParameters);
+        $this->transport->send($mailParameters);
     }
 
     public function testSendWithCategories(): void
@@ -152,7 +150,6 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $send = Mockery::mock();
         $send->shouldReceive('post')
             ->with(Mockery::on(function ($email) use ($expectedCategories) {
-                print_r($email->getCategories());
                 $actualCategories = array_map(function ($category) {
                     return $category->getCategory();
                 }, $email->getCategories());
@@ -184,7 +181,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
             ->with($mailParameters)
             ->andReturn($message);
 
-        $this->service->send($mailParameters);
+        $this->transport->send($mailParameters);
     }
 
     public function testSendHtmlOnlySetsPlainText(): void
@@ -238,7 +235,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
             ->with($mailParameters)
             ->andReturn($message);
 
-        $this->service->send($mailParameters);
+        $this->transport->send($mailParameters);
     }
 
     public function testSendPlainTextAndHtml(): void
@@ -277,7 +274,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
             ->with($mailParameters)
             ->andReturn($message);
 
-        $this->service->send($mailParameters);
+        $this->transport->send($mailParameters);
     }
 
     public function testSendPostReturns500(): void
@@ -308,7 +305,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Email sending failed: Test error');
 
-        $this->service->send($mailParameters);
+        $this->transport->send($mailParameters);
     }
 
     public function testSendNoFrom(): void
@@ -324,7 +321,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Message returns as invalid');
 
-        $this->service->send($mailParameters);
+        $this->transport->send($mailParameters);
     }
 
     public function testSendNoTo(): void
@@ -341,7 +338,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('SendGrid requires at least one TO address');
 
-        $this->service->send($mailParameters);
+        $this->transport->send($mailParameters);
     }
 
     public function testSendNoMessage(): void
@@ -359,7 +356,7 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('No message content has been set');
 
-        $this->service->send($mailParameters);
+        $this->transport->send($mailParameters);
     }
 
     public function testSendInvalidRequestException(): void
@@ -392,6 +389,6 @@ class SendGridMailTransportTest extends AbstractEmailServiceTest
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->send($mailParameters);
+        $this->transport->send($mailParameters);
     }
 }

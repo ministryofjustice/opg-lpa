@@ -96,7 +96,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             ]);
 
             if (is_array($result) && isset($result['token'])) {
-                //  Send the new email address received notification - log any failures
+                // Send notification to old email address that a new email address
+                // has been set
                 $mailParameters = new MailParameters(
                     $currentAddress,
                     AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY,
@@ -109,13 +110,20 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                     $logger->err($ex);
                 }
 
+                // Send the new email address an email with link to verify that
+                // the new email address is correct
+                $changeEmailAddressUrl = $this->url(
+                    'user/change-email-address/verify',
+                    ['token' => $result['token']],
+                    ['force_canonical' => true]
+                );
+
                 $mailParameters = new MailParameters(
                     $email,
                     AbstractEmailService::EMAIL_NEW_EMAIL_ADDRESS_VERIFY,
-                    ['token' => $result['token']]
+                    ['changeEmailAddressUrl' => $changeEmailAddressUrl]
                 );
 
-                //  Send the new email address verify email
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex) {
@@ -293,10 +301,16 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 }
 
                 if (isset($result['token'])) {
+                    $forgotPasswordUrl = $this->url(
+                        'forgot-password/callback',
+                        ['token' => $result['token']],
+                        ['force_canonical' => true]
+                    );
+
                     $mailParameters = new MailParameters(
                         $email,
                         AbstractEmailService::EMAIL_PASSWORD_RESET,
-                        ['token' => $result['token']]
+                        ['forgotPasswordUrl' => $forgotPasswordUrl]
                     );
 
                     try {
@@ -316,9 +330,12 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             // 404 response means user not found...
             if ($ex->getCode() == 404) {
+                $signUpUrl = $this->url('register', [], ['force_canonical' => true]);
+
                 $mailParameters = new MailParameters(
                     $email,
-                    AbstractEmailService::EMAIL_PASSWORD_RESET_NO_ACCOUNT
+                    AbstractEmailService::EMAIL_PASSWORD_RESET_NO_ACCOUNT,
+                    ['signUpUrl' => $signUpUrl]
                 );
 
                 try {
@@ -342,10 +359,16 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     private function sendAccountActivateEmail($email, $activationToken)
     {
+        $activateAccountUrl = $this->url(
+            'register/confirm',
+            ['token' => $activationToken],
+            ['force_canonical' => true]
+        );
+
         $mailParameters = new MailParameters(
-            strtolower($email),
+            $email,
             AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
-            ['token' => $activationToken]
+            ['activateAccountUrl' => $activateAccountUrl]
         );
 
         try {
@@ -412,10 +435,16 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             ]);
 
             if (isset($result['activation_token'])) {
+                $activateAccountUrl = $this->url(
+                    'register/confirm',
+                    ['token' => $result['activation_token']],
+                    ['force_canonical' => true]
+                );
+
                 $mailParameters = new MailParameters(
                     $email,
                     AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE,
-                    ['token' => $result['activation_token']]
+                    ['activateAccountUrl' => $activateAccountUrl]
                 );
 
                 try {
