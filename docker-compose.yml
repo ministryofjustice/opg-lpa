@@ -124,6 +124,8 @@ services:
     build:
       context: ./
       dockerfile: service-front-v2/docker/app/Dockerfile
+    environment:
+      AWS_XRAY_SDK_ENABLED: "false"
     ports:
       - 8005:8005
 
