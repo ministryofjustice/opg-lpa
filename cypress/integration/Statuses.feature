@@ -40,6 +40,9 @@ Feature: Status display for LPAs
         # receipt and withdrawn dates
         And the LPA with ID "43476377885" should display with status "Processed"
 
+        # receipt date, Payment Pending status on Sirius
+        And the LPA with ID "48218451245" should display with status "Received"
+
     @focus
     Scenario: The status message page for an LPA has the title "Status message" (LPAL-432)
         Given I log in as appropriate test user
@@ -131,3 +134,12 @@ Feature: Status display for LPAs
 
         # invalid date is 05/01/2021
         And the date by which the LPA should be received is shown as "26/01/21"
+
+    @focus
+    Scenario: An LPA which is received and is Payment Pending displays as "Received" on its status page (LPAL-543)
+        Given I log in as appropriate test user
+        When I am taken to the dashboard page
+        And I click on the View "received" message link for LPA with ID "48218451245"
+        Then I am taken to the detail page for LPA with ID "48218451245"
+        And I see "A482 1845 1245" in the page text
+        And the LPA status is shown as "Received"
