@@ -52,14 +52,20 @@ class AuthenticationListener
             $config = $serviceManager->get('Config');
 
             $authAdapter = new Adapter\LpaAuth($authenticationService, $token, $config['admin']['accounts']);
+
+            // This calls LpaAuth->authenticate() behind the scenes, where we deal with the authentication
+            // response, including exceptions thrown due to database issues
             $result = $authService->authenticate($authAdapter);
 
-            if (AuthenticationResult::SUCCESS !== $result->getCode()) {
-                $this->getLogger()->info('Authentication failed');
+            $resultCode = $result->getCode();
 
+            if (AuthenticationResult::SUCCESS === $resultCode) {
+                $this->getLogger()->info('Authentication success');
+            } elseif (AuthenticationResult::FAILURE_CREDENTIAL_INVALID === $resultCode) {
+                $this->getLogger()->info('Authentication failed');
                 return new ApiProblemResponse(new ApiProblem(401, 'Invalid authentication token'));
             } else {
-                $this->getLogger()->info('Authentication success');
+                return new ApiProblemResponse(new ApiProblem(500, 'Uncategorised error'));
             }
         }
     }

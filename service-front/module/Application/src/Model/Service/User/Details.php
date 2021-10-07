@@ -231,14 +231,28 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     public function getTokenInfo($token)
     {
         try {
-            return $this->apiClient->httpPost('/v2/authenticate', [
+            $response = $this->apiClient->httpPost('/v2/authenticate', [
                 'authToken' => $token,
             ]);
+
+            $success = true;
+            if (isset($response['expiresIn'])) {
+                $expiresIn = $response['expiresIn'];
+            }
+            $failureCode = null;
         } catch (ApiException $ex) {
             $this->getLogger()->err($ex);
+
+            $success = false;
+            $expiresIn = null;
+            $failureCode = $ex->getStatusCode();
         }
 
-        return false;
+        return [
+            'success' => $success,
+            'failureCode' => $failureCode,
+            'expiresIn' => $expiresIn,
+        ];
     }
 
     /**

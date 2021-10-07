@@ -15,12 +15,12 @@ class ApiExceptionTest extends MockeryTestCase
      */
     private $response;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->response = Mockery::mock(ResponseInterface::class);
     }
 
-    public function testConstructor() : void
+    public function testConstructor(): void
     {
         $this->response->shouldReceive('getBody')->once()->andReturn(null);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
@@ -31,7 +31,7 @@ class ApiExceptionTest extends MockeryTestCase
         $this->assertEquals(500, $result->getCode());
     }
 
-    public function testConstructorMessageInResponse() : void
+    public function testConstructorMessageInResponse(): void
     {
         $this->response->shouldReceive('getBody')->once()->andReturn('{"detail":"Body exception message"}');
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
@@ -42,10 +42,10 @@ class ApiExceptionTest extends MockeryTestCase
         $this->assertEquals(500, $result->getCode());
     }
 
-    public function testConstructorNoMessage() : void
+    public function testConstructorNoMessage(): void
     {
         $this->response->shouldReceive('getBody')->once()->andReturn(null);
-        $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
 
@@ -53,50 +53,50 @@ class ApiExceptionTest extends MockeryTestCase
         $this->assertEquals(500, $result->getCode());
     }
 
-    public function testGetTitle() : void
+    public function testGetTitle(): void
     {
         $this->response->shouldReceive('getBody')->once()->andReturn('{"title":"Test Title"}');
-        $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
 
         $this->assertEquals('Test Title', $result->getTitle());
     }
 
-    public function testGetTitleNotPresent() : void
+    public function testGetTitleNotPresent(): void
     {
         $this->response->shouldReceive('getBody')->once()->andReturn(null);
-        $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
 
         $this->assertNull($result->getTitle());
     }
 
-    public function testGetData() : void
+    public function testGetData(): void
     {
         $this->response->shouldReceive('getBody')->once()->andReturn('{"data":"Test Data"}');
-        $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
 
         $this->assertEquals('Test Data', $result->getData());
     }
 
-    public function testGetDataWithKey() : void
+    public function testGetDataWithKey(): void
     {
         $this->response->shouldReceive('getBody')->once()->andReturn('{"data":{"test":"Test Data"}}');
-        $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
 
         $this->assertEquals('Test Data', $result->getData('test'));
     }
 
-    public function testGetDataNotPresent() : void
+    public function testGetDataNotPresent(): void
     {
         $this->response->shouldReceive('getBody')->once()->andReturn(null);
-        $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
 

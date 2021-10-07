@@ -8,6 +8,11 @@ use RuntimeException;
 class ApiException extends RuntimeException
 {
     /**
+     * @var int
+     */
+    private $statusCode;
+
+    /**
      * @var array
      */
     private $body;
@@ -21,6 +26,7 @@ class ApiException extends RuntimeException
     public function __construct(ResponseInterface $response, string $message = null)
     {
         $this->body = json_decode($response->getBody(), true);
+        $this->statusCode = $response->getStatusCode();
 
         //  If no message was provided create one from the response data
         if (is_null($message)) {
@@ -29,11 +35,12 @@ class ApiException extends RuntimeException
 
             //  If there is still no message then compose a standard message
             if (is_null($message)) {
-                $message = 'HTTP:' . $response->getStatusCode() . ' - ' . (is_array($this->body) ? print_r($this->body, true) : 'Unexpected API response');
+                $message = 'HTTP:' . $this->statusCode . ' - ' .
+                (is_array($this->body) ? print_r($this->body, true) : 'Unexpected API response');
             }
         }
 
-        parent::__construct($message, $response->getStatusCode());
+        parent::__construct($message, $this->statusCode);
     }
 
     /**
@@ -74,5 +81,15 @@ class ApiException extends RuntimeException
         }
 
         return null;
+    }
+
+    /**
+     * Get the status code of the response which created this exception.
+     *
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
     }
 }

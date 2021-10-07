@@ -16,13 +16,22 @@
           <p data-tracking-summary="Session timed out">Sorry, your session has timed out due to inactivity or because you have signed in on another browser. Please sign in again.</p>
       </div>
     </div>
+{% elseif isInternalSystemError %}
+    <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
+      <h2 class="heading-medium error-summary-heading" id="error-heading">There is a problem</h2>
+      <div class="error-summary-text" data-tracking-context="Session">
+          <p data-tracking-summary="Internal error">Sorry, the service is unavailable. Please try again later.</p>
+      </div>
+    </div>
 {% endif %}
 
 {% if authError %}
     <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
       <h2 class="heading-medium error-summary-heading" id="error-heading" data-cy="error-heading">There is a problem</h2>
       <div class="error-summary-text" data-tracking-context="Signing in">
-            {% if authError == 'not-activated' %}
+            {% if authError == 'api-error' %}
+                <p data-tracking-summary="API unavailable">Sorry, the service is unavailable. Please try again later.</p>
+            {% elseif authError == 'not-activated' %}
                 <p data-tracking-summary="Account not activated">Your account has not been activated. Click on the link in the email sent to you when you created the account.
                     If you have not received an email, check your spam, bulk or junk email folder or <a href="{{ url('register/resend-email') }}">resend activation email</a>.</p>
             {% elseif authError == 'locked' %}

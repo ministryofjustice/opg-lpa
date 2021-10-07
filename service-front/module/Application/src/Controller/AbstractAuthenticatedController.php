@@ -74,7 +74,8 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         $this->lpaApplicationService = $lpaApplicationService;
         $this->userService = $userService;
 
-        //  If there is a user identity set up the user - if this is missing the request will be bounced in the onDispatch function
+        //  If there is a user identity set up the user - if this is missing the request
+        // will be bounced in the onDispatch function
         if ($authenticationService->hasIdentity()) {
             $this->identity = $authenticationService->getIdentity();
 
@@ -102,8 +103,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         // Before the user can access any actions that extend this controller...
 
         //----------------------------------------------------------------------
-        // Check we have a user set, thus ensuring an authenticated user
-
+        // Check we have a user set, thus ensuring an authenticated user.
         if (($authenticated = $this->checkAuthenticated()) !== true) {
             return $authenticated;
         }
@@ -200,15 +200,21 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         if (!$this->identity instanceof Identity) {
             if ($allowRedirect) {
                 $preAuthRequest = new Container('PreAuthRequest');
-
                 $preAuthRequest->url = (string)$this->getRequest()->getUri();
             }
 
-            //---
+            // If the user's identity was cleared because of a genuine timeout,
+            // redirect to the login page with session timeout; otherwise,
+            // redirect to the login page and show the "service unavailable" message.
+            $authFailureReason = new Container('AuthFailureReason');
+            if (is_null($authFailureReason->code)) {
+                return $this->redirect()->toRoute('login', [
+                    'state' => 'timeout'
+                ]);
+            }
 
-            // Redirect to the About You page
             return $this->redirect()->toRoute('login', [
-                'state' => 'timeout'
+                'state' => 'internalSystemError'
             ]);
         }
 
