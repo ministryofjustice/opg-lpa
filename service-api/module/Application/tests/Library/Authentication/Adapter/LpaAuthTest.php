@@ -5,6 +5,7 @@ namespace ApplicationTest\Library\Authentication\Adapter;
 use Application\Library\Authentication\Adapter\LpaAuth;
 use Application\Library\Authentication\Identity\User;
 use Application\Model\Service\Authentication\Service;
+use Laminas\Db\Exception\RuntimeException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -17,12 +18,12 @@ class LpaAuthTest extends MockeryTestCase
      */
     private $authenticationService;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->authenticationService = Mockery::mock(Service::class);
     }
 
-    public function testAuthenticateStandardUser() : void
+    public function testAuthenticateStandardUser(): void
     {
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)
             ->andReturn(['userId' => 'ID', 'username' => 'user name']);
@@ -41,7 +42,7 @@ class LpaAuthTest extends MockeryTestCase
         $this->assertEquals([0 => 'user'], $user->getRoles());
     }
 
-    public function testAuthenticateAdminUser() : void
+    public function testAuthenticateAdminUser(): void
     {
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)
             ->andReturn(['userId' => 'ID', 'username' => 'user name']);
@@ -60,12 +61,30 @@ class LpaAuthTest extends MockeryTestCase
         $this->assertEquals([0 => 'user', 1 => 'admin'], $user->getRoles());
     }
 
-    public function testAuthenticateFailed() : void
+    public function testAuthenticateFailedToken(): void
     {
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)
             ->andReturn(null);
 
         $lpaAuth = new LpaAuth($this->authenticationService, 'Token', ['user name']);
+        $result = $lpaAuth->authenticate();
+
+        $this->assertNotNull($result);
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(Result::FAILURE_CREDENTIAL_INVALID, $result->getCode());
+        $this->assertNull($result->getIdentity());
+    }
+
+    public function testAuthenticateFailedDb(): void
+    {
+        $expectedException = new RuntimeException();
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->with('Token', true)
+            ->andThrow($expectedException);
+
+        $lpaAuth = new LpaAuth($this->authenticationService, 'Token', ['user name']);
+
         $result = $lpaAuth->authenticate();
 
         $this->assertNotNull($result);

@@ -309,9 +309,11 @@ class DashboardControllerTest extends AbstractControllerTest
 
         $response = new Response();
 
-        $this->sessionManager->shouldReceive('start')->never();
-        $preAuthRequest = new ArrayObject(['url' => 'https://localhost/user/about-you']);
         $this->request->shouldReceive('getUri')->never();
+
+        // Session should start as we check the content of the AuthFailureReason container in the session
+        // to decide where to redirect to
+        $this->sessionManager->shouldReceive('start')->once();
 
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['login', ['state' => 'timeout']])->andReturn($response)->once();

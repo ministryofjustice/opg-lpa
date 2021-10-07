@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\User;
 
+use Hamcrest\MatcherAssert;
 use Laminas\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
 use Exception;
@@ -499,11 +500,15 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/authenticate', ['authToken' => 'test-token']])
             ->once()
-            ->andReturn(['test' => 'response']);
+            ->andReturn(['expiresIn' => 10000]);
 
         $result = $this->service->getTokenInfo('test-token');
 
-        $this->assertEquals(['test' => 'response'], $result);
+        $this->assertEquals([
+            'success' => true,
+            'failureCode' => null,
+            'expiresIn' => 10000,
+        ], $result);
     }
 
     public function testGetTokenInfoApiException(): void
@@ -515,7 +520,11 @@ class DetailsTest extends AbstractEmailServiceTest
 
         $result = $this->service->getTokenInfo('test-token');
 
-        $this->assertEquals(false, $result);
+        MatcherAssert::assertThat([
+            'success' => false,
+            'failureCode' => 500,
+            'expiresIn' => null,
+        ], Matchers::equalTo($result));
     }
 
     public function testDelete(): void
