@@ -40,6 +40,23 @@ class AbstractLpaActorControllerTest extends AbstractControllerTest
         $this->assertNotNull($reuseDetails);
     }
 
+    // Test that the correspondent from the reused (seed) LPA appears in the
+    // reusable actors list when on the correspondent page
+    public function testGetActorReuseDetailsWasCorrespondentForCorrespondentPopup()
+    {
+        $controller = $this->getController(TestableAbstractLpaActorController::class);
+
+        $seedLpa = FixturesData::getHwLpa();
+        $seedLpa->document->correspondent->who = Correspondence::WHO_OTHER;
+        $this->setSeedLpa($this->lpa, $seedLpa);
+        $this->userDetailsSession->user = $this->user;
+
+        $result = $controller->testGetActorReuseDetails(true, true);
+        $reuseDetails = $this->getReuseDetailsByLabelContains($result, '(was the correspondent)');
+
+        $this->assertNotNull($reuseDetails);
+    }
+
     public function testGetActorReuseDetailsTrustNotIncluded()
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
@@ -86,7 +103,10 @@ class AbstractLpaActorControllerTest extends AbstractControllerTest
         $this->userDetailsSession->user = $this->user;
 
         $result = $controller->testGetActorReuseDetails();
-        $reuseDetails = $this->getReuseDetailsByLabelContains($result, $this->user->name->first . ' ' . $this->user->name->last);
+        $reuseDetails = $this->getReuseDetailsByLabelContains(
+            $result,
+            $this->user->name->first . ' ' . $this->user->name->last
+        );
 
         $this->assertNull($reuseDetails);
     }
