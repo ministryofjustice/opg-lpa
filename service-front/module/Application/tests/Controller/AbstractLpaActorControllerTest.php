@@ -142,6 +142,24 @@ class AbstractLpaActorControllerTest extends AbstractControllerTest
         $controller->testUpdateCorrespondentData($trust);
     }
 
+    public function testUpdateCorrespondentDataFailedOnDelete()
+    {
+        $controller = $this->getController(TestableAbstractLpaActorController::class);
+
+        $this->lpa->document->correspondent->who = Correspondence::WHO_ATTORNEY;
+
+        $this->lpaApplicationService->shouldReceive('deleteCorrespondent')
+            ->andReturn(false)
+            ->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to delete correspondent for id: 91333263035');
+
+        $trust = FixturesData::getAttorneyTrust();
+        $isDelete = true;
+        $controller->testUpdateCorrespondentData($trust, $isDelete);
+    }
+
     private function getReuseDetailsByLabelContains($actorReuseDetails, $label)
     {
         $index = null;
