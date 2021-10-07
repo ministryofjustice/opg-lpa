@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service\Authentication\Adapter;
 
-use Application\Logging\LoggerTrait;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\ApiClient\Response\AuthResponse;
@@ -18,8 +17,6 @@ use DateTime;
  */
 class LpaAuthAdapter implements AdapterInterface
 {
-    use LoggerTrait;
-
     private $client;
     private $email;
     private $password;
