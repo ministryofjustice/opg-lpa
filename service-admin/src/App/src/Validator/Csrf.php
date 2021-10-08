@@ -22,7 +22,7 @@ class Csrf extends ZendCsrf
     protected $name = null;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     protected $messageTemplates = [
         self::NOT_SAME => 'csrf',
@@ -31,7 +31,7 @@ class Csrf extends ZendCsrf
     /**
      * Csrf constructor
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function __construct($options = [])
     {

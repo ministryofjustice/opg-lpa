@@ -12,7 +12,7 @@ class Email extends EmailAddress
 {
     /**
      * Email constructor.
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function __construct($options = [])
     {

@@ -17,8 +17,9 @@ abstract class AbstractForm extends LaminasForm
 {
     /**
      * @param InputFilter $inputFilter
+     * @return void
      */
-    protected function addCsrfElement(InputFilter $inputFilter)
+    protected function addCsrfElement(InputFilter $inputFilter): void
     {
         $options = $this->getOptions();
 
@@ -43,9 +44,9 @@ abstract class AbstractForm extends LaminasForm
      * Function strips out the 'secret' value if set
      *
      * @param int $flag
-     * @return array|object
+     * @return array<string, mixed>|object
      */
-    public function getData($flag = FormInterface::VALUES_NORMALIZED)
+    public function getData($flag = FormInterface::VALUES_NORMALIZED): mixed
     {
         $data = parent::getData($flag);
 

@@ -8,7 +8,9 @@ use RuntimeException;
 class ApiException extends RuntimeException
 {
     /**
-     * @var array
+     * JSON-decoded body
+     *
+     * @var mixed
      */
     private $body;
 

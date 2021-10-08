@@ -45,11 +45,11 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
      * Redirect to the specified route
      *
      * @param string|\Psr\Http\Message\UriInterface $route
-     * @param array $routeParams
-     * @param array $queryParams
+     * @param array<string, mixed> $routeParams
+     * @param array<string, mixed> $queryParams
      * @return Response\RedirectResponse
      */
-    protected function redirectToRoute($route, $routeParams = [], $queryParams = [])
+    protected function redirectToRoute($route, $routeParams = [], $queryParams = []): Response\RedirectResponse
     {
         return new Response\RedirectResponse(
             $this->getUrlHelper()->generate($route, $routeParams, $queryParams)
@@ -60,14 +60,26 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
      * @param ServerRequestInterface $request
      * @param string $message
      * @param bool $now
+     * @return void
      */
-    protected function setFlashInfoMessage(ServerRequestInterface $request, $message, bool $now = false)
+    protected function setFlashInfoMessage(ServerRequestInterface $request, string $message, bool $now = false): void
     {
         $this->setFlashMessage($request, 'info', $message, $now);
     }
 
-    protected function setFlashMessage(ServerRequestInterface $request, $key, $message, bool $now = false)
-    {
+    /**
+     * @param ServerRequestInterface $request
+     * @param string $key
+     * @param string $message
+     * @param bool $now
+     * @return void
+     */
+    protected function setFlashMessage(
+        ServerRequestInterface $request,
+        string $key,
+        string $message,
+        bool $now = false
+    ): void {
         /** @var Messages $flash */
         $flash = $request->getAttribute('flash');
 
@@ -78,10 +90,12 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
         }
     }
 
-    protected function getFlashMessages(ServerRequestInterface $request)
+    /**
+     * @param ServerRequestInterface $request
+     * @return array<string, mixed>
+     */
+    protected function getFlashMessages(ServerRequestInterface $request): array
     {
-        /** @var Messages $flash */
-        $flash = $request->getAttribute('flash');
-        return $flash->getMessages();
+        return $request->getAttribute('flash')->getMessages();
     }
 }

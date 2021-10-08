@@ -16,8 +16,9 @@ class ErrorMapperPlatesExtension implements ExtensionInterface
 {
     /**
      * @param Engine $engine
+     * @return void
      */
-    public function register(Engine $engine)
+    public function register(Engine $engine): void
     {
         /** @phpstan-ignore-next-line */
         $engine->registerFunction('addErrorMap', [$this, 'addErrorMap']);
@@ -31,15 +32,16 @@ class ErrorMapperPlatesExtension implements ExtensionInterface
 
     /**
      * Store of error messages.
-     * @var array
+     * @var array<string, array>
      */
     private $errors = [];
 
     /**
-     * @param array $map
+     * @param string[] $map
      * @param string $locale
+     * @return void
      */
-    public function addErrorMap(array $map, $locale = 'en-GB')
+    public function addErrorMap(array $map, $locale = 'en-GB'): void
     {
         // Ensure there's an array for the locale
         if (!isset($this->errors[$locale])) {

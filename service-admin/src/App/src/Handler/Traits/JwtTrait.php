@@ -13,8 +13,9 @@ trait JwtTrait
     /**
      * @param string $name
      * @param string $value
+     * @return void
      */
-    private function addTokenData($name, $value)
+    private function addTokenData(string $name, string $value): void
     {
         $this->verifyTokenDataExists();
 
@@ -25,7 +26,7 @@ trait JwtTrait
      * @param string $name
      * @return mixed
      */
-    private function getTokenData($name = null)
+    private function getTokenData(string $name = null): mixed
     {
         $this->verifyTokenDataExists();
 
@@ -38,8 +39,9 @@ trait JwtTrait
 
     /**
      * @param string $name
+     * @return void
      */
-    private function removeTokenData($name)
+    private function removeTokenData(string $name): void
     {
         $this->verifyTokenDataExists();
 
@@ -47,9 +49,11 @@ trait JwtTrait
     }
 
     /**
-     *  Clear all token data down
+     * Clear all token data down
+     *
+     * @return void
      */
-    private function clearTokenData()
+    private function clearTokenData(): void
     {
         $this->verifyTokenDataExists();
 
@@ -58,8 +62,10 @@ trait JwtTrait
 
     /**
      * Centralised function to verify that the JWT token data is present in the session
+     *
+     * @return void
      */
-    private function verifyTokenDataExists()
+    private function verifyTokenDataExists(): void
     {
         if (!array_key_exists('jwt-payload', $_SESSION)) {
             throw new RuntimeException('JWT token not available');

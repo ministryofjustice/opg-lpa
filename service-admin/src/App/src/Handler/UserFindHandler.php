@@ -15,6 +15,9 @@ class UserFindHandler extends AbstractHandler
 {
     use JwtTrait;
 
+    /**
+     * @var int
+     */
     public static $LIMIT = 10;
 
     /**
