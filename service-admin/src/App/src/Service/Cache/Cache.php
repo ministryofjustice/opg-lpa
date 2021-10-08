@@ -85,6 +85,8 @@ class Cache implements StorageInterface
                 'value'   => $value,
             ]
         ]);
+
+        return true;
     }
 
     /* (non-PHPdoc)
@@ -102,6 +104,8 @@ class Cache implements StorageInterface
                 'id'      => $key,
             ],
         ]);
+
+        return true;
     }
 
     /* (non-PHPdoc)
