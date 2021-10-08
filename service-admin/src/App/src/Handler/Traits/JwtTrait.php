@@ -12,10 +12,13 @@ trait JwtTrait
 {
     /**
      * @param string $name
-     * @param string $value
+     * @param object|string $value
      * @return void
      */
-    private function addTokenData(string $name, string $value): void
+    // phpstan wants a typehint for $value, but PHP 7 won't accept union typehints;
+    // consquently, we just tell phpstan to ignore this method signature
+    /* @phpstan-ignore-next-line */
+    private function addTokenData(string $name, $value): void
     {
         $this->verifyTokenDataExists();
 
@@ -24,9 +27,12 @@ trait JwtTrait
 
     /**
      * @param string $name
-     * @return mixed
+     * @return string|null|object
      */
-    private function getTokenData(string $name = null): mixed
+    // phpstan wants a return type, but PHP 7 won't accept union typehints;
+    // consquently, we just tell phpstan to ignore this method signature
+    /* @phpstan-ignore-next-line */
+    private function getTokenData(string $name = null)
     {
         $this->verifyTokenDataExists();
 

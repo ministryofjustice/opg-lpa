@@ -40,7 +40,15 @@ class SystemMessageHandler extends AbstractHandler
         ]);
 
         if ($request->getMethod() == 'POST') {
-            $form->setData($request->getParsedBody());
+            $parsedBody = $request->getParsedBody();
+
+            // if by some freak of chance we don't have a valid POST body
+            // which can be parsed to an array
+            if (!is_array($parsedBody)) {
+                $parsedBody = [];
+            }
+
+            $form->setData($parsedBody);
             $newMessage = $form->get('message')->getValue();
 
             $confirmMessage = "No system message has been set";

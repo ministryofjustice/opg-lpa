@@ -66,7 +66,14 @@ class SignInHandler extends AbstractHandler
         ]);
 
         if ($request->getMethod() == 'POST') {
-            $form->setData($request->getParsedBody());
+            $parsedBody = $request->getParsedBody();
+
+            // to protect against a POST body which isn't name/value pairs
+            if (!is_array($parsedBody)) {
+                $parsedBody = [];
+            }
+
+            $form->setData($parsedBody);
 
             if ($form->isValid()) {
                 //  Get the data from the form and authenticate with the service

@@ -9,6 +9,7 @@ use App\Handler\Initializers\TemplatingSupportTrait;
 use App\Handler\Initializers\UrlHelperInterface;
 use App\Handler\Initializers\UrlHelperTrait;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Flash\Messages;
 use Laminas\Diactoros\Response;
@@ -44,7 +45,7 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
     /**
      * Redirect to the specified route
      *
-     * @param string|\Psr\Http\Message\UriInterface $route
+     * @param string|UriInterface $route
      * @param array<string, mixed> $routeParams
      * @param array<string, mixed> $queryParams
      * @return Response\RedirectResponse
@@ -52,7 +53,7 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
     protected function redirectToRoute($route, $routeParams = [], $queryParams = []): Response\RedirectResponse
     {
         return new Response\RedirectResponse(
-            $this->getUrlHelper()->generate($route, $routeParams, $queryParams)
+            $this->getUrlHelper()->generate("{$route}", $routeParams, $queryParams)
         );
     }
 

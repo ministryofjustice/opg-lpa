@@ -81,7 +81,14 @@ class Client
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $request = new Request('POST', $url, $this->buildHeaders(), json_encode($payload));
+        $encodedPayload = json_encode($payload);
+
+        if (!$encodedPayload) {
+            // JSON parse error
+            throw new \RuntimeException('Invalid JSON payload supplied as POST body');
+        }
+
+        $request = new Request('POST', $url, $this->buildHeaders(), $encodedPayload);
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -106,7 +113,14 @@ class Client
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $request = new Request('PUT', $url, $this->buildHeaders(), json_encode($payload));
+        $encodedPayload = json_encode($payload);
+
+        if (!$encodedPayload) {
+            // JSON parse error
+            throw new \RuntimeException('Invalid JSON payload supplied as PUT body');
+        }
+
+        $request = new Request('PUT', $url, $this->buildHeaders(), $encodedPayload);
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -131,7 +145,14 @@ class Client
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $request = new Request('PATCH', $url, $this->buildHeaders(), json_encode($payload));
+        $encodedPayload = json_encode($payload);
+
+        if (!$encodedPayload) {
+            // JSON parse error
+            throw new \RuntimeException('Invalid JSON payload supplied as PATCH body');
+        }
+
+        $request = new Request('PATCH', $url, $this->buildHeaders(), $encodedPayload);
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -171,7 +192,7 @@ class Client
     /**
      * Generates the standard set of HTTP headers expected by the API
      *
-     * @return array<string, string>
+     * @return array<string, string|object>
      */
     private function buildHeaders()
     {

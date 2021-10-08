@@ -98,8 +98,13 @@ class UserFindHandler extends AbstractHandler
             }
 
             if ($numResults === 0) {
+                $formMessages = $form->getMessages();
+                if (!is_array($formMessages)) {
+                    $formMessages = iterator_to_array($formMessages);
+                }
+
                 // Set error message
-                $messages = array_merge($form->getMessages(), [
+                $messages = array_merge($formMessages, [
                     'query' => [
                         'No users match your query'
                     ]

@@ -170,4 +170,17 @@ class Date extends Fieldset
 
         return null;
     }
+
+    /**
+     * Override getName() from the parent class, so that we always return
+     * a string or null as the name. This is so that this fieldset can be
+     * used with form input filters, as in \App\Form\Feedback.
+     *
+     * @return ?string
+     */
+    public function getName(): ?string
+    {
+        $name = parent::getName();
+        return (is_string($name) ? $name : null);
+    }
 }
