@@ -20,7 +20,7 @@ class Date extends Fieldset
     private $inputFilter;
 
     /**
-     * @param null $name
+     * @param string|null $name
      */
     public function __construct($name = null)
     {
