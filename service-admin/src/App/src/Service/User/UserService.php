@@ -110,7 +110,7 @@ class UserService
 
     /**
      * @param array<string, mixed> $params
-     * @return array<string, mixed>|bool
+     * @return array<string, mixed>
      */
     public function match(array $params)
     {

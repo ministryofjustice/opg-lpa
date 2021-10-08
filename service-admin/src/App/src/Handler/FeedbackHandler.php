@@ -46,7 +46,14 @@ class FeedbackHandler extends AbstractHandler
         $earliestAvailableTime = null;
 
         if ($request->getMethod() == 'POST') {
-            $form->setData($request->getParsedBody());
+            $parsedBody = $request->getParsedBody();
+
+            // protect against POST body which can't be parsed to an array
+            if (!is_array($parsedBody)) {
+                $parsedBody = [];
+            }
+
+            $form->setData($parsedBody);
 
             if ($form->isValid()) {
                 //  Get the data from the form
@@ -143,6 +150,10 @@ class FeedbackHandler extends AbstractHandler
 
         $file = fopen($fullFilename, "w");
 
+        if (!$file) {
+            throw new \RuntimeException('could not open file ' . $fullFilename);
+        }
+
         //  Write the headings to the first line
         $headings = array_keys($data);
         fputcsv($file, $headings);
@@ -164,13 +175,19 @@ class FeedbackHandler extends AbstractHandler
 
         fclose($file);
 
+        $file = fopen($fullFilename, 'rb');
+
+        if (!$file) {
+            throw new \RuntimeException('could not read file ' . $fullFilename);
+        }
+
         header('Content-Type: text/csv; charset=utf-8');
         header("Content-disposition: attachment; filename=" . $filename);
         header('Pragma: no-cache');
         header("Expires: 0");
 
         //  Dump the file and remove the local copy
-        fpassthru(fopen($fullFilename, 'rb'));
+        fpassthru($file);
         unlink($fullFilename);
 
         exit;
