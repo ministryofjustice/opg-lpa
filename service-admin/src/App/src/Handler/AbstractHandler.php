@@ -44,7 +44,7 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
     /**
      * Redirect to the specified route
      *
-     * @param $route
+     * @param string|\Psr\Http\Message\UriInterface $route
      * @param array $routeParams
      * @param array $queryParams
      * @return Response\RedirectResponse
@@ -58,7 +58,7 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
 
     /**
      * @param ServerRequestInterface $request
-     * @param $message
+     * @param string $message
      * @param bool $now
      */
     protected function setFlashInfoMessage(ServerRequestInterface $request, $message, bool $now = false)

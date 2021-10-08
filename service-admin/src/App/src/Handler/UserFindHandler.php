@@ -65,8 +65,8 @@ class UserFindHandler extends AbstractHandler
 
                 if ($form->isValid()) {
                     $inputFilter = $form->getInputFilter();
-                    $query = $inputFilter->get('query')->getValue();
-                    $offset = $inputFilter->get('offset')->getValue();
+                    $query = $inputFilter->getValue('query');
+                    $offset = $inputFilter->getValue('offset');
                 }
             } else {
                 // reset this to empty string for display as form element value

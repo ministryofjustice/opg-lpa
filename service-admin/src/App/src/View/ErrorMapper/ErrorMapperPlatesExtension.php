@@ -45,8 +45,8 @@ class ErrorMapperPlatesExtension implements ExtensionInterface
     }
 
     /**
-     * @param $field
-     * @param $slug
+     * @param string $field
+     * @param string $slug
      * @param string $locale
      * @return mixed
      */
@@ -57,8 +57,8 @@ class ErrorMapperPlatesExtension implements ExtensionInterface
     }
 
     /**
-     * @param $field
-     * @param $slug
+     * @param string $field
+     * @param string $slug
      * @param string $locale
      * @return mixed
      */

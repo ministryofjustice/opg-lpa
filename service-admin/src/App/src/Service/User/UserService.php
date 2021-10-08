@@ -26,7 +26,7 @@ class UserService
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return null|User
      */
     public function fetch($id)
