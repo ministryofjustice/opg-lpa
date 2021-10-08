@@ -11,8 +11,8 @@ use RuntimeException;
 trait JwtTrait
 {
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param string $value
      */
     private function addTokenData($name, $value)
     {
@@ -22,7 +22,7 @@ trait JwtTrait
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return mixed
      */
     private function getTokenData($name = null)
@@ -37,7 +37,7 @@ trait JwtTrait
     }
 
     /**
-     * @param $name
+     * @param string $name
      */
     private function removeTokenData($name)
     {

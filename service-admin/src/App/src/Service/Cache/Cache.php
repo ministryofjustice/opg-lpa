@@ -37,7 +37,7 @@ class Cache implements StorageInterface
     /**
      * Cache constructor.
      * @param array $dynamoConfig
-     * @param $keyPrefix
+     * @param string $keyPrefix
      */
     public function __construct(array $dynamoConfig, $keyPrefix)
     {
@@ -51,7 +51,7 @@ class Cache implements StorageInterface
     /**
      * Returns the passed key, prefixed with a namespace.
      *
-     * @param $key
+     * @param string $key
      * @return string
      */
     private function formatKey($key)

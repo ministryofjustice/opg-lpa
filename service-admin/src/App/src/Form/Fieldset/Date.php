@@ -15,7 +15,7 @@ use DateTime;
 class Date extends Fieldset
 {
     /**
-     * @var
+     * @var InputFilter
      */
     private $inputFilter;
 

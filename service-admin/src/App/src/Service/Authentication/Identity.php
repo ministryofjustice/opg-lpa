@@ -39,7 +39,7 @@ class Identity
     }
 
     /**
-     * @param $username
+     * @param string $username
      */
     public function setUsername($username)
     {
@@ -55,7 +55,7 @@ class Identity
     }
 
     /**
-     * @param $userId
+     * @param string $userId
      */
     public function setUserId($userId)
     {
@@ -71,7 +71,7 @@ class Identity
     }
 
     /**
-     * @param $token
+     * @param string $token
      */
     public function setToken($token)
     {
