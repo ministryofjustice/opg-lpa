@@ -24,9 +24,13 @@
                     <p data-tracking-summary="Email address already exists">
                         Another LPA account is already using that email address – please enter a different email address.
                     </p>
+                {% elseif error == 'api-error' %}
+                    <p data-tracking-summary="API unavailable">
+                        Sorry, the service is unavailable. Please try again later.
+                    </p>
                 {% else %}
                     <p data-tracking-summary="{{ error }}">
-                        {{ error }}
+                        Unexpected error: {{ error }}
                     </p>
                 {% endif %}
             </div>
