@@ -46,7 +46,7 @@ abstract class AbstractForm extends LaminasForm
      * @param int $flag
      * @return array<string, mixed>|object
      */
-    public function getData($flag = FormInterface::VALUES_NORMALIZED): mixed
+    public function getData($flag = FormInterface::VALUES_NORMALIZED)
     {
         $data = parent::getData($flag);
 
