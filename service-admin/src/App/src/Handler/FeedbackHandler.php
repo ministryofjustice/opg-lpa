@@ -85,10 +85,10 @@ class FeedbackHandler extends AbstractHandler
     /**
      * Parse the feedback results into a presentable or an exportable format
      *
-     * @param array $feedbackResults
-     * @return array
+     * @param array<array> $feedbackResults
+     * @return array<string, mixed>
      */
-    private function parseFeedbackResults(array $feedbackResults)
+    private function parseFeedbackResults(array $feedbackResults): array
     {
         $parsedResults = [];
 
@@ -133,9 +133,10 @@ class FeedbackHandler extends AbstractHandler
     /**
      * Export the contents of the data array to a CSV file
      *
-     * @param array $data
+     * @param array<string, mixed> $data
+     * @return void
      */
-    private function exportToCsv(array $data)
+    private function exportToCsv(array $data): void
     {
         $filename = sprintf('FeedbackExport_%s_%s.csv', date('Y-m-d'), date('h.i.s'));
         $fullFilename = '/tmp/' . $filename;

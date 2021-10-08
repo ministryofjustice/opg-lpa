@@ -19,6 +19,7 @@ class LoggingErrorListener
      * @param Throwable $error
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
+     * @return void
      */
     public function __invoke(Throwable $error, ServerRequestInterface $request, ResponseInterface $response)
     {

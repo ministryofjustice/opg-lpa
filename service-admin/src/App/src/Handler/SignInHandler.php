@@ -33,10 +33,15 @@ class SignInHandler extends AbstractHandler
     private $authService;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private $adminUsers;
 
+    /**
+     * @param AuthenticationService $authService
+     * @param array<string> $adminUsers
+     * @param UserService $userService
+     */
     public function __construct(AuthenticationService $authService, array $adminUsers, UserService $userService)
     {
         $this->authService = $authService;

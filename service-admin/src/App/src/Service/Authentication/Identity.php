@@ -21,7 +21,7 @@ class Identity
 
     /**
      * Identity constructor.
-     * @param array $data
+     * @param array<string, string> $data
      */
     public function __construct(array $data)
     {
@@ -40,6 +40,7 @@ class Identity
 
     /**
      * @param string $username
+     * @return void
      */
     public function setUsername($username)
     {
@@ -56,6 +57,7 @@ class Identity
 
     /**
      * @param string $userId
+     * @return void
      */
     public function setUserId($userId)
     {
@@ -72,6 +74,7 @@ class Identity
 
     /**
      * @param string $token
+     * @return void
      */
     public function setToken($token)
     {

@@ -40,8 +40,14 @@ class UserService
         return null;
     }
 
-    // convert the date fields for a single user
-    private function convertDates($user)
+    /**
+     * Convert the date fields for a single user.
+     * Returns the user with the modified dates.
+     *
+     * @param array<string, mixed> $user
+     * @return array<string, mixed>
+     */
+    private function convertDates(array $user): array
     {
         //  Parse the datetime fields as required
         $dateFields = [
@@ -66,7 +72,7 @@ class UserService
 
     /**
      * @param string $email
-     * @return array|bool
+     * @return array<string, mixed>|bool
      */
     public function search(string $email)
     {
@@ -103,8 +109,8 @@ class UserService
     }
 
     /**
-     * @param array $params
-     * @return array|bool
+     * @param array<string, mixed> $params
+     * @return array<string, mixed>|bool
      */
     public function match(array $params)
     {

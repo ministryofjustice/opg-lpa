@@ -95,7 +95,7 @@ class Date extends Fieldset
      * Combines the errors from each field into one.
      *
      * @param null $elementName
-     * @return array
+     * @return array<string, mixed>
      */
     public function getMessages($elementName = null)
     {
