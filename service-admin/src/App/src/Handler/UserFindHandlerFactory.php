@@ -18,7 +18,7 @@ class UserFindHandlerFactory
      * @param ContainerInterface $container
      * @return RequestHandlerInterface
      */
-    public function __invoke(ContainerInterface $container) : RequestHandlerInterface
+    public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
         $userSearchService = $container->get(UserService::class);
 

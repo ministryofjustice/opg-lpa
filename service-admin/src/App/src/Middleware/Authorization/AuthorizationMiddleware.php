@@ -61,8 +61,13 @@ class AuthorizationMiddleware implements MiddlewareInterface
      * @param Rbac $rbac
      * @param NotFoundHandler $notFoundHandler
      */
-    public function __construct(AuthenticationService $authenticationService, UserService $userService, UrlHelper $urlHelper, Rbac $rbac, NotFoundHandler $notFoundHandler)
-    {
+    public function __construct(
+        AuthenticationService $authenticationService,
+        UserService $userService,
+        UrlHelper $urlHelper,
+        Rbac $rbac,
+        NotFoundHandler $notFoundHandler
+    ) {
         $this->authenticationService = $authenticationService;
         $this->userService = $userService;
         $this->urlHelper = $urlHelper;
@@ -118,7 +123,6 @@ class AuthorizationMiddleware implements MiddlewareInterface
         //  Check each role to see if the user has access to the route
         foreach ($roles as $role) {
             if ($this->rbac->hasRole($role) && $this->rbac->isGranted($role, $matchedRoute->getName())) {
-
                 //  Catch any unauthorized exceptions and trigger a sign out if required
                 try {
                     return $handler->handle($request->withAttribute('user', $user));

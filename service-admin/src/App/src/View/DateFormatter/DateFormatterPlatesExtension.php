@@ -1,4 +1,5 @@
 <?php
+
 namespace App\View\DateFormatter;
 
 use League\Plates\Engine;

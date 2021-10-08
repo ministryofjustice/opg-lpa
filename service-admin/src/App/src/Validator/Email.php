@@ -16,7 +16,8 @@ class Email extends EmailAddress
      */
     public function __construct($options = [])
     {
-        //  Merge the custom error references into the message templates - do this to simplify the error reference for translation
+        //  Merge the custom error references into the message templates
+        // - do this to simplify the error reference for translation
         $this->messageTemplates = array_merge($this->messageTemplates, [
             self::INVALID            => 'invalid-email',
             self::INVALID_FORMAT     => 'invalid-email',

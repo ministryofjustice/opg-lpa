@@ -33,7 +33,7 @@ class SystemMessageHandler extends AbstractHandler
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new SystemMessage([
             'csrf' => $this->getTokenData('csrf'),
@@ -48,7 +48,6 @@ class SystemMessageHandler extends AbstractHandler
             if (empty($newMessage) && !is_null($this->cache->getItem('system-message'))) {
                 $this->cache->removeItem('system-message');
                 $confirmMessage = 'System message removed';
-
             } elseif ($form->isValid() && !empty($newMessage)) {
                 $this->cache->setItem('system-message', $newMessage);
                 $confirmMessage = 'System message set';

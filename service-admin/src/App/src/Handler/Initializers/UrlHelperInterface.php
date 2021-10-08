@@ -21,5 +21,5 @@ interface UrlHelperInterface
     /**
      * @return UrlHelper
      */
-    public function getUrlHelper() : UrlHelper;
+    public function getUrlHelper(): UrlHelper;
 }

@@ -13,9 +13,9 @@ use Laminas\Diactoros\Response\HtmlResponse;
 
 class UserFindHandler extends AbstractHandler
 {
-    public static $LIMIT = 10;
-
     use JwtTrait;
+
+    public static $LIMIT = 10;
 
     /**
      * @var UserService
@@ -35,7 +35,7 @@ class UserFindHandler extends AbstractHandler
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new UserFind();
 
@@ -66,8 +66,7 @@ class UserFindHandler extends AbstractHandler
                     $query = $inputFilter->get('query')->getValue();
                     $offset = $inputFilter->get('offset')->getValue();
                 }
-            }
-            else {
+            } else {
                 // reset this to empty string for display as form element value
                 $params['query'] = '';
 

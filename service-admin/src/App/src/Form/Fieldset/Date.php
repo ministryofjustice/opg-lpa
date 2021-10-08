@@ -27,7 +27,7 @@ class Date extends Fieldset
     {
         parent::__construct($name);
 
-        $inputFilter = $this->inputFilter = new InputFilter;
+        $inputFilter = $this->inputFilter = new InputFilter();
 
         //------------------------
         // Day
@@ -36,11 +36,11 @@ class Date extends Fieldset
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(new StandardInputFilter);
+            ->attach(new StandardInputFilter());
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(Validator\NotEmpty::INTEGER + Validator\NotEmpty::ZERO), true)
-            ->attach(new Validator\Digits, true)
+            ->attach(new Validator\Digits(), true)
             ->attach($this->getValidDateValidator(), true)
             ->attach($this->getFutureDateValidator(), true);
 
@@ -54,11 +54,11 @@ class Date extends Fieldset
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(new StandardInputFilter);
+            ->attach(new StandardInputFilter());
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(Validator\NotEmpty::INTEGER + Validator\NotEmpty::ZERO), true)
-            ->attach(new Validator\Digits, true)
+            ->attach(new Validator\Digits(), true)
             ->attach($this->getValidDateValidator(), true)
             ->attach($this->getFutureDateValidator(), true);
 
@@ -72,11 +72,11 @@ class Date extends Fieldset
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(new StandardInputFilter);
+            ->attach(new StandardInputFilter());
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(Validator\NotEmpty::INTEGER + Validator\NotEmpty::ZERO), true)
-            ->attach(new Validator\Digits, true)
+            ->attach(new Validator\Digits(), true)
             ->attach($this->getValidDateValidator(), true)
             ->attach($this->getFutureDateValidator(), true);
 
@@ -87,7 +87,7 @@ class Date extends Fieldset
     /**
      * @return InputFilter
      */
-    public function getInputFilter() : InputFilter
+    public function getInputFilter(): InputFilter
     {
         return $this->inputFilter;
     }
@@ -114,7 +114,7 @@ class Date extends Fieldset
     /**
      * @return ValidatorInterface
      */
-    private function getValidDateValidator() : ValidatorInterface
+    private function getValidDateValidator(): ValidatorInterface
     {
         $validator = new Callback(function ($value, $context) {
             if (count(array_filter($context)) != 3) {
@@ -132,10 +132,9 @@ class Date extends Fieldset
     /**
      * @return ValidatorInterface
      */
-    private function getFutureDateValidator() : ValidatorInterface
+    private function getFutureDateValidator(): ValidatorInterface
     {
         $validator = new Callback(function ($value, $context) {
-
             $context = array_filter($context);
             if (count($context) != 3) {
                 // Don't validate unless all fields present.
@@ -149,7 +148,7 @@ class Date extends Fieldset
 
             $born = DateTime::createFromFormat('Y-m-d', "{$context['year']}-{$context['month']}-{$context['day']}");
 
-            return ($born < new DateTime);
+            return ($born < new DateTime());
         });
 
         $validator->setMessage('future-date', Callback::INVALID_VALUE);

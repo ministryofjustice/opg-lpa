@@ -22,6 +22,12 @@ class LoggingErrorListener
      */
     public function __invoke(Throwable $error, ServerRequestInterface $request, ResponseInterface $response)
     {
-        $this->getLogger()->err(sprintf('%s in %s on line %s - %s' . $error->getTraceAsString() ,$error->getMessage(), $error->getFile(), $error->getLine(), $error->getTraceAsString()));
+        $this->getLogger()->err(sprintf(
+            '%s in %s on line %s - %s' . $error->getTraceAsString(),
+            $error->getMessage(),
+            $error->getFile(),
+            $error->getLine(),
+            $error->getTraceAsString()
+        ));
     }
 }
