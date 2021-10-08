@@ -21,9 +21,8 @@ class Date extends Fieldset
 
     /**
      * @param null $name
-     * @param array $options
      */
-    public function __construct($name = null, $options = [])
+    public function __construct($name = null)
     {
         parent::__construct($name);
 

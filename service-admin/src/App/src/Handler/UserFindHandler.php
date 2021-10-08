@@ -43,7 +43,9 @@ class UserFindHandler extends AbstractHandler
 
         // to be set from GET
         $query = null;
-        $defaultOffset = 0;
+
+        // default offset
+        $offset = 0;
 
         // next/previous params
         $nextOffset = null;
@@ -70,7 +72,7 @@ class UserFindHandler extends AbstractHandler
                 // reset this to empty string for display as form element value
                 $params['query'] = '';
 
-                $params['offset'] = $defaultOffset;
+                $params['offset'] = $offset;
 
                 $form->setData($params);
             }

@@ -25,7 +25,7 @@ class JwtAuthenticationFactory
 
         //  Add JWT callback handlers to the config
         $jwtHandlers = [
-            'before' => function (ServerRequestInterface $request, $params) use ($jwtConfig) {
+            'before' => function (ServerRequestInterface $request, $params) {
                 //  Move the existing JWT data to the session so we can get it after processing
                 $_SESSION['jwt-payload'] = $request->getAttribute('token');
             },
