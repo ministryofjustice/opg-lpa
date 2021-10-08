@@ -88,9 +88,16 @@ class SignInHandler extends AbstractHandler
                         //  Update the JWT data with the user data
                         /** @var Identity $identity */
                         $identity = $result->getIdentity();
-                        $this->addTokenData('token', $identity->getToken());
 
-                        $user = $this->userService->fetch($identity->getUserId());
+                        $token = $identity->getToken();
+
+                        // only save the user token if it isn't null
+                        if (!is_null($token)) {
+                            $this->addTokenData('token', $token);
+                        }
+
+                        // ensure we have a string for the user ID, even if it's empty
+                        $user = $this->userService->fetch($identity->getUserId() ?? '');
 
                         if (!isset($user->name)) {
                             return new HtmlResponse(

@@ -5,17 +5,17 @@ namespace App\Service\Authentication;
 class Identity
 {
     /**
-     * @var string
+     * @var ?string
      */
     private $username;
 
     /**
-     * @var string
+     * @var ?string
      */
     private $userId;
 
     /**
-     * @var string
+     * @var ?string
      */
     private $token;
 
@@ -31,7 +31,7 @@ class Identity
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getUsername()
     {
@@ -48,7 +48,7 @@ class Identity
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getUserId()
     {
@@ -65,7 +65,7 @@ class Identity
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getToken()
     {
