@@ -89,7 +89,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
 
         $roles = ['guest'];
 
-        if (!is_null($token)) {
+        if (is_string($token)) {
             //  Attempt to get a user with the token value
             $result = $this->authenticationService->verify($token);
 
@@ -97,7 +97,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
 
             if ($identity instanceof Identity) {
                 //  Try to get the user details
-                $user = $this->userService->fetch($identity->getUserId());
+                $user = $this->userService->fetch($identity->getUserId() ?? '');
 
                 //  There is something wrong with the user here so throw an exception
                 if (!$user instanceof User) {
@@ -111,7 +111,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
             }
         }
 
-        //  Determine the route was are attempting to access
+        //  Determine the route we are attempting to access
         /** @var RouteResult $route */
         $route = $request->getAttribute(RouteResult::class);
         $matchedRoute = $route->getMatchedRoute();

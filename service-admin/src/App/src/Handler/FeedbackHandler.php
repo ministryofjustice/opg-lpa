@@ -56,9 +56,11 @@ class FeedbackHandler extends AbstractHandler
             $form->setData($parsedBody);
 
             if ($form->isValid()) {
-                //  Get the data from the form
-                $startDate = $form->getDateValue('start-date');
-                $endDate = $form->getDateValue('end-date');
+                // Get the data from the form; if start date or end date are null
+                // (e.g. if someone was messing about manually with the form),
+                // set them to today
+                $startDate = $form->getDateValue('start-date') ?? new DateTime();
+                $endDate = $form->getDateValue('end-date') ?? new DateTime();
 
                 $result = $this->feedbackService->search($startDate, $endDate);
 

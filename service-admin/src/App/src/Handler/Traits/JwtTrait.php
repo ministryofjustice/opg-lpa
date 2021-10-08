@@ -36,7 +36,7 @@ trait JwtTrait
     {
         $this->verifyTokenDataExists();
 
-        if (array_key_exists($name, $_SESSION['jwt-payload'])) {
+        if (!is_null($name) && array_key_exists($name, $_SESSION['jwt-payload'])) {
             return $_SESSION['jwt-payload'][$name];
         }
 
