@@ -13,6 +13,7 @@ class DateFormatterPlatesExtension implements ExtensionInterface
 {
     public function register(Engine $engine)
     {
+        /** @phpstan-ignore-next-line */
         $engine->registerFunction('dateFormat', [$this, 'dateFormat']);
     }
 

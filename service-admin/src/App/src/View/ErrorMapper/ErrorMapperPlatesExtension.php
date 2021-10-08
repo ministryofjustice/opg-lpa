@@ -19,8 +19,13 @@ class ErrorMapperPlatesExtension implements ExtensionInterface
      */
     public function register(Engine $engine)
     {
+        /** @phpstan-ignore-next-line */
         $engine->registerFunction('addErrorMap', [$this, 'addErrorMap']);
+
+        /** @phpstan-ignore-next-line */
         $engine->registerFunction('summaryError', [$this, 'getSummaryError']);
+
+        /** @phpstan-ignore-next-line */
         $engine->registerFunction('fieldError', [$this, 'getFieldError']);
     }
 
