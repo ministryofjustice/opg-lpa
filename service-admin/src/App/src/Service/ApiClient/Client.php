@@ -74,7 +74,7 @@ class Client
      *
      * @param string $path
      * @param array  $payload
-     * @return array
+     * @return array|null
      * @throw RuntimeException | ApiException
      */
     public function httpPost($path, array $payload = [])
@@ -99,7 +99,7 @@ class Client
      *
      * @param string $path
      * @param array  $payload
-     * @return array
+     * @return array|null
      * @throw RuntimeException | ApiException
      */
     public function httpPut($path, array $payload = [])
@@ -124,7 +124,7 @@ class Client
      *
      * @param string $path
      * @param array  $payload
-     * @return array
+     * @return array|null
      * @throw RuntimeException | ApiException
      */
     public function httpPatch($path, array $payload = [])
@@ -148,7 +148,7 @@ class Client
      * Performs a DELETE against the API
      *
      * @param string $path
-     * @return array
+     * @return array|null
      * @throw RuntimeException | ApiException
      */
     public function httpDelete($path)
