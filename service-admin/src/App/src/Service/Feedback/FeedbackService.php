@@ -35,7 +35,8 @@ class FeedbackService
                 'from'  => $startDate->format('Y-m-d'),
                 'to'    => $endDate->format('Y-m-d'),
             ]);
-        } catch (ApiException $ignore) {}
+        } catch (ApiException $ignore) {
+        }
 
         return false;
     }

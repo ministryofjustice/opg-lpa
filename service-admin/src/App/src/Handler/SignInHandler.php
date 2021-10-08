@@ -48,7 +48,7 @@ class SignInHandler extends AbstractHandler
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $token = $this->getTokenData('token');
 
@@ -80,17 +80,22 @@ class SignInHandler extends AbstractHandler
 
                         $user = $this->userService->fetch($identity->getUserId());
 
-                        if(!isset($user->name)){
-                            return new HtmlResponse($this->getTemplateRenderer()->render('error::no-user-details-error', [
-                                'user'         => $user,
-                            ]));
-                        }
-                        else {
+                        if (!isset($user->name)) {
+                            return new HtmlResponse(
+                                $this->getTemplateRenderer()
+                                    ->render('error::no-user-details-error', [
+                                        'user' => $user,
+                                    ])
+                            );
+                        } else {
                             return $this->redirectToRoute('home');
                         }
                     }
 
-                    $form->setAuthError($result->getCode() === Result::FAILURE_ACCOUNT_LOCKED ? 'account-locked' : 'authentication-error');
+                    $form->setAuthError(
+                        $result->getCode() === Result::FAILURE_ACCOUNT_LOCKED ?
+                            'account-locked' : 'authentication-error'
+                    );
                 } else {
                     $form->setAuthError('authorization-error');
                 }

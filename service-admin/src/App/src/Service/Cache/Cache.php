@@ -107,7 +107,7 @@ class Cache implements StorageInterface
     /* (non-PHPdoc)
      * @see \Laminas\Cache\Storage\StorageInterface::getItem()
      */
-    public function getItem($key, & $success = null, & $casToken = null)
+    public function getItem($key, &$success = null, &$casToken = null)
     {
         try {
             $result = $this->client->getItem([
@@ -122,7 +122,8 @@ class Cache implements StorageInterface
             $success = true;
 
             return $result['Item']['value']['B'];
-        } catch (Exception $ignore) {}
+        } catch (Exception $ignore) {
+        }
 
         $success = false;
 

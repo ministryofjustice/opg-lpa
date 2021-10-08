@@ -54,7 +54,10 @@ class UserService
 
         foreach ($dateFields as $dateField) {
             if (array_key_exists($dateField, $user) && isset($user[$dateField])) {
-                $user[$dateField] = new DateTime($user[$dateField]['date'], new DateTimeZone($user[$dateField]['timezone']));
+                $user[$dateField] = new DateTime(
+                    $user[$dateField]['date'],
+                    new DateTimeZone($user[$dateField]['timezone'])
+                );
             }
         }
 
@@ -87,7 +90,8 @@ class UserService
                     if (is_array($lpaData) && array_key_exists('total', $lpaData)) {
                         $numberOfLpas = $lpaData['total'];
                     }
-                } catch (Exception $ignore) {}
+                } catch (Exception $ignore) {
+                }
 
                 $userData['numberOfLpas'] = $numberOfLpas;
             }
@@ -105,6 +109,6 @@ class UserService
     public function match(array $params)
     {
         $users = $this->client->httpGet('/v2/users/match', $params);
-        return array_map(fn($user) => $this->convertDates($user), $users);
+        return array_map(fn ($user) => $this->convertDates($user), $users);
     }
 }

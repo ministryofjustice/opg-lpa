@@ -37,8 +37,8 @@ class JwtAuthenticationFactory
 
                 setcookie($jwtConfig['cookie'], $jwtCookie, [
                     'expires' => $ttl->getTimeStamp(),
-                    'secure' => TRUE,
-                    'httponly' => TRUE,
+                    'secure' => true,
+                    'httponly' => true,
                     'samesite' => 'Strict',
                 ]);
             },
