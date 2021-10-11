@@ -34,9 +34,9 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     /**
      * Constants
      */
-    const MAX_ATTORNEYS_PER_PAGE_SECTION_11 = 4;
-    const MAX_APPLICANTS_SECTION_12 = 4;
-    const MAX_SIGNATURES_SECTION_15 = 4;
+    public const MAX_ATTORNEYS_PER_PAGE_SECTION_11 = 4;
+    public const MAX_APPLICANTS_SECTION_12 = 4;
+    public const MAX_SIGNATURES_SECTION_15 = 4;
 
     /**
      * PDF file name for the coversheet
@@ -67,28 +67,31 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     public function __construct(Lpa $lpa = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
     {
-        //  Check that the coversheet variables have been set
+        // Check that the coversheet variables have been set
         if (is_null($this->coversheetFileName)) {
             throw new Exception('PDF coversheet file name must be defined to create an LP1');
         }
 
-        //  If an LPA has been provided - check that it has been completed
+        // If an LPA has been provided - check that it has been completed
         if ($lpa instanceof Lpa) {
-            $this->lpaIsComplete = $lpa->isStateCompleted() && $lpa->getCompletedAt() instanceof DateTime;
+            $this->lpaIsComplete = $lpa->isStateCompleted() &&
+                $lpa->getCompletedAt() instanceof DateTime;
         }
 
         parent::__construct($lpa, $options, $pdftkFactory);
     }
 
     /**
-     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
+     * Create the PDF in preparation for it to be generated - this
+     * function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
      */
     protected function create(Lpa $lpa)
     {
-        //  Add an appropriate coversheet to the start of the document
-        $this->insertStaticPDF($this->lpaIsComplete ? $this->coversheetFileName : $this->coversheetFileNameDraft, 1, 2, 'start');
+        // Add an appropriate coversheet to the start of the document
+        $this->insertStaticPDF($this->lpaIsComplete ?
+            $this->coversheetFileName : $this->coversheetFileNameDraft, 1, 2, 'start');
 
         $this->populatePageOne($lpa->document->donor);
         $this->populatePageTwoThreeFour($lpa->document);
@@ -96,17 +99,18 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $this->populatePageSix($lpa->document->primaryAttorneyDecisions);
         $this->populatePageSeven($lpa->document->peopleToNotify);
         $this->populatePageEight($lpa->document);
-        //  No content on page 9
+        // No content on page 9
         $this->populatePageTen($lpa->document->donor);
         $this->populatePageEleven($lpa->document->certificateProvider);
         $this->populatePageTwelveThirteenFourteenFifteen($lpa);
-        //  No content on page 16
+        // No content on page 16
         $this->populatePageSeventeen($lpa->document);
         $this->populatePageEighteen($lpa->document->correspondent);
         $this->populatePageNineteen($lpa->payment, $lpa->repeatCaseNumber);
         $this->populatePageTwenty($lpa->document->whoIsRegistering);
 
-        //  Add any continuation sheets - this must take place AFTER the core content is set above to ensure that pages are inserted in the correct order
+        // Add any continuation sheets - this must take place AFTER the core content
+        // is set above to ensure that pages are inserted in the correct order
         $this->addContinuationSheets($lpa);
 
         $this->setFooterContent($lpa);
@@ -118,16 +122,16 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageOne(Donor $donor)
     {
         $this->setData('lpa-document-donor-name-title', $donor->name->title)
-             ->setData('lpa-document-donor-name-first', $donor->name->first)
-             ->setData('lpa-document-donor-name-last', $donor->name->last)
-             ->setData('lpa-document-donor-otherNames', $donor->otherNames)
-             ->setData('lpa-document-donor-dob-date-day', $donor->dob->date->format('d'))
-             ->setData('lpa-document-donor-dob-date-month', $donor->dob->date->format('m'))
-             ->setData('lpa-document-donor-dob-date-year', $donor->dob->date->format('Y'))
-             ->setData('lpa-document-donor-address-address1', $donor->address->address1)
-             ->setData('lpa-document-donor-address-address2', $donor->address->address2)
-             ->setData('lpa-document-donor-address-address3', $donor->address->address3)
-             ->setData('lpa-document-donor-address-postcode', $donor->address->postcode);
+            ->setData('lpa-document-donor-name-first', $donor->name->first)
+            ->setData('lpa-document-donor-name-last', $donor->name->last)
+            ->setData('lpa-document-donor-otherNames', $donor->otherNames)
+            ->setData('lpa-document-donor-dob-date-day', $donor->dob->date->format('d'))
+            ->setData('lpa-document-donor-dob-date-month', $donor->dob->date->format('m'))
+            ->setData('lpa-document-donor-dob-date-year', $donor->dob->date->format('Y'))
+            ->setData('lpa-document-donor-address-address1', $donor->address->address1)
+            ->setData('lpa-document-donor-address-address2', $donor->address->address2)
+            ->setData('lpa-document-donor-address-address3', $donor->address->address3)
+            ->setData('lpa-document-donor-address-postcode', $donor->address->postcode);
 
         if ($donor->email instanceof EmailAddress) {
             $this->setData('lpa-document-donor-email-address', $donor->email->address);
@@ -142,39 +146,65 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $primaryAttorneys = $this->getOrderedAttorneys($lpaDocument->primaryAttorneys);
 
         for ($i = 0; $i < self::MAX_ATTORNEYS_SECTION_2; $i++) {
-            //  If there is a primary attorney for this index then render the details
+            // If there is a primary attorney for this index then render the details
             if (array_key_exists($i, $primaryAttorneys)) {
                 $primaryAttorney = $primaryAttorneys[$i];
 
                 if ($primaryAttorney instanceof TrustCorporation) {
                     $this->setCheckBox('attorney-' . $i . '-is-trust-corporation')
-                         ->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', (string) $primaryAttorney->name);
+                         ->setData(
+                             'lpa-document-primaryAttorneys-' . $i . '-name-last',
+                             (string) $primaryAttorney->name
+                         );
                 } else {
                     $this->setData('lpa-document-primaryAttorneys-' . $i . '-name-title', $primaryAttorney->name->title)
-                         ->setData('lpa-document-primaryAttorneys-' . $i . '-name-first', $primaryAttorney->name->first)
-                         ->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $primaryAttorney->name->last)
-                         ->setData('lpa-document-primaryAttorneys-' . $i . '-dob-date-day', $primaryAttorney->dob->date->format('d'))
-                         ->setData('lpa-document-primaryAttorneys-' . $i . '-dob-date-month', $primaryAttorney->dob->date->format('m'))
-                         ->setData('lpa-document-primaryAttorneys-' . $i . '-dob-date-year', $primaryAttorney->dob->date->format('Y'));
+                        ->setData('lpa-document-primaryAttorneys-' . $i . '-name-first', $primaryAttorney->name->first)
+                        ->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $primaryAttorney->name->last)
+                        ->setData('lpa-document-primaryAttorneys-' . $i .
+                            '-dob-date-day', $primaryAttorney->dob->date->format('d'))
+                        ->setData(
+                            'lpa-document-primaryAttorneys-' . $i . '-dob-date-month',
+                            $primaryAttorney->dob->date->format('m')
+                        )
+                        ->setData(
+                            'lpa-document-primaryAttorneys-' . $i . '-dob-date-year',
+                            $primaryAttorney->dob->date->format('Y')
+                        );
                 }
 
-                $this->setData('lpa-document-primaryAttorneys-' . $i . '-address-address1', $primaryAttorney->address->address1)
-                     ->setData('lpa-document-primaryAttorneys-' . $i . '-address-address2', $primaryAttorney->address->address2)
-                     ->setData('lpa-document-primaryAttorneys-' . $i . '-address-address3', $primaryAttorney->address->address3)
-                     ->setData('lpa-document-primaryAttorneys-' . $i . '-address-postcode', $primaryAttorney->address->postcode);
+                $this->setData(
+                    'lpa-document-primaryAttorneys-' . $i . '-address-address1',
+                    $primaryAttorney->address->address1
+                )
+                    ->setData(
+                        'lpa-document-primaryAttorneys-' . $i . '-address-address2',
+                        $primaryAttorney->address->address2
+                    )
+                    ->setData(
+                        'lpa-document-primaryAttorneys-' . $i . '-address-address3',
+                        $primaryAttorney->address->address3
+                    )
+                    ->setData(
+                        'lpa-document-primaryAttorneys-' . $i . '-address-postcode',
+                        $primaryAttorney->address->postcode
+                    );
 
                 if ($primaryAttorney->email instanceof EmailAddress) {
-                    $this->setData('lpa-document-primaryAttorneys-' . $i . '-email-address', $primaryAttorney->email->address, true);
+                    $this->setData(
+                        'lpa-document-primaryAttorneys-' . $i . '-email-address',
+                        $primaryAttorney->email->address,
+                        true
+                    );
                 }
             } else {
-                //  Add a strike through on the appropriate page
+                // Add a strike through on the appropriate page
                 $strikeThroughArea = 'primaryAttorney-' . $i;
 
-                //  Determine what page number this is
-                $strikeThroughPage = 2 + floor($i/2);
+                // Determine what page number this is
+                $strikeThroughPage = 2 + floor($i / 2);
 
                 if ($strikeThroughPage == 2) {
-                    //  Add the required strike through area prefix
+                    // Add the required strike through area prefix
                     $strikeThroughArea .= '-' . $this->getAreaReferenceSuffix();
                 }
 
@@ -186,7 +216,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             $this->setCheckBox('has-more-than-4-attorneys');
         }
 
-        //  Set the attorney decisions value
+        // Set the attorney decisions value
         if (count($primaryAttorneys) == 1) {
             $this->setData('how-attorneys-act', 'only-one-attorney-appointed');
         } elseif ($lpaDocument->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
@@ -202,34 +232,71 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $replacementAttorneys = $this->getOrderedAttorneys($lpaDocument->replacementAttorneys);
 
         for ($i = 0; $i < self::MAX_REPLACEMENT_ATTORNEYS_SECTION_4; $i++) {
-            //  If there is a replacement attorney for this index then render the details
+            // If there is a replacement attorney for this index then render the details
             if (array_key_exists($i, $replacementAttorneys)) {
                 $replacementAttorney = $replacementAttorneys[$i];
 
                 if ($replacementAttorney instanceof TrustCorporation) {
                     $this->setCheckBox('replacement-attorney-' . $i . '-is-trust-corporation')
-                         ->setData('lpa-document-replacementAttorneys-' . $i . '-name-last', (string) $replacementAttorney->name);
+                        ->setData(
+                            'lpa-document-replacementAttorneys-' . $i . '-name-last',
+                            (string) $replacementAttorney->name
+                        );
                 } else {
-                    $this->setData('lpa-document-replacementAttorneys-' . $i . '-name-title', $replacementAttorney->name->title)
-                         ->setData('lpa-document-replacementAttorneys-' . $i . '-name-first', $replacementAttorney->name->first)
-                         ->setData('lpa-document-replacementAttorneys-' . $i . '-name-last', $replacementAttorney->name->last)
-                         ->setData('lpa-document-replacementAttorneys-' . $i . '-dob-date-day', $replacementAttorney->dob->date->format('d'))
-                         ->setData('lpa-document-replacementAttorneys-' . $i . '-dob-date-month', $replacementAttorney->dob->date->format('m'))
-                         ->setData('lpa-document-replacementAttorneys-' . $i . '-dob-date-year', $replacementAttorney->dob->date->format('Y'));
+                    $this->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-name-title',
+                        $replacementAttorney->name->title
+                    )
+                        ->setData(
+                            'lpa-document-replacementAttorneys-' . $i . '-name-first',
+                            $replacementAttorney->name->first
+                        )
+                        ->setData(
+                            'lpa-document-replacementAttorneys-' . $i . '-name-last',
+                            $replacementAttorney->name->last
+                        )
+                        ->setData(
+                            'lpa-document-replacementAttorneys-' . $i . '-dob-date-day',
+                            $replacementAttorney->dob->date->format('d')
+                        )
+                        ->setData(
+                            'lpa-document-replacementAttorneys-' . $i . '-dob-date-month',
+                            $replacementAttorney->dob->date->format('m')
+                        )
+                        ->setData(
+                            'lpa-document-replacementAttorneys-' . $i . '-dob-date-year',
+                            $replacementAttorney->dob->date->format('Y')
+                        );
                 }
 
-                $this->setData('lpa-document-replacementAttorneys-' . $i . '-address-address1', $replacementAttorney->address->address1)
-                     ->setData('lpa-document-replacementAttorneys-' . $i . '-address-address2', $replacementAttorney->address->address2)
-                     ->setData('lpa-document-replacementAttorneys-' . $i . '-address-address3', $replacementAttorney->address->address3)
-                     ->setData('lpa-document-replacementAttorneys-' . $i . '-address-postcode', $replacementAttorney->address->postcode);
+                $this->setData(
+                    'lpa-document-replacementAttorneys-' . $i . '-address-address1',
+                    $replacementAttorney->address->address1
+                )
+                    ->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-address-address2',
+                        $replacementAttorney->address->address2
+                    )
+                    ->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-address-address3',
+                        $replacementAttorney->address->address3
+                    )
+                    ->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-address-postcode',
+                        $replacementAttorney->address->postcode
+                    );
 
                 if ($replacementAttorney->email instanceof EmailAddress) {
-                    $this->setData('lpa-document-replacementAttorneys-' . $i . '-email-address', $replacementAttorney->email->address, true);
+                    $this->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-email-address',
+                        $replacementAttorney->email->address,
+                        true
+                    );
                 }
             } else {
-                //  Add a strike through on the appropriate page
+                // Add a strike through on the appropriate page
                 $strikeThroughArea = 'replacementAttorney-' . $i . '-' . $this->getAreaReferenceSuffix();
-                $strikeThroughPage = 5 + floor($i/2);
+                $strikeThroughPage = 5 + floor($i / 2);
 
                 $this->addStrikeThrough($strikeThroughArea, $strikeThroughPage);
             }
@@ -239,7 +306,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             $this->setCheckBox('has-more-than-2-replacement-attorneys');
         }
 
-        //  Determine whether to check the when/how my attorneys can act checkbox
+        // Determine whether to check the when/how my attorneys can act checkbox
         $replacementAttorneysContent = $this->getHowWhenReplacementAttorneysCanActContent($lpaDocument);
 
         if (!empty($replacementAttorneysContent)) {
@@ -259,31 +326,43 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     private function populatePageSeven(array $peopleToNotify)
     {
-        //  Ensure array has correct indexes
+        // Ensure array has correct indexes
         $peopleToNotify = array_values($peopleToNotify);
 
         for ($i = 0; $i < self::MAX_PEOPLE_TO_NOTIFY_SECTION_6; $i++) {
-            //  If there is a person to notify for this index then render the details
+            // If there is a person to notify for this index then render the details
             if (array_key_exists($i, $peopleToNotify)) {
                 $personToNotify = $peopleToNotify[$i];
 
                 $this->setData('lpa-document-peopleToNotify-' . $i . '-name-title', $personToNotify->name->title)
-                     ->setData('lpa-document-peopleToNotify-' . $i . '-name-first', $personToNotify->name->first)
-                     ->setData('lpa-document-peopleToNotify-' . $i . '-name-last', $personToNotify->name->last)
-                     ->setData('lpa-document-peopleToNotify-' . $i . '-address-address1', $personToNotify->address->address1)
-                     ->setData('lpa-document-peopleToNotify-' . $i . '-address-address2', $personToNotify->address->address2)
-                     ->setData('lpa-document-peopleToNotify-' . $i . '-address-address3', $personToNotify->address->address3)
-                     ->setData('lpa-document-peopleToNotify-' . $i . '-address-postcode', $personToNotify->address->postcode);
+                    ->setData('lpa-document-peopleToNotify-' . $i . '-name-first', $personToNotify->name->first)
+                    ->setData('lpa-document-peopleToNotify-' . $i . '-name-last', $personToNotify->name->last)
+                    ->setData(
+                        'lpa-document-peopleToNotify-' . $i . '-address-address1',
+                        $personToNotify->address->address1
+                    )
+                    ->setData(
+                        'lpa-document-peopleToNotify-' . $i . '-address-address2',
+                        $personToNotify->address->address2
+                    )
+                    ->setData(
+                        'lpa-document-peopleToNotify-' . $i . '-address-address3',
+                        $personToNotify->address->address3
+                    )
+                    ->setData(
+                        'lpa-document-peopleToNotify-' . $i . '-address-postcode',
+                        $personToNotify->address->postcode
+                    );
             } else {
-                //  Add a strike through on the appropriate page
+                // Add a strike through on the appropriate page
                 $this->addStrikeThrough('people-to-notify-' . $i, 7);
             }
         }
 
         if (count($peopleToNotify) > self::MAX_PEOPLE_TO_NOTIFY_SECTION_6) {
-            //  TODO - Historic bug - the check box on the H&W PDF is named incorrecly
+            // TODO - Historic bug - the check box on the H&W PDF is named incorrecly
             $this->setCheckBox('has-more-than-4-notified-people')   //Property and Finance
-                 ->setCheckBox('has-more-than-5-notified-people');  //Health and Welfare
+                ->setCheckBox('has-more-than-5-notified-people');  //Health and Welfare
         }
     }
 
@@ -328,12 +407,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageEleven(CertificateProvider $certificateProvider)
     {
         $this->setData('lpa-document-certificateProvider-name-title', $certificateProvider->name->title)
-             ->setData('lpa-document-certificateProvider-name-first', $certificateProvider->name->first)
-             ->setData('lpa-document-certificateProvider-name-last', $certificateProvider->name->last)
-             ->setData('lpa-document-certificateProvider-address-address1', $certificateProvider->address->address1)
-             ->setData('lpa-document-certificateProvider-address-address2', $certificateProvider->address->address2)
-             ->setData('lpa-document-certificateProvider-address-address3', $certificateProvider->address->address3)
-             ->setData('lpa-document-certificateProvider-address-postcode', $certificateProvider->address->postcode);
+            ->setData('lpa-document-certificateProvider-name-first', $certificateProvider->name->first)
+            ->setData('lpa-document-certificateProvider-name-last', $certificateProvider->name->last)
+            ->setData('lpa-document-certificateProvider-address-address1', $certificateProvider->address->address1)
+            ->setData('lpa-document-certificateProvider-address-address2', $certificateProvider->address->address2)
+            ->setData('lpa-document-certificateProvider-address-address3', $certificateProvider->address->address3)
+            ->setData('lpa-document-certificateProvider-address-postcode', $certificateProvider->address->postcode);
     }
 
     /**
@@ -342,11 +421,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     private function populatePageTwelveThirteenFourteenFifteen(Lpa $lpa, $pageIteration = 0)
     {
-        //  This page is repeatable so determine which PDF object to use
-        //  For the first MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages we should populate the main document
-        $pdf = ($pageIteration >= self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 ? new $this(null, [], $this->pdftkFactory) : $this);
+        // This page is repeatable so determine which PDF object to use
+        // For the first MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages we should populate the main document
+        $pdf = ($pageIteration >= self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 ?
+            new $this(null, [], $this->pdftkFactory) : $this);
 
-        //  Immediately get an array of all attorneys excluding trusts so we can work with it below
+        // Immediately get an array of all attorneys excluding trusts so we can work with it below
         $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
 
         foreach ($attorneys as $i => $attorney) {
@@ -357,39 +437,41 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             }
         }
 
-        //  Try to get the attorney for this page
+        // Try to get the attorney for this page
         $attorney = null;
 
         if (array_key_exists($pageIteration, $attorneys)) {
             $attorney = $attorneys[$pageIteration];
         }
 
-        //  Populate the page details for a human attorney
+        // Populate the page details for a human attorney
         if ($attorney instanceof Human) {
-            //  Determine which index key ref to use - for the first MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages iterate up
-            //  But stop at MAX_ATTORNEYS_PER_PAGE_SECTION_11 - 1
+            // Determine which index key ref to use - for the first MAX_ATTORNEYS_PER_PAGE_SECTION_11
+            // number of pages iterate up
+            // But stop at MAX_ATTORNEYS_PER_PAGE_SECTION_11 - 1
             $dataKeyIndex = min($pageIteration, self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 - 1);
 
             $pdf->setData('signature-attorney-' . $dataKeyIndex . '-name-title', $attorney->name->title)
                 ->setData('signature-attorney-' . $dataKeyIndex . '-name-first', $attorney->name->first)
                 ->setData('signature-attorney-' . $dataKeyIndex . '-name-last', $attorney->name->last);
         } else {
-            //  Add a strike through on the appropriate page
+            // Add a strike through on the appropriate page
             $pageNumber = 12 + $pageIteration;
             $strikeThroughArea = 'attorney-signature-' . $this->getAreaReferenceSuffix();
             $pdf->addStrikeThrough($strikeThroughArea, $pageNumber);
         }
 
-        //  Set the fotter content too
+        // Set the fotter content too
         $pdf->setFooterContent($lpa);
 
-        //  If applicable add the page PDF as a constituent
+        // If applicable add the page PDF as a constituent
         if ($pdf !== $this) {
-            //  We will be using page 15 for this purpose to make sure the PDF page numbering is sequential
+            // We will be using page 15 for this purpose to make sure the PDF page numbering is sequential
             $this->addConstituentPdfPage($pdf, 15, 15);
         }
 
-        //  If there is another attorney available, or we are still populating the first MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages, trigger again
+        // If there is another attorney available, or we are still populating the first
+        // MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages, trigger again
         $pageIteration++;
 
         if ($pageIteration < self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 || array_key_exists($pageIteration, $attorneys)) {
@@ -403,7 +485,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     private function populatePageSeventeen(Document $lpaDocument, $pageIteration = 0)
     {
-        //  This page is repeatable so determine which PDF object to use
+        // This page is repeatable so determine which PDF object to use
         $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
 
         $applicantType = 'donor';
@@ -417,7 +499,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             if (array_key_exists($pageIteration, $attorneysForPages)) {
                 $attorneysForPage = $attorneysForPages[$pageIteration];
 
-                //  Insert the specific attorney details
+                // Insert the specific attorney details
                 foreach ($attorneysForPage as $i => $attorneyId) {
                     $attorney = $lpaDocument->getPrimaryAttorneyById($attorneyId);
 
@@ -435,12 +517,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                     $strikeThroughIndex++;
                 }
 
-                //  If applicable add the page PDF as a constituent
+                // If applicable add the page PDF as a constituent
                 if ($pdf !== $this) {
                     $this->addConstituentPdfPage($pdf, 17, 17);
                 }
 
-                //  If there is another page available trigger again
+                // If there is another page available trigger again
                 $pageIteration++;
 
                 if (array_key_exists($pageIteration, $attorneysForPages)) {
@@ -451,7 +533,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         $pdf->setData('who-is-applicant', $applicantType);
 
-        //  Draw the strike throughs
+        // Draw the strike throughs
         while ($strikeThroughIndex < self::MAX_APPLICANTS_SECTION_12) {
             $areaReference = 'applicant-' . $strikeThroughIndex . '-' . $this->getAreaReferenceSuffix();
             $pdf->addStrikeThrough($areaReference, 17);
@@ -465,13 +547,14 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageEighteen(Correspondence $correspondent = null)
     {
         if (!is_null($correspondent)) {
-            //  Set the correspondent type - if this is the certificate provider then set it to other
-            $correspondentType = ($correspondent->who == Correspondence::WHO_CERTIFICATE_PROVIDER ? Correspondence::WHO_OTHER : $correspondent->who);
+            // Set the correspondent type - if this is the certificate provider then set it to other
+            $correspondentType = ($correspondent->who == Correspondence::WHO_CERTIFICATE_PROVIDER ?
+                Correspondence::WHO_OTHER : $correspondent->who);
             $this->setData('who-is-correspondent', $correspondentType);
 
-            //  Display the name details
+            // Display the name details
             if ($correspondent->who == Correspondence::WHO_DONOR) {
-                //  No need to display the name for the donor
+                // No need to display the name for the donor
                 $this->addStrikeThrough('correspondent-empty-name-address', 18);
             } else {
                 if ($correspondent->name instanceof LongName) {
@@ -480,13 +563,16 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                         ->setData('lpa-document-correspondent-name-last', $correspondent->name->last);
                 }
 
-                $this->setData('lpa-document-correspondent-company', (isset($correspondent->company) ? $correspondent->company : ''));
+                $this->setData(
+                    'lpa-document-correspondent-company',
+                    (isset($correspondent->company) ? $correspondent->company : '')
+                );
 
-                //  If the correspondent is an attorney then strike through the address field
+                // If the correspondent is an attorney then strike through the address field
                 if ($correspondent->who == Correspondence::WHO_ATTORNEY) {
                     $this->addStrikeThrough('correspondent-empty-address', 18);
                 } else {
-                    //  The correspondent is "other" so display the full address
+                    // The correspondent is "other" so display the full address
                     $this->setData('lpa-document-correspondent-address-address1', $correspondent->address->address1)
                         ->setData('lpa-document-correspondent-address-address2', $correspondent->address->address2)
                         ->setData('lpa-document-correspondent-address-address3', $correspondent->address->address3)
@@ -494,14 +580,17 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 }
             }
 
-            //  Set the contact preferences
+            // Set the contact preferences
             if ($correspondent->contactByPost === true) {
                 $this->setCheckBox('correspondent-contact-by-post');
             }
 
             if ($correspondent->phone instanceof PhoneNumber) {
                 $this->setCheckBox('correspondent-contact-by-phone')
-                    ->setData('lpa-document-correspondent-phone-number', str_replace(" ", "", $correspondent->phone->number));
+                    ->setData(
+                        'lpa-document-correspondent-phone-number',
+                        str_replace(" ", "", $correspondent->phone->number)
+                    );
             }
 
             if ($correspondent->email instanceof EmailAddress) {
@@ -530,20 +619,21 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 $this->setData('lpa-payment-phone-number', 'NOT REQUIRED.');
             }
 
-            if (($payment->reducedFeeReceivesBenefits && $payment->reducedFeeAwardedDamages)
+            if (
+                ($payment->reducedFeeReceivesBenefits && $payment->reducedFeeAwardedDamages)
                 || $payment->reducedFeeLowIncome
-                || $payment->reducedFeeUniversalCredit) {
-
+                || $payment->reducedFeeUniversalCredit
+            ) {
                 $this->setCheckBox('apply-for-fee-reduction');
             }
 
-            //  Set any online payment details
+            // Set any online payment details
             if (!is_null($payment->reference)) {
                 $this->setData('lpa-payment-reference', $payment->reference)
-                     ->setData('lpa-payment-amount', '£' . sprintf('%.2f', $payment->amount))
-                     ->setData('lpa-payment-date-day', $payment->date->format('d'))
-                     ->setData('lpa-payment-date-month', $payment->date->format('m'))
-                     ->setData('lpa-payment-date-year', $payment->date->format('Y'));
+                    ->setData('lpa-payment-amount', '£' . sprintf('%.2f', $payment->amount))
+                    ->setData('lpa-payment-date-day', $payment->date->format('d'))
+                    ->setData('lpa-payment-date-month', $payment->date->format('m'))
+                    ->setData('lpa-payment-date-year', $payment->date->format('Y'));
             }
         }
 
@@ -551,7 +641,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             $this->setData('lpa-a-reference-number', $this->formattedLpaRef);
         }
 
-        //  Set repeat application details
+        // Set repeat application details
         if (!is_null($repeatCaseNumber)) {
             $this->setCheckBox('is-repeat-application')
                  ->setData('repeat-application-case-number', $repeatCaseNumber);
@@ -564,10 +654,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     private function populatePageTwenty($whoIsRegistering, $pageIteration = 0)
     {
-        //  This page is repeatable so determine which PDF object to use
+        // This page is repeatable so determine which PDF object to use
         $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
 
-        //  There must always be at least one signature
+        // There must always be at least one signature
         $blankIndex = 1;
 
         if (is_array($whoIsRegistering)) {
@@ -578,13 +668,13 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
                 $blankIndex = count($signaturesForPage);
 
-                //  If applicable add the page PDF as a constituent
+                // If applicable add the page PDF as a constituent
                 if ($pdf !== $this) {
-                    //  Insert the page at the end of the document
+                    // Insert the page at the end of the document
                     $this->addConstituentPdfPage($pdf, 20, 'end');
                 }
 
-                //  If there is another page available trigger again
+                // If there is another page available trigger again
                 $pageIteration++;
 
                 if (array_key_exists($pageIteration, $signaturesForPages)) {
@@ -593,7 +683,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             }
         }
 
-        //  Draw the blanks
+        // Draw the blanks
         while ($blankIndex < self::MAX_SIGNATURES_SECTION_15) {
             $pdf->addBlank('applicant-signature-' . $blankIndex . '-' . $this->getAreaReferenceSuffix(), 20);
             $blankIndex++;
@@ -623,7 +713,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     {
         $continuationSheetsAdded = false;
 
-        //  Add continuation sheet 1 instances if required
+        // Add continuation sheet 1 instances if required
         $primaryAttorneys = $this->getOrderedAttorneys($lpa->document->primaryAttorneys);
         $primaryAttorneys = array_splice($primaryAttorneys, self::MAX_ATTORNEYS_SECTION_2);
         $replacementAttorneys = $this->getOrderedAttorneys($lpa->document->replacementAttorneys);
@@ -631,47 +721,69 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $peopleToNotify = array_splice($lpa->document->peopleToNotify, self::MAX_PEOPLE_TO_NOTIFY_SECTION_6);
 
         if (!empty($primaryAttorneys) || !empty($replacementAttorneys) || !empty($peopleToNotify)) {
-            $continuationSheet1 = new ContinuationSheet1Aggregator($lpa, $primaryAttorneys, $replacementAttorneys, $peopleToNotify, $this->pdftkFactory);
+            $continuationSheet1 = new ContinuationSheet1Aggregator(
+                $lpa,
+                $primaryAttorneys,
+                $replacementAttorneys,
+                $peopleToNotify,
+                $this->pdftkFactory
+            );
             $this->addConstituentPdf($continuationSheet1, 1, $continuationSheet1->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
         }
 
-        //  Add continuation sheet 2 (primary attorney decisions) instances if required
+        // Add continuation sheet 2 (primary attorney decisions) instances if required
         if ($lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS, $this->pdftkFactory);
+            $continuationSheet2 = new ContinuationSheet2Aggregator(
+                $lpa,
+                ContinuationSheet2::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS,
+                $this->pdftkFactory
+            );
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
         }
 
-        //  Add continuation sheet 2 (how replacement attorneys can act) instances if required
+        // Add continuation sheet 2 (how replacement attorneys can act) instances if required
         $replacementAttorneysContent = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
 
         if (!empty($replacementAttorneysContent)) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $this->pdftkFactory);
+            $continuationSheet2 = new ContinuationSheet2Aggregator(
+                $lpa,
+                ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN,
+                $this->pdftkFactory
+            );
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
         }
 
-        //  Add continuation sheet 2 (preferences) instances if required
+        // Add continuation sheet 2 (preferences) instances if required
         if ($this->fillsInstructionsPreferencesBox($lpa->document->preference)) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_PREFERENCES, $this->pdftkFactory);
+            $continuationSheet2 = new ContinuationSheet2Aggregator(
+                $lpa,
+                ContinuationSheet2::CS2_TYPE_PREFERENCES,
+                $this->pdftkFactory
+            );
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
         }
 
-        //  Add continuation sheet 2 (instructions) instances if required
+        // Add continuation sheet 2 (instructions) instances if required
         if ($this->fillsInstructionsPreferencesBox($lpa->document->instruction)) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_INSTRUCTIONS, $this->pdftkFactory);
+            $continuationSheet2 = new ContinuationSheet2Aggregator(
+                $lpa,
+                ContinuationSheet2::CS2_TYPE_INSTRUCTIONS,
+                $this->pdftkFactory
+            );
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
         }
 
-        //  Add continuation sheet 3 instances if required
+        // Add continuation sheet 3 instances if required
         if ($lpa->document->donor->canSign === false) {
             $continuationSheet3 = new ContinuationSheet3($lpa, [], $this->pdftkFactory);
             $this->addConstituentPdf($continuationSheet3, 1, 2, 15);
@@ -679,7 +791,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             $continuationSheetsAdded = true;
         }
 
-        //  Add continuation sheet 4 instances if required
+        // Add continuation sheet 4 instances if required
         $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
 
         if ($this->getTrustAttorney($attorneys) instanceof TrustCorporation) {
@@ -689,7 +801,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             $continuationSheetsAdded = true;
         }
 
-        //  If any continuation sheets have been added append another blank page
+        // If any continuation sheets have been added append another blank page
         if ($continuationSheetsAdded) {
             $this->insertBlankPage(15);
         }
@@ -705,7 +817,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     {
         foreach ($attorneys as $i => $attorney) {
             if ($attorney instanceof TrustCorporation) {
-                //  Recreate the attorney array with the trust at the start
+                // Recreate the attorney array with the trust at the start
                 unset($attorneys[$i]);
                 $attorneys = array_values($attorneys);
                 array_unshift($attorneys, $attorney);
@@ -713,7 +825,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             }
         }
 
-        //  Ensure array indexes are correct
+        // Ensure array indexes are correct
         return array_values($attorneys);
     }
 
@@ -740,13 +852,13 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     public function generate($protect = false)
     {
-        //  Generate the LP1 PDF - don't protect the PDF at this point
-        //  The password will only be set below if this in the main PDF being generated
+        // Generate the LP1 PDF - don't protect the PDF at this point
+        // The password will only be set below if this in the main PDF being generated
         $pdfFile = parent::generate(false);
 
-        //  Only perform the stamping if this is the main PDF being generated rather than a constituent PDF
+        // Only perform the stamping if this is the main PDF being generated rather than a constituent PDF
         if (!is_null($this->formattedLpaRef)) {
-            //  If the LPA is completed then stamp it with a barcode
+            // If the LPA is completed then stamp it with a barcode
             if ($this->lpaIsComplete) {
                 // Generate the barcode
                 $renderer = Barcode::factory(
@@ -764,18 +876,18 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                     ]
                 );
 
-                //  Create a blank PDF with the barcode only
+                // Create a blank PDF with the barcode only
                 $barcodeOnlyPdf = $renderer->draw();
                 $barcodePdfFile = $this->getIntermediatePdfFilePath('barcode.pdf');
                 $barcodeOnlyPdf->save($barcodePdfFile);
 
-                //  Stamp the required page with the new barcode using the unshifted page number
+                // Stamp the required page with the new barcode using the unshifted page number
                 $this->stampPageWith($barcodePdfFile, 19, false);
 
-                //  Cleanup - remove tmp barcode file
+                // Cleanup - remove tmp barcode file
                 unlink($barcodePdfFile);
             } else {
-                //  If the LPA is not completed then stamp with the draft watermark
+                // If the LPA is not completed then stamp with the draft watermark
                 $draftWatermarkPdf = $this->getTemplatePdfFilePath('RegistrationWatermark.pdf');
 
                 $this->stampPageWith($draftWatermarkPdf, 16);
@@ -785,7 +897,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 $this->stampPageWith($draftWatermarkPdf, 20);
             }
 
-            //  Protect the PDF with a password now
+            // Protect the PDF with a password now
             $this->protectPdf();
         }
 
@@ -793,7 +905,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     }
 
     /**
-     * Apply the required stamp to the specified page (and possibly any inserted pages) in by creating a new copy of the PDF
+     * Apply the required stamp to the specified page (and possibly any inserted pages)
+     * by creating a new copy of the PDF
      *
      * @param $stampPdf
      * @param $pageNumber
@@ -801,30 +914,32 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     private function stampPageWith($stampPdf, $pageNumber, $stampInsertedPages = true)
     {
-        //  Create a copy of the LPA PDF with the contents of the provided PDF stamped on the specified page
+        // Create a copy of the LPA PDF with the contents of the provided PDF stamped on the specified page
         $tmpStampedPdfName = $this->getIntermediatePdfFilePath('stamp.pdf');
         $stampedPdfAllPages = $this->pdftkFactory->create($this->pdfFile);
         $stampedPdfAllPages->stamp($stampPdf)
-                           ->flatten()
-                           ->saveAs($tmpStampedPdfName);
+            ->flatten()
+            ->saveAs($tmpStampedPdfName);
 
         $newPdf = $this->pdftkFactory->create([
             'A' => $this->pdfFile,
             'B' => $tmpStampedPdfName
         ]);
 
-        //  Adjust the page number to account for the page shift - but only for the pages before this one
+        // Adjust the page number to account for the page shift - but only for the pages before this one
         $pageNumberShifted = $pageNumber + $this->getPageShiftBeforePage($pageNumber);
 
-        //  If we are going to stamp the inserted pages too then determine the end page to use in the stamped PDF
-        //  Initially set the end page to the same as the start page so only a single page will be inserted
+        // If we are going to stamp the inserted pages too then determine the end page to use in the stamped PDF
+        // Initially set the end page to the same as the start page so only a single page will be inserted
         $stampedPdfEndPage = $pageNumberShifted;
 
         if ($stampInsertedPages) {
-            //  Determine how many pages of the stamped PDF to use by inspecting the shifted position of the next page (if available)
+            // Determine how many pages of the stamped PDF to use by inspecting the shifted position
+            // of the next page (if available)
             $nextPage = $pageNumber + 1;
 
-            //  If the current page is the last page then set the number of pages to null so the code below knows to use all trailing pages to the end of the document
+            // If the current page is the last page then set the number of pages to null so the code below knows
+            // to use all trailing pages to the end of the document
             if ($nextPage > $this->numberOfPages) {
                 $stampedPdfEndPage = 'end';
             } else {
@@ -833,17 +948,18 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         }
 
         $newPdf->cat(1, $pageNumberShifted - 1, 'A')
-               ->cat($pageNumberShifted, $stampedPdfEndPage, 'B');
+            ->cat($pageNumberShifted, $stampedPdfEndPage, 'B');
 
-        //  If the stamped end page is numeric then that means this was NOT the last page and therefore we need to append another unstamped part of the PDF
+        // If the stamped end page is numeric then that means this was NOT the last page and therefore we need
+        // to append another unstamped part of the PDF
         if (is_numeric($stampedPdfEndPage)) {
             $newPdf->cat($stampedPdfEndPage + 1, 'end', 'A');
         }
 
         $newPdf->flatten()
-               ->saveAs($this->pdfFile);
+            ->saveAs($this->pdfFile);
 
-        //  Remove the temp PDF with all the pages stamped
+        // Remove the temp PDF with all the pages stamped
         if (file_exists($tmpStampedPdfName)) {
             unlink($tmpStampedPdfName);
         }
