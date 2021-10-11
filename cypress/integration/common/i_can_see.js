@@ -1,10 +1,10 @@
 import { Then } from "cypress-cucumber-preprocessor/steps";
 
-Then('I can see a "Reuse LPA details" link for the test fixture lpa', (linkText) => {
+Then('I can see a "Reuse LPA details" link for the test fixture lpa', () => {
     seeReuseDetailsLink(true);
 });
 
-Then('I cannot see a "Reuse LPA details" link for the test fixture lpa', (linkText) => {
+Then('I cannot see a "Reuse LPA details" link for the test fixture lpa', () => {
     seeReuseDetailsLink(false);
 });
 
