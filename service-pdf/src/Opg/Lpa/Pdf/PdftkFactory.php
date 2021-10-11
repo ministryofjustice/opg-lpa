@@ -1,8 +1,8 @@
 <?php
+
 namespace Opg\Lpa\Pdf;
 
 use mikehaertl\pdftk\Pdf as PdftkPdf;
-
 
 class PdftkFactory
 {

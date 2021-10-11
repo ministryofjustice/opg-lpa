@@ -2,7 +2,7 @@
 
 namespace Opg\Lpa\Pdf\Traits;
 
-use Opg\Lpa\DataModel\Lpa\Formatter As LpaFormatter;
+use Opg\Lpa\DataModel\Lpa\Formatter as LpaFormatter;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
@@ -121,37 +121,50 @@ trait LongContentTrait
     {
         $content = '';
 
-        if ((count($lpaDocument->primaryAttorneys) == 1
+        if (
+            (count($lpaDocument->primaryAttorneys) == 1
                 || (count($lpaDocument->primaryAttorneys) > 1
-                    && $lpaDocument->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
-            && count($lpaDocument->replacementAttorneys) > 1) {
-
+                    && $lpaDocument->primaryAttorneyDecisions->how ==
+                    PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
+            && count($lpaDocument->replacementAttorneys) > 1
+        ) {
             switch ($lpaDocument->replacementAttorneyDecisions->how) {
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
                     $content = "Replacement attorneys are to act jointly and severally\r\n";
                     break;
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                    $content = "Replacement attorneys are to act jointly for some decisions and jointly and severally for others, as below:\r\n" . $lpaDocument->replacementAttorneyDecisions->howDetails . "\r\n";
+                    $content = "Replacement attorneys are to act jointly for some decisions and jointly and " .
+                        "severally for others, as below:\r\n" .
+                        $lpaDocument->replacementAttorneyDecisions->howDetails . "\r\n";
                     break;
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
                     // default arrangement
                     break;
             }
-        } elseif (count($lpaDocument->primaryAttorneys) > 1 && $lpaDocument->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
+        } elseif (
+            count($lpaDocument->primaryAttorneys) > 1 &&
+            $lpaDocument->primaryAttorneyDecisions->how ==
+            PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
+        ) {
             if (count($lpaDocument->replacementAttorneys) == 1) {
                 switch ($lpaDocument->replacementAttorneyDecisions->when) {
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
                         // default arrangement, as per how primary attorneys making decision arrangement
                         break;
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
-                        $content = "Replacement attorney to step in only when none of the original attorneys can act\r\n";
+                        $content = "Replacement attorney to step in only when none of the original " .
+                            "attorneys can act\r\n";
                         break;
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
-                        $content = "How replacement attorneys will replace the original attorneys:\r\n" . $lpaDocument->replacementAttorneyDecisions->whenDetails;
+                        $content = "How replacement attorneys will replace the original attorneys:\r\n" .
+                            $lpaDocument->replacementAttorneyDecisions->whenDetails;
                         break;
                 }
             } elseif (count($lpaDocument->replacementAttorneys) > 1) {
-                if ($lpaDocument->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) {
+                if (
+                    $lpaDocument->replacementAttorneyDecisions->when ==
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
+                ) {
                     $content = "Replacement attorneys to step in only when none of the original attorneys can act\r\n";
 
                     switch ($lpaDocument->replacementAttorneyDecisions->how) {
@@ -159,15 +172,21 @@ trait LongContentTrait
                             $content .= "Replacement attorneys are to act jointly and severally\r\n";
                             break;
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                            $content .= "Replacement attorneys are to act joint for some decisions, joint and several for other decisions, as below:\r\n" . $lpaDocument->replacementAttorneyDecisions->howDetails . "\r\n";
+                            $content .= "Replacement attorneys are to act joint for some decisions, joint and " .
+                                "several for other decisions, as below:\r\n" .
+                                $lpaDocument->replacementAttorneyDecisions->howDetails . "\r\n";
                             break;
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
                             // default arrangement
                             $content = "";
                             break;
                     }
-                } elseif ($lpaDocument->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
-                    $content = "How replacement attorneys will replace the original attorneys:\r\n" . $lpaDocument->replacementAttorneyDecisions->whenDetails;
+                } elseif (
+                    $lpaDocument->replacementAttorneyDecisions->when ==
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
+                ) {
+                    $content = "How replacement attorneys will replace the original attorneys:\r\n" .
+                        $lpaDocument->replacementAttorneyDecisions->whenDetails;
                 }
             }
         }

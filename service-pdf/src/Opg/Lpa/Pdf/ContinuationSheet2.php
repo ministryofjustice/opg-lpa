@@ -17,10 +17,10 @@ class ContinuationSheet2 extends AbstractContinuationSheet
     /**
      * Constant
      */
-    const CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS   = 'decisions';
-    const CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN = 'how-replacement-attorneys-step-in';
-    const CS2_TYPE_PREFERENCES                   = 'preferences';
-    const CS2_TYPE_INSTRUCTIONS                  = 'instructions';
+    public const CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS   = 'decisions';
+    public const CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN = 'how-replacement-attorneys-step-in';
+    public const CS2_TYPE_PREFERENCES                   = 'preferences';
+    public const CS2_TYPE_INSTRUCTIONS                  = 'instructions';
 
     /**
      * PDF template file name (without path) for this PDF object
@@ -57,14 +57,18 @@ class ContinuationSheet2 extends AbstractContinuationSheet
         if (!is_int($contentPage) || $contentPage < 1) {
             throw new Exception('The requested content page must be a positive integer');
         } elseif (in_array($cs2Type, [self::CS2_TYPE_PREFERENCES, self::CS2_TYPE_INSTRUCTIONS]) && $contentPage == 1) {
-            throw new Exception('Page 1 of the preferences and instructions can not be displayed on continuation sheet 2');
+            throw new Exception(
+                'Page 1 of the preferences and instructions can not be displayed on continuation sheet 2'
+            );
         }
 
         //  Get the correct piece of content to use
-        if (in_array($cs2Type, [
+        if (
+            in_array($cs2Type, [
             self::CS2_TYPE_PREFERENCES,
             self::CS2_TYPE_INSTRUCTIONS,
-        ])) {
+            ])
+        ) {
             $content = $this->getInstructionsAndPreferencesContent($fullContent, $contentPage);
         } else {
             $content = $this->getContinuationSheet2Content($fullContent, $contentPage);
@@ -83,7 +87,8 @@ class ContinuationSheet2 extends AbstractContinuationSheet
     }
 
     /**
-     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
+     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the
+     * file system
      *
      * @param Lpa $lpa
      */

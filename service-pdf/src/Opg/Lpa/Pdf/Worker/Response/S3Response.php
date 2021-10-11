@@ -34,7 +34,6 @@ class S3Response extends AbstractResponse
         $s3 = new S3Client($workerConfig['client']);
 
         try {
-
             //  Put the encrypted file to S3
             $file = $workerSettingsConfig + [
                 'Key'  => (string)$this->docId,
@@ -42,7 +41,6 @@ class S3Response extends AbstractResponse
             ];
 
             $s3->putObject($file);
-
         } catch (S3Exception $e) {
             $this->logger->emerg('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
             throw $e;

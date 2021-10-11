@@ -34,7 +34,8 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
     }
 
     /**
-     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
+     * Create the PDF in preparation for it to be generated - this function alone will not
+     * save a copy to the file system
      *
      * @param Lpa $lpa
      * @throws Exception
@@ -71,16 +72,20 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
 
             try {
                 //  TODO - implement a check for this instead of just getting the content...
-                if (in_array($this->cs2Type, [
+                if (
+                    in_array($this->cs2Type, [
                     ContinuationSheet2Pdf::CS2_TYPE_PREFERENCES,
                     ContinuationSheet2Pdf::CS2_TYPE_INSTRUCTIONS,
-                ])) {
+                    ])
+                ) {
                     $content = $this->getInstructionsAndPreferencesContent($fullContent, $page);
                 } else {
                     $content = $this->getContinuationSheet2Content($fullContent, $page);
                 }
 
-                $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $fullContent, $page, $this->pdftkFactory));
+                $this->addPdf(
+                    new ContinuationSheet2Pdf($lpa, $this->cs2Type, $fullContent, $page, $this->pdftkFactory)
+                );
             } catch (Exception $ignore) {
                 //  We've requested a page too far so break the loop
                 $contentFullyProcessed = true;
