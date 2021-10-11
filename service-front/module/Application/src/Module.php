@@ -121,11 +121,18 @@ class Module implements FormElementProviderInterface
             try {
                 $info = $sm->get('UserService')->getTokenInfo($identity->token());
 
-                if (is_array($info) && isset($info['expiresIn'])) {
+                if ($info['success'] && !is_null($info['expiresIn'])) {
                     // update the time the token expires in the session
                     $identity->tokenExpiresIn($info['expiresIn']);
                 } else {
                     $auth->clearIdentity();
+
+                    // Record that identity was cleared because of a 500 error (normally db-related)
+                    if ($info['failureCode'] >= 500) {
+                        $authFailureReason = new Container('AuthFailureReason');
+                        $authFailureReason->reason = 'Internal system error';
+                        $authFailureReason->code = $info['failureCode'];
+                    }
                 }
             } catch (ApiException $ex) {
                 $auth->clearIdentity();
@@ -233,11 +240,11 @@ class Module implements FormElementProviderInterface
 
                         if ($shouldWrite) {
                             $msg = 'Writing session for request';
-                        }
-                        else {
+                        } else {
                             $msg = 'IGNORING session write for request marked with X-SessionReadOnly';
                         }
-                        $logger->debug('XXXXXXXXXXXXXXXXXXXXXXXXXXX ' . $msg . '; path = ' . $request->getUri()->getPath());
+                        $logger->debug('XXXXXXXXXXXXXXXXXXXXXXXXXXX ' . $msg . '; path = ' .
+                            $request->getUri()->getPath());
 
                         return $shouldWrite;
                     };
