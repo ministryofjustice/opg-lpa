@@ -73,6 +73,7 @@ class LpaAuthAdapter implements AdapterInterface
         //  Initially assume the authentication failed
         $response = new AuthResponse();
         $response->setErrorDescription('authentication-failed');
+        $failureCode = Result::FAILURE_CREDENTIAL_INVALID;
 
         try {
             $result = $this->client->httpPost('/v2/authenticate', [
@@ -82,13 +83,19 @@ class LpaAuthAdapter implements AdapterInterface
 
             $response = AuthResponse::buildFromResponse($result);
         } catch (ApiException $ex) {
-            switch ($ex->getMessage()) {
-                case 'account-locked/max-login-attempts':
+            if ($ex->getCode() === 500) {
+                $response->setErrorDescription('api-error');
+
+                // change failure code so that we can distinguish
+                // API errors from credential failures
+                $failureCode = Result::FAILURE;
+            } else {
+                $msg = $ex->getMessage();
+                if ($msg === 'account-locked/max-login-attempts') {
                     $response->setErrorDescription('locked');
-                    break;
-                case 'account-not-active':
+                } elseif ($msg === 'account-not-active') {
                     $response->setErrorDescription('not-activated');
-                    break;
+                }
             }
         }
 
@@ -96,7 +103,7 @@ class LpaAuthAdapter implements AdapterInterface
         unset($this->password);
 
         if (!$response->isAuthenticated()) {
-            return new Result(Result::FAILURE, null, [
+            return new Result($failureCode, null, [
                 $response->getErrorDescription()
             ]);
         }
@@ -121,7 +128,6 @@ class LpaAuthAdapter implements AdapterInterface
      */
     public function getSessionExpiry(string $token)
     {
-
         try {
             $result = $this->client->httpGet(
                 '/v2/session-expiry',
@@ -145,7 +151,6 @@ class LpaAuthAdapter implements AdapterInterface
      */
     public function setSessionExpiry(string $token, int $expireInSeconds)
     {
-
         try {
             $result = $this->client->httpPost(
                 '/v2/session-set-expiry',

@@ -24,7 +24,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('getUri')->andReturn('http://localhost/home');
         $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
+            ->withArgs(['login', ['state' => 'timeout']])->andReturn($response)->once();
 
         $result = $controller->onDispatch($event);
 
@@ -72,7 +72,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
             'clear_storage' => true
         ]])->once();
         $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
+            ->withArgs(['login', ['state' => 'timeout']])->andReturn($response)->once();
 
         $result = $controller->onDispatch($event);
 
@@ -122,6 +122,38 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals('Placeholder page', $result->content);
+    }
+
+    public function testOnDispatchDatabaseDown()
+    {
+        // Simulate the database being unavailable, which results in a marker in the session;
+        // see Module.php, where this marker is added before the session is handed over to the controller
+        $authFailureReason = new Container('AuthFailureReason');
+        $authFailureReason->reason = 'Internal system error';
+        $authFailureReason->code = 500;
+
+        // Simulate bootstrapIdentity() being unable to find the user; see Module.php
+        $this->setIdentity(null);
+
+        // mocks and stubs
+        $event = Mockery::mock(MvcEvent::class);
+        $response = new Response();
+
+        // expectations
+        $this->logger->shouldReceive('info');
+        $this->request->shouldReceive('getUri');
+
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['login', ['state' => 'internalSystemError']])
+            ->andReturn($response)
+            ->once();
+
+        // test
+        $controller = $this->getController(TestableAbstractAuthenticatedController::class);
+
+        $result = $controller->onDispatch($event);
+
+        $this->assertEquals($response, $result);
     }
 
     public function testResetSessionCloneData()

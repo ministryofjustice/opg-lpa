@@ -84,7 +84,10 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testAuthenticationFailed(): void
+    /**
+     * @dataProvider authenticationFailureDataProvider
+     */
+    public function testAuthenticationFailed($authenticationResultCode, $expectedStatusCode, $title, $detail): void
     {
         $header = Mockery::mock();
         $header->shouldReceive('getFieldValue')->andReturn('value')->once();
@@ -92,7 +95,9 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->request->shouldReceive('getHeader')->with('Token')->andReturn($header)->once();
 
         $authenticationResult = Mockery::mock(Result::class);
-        $authenticationResult->shouldReceive('getCode')->andReturn(Result::FAILURE)->once();
+        $authenticationResult->shouldReceive('getCode')
+            ->andReturn($authenticationResultCode)
+            ->once();
 
         $this->authService->shouldReceive('authenticate')->andReturn($authenticationResult)->once();
 
@@ -105,14 +110,36 @@ class AuthenticationListenerTest extends MockeryTestCase
         $result = $authenticationListener->authenticate($this->mvcEvent);
 
         $this->assertInstanceOf(ApiProblemResponse::class, $result);
-        $this->assertEquals(401, $result->getStatusCode());
+        $this->assertEquals($expectedStatusCode, $result->getStatusCode());
 
         $apiProblem = $result->getApiProblem();
         $this->assertEquals(
-            ['type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                'title' => 'Unauthorized',
-                'status' => 401,
-                'detail' => 'Invalid authentication token'], $apiProblem->toArray());
+            [
+                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title' => $title,
+                'status' => $expectedStatusCode,
+                'detail' => $detail
+            ],
+            $apiProblem->toArray()
+        );
+    }
+
+    public function authenticationFailureDataProvider()
+    {
+        return [
+            'Invalid token' => [
+                Result::FAILURE_CREDENTIAL_INVALID,
+                401,
+                'Unauthorized',
+                'Invalid authentication token'
+            ],
+            'Database error' => [
+                Result::FAILURE,
+                500,
+                'Internal Server Error',
+                'Uncategorised error'
+            ],
+        ];
     }
 
     public function testAuthenticationNoToken(): void
