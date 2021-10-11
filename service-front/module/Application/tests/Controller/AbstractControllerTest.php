@@ -24,6 +24,7 @@ use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTe
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Common\Dob;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
@@ -172,8 +173,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
     protected $userDetails;
 
     /**
-     * Set up the services in default configuration - these can be adapted in the subclasses before getting the
-     * controller to test
+     * Set up the services in default configuration - these can be adapted
+     * in the subclasses before getting the controller to test
      */
     public function setUp(): void
     {
@@ -419,7 +420,9 @@ abstract class AbstractControllerTest extends MockeryTestCase
     public function setMatchedRouteNameHttp($controller, $routeName, $expectedMatchedRouteNameTimes = 1)
     {
         $routeMatch = $this->getHttpRouteMatch($controller);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->times($expectedMatchedRouteNameTimes);
+        $routeMatch->shouldReceive('getMatchedRouteName')
+            ->andReturn($routeName)
+            ->times($expectedMatchedRouteNameTimes);
         return $routeMatch;
     }
 
@@ -755,6 +758,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
             $user->email = new EmailAddress([
                 'address' => 'unit@test.com',
             ]);
+
+            $user->dob = new Dob(['date' => '1957-12-17T00:00:00.000Z']);
         }
 
         return $user;

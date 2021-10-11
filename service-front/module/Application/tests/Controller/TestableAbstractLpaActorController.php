@@ -18,8 +18,8 @@ class TestableAbstractLpaActorController extends AbstractLpaActorController
         return parent::getActorReuseDetails($includeTrusts, $forCorrespondent);
     }
 
-    public function testUpdateCorrespondentData(AbstractData $actor)
+    public function testUpdateCorrespondentData(AbstractData $actor, bool $isDelete = false)
     {
-        return parent::updateCorrespondentData($actor);
+        return parent::updateCorrespondentData($actor, $isDelete);
     }
 }
