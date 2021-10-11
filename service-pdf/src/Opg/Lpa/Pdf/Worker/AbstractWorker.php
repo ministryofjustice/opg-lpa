@@ -88,7 +88,8 @@ abstract class AbstractWorker
                 if (property_exists($lpaDecode, 'id')) {
                     $lpaId = $lpaDecode->id;
                 } else {
-                    throw new Exception('Missing field: id in JSON for docId: ' . $docId . ' This can be caused by incorrectly configured encryption keys.');
+                    throw new Exception('Missing field: id in JSON for docId: ' . $docId .
+                        ' This can be caused by incorrectly configured encryption keys.');
                 }
             }
 
@@ -106,10 +107,11 @@ abstract class AbstractWorker
             $pdf = null;
             $pdfFilePath = null;
 
-            if ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_PF) {
+            $docType = $lpa->getDocument()->getType();
+            if ($type == 'LP1' && $docType == Document::LPA_TYPE_PF) {
                 $pdf = new Lp1f($lpa);
                 $pdfFilePath = $pdf->generate(true);
-            } elseif ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_HW) {
+            } elseif ($type == 'LP1' && $docType == Document::LPA_TYPE_HW) {
                 $pdf = new Lp1h($lpa);
                 $pdfFilePath = $pdf->generate(true);
             } elseif ($type == 'LP3') {
