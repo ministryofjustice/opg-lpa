@@ -81,8 +81,8 @@ trait LongContentTrait
     }
 
     /**
-     * @param $content
-     * @param $pageNo
+     * @param string $content
+     * @param int $pageNo
      * @return null|string
      */
     private function getContinuationSheet2Content($content, $pageNo)
@@ -121,33 +121,45 @@ trait LongContentTrait
     {
         $content = '';
 
+        $primaryAttorneys = $lpaDocument->getPrimaryAttorneys();
+        $primaryHow = null;
+        if (count($primaryAttorneys) > 1) {
+            $primaryHow = $lpaDocument->getPrimaryAttorneyDecisions()->getHow();
+        }
+
+        $replacementAttorneys = $lpaDocument->getReplacementAttorneys();
+        $replacementHow = null;
+        $replacementWhen = null;
+        $replacementHowDetails = null;
+        $replacementWhenDetails = null;
+        if (count($replacementAttorneys) > 1) {
+            $replacementDecisions = $lpaDocument->getReplacementAttorneyDecisions();
+            $replacementHow = $replacementDecisions->getHow();
+            $replacementWhen = $replacementDecisions->getWhen();
+            $replacementHowDetails = $replacementDecisions->getHowDetails();
+            $replacementWhenDetails = $replacementDecisions->getWhenDetails();
+        }
+
         if (
-            (count($lpaDocument->primaryAttorneys) == 1
-                || (count($lpaDocument->primaryAttorneys) > 1
-                    && $lpaDocument->primaryAttorneyDecisions->how ==
-                    PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
-            && count($lpaDocument->replacementAttorneys) > 1
+            count($replacementAttorneys) > 1 &&
+            (count($primaryAttorneys) == 1 || $primaryHow == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)
         ) {
-            switch ($lpaDocument->replacementAttorneyDecisions->how) {
+            switch ($replacementHow) {
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
                     $content = "Replacement attorneys are to act jointly and severally\r\n";
                     break;
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
                     $content = "Replacement attorneys are to act jointly for some decisions and jointly and " .
                         "severally for others, as below:\r\n" .
-                        $lpaDocument->replacementAttorneyDecisions->howDetails . "\r\n";
+                        $replacementHowDetails . "\r\n";
                     break;
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
                     // default arrangement
                     break;
             }
-        } elseif (
-            count($lpaDocument->primaryAttorneys) > 1 &&
-            $lpaDocument->primaryAttorneyDecisions->how ==
-            PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
-        ) {
-            if (count($lpaDocument->replacementAttorneys) == 1) {
-                switch ($lpaDocument->replacementAttorneyDecisions->when) {
+        } elseif ($primaryHow = PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
+            if (count($replacementAttorneys) == 1) {
+                switch ($replacementWhen) {
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
                         // default arrangement, as per how primary attorneys making decision arrangement
                         break;
@@ -157,36 +169,30 @@ trait LongContentTrait
                         break;
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
                         $content = "How replacement attorneys will replace the original attorneys:\r\n" .
-                            $lpaDocument->replacementAttorneyDecisions->whenDetails;
+                            $replacementWhenDetails;
                         break;
                 }
-            } elseif (count($lpaDocument->replacementAttorneys) > 1) {
-                if (
-                    $lpaDocument->replacementAttorneyDecisions->when ==
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
-                ) {
+            } elseif (count($replacementAttorneys) > 1) {
+                if ($replacementWhen == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) {
                     $content = "Replacement attorneys to step in only when none of the original attorneys can act\r\n";
 
-                    switch ($lpaDocument->replacementAttorneyDecisions->how) {
+                    switch ($replacementHow) {
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
                             $content .= "Replacement attorneys are to act jointly and severally\r\n";
                             break;
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
                             $content .= "Replacement attorneys are to act joint for some decisions, joint and " .
                                 "several for other decisions, as below:\r\n" .
-                                $lpaDocument->replacementAttorneyDecisions->howDetails . "\r\n";
+                                $replacementHowDetails . "\r\n";
                             break;
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
                             // default arrangement
                             $content = "";
                             break;
                     }
-                } elseif (
-                    $lpaDocument->replacementAttorneyDecisions->when ==
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
-                ) {
+                } elseif ($replacementWhen == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
                     $content = "How replacement attorneys will replace the original attorneys:\r\n" .
-                        $lpaDocument->replacementAttorneyDecisions->whenDetails;
+                        $replacementWhenDetails;
                 }
             }
         }

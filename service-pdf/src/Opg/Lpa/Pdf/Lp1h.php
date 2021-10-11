@@ -13,21 +13,21 @@ class Lp1h extends AbstractLp1
     /**
      * PDF template file name (without path) for this PDF object
      *
-     * @var
+     * @var string
      */
     protected $templateFileName = 'LP1H.pdf';
 
     /**
      * PDF file name for the coversheet
      *
-     * @var
+     * @var string
      */
     protected $coversheetFileName = 'LP1H_CoversheetRegistration.pdf';
 
     /**
      * PDF file name for the draft coversheet
      *
-     * @var
+     * @var string
      */
     protected $coversheetFileNameDraft = 'LP1H_CoversheetInstrument.pdf';
 
@@ -38,7 +38,7 @@ class Lp1h extends AbstractLp1
     {
         //  Set when primary attorneys can make decisions
         if ($primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-            $strikeThroughArea = ($primaryAttorneyDecisions->canSustainLife ? 'life-sustain-B' : 'life-sustain-A');
+            $strikeThroughArea = ($primaryAttorneyDecisions->isCanSustainLife() ? 'life-sustain-B' : 'life-sustain-A');
             $this->addStrikeThrough($strikeThroughArea, 6);
         }
     }
