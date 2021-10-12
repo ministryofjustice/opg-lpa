@@ -50,7 +50,7 @@ casper.test.begin("Checking user can access correspondent page", {
             // check lightbox has been loaded and displayed
             test.assertExists('div#popup', "Lightbox for selecting an actors details to use for a correspondent is loaded and displayed as expected");
             test.assertExists('form#form-reuse-details', "Found reuse details form as expected");
-            test.assertElementCount('form#form-reuse-details input[name="reuse-details"]', 5, "Reuse details radio buttons displayed as expected");
+            test.assertElementCount('form#form-reuse-details input[name="reuse-details"]', 6, "Reuse details radio buttons displayed as expected");
 
         }).then(function() {
 

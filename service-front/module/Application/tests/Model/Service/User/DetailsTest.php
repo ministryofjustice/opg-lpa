@@ -857,7 +857,7 @@ class DetailsTest extends AbstractEmailServiceTest
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
 
-        $this->assertEquals('api-problem', $result);
+        $this->assertEquals('api-error', $result);
     }
 
     public function testDuplicateRegisterAccountWarningEmailSend(): void
