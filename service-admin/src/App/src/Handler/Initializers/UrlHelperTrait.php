@@ -29,7 +29,7 @@ trait UrlHelperTrait
     /**
      * @return UrlHelper
      */
-    public function getUrlHelper() : UrlHelper
+    public function getUrlHelper(): UrlHelper
     {
         if (!$this->helper instanceof UrlHelper) {
             throw new UnexpectedValueException('UrlHelper not set');

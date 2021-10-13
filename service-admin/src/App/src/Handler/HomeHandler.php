@@ -18,7 +18,7 @@ class HomeHandler extends AbstractHandler
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         return new HtmlResponse($this->getTemplateRenderer()->render('app::home'));
     }
