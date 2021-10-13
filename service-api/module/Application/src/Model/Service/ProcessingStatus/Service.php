@@ -124,25 +124,46 @@ class Service extends AbstractService
         // Handle all request response now
         foreach ($results as $lpaId => $result) {
             $statusCode = $result->getStatusCode();
-
             switch ($statusCode) {
                 case 200:
                     $response = $this->handleResponse($result);
-                    $siriusResponseArray[$lpaId] = $response;
+                    $siriusResponseArray[$lpaId] = [
+                        'deleted'   => false,
+                        'response'  => $response
+                    ];
                     break;
 
                 case 404:
                     // A 404 represents that details for the passed ID could not be found
-                    $siriusResponseArray[$lpaId] = null;
+                    $siriusResponseArray[$lpaId] = [
+                        'deleted'   => false,
+                        'response'  => null
+                    ];
                     break;
 
-                default:
+                case 410:
+                    // A 410 represents the LPA has recently been deleted from Sirius
+                    $siriusResponseArray[$lpaId] = [
+                        'deleted'   => true,
+                        'response'  => null
+                    ];
+                    break;
+
+                case 500:
+                case 503:
                     $this->getLogger()
-                        ->err('Unexpected response from Sirius gateway: ' . (string)$result->getBody());
-                    throw new ApiProblemException('Unexpected response from Sirius gateway: ' . $statusCode);
+                    ->err('Bad response from Sirius gateway: ' . (string)$result->getBody());
+                    throw new ApiProblemException('Bad response from Sirius gateway: ' . $statusCode);
+
+                default:
+                    $this->getLogger()->err(
+                        'Unexpected response from Sirius gateway: ' . (string)$result->getBody()
+                    );
+                    break;
             } //end switch
         } //end for
 
+        print_r($siriusResponseArray);
         return $siriusResponseArray;
     }
 
