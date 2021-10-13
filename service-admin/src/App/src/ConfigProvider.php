@@ -21,8 +21,9 @@ class ConfigProvider
      * To add a bit of a structure, each section is defined in a separate
      * method which returns an array with its configuration.
      *
+     * @return array<string, mixed>
      */
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return [
             'dependencies' => $this->getDependencies(),
@@ -39,39 +40,46 @@ class ConfigProvider
 
     /**
      * Returns the container dependencies
+     *
+     * @return array<string, mixed>
      */
-    public function getDependencies() : array
+    public function getDependencies(): array
     {
         return [
             'invokables' => [
                 //  Handlers
-                Handler\HomeHandler::class      => Handler\HomeHandler::class,
-                Handler\SignOutHandler::class   => Handler\SignOutHandler::class,
+                Handler\HomeHandler::class => Handler\HomeHandler::class,
+                Handler\SignOutHandler::class => Handler\SignOutHandler::class,
 
                 //  Middleware
                 Middleware\Flash\SlimFlashMiddleware::class => Middleware\Flash\SlimFlashMiddleware::class,
-                Middleware\Session\CsrfMiddleware::class    => Middleware\Session\CsrfMiddleware::class,
+                Middleware\Session\CsrfMiddleware::class => Middleware\Session\CsrfMiddleware::class,
             ],
             'factories' => [
                 //  Handlers
-                Handler\FeedbackHandler::class      => Handler\FeedbackHandlerFactory::class,
-                Handler\SignInHandler::class        => Handler\SignInHandlerFactory::class,
+                Handler\FeedbackHandler::class => Handler\FeedbackHandlerFactory::class,
+                Handler\SignInHandler::class => Handler\SignInHandlerFactory::class,
                 Handler\SystemMessageHandler::class => Handler\SystemMessageHandlerFactory::class,
-                Handler\UserSearchHandler::class    => Handler\UserSearchHandlerFactory::class,
-                Handler\UserFindHandler::class      => Handler\UserFindHandlerFactory::class,
+                Handler\UserSearchHandler::class => Handler\UserSearchHandlerFactory::class,
+                Handler\UserFindHandler::class => Handler\UserFindHandlerFactory::class,
 
                 //  Middleware
-                JwtAuthentication::class                                => Middleware\Session\JwtAuthenticationFactory::class,
-                Middleware\Authorization\AuthorizationMiddleware::class => Middleware\Authorization\AuthorizationMiddlewareFactory::class,
-                Middleware\Session\SessionMiddleware::class             => Middleware\Session\SessionMiddlewareFactory::class,
-                Middleware\ViewData\ViewDataMiddleware::class           => Middleware\ViewData\ViewDataMiddlewareFactory::class,
+                JwtAuthentication::class =>
+                    Middleware\Session\JwtAuthenticationFactory::class,
+                Middleware\Authorization\AuthorizationMiddleware::class =>
+                    Middleware\Authorization\AuthorizationMiddlewareFactory::class,
+                Middleware\Session\SessionMiddleware::class =>
+                    Middleware\Session\SessionMiddlewareFactory::class,
+                Middleware\ViewData\ViewDataMiddleware::class =>
+                    Middleware\ViewData\ViewDataMiddlewareFactory::class,
 
                 //  Services
-                Service\Cache\Cache::class                          => Service\Cache\CacheFactory::class,
-                Service\ApiClient\Client::class                     => Service\ApiClient\ClientFactory::class,
-                Service\Authentication\AuthenticationService::class => Service\Authentication\AuthenticationServiceFactory::class,
-                Service\Feedback\FeedbackService::class             => Service\Feedback\FeedbackServiceFactory::class,
-                Service\User\UserService::class                     => Service\User\UserServiceFactory::class,
+                Service\Cache\Cache::class  => Service\Cache\CacheFactory::class,
+                Service\ApiClient\Client::class => Service\ApiClient\ClientFactory::class,
+                Service\Authentication\AuthenticationService::class =>
+                    Service\Authentication\AuthenticationServiceFactory::class,
+                Service\Feedback\FeedbackService::class => Service\Feedback\FeedbackServiceFactory::class,
+                Service\User\UserService::class => Service\User\UserServiceFactory::class,
             ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,
@@ -87,8 +95,10 @@ class ConfigProvider
 
     /**
      * Returns the templates configuration
+     *
+     * @return array<string, array>
      */
-    public function getTemplates() : array
+    public function getTemplates(): array
     {
         return [
             'paths' => [

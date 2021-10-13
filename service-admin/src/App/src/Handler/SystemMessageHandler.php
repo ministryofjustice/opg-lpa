@@ -33,14 +33,22 @@ class SystemMessageHandler extends AbstractHandler
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new SystemMessage([
             'csrf' => $this->getTokenData('csrf'),
         ]);
 
         if ($request->getMethod() == 'POST') {
-            $form->setData($request->getParsedBody());
+            $parsedBody = $request->getParsedBody();
+
+            // if by some freak of chance we don't have a valid POST body
+            // which can be parsed to an array
+            if (!is_array($parsedBody)) {
+                $parsedBody = [];
+            }
+
+            $form->setData($parsedBody);
             $newMessage = $form->get('message')->getValue();
 
             $confirmMessage = "No system message has been set";
@@ -48,7 +56,6 @@ class SystemMessageHandler extends AbstractHandler
             if (empty($newMessage) && !is_null($this->cache->getItem('system-message'))) {
                 $this->cache->removeItem('system-message');
                 $confirmMessage = 'System message removed';
-
             } elseif ($form->isValid() && !empty($newMessage)) {
                 $this->cache->setItem('system-message', $newMessage);
                 $confirmMessage = 'System message set';

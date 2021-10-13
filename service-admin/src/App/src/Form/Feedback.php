@@ -15,7 +15,7 @@ class Feedback extends AbstractForm
     /**
      * Feedback constructor
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function __construct($options = [])
     {
@@ -76,8 +76,11 @@ class Feedback extends AbstractForm
             throw new Exception('Date value can only be retrieved for fields start-date and end-date');
         }
 
-        /** @var Fieldset\Date $dateInput */
         $dateInput = $this->get($fieldname);
+
+        if (!is_a($dateInput, \App\Form\Fieldset\Date::class)) {
+            throw new Exception('Field ' . $fieldname . ' is not a Fieldset\Date instance');
+        }
 
         return $dateInput->getDateValue();
     }

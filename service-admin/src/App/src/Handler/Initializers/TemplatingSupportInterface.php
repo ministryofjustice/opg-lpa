@@ -21,5 +21,5 @@ interface TemplatingSupportInterface
     /**
      * @return TemplateRendererInterface
      */
-    public function getTemplateRenderer() : TemplateRendererInterface;
+    public function getTemplateRenderer(): TemplateRendererInterface;
 }

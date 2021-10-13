@@ -1,4 +1,5 @@
 <?php
+
 namespace App\View\DateFormatter;
 
 use League\Plates\Engine;
@@ -10,8 +11,13 @@ use DateTime;
  */
 class DateFormatterPlatesExtension implements ExtensionInterface
 {
-    public function register(Engine $engine)
+    /**
+     * @param Engine $engine
+     * @return void
+     */
+    public function register(Engine $engine): void
     {
+        /** @phpstan-ignore-next-line */
         $engine->registerFunction('dateFormat', [$this, 'dateFormat']);
     }
 
@@ -19,6 +25,7 @@ class DateFormatterPlatesExtension implements ExtensionInterface
      * @param mixed $var Value to format as a date
      * @param mixed $default Default value to return if $var is not a DateTime;
      * defaults to $var itself
+     * @return string|null
      */
     public function dateFormat($var, $default = null)
     {
