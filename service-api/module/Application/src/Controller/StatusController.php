@@ -207,19 +207,26 @@ class StatusController extends AbstractRestfulController
 
         if (!empty($allIdsToCheckStatusInSirius)) {
             // LPA-3534 Log the request
-            $this->getLogger()->info('All application ids to check in Sirius :' .implode("','",$allIdsToCheckStatusInSirius)."'");
-            $this->getLogger()->info('Count of all application ids to check in Sirius :' . count($allIdsToCheckStatusInSirius));
+            $this->getLogger()->info(
+                'All application ids to check in Sirius :' .
+                implode("','",$allIdsToCheckStatusInSirius) .
+                "'"
+            );
+            $this->getLogger()->info(
+                'Count of all application ids to check in Sirius :' .
+                count($allIdsToCheckStatusInSirius)
+            );
 
             // Get status update from Sirius
-            $siriusResponseArray =
-                $this->processingStatusService->getStatuses($allIdsToCheckStatusInSirius);
-
+            $siriusResponseArray = $this->processingStatusService->getStatuses($allIdsToCheckStatusInSirius);
+            print_r($siriusResponseArray);
             // Update the results for the status received back from Sirius
             foreach ($siriusResponseArray as $lpaId => $lpaDetail) {
+
                 // If the processStatusService didn't get a response for
                 // this LPA (it hasn't been received yet), the detail is null
                 // and the LPA will display as "Waiting"
-                if (is_null($lpaDetail)) {
+                if (is_null($lpaDetail['response'])) {
                     $results[$lpaId] = ['found' => false];
                 }
                 // There was a status returned by processStatusService
@@ -229,17 +236,18 @@ class StatusController extends AbstractRestfulController
 
                     // Common data, whether the status is set or not
                     $data = [
-                        'status' => $lpaDetail['status'],
-                        'rejectedDate' => $this->getValue($lpaDetail, 'rejectedDate')
+                        'deleted'      => $lpaDetail['deleted'],
+                        'status'       => $this->getValue($lpaDetail['response'],'status'),
+                        'rejectedDate' => $this->getValue($lpaDetail['response'], 'rejectedDate')
                     ];
 
                     if (isset($data['status'])) {
                         // Data we only need if status is set already
-                        $data['receiptDate'] = $this->getValue($lpaDetail, 'receiptDate');
-                        $data['registrationDate'] = $this->getValue($lpaDetail, 'registrationDate');
-                        $data['invalidDate'] = $this->getValue($lpaDetail, 'invalidDate');
-                        $data['withdrawnDate'] = $this->getValue($lpaDetail, 'withdrawnDate');
-                        $data['dispatchDate'] = $this->getValue($lpaDetail, 'dispatchDate');
+                        $data['receiptDate'] = $this->getValue($lpaDetail['response'], 'receiptDate');
+                        $data['registrationDate'] = $this->getValue($lpaDetail['response'], 'registrationDate');
+                        $data['invalidDate'] = $this->getValue($lpaDetail['response'], 'invalidDate');
+                        $data['withdrawnDate'] = $this->getValue($lpaDetail['response'], 'withdrawnDate');
+                        $data['dispatchDate'] = $this->getValue($lpaDetail['response'], 'dispatchDate');
 
                         // If we found a record in the db, try to update it
                         // (the decision of whether to run the update is made
@@ -252,24 +260,38 @@ class StatusController extends AbstractRestfulController
                         // set found to true here as we got a processing status
                         // from Sirius
                         $results[$lpaId] = [
-                            'found' => true,
+                            'found'  => true,
                             'status' => $data['status'],
                         ];
+
+                        continue;
                     }
+
+                    // Forcefully set status to Withdrawn, as application has recently been deleted from Sirius
+                    if ($lpaDetail['deleted']) {
+                        $results[$lpaId] = [
+                            'found'  => true,
+                            'status' => 'Withdrawn',
+                        ];
+
+                        continue;
+                    }
+
                     // Use the db status if we got nothing from Sirius, providing there's
                     // no rejection date
-                    else if (!is_null($dbProcessingStatus) && is_null($data['rejectedDate'])) {
+                    if (!is_null($dbProcessingStatus) && is_null($data['rejectedDate'])) {
                         $results[$lpaId] = [
-                            'found' => true,
+                            'found'  => true,
                             'status' => $dbProcessingStatus,
                         ];
+
+                        continue;
                     }
+
                     // We didn't get a status from db or Sirius
-                    else {
-                        $results[$lpaId] = [
-                            'found' => false,
-                        ];
-                    }
+                    $results[$lpaId] = [
+                        'found' => false,
+                    ];
                 }
             }
         }
