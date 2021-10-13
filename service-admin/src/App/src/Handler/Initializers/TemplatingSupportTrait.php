@@ -31,7 +31,7 @@ trait TemplatingSupportTrait
     /**
      * @return TemplateRendererInterface
      */
-    public function getTemplateRenderer() : TemplateRendererInterface
+    public function getTemplateRenderer(): TemplateRendererInterface
     {
         if (!$this->render instanceof TemplateRendererInterface) {
             throw new UnexpectedValueException('TemplateRenderer not set');
