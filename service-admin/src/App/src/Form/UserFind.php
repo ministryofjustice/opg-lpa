@@ -19,7 +19,7 @@ class UserFind extends AbstractForm
     /**
      * UserFind constructor
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function __construct($options = [])
     {

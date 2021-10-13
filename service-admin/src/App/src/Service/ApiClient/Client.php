@@ -42,8 +42,8 @@ class Client
      * Performs a GET against the API
      *
      * @param string $path
-     * @param array  $query
-     * @return array|null
+     * @param array<string, mixed> $query
+     * @return mixed|null
      * @throw RuntimeException | ApiException
      */
     public function httpGet($path, array $query = [])
@@ -73,15 +73,22 @@ class Client
      * Performs a POST against the API
      *
      * @param string $path
-     * @param array  $payload
-     * @return array
+     * @param mixed $payload
+     * @return mixed|null
      * @throw RuntimeException | ApiException
      */
-    public function httpPost($path, array $payload = [])
+    public function httpPost($path, $payload = [])
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $request = new Request('POST', $url, $this->buildHeaders(), json_encode($payload));
+        $encodedPayload = json_encode($payload);
+
+        if (!$encodedPayload) {
+            // JSON parse error
+            throw new \RuntimeException('Invalid JSON payload supplied as POST body');
+        }
+
+        $request = new Request('POST', $url, $this->buildHeaders(), $encodedPayload);
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -98,15 +105,22 @@ class Client
      * Performs a PUT against the API
      *
      * @param string $path
-     * @param array  $payload
-     * @return array
+     * @param mixed $payload
+     * @return mixed|null
      * @throw RuntimeException | ApiException
      */
-    public function httpPut($path, array $payload = [])
+    public function httpPut($path, $payload = [])
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $request = new Request('PUT', $url, $this->buildHeaders(), json_encode($payload));
+        $encodedPayload = json_encode($payload);
+
+        if (!$encodedPayload) {
+            // JSON parse error
+            throw new \RuntimeException('Invalid JSON payload supplied as PUT body');
+        }
+
+        $request = new Request('PUT', $url, $this->buildHeaders(), $encodedPayload);
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -123,15 +137,22 @@ class Client
      * Performs a PATCH against the API
      *
      * @param string $path
-     * @param array  $payload
-     * @return array
+     * @param mixed $payload
+     * @return mixed|null
      * @throw RuntimeException | ApiException
      */
-    public function httpPatch($path, array $payload = [])
+    public function httpPatch($path, $payload = [])
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $request = new Request('PATCH', $url, $this->buildHeaders(), json_encode($payload));
+        $encodedPayload = json_encode($payload);
+
+        if (!$encodedPayload) {
+            // JSON parse error
+            throw new \RuntimeException('Invalid JSON payload supplied as PATCH body');
+        }
+
+        $request = new Request('PATCH', $url, $this->buildHeaders(), $encodedPayload);
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -148,7 +169,7 @@ class Client
      * Performs a DELETE against the API
      *
      * @param string $path
-     * @return array
+     * @return mixed|null
      * @throw RuntimeException | ApiException
      */
     public function httpDelete($path)
@@ -171,7 +192,7 @@ class Client
     /**
      * Generates the standard set of HTTP headers expected by the API
      *
-     * @return array
+     * @return array<string, string|object>
      */
     private function buildHeaders()
     {
@@ -195,7 +216,7 @@ class Client
      * Successful response processing
      *
      * @param ResponseInterface $response
-     * @return array
+     * @return mixed
      * @throw ApiException
      */
     private function handleResponse(ResponseInterface $response)
