@@ -2,15 +2,6 @@ resource "aws_kms_key" "secrets_encryption_key" {
   enable_key_rotation = true
 }
 
-resource "aws_kms_key" "rds_snapshot_cross_region_encryption_key" {
-  enable_key_rotation = true
-}
-
-resource "aws_kms_alias" "rds_snapshot_cross_region_encryption" {
-  target_key_id = aws_kms_key.rds_snapshot_cross_region_encryption_key.key_id
-  name          = "alias/rds-snapshot-cross-region-encryption-key"
-}
-
 # common
 resource "aws_secretsmanager_secret" "opg_lpa_common_admin_accounts" {
   name       = "${local.account_name}/opg_lpa_common_admin_accounts"
