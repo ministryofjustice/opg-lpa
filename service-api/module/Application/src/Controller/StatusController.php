@@ -268,6 +268,7 @@ class StatusController extends AbstractRestfulController
                     }
 
                     // Forcefully set status to Withdrawn, as application has recently been deleted from Sirius
+                    // Service::SIRIUS_STATUS_TO_LPA for all current statues
                     if ($lpaDetail['deleted']) {
                         $results[$lpaId] = [
                             'found'  => true,
