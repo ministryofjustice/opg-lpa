@@ -219,7 +219,6 @@ class StatusController extends AbstractRestfulController
 
             // Get status update from Sirius
             $siriusResponseArray = $this->processingStatusService->getStatuses($allIdsToCheckStatusInSirius);
-            print_r($siriusResponseArray);
             // Update the results for the status received back from Sirius
             foreach ($siriusResponseArray as $lpaId => $lpaDetail) {
 
@@ -237,7 +236,7 @@ class StatusController extends AbstractRestfulController
                     // Common data, whether the status is set or not
                     $data = [
                         'deleted'      => $lpaDetail['deleted'],
-                        'status'       => $this->getValue($lpaDetail['response'],'status'),
+                        'status'       => $lpaDetail['response']['status'],
                         'rejectedDate' => $this->getValue($lpaDetail['response'], 'rejectedDate')
                     ];
 
