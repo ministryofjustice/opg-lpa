@@ -751,4 +751,37 @@ class StatusControllerTest extends AbstractControllerTest
                 'found' => false,
             ]]), $result);
     }
+
+    public function testGetLpaDeleted()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
+            ]]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->applicationsService->shouldReceive('filterByIdsAndUser')
+            ->withArgs([['98765'], '12345'])
+            ->once()
+            ->andReturn([$lpa]);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => [
+                    'deleted'   => true,
+                    'response'  => null
+                ]
+            ]);
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json([
+            '98765' => [
+                'found' => false,
+            ]]), $result);
+    }
 }

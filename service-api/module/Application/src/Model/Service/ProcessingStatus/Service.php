@@ -162,8 +162,6 @@ class Service extends AbstractService
                     break;
             } //end switch
         } //end for
-
-        print_r($siriusResponseArray);
         return $siriusResponseArray;
     }
 
