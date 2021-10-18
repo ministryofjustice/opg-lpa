@@ -11,7 +11,7 @@ use Laminas\Validator\NotEmpty as ZendNotEmpty;
 class NotEmpty extends ZendNotEmpty
 {
     /**
-     * @var array
+     * @var array<string, string>
      */
     protected $messageTemplates = [
         self::IS_EMPTY => 'required',

@@ -36,8 +36,8 @@ class Cache implements StorageInterface
 
     /**
      * Cache constructor.
-     * @param array $dynamoConfig
-     * @param $keyPrefix
+     * @param array<string, mixed> $dynamoConfig
+     * @param string $keyPrefix
      */
     public function __construct(array $dynamoConfig, $keyPrefix)
     {
@@ -51,7 +51,7 @@ class Cache implements StorageInterface
     /**
      * Returns the passed key, prefixed with a namespace.
      *
-     * @param $key
+     * @param string $key
      * @return string
      */
     private function formatKey($key)
@@ -59,8 +59,12 @@ class Cache implements StorageInterface
         return "{$this->keyPrefix}/{$key}";
     }
 
-    /* (non-PHPdoc)
+    /**
      * @see \Laminas\Cache\Storage\StorageInterface::setItem()
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return bool
      */
     public function setItem($key, $value)
     {
@@ -85,6 +89,8 @@ class Cache implements StorageInterface
                 'value'   => $value,
             ]
         ]);
+
+        return true;
     }
 
     /* (non-PHPdoc)
@@ -102,12 +108,14 @@ class Cache implements StorageInterface
                 'id'      => $key,
             ],
         ]);
+
+        return true;
     }
 
     /* (non-PHPdoc)
      * @see \Laminas\Cache\Storage\StorageInterface::getItem()
      */
-    public function getItem($key, & $success = null, & $casToken = null)
+    public function getItem($key, &$success = null, &$casToken = null)
     {
         try {
             $result = $this->client->getItem([
@@ -122,7 +130,8 @@ class Cache implements StorageInterface
             $success = true;
 
             return $result['Item']['value']['B'];
-        } catch (Exception $ignore) {}
+        } catch (Exception $ignore) {
+        }
 
         $success = false;
 
@@ -137,9 +146,12 @@ class Cache implements StorageInterface
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::addItems()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::addItems()
+     *
+     * @param array<string, mixed> $keyValuePairs
+     * @return array<string, mixed>
+     */
     public function addItems(array $keyValuePairs)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
@@ -153,145 +165,198 @@ class Cache implements StorageInterface
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::decrementItem()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::decrementItem()
+     *
+     * @param string $key
+     * @param int $value
+     * @return int|bool The new value on success, false on failure
+     */
     public function decrementItem($key, $value)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::decrementItems()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::decrementItems()
+     *
+     * @param array<string, int> $keyValuePairs
+     * @return array<string, mixed> Associative array of new values
+     */
     public function decrementItems(array $keyValuePairs)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::getCapabilities()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::getCapabilities()
+     */
     public function getCapabilities()
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::getItems()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::getItems()
+     *
+     * @param array<string> $keys
+     * @return array<string, mixed> Associative array of keys and values
+     */
     public function getItems(array $keys)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::getMetadata()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::getMetadata()
+     *
+     * @param string $key
+     * @return array<string, mixed>|bool Metadata on success, false on failure
+     */
     public function getMetadata($key)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::getMetadatas()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::getMetadatas()
+     *
+     * @param array<string> $keys
+     * @return array<string, mixed> Associative array of keys and metadataa
+     */
     public function getMetadatas(array $keys)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::getOptions()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::getOptions()
+     *
+     * @return \Laminas\Cache\Storage\Adapter\AdapterOptions
+     */
     public function getOptions()
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::hasItem()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::hasItem()
+     *
+     * @param string $key
+     * @return bool
+     */
     public function hasItem($key)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::hasItems()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::hasItems()
+     *
+     * @param array<string> $keys
+     * @return array<string> Array of found keys
+     */
     public function hasItems(array $keys)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::incrementItem()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::incrementItem()
+     *
+     * @param string $key
+     * @param int $value
+     * @return int|bool The new value on success, false on failure
+     */
     public function incrementItem($key, $value)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::incrementItems()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::incrementItems()
+     *
+     * @param array<string, int> $keyValuePairs
+     * @return array<string, mixed> Associative array of new values
+     */
     public function incrementItems(array $keyValuePairs)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::removeItems()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::removeItems()
+     *
+     * @param array<string> $keys
+     * @return array<string> Array of not removed keys
+     */
     public function removeItems(array $keys)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::replaceItem()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::replaceItem()
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return bool
+     */
     public function replaceItem($key, $value)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::replaceItems()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::replaceItems()
+     *
+     * @param array<string, mixed> $keyValuePairs
+     * @return array<string> Array of not replaced keys
+     */
     public function replaceItems(array $keyValuePairs)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::setItems()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::setItems()
+     *
+     * @param array<string, mixed> $keyValuePairs
+     * @return array<string> Array of not set keys
+     */
     public function setItems(array $keyValuePairs)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::setOptions()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::setOptions()
+     *
+     * @param array<string, mixed> $options
+     * @return $this
+     */
     public function setOptions($options)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::touchItem()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::touchItem()
+     *
+     * @param string $key
+     * @return bool
+     */
     public function touchItem($key)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
-    /* (non-PHPdoc)
-    * @see \Laminas\Cache\Storage\StorageInterface::touchItems()
-    */
+    /**
+     * @see \Laminas\Cache\Storage\StorageInterface::touchItems()
+     *
+     * @param array<int, string> $keys
+     * @return array<string> Array of not updated keys
+     */
     public function touchItems(array $keys)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');

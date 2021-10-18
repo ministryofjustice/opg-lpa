@@ -13,9 +13,12 @@ use Laminas\Diactoros\Response\HtmlResponse;
 
 class UserFindHandler extends AbstractHandler
 {
-    public static $LIMIT = 10;
-
     use JwtTrait;
+
+    /**
+     * @var int
+     */
+    public static $LIMIT = 10;
 
     /**
      * @var UserService
@@ -35,7 +38,7 @@ class UserFindHandler extends AbstractHandler
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new UserFind();
 
@@ -43,7 +46,9 @@ class UserFindHandler extends AbstractHandler
 
         // to be set from GET
         $query = null;
-        $defaultOffset = 0;
+
+        // default offset
+        $offset = 0;
 
         // next/previous params
         $nextOffset = null;
@@ -63,15 +68,14 @@ class UserFindHandler extends AbstractHandler
 
                 if ($form->isValid()) {
                     $inputFilter = $form->getInputFilter();
-                    $query = $inputFilter->get('query')->getValue();
-                    $offset = $inputFilter->get('offset')->getValue();
+                    $query = $inputFilter->getValue('query');
+                    $offset = $inputFilter->getValue('offset');
                 }
-            }
-            else {
+            } else {
                 // reset this to empty string for display as form element value
                 $params['query'] = '';
 
-                $params['offset'] = $defaultOffset;
+                $params['offset'] = $offset;
 
                 $form->setData($params);
             }
@@ -94,8 +98,13 @@ class UserFindHandler extends AbstractHandler
             }
 
             if ($numResults === 0) {
+                $formMessages = $form->getMessages();
+                if (!is_array($formMessages)) {
+                    $formMessages = iterator_to_array($formMessages);
+                }
+
                 // Set error message
-                $messages = array_merge($form->getMessages(), [
+                $messages = array_merge($formMessages, [
                     'query' => [
                         'No users match your query'
                     ]
