@@ -50,3 +50,16 @@ We also use the time to check that the LPA has been made correctly and there's n
 Once we’ve registered the LPA, we’ll stamp the LPA form you sent us and return it to the correspondent by post.
 
 It takes up to 20 weeks in total to register the LPA if there are no mistakes in the application.
+
+#### Using the LPA
+
+If you're the donor or an attorney on the LPA, you'll need to show the LPA to organisations when you want to use it.
+
+The <a href="https://www.gov.uk/use-lasting-power-of-attorney" target="_blank" rel="external noopener noreferrer">Use a lasting power of attorney service (opens in new tab)</a> lets you:
+
+* give organisations access to an online summary of the LPA
+* keep track of who has been given access to the LPA
+
+This is quicker and easier than having to show the paper LPA in person.
+
+Once the LPA is registered, we'll write to the donor and attorneys. We'll give each of them a unique activation key so they can access the Use a lasting power of attorney service.

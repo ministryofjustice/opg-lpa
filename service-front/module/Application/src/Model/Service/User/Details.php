@@ -472,7 +472,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 return 'address-already-registered';
             }
 
-            return 'api-problem';
+            return 'api-error';
         }
 
         return 'unknown-error';

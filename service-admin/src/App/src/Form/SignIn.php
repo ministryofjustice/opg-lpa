@@ -19,7 +19,7 @@ class SignIn extends AbstractForm
     /**
      * SignIn constructor
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function __construct($options = [])
     {
@@ -63,9 +63,11 @@ class SignIn extends AbstractForm
 
     /**
      * Set the authentication error reference
+     *
      * @param string $errorReference
+     * @return void
      */
-    public function setAuthError(string $errorReference)
+    public function setAuthError(string $errorReference): void
     {
         $this->setMessages([
             'email' => [
