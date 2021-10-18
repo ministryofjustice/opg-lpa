@@ -25,7 +25,7 @@ csp = {
 }
 
 Compress(app)
-Talisman(app, content_security_policy=csp, force_https=False, strict_transport_security_max_age=3600)
+Talisman(app, content_security_policy=csp, strict_transport_security_max_age=3600)
 csrf = CSRFProtect(app)
 
 from app import routes
