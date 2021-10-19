@@ -82,7 +82,14 @@ class ServiceTest extends MockeryTestCase
 
         $result = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => ['status' => 'Received']], $result);
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => false,
+                'response'  => ['status' => 'Received']
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $result);
     }
 
     /**
@@ -97,25 +104,31 @@ class ServiceTest extends MockeryTestCase
 
         $statusResult = $this->service->getStatuses([1000000000,1000000001]);
 
-        $this->assertEquals(
-            [
-                1000000000 => ['status' => 'Received'],
-                1000000001 => ['status' => 'Received']
-            ], $statusResult
-        );
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => false,
+                'response'  => ['status' => 'Received']
+            ],
+            1000000001 => [
+                'deleted'   => false,
+                'response'  => ['status' => 'Received']
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $statusResult);
     }
 
     /**
      * @throws ApiProblemException
      * @throws Exception
      */
-    public function testGetStatuses400()
+    public function testGetStatuses500()
     {
         $this->expectException(ApiProblemException::class);
 
         $this->setUpSigning();
 
-        $this->setUpRequest(400, '{}');
+        $this->setUpRequest(500, '{}');
 
         $this->service->getStatuses([1000000000]);
     }
@@ -132,12 +145,53 @@ class ServiceTest extends MockeryTestCase
 
         $statusResultArray  = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals(
-            [
-                1000000000 => null
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => false,
+                'response'  => null
             ]
-            , $statusResultArray
-        );
+        ];
+
+        $this->assertEquals($expectedResult, $statusResultArray);
+    }
+
+    /**
+     * @throws ApiProblemException
+     * @throws Exception
+     */
+    public function testGetStatusesDeleted()
+    {
+        $this->setUpSigning();
+
+        $this->setUpRequest(410, null);
+
+        $statusResultArray  = $this->service->getStatuses([1000000000]);
+
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => true,
+                'response'  => null
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $statusResultArray);
+    }
+
+    /**
+     * @throws ApiProblemException
+     * @throws Exception
+     */
+    public function testGetStatusesUnexpectedResponse()
+    {
+        $this->setUpSigning();
+
+        $this->setUpRequest(418, '{}');
+
+        $statusResultArray  = $this->service->getStatuses([1000000000]);
+
+        $expectedResult = [];
+
+        $this->assertEquals($expectedResult, $statusResultArray);
     }
 
     /**
@@ -152,7 +206,14 @@ class ServiceTest extends MockeryTestCase
         $this->setUpRequest($returnStatus, $returnBody);
         $statusResult = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => ['status' => 'Processed', 'rejectedDate' => '2019-02-11']], $statusResult);
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => false,
+                'response'  => ['status' => 'Processed', 'rejectedDate' => '2019-02-11']
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $statusResult);
     }
 
     public function testGetProcessedStatusForWithdrawn()
@@ -163,7 +224,14 @@ class ServiceTest extends MockeryTestCase
         $this->setUpRequest($returnStatus, $returnBody);
         $statusResult = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => ['status' => 'Processed', 'withdrawnDate' => '2021-03-08']], $statusResult);
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => false,
+                'response'  => ['status' => 'Processed', 'withdrawnDate' => '2021-03-08']
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $statusResult);
     }
 
     public function testGetProcessedStatusForInvalid()
@@ -174,6 +242,13 @@ class ServiceTest extends MockeryTestCase
         $this->setUpRequest($returnStatus, $returnBody);
         $statusResult = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => ['status' => 'Processed', 'invalidDate' => '2021-02-08']], $statusResult);
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => false,
+                'response'  => ['status' => 'Processed', 'invalidDate' => '2021-02-08']
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $statusResult);
     }
 }
