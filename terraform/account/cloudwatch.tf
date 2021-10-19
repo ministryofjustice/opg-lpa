@@ -51,11 +51,11 @@ resource "aws_cloudwatch_metric_alarm" "account_breakglass_login_alarm" {
 
 # elasticache cloudwatch alerts
 resource "aws_cloudwatch_metric_alarm" "elasticache_high_cpu_utilization" {
-  for_each                  = toset(aws_elasticache_replication_group.front_cache.member_clusters)
+  count                     = local.cache_cluster_count
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn]
-  alarm_description         = "High CPU usage on ${lower(each.value)}"
-  alarm_name                = "High CPU Utilization on ${lower(each.value)}"
+  alarm_description         = "High CPU usage on ${element(local.cache_member_clusters, count.index)}"
+  alarm_name                = "High CPU Utilization on ${element(local.cache_member_clusters, count.index)}"
   comparison_operator       = "GreaterThanThreshold"
   datapoints_to_alarm       = 2
   evaluation_periods        = 2
@@ -68,16 +68,17 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_cpu_utilization" {
   threshold                 = 90
   treat_missing_data        = "notBreaching"
   dimensions = {
-    CacheClusterId = each.value
+    CacheClusterId = element(local.cache_member_clusters, count.index)
   }
+  depends_on = [aws_elasticache_replication_group.front_cache]
 }
 
 resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
-  for_each                  = toset(aws_elasticache_replication_group.front_cache.member_clusters)
+  count                     = local.cache_cluster_count
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn]
-  alarm_description         = "High swap mem usage on ${lower(each.value)}"
-  alarm_name                = "High swap mem Utilization on ${lower(each.value)}"
+  alarm_description         = "High swap mem usage on ${element(local.cache_member_clusters, count.index)}"
+  alarm_name                = "High swap mem Utilization on ${element(local.cache_member_clusters, count.index)}"
   comparison_operator       = "GreaterThanThreshold"
   datapoints_to_alarm       = 2
   evaluation_periods        = 2
@@ -90,8 +91,9 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
   threshold                 = 50000000
   treat_missing_data        = "notBreaching"
   dimensions = {
-    CacheClusterId = each.value
+    CacheClusterId = element(local.cache_member_clusters, count.index)
   }
+  depends_on = [aws_elasticache_replication_group.front_cache]
 }
 
 resource "aws_cloudwatch_event_rule" "tasks_stopped" {
