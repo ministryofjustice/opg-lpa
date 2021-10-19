@@ -94,3 +94,10 @@ paths:
                     invalidDate: null
                     withdrawnDate: null
                     status: Payment Pending
+        '410':
+          content:
+            application/json:
+              examples:
+                deleted:
+                  value:
+                    onlineLpaId: A97998888883
