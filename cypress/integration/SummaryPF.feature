@@ -53,7 +53,6 @@ Feature: View Summary for Create a Property and Finance LPA
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
         And I can find draft download link
-        # line below will be uncommented once we fix issues with pdf generation unreliability
-        #And I can get pdf from link containing "download a preview"
+        And I can get pdf from link containing "download a preview"
         When I click "continue"
         Then I am taken to the applicant page

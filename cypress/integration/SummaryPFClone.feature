@@ -33,7 +33,6 @@ Feature: View Summary for Create a Property and Finance LPA
             | Name | Mr Reece Richards | certificate-provider |
             | Address | 11 Brookside $ Cholsey $ Wallingford, Oxfordshire $ OX10 9NN | |
         And I can find draft download link
-        # line below will be uncommented once we fix issues with pdf generation unreliability
-        #And I can get pdf from link containing "download a preview"
+        And I can get pdf from link containing "download a preview"
         When I click "continue"
         Then I am taken to the applicant page
