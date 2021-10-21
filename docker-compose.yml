@@ -119,8 +119,6 @@ services:
   flask-app:
     container_name: lpa-flask-app
     image: lpa-flask-app
-      #volumes:
-      #- ./service-front-v2:/makelpa
     build:
       context: ./
       dockerfile: service-front-v2/docker/app/Dockerfile
