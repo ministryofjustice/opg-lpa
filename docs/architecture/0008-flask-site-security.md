@@ -49,11 +49,13 @@ A07:2021  Identification and Authentication failures (formerly Broken Authentica
 We aim to share session info with PHP , this will happen only when we get to forms that require authenticating to view.
 
 A08:2021 Software and Data Integrity Errors (new for 2021)
+We address this by ensuring the security of the Circle CI/CD pipeline
 
 A09:2021 Security Logging and Monitoring failures (formerly insufficient logginng & monitoring)
 While page access is automatically logged in nginx and by flask, when we do get to the point of having authenticated pages, we will need to log all login attempts
 
 A10:2021  Server-side request forgery
+This is addressed by restricting assets to our own servers, not pulling in anything external. In future we will allow a select few such as Google Analytics but it will still be tightly restricted.
 
 ### Other Considerations
 
