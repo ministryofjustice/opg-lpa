@@ -247,6 +247,7 @@ class StatusController extends AbstractRestfulController
                         $data['invalidDate'] = $this->getValue($lpaDetail['response'], 'invalidDate');
                         $data['withdrawnDate'] = $this->getValue($lpaDetail['response'], 'withdrawnDate');
                         $data['dispatchDate'] = $this->getValue($lpaDetail['response'], 'dispatchDate');
+                        $data['statusDate'] = $this->getValue($lpaDetail['response'], 'statusDate');
 
                         // If we found a record in the db, try to update it
                         // (the decision of whether to run the update is made
