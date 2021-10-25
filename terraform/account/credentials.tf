@@ -26,8 +26,17 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias  = "eu_west_2"
+  alias  = "eu-west-1"
+  region = "eu-west-1"
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
+    session_name = "terraform-session"
+  }
+}
+
+provider "aws" {
   region = "eu-west-2"
+  alias  = "eu-west-2"
   assume_role {
     role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
