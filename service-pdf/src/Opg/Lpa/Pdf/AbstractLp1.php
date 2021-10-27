@@ -720,12 +720,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     }
 
     /**
-     * @param array $whoIsRegistering
+     * @param array|string $whoIsRegistering
      * @param int $pageIteration
      *
      * @return void
      */
-    private function populatePageTwenty(array $whoIsRegistering, int $pageIteration = 0): void
+    private function populatePageTwenty($whoIsRegistering, int $pageIteration = 0): void
     {
         // This page is repeatable so determine which PDF object to use
         $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
@@ -913,7 +913,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      *
      * @return mixed
      */
-    private function getTrustAttorney(array $attorneys): mixed
+    private function getTrustAttorney(array $attorneys)
     {
         foreach ($attorneys as $attorney) {
             if ($attorney instanceof TrustCorporation) {
