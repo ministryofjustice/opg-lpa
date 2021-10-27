@@ -17,41 +17,41 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * PDF template file name (without path) for this PDF object - value to be set in extending class
      *
-     * @var
+     * @var string
      */
-    protected $templateFileName;
+    protected string $templateFileName;
 
     /**
      * @var array
      */
-    private $data = [];
+    private array $data = [];
 
     /**
      * Area references that should have a strike through
      *
      * @var array
      */
-    private $strikeThroughTargets = [];
+    private array $strikeThroughTargets = [];
 
     /**
      * Area references that should have a blank drawn over them
      *
      * @var array
      */
-    private $blankTargets = [];
+    private array $blankTargets = [];
 
     /**
      * @var array
      */
-    private $constituentPdfs = [];
+    private array $constituentPdfs = [];
 
     /**
      * Integer value to track how the pages have shifted from their starting positions in the PDF, most likely
      * due to inserting content
      *
-     * @var
+     * @var int
      */
-    protected $pageShift = 0;
+    protected int $pageShift = 0;
 
     /**
      * @param Lpa|null $lpa
@@ -85,11 +85,13 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * Easy way to set the data to fill in the PDF - chainable
      *
      * @param $key
-     * @param $value
+     * @param string $value
      * @param bool $insertLeadingNewLine
-     * @return $this
+     * @param (int|string)|false|null $value
+     *
+     * @return static
      */
-    protected function setData($key, $value, $insertLeadingNewLine = false)
+    protected function setData(string $key, string $value, bool $insertLeadingNewLine = false): self
     {
         //  If applicable insert a new line char
         if ($insertLeadingNewLine === true) {
@@ -104,10 +106,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * Easy way to set a check box cross
      *
-     * @param $key
+     * @param string $key
      * @return $this
      */
-    protected function setCheckBox($key)
+    protected function setCheckBox(string $key)
     {
         return $this->setData($key, 'On');
     }
@@ -115,10 +117,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * Set the footer content from the config
      *
-     * @param $key
-     * @param $type
+     * @param string $key
+     * @param string $type
      */
-    public function setFooter($key, $type)
+    public function setFooter(string $key, string $type): void
     {
         $this->setData($key, $this->config['footer'][$type]);
     }
@@ -133,6 +135,8 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * @throws \setasign\Fpdi\PdfParser\PdfParserException
      * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
      * @throws \setasign\Fpdi\PdfReader\PdfReaderException
+     *
+     * @return void
      */
     protected function drawStrikeThroughsAndBlanks(): void
     {
@@ -236,10 +240,12 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * Generate the PDF - this will save a copy to the file system
      *
      * @param bool $protect
-     * @return string
+     *
      * @throws Exception
+     *
+     * @return string
      */
-    public function generate($protect = false)
+    public function generate(bool $protect = false): string
     {
         $this->fillForm($this->data)
              ->needAppearances()
@@ -308,10 +314,11 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * Get the page shift that will be implemented before a specific page
      *
-     * @param $originalPageNumber
+     * @param int $originalPageNumber
+     *
      * @return int
      */
-    protected function getPageShiftBeforePage($originalPageNumber)
+    protected function getPageShiftBeforePage(int $originalPageNumber): int
     {
         //  Add the total calculated page shift
         $adjustedPageShift = $this->pageShift;
@@ -332,11 +339,12 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * Add a strike through line to the specified page
      *
-     * @param $areaReference
+     * @param string $areaReference
      * @param int $pageNumber
+     *
      * @return $this
      */
-    protected function addStrikeThrough($areaReference, $pageNumber = 1)
+    protected function addStrikeThrough(string $areaReference, int $pageNumber = 1)
     {
         return $this->addDrawingTarget($this->strikeThroughTargets, $areaReference, $pageNumber);
     }
@@ -344,11 +352,12 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * Draw a blank section on the specified page
      *
-     * @param $areaReference
+     * @param string $areaReference
      * @param int $pageNumber
+     *
      * @return $this
      */
-    protected function addBlank($areaReference, $pageNumber = 1)
+    protected function addBlank(string $areaReference, int $pageNumber = 1)
     {
         return $this->addDrawingTarget($this->blankTargets, $areaReference, $pageNumber);
     }
@@ -357,11 +366,12 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * Add a drawing target (strike through or blank) to the specified page
      *
      * @param array $drawingTargets
-     * @param $areaReference
+     * @param string $areaReference
      * @param int $pageNumber
+     *
      * @return $this
      */
-    private function addDrawingTarget(array &$drawingTargets, $areaReference, $pageNumber)
+    private function addDrawingTarget(array &$drawingTargets, string $areaReference, int $pageNumber)
     {
         //  Adjust the page number for zero based indexes
         $pageNumber--;
@@ -380,12 +390,15 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * Insert a number of pages of the constituent PDF after a specified page
      *
      * @param AbstractPdf|string $pdf
-     * @param $start
-     * @param $pages
-     * @param $insertAfter
+     * @param int $start
+     * @param int $pages
+     * @param int $insertAfter
+     *
      * @throws Exception
+     *
+     * @return void
      */
-    protected function addConstituentPdf($pdf, $start, $pages, $insertAfter)
+    protected function addConstituentPdf(AbstractPdf|string $pdf, int $start, int $pages, int $insertAfter): void
     {
         //  Ensure that the PDF is an expected type
         if (!is_string($pdf) && !$pdf instanceof AbstractPdf) {
@@ -415,10 +428,13 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * Insert a single page of the constituent PDF after a specified page
      *
      * @param AbstractPdf|string $pdf
-     * @param $pageNumber
-     * @param $insertAfter
+     * @param int $pageNumber
+     * @param int $insertAfter
+     * @param int|string $insertAfter
+     *
+     * @psalm-param 'end'|3|15|17 $insertAfter
      */
-    protected function addConstituentPdfPage($pdf, $pageNumber, $insertAfter)
+    protected function addConstituentPdfPage(AbstractPdf|string $pdf, int $pageNumber, int $insertAfter): void
     {
         $this->addConstituentPdf($pdf, $pageNumber, 1, $insertAfter);
     }
@@ -430,8 +446,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * @param $start
      * @param $pages
      * @param $insertAfter
+     *
+     * @return void
      */
-    protected function insertStaticPDF($pdfFileName, $start, $pages, $insertAfter)
+    protected function insertStaticPDF(string $pdfFileName, int $start, int $pages, string $insertAfter): void
     {
         $pdfPath = $this->getTemplatePdfFilePath($pdfFileName);
         $this->addConstituentPdf($pdfPath, $start, $pages, $insertAfter);
@@ -441,8 +459,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * Insert a blank page (static PDF) after a specified page
      *
      * @param string $insertAfter
+     *
+     * @return void
      */
-    protected function insertBlankPage($insertAfter)
+    protected function insertBlankPage($insertAfter): void
     {
         $this->insertStaticPDF('blank.pdf', 1, 1, $insertAfter);
     }

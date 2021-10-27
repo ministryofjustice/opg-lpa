@@ -26,12 +26,12 @@ class Lp3 extends AbstractIndividualPdf
      *
      * @var string
      */
-    protected $templateFileName = 'LP3.pdf';
+    protected string $templateFileName = 'LP3.pdf';
 
     /**
      * @var NotifiedPerson
      */
-    private $personToNotify;
+    private NotifiedPerson $personToNotify;
 
     /**
      * @param Lpa|null $lpa
@@ -53,8 +53,10 @@ class Lp3 extends AbstractIndividualPdf
      * to the file system
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    protected function create(Lpa $lpa)
+    protected function create(Lpa $lpa): void
     {
         $this->populatePageOne($this->personToNotify);
         $this->populatePageTwo($lpa);
@@ -73,8 +75,10 @@ class Lp3 extends AbstractIndividualPdf
 
     /**
      * @param NotifiedPerson $personToNotify
+     *
+     * @return void
      */
-    private function populatePageOne(NotifiedPerson $personToNotify)
+    private function populatePageOne(NotifiedPerson $personToNotify): void
     {
         $name = $personToNotify->getName();
         $address = $personToNotify->getAddress();
@@ -92,8 +96,10 @@ class Lp3 extends AbstractIndividualPdf
 
     /**
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    private function populatePageTwo(Lpa $lpa)
+    private function populatePageTwo(Lpa $lpa): void
     {
         //  Set the donor details
         $document = $lpa->getDocument();
@@ -126,8 +132,10 @@ class Lp3 extends AbstractIndividualPdf
 
     /**
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    private function populatePageThree(Lpa $lpa, $pageIteration = 0)
+    private function populatePageThree(Lpa $lpa, $pageIteration = 0): void
     {
         //  This page is repeatable so determine which PDF object to use
         $pdf = ($pageIteration > 0 ? new $this(null, null, $this->pdftkFactory) : $this);
@@ -211,7 +219,10 @@ class Lp3 extends AbstractIndividualPdf
         $pdf->setFooter('footer-right-page-three', 'lp3');
     }
 
-    private function populatePageFour()
+    /**
+     * @return void
+     */
+    private function populatePageFour(): void
     {
         $this->setFooter('footer-right-page-four', 'lp3');
     }

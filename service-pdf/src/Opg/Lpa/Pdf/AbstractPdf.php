@@ -147,7 +147,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
      * @param $intermediatePdfFileName
      * @return string
      */
-    protected function getIntermediatePdfFilePath($intermediatePdfFileName)
+    protected function getIntermediatePdfFilePath(string $intermediatePdfFileName)
     {
         //  Create a (near) unique intermediate file name using the formatted LPA ref (if set) and a micro timestamp
         if (!is_null($this->formattedLpaRef)) {
@@ -170,7 +170,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
      * @param bool $protect
      * @return string
      */
-    public function generate($protect = false)
+    public function generate(bool $protect = false): string
     {
         //  If required re-get the PDF and set the password
         if ($protect) {
@@ -183,7 +183,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
     /**
      * Protect the PDF with the password
      */
-    protected function protectPdf()
+    protected function protectPdf(): void
     {
         $pdfToProtect = $this->pdftkFactory->create($this->pdfFile);
 
@@ -204,8 +204,12 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
 
     /**
      * JsonSerializable implementation
+     *
+     * @return get-class-of<$this, Opg\Lpa\Pdf\AbstractPdf&static>[]
+     *
+     * @psalm-return array{class: get-class-of<$this, Opg\Lpa\Pdf\AbstractPdf&static>}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'class' => get_class($this),

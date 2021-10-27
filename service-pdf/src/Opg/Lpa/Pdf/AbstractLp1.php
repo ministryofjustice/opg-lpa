@@ -43,21 +43,21 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      *
      * @var string
      */
-    protected $coversheetFileName;
+    protected string $coversheetFileName;
 
     /**
      * PDF file name for the draft coversheet
      *
      * @var string
      */
-    protected $coversheetFileNameDraft;
+    protected string $coversheetFileNameDraft;
 
     /**
      * Flag to indicate if the LPA should be considered completed or not - assume not until proven otherwise
      *
      * @var bool
      */
-    private $lpaIsComplete = false;
+    private bool $lpaIsComplete = false;
 
     /**
      * @param Lpa|null $lpa
@@ -86,8 +86,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      * function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    protected function create(Lpa $lpa)
+    protected function create(Lpa $lpa): void
     {
         // Add an appropriate coversheet to the start of the document
         $this->insertStaticPDF($this->lpaIsComplete ?
@@ -121,8 +123,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param Donor $donor
+     *
+     * @return void
      */
-    private function populatePageOne(Donor $donor)
+    private function populatePageOne(Donor $donor): void
     {
         $name = $donor->getName();
         $dobDate = $donor->getDob()->getDate();
@@ -147,8 +151,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param Document $lpaDocument
+     *
+     * @return void
      */
-    private function populatePageTwoThreeFour(Document $lpaDocument)
+    private function populatePageTwoThreeFour(Document $lpaDocument): void
     {
         $primaryAttorneys = $this->getOrderedAttorneys($lpaDocument->getPrimaryAttorneys());
 
@@ -237,8 +243,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param Document $lpaDocument
+     *
+     * @return void
      */
-    private function populatePageFive(Document $lpaDocument)
+    private function populatePageFive(Document $lpaDocument): void
     {
         $replacementAttorneys = $this->getOrderedAttorneys($lpaDocument->getReplacementAttorneys());
 
@@ -338,8 +346,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param array $peopleToNotify
+     *
+     * @return void
      */
-    private function populatePageSeven(array $peopleToNotify)
+    private function populatePageSeven(array $peopleToNotify): void
     {
         // Ensure array has correct indexes
         $peopleToNotify = array_values($peopleToNotify);
@@ -383,8 +393,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param Document $lpaDocument
+     *
+     * @return void
      */
-    private function populatePageEight(Document $lpaDocument)
+    private function populatePageEight(Document $lpaDocument): void
     {
         $details = [
             'preference'  => [
@@ -416,8 +428,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param Donor $donor
+     *
+     * @return void
      */
-    private function populatePageTen(Donor $donor)
+    private function populatePageTen(Donor $donor): void
     {
         if ($donor->isCanSign() === false) {
             $this->setData('see_continuation_sheet_3', 'see continuation sheet 3');
@@ -426,8 +440,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param CertificateProvider $certificateProvider
+     *
+     * @return void
      */
-    private function populatePageEleven(CertificateProvider $certificateProvider)
+    private function populatePageEleven(CertificateProvider $certificateProvider): void
     {
         $name = $certificateProvider->getName();
         $address = $certificateProvider->getAddress();
@@ -444,13 +460,17 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     /**
      * @param Lpa $lpa
      * @param int $pageIteration
+     *
+     * @return void
      */
-    private function populatePageTwelveThirteenFourteenFifteen(Lpa $lpa, $pageIteration = 0)
+    private function populatePageTwelveThirteenFourteenFifteen(Lpa $lpa, int $pageIteration = 0): void
     {
         // This page is repeatable so determine which PDF object to use
         // For the first MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages we should populate the main document
         $pdf = ($pageIteration >= self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 ?
-            new $this(null, [], $this->pdftkFactory) : $this);
+            new $this(null, [], $this->pdftkFactory) :
+            $this
+        );
 
         // Immediately get an array of all attorneys excluding trusts so we can work with it below
         $attorneys = array_merge(
@@ -513,8 +533,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     /**
      * @param Document $lpaDocument
      * @param int $pageIteration
+     *
+     * @return void
      */
-    private function populatePageSeventeen(Document $lpaDocument, $pageIteration = 0)
+    private function populatePageSeventeen(Document $lpaDocument, int $pageIteration = 0): void
     {
         // This page is repeatable so determine which PDF object to use
         $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
@@ -571,16 +593,20 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         // Draw the strike throughs
         while ($strikeThroughIndex < self::MAX_APPLICANTS_SECTION_12) {
-            $areaReference = 'applicant-' . $strikeThroughIndex . '-' . $this->getAreaReferenceSuffix();
-            $pdf->addStrikeThrough($areaReference, 17);
+            $pdf->addStrikeThrough(
+                'applicant-' . $strikeThroughIndex . '-' . $this->getAreaReferenceSuffix(),
+                17
+            );
             $strikeThroughIndex++;
         }
     }
 
     /**
      * @param Correspondence $correspondent
+     *
+     * @return void
      */
-    private function populatePageEighteen(Correspondence $correspondent = null)
+    private function populatePageEighteen(Correspondence $correspondent = null): void
     {
         if (!is_null($correspondent)) {
             $who = $correspondent->getWho();
@@ -647,9 +673,9 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param Payment|null $payment
-     * @param null $repeatCaseNumber
+     * @param int|null $repeatCaseNumber
      */
-    private function populatePageNineteen(Payment $payment = null, $repeatCaseNumber = null)
+    private function populatePageNineteen(Payment $payment = null, ?int $repeatCaseNumber = null): void
     {
         if ($payment instanceof Payment) {
             $method = $payment->getMethod();
@@ -696,8 +722,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     /**
      * @param array $whoIsRegistering
      * @param int $pageIteration
+     *
+     * @return void
      */
-    private function populatePageTwenty($whoIsRegistering, $pageIteration = 0)
+    private function populatePageTwenty(array $whoIsRegistering, int $pageIteration = 0): void
     {
         // This page is repeatable so determine which PDF object to use
         $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
@@ -742,8 +770,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    private function setFooterContent(Lpa $lpa)
+    private function setFooterContent(Lpa $lpa): void
     {
         $footerContentRef = ($lpa->getDocument()->getType() == Document::LPA_TYPE_PF ? 'lp1f' : 'lp1h');
 
@@ -753,8 +783,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    private function addContinuationSheets(Lpa $lpa)
+    private function addContinuationSheets(Lpa $lpa): void
     {
         $continuationSheetsAdded = false;
         $document = $lpa->getDocument();
@@ -857,9 +889,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      * Return a sorted (trust first) array of attorneys
      *
      * @param array $attorneys
-     * @return array
+     *
+     * @return list<TrustCorporation|mixed>
      */
-    private function getOrderedAttorneys(array $attorneys)
+    private function getOrderedAttorneys(array $attorneys): array
     {
         foreach ($attorneys as $i => $attorney) {
             if ($attorney instanceof TrustCorporation) {
@@ -877,9 +910,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param array $attorneys
-     * @return mixed|null
+     *
+     * @return mixed
      */
-    private function getTrustAttorney(array $attorneys)
+    private function getTrustAttorney(array $attorneys): mixed
     {
         foreach ($attorneys as $attorney) {
             if ($attorney instanceof TrustCorporation) {
@@ -894,9 +928,11 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      * Generate the PDF - this will save a copy to the file system
      *
      * @param bool $protect
+     * @throws Exception
+     *
      * @return string
      */
-    public function generate($protect = false)
+    public function generate(bool $protect = false): string
     {
         // Generate the LP1 PDF - don't protect the PDF at this point
         // The password will only be set below if this in the main PDF being generated
@@ -957,8 +993,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      * @param string $stampPdf File path of PDF to use as the stamp
      * @param int $pageNumber
      * @param bool $stampInsertedPages
+     *
+     * @return void
      */
-    private function stampPageWith($stampPdf, $pageNumber, $stampInsertedPages = true)
+    private function stampPageWith(string $stampPdf, int $pageNumber, bool $stampInsertedPages = true): void
     {
         // Create a copy of the LPA PDF with the contents of the provided PDF stamped on the specified page
         $tmpStampedPdfName = $this->getIntermediatePdfFilePath('stamp.pdf');
