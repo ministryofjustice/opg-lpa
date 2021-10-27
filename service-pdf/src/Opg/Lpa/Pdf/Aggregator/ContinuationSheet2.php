@@ -23,9 +23,10 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
 
     /**
      * @param Lpa|null $lpa
-     * @param $csType
+     * @param string $csType
+     * @param PdftkFactory|null $pdftkFactory
      */
-    public function __construct(Lpa $lpa = null, $csType, ?PdftkFactory $pdftkFactory = null)
+    public function __construct(Lpa $lpa = null, string $csType, ?PdftkFactory $pdftkFactory = null)
     {
         //  Set up all the additional actors for processing
         $this->cs2Type = $csType;
@@ -38,9 +39,12 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
      * save a copy to the file system
      *
      * @param Lpa $lpa
+     *
      * @throws Exception
+     *
+     * @return void
      */
-    protected function create(Lpa $lpa)
+    protected function create(Lpa $lpa): void
     {
         //  Get the full content and determine the starting page
         $page = 1;
