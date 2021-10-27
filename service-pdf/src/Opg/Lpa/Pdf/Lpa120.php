@@ -23,15 +23,17 @@ class Lpa120 extends AbstractIndividualPdf
      *
      * @var string
      */
-    protected $templateFileName = 'LPA120.pdf';
+    protected string $templateFileName = 'LPA120.pdf';
 
     /**
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to
      * the file system
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    protected function create(Lpa $lpa)
+    protected function create(Lpa $lpa): void
     {
         // No content on pages 1 & 2
         $this->populatePageThree($lpa);
@@ -40,8 +42,10 @@ class Lpa120 extends AbstractIndividualPdf
 
     /**
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    private function populatePageThree(Lpa $lpa)
+    private function populatePageThree(Lpa $lpa): void
     {
         $lpaDocument = $lpa->getDocument();
         $lpaRepeatCaseNumber = $lpa->getRepeatCaseNumber();
@@ -115,7 +119,7 @@ class Lpa120 extends AbstractIndividualPdf
     /**
      * @param Payment $payment
      */
-    private function populatePageFour(Payment $payment)
+    private function populatePageFour(Payment $payment): void
     {
         $this->setData(
             'receive-benefits',
@@ -134,9 +138,10 @@ class Lpa120 extends AbstractIndividualPdf
      * Simple function to return a yes/no string or empty value
      *
      * @param ?bool $valueIn
-     * @return null|string
+     *
+     * @return string
      */
-    private function getYesNoEmptyValueFromBoolean($valueIn)
+    private function getYesNoEmptyValueFromBoolean(bool $valueIn): string
     {
         if ($valueIn === true) {
             return 'yes';

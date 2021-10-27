@@ -27,32 +27,31 @@ class ContinuationSheet2 extends AbstractContinuationSheet
      *
      * @var string
      */
-    protected $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
+    protected string $templateFileName = 'LPC_Continuation_Sheet_2.pdf';
 
     /**
      * @var string
      */
-    private $cs2Type;
+    private string $cs2Type;
 
     /**
      * @var string
      */
-    private $content;
+    private string $content;
 
     /**
-     * @var int
+     * @var bool
      */
-    private $isContinued = false;
+    private bool $isContinued = false;
 
     /**
      * @param Lpa $lpa
-     * @param $cs2Type
-     * @param $fullContent
-     * @param $contentPage
+     * @param string $cs2Type
+     * @param string $fullContent
+     * @param int $contentPage
      * @throws Exception
      */
-    public function __construct(Lpa $lpa, $cs2Type, $fullContent, $contentPage, ?PdftkFactory $pdftkFactory = null)
-    {
+    public function __construct(Lpa $lpa, string $cs2Type, string $fullContent, int $contentPage, ?PdftkFactory $pdftkFactory = null) {
         //  Ensure that the content type and page number selected are allowed
         if (!is_int($contentPage) || $contentPage < 1) {
             throw new Exception('The requested content page must be a positive integer');
@@ -91,8 +90,10 @@ class ContinuationSheet2 extends AbstractContinuationSheet
      * file system
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    protected function create(Lpa $lpa)
+    protected function create(Lpa $lpa): void
     {
         parent::create($lpa);
 

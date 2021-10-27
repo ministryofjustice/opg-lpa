@@ -24,12 +24,12 @@ class ContinuationSheet1 extends AbstractContinuationSheet
      *
      * @var
      */
-    protected $templateFileName = 'LPC_Continuation_Sheet_1.pdf';
+    protected string $templateFileName = 'LPC_Continuation_Sheet_1.pdf';
 
     /**
      * @var array
      */
-    private $actorGroups;
+    private array $actorGroups;
 
     /**
      * @param Lpa $lpa
@@ -46,8 +46,10 @@ class ContinuationSheet1 extends AbstractContinuationSheet
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    protected function create(Lpa $lpa)
+    protected function create(Lpa $lpa): void
     {
         parent::create($lpa);
 

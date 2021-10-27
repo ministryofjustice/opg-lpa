@@ -15,26 +15,28 @@ class Lp1h extends AbstractLp1
      *
      * @var string
      */
-    protected $templateFileName = 'LP1H.pdf';
+    protected string $templateFileName = 'LP1H.pdf';
 
     /**
      * PDF file name for the coversheet
      *
      * @var string
      */
-    protected $coversheetFileName = 'LP1H_CoversheetRegistration.pdf';
+    protected string $coversheetFileName = 'LP1H_CoversheetRegistration.pdf';
 
     /**
      * PDF file name for the draft coversheet
      *
      * @var string
      */
-    protected $coversheetFileNameDraft = 'LP1H_CoversheetInstrument.pdf';
+    protected string $coversheetFileNameDraft = 'LP1H_CoversheetInstrument.pdf';
 
     /**
      * @param PrimaryAttorneyDecisions $primaryAttorneyDecisions
+     *
+     * @return void
      */
-    protected function populatePageSix(PrimaryAttorneyDecisions $primaryAttorneyDecisions = null)
+    protected function populatePageSix(PrimaryAttorneyDecisions $primaryAttorneyDecisions = null): void
     {
         //  Set when primary attorneys can make decisions
         if ($primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
@@ -46,7 +48,7 @@ class Lp1h extends AbstractLp1
     /**
      * @return string
      */
-    protected function getAreaReferenceSuffix()
+    protected function getAreaReferenceSuffix(): string
     {
         return 'hw';
     }
