@@ -19,9 +19,12 @@ class S3Response extends AbstractResponse
      * Store the file on the passed path for retrieval by the API service.
      *
      * @param SplFileInfo $file
+     *
      * @throws InvalidArgumentException|S3Exception
+     *
+     * @return void
      */
-    public function save(SplFileInfo $file)
+    public function save(SplFileInfo $file): void
     {
         $this->logger->info('Response received: ' . $file->getRealPath());
 

@@ -11,18 +11,21 @@ class SqsWorker extends AbstractWorker
     /**
      * Return the object for handling the response
      *
-     * @param $docId
-     * @return Response\AbstractResponse
+     * @param string $docId
+     *
+     * @return Response\S3Response
      */
-    protected function getResponseObject($docId)
+    protected function getResponseObject(string $docId): Response\S3Response
     {
         return new Response\S3Response($docId);
     }
 
     /**
      * @throws \Exception
+     *
+     * @return void
      */
-    public function start()
+    public function start(): void
     {
         $config = Config::getInstance();
 

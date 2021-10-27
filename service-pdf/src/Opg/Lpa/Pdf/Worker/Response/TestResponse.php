@@ -13,8 +13,10 @@ class TestResponse extends AbstractResponse
      * Store the file on the passed path for retrieval by the API service.
      *
      * @param SplFileInfo $file
+     *
+     * @return void
      */
-    public function save(SplFileInfo $file)
+    public function save(SplFileInfo $file): void
     {
         $this->logToConsole('Response received: ' . $file->getRealPath());
 

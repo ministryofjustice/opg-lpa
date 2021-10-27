@@ -10,7 +10,7 @@ class TestWorker extends AbstractWorker
      * @param $docId
      * @return Response\TestResponse
      */
-    protected function getResponseObject($docId)
+    protected function getResponseObject($docId): Response\TestResponse
     {
         return new Response\TestResponse($docId);
     }
