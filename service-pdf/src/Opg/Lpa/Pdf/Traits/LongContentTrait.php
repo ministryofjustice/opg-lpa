@@ -33,7 +33,7 @@ trait LongContentTrait
      *
      * @return boolean
      */
-    private function fillsInstructionsPreferencesBox($content)
+    private function fillsInstructionsPreferencesBox(string $content): bool
     {
         $flatContent = $this->flattenTextContent($content);
 
@@ -43,7 +43,7 @@ trait LongContentTrait
     /**
      * @return int
      */
-    private function getInstructionsPreferencesBoxSize()
+    private function getInstructionsPreferencesBoxSize(): int
     {
         return ($this->fullWidthNumberOfChars + 2) * $this->instructionsPreferencesBoxRows;
     }
@@ -51,7 +51,7 @@ trait LongContentTrait
     /**
      * @return int
      */
-    private function getContinuationSheet2BoxSize()
+    private function getContinuationSheet2BoxSize(): int
     {
         return ($this->fullWidthNumberOfChars + 2) * $this->continuationSheet2BoxRows;
     }
@@ -64,7 +64,7 @@ trait LongContentTrait
      * @param int $pageNo
      * @return string|null
      */
-    private function getInstructionsAndPreferencesContent($content, $pageNo = 1)
+    private function getInstructionsAndPreferencesContent(string $content, int $pageNo = 1): ?string
     {
         $flatContent = $this->flattenTextContent($content);
 
@@ -85,7 +85,7 @@ trait LongContentTrait
      * @param int $pageNo
      * @return null|string
      */
-    private function getContinuationSheet2Content($content, $pageNo)
+    private function getContinuationSheet2Content(string $content, int $pageNo): ?string
     {
         $flatContent = $this->flattenTextContent($content);
 
@@ -102,9 +102,10 @@ trait LongContentTrait
      * Convert all new lines with spaces to fill out to the end of each line
      *
      * @param string $contentIn
+     *
      * @return string
      */
-    private function flattenTextContent($contentIn)
+    private function flattenTextContent(string $contentIn): string
     {
         return LpaFormatter::flattenInstructionsOrPreferences($contentIn);
     }
@@ -115,9 +116,10 @@ trait LongContentTrait
      * The logic is messy but by housing it here we can contain it
      *
      * @param Document $lpaDocument
+     *
      * @return string
      */
-    private function getHowWhenReplacementAttorneysCanActContent(Document $lpaDocument)
+    private function getHowWhenReplacementAttorneysCanActContent(Document $lpaDocument): string
     {
         $content = '';
 
