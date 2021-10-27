@@ -1,5 +1,7 @@
+#prevent in pre and prod for now
 module "eu-west-1" {
   source       = "./modules/region"
+  count        = local.account_name == "development" ? 1 : 0
   account      = local.account
   account_name = local.account_name
   providers = {
@@ -10,7 +12,7 @@ module "eu-west-1" {
 
 module "eu-west-2" {
   source       = "./modules/region"
-  count        = local.account.dr_enabled ? 1 : 0
+  count        = local.account.dr_enabled && local.account_name == "development" ? 1 : 0
   account      = local.account
   account_name = local.account_name
   providers = {
