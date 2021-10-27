@@ -28,11 +28,11 @@ class PdftkFactory
     }
 
     /**
-     * @param string $pdf
+     * @param array|string $pdf
      *
      * @return PdftkPdf
      */
-    public function create(string $pdf): PdftkPdf
+    public function create($pdf): PdftkPdf
     {
         return new PdftkPdf($pdf, ['command' => $this->command]);
     }

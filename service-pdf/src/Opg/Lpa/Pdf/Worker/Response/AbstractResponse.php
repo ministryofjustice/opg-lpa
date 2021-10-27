@@ -30,7 +30,7 @@ abstract class AbstractResponse
      *
      * @var Logger
      */
-    protected Logger $logger;
+    protected $logger;
 
     /**
      * AbstractResponse constructor

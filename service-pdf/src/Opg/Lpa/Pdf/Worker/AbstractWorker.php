@@ -62,13 +62,13 @@ abstract class AbstractWorker
     /**
      * @param string $docId Unique ID representing this job/document.
      * @param string $type The type of PDF to generate.
-     * @param string $lpaData JSON document representing the LPA document.
+     * @param array $lpaData JSON document representing the LPA document.
      *
      * @throws Exception
      *
      * @return void
      */
-    public function run(string $docId, string $type, string $lpaData): void
+    public function run(string $docId, string $type, array $lpaData): void
     {
         $lpaId = null;
 

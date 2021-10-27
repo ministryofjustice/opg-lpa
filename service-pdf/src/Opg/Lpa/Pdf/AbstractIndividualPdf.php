@@ -392,13 +392,13 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * @param AbstractPdf|string $pdf
      * @param int $start
      * @param int $pages
-     * @param int $insertAfter
+     * @param int|string $insertAfter
      *
      * @throws Exception
      *
      * @return void
      */
-    protected function addConstituentPdf(AbstractPdf|string $pdf, int $start, int $pages, int $insertAfter): void
+    protected function addConstituentPdf($pdf, int $start, int $pages, $insertAfter): void
     {
         //  Ensure that the PDF is an expected type
         if (!is_string($pdf) && !$pdf instanceof AbstractPdf) {
@@ -432,9 +432,9 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * @param int $insertAfter
      * @param int|string $insertAfter
      *
-     * @psalm-param 'end'|3|15|17 $insertAfter
+     * @return void
      */
-    protected function addConstituentPdfPage(AbstractPdf|string $pdf, int $pageNumber, int $insertAfter): void
+    protected function addConstituentPdfPage($pdf, int $pageNumber, $insertAfter): void
     {
         $this->addConstituentPdf($pdf, $pageNumber, 1, $insertAfter);
     }
