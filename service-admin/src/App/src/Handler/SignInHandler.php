@@ -33,10 +33,15 @@ class SignInHandler extends AbstractHandler
     private $authService;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private $adminUsers;
 
+    /**
+     * @param AuthenticationService $authService
+     * @param array<string> $adminUsers
+     * @param UserService $userService
+     */
     public function __construct(AuthenticationService $authService, array $adminUsers, UserService $userService)
     {
         $this->authService = $authService;
@@ -48,7 +53,7 @@ class SignInHandler extends AbstractHandler
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $token = $this->getTokenData('token');
 
@@ -61,7 +66,14 @@ class SignInHandler extends AbstractHandler
         ]);
 
         if ($request->getMethod() == 'POST') {
-            $form->setData($request->getParsedBody());
+            $parsedBody = $request->getParsedBody();
+
+            // to protect against a POST body which isn't name/value pairs
+            if (!is_array($parsedBody)) {
+                $parsedBody = [];
+            }
+
+            $form->setData($parsedBody);
 
             if ($form->isValid()) {
                 //  Get the data from the form and authenticate with the service
@@ -76,21 +88,33 @@ class SignInHandler extends AbstractHandler
                         //  Update the JWT data with the user data
                         /** @var Identity $identity */
                         $identity = $result->getIdentity();
-                        $this->addTokenData('token', $identity->getToken());
 
-                        $user = $this->userService->fetch($identity->getUserId());
+                        $token = $identity->getToken();
 
-                        if(!isset($user->name)){
-                            return new HtmlResponse($this->getTemplateRenderer()->render('error::no-user-details-error', [
-                                'user'         => $user,
-                            ]));
+                        // only save the user token if it isn't null
+                        if (!is_null($token)) {
+                            $this->addTokenData('token', $token);
                         }
-                        else {
+
+                        // ensure we have a string for the user ID, even if it's empty
+                        $user = $this->userService->fetch($identity->getUserId() ?? '');
+
+                        if (!isset($user->name)) {
+                            return new HtmlResponse(
+                                $this->getTemplateRenderer()
+                                    ->render('error::no-user-details-error', [
+                                        'user' => $user,
+                                    ])
+                            );
+                        } else {
                             return $this->redirectToRoute('home');
                         }
                     }
 
-                    $form->setAuthError($result->getCode() === Result::FAILURE_ACCOUNT_LOCKED ? 'account-locked' : 'authentication-error');
+                    $form->setAuthError(
+                        $result->getCode() === Result::FAILURE_ACCOUNT_LOCKED ?
+                            'account-locked' : 'authentication-error'
+                    );
                 } else {
                     $form->setAuthError('authorization-error');
                 }

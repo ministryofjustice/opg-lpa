@@ -65,7 +65,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11')]
+                ]
             ]);
 
         $this->applicationsService->shouldReceive('patch')
@@ -112,7 +115,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11')]
+                ]
             ]);
 
         $this->applicationsService->shouldReceive('patch')
@@ -174,7 +180,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Received' , 'receiptDate' => new DateTime('2019-02-11')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Received' , 'receiptDate' => new DateTime('2019-02-11')]
+                ]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -206,7 +215,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking' , 'registrationDate' => new DateTime('2019-02-11')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Checking' , 'registrationDate' => new DateTime('2019-02-11')]
+                ]
             ]);
 
         $this->applicationsService->shouldReceive('patch')
@@ -257,7 +269,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11')]
+                ]
             ]);
 
         $this->applicationsService->shouldReceive('patch')
@@ -308,7 +323,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11')]
+                ]
             ]);
 
         $this->applicationsService->shouldReceive('patch')
@@ -354,7 +372,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => null,'rejectedDate' => null]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => null,'rejectedDate' => null]
+                ]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -381,7 +402,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => null,'rejectedDate' => null]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => null,'rejectedDate' => null]
+                ]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -412,7 +436,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking', 'receiptDate' => new DateTime('2019-02-02')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Checking', 'receiptDate' => new DateTime('2019-02-02')]
+                ]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -442,7 +469,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+                ]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -474,7 +504,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+                ]
             ]);
 
         $this->applicationsService->shouldReceive('patch')
@@ -521,7 +554,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Processed','rejectedDate' => new DateTime('2019-02-10')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Processed','rejectedDate' => new DateTime('2019-02-10')]
+                ]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -561,8 +597,14 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Processed', 'rejectedDate' => new DateTime('2019-02-11')],
-                '98766' => ['status' => 'Received', 'receiptDate' => new DateTime('2019-02-11')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Processed', 'rejectedDate' => new DateTime('2019-02-11')]
+                ],
+                '98766' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Received', 'receiptDate' => new DateTime('2019-02-11')]
+                ]
             ]);
 
         $this->applicationsService->shouldReceive('patch')
@@ -627,7 +669,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Processed','invalidDate' => new DateTime('2019-02-10')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Processed','invalidDate' => new DateTime('2019-02-10')]
+                ]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -659,7 +704,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Processed','withdrawnDate' => new DateTime('2019-02-12')]
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Processed','withdrawnDate' => new DateTime('2019-02-12')]
+                ]
             ]);
 
         $result = $this->statusController->get('98765');
@@ -690,7 +738,43 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => null
+                '98765' => [
+                    'deleted'   => false,
+                    'response'  => null
+                ]
+            ]);
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json([
+            '98765' => [
+                'found' => false,
+            ]]), $result);
+    }
+
+    public function testGetLpaDeleted()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
+            ]]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->applicationsService->shouldReceive('filterByIdsAndUser')
+            ->withArgs([['98765'], '12345'])
+            ->once()
+            ->andReturn([$lpa]);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => [
+                    'deleted'   => true,
+                    'response'  => null
+                ]
             ]);
 
         $result = $this->statusController->get('98765');
