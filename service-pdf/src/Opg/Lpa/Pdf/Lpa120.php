@@ -137,7 +137,7 @@ class Lpa120 extends AbstractIndividualPdf
     /**
      * Simple function to return a yes/no string or empty value
      *
-     * @param ?bool $valueIn
+     * @param bool $valueIn
      *
      * @return string
      */

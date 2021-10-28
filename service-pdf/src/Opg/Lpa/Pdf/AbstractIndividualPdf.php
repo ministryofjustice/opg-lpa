@@ -84,10 +84,9 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * Easy way to set the data to fill in the PDF - chainable
      *
-     * @param $key
+     * @param string $key
      * @param string $value
      * @param bool $insertLeadingNewLine
-     * @param (int|string)|false|null $value
      *
      * @return static
      */
@@ -442,10 +441,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * Insert a static PDF after a specified page
      *
-     * @param $pdfFileName
-     * @param $start
-     * @param $pages
-     * @param $insertAfter
+     * @param string $pdfFileName
+     * @param int $start
+     * @param int $pages
+     * @param string $insertAfter
      *
      * @return void
      */

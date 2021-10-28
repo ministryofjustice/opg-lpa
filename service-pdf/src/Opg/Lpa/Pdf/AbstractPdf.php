@@ -41,27 +41,27 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
     /**
      * Unique file name (with path) for the PDF being created
      *
-     * @var
+     * @var string
      */
-    protected $pdfFile;
+    protected string $pdfFile;
 
     /**
      * @var int
      */
-    protected $numberOfPages;
+    protected int $numberOfPages;
 
     /**
      * Formatted LPA reference in the format ANNN-NNNN-NNNN
      *
-     * @var
+     * @var string
      */
-    protected $formattedLpaRef;
+    protected string $formattedLpaRef;
 
     /**
      * Factory for creating mikehaertl\pdftk\Pdf instances
-     * @var
+     * @var PdftkFactory
      */
-    protected $pdftkFactory;
+    protected PdftkFactory $pdftkFactory;
 
     /**
      * Constructor can be triggered with or without an LPA object
@@ -117,11 +117,11 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
         //  If an LPA has been passed then set up the PDF object and trigger the create
         if ($lpa instanceof Lpa) {
             //  Set the formatted LPA ref for use later
-            $this->formattedLpaRef = Formatter::id($lpa->id);
+            $this->formattedLpaRef = Formatter::id($lpa->getId());
 
             //  Log a message for this PDF creation
             $this->logger->info('Creating ' . $pdfFileName . ' for ' . $this->formattedLpaRef, [
-                'lpaId' => $lpa->id
+                'lpaId' => $lpa->getId()
             ]);
 
             //  Trigger the create now - this will trigger in the child class
@@ -136,7 +136,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
      * @param string $templatePdfFileName
      * @return string
      */
-    protected function getTemplatePdfFilePath($templatePdfFileName)
+    protected function getTemplatePdfFilePath(string $templatePdfFileName): string
     {
         return $this->config['service']['assets']['template_path_on_ram_disk'] . '/' . $templatePdfFileName;
     }
@@ -144,10 +144,10 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
     /**
      * Get a unique intermediary file name and path - a micro timestamp will be used here to ensure uniqueness
      *
-     * @param $intermediatePdfFileName
+     * @param string $intermediatePdfFileName
      * @return string
      */
-    protected function getIntermediatePdfFilePath(string $intermediatePdfFileName)
+    protected function getIntermediatePdfFilePath(string $intermediatePdfFileName): string
     {
         //  Create a (near) unique intermediate file name using the formatted LPA ref (if set) and a micro timestamp
         if (!is_null($this->formattedLpaRef)) {

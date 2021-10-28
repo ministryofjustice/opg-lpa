@@ -14,16 +14,16 @@ abstract class AbstractResponse
     /**
      * Document ID value
      *
-     * @var
+     * @var string
      */
     protected string $docId;
 
     /**
      * Config to use with the response
      *
-     * @var
+     * @var Config
      */
-    protected $config;
+    protected Config $config;
 
     /**
      * Logger utility
@@ -54,7 +54,7 @@ abstract class AbstractResponse
     /**
      * Echo a string message in the console using the document ID prefix
      *
-     * @param $message
+     * @param string $message
      *
      * @return void
      */

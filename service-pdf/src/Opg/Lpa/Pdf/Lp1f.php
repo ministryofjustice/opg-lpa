@@ -13,21 +13,21 @@ class Lp1f extends AbstractLp1
     /**
      * PDF template file name (without path) for this PDF object
      *
-     * @var
+     * @var string
      */
     protected string $templateFileName = 'LP1F.pdf';
 
     /**
      * PDF file name for the coversheet
      *
-     * @var
+     * @var string
      */
     protected string $coversheetFileName = 'LP1F_CoversheetRegistration.pdf';
 
     /**
      * PDF file name for the draft coversheet
      *
-     * @var
+     * @var string
      */
     protected string $coversheetFileNameDraft = 'LP1F_CoversheetInstrument.pdf';
 
@@ -40,7 +40,12 @@ class Lp1f extends AbstractLp1
     {
         //  Set when primary attorneys can make decisions
         if ($primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-            $whenAttorneysMakeDecisions = ($primaryAttorneyDecisions->when == PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW ? 'when-lpa-registered' : 'when-donor-lost-mental-capacity');
+            $whenAttorneysMakeDecisions = (
+                $primaryAttorneyDecisions->getWhen() == PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW ?
+                    'when-lpa-registered' :
+                    'when-donor-lost-mental-capacity'
+            );
+
             $this->setData('when-attorneys-may-make-decisions', $whenAttorneysMakeDecisions);
         }
     }

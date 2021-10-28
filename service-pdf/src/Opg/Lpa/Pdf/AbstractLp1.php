@@ -260,54 +260,48 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                     $this->setCheckBox('replacement-attorney-' . $i . '-is-trust-corporation')
                         ->setData(
                             'lpa-document-replacementAttorneys-' . $i . '-name-last',
-                            (string) $replacementAttorney->getName()
+                            $replacementAttorney->getName()
                         );
                 } else {
                     $name = $replacementAttorney->getName();
                     $dobDate = $replacementAttorney->getDob()->getDate();
 
-                    $this->setData(
-                        'lpa-document-replacementAttorneys-' . $i . '-name-title',
-                        $name->getTitle()
-                    )
-                        ->setData(
+                    if ($name instanceof LongName) {
+                        $this->setData(
+                            'lpa-document-replacementAttorneys-' . $i . '-name-title',
+                            $name->getTitle()
+                        )->setData(
                             'lpa-document-replacementAttorneys-' . $i . '-name-first',
                             $name->getFirst()
-                        )
-                        ->setData(
+                        )->setData(
                             'lpa-document-replacementAttorneys-' . $i . '-name-last',
                             $name->getLast()
-                        )
-                        ->setData(
+                        )->setData(
                             'lpa-document-replacementAttorneys-' . $i . '-dob-date-day',
                             $dobDate->format('d')
-                        )
-                        ->setData(
+                        )->setData(
                             'lpa-document-replacementAttorneys-' . $i . '-dob-date-month',
                             $dobDate->format('m')
-                        )
-                        ->setData(
+                        )->setData(
                             'lpa-document-replacementAttorneys-' . $i . '-dob-date-year',
                             $dobDate->format('Y')
                         );
+                    }
                 }
 
                 $this->setData(
                     'lpa-document-replacementAttorneys-' . $i . '-address-address1',
                     $address->getAddress1()
-                )
-                    ->setData(
-                        'lpa-document-replacementAttorneys-' . $i . '-address-address2',
-                        $address->getAddress2()
-                    )
-                    ->setData(
-                        'lpa-document-replacementAttorneys-' . $i . '-address-address3',
-                        $address->getAddress3()
-                    )
-                    ->setData(
-                        'lpa-document-replacementAttorneys-' . $i . '-address-postcode',
-                        $address->getPostcode()
-                    );
+                )->setData(
+                    'lpa-document-replacementAttorneys-' . $i . '-address-address2',
+                    $address->getAddress2()
+                )->setData(
+                    'lpa-document-replacementAttorneys-' . $i . '-address-address3',
+                    $address->getAddress3()
+                )->setData(
+                    'lpa-document-replacementAttorneys-' . $i . '-address-postcode',
+                    $address->getPostcode()
+                );
 
                 if ($replacementAttorney->getEmail() instanceof EmailAddress) {
                     $this->setData(
