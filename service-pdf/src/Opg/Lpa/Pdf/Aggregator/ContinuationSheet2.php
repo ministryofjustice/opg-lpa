@@ -17,16 +17,16 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
     use LongContentTrait;
 
     /**
-     * @var
+     * @var string
      */
-    private $cs2Type;
+    private string $cs2Type;
 
     /**
      * @param Lpa|null $lpa
      * @param string $csType
      * @param PdftkFactory|null $pdftkFactory
      */
-    public function __construct(Lpa $lpa = null, string $csType, ?PdftkFactory $pdftkFactory = null)
+    public function __construct(?Lpa $lpa, string $csType, ?PdftkFactory $pdftkFactory = null)
     {
         //  Set up all the additional actors for processing
         $this->cs2Type = $csType;
@@ -48,21 +48,20 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
     {
         //  Get the full content and determine the starting page
         $page = 1;
-        $fullContent = null;
 
         switch ($this->cs2Type) {
             case ContinuationSheet2Pdf::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS:
-                $fullContent = $lpa->document->primaryAttorneyDecisions->howDetails;
+                $fullContent = $lpa->getDocument()->getPrimaryAttorneyDecisions()->getHowDetails();
                 break;
             case ContinuationSheet2Pdf::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN:
-                $fullContent = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
+                $fullContent = $this->getHowWhenReplacementAttorneysCanActContent($lpa->getDocument());
                 break;
             case ContinuationSheet2Pdf::CS2_TYPE_PREFERENCES:
-                $fullContent = $lpa->document->preference;
+                $fullContent = $lpa->getDocument()->getPreference();
                 $page = 2;
                 break;
             case ContinuationSheet2Pdf::CS2_TYPE_INSTRUCTIONS:
-                $fullContent = $lpa->document->instruction;
+                $fullContent = $lpa->getDocument()->getInstruction();
                 $page = 2;
                 break;
             default:

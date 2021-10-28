@@ -13,7 +13,7 @@ class ContinuationSheet3 extends AbstractContinuationSheet
     /**
      * PDF template file name (without path) for this PDF object
      *
-     * @var
+     * @var string
      */
     protected string $templateFileName = 'LPC_Continuation_Sheet_3.pdf';
 
@@ -28,7 +28,7 @@ class ContinuationSheet3 extends AbstractContinuationSheet
     {
         parent::create($lpa);
 
-        $this->setData('cs3-donor-full-name', (string) $lpa->document->donor->name);
+        $this->setData('cs3-donor-full-name', (string) $lpa->getDocument()->getDonor()->getName());
 
         //  Set footer data
         $this->setFooter('cs3-footer-right', 'cs3');
