@@ -17,7 +17,7 @@ class LoggingErrorListenerDelegatorFactory
      * @param callable $callback
      * @return ErrorHandler
      */
-    public function __invoke(ContainerInterface $container, string $name, callable $callback) : ErrorHandler
+    public function __invoke(ContainerInterface $container, string $name, callable $callback): ErrorHandler
     {
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $callback();

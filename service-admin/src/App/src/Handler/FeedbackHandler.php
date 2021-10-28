@@ -36,7 +36,7 @@ class FeedbackHandler extends AbstractHandler
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new Feedback([
             'csrf' => $this->getTokenData('csrf'),
@@ -46,12 +46,21 @@ class FeedbackHandler extends AbstractHandler
         $earliestAvailableTime = null;
 
         if ($request->getMethod() == 'POST') {
-            $form->setData($request->getParsedBody());
+            $parsedBody = $request->getParsedBody();
+
+            // protect against POST body which can't be parsed to an array
+            if (!is_array($parsedBody)) {
+                $parsedBody = [];
+            }
+
+            $form->setData($parsedBody);
 
             if ($form->isValid()) {
-                //  Get the data from the form
-                $startDate = $form->getDateValue('start-date');
-                $endDate = $form->getDateValue('end-date');
+                // Get the data from the form; if start date or end date are null
+                // (e.g. if someone was messing about manually with the form),
+                // set them to today
+                $startDate = $form->getDateValue('start-date') ?? new DateTime();
+                $endDate = $form->getDateValue('end-date') ?? new DateTime();
 
                 $result = $this->feedbackService->search($startDate, $endDate);
 
@@ -85,10 +94,10 @@ class FeedbackHandler extends AbstractHandler
     /**
      * Parse the feedback results into a presentable or an exportable format
      *
-     * @param array $feedbackResults
-     * @return array
+     * @param array<array> $feedbackResults
+     * @return array<string, mixed>
      */
-    private function parseFeedbackResults(array $feedbackResults)
+    private function parseFeedbackResults(array $feedbackResults): array
     {
         $parsedResults = [];
 
@@ -133,14 +142,19 @@ class FeedbackHandler extends AbstractHandler
     /**
      * Export the contents of the data array to a CSV file
      *
-     * @param array $data
+     * @param array<string, mixed> $data
+     * @return void
      */
-    private function exportToCsv(array $data)
+    private function exportToCsv(array $data): void
     {
         $filename = sprintf('FeedbackExport_%s_%s.csv', date('Y-m-d'), date('h.i.s'));
         $fullFilename = '/tmp/' . $filename;
 
         $file = fopen($fullFilename, "w");
+
+        if (!$file) {
+            throw new \RuntimeException('could not open file ' . $fullFilename);
+        }
 
         //  Write the headings to the first line
         $headings = array_keys($data);
@@ -163,13 +177,19 @@ class FeedbackHandler extends AbstractHandler
 
         fclose($file);
 
+        $file = fopen($fullFilename, 'rb');
+
+        if (!$file) {
+            throw new \RuntimeException('could not read file ' . $fullFilename);
+        }
+
         header('Content-Type: text/csv; charset=utf-8');
         header("Content-disposition: attachment; filename=" . $filename);
         header('Pragma: no-cache');
         header("Expires: 0");
 
         //  Dump the file and remove the local copy
-        fpassthru(fopen($fullFilename, 'rb'));
+        fpassthru($file);
         unlink($fullFilename);
 
         exit;

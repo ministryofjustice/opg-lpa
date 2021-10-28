@@ -11,7 +11,7 @@ use Laminas\Validator\Regex as ZendRegex;
 class Regex extends ZendRegex
 {
     /**
-     * @var array
+     * @var array<string, string>
      */
     protected $messageTemplates = [
         self::NOT_MATCH  => 'not-match',

@@ -26,16 +26,17 @@ class FeedbackService
     /**
      * @param DateTime $startDate
      * @param DateTime $endDate
-     * @return array|bool|null
+     * @return mixed|bool|null
      */
     public function search(DateTime $startDate, DateTime $endDate)
     {
         try {
             return $this->client->httpGet('/user-feedback', [
-                'from'  => $startDate->format('Y-m-d'),
-                'to'    => $endDate->format('Y-m-d'),
+                'from' => $startDate->format('Y-m-d'),
+                'to' => $endDate->format('Y-m-d'),
             ]);
-        } catch (ApiException $ignore) {}
+        } catch (ApiException $ignore) {
+        }
 
         return false;
     }

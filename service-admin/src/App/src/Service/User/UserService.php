@@ -26,7 +26,7 @@ class UserService
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return null|User
      */
     public function fetch($id)
@@ -40,8 +40,14 @@ class UserService
         return null;
     }
 
-    // convert the date fields for a single user
-    private function convertDates($user)
+    /**
+     * Convert the date fields for a single user.
+     * Returns the user with the modified dates.
+     *
+     * @param array<string, mixed> $user
+     * @return array<string, mixed>
+     */
+    private function convertDates(array $user): array
     {
         //  Parse the datetime fields as required
         $dateFields = [
@@ -54,7 +60,10 @@ class UserService
 
         foreach ($dateFields as $dateField) {
             if (array_key_exists($dateField, $user) && isset($user[$dateField])) {
-                $user[$dateField] = new DateTime($user[$dateField]['date'], new DateTimeZone($user[$dateField]['timezone']));
+                $user[$dateField] = new DateTime(
+                    $user[$dateField]['date'],
+                    new DateTimeZone($user[$dateField]['timezone'])
+                );
             }
         }
 
@@ -63,7 +72,7 @@ class UserService
 
     /**
      * @param string $email
-     * @return array|bool
+     * @return array<string, mixed>|bool
      */
     public function search(string $email)
     {
@@ -87,7 +96,8 @@ class UserService
                     if (is_array($lpaData) && array_key_exists('total', $lpaData)) {
                         $numberOfLpas = $lpaData['total'];
                     }
-                } catch (Exception $ignore) {}
+                } catch (Exception $ignore) {
+                }
 
                 $userData['numberOfLpas'] = $numberOfLpas;
             }
@@ -99,12 +109,12 @@ class UserService
     }
 
     /**
-     * @param array $params
-     * @return array|bool
+     * @param array<string, mixed> $params
+     * @return array<string, mixed>
      */
     public function match(array $params)
     {
         $users = $this->client->httpGet('/v2/users/match', $params);
-        return array_map(fn($user) => $this->convertDates($user), $users);
+        return array_map(fn ($user) => $this->convertDates($user), $users);
     }
 }

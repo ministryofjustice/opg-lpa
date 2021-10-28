@@ -19,7 +19,7 @@ class SignInHandlerFactory
      * @param ContainerInterface $container
      * @return RequestHandlerInterface
      */
-    public function __invoke(ContainerInterface $container) : RequestHandlerInterface
+    public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
         $authService = $container->get(AuthenticationService::class);
         $config = $container->get('config');

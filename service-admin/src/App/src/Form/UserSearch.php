@@ -18,7 +18,7 @@ class UserSearch extends AbstractForm
     /**
      * UserSearch constructor
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function __construct($options = [])
     {
