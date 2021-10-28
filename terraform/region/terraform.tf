@@ -7,6 +7,18 @@ terraform {
     role_arn       = "arn:aws:iam::311462405659:role/opg-lpa-ci"
     dynamodb_table = "remote_lock"
   }
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+    pagerduty = {
+      source  = "pagerduty/pagerduty"
+      version = "~> 1.10"
+    }
+  }
+  required_version = ">= 1.0"
 }
 
 provider "aws" {
@@ -53,14 +65,9 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  region = "eu-west-1"
-  alias  = "legacy-lpa"
-  assume_role {
-    role_arn     = "arn:aws:iam::550790013665:role/${var.default_role}"
-    session_name = "terraform-session"
-  }
-}
+
+
+
 
 
 provider "pagerduty" {
