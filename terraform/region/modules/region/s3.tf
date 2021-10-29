@@ -72,7 +72,6 @@ resource "aws_s3_bucket_public_access_block" "access_log" {
 resource "aws_s3_bucket_policy" "access_log" {
   bucket = aws_s3_bucket.access_log.id
   policy = data.aws_iam_policy_document.loadbalancer_logging.json
-
 }
 
 #tfsec:ignore:AWS002 #tfsec:ignore:AWS077 - no logging or versioning required as a temp cache
