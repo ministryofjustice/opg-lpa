@@ -25,7 +25,8 @@ The initial release consists of static pages that are public. The first form wil
 Except for public resources, deny by default.  This does happen to some extent in that the flask site needs nginx to actively be configured to proxy_pass pages to it. However we need to be careful with any wildcard instructions to nginx.
 
 A02:2021 Cryptographic failure, (formerly known as Sensitive Data Exposure).
-We avoid having any secrets in the repo.
+We do not keep any secrets in the repository and any in use will be protected using secrets management services, and accessed by code from there
+see : [OPG security policy](https://docs.opg.service.justice.gov.uk/documentation/guides/security_process.html#security-in-our-process)
 
 A03:2021 Injection (ths category now includes Cross Site Scripting)
 This will be worth addressing when we have forms to submit. We already have some headers in place against this (see "Other considerations" section)
