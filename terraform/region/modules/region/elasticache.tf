@@ -15,9 +15,9 @@ resource "aws_elasticache_subnet_group" "private_subnets" {
 resource "aws_elasticache_replication_group" "front_cache" {
   replication_group_id          = "${local.account_name_short}-${local.region_name}-front-cache-rg"
   replication_group_description = "front cache replication group"
-  parameter_group_name          = "default.redis5.0"
+  parameter_group_name          = "default.redis6.x"
   engine                        = "redis"
-  engine_version                = "5.0.6"
+  engine_version                = "6.x"
   node_type                     = "cache.t2.micro"
   number_cache_clusters         = local.cache_cluster_count
   transit_encryption_enabled    = true
