@@ -1,62 +1,9 @@
-#tfsec:ignore:AWS089
-resource "aws_cloudwatch_log_group" "online-lpa" {
-  name              = "online-lpa"
-  retention_in_days = local.account.retention_in_days
-
-  tags = merge(
-    local.default_tags,
-    local.shared_component_tag,
-    {
-      "Name" = "online-lpa"
-    },
-  )
-}
-
-data "aws_cloudwatch_log_group" "cloudtrail" {
-  name     = "online_lpa_cloudtrail_${local.account_name}"
-  provider = aws.eu-west-1
-}
-
-resource "aws_cloudwatch_log_metric_filter" "breakglass_metric" {
-  count          = local.account.is_production ? 1 : 0
-  name           = "BreakGlassConsoleLogin"
-  pattern        = "{ ($.eventType = \"AwsConsoleSignIn\") && ($.userIdentity.arn = \"arn:aws:sts::${local.account_id}:assumed-role/breakglass/*\") }"
-  log_group_name = data.aws_cloudwatch_log_group.cloudtrail.name
-
-  metric_transformation {
-    name      = "EventCount"
-    namespace = "online-lpa/Cloudtrail"
-    value     = "1"
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "account_breakglass_login_alarm" {
-  count               = local.account.is_production ? 1 : 0
-  actions_enabled     = true
-  alarm_name          = "${local.account_name} breakglass console login check"
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_slack_breakglass_alerts.arn]
-  ok_actions          = [aws_sns_topic.cloudwatch_to_slack_breakglass_alerts.arn]
-  alarm_description   = "number of breakglass attempts"
-  namespace           = "online-lpa/Cloudtrail"
-  metric_name         = "EventCount"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  period              = 60
-  evaluation_periods  = 1
-  datapoints_to_alarm = 1
-  statistic           = "Sum"
-  tags                = merge(local.default_tags, local.shared_component_tag)
-  threshold           = 1
-  treat_missing_data  = "notBreaching"
-}
-
-
-# elasticache cloudwatch alerts
 resource "aws_cloudwatch_metric_alarm" "elasticache_high_cpu_utilization" {
   count                     = local.cache_cluster_count
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn]
   alarm_description         = "High CPU usage on ${element(local.cache_member_clusters, count.index)}"
-  alarm_name                = "High CPU Utilization on ${element(local.cache_member_clusters, count.index)}"
+  alarm_name                = "high-cpu-utilization-${element(local.cache_member_clusters, count.index)}"
   comparison_operator       = "GreaterThanThreshold"
   datapoints_to_alarm       = 2
   evaluation_periods        = 2
@@ -78,8 +25,8 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
   count                     = local.cache_cluster_count
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn]
-  alarm_description         = "High swap mem usage on ${element(local.cache_member_clusters, count.index)}"
-  alarm_name                = "High swap mem Utilization on ${element(local.cache_member_clusters, count.index)}"
+  alarm_description         = "High swap mem usage on ${element(local.cache_member_clusters, count.index)} "
+  alarm_name                = "high-swap-mem-${element(local.cache_member_clusters, count.index)}}"
   comparison_operator       = "GreaterThanThreshold"
   datapoints_to_alarm       = 2
   evaluation_periods        = 2
@@ -98,7 +45,7 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
 }
 
 resource "aws_cloudwatch_event_rule" "tasks_stopped" {
-  name        = "${local.account_name}-capture-ecs-task-stopped"
+  name        = "${local.account_name}-${local.region_name}-capture-ecs-task-stopped"
   description = "Capture each task-stopped event in ECS"
 
   event_pattern = jsonencode({
