@@ -99,6 +99,7 @@ dc-build-clean:
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache
 
 # only reset the front container - uesful for quick reset when only been working on front component
