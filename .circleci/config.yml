@@ -18,6 +18,14 @@ pr_build: &pr_build
         requires: [node_build_web]
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: flask_docker_build
+        ecr_repository_name_prefix: online-lpa/front_v2
+        service_path: service-front-v2
+        build_web: false
+        unit_test: false
+        filters: { branches: { ignore: [main] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: admin_docker_build
         ecr_repository_name_prefix: online-lpa/admin
         service_path: service-admin
@@ -136,6 +144,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build
           ]
@@ -151,6 +160,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build
           ]
@@ -237,6 +247,14 @@ path_to_live: &path_to_live
         unit_test: false
         filters: { branches: { only: [main] } }
 
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: flask_docker_build
+        ecr_repository_name_prefix: online-lpa/front_v2
+        service_path: service-front-v2
+        build_web: false
+        unit_test: false
+        filters: { branches: { only: [main] } }
+
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-build-preproduction
         account_id: "987830934591"
@@ -271,7 +289,7 @@ path_to_live: &path_to_live
         lambda_name: perfplat-api
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-api-ci
-        filters: { branches: { only: [ master ] } }
+        filters: { branches: { only: [ main ] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-worker-build-production
@@ -289,7 +307,7 @@ path_to_live: &path_to_live
         lambda_name: perfplat-api
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-api-ci
-        filters: { branches: { only: [ master ] } }
+        filters: { branches: { only: [ main ] } }
 
     - infrastructure_and_deployment/plan_check_terraform:
         name: preprod_account_plan_check_terraform_pr_build
@@ -337,6 +355,7 @@ path_to_live: &path_to_live
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            flask_docker_build,
             perfplat-lambda-docker-worker-build-preproduction,
             perfplat-lambda-docker-worker-build-production,
             perfplat-lambda-docker-api-build-preproduction,
@@ -353,6 +372,7 @@ path_to_live: &path_to_live
             admin_docker_build,
             api_docker_build,
             pdf_docker_build,
+            flask_docker_build,
             perfplat-lambda-docker-worker-build-preproduction,
             perfplat-lambda-docker-worker-build-production,
             perfplat-lambda-docker-api-build-preproduction,
