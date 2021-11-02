@@ -18,7 +18,7 @@ class SystemMessageHandlerFactory
      * @param ContainerInterface $container
      * @return RequestHandlerInterface
      */
-    public function __invoke(ContainerInterface $container) : RequestHandlerInterface
+    public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
         $cache = $container->get(Cache::class);
 

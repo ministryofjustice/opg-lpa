@@ -144,11 +144,6 @@
         <p>
             Your <a href="/send-feedback">feedback</a> will help us to improve
         </p>
-        <div class="panel panel-border-narrow govuk-details__text" role="note" aria-label="Information">
-        <p>
-            <a href="https://consult.justice.gov.uk/opg/modernising-lasting-powers-of-attorney" rel="noreferrer noopener" target="_blank">Have your say on the future of LPAs<span class="visually-hidden"> (opens in new tab)</a> by taking part in our public consultation
-        </p>
-    </div>
         {% endif %}
 
 
@@ -183,6 +178,9 @@
     <script>
         // config for the GOVUK analytics module
         var gaConfig = { universalId: 'UA-33184303-1', govId: 'UA-145652997-1' }
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', gaConfig.universalId]);
+        _gaq.push(['_trackPageview']);
     </script>
 
     <script src="/assets/v2/js/libs/jquery.min.js"></script>

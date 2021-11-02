@@ -11,10 +11,14 @@ use RuntimeException;
 trait JwtTrait
 {
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param object|string $value
+     * @return void
      */
-    private function addTokenData($name, $value)
+    // phpstan wants a typehint for $value, but PHP 7 won't accept union typehints;
+    // consquently, we just tell phpstan to ignore this method signature
+    /* @phpstan-ignore-next-line */
+    private function addTokenData(string $name, $value): void
     {
         $this->verifyTokenDataExists();
 
@@ -22,14 +26,17 @@ trait JwtTrait
     }
 
     /**
-     * @param $name
-     * @return mixed
+     * @param string $name
+     * @return string|null|object
      */
-    private function getTokenData($name = null)
+    // phpstan wants a return type, but PHP 7 won't accept union typehints;
+    // consquently, we just tell phpstan to ignore this method signature
+    /* @phpstan-ignore-next-line */
+    private function getTokenData(string $name = null)
     {
         $this->verifyTokenDataExists();
 
-        if (array_key_exists($name, $_SESSION['jwt-payload'])) {
+        if (!is_null($name) && array_key_exists($name, $_SESSION['jwt-payload'])) {
             return $_SESSION['jwt-payload'][$name];
         }
 
@@ -37,9 +44,10 @@ trait JwtTrait
     }
 
     /**
-     * @param $name
+     * @param string $name
+     * @return void
      */
-    private function removeTokenData($name)
+    private function removeTokenData(string $name): void
     {
         $this->verifyTokenDataExists();
 
@@ -47,9 +55,11 @@ trait JwtTrait
     }
 
     /**
-     *  Clear all token data down
+     * Clear all token data down
+     *
+     * @return void
      */
-    private function clearTokenData()
+    private function clearTokenData(): void
     {
         $this->verifyTokenDataExists();
 
@@ -58,8 +68,10 @@ trait JwtTrait
 
     /**
      * Centralised function to verify that the JWT token data is present in the session
+     *
+     * @return void
      */
-    private function verifyTokenDataExists()
+    private function verifyTokenDataExists(): void
     {
         if (!array_key_exists('jwt-payload', $_SESSION)) {
             throw new RuntimeException('JWT token not available');
