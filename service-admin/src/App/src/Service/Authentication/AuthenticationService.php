@@ -29,8 +29,8 @@ class AuthenticationService
     /**
      * Authenticate the credentials via the API
      *
-     * @param $email
-     * @param $password
+     * @param string $email
+     * @param string $password
      * @return Result
      */
     public function authenticate($email, $password)
@@ -64,7 +64,7 @@ class AuthenticationService
     /**
      * Verify the user with the token value
      *
-     * @param $token
+     * @param string $token
      * @return Result
      */
     public function verify($token)

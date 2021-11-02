@@ -26,7 +26,7 @@ class ViewDataMiddleware implements MiddlewareInterface
 
     /**
      * @param PlatesRenderer $renderer
-     * @param $dockerTag
+     * @param string $dockerTag
      */
     public function __construct(PlatesRenderer $renderer, $dockerTag)
     {
