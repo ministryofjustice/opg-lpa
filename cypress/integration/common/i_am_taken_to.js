@@ -133,6 +133,11 @@ Then(`I am taken to the donor page`, () => {
     checkAccordionHeaderContains('Who is the donor for this LPA?');
 })
 
+Then(`I am taken to the completed feedback page`, () => {
+    cy.url().should('contain','completed-feedback');
+    cy.contains('Send us feedback');
+});
+
 Then(`I am taken to the post logout url`, () => {
     cy.log('I should be on ' + Cypress.config().postLogoutUrl );
     cy.url().should('eq',Cypress.config().postLogoutUrl );
