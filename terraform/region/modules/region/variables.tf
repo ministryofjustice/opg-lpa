@@ -1,6 +1,6 @@
 variable "account" {
+  description = "the account object passed into the region module."
   type = object({
-
     account_name_short = string
     account_id         = string
     is_production      = string
@@ -15,5 +15,6 @@ variable "account" {
 }
 
 variable "account_name" {
-  type = string
+  description = "account name passed into the region module"
+  type        = string
 }

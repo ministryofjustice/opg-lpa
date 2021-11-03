@@ -1,16 +1,20 @@
 variable "default_role" {
-  default = "opg-lpa-ci"
+  description = "default aws IAM role to use. defaults to the CI Role"
+  default     = "opg-lpa-ci"
 }
 
 variable "pagerduty_token" {
+  description = "pagerduty token"
 }
 
 # variables for terraform.tfvars.json
 variable "account_mapping" {
-  type = map(any)
+  description = "maps the tfvars.json files to accounts"
+  type        = map(any)
 }
 
 variable "accounts" {
+  description = "the account map loaded from tfvars.json"
   type = map(
     object({
       account_id         = string
