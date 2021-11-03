@@ -198,6 +198,18 @@ Then(`I create PF LPA test fixture with donor, single attorney, cert provider, i
     });
 })
 
+Then(`I create PF LPA test fixture with donor, single attorney, cert provider, people to notify, instructions, preferences`, () => {
+    cy.runPythonApiCommand("createLpa.py -d -asingle -cp -pn -i").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences through the API with id " + lpaId);
+    });
+})
+
+Then(`I create HW LPA test fixture with donor, single attorney, cert provider, people to notify, instructions, preferences`, () => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -asingle -cp -pn -i").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences through the API with id " + lpaId);
+    });
+})
+
 Then(`an existing user has the email {string}`, (email) => {
     cy.runPythonApiCommand("manageUsers.py getOrCreate " + email + " Pass1234").its('stdout').then(getUserResult => {
         const getUserResultObj = JSON.parse(getUserResult);
