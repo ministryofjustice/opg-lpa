@@ -99,6 +99,9 @@ dc-build-clean:
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
+	rm -fr ./service-front/vendor; \
+	rm -fr ./service-pdf/vendor; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache
 
 # only reset the front container - uesful for quick reset when only been working on front component
@@ -112,9 +115,33 @@ reset-front:
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	docker-compose build --no-cache front-web
 	docker-compose build --no-cache front-app
-	docker-compose run front-composer
+
+# only reset the front web container - uesful for quick reset after nginx.conf tweak
+.PHONY: reset-front-web
+reset-front-web:
+	@${MAKE} dc-down
+	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
+	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
+	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
+	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	docker rmi lpa-front-web || true; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
+	docker-compose build --no-cache front-web
+
+.PHONY: reset-flask
+reset-flask:
+	@${MAKE} dc-down
+	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
+	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
+	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
+	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	docker rmi lpa-flask-app || true; \
+	docker-compose build --no-cache flask-app
 
 # only reset the api container
 .PHONY: reset-api
@@ -124,9 +151,9 @@ reset-api:
 	docker rmi lpa-api-web || true; \
 	docker rmi lpa-api-app || true; \
 	rm -fr ./service-api/vendor; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	docker-compose build --no-cache api-web
 	docker-compose build --no-cache api-app
-	docker-compose run api-composer
 
 .PHONY: dc-down
 dc-down:

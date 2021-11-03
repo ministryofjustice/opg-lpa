@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "front" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.front_web}, ${local.front_app}]"
+  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = merge(local.default_tags, local.front_component_tag)
@@ -160,6 +160,11 @@ data "aws_ecr_repository" "lpa_front_app" {
   name     = "online-lpa/front_app"
 }
 
+data "aws_ecr_repository" "lpa_front_v2_app" {
+  provider = aws.management
+  name     = "online-lpa/front_v2_app"
+}
+
 //-----------------------------------------------
 // front ECS Service Task Container level config
 
@@ -177,6 +182,12 @@ locals {
         "protocol" : "tcp"
       }
     ],
+    "dependsOn" : [
+      {
+        "containerName" : "app_v2",
+        "condition" : "START"
+      }
+    ]
     "volumesFrom" : [],
     "logConfiguration" : {
       "logDriver" : "awslogs",
@@ -190,7 +201,10 @@ locals {
       { "name" : "APP_HOST", "value" : "127.0.0.1" },
       { "name" : "APP_PORT", "value" : "9000" },
       { "name" : "TIMEOUT", "value" : "60" },
-      { "name" : "CONTAINER_VERSION", "value" : var.container_version }
+      { "name" : "CONTAINER_VERSION", "value" : var.container_version },
+      { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name },
+      { "name" : "APP_V2_HOST", "value" : "127.0.0.1" },
+      { "name" : "APP_V2_PORT", "value" : "8005" },
     ]
     }
   )
@@ -250,6 +264,54 @@ locals {
         { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : aws_sqs_queue.pdf_fifo_queue.id },
         { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
         { "name" : "OPG_LPA_OS_PLACES_HUB_ENDPOINT", "value" : "https://api.os.uk/search/places/v1/postcode" },
+        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache.primary_endpoint_address}" },
+        { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name },
+        { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" }
+      ]
+    }
+  )
+
+  front_v2_app = jsonencode(
+    {
+      "cpu" : 1,
+      "essential" : true,
+      "image" : "${data.aws_ecr_repository.lpa_front_v2_app.repository_url}:${var.container_version}",
+      "mountPoints" : [],
+      "name" : "app_v2",
+      "portMappings" : [
+        {
+          "containerPort" : 8005,
+          "hostPort" : 8005,
+          "protocol" : "tcp"
+        }
+      ],
+      "volumesFrom" : [],
+      "logConfiguration" : {
+        "logDriver" : "awslogs",
+        "options" : {
+          "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
+          "awslogs-region" : "eu-west-1",
+          "awslogs-stream-prefix" : "${local.environment}.front-v2-app.online-lpa"
+        }
+      },
+      "secrets" : [
+        { "name" : "OPG_LPA_FRONT_CSRF_SALT", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.name}" },
+      ],
+      "environment" : [
+        { "name" : "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value" : "${local.dns_namespace_env}${local.front_dns}" },
+        { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "${local.dns_namespace_env}${local.front_dns} localhost 127.0.0.1" },
+        { "name" : "OPG_LPA_FRONT_TRACK_FROM_DATE", "value" : local.track_from_date },
+        { "name" : "OPG_LPA_STACK_NAME", "value" : local.environment },
+        { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
+        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : local.account_name },
+        { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
+        { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
+        { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },
+        { "name" : "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-sessions.name },
+        { "name" : "OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-properties.name },
+        { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
+        { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
+        { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
         { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache.primary_endpoint_address}" },
         { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" }
       ]
