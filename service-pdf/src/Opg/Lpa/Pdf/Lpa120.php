@@ -141,7 +141,7 @@ class Lpa120 extends AbstractIndividualPdf
      *
      * @return string
      */
-    private function getYesNoEmptyValueFromBoolean(bool $valueIn): string
+    private function getYesNoEmptyValueFromBoolean(?bool $valueIn): string
     {
         if ($valueIn === true) {
             return 'yes';

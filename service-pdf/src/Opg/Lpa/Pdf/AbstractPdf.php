@@ -79,6 +79,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
             $pdftkFactory = new PdftkFactory();
         }
         $this->pdftkFactory = $pdftkFactory;
+        $this->formattedLpaRef = '';
 
         $this->logger = Logger::getInstance();
         $this->config = Config::getInstance();
