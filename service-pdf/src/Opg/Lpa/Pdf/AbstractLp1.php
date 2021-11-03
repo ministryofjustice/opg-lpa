@@ -266,27 +266,25 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                     $name = $replacementAttorney->getName();
                     $dobDate = $replacementAttorney->getDob()->getDate();
 
-                    if ($name instanceof LongName) {
-                        $this->setData(
-                            'lpa-document-replacementAttorneys-' . $i . '-name-title',
-                            $name->getTitle()
-                        )->setData(
-                            'lpa-document-replacementAttorneys-' . $i . '-name-first',
-                            $name->getFirst()
-                        )->setData(
-                            'lpa-document-replacementAttorneys-' . $i . '-name-last',
-                            $name->getLast()
-                        )->setData(
-                            'lpa-document-replacementAttorneys-' . $i . '-dob-date-day',
-                            $dobDate->format('d')
-                        )->setData(
-                            'lpa-document-replacementAttorneys-' . $i . '-dob-date-month',
-                            $dobDate->format('m')
-                        )->setData(
-                            'lpa-document-replacementAttorneys-' . $i . '-dob-date-year',
-                            $dobDate->format('Y')
-                        );
-                    }
+                    $this->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-name-title',
+                        $name->getTitle()
+                    )->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-name-first',
+                        $name->getFirst()
+                    )->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-name-last',
+                        $name->getLast()
+                    )->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-dob-date-day',
+                        $dobDate->format('d')
+                    )->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-dob-date-month',
+                        $dobDate->format('m')
+                    )->setData(
+                        'lpa-document-replacementAttorneys-' . $i . '-dob-date-year',
+                        $dobDate->format('Y')
+                    );
                 }
 
                 $this->setData(
@@ -379,7 +377,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         }
 
         if (count($peopleToNotify) > self::MAX_PEOPLE_TO_NOTIFY_SECTION_6) {
-            // TODO - Historic bug - the check box on the H&W PDF is named incorrecly
+            // TODO - Historic bug - the check box on the H&W PDF is named incorrectly
             $this->setCheckBox('has-more-than-4-notified-people')   //Property and Finance
                 ->setCheckBox('has-more-than-5-notified-people');  //Health and Welfare
         }
@@ -790,7 +788,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $primaryAttorneys = array_splice($primaryAttorneys, self::MAX_ATTORNEYS_SECTION_2);
         $replacementAttorneys = $this->getOrderedAttorneys($document->getReplacementAttorneys());
         $replacementAttorneys = array_splice($replacementAttorneys, self::MAX_REPLACEMENT_ATTORNEYS_SECTION_4);
-        $peopleToNotify = array_splice($document->getPeopleToNotify(), self::MAX_PEOPLE_TO_NOTIFY_SECTION_6);
+        $peopleToNotify = $document->getPeopleToNotify();
+        $peopleToNotify = array_splice($peopleToNotify, self::MAX_PEOPLE_TO_NOTIFY_SECTION_6);
 
         if (!empty($primaryAttorneys) || !empty($replacementAttorneys) || !empty($peopleToNotify)) {
             $continuationSheet1 = new ContinuationSheet1Aggregator(

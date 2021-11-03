@@ -29,18 +29,18 @@ class Lp3 extends AbstractIndividualPdf
     protected string $templateFileName = 'LP3.pdf';
 
     /**
-     * @var NotifiedPerson
+     * @var NotifiedPerson|null
      */
-    private NotifiedPerson $personToNotify;
+    private ?NotifiedPerson $personToNotify;
 
     /**
      * @param Lpa|null $lpa
      * @param NotifiedPerson|null $personToNotify
-     * @param ?PdftkFactory $pdftkFactory
+     * @param PdftkFactory|null $pdftkFactory
      */
     public function __construct(
-        Lpa $lpa = null,
-        NotifiedPerson $personToNotify = null,
+        ?Lpa $lpa = null,
+        ?NotifiedPerson $personToNotify = null,
         ?PdftkFactory $pdftkFactory = null
     ) {
         $this->personToNotify = $personToNotify;
