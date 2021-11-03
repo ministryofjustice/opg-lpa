@@ -1,5 +1,5 @@
 @CreateLpa
-Feature: View Summary for Create a Property and Finance LPA
+Feature: View Summary for a Property and Finance LPA
 
     I want to view the summary for a Property and Finance LPA
 
@@ -53,6 +53,5 @@ Feature: View Summary for Create a Property and Finance LPA
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
         And I can find draft download link
-        #And I can get pdf from link containing "download a preview"
         When I click "continue"
         Then I am taken to the applicant page
