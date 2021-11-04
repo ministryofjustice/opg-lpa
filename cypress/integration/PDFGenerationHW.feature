@@ -13,3 +13,5 @@ Feature: PDF Generation for Health and Welfare LPA
         Then I am taken to the summary page
         And I can find draft download link
         And I can get pdf from link containing "download a preview"
+        When I click "continue"
+        Then I am taken to the applicant page
