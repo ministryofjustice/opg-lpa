@@ -3,12 +3,15 @@
 aws-vault exec identity -- terraform state pull > account.tfstate
 cp account.tfstate account.tfstate.backup
 
+#retrieve IGW details from data source.
+IGW=$(tf show -json | jq -r '.values.root_module.resources[] | select(.address=="data.aws_internet_gateway.default") | .values.id')
 cd ../region
 
 aws-vault exec identity -- terraform state pull > region.tfstate
 cp region.tfstate region.tfstate.backup
-# needed to import as existing GW is a data reference.
-aws-vault exec identity -- terraform import -state-out=region.tfstate "module.eu-west-1.aws_internet_gateway.default" igw-7f98a318
+
+# import Internet Gateway into new state.
+aws-vault exec identity -- terraform import -state-out=region.tfstate "module.eu-west-1.aws_internet_gateway.default" $IGW
 
 cd ../account
 
