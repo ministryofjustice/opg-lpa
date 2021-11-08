@@ -36,7 +36,7 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
         $this->expectExceptionMessage('The requested content page must be a positive integer');
 
         $lpa = $this->getLpa();
-        $contentPage = '1';
+        $contentPage = -1;
         new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_INSTRUCTIONS, $lpa->document->instruction, $contentPage);
     }
 

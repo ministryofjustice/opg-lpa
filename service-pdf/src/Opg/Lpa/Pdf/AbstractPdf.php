@@ -41,27 +41,27 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
     /**
      * Unique file name (with path) for the PDF being created
      *
-     * @var
+     * @var string
      */
-    protected $pdfFile;
+    protected string $pdfFile;
 
     /**
      * @var int
      */
-    protected $numberOfPages;
+    protected int $numberOfPages;
 
     /**
      * Formatted LPA reference in the format ANNN-NNNN-NNNN
      *
-     * @var
+     * @var string
      */
-    protected $formattedLpaRef;
+    protected string $formattedLpaRef;
 
     /**
      * Factory for creating mikehaertl\pdftk\Pdf instances
-     * @var
+     * @var PdftkFactory
      */
-    protected $pdftkFactory;
+    protected PdftkFactory $pdftkFactory;
 
     /**
      * Constructor can be triggered with or without an LPA object
@@ -79,6 +79,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
             $pdftkFactory = new PdftkFactory();
         }
         $this->pdftkFactory = $pdftkFactory;
+        $this->formattedLpaRef = '';
 
         $this->logger = Logger::getInstance();
         $this->config = Config::getInstance();
@@ -117,11 +118,11 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
         //  If an LPA has been passed then set up the PDF object and trigger the create
         if ($lpa instanceof Lpa) {
             //  Set the formatted LPA ref for use later
-            $this->formattedLpaRef = Formatter::id($lpa->id);
+            $this->formattedLpaRef = Formatter::id($lpa->getId());
 
             //  Log a message for this PDF creation
             $this->logger->info('Creating ' . $pdfFileName . ' for ' . $this->formattedLpaRef, [
-                'lpaId' => $lpa->id
+                'lpaId' => $lpa->getId()
             ]);
 
             //  Trigger the create now - this will trigger in the child class
@@ -136,7 +137,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
      * @param string $templatePdfFileName
      * @return string
      */
-    protected function getTemplatePdfFilePath($templatePdfFileName)
+    protected function getTemplatePdfFilePath(string $templatePdfFileName): string
     {
         return $this->config['service']['assets']['template_path_on_ram_disk'] . '/' . $templatePdfFileName;
     }
@@ -144,10 +145,10 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
     /**
      * Get a unique intermediary file name and path - a micro timestamp will be used here to ensure uniqueness
      *
-     * @param $intermediatePdfFileName
+     * @param string $intermediatePdfFileName
      * @return string
      */
-    protected function getIntermediatePdfFilePath($intermediatePdfFileName)
+    protected function getIntermediatePdfFilePath(string $intermediatePdfFileName): string
     {
         //  Create a (near) unique intermediate file name using the formatted LPA ref (if set) and a micro timestamp
         if (!is_null($this->formattedLpaRef)) {
@@ -170,7 +171,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
      * @param bool $protect
      * @return string
      */
-    public function generate($protect = false)
+    public function generate(bool $protect = false): string
     {
         //  If required re-get the PDF and set the password
         if ($protect) {
@@ -183,7 +184,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
     /**
      * Protect the PDF with the password
      */
-    protected function protectPdf()
+    protected function protectPdf(): void
     {
         $pdfToProtect = $this->pdftkFactory->create($this->pdfFile);
 
@@ -204,8 +205,12 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
 
     /**
      * JsonSerializable implementation
+     *
+     * @return get-class-of<$this, Opg\Lpa\Pdf\AbstractPdf&static>[]
+     *
+     * @psalm-return array{class: get-class-of<$this, Opg\Lpa\Pdf\AbstractPdf&static>}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'class' => get_class($this),
