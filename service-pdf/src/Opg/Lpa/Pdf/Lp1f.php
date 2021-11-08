@@ -13,32 +13,39 @@ class Lp1f extends AbstractLp1
     /**
      * PDF template file name (without path) for this PDF object
      *
-     * @var
+     * @var string
      */
-    protected $templateFileName = 'LP1F.pdf';
+    protected string $templateFileName = 'LP1F.pdf';
 
     /**
      * PDF file name for the coversheet
      *
-     * @var
+     * @var string
      */
-    protected $coversheetFileName = 'LP1F_CoversheetRegistration.pdf';
+    protected string $coversheetFileName = 'LP1F_CoversheetRegistration.pdf';
 
     /**
      * PDF file name for the draft coversheet
      *
-     * @var
+     * @var string
      */
-    protected $coversheetFileNameDraft = 'LP1F_CoversheetInstrument.pdf';
+    protected string $coversheetFileNameDraft = 'LP1F_CoversheetInstrument.pdf';
 
     /**
      * @param PrimaryAttorneyDecisions $primaryAttorneyDecisions
+     *
+     * @return void
      */
-    protected function populatePageSix(PrimaryAttorneyDecisions $primaryAttorneyDecisions = null)
+    protected function populatePageSix(PrimaryAttorneyDecisions $primaryAttorneyDecisions = null): void
     {
         //  Set when primary attorneys can make decisions
         if ($primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-            $whenAttorneysMakeDecisions = ($primaryAttorneyDecisions->when == PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW ? 'when-lpa-registered' : 'when-donor-lost-mental-capacity');
+            $whenAttorneysMakeDecisions = (
+                $primaryAttorneyDecisions->getWhen() == PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW ?
+                    'when-lpa-registered' :
+                    'when-donor-lost-mental-capacity'
+            );
+
             $this->setData('when-attorneys-may-make-decisions', $whenAttorneysMakeDecisions);
         }
     }
@@ -46,7 +53,7 @@ class Lp1f extends AbstractLp1
     /**
      * @return string
      */
-    protected function getAreaReferenceSuffix()
+    protected function getAreaReferenceSuffix(): string
     {
         return 'pf';
     }
