@@ -14,16 +14,16 @@ abstract class AbstractResponse
     /**
      * Document ID value
      *
-     * @var
+     * @var string
      */
-    protected $docId;
+    protected string $docId;
 
     /**
      * Config to use with the response
      *
-     * @var
+     * @var Config
      */
-    protected $config;
+    protected Config $config;
 
     /**
      * Logger utility
@@ -35,9 +35,9 @@ abstract class AbstractResponse
     /**
      * AbstractResponse constructor
      *
-     * @param $docId
+     * @param string $docId
      */
-    public function __construct($docId)
+    public function __construct(string $docId)
     {
         $this->docId = $docId;
         $this->config = Config::getInstance();
@@ -54,9 +54,11 @@ abstract class AbstractResponse
     /**
      * Echo a string message in the console using the document ID prefix
      *
-     * @param $message
+     * @param string $message
+     *
+     * @return void
      */
-    protected function logToConsole($message)
+    protected function logToConsole(string $message): void
     {
         echo $this->docId . ': ' . $message . "\n";
     }
