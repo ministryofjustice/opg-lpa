@@ -2,11 +2,9 @@
 
 namespace OpgTest\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Lp3;
-use Opg\Lpa\Pdf\PdftkFactory;
-use OpgTest\Lpa\Pdf\AbstractPdfTestCase;
 use Exception;
 
 class Lp3Test extends AbstractPdfTestCase
@@ -16,7 +14,7 @@ class Lp3Test extends AbstractPdfTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('LPA does not contain all the required data to generate Opg\Lpa\Pdf\Lp3');
 
-        new Lp3(new Lpa());
+        new Lp3(new Lpa(), new NotifiedPerson());
     }
 
     public function testGeneratePFFirstPersonToNotify()
