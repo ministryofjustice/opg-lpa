@@ -8,5 +8,5 @@ Feature: PDF Generation for Property and Finance LPA
     @focus 
     Scenario: Generate PDF
         When I log in as appropriate test user
-        And I visit view docs page for test lpa "91155453023"
-        And I can get pdf from link containing "Download your print-ready LPA form"
+        And I click "view-or-continue-lpa-91155453023"
+        Then I can get pdf from link containing "Download your print-ready LPA form"
