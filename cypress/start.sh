@@ -33,13 +33,6 @@ if [[ "$CYPRESS_CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
 
     if [ -z "$CYPRESS_TAGS" ]; then
         echo "Error:  CYPRESS_TAGS needs to be set to indicate which tests to run"
-        # CYPRESS_TAGS not set to we default to sequentially running StitchedPF, then StitchedHW then the rest
-        #./node_modules/.bin/cypress-tags run -e TAGS='@StitchedPF'
-        #./node_modules/.bin/cypress-tags run -e TAGS='@StitchedClone'
-        #./node_modules/.bin/cypress-tags run -e TAGS='@StitchedHW'
-        # run remaining feature files that haven't already been run
-        # @CreateLpa is files used in stitching, @StitchedXX is the files resulting from stitching, @SignUp is the SignUp feature
-        #./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp and not @CreateLpa and not @CleanupFixtures and not @StitchedHW and not @StitchedPF and not @StitchedClone'
     else
         # CYPRESS_TAGS is set so we run those specific tests
         ./node_modules/.bin/cypress-tags run -e TAGS="$CYPRESS_TAGS"
