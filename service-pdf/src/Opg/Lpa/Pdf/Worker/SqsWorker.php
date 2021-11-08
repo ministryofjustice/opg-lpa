@@ -1,4 +1,5 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Worker;
 
 use Opg\Lpa\Pdf\Config\Config;
@@ -7,22 +8,24 @@ use Aws\Sqs\SqsClient;
 
 class SqsWorker extends AbstractWorker
 {
-
     /**
      * Return the object for handling the response
      *
-     * @param $docId
-     * @return Response\AbstractResponse
+     * @param string $docId
+     *
+     * @return Response\S3Response
      */
-    protected function getResponseObject($docId)
+    protected function getResponseObject(string $docId): Response\S3Response
     {
         return new Response\S3Response($docId);
     }
 
     /**
      * @throws \Exception
+     *
+     * @return void
      */
-    public function start()
+    public function start(): void
     {
         $config = Config::getInstance();
 
@@ -80,10 +83,9 @@ class SqsWorker extends AbstractWorker
                     // Generate the PDF
                     $this->run($lpaMessage['jobId'], $body['type'], $body['lpa']);
 
-                    $this->logger->info("----------------- DONE - Generation time: ".
+                    $this->logger->info("----------------- DONE - Generation time: " .
                         (microtime(true) - $startTime) .
                         " seconds to make PDF for LPA " . $lpaId);
-
                 } catch (\Exception $e) {
                     $this->logger->err("Error generating PDF", [
                         'jobId' => $lpaMessage['jobId'],
@@ -98,16 +100,12 @@ class SqsWorker extends AbstractWorker
                     'QueueUrl' => $sqsUrl,
                     'ReceiptHandle' => $sqsMessage['ReceiptHandle'],
                 ]);
-
             } else {
                 $this->logger->debug("No message found in queue for this poll, finishing thread.");
             }
-
         } catch (\Exception $e) {
-            $this->logger->emerg("Exception in SqsWorker: ".$e->getMessage());
+            $this->logger->emerg("Exception in SqsWorker: " . $e->getMessage());
             sleep(5);
         }
-
     }
-
 }

@@ -22,14 +22,14 @@ class ContinuationSheet1 extends AbstractContinuationSheet
     /**
      * PDF template file name (without path) for this PDF object
      *
-     * @var
+     * @var string
      */
-    protected $templateFileName = 'LPC_Continuation_Sheet_1.pdf';
+    protected string $templateFileName = 'LPC_Continuation_Sheet_1.pdf';
 
     /**
      * @var array
      */
-    private $actorGroups;
+    private array $actorGroups;
 
     /**
      * @param Lpa $lpa
@@ -46,13 +46,15 @@ class ContinuationSheet1 extends AbstractContinuationSheet
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    protected function create(Lpa $lpa)
+    protected function create(Lpa $lpa): void
     {
         parent::create($lpa);
 
         //  Add the donor details
-        $this->setData('cs1-donor-full-name', (string) $lpa->document->donor->name);
+        $this->setData('cs1-donor-full-name', (string) $lpa->getDocument()->getDonor()->getName());
 
         $i = 0;
 
@@ -61,24 +63,24 @@ class ContinuationSheet1 extends AbstractContinuationSheet
                 $this->setData('cs1-' . $i . '-is', $actorType);
 
                 if ($actor->name instanceof Name) {
-                    $this->setData('cs1-' . $i . '-name-title', $actor->name->title)
-                         ->setData('cs1-' . $i . '-name-first', $actor->name->first)
-                         ->setData('cs1-' . $i . '-name-last', $actor->name->last);
+                    $this->setData('cs1-' . $i . '-name-title', $actor->getName()->getTitle())
+                         ->setData('cs1-' . $i . '-name-first', $actor->getName()->getFirst())
+                         ->setData('cs1-' . $i . '-name-last', $actor->getName()->getLast());
                 }
 
-                $this->setData('cs1-' . $i . '-address-address1', $actor->address->address1)
-                     ->setData('cs1-' . $i . '-address-address2', $actor->address->address2)
-                     ->setData('cs1-' . $i . '-address-address3', $actor->address->address3)
-                     ->setData('cs1-' . $i . '-address-postcode', $actor->address->postcode);
+                $this->setData('cs1-' . $i . '-address-address1', $actor->getAddress()->getAddress1())
+                     ->setData('cs1-' . $i . '-address-address2', $actor->getAddress()->getAddress2())
+                     ->setData('cs1-' . $i . '-address-address3', $actor->getAddress()->getAddress3())
+                     ->setData('cs1-' . $i . '-address-postcode', $actor->getAddress()->getPostcode());
 
                 if (property_exists($actor, 'dob')) {
-                    $this->setData('cs1-' . $i . '-dob-date-day', $actor->dob->date->format('d'))
-                         ->setData('cs1-' . $i . '-dob-date-month', $actor->dob->date->format('m'))
-                         ->setData('cs1-' . $i . '-dob-date-year', $actor->dob->date->format('Y'));
+                    $this->setData('cs1-' . $i . '-dob-date-day', $actor->getDob()->getDate()->format('d'))
+                         ->setData('cs1-' . $i . '-dob-date-month', $actor->getDob()->getDate()->format('m'))
+                         ->setData('cs1-' . $i . '-dob-date-year', $actor->getDob()->getDate()->format('Y'));
                 }
 
                 if (property_exists($actor, 'email') && ($actor->email instanceof EmailAddress)) {
-                    $this->setData('cs1-' . $i . '-email-address', $actor->email->address, true);
+                    $this->setData('cs1-' . $i . '-email-address', $actor->getEmail()->getAddress(), true);
                 }
 
                 $i++;
