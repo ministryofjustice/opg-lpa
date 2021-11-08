@@ -4,7 +4,6 @@ Feature: PDF Generation for Property and Finance LPA
 
     Background:
         Given I ignore application exceptions
-        And I create PF LPA test fixture with donor, single attorney, cert provider, people to notify, instructions, preferences
 
     @focus 
     Scenario: Generate PDF
