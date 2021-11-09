@@ -86,7 +86,7 @@ class Lpa120 extends AbstractIndividualPdf
 
         // Set the name
         if ($correspondentName instanceof Name || $correspondentName instanceof LongName) {
-            $correspondentTitle = $correspondentName->getTitle();
+            $correspondentTitle = $correspondentName->name->title;
             $correspondentTitleOther = '';
 
             if (!in_array($correspondentTitle, ['Mr', 'Mrs', 'Miss', 'Ms'])) {
@@ -96,8 +96,8 @@ class Lpa120 extends AbstractIndividualPdf
 
             $this->setData('applicant-name-title', strtolower($correspondentTitle))
                 ->setData('applicant-name-title-other', $correspondentTitleOther)
-                ->setData('applicant-name-first', $correspondentName->getFirst())
-                ->setData('applicant-name-last', $correspondentName->getLast());
+                ->setData('applicant-name-first', $correspondentName->name->first)
+                ->setData('applicant-name-last', $correspondentName->name->last);
         }
 
         // Set the address
