@@ -85,7 +85,7 @@ class Lpa120 extends AbstractIndividualPdf
         $this->setData('applicant-type-other', $correspondentTypeOther);
 
         // Set the name
-        if ($correspondentName instanceof Name || $correspondentName instanceof LongName) {
+        if ($correspondent->name instanceof Name || $correspondent->name instanceof LongName) {
             $correspondentTitle = $correspondent->name->title;
             $correspondentTitleOther = '';
 
