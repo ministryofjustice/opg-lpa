@@ -63,9 +63,9 @@ class ContinuationSheet1 extends AbstractContinuationSheet
                 $this->setData('cs1-' . $i . '-is', $actorType);
 
                 if ($actor->name instanceof Name) {
-                    $this->setData('cs1-' . $i . '-name-title', $actor->getName()->getTitle())
-                         ->setData('cs1-' . $i . '-name-first', $actor->getName()->getFirst())
-                         ->setData('cs1-' . $i . '-name-last', $actor->getName()->getLast());
+                    $this->setData('cs1-' . $i . '-name-title', $actor->name->title)
+                         ->setData('cs1-' . $i . '-name-first', $actor->name->first)
+                         ->setData('cs1-' . $i . '-name-last', $actor->name->last);
                 }
 
                 $this->setData('cs1-' . $i . '-address-address1', $actor->getAddress()->getAddress1())
