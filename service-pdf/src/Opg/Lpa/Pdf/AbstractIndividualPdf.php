@@ -85,12 +85,12 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * Easy way to set the data to fill in the PDF - chainable
      *
      * @param string $key
-     * @param string $value
+     * @param string|null $value
      * @param bool $insertLeadingNewLine
      *
      * @return static
      */
-    protected function setData(string $key, string $value, bool $insertLeadingNewLine = false): self
+    protected function setData(string $key, ?string $value, bool $insertLeadingNewLine = false): self
     {
         //  If applicable insert a new line char
         if ($insertLeadingNewLine === true) {
