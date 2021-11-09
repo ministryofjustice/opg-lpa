@@ -52,7 +52,7 @@ class Lpa120 extends AbstractIndividualPdf
         $lpaDonor = $lpaDocument->getDonor();
 
         // Set the donor details
-        $this->setData('donor-full-name', (string) $lpaDonor->donor->name)
+        $this->setData('donor-full-name', (string) $lpaDonor->name)
              ->setData('donor-address', (string) $lpaDonor->getAddress(), true);
 
         // Set repeat case details
