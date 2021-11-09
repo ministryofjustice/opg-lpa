@@ -83,9 +83,9 @@ class Lp3 extends AbstractIndividualPdf
         $name = $personToNotify->getName();
         $address = $personToNotify->getAddress();
 
-        $this->setData('lpa-document-peopleToNotify-name-title', $name->getTitle())
-             ->setData('lpa-document-peopleToNotify-name-first', $name->getFirst())
-             ->setData('lpa-document-peopleToNotify-name-last', $name->getLast())
+        $this->setData('lpa-document-peopleToNotify-name-title', $personToNotify->name->title)
+             ->setData('lpa-document-peopleToNotify-name-first', $personToNotify->name->first)
+             ->setData('lpa-document-peopleToNotify-name-last', $personToNotify->name->last)
              ->setData('lpa-document-peopleToNotify-address-address1', $address->getAddress1())
              ->setData('lpa-document-peopleToNotify-address-address2', $address->getAddress2())
              ->setData('lpa-document-peopleToNotify-address-address3', $address->getAddress3())
@@ -107,9 +107,9 @@ class Lp3 extends AbstractIndividualPdf
         $name = $donor->getName();
         $address = $donor->getAddress();
 
-        $this->setData('lpa-document-donor-name-title', $name->getTitle())
-            ->setData('lpa-document-donor-name-first', $name->getFirst())
-            ->setData('lpa-document-donor-name-last', $name->getLast())
+        $this->setData('lpa-document-donor-name-title', $donor->name->title)
+            ->setData('lpa-document-donor-name-first', $donor->name->first)
+            ->setData('lpa-document-donor-name-last', $donor->name->last)
             ->setData('lpa-document-donor-address-address1', $address->getAddress1())
             ->setData('lpa-document-donor-address-address2', $address->getAddress2())
             ->setData('lpa-document-donor-address-address3', $address->getAddress3())
@@ -167,15 +167,15 @@ class Lp3 extends AbstractIndividualPdf
                     if ($name instanceof Name || $name instanceof LongName) {
                         $pdf->setData(
                             'lpa-document-primaryAttorneys-' . $i . '-name-title',
-                            $name->getTitle()
+                            $primaryAttorney->name->title
                         )
                             ->setData(
                                 'lpa-document-primaryAttorneys-' . $i . '-name-first',
-                                $name->getFirst()
+                                $primaryAttorney->name->first
                             )
                             ->setData(
                                 'lpa-document-primaryAttorneys-' . $i . '-name-last',
-                                $name->getLast()
+                                $primaryAttorney->name->last
                             );
                     } elseif (is_string($name)) {
                         $pdf->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $name);
