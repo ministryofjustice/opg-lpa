@@ -1,6 +1,6 @@
 import { Then } from "cypress-cucumber-preprocessor/steps";
 
-const MAX_TRIES = 100;
+const MAX_TRIES = 500;
 
 const requestUntilRefreshUrl = (href, tries) => {
     // keep requesting until the response contains url in meta http-equiv

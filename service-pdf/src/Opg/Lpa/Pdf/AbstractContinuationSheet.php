@@ -14,8 +14,10 @@ abstract class AbstractContinuationSheet extends AbstractIndividualPdf
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
+     *
+     * @return void
      */
-    protected function create(Lpa $lpa)
+    protected function create(Lpa $lpa): void
     {
         //  Add a leading blank page - this is done for all continuation sheets
         $this->insertBlankPage('start');
