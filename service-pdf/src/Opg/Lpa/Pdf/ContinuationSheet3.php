@@ -28,7 +28,7 @@ class ContinuationSheet3 extends AbstractContinuationSheet
     {
         parent::create($lpa);
 
-        $this->setData('cs3-donor-full-name', (string) $lpa->getDocument()->getDonor()->getName());
+        $this->setData('cs3-donor-full-name', (string) $lpa->getDocument()->getDonor()->name);
 
         //  Set footer data
         $this->setFooter('cs3-footer-right', 'cs3');

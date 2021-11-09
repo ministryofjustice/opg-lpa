@@ -54,7 +54,7 @@ class ContinuationSheet1 extends AbstractContinuationSheet
         parent::create($lpa);
 
         //  Add the donor details
-        $this->setData('cs1-donor-full-name', (string) $lpa->getDocument()->getDonor()->getName());
+        $this->setData('cs1-donor-full-name', (string) $lpa->getDocument()->getDonor()->name);
 
         $i = 0;
 

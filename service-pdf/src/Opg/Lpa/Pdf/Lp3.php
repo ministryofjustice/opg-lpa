@@ -80,7 +80,6 @@ class Lp3 extends AbstractIndividualPdf
      */
     private function populatePageOne(NotifiedPerson $personToNotify): void
     {
-        $name = $personToNotify->getName();
         $address = $personToNotify->getAddress();
 
         $this->setData('lpa-document-peopleToNotify-name-title', $personToNotify->name->title)
@@ -104,7 +103,6 @@ class Lp3 extends AbstractIndividualPdf
         //  Set the donor details
         $document = $lpa->getDocument();
         $donor = $document->getDonor();
-        $name = $donor->getName();
         $address = $donor->getAddress();
 
         $this->setData('lpa-document-donor-name-title', $donor->name->title)
@@ -161,10 +159,9 @@ class Lp3 extends AbstractIndividualPdf
                 //  If there is a primary attorney for this index then render the details
                 if (array_key_exists($i, $primaryAttorneysForPage)) {
                     $primaryAttorney = $primaryAttorneysForPage[$i];
-                    $name = $primaryAttorney->getName();
                     $address = $primaryAttorney->getAddress();
 
-                    if ($name instanceof Name || $name instanceof LongName) {
+                    if ($primaryAttorney->name instanceof Name || $primaryAttorney->name instanceof LongName) {
                         $pdf->setData(
                             'lpa-document-primaryAttorneys-' . $i . '-name-title',
                             $primaryAttorney->name->title
@@ -177,8 +174,8 @@ class Lp3 extends AbstractIndividualPdf
                                 'lpa-document-primaryAttorneys-' . $i . '-name-last',
                                 $primaryAttorney->name->last
                             );
-                    } elseif (is_string($name)) {
-                        $pdf->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $name);
+                    } elseif (is_string($primaryAttorney->name)) {
+                        $pdf->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $primaryAttorney->name);
                     }
 
                     $pdf->setData(

@@ -52,7 +52,7 @@ class Lpa120 extends AbstractIndividualPdf
         $lpaDonor = $lpaDocument->getDonor();
 
         // Set the donor details
-        $this->setData('donor-full-name', (string) $lpaDonor->getName())
+        $this->setData('donor-full-name', (string) $lpaDonor->donor->name)
              ->setData('donor-address', (string) $lpaDonor->getAddress(), true);
 
         // Set repeat case details
@@ -71,7 +71,6 @@ class Lpa120 extends AbstractIndividualPdf
         // The details to be entered as the "applicant" below should ALWAYS be to correspondent details and
         // NOT the applicant as we understand it in the data
         $correspondent = $lpaDocument->getCorrespondent();
-        $correspondentName = $correspondent->getName();
         $correspondentType = $correspondent->getWho();
         $correspondentTypeOther = '';
 
