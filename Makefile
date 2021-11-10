@@ -119,6 +119,15 @@ reset-front:
 	docker-compose build --no-cache front-web
 	docker-compose build --no-cache front-app
 
+# only reset the pdf container - uesful for quick reset when only been working on pdf component
+.PHONY: reset-pdf
+reset-pdf:
+	@${MAKE} dc-down
+	docker rmi lpa-pdf-app || true; \
+	rm -fr ./service-pdf/vendor; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
+	docker-compose build --no-cache lpa-app
+
 # only reset the front web container - uesful for quick reset after nginx.conf tweak
 .PHONY: reset-front-web
 reset-front-web:
