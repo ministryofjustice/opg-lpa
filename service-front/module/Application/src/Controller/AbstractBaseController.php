@@ -4,7 +4,7 @@ namespace Application\Controller;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManager;
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\AbstractPluginManager;
 

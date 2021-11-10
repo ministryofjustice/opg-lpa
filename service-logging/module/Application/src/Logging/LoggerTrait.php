@@ -1,10 +1,10 @@
 <?php
 
-namespace Application\Logging;
+namespace MakeLogger\Logging;
 
 /**
  * Trait LoggerTrait
- * @package Application\Logging
+ * @package MakeLogger\Logging
  */
 trait LoggerTrait
 {
