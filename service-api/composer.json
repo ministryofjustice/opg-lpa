@@ -54,7 +54,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Application\\": "module/Application/src/"
+            "Application\\": "module/Application/src/",
+            "MakeLogger\\": "../service-logging/module/MakeLogger/src/"
         }
     }
 }

@@ -14,6 +14,7 @@ return array(
         'Laminas\ApiTools\ApiProblem',
         'LmcRbacMvc',
         'Application',
+        'MakeLogger',
     ),
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(
@@ -51,12 +52,12 @@ return array(
         // 'check_dependencies' => true,
     ),
     'listeners' => [
-        'Application\Logging\ErrorEventListener',
+        'MakeLogger\Logging\ErrorEventListener',
     ],
     // Should be compatible with Laminas\ServiceManager\Config.
     'service_manager' => [
         'factories' => [
-            'Application\Logging\ErrorEventListener'  => 'Application\Logging\ErrorEventListener',
+            'MakeLogger\Logging\ErrorEventListener'  => 'MakeLogger\Logging\ErrorEventListener',
         ],
     ],
 );

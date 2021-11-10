@@ -13,10 +13,6 @@
             "type": "vcs",
             "url": "https://github.com/ministryofjustice/opg-lpa-logger",
             "no-api": true
-        },
-        {
-            "type": "path",
-            "url": "../service-logging"
         }
     ],
     "require": {
@@ -32,8 +28,7 @@
         "tecnickcom/tcpdf": "6.4.1",
         "setasign/fpdi-tcpdf": "^2.0",
         "laminas/laminas-zendframework-bridge": "^1.1.1",
-        "laminas/laminas-log": "^2.12",
-        "ministryofjustice/opg-make-logging": "*@dev"
+        "laminas/laminas-log": "^2.12"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
@@ -41,7 +36,8 @@
         "ext-json": "*"
     },
     "autoload": {
-        "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/", "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/"}
+        "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/", "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/"},
+        "MakeLogger\\": "../service-logging/module/MakeLogger/src/"
     },
     "include-path": ["config/"]
 }
