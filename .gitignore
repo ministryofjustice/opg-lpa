@@ -40,7 +40,6 @@ service-front/public/assets/v2/css/fonts.css
 service-front/public/assets/v2/css/govuk-template-print.css
 service-front/public/assets/v2/css/govuk-template.css
 service-front-v2/app/static
-service-front-v2/govuk_components
 .phpunit.result.cache
 cypress/integration/common/local_dev_only.js
 *.egg-info
