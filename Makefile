@@ -126,7 +126,7 @@ reset-pdf:
 	docker rmi lpa-pdf-app || true; \
 	rm -fr ./service-pdf/vendor; \
 	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
-	docker-compose build --no-cache lpa-app
+	docker-compose build --no-cache pdf-app
 
 # only reset the front web container - uesful for quick reset after nginx.conf tweak
 .PHONY: reset-front-web
