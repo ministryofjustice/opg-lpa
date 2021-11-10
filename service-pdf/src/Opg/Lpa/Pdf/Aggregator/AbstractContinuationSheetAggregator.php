@@ -11,7 +11,7 @@ abstract class AbstractContinuationSheetAggregator extends AbstractAggregator
     /**
      * @return int
      */
-    public function getPageCount(): int
+    public function getPageCount()
     {
         return count($this->pdfs) * 2;  //  2 pages per PDF
     }

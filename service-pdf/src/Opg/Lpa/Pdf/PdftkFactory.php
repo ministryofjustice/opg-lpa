@@ -1,15 +1,12 @@
 <?php
-
 namespace Opg\Lpa\Pdf;
 
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 
+
 class PdftkFactory
 {
-    /**
-     * @var string
-     */
-    private string $command;
+    private $command;
 
     /**
      * @param string $command Custom pdftk command; if not set, defaults to 'pdftk'
@@ -19,20 +16,12 @@ class PdftkFactory
         $this->command = $command;
     }
 
-    /**
-     * @return string
-     */
-    public function getPdftkCommand(): string
+    public function getPdftkCommand()
     {
         return $this->command;
     }
 
-    /**
-     * @param array|string $pdf
-     *
-     * @return PdftkPdf
-     */
-    public function create($pdf): PdftkPdf
+    public function create($pdf)
     {
         return new PdftkPdf($pdf, ['command' => $this->command]);
     }

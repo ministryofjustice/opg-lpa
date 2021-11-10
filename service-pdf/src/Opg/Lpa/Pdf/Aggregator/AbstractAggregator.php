@@ -22,7 +22,7 @@ abstract class AbstractAggregator extends AbstractPdf
      * @param bool $protect
      * @return string
      */
-    public function generate($protect = false): string
+    public function generate($protect = false)
     {
         //  Loop through the created PDFs generate them then cat them into the aggregate
         foreach ($this->pdfs as $pdf) {
@@ -42,7 +42,7 @@ abstract class AbstractAggregator extends AbstractPdf
     /**
      * @param AbstractIndividualPdf $pdf
      */
-    protected function addPdf(AbstractIndividualPdf $pdf): void
+    protected function addPdf(AbstractIndividualPdf $pdf)
     {
         $this->pdfs[] = $pdf;
     }
