@@ -25,6 +25,7 @@ return array(
         'module_paths' => array(
             './module',
             './vendor',
+            '../service-logging/module',
         ),
         // An array of paths from which to glob configuration files after
         // modules are loaded. These effectively override configuration

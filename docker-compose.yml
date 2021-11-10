@@ -280,6 +280,7 @@ services:
     image: composer:latest
     volumes:
       - ./service-api:/app
+      - ./service-logging:/service-logging
     command:
       - install
       - --prefer-dist
