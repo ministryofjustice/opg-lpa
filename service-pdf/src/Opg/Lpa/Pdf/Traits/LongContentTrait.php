@@ -2,7 +2,7 @@
 
 namespace Opg\Lpa\Pdf\Traits;
 
-use Opg\Lpa\DataModel\Lpa\Formatter as LpaFormatter;
+use Opg\Lpa\DataModel\Lpa\Formatter As LpaFormatter;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
@@ -33,7 +33,7 @@ trait LongContentTrait
      *
      * @return boolean
      */
-    private function fillsInstructionsPreferencesBox(string $content): bool
+    private function fillsInstructionsPreferencesBox($content)
     {
         $flatContent = $this->flattenTextContent($content);
 
@@ -43,7 +43,7 @@ trait LongContentTrait
     /**
      * @return int
      */
-    private function getInstructionsPreferencesBoxSize(): int
+    private function getInstructionsPreferencesBoxSize()
     {
         return ($this->fullWidthNumberOfChars + 2) * $this->instructionsPreferencesBoxRows;
     }
@@ -51,7 +51,7 @@ trait LongContentTrait
     /**
      * @return int
      */
-    private function getContinuationSheet2BoxSize(): int
+    private function getContinuationSheet2BoxSize()
     {
         return ($this->fullWidthNumberOfChars + 2) * $this->continuationSheet2BoxRows;
     }
@@ -64,7 +64,7 @@ trait LongContentTrait
      * @param int $pageNo
      * @return string|null
      */
-    private function getInstructionsAndPreferencesContent(string $content, int $pageNo = 1): ?string
+    private function getInstructionsAndPreferencesContent($content, $pageNo = 1)
     {
         $flatContent = $this->flattenTextContent($content);
 
@@ -81,11 +81,11 @@ trait LongContentTrait
     }
 
     /**
-     * @param string $content
-     * @param int $pageNo
+     * @param $content
+     * @param $pageNo
      * @return null|string
      */
-    private function getContinuationSheet2Content(string $content, int $pageNo): ?string
+    private function getContinuationSheet2Content($content, $pageNo)
     {
         $flatContent = $this->flattenTextContent($content);
 
@@ -102,10 +102,9 @@ trait LongContentTrait
      * Convert all new lines with spaces to fill out to the end of each line
      *
      * @param string $contentIn
-     *
      * @return string
      */
-    private function flattenTextContent(string $contentIn): string
+    private function flattenTextContent($contentIn)
     {
         return LpaFormatter::flattenInstructionsOrPreferences($contentIn);
     }
@@ -116,85 +115,59 @@ trait LongContentTrait
      * The logic is messy but by housing it here we can contain it
      *
      * @param Document $lpaDocument
-     *
      * @return string
      */
-    private function getHowWhenReplacementAttorneysCanActContent(Document $lpaDocument): string
+    private function getHowWhenReplacementAttorneysCanActContent(Document $lpaDocument)
     {
         $content = '';
 
-        $primaryAttorneys = $lpaDocument->getPrimaryAttorneys();
-        $primaryHow = null;
-        if (count($primaryAttorneys) > 1) {
-            $primaryHow = $lpaDocument->getPrimaryAttorneyDecisions()->getHow();
-        }
+        if ((count($lpaDocument->primaryAttorneys) == 1
+                || (count($lpaDocument->primaryAttorneys) > 1
+                    && $lpaDocument->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
+            && count($lpaDocument->replacementAttorneys) > 1) {
 
-        $replacementAttorneys = $lpaDocument->getReplacementAttorneys();
-        $replacementHow = null;
-        $replacementWhen = null;
-        $replacementHowDetails = null;
-        $replacementWhenDetails = null;
-        if (count($replacementAttorneys) > 1) {
-            $replacementDecisions = $lpaDocument->getReplacementAttorneyDecisions();
-            $replacementHow = $replacementDecisions->getHow();
-            $replacementWhen = $replacementDecisions->getWhen();
-            $replacementHowDetails = $replacementDecisions->getHowDetails();
-            $replacementWhenDetails = $replacementDecisions->getWhenDetails();
-        }
-
-        if (
-            count($replacementAttorneys) > 1 &&
-            (count($primaryAttorneys) == 1 || $primaryHow == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY)
-        ) {
-            switch ($replacementHow) {
+            switch ($lpaDocument->replacementAttorneyDecisions->how) {
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
                     $content = "Replacement attorneys are to act jointly and severally\r\n";
                     break;
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                    $content = "Replacement attorneys are to act jointly for some decisions and jointly and " .
-                        "severally for others, as below:\r\n" .
-                        $replacementHowDetails . "\r\n";
+                    $content = "Replacement attorneys are to act jointly for some decisions and jointly and severally for others, as below:\r\n" . $lpaDocument->replacementAttorneyDecisions->howDetails . "\r\n";
                     break;
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
                     // default arrangement
                     break;
             }
-        } elseif ($primaryHow = PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
-            if (count($replacementAttorneys) == 1) {
-                switch ($replacementWhen) {
+        } elseif (count($lpaDocument->primaryAttorneys) > 1 && $lpaDocument->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
+            if (count($lpaDocument->replacementAttorneys) == 1) {
+                switch ($lpaDocument->replacementAttorneyDecisions->when) {
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
                         // default arrangement, as per how primary attorneys making decision arrangement
                         break;
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
-                        $content = "Replacement attorney to step in only when none of the original " .
-                            "attorneys can act\r\n";
+                        $content = "Replacement attorney to step in only when none of the original attorneys can act\r\n";
                         break;
                     case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
-                        $content = "How replacement attorneys will replace the original attorneys:\r\n" .
-                            $replacementWhenDetails;
+                        $content = "How replacement attorneys will replace the original attorneys:\r\n" . $lpaDocument->replacementAttorneyDecisions->whenDetails;
                         break;
                 }
-            } elseif (count($replacementAttorneys) > 1) {
-                if ($replacementWhen == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) {
+            } elseif (count($lpaDocument->replacementAttorneys) > 1) {
+                if ($lpaDocument->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) {
                     $content = "Replacement attorneys to step in only when none of the original attorneys can act\r\n";
 
-                    switch ($replacementHow) {
+                    switch ($lpaDocument->replacementAttorneyDecisions->how) {
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
                             $content .= "Replacement attorneys are to act jointly and severally\r\n";
                             break;
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                            $content .= "Replacement attorneys are to act joint for some decisions, joint and " .
-                                "several for other decisions, as below:\r\n" .
-                                $replacementHowDetails . "\r\n";
+                            $content .= "Replacement attorneys are to act joint for some decisions, joint and several for other decisions, as below:\r\n" . $lpaDocument->replacementAttorneyDecisions->howDetails . "\r\n";
                             break;
                         case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
                             // default arrangement
                             $content = "";
                             break;
                     }
-                } elseif ($replacementWhen == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
-                    $content = "How replacement attorneys will replace the original attorneys:\r\n" .
-                        $replacementWhenDetails;
+                } elseif ($lpaDocument->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
+                    $content = "How replacement attorneys will replace the original attorneys:\r\n" . $lpaDocument->replacementAttorneyDecisions->whenDetails;
                 }
             }
         }

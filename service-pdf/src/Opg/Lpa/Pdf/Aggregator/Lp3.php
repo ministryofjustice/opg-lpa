@@ -15,13 +15,11 @@ class Lp3 extends AbstractAggregator
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
-     *
-     * @return void
      */
-    protected function create(Lpa $lpa): void
+    protected function create(Lpa $lpa)
     {
         //  Loop through the people to notify and set up the individual PDFs
-        foreach ($lpa->getDocument()->getPeopleToNotify() as $personToNotify) {
+        foreach ($lpa->document->peopleToNotify as $personToNotify) {
             $this->addPdf(new Lp3Pdf($lpa, $personToNotify, $this->pdftkFactory));
         }
     }

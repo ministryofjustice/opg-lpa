@@ -19,12 +19,9 @@ class S3Response extends AbstractResponse
      * Store the file on the passed path for retrieval by the API service.
      *
      * @param SplFileInfo $file
-     *
      * @throws InvalidArgumentException|S3Exception
-     *
-     * @return void
      */
-    public function save(SplFileInfo $file): void
+    public function save(SplFileInfo $file)
     {
         $this->logger->info('Response received: ' . $file->getRealPath());
 
@@ -37,6 +34,7 @@ class S3Response extends AbstractResponse
         $s3 = new S3Client($workerConfig['client']);
 
         try {
+
             //  Put the encrypted file to S3
             $file = $workerSettingsConfig + [
                 'Key'  => (string)$this->docId,
@@ -44,6 +42,7 @@ class S3Response extends AbstractResponse
             ];
 
             $s3->putObject($file);
+
         } catch (S3Exception $e) {
             $this->logger->emerg('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
             throw $e;
