@@ -646,9 +646,7 @@ orbs:
           - run:
               name: Build app container
               command: |
-                cd << parameters.service_path >>
-                docker build -f docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
-                cd ..
+                docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
           - run:
               name: Run unit tests
               command: |
