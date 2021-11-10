@@ -5,6 +5,7 @@ namespace Opg\Lpa\Pdf;
 use DateTime;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\LongName;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
@@ -130,11 +131,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     {
         $dobDate = $donor->getDob()->getDate();
         $address = $donor->getAddress();
+        $name = $donor->getName();
 
-        $this->setData('lpa-document-donor-name-title', $donor->name->title)
-            ->setData('lpa-document-donor-name-first', $donor->name->first)
-            ->setData('lpa-document-donor-name-last', $donor->name->last)
-            ->setData('lpa-document-donor-otherNames', $donor->otherNames)
+        $this->setData('lpa-document-donor-name-title', $name->getTitle())
+            ->setData('lpa-document-donor-name-first', $name->getFirst())
+            ->setData('lpa-document-donor-name-last', $name->getLast())
+            ->setData('lpa-document-donor-otherNames', $donor->getOtherNames())
             ->setData('lpa-document-donor-dob-date-day', $dobDate->format('d'))
             ->setData('lpa-document-donor-dob-date-month', $dobDate->format('m'))
             ->setData('lpa-document-donor-dob-date-year', $dobDate->format('Y'))
@@ -161,20 +163,21 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             // If there is a primary attorney for this index then render the details
             if (array_key_exists($i, $primaryAttorneys)) {
                 $primaryAttorney = $primaryAttorneys[$i];
+                $primaryAttorneyName = $primaryAttorney->getName();
                 $address = $primaryAttorney->getAddress();
 
                 if ($primaryAttorney instanceof TrustCorporation) {
                     $this->setCheckBox('attorney-' . $i . '-is-trust-corporation')
                          ->setData(
                              'lpa-document-primaryAttorneys-' . $i . '-name-last',
-                             (string) $primaryAttorney->name
+                             (string) $primaryAttorneyName
                          );
                 } else {
                     $dobDate = $primaryAttorney->getDob()->getDate();
 
-                    $this->setData('lpa-document-primaryAttorneys-' . $i . '-name-title', $primaryAttorney->name->title)
-                        ->setData('lpa-document-primaryAttorneys-' . $i . '-name-first', $primaryAttorney->name->first)
-                        ->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $primaryAttorney->name->last)
+                    $this->setData('lpa-document-primaryAttorneys-' . $i . '-name-title', $primaryAttorneyName->getTitle())
+                        ->setData('lpa-document-primaryAttorneys-' . $i . '-name-first', $primaryAttorneyName->getFirst())
+                        ->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $primaryAttorneyName->getLast())
                         ->setData('lpa-document-primaryAttorneys-' . $i .
                             '-dob-date-day', $dobDate->format('d'))
                         ->setData(
@@ -252,26 +255,27 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             // If there is a replacement attorney for this index then render the details
             if (array_key_exists($i, $replacementAttorneys)) {
                 $replacementAttorney = $replacementAttorneys[$i];
+                $replacementAttorneyName = $replacementAttorney->getName();
                 $address = $replacementAttorney->getAddress();
 
                 if ($replacementAttorney instanceof TrustCorporation) {
                     $this->setCheckBox('replacement-attorney-' . $i . '-is-trust-corporation')
                         ->setData(
                             'lpa-document-replacementAttorneys-' . $i . '-name-last',
-                            $replacementAttorney->name
+                            (string) $replacementAttorneyName
                         );
                 } else {
                     $dobDate = $replacementAttorney->getDob()->getDate();
 
                     $this->setData(
                         'lpa-document-replacementAttorneys-' . $i . '-name-title',
-                        $replacementAttorney->title
+                        $replacementAttorneyName->getTitle()
                     )->setData(
                         'lpa-document-replacementAttorneys-' . $i . '-name-first',
-                        $replacementAttorney->first
+                        $replacementAttorneyName->getFirst()
                     )->setData(
                         'lpa-document-replacementAttorneys-' . $i . '-name-last',
-                        $replacementAttorney->last
+                        $replacementAttorneyName->getLast()
                     )->setData(
                         'lpa-document-replacementAttorneys-' . $i . '-dob-date-day',
                         $dobDate->format('d')
@@ -347,26 +351,36 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             // If there is a person to notify for this index then render the details
             if (array_key_exists($i, $peopleToNotify)) {
                 $personToNotify = $peopleToNotify[$i];
+                $personToNotifyName = $personToNotify->getName();
+                $personToNotifyAddress = $personToNotify->getAddress();
 
-                $this->setData('lpa-document-peopleToNotify-' . $i . '-name-title', $personToNotify->name->title)
-                    ->setData('lpa-document-peopleToNotify-' . $i . '-name-first', $personToNotify->name->first)
-                    ->setData('lpa-document-peopleToNotify-' . $i . '-name-last', $personToNotify->name->last)
-                    ->setData(
-                        'lpa-document-peopleToNotify-' . $i . '-address-address1',
-                        $personToNotify->address->address1
-                    )
-                    ->setData(
-                        'lpa-document-peopleToNotify-' . $i . '-address-address2',
-                        $personToNotify->address->address2
-                    )
-                    ->setData(
-                        'lpa-document-peopleToNotify-' . $i . '-address-address3',
-                        $personToNotify->address->address3
-                    )
-                    ->setData(
-                        'lpa-document-peopleToNotify-' . $i . '-address-postcode',
-                        $personToNotify->address->postcode
+                if ($personToNotify instanceof TrustCorporation) {
+                    $this->setData(
+                        'lpa-document-peopleToNotify-' . $i . '-name-last',
+                        (string) $personToNotifyName
                     );
+                } else {
+                    $this->setData('lpa-document-peopleToNotify-' . $i . '-name-title', $personToNotifyName->getTitle())
+                        ->setData('lpa-document-peopleToNotify-' . $i . '-name-first', $personToNotifyName->getFirst())
+                        ->setData('lpa-document-peopleToNotify-' . $i . '-name-last', $personToNotifyName->getLast());
+                }
+
+                $this->setData(
+                    'lpa-document-peopleToNotify-' . $i . '-address-address1',
+                    $personToNotifyAddress->getAddress1()
+                )
+                ->setData(
+                    'lpa-document-peopleToNotify-' . $i . '-address-address2',
+                    $personToNotifyAddress->getAddress2()
+                )
+                ->setData(
+                    'lpa-document-peopleToNotify-' . $i . '-address-address3',
+                    $personToNotifyAddress->getAddress3()
+                )
+                ->setData(
+                    'lpa-document-peopleToNotify-' . $i . '-address-postcode',
+                    $personToNotifyAddress->getPostcode()
+                );
             } else {
                 // Add a strike through on the appropriate page
                 $this->addStrikeThrough('people-to-notify-' . $i, 7);
@@ -435,10 +449,11 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageEleven(CertificateProvider $certificateProvider): void
     {
         $address = $certificateProvider->getAddress();
+        $name = $certificateProvider->getName();
 
-        $this->setData('lpa-document-certificateProvider-name-title', $certificateProvider->name->title)
-            ->setData('lpa-document-certificateProvider-name-first', $certificateProvider->name->first)
-            ->setData('lpa-document-certificateProvider-name-last', $certificateProvider->name->last)
+        $this->setData('lpa-document-certificateProvider-name-title', $name->getTitle())
+            ->setData('lpa-document-certificateProvider-name-first', $name->getFirst())
+            ->setData('lpa-document-certificateProvider-name-last', $name->getLast())
             ->setData('lpa-document-certificateProvider-address-address1', $address->getAddress1())
             ->setData('lpa-document-certificateProvider-address-address2', $address->getAddress2())
             ->setData('lpa-document-certificateProvider-address-address3', $address->getAddress3())
@@ -488,9 +503,11 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             // But stop at MAX_ATTORNEYS_PER_PAGE_SECTION_11 - 1
             $dataKeyIndex = min($pageIteration, self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 - 1);
 
-            $pdf->setData('signature-attorney-' . $dataKeyIndex . '-name-title', $attorney->name->title)
-                ->setData('signature-attorney-' . $dataKeyIndex . '-name-first', $attorney->name->first)
-                ->setData('signature-attorney-' . $dataKeyIndex . '-name-last', $attorney->name->last);
+            $name = $attorney->getName();
+
+            $pdf->setData('signature-attorney-' . $dataKeyIndex . '-name-title', $name->getTitle())
+                ->setData('signature-attorney-' . $dataKeyIndex . '-name-first', $name->getFirst())
+                ->setData('signature-attorney-' . $dataKeyIndex . '-name-last', $name->getLast());
         } else {
             // Add a strike through on the appropriate page
             $pageNumber = 12 + $pageIteration;
@@ -541,17 +558,18 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 // Insert the specific attorney details
                 foreach ($attorneysForPage as $i => $attorneyId) {
                     $attorney = $lpaDocument->getPrimaryAttorneyById($attorneyId);
+                    $attorneyName = $attorney->getName();
 
                     if ($attorney instanceof TrustCorporation) {
-                        $pdf->setData('applicant-' . $i . '-name-last', $attorney->name);
+                        $pdf->setData('applicant-' . $i . '-name-last', (string) $attorneyName);
                     } elseif ($attorney instanceof Human) {
                         // we know $attorney must be a Human at this point, but we have to make sure otherwise
                         // there's no guarantee the attorney instance has a getName() method
                         $dobDate = $attorney->getDob()->getDate();
 
-                        $pdf->setData('applicant-' . $i . '-name-title', $attorney->title)
-                            ->setData('applicant-' . $i . '-name-first', $attorney->first)
-                            ->setData('applicant-' . $i . '-name-last', $attorney->last)
+                        $pdf->setData('applicant-' . $i . '-name-title', $attorneyName->getTitle())
+                            ->setData('applicant-' . $i . '-name-first', $attorneyName->getFirst())
+                            ->setData('applicant-' . $i . '-name-last', $attorneyName->getLast())
                             ->setData('applicant-' . $i . '-dob-date-day', $dobDate->format('d'))
                             ->setData('applicant-' . $i . '-dob-date-month', $dobDate->format('m'))
                             ->setData('applicant-' . $i . '-dob-date-year', $dobDate->format('Y'));
@@ -607,10 +625,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 $this->addStrikeThrough('correspondent-empty-name-address', 18);
             } else {
                 $name = $correspondent->getName();
-                if ($name instanceof LongName) {
-                    $this->setData('lpa-document-correspondent-name-title', $correspondent->name->title)
-                        ->setData('lpa-document-correspondent-name-first', $correspondent->name->first)
-                        ->setData('lpa-document-correspondent-name-last', $correspondent->name->last);
+                if ($name instanceof LongName || $name instanceof Name) {
+                    $this->setData('lpa-document-correspondent-name-title', $name->getTitle())
+                        ->setData('lpa-document-correspondent-name-first', $name->getFirst())
+                        ->setData('lpa-document-correspondent-name-last', $name->getLast());
                 }
 
                 $this->setData(

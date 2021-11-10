@@ -97,7 +97,7 @@ class ContinuationSheet2 extends AbstractContinuationSheet
     {
         parent::create($lpa);
 
-        $this->setData('cs2-donor-full-name', (string) $lpa->getDocument()->getDonor()->name)
+        $this->setData('cs2-donor-full-name', (string) $lpa->getDocument()->getDonor()->getName())
              ->setData('cs2-is', $this->cs2Type)
              ->setData('cs2-content', $this->content)
              ->setData('cs2-continued', ($this->isContinued ? '(Continued)' : ''));

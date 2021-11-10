@@ -3,8 +3,10 @@
 namespace Opg\Lpa\Pdf;
 
 use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
@@ -62,25 +64,35 @@ class ContinuationSheet1 extends AbstractContinuationSheet
             foreach ($actors as $actor) {
                 $this->setData('cs1-' . $i . '-is', $actorType);
 
-                if ($actor->name instanceof Name) {
-                    $this->setData('cs1-' . $i . '-name-title', $actor->name->title)
-                         ->setData('cs1-' . $i . '-name-first', $actor->name->first)
-                         ->setData('cs1-' . $i . '-name-last', $actor->name->last);
+                $name = $actor->getName();
+                $address = $actor->getAddress();
+
+                if ($name instanceof Name || $name instanceof LongName) {
+                    $this->setData('cs1-' . $i . '-name-title', $name->getTitle())
+                         ->setData('cs1-' . $i . '-name-first', $name->getFirst())
+                         ->setData('cs1-' . $i . '-name-last', $name->getLast());
+                } elseif (is_string($name)) {
+                    $this->setData('cs1-' . $i . '-name-last', (string) $name);
                 }
 
-                $this->setData('cs1-' . $i . '-address-address1', $actor->getAddress()->getAddress1())
-                     ->setData('cs1-' . $i . '-address-address2', $actor->getAddress()->getAddress2())
-                     ->setData('cs1-' . $i . '-address-address3', $actor->getAddress()->getAddress3())
-                     ->setData('cs1-' . $i . '-address-postcode', $actor->getAddress()->getPostcode());
+                $this->setData('cs1-' . $i . '-address-address1', $address->getAddress1())
+                     ->setData('cs1-' . $i . '-address-address2', $address->getAddress2())
+                     ->setData('cs1-' . $i . '-address-address3', $address->getAddress3())
+                     ->setData('cs1-' . $i . '-address-postcode', $address->getPostcode());
 
-                if (property_exists($actor, 'dob')) {
-                    $this->setData('cs1-' . $i . '-dob-date-day', $actor->getDob()->getDate()->format('d'))
-                         ->setData('cs1-' . $i . '-dob-date-month', $actor->getDob()->getDate()->format('m'))
-                         ->setData('cs1-' . $i . '-dob-date-year', $actor->getDob()->getDate()->format('Y'));
-                }
+                if (!$actor instanceof NotifiedPerson) {
+                    $email = $actor->getEmail();
+                    $dobDate = $actor->getDob()->getDate();
 
-                if (property_exists($actor, 'email') && ($actor->email instanceof EmailAddress)) {
-                    $this->setData('cs1-' . $i . '-email-address', $actor->getEmail()->getAddress(), true);
+                    if ($dobDate instanceof \DateTime) {
+                        $this->setData('cs1-' . $i . '-dob-date-day', $dobDate->format('d'))
+                            ->setData('cs1-' . $i . '-dob-date-month', $dobDate->format('m'))
+                            ->setData('cs1-' . $i . '-dob-date-year', $dobDate->format('Y'));
+                    }
+
+                    if ($email instanceof EmailAddress) {
+                        $this->setData('cs1-' . $i . '-email-address', $email->getAddress(), true);
+                    }
                 }
 
                 $i++;

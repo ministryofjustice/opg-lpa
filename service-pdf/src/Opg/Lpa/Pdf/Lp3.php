@@ -160,22 +160,23 @@ class Lp3 extends AbstractIndividualPdf
                 if (array_key_exists($i, $primaryAttorneysForPage)) {
                     $primaryAttorney = $primaryAttorneysForPage[$i];
                     $address = $primaryAttorney->getAddress();
+                    $name = $primaryAttorney->getName();
 
-                    if ($primaryAttorney->name instanceof Name || $primaryAttorney->name instanceof LongName) {
+                    if ($name instanceof Name || $name instanceof LongName) {
                         $pdf->setData(
                             'lpa-document-primaryAttorneys-' . $i . '-name-title',
-                            $primaryAttorney->name->title
+                            $name->getTitle()
                         )
-                            ->setData(
-                                'lpa-document-primaryAttorneys-' . $i . '-name-first',
-                                $primaryAttorney->name->first
-                            )
-                            ->setData(
-                                'lpa-document-primaryAttorneys-' . $i . '-name-last',
-                                $primaryAttorney->name->last
-                            );
-                    } elseif (is_string($primaryAttorney->name)) {
-                        $pdf->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $primaryAttorney->name);
+                        ->setData(
+                            'lpa-document-primaryAttorneys-' . $i . '-name-first',
+                            $name->getFirst()
+                        )
+                        ->setData(
+                            'lpa-document-primaryAttorneys-' . $i . '-name-last',
+                            $name->getLast()
+                        );
+                    } elseif (is_string($name)) {
+                        $pdf->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', (string) $name);
                     }
 
                     $pdf->setData(
