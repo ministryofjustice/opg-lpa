@@ -16,7 +16,7 @@
         },
         {
             "type": "path",
-            "url": "service-front/module/Application/src/Logging"
+            "url": "../service-logging"
         }
     ],
     "require": {
