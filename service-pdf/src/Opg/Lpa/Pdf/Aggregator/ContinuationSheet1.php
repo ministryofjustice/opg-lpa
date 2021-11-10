@@ -39,10 +39,8 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
-     *
-     * @return void
      */
-    protected function create(Lpa $lpa): void
+    protected function create(Lpa $lpa)
     {
         //  Loop through the actors and extract sets to send to the continuation sheet PDF for processing
         $actorsPackages = [];
