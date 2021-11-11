@@ -2,7 +2,7 @@
 
 namespace App\Logging;
 
-use Opg\Lpa\Logger\LoggerTrait;
+use MakeLogger\Logger\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
