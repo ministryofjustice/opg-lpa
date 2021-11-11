@@ -19,44 +19,38 @@ class Lp3 extends AbstractIndividualPdf
     /**
      * Constants
      */
-    public const MAX_ATTORNEYS_PER_PAGE = 4;
+    const MAX_ATTORNEYS_PER_PAGE = 4;
 
     /**
      * PDF template file name (without path) for this PDF object
      *
-     * @var string
+     * @var
      */
-    protected string $templateFileName = 'LP3.pdf';
+    protected $templateFileName = 'LP3.pdf';
 
     /**
-     * @var NotifiedPerson|null
+     * @var NotifiedPerson
      */
-    private ?NotifiedPerson $personToNotify;
+    private $personToNotify;
 
     /**
      * @param Lpa|null $lpa
      * @param NotifiedPerson|null $personToNotify
-     * @param PdftkFactory|null $pdftkFactory
+     * @param ?PdftkFactory $pdftkFactory
      */
-    public function __construct(
-        ?Lpa $lpa = null,
-        ?NotifiedPerson $personToNotify = null,
-        ?PdftkFactory $pdftkFactory = null
-    ) {
+    public function __construct(Lpa $lpa = null, NotifiedPerson $personToNotify = null, ?PdftkFactory $pdftkFactory = null)
+    {
         $this->personToNotify = $personToNotify;
 
         parent::__construct($lpa, [], $pdftkFactory);
     }
 
     /**
-     * Create the PDF in preparation for it to be generated - this function alone will not save a copy
-     * to the file system
+     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
-     *
-     * @return void
      */
-    protected function create(Lpa $lpa): void
+    protected function create(Lpa $lpa)
     {
         $this->populatePageOne($this->personToNotify);
         $this->populatePageTwo($lpa);
@@ -65,7 +59,7 @@ class Lp3 extends AbstractIndividualPdf
 
         //  Determine how many additional page three instances were added
         //  If there is an odd number of additional pages then we need to insert a blank page
-        $additionalPages = ceil(count($lpa->getDocument()->getPrimaryAttorneys()) / self::MAX_ATTORNEYS_PER_PAGE) - 1;
+        $additionalPages = ceil(count($lpa->document->primaryAttorneys) / self::MAX_ATTORNEYS_PER_PAGE) - 1;
 
         if ($additionalPages % 2 == 1) {
             //  Insert a single blank page at the end of the document
@@ -75,80 +69,59 @@ class Lp3 extends AbstractIndividualPdf
 
     /**
      * @param NotifiedPerson $personToNotify
-     *
-     * @return void
      */
-    private function populatePageOne(NotifiedPerson $personToNotify): void
+    private function populatePageOne(NotifiedPerson $personToNotify)
     {
-        $name = $personToNotify->getName();
-        $address = $personToNotify->getAddress();
-
-        $this->setData('lpa-document-peopleToNotify-name-title', $name->getTitle())
-             ->setData('lpa-document-peopleToNotify-name-first', $name->getFirst())
-             ->setData('lpa-document-peopleToNotify-name-last', $name->getLast())
-             ->setData('lpa-document-peopleToNotify-address-address1', $address->getAddress1())
-             ->setData('lpa-document-peopleToNotify-address-address2', $address->getAddress2())
-             ->setData('lpa-document-peopleToNotify-address-address3', $address->getAddress3())
-             ->setData('lpa-document-peopleToNotify-address-postcode', $address->getPostcode());
+        $this->setData('lpa-document-peopleToNotify-name-title', $personToNotify->name->title)
+             ->setData('lpa-document-peopleToNotify-name-first', $personToNotify->name->first)
+             ->setData('lpa-document-peopleToNotify-name-last', $personToNotify->name->last)
+             ->setData('lpa-document-peopleToNotify-address-address1', $personToNotify->address->address1)
+             ->setData('lpa-document-peopleToNotify-address-address2', $personToNotify->address->address2)
+             ->setData('lpa-document-peopleToNotify-address-address3', $personToNotify->address->address3)
+             ->setData('lpa-document-peopleToNotify-address-postcode', $personToNotify->address->postcode);
 
         $this->setFooter('footer-right-page-one', 'lp3');
     }
 
     /**
      * @param Lpa $lpa
-     *
-     * @return void
      */
-    private function populatePageTwo(Lpa $lpa): void
+    private function populatePageTwo(Lpa $lpa)
     {
         //  Set the donor details
-        $document = $lpa->getDocument();
-        $donor = $document->getDonor();
-        $name = $donor->getName();
-        $address = $donor->getAddress();
-
-        $this->setData('lpa-document-donor-name-title', $name->getTitle())
-            ->setData('lpa-document-donor-name-first', $name->getFirst())
-            ->setData('lpa-document-donor-name-last', $name->getLast())
-            ->setData('lpa-document-donor-address-address1', $address->getAddress1())
-            ->setData('lpa-document-donor-address-address2', $address->getAddress2())
-            ->setData('lpa-document-donor-address-address3', $address->getAddress3())
-            ->setData('lpa-document-donor-address-postcode', $address->getPostcode());
+        $donor = $lpa->document->donor;
+        $this->setData('lpa-document-donor-name-title', $donor->name->title)
+             ->setData('lpa-document-donor-name-first', $donor->name->first)
+             ->setData('lpa-document-donor-name-last', $donor->name->last)
+             ->setData('lpa-document-donor-address-address1', $donor->address->address1)
+             ->setData('lpa-document-donor-address-address2', $donor->address->address2)
+             ->setData('lpa-document-donor-address-address3', $donor->address->address3)
+             ->setData('lpa-document-donor-address-postcode', $donor->address->postcode);
 
         //  Set who is applicant
-        $this->setData(
-            'who-is-applicant',
-            ($document->getWhoIsRegistering() == 'donor' ? 'donor' : 'attorney')
-        );
+        $this->setData('who-is-applicant', ($lpa->document->whoIsRegistering == 'donor' ? 'donor' : 'attorney'));
 
         //  Set LPA type
-        $this->setData(
-            'lpa-type',
-            ($document->getType() == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : $document->getType())
-        );
+        $this->setData('lpa-type', ($lpa->document->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : $lpa->document->type));
 
         $this->setFooter('footer-right-page-two', 'lp3');
     }
 
     /**
      * @param Lpa $lpa
-     *
-     * @return void
      */
-    private function populatePageThree(Lpa $lpa, $pageIteration = 0): void
+    private function populatePageThree(Lpa $lpa, $pageIteration = 0)
     {
         //  This page is repeatable so determine which PDF object to use
         $pdf = ($pageIteration > 0 ? new $this(null, null, $this->pdftkFactory) : $this);
 
-        $document = $lpa->getDocument();
-        $primaryAttorneys = $document->getPrimaryAttorneys();
-        $primaryDecisions = $document->getPrimaryAttorneyDecisions();
+        $primaryAttorneys = $lpa->document->primaryAttorneys;
 
         //  Set the details about how attorneys act
         if (count($primaryAttorneys) == 1) {
             $pdf->setData('how-attorneys-act', 'only-one-attorney-appointed');
-        } elseif ($primaryDecisions instanceof PrimaryAttorneyDecisions) {
-            $pdf->setData('how-attorneys-act', $primaryDecisions->getHow());
+        } elseif ($lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
+            $pdf->setData('how-attorneys-act', $lpa->document->primaryAttorneyDecisions->how);
         }
 
         //  Populate the details for primary attorneys on this page
@@ -161,42 +134,19 @@ class Lp3 extends AbstractIndividualPdf
                 //  If there is a primary attorney for this index then render the details
                 if (array_key_exists($i, $primaryAttorneysForPage)) {
                     $primaryAttorney = $primaryAttorneysForPage[$i];
-                    $name = $primaryAttorney->getName();
-                    $address = $primaryAttorney->getAddress();
 
-                    if ($name instanceof Name || $name instanceof LongName) {
-                        $pdf->setData(
-                            'lpa-document-primaryAttorneys-' . $i . '-name-title',
-                            $name->getTitle()
-                        )
-                            ->setData(
-                                'lpa-document-primaryAttorneys-' . $i . '-name-first',
-                                $name->getFirst()
-                            )
-                            ->setData(
-                                'lpa-document-primaryAttorneys-' . $i . '-name-last',
-                                $name->getLast()
-                            );
-                    } elseif (is_string($name)) {
-                        $pdf->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $name);
+                    if ($primaryAttorney->name instanceof Name || $primaryAttorney->name instanceof LongName) {
+                        $pdf->setData('lpa-document-primaryAttorneys-' . $i . '-name-title', $primaryAttorney->name->title)
+                            ->setData('lpa-document-primaryAttorneys-' . $i . '-name-first', $primaryAttorney->name->first)
+                            ->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $primaryAttorney->name->last);
+                    } elseif (is_string($primaryAttorney->name)) {
+                        $pdf->setData('lpa-document-primaryAttorneys-' . $i . '-name-last', $primaryAttorney->name);
                     }
 
-                    $pdf->setData(
-                        'lpa-document-primaryAttorneys-' . $i . '-address-address1',
-                        $address->getAddress1()
-                    )
-                        ->setData(
-                            'lpa-document-primaryAttorneys-' . $i . '-address-address2',
-                            $address->getAddress2()
-                        )
-                        ->setData(
-                            'lpa-document-primaryAttorneys-' . $i . '-address-address3',
-                            $address->getAddress3()
-                        )
-                        ->setData(
-                            'lpa-document-primaryAttorneys-' . $i . '-address-postcode',
-                            $address->getPostcode()
-                        );
+                    $pdf->setData('lpa-document-primaryAttorneys-' . $i . '-address-address1', $primaryAttorney->address->address1)
+                        ->setData('lpa-document-primaryAttorneys-' . $i . '-address-address2', $primaryAttorney->address->address2)
+                        ->setData('lpa-document-primaryAttorneys-' . $i . '-address-address3', $primaryAttorney->address->address3)
+                        ->setData('lpa-document-primaryAttorneys-' . $i . '-address-postcode', $primaryAttorney->address->postcode);
                 } else {
                     //  Add a strike through
                     $pdf->addStrikeThrough('lp3-primaryAttorney-' . $i, 3);
@@ -219,10 +169,7 @@ class Lp3 extends AbstractIndividualPdf
         $pdf->setFooter('footer-right-page-three', 'lp3');
     }
 
-    /**
-     * @return void
-     */
-    private function populatePageFour(): void
+    private function populatePageFour()
     {
         $this->setFooter('footer-right-page-four', 'lp3');
     }

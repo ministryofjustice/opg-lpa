@@ -14,30 +14,25 @@ class ContinuationSheet4 extends AbstractContinuationSheet
     /**
      * PDF template file name (without path) for this PDF object
      *
-     * @var string
+     * @var
      */
-    protected string $templateFileName = 'LPC_Continuation_Sheet_4.pdf';
+    protected $templateFileName = 'LPC_Continuation_Sheet_4.pdf';
 
     /**
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
-     *
-     * @return void
      */
-    protected function create(Lpa $lpa): void
+    protected function create(Lpa $lpa)
     {
         parent::create($lpa);
 
         //  Get the trust from the attorneys
-        $attorneys = array_merge(
-            $lpa->getDocument()->getPrimaryAttorneys(),
-            $lpa->getDocument()->getReplacementAttorneys()
-        );
+        $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
 
         foreach ($attorneys as $attorney) {
             if ($attorney instanceof TrustCorporation) {
-                $this->setData('cs4-trust-corporation-company-registration-number', $attorney->getNumber());
+                $this->setData('cs4-trust-corporation-company-registration-number', $attorney->number);
             }
         }
 

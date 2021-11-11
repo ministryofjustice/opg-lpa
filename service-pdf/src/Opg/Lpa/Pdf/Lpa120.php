@@ -21,61 +21,46 @@ class Lpa120 extends AbstractIndividualPdf
     /**
      * PDF template file name (without path) for this PDF object
      *
-     * @var string
+     * @var
      */
-    protected string $templateFileName = 'LPA120.pdf';
+    protected $templateFileName = 'LPA120.pdf';
 
     /**
-     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to
-     * the file system
+     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
-     *
-     * @return void
      */
-    protected function create(Lpa $lpa): void
+    protected function create(Lpa $lpa)
     {
-        // No content on pages 1 & 2
+        //  No content on pages 1 & 2
         $this->populatePageThree($lpa);
-        $this->populatePageFour($lpa->getPayment());
+        $this->populatePageFour($lpa->payment);
     }
 
     /**
      * @param Lpa $lpa
-     *
-     * @return void
      */
-    private function populatePageThree(Lpa $lpa): void
+    private function populatePageThree(Lpa $lpa)
     {
-        $lpaDocument = $lpa->getDocument();
-        $lpaRepeatCaseNumber = $lpa->getRepeatCaseNumber();
-        $lpaDonor = $lpaDocument->getDonor();
+        //  Set the donor details
+        $this->setData('donor-full-name', (string) $lpa->document->donor->name)
+             ->setData('donor-address', (string) $lpa->document->donor->address, true);
 
-        // Set the donor details
-        $this->setData('donor-full-name', (string) $lpaDonor->getName())
-             ->setData('donor-address', (string) $lpaDonor->getAddress(), true);
-
-        // Set repeat case details
-        if (!is_null($lpaRepeatCaseNumber)) {
+        //  Set repeat case details
+        if (!is_null($lpa->repeatCaseNumber)) {
             $this->setCheckBox('is-repeat-application')
-                ->setData('case-number', $lpaRepeatCaseNumber);
+                 ->setData('case-number', $lpa->repeatCaseNumber);
         }
 
-        $this->setData(
-            'lpa-type',
-            $lpaDocument->getType() == Document::LPA_TYPE_PF ?
-            'property-and-financial-affairs' : 'health-and-welfare'
-        );
+        $this->setData('lpa-type', $lpa->document->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : 'health-and-welfare');
 
-        // IMPORTANT NOTE!
-        // The details to be entered as the "applicant" below should ALWAYS be to correspondent details and
-        // NOT the applicant as we understand it in the data
-        $correspondent = $lpaDocument->getCorrespondent();
-        $correspondentName = $correspondent->getName();
-        $correspondentType = $correspondent->getWho();
+        //  IMPORTANT NOTE!
+        //  The details to be entered as the "applicant" below should ALWAYS be to correspondent details and NOT the applicant as we understand it in the data
+        $correspondent = $lpa->document->correspondent;
+        $correspondentType = $correspondent->who;
         $correspondentTypeOther = '';
 
-        // Set the type
+        //  Set the type
         if (!in_array($correspondentType, [Correspondence::WHO_DONOR, Correspondence::WHO_ATTORNEY])) {
             $correspondentType = 'other';
             $correspondentTypeOther = 'Correspondent';
@@ -84,9 +69,9 @@ class Lpa120 extends AbstractIndividualPdf
         $this->setData('applicant-type', $correspondentType);
         $this->setData('applicant-type-other', $correspondentTypeOther);
 
-        // Set the name
-        if ($correspondentName instanceof Name || $correspondentName instanceof LongName) {
-            $correspondentTitle = $correspondentName->getTitle();
+        //  Set the name
+        if ($correspondent->name instanceof Name || $correspondent->name instanceof LongName) {
+            $correspondentTitle = $correspondent->name->title;
             $correspondentTitleOther = '';
 
             if (!in_array($correspondentTitle, ['Mr', 'Mrs', 'Miss', 'Ms'])) {
@@ -95,53 +80,45 @@ class Lpa120 extends AbstractIndividualPdf
             }
 
             $this->setData('applicant-name-title', strtolower($correspondentTitle))
-                ->setData('applicant-name-title-other', $correspondentTitleOther)
-                ->setData('applicant-name-first', $correspondentName->getFirst())
-                ->setData('applicant-name-last', $correspondentName->getLast());
+                 ->setData('applicant-name-title-other', $correspondentTitleOther)
+                 ->setData('applicant-name-first', $correspondent->name->first)
+                 ->setData('applicant-name-last', $correspondent->name->last);
         }
 
-        // Set the address
-        if ($correspondent->getAddress() instanceof Address) {
-            $this->setData('applicant-address', (string) $correspondent->getAddress(), true);
+        //  Set the address
+        if ($correspondent->address instanceof Address) {
+            $this->setData('applicant-address', (string) $correspondent->address, true);
         }
 
-        // Set the phone number
-        if ($correspondent->getPhone() instanceof PhoneNumber) {
-            $this->setData('applicant-phone-number', $correspondent->getPhone()->getNumber());
+        //  Set the phone number
+        if ($correspondent->phone instanceof PhoneNumber) {
+            $this->setData('applicant-phone-number', $correspondent->phone->number);
         }
 
-        // Set the email address
-        if ($correspondent->getEmail() instanceof EmailAddress) {
-            $this->setData('applicant-email-address', (string) $correspondent->getEmail());
+        //  Set the email address
+        if ($correspondent->email instanceof EmailAddress) {
+            $this->setData('applicant-email-address', (string) $correspondent->email);
         }
     }
 
     /**
      * @param Payment $payment
      */
-    private function populatePageFour(Payment $payment): void
+    private function populatePageFour(Payment $payment)
     {
-        $this->setData(
-            'receive-benefits',
-            $this->getYesNoEmptyValueFromBoolean($payment->isReducedFeeReceivesBenefits())
-        )
-            ->setData('damage-awarded', empty($payment->isReducedFeeAwardedDamages()) ?
-                '' : $this->getYesNoEmptyValueFromBoolean(!$payment->isReducedFeeAwardedDamages()))
-            ->setData('low-income', $this->getYesNoEmptyValueFromBoolean($payment->isReducedFeeLowIncome()))
-            ->setData(
-                'receive-universal-credit',
-                $this->getYesNoEmptyValueFromBoolean($payment->isReducedFeeUniversalCredit())
-            );
+        $this->setData('receive-benefits', $this->getYesNoEmptyValueFromBoolean($payment->reducedFeeReceivesBenefits))
+             ->setData('damage-awarded', empty($payment->reducedFeeAwardedDamages) ? '' : $this->getYesNoEmptyValueFromBoolean(!$payment->reducedFeeAwardedDamages))
+             ->setData('low-income', $this->getYesNoEmptyValueFromBoolean($payment->reducedFeeLowIncome))
+             ->setData('receive-universal-credit', $this->getYesNoEmptyValueFromBoolean($payment->reducedFeeUniversalCredit));
     }
 
     /**
      * Simple function to return a yes/no string or empty value
      *
-     * @param bool $valueIn
-     *
-     * @return string
+     * @param $valueIn
+     * @return null|string
      */
-    private function getYesNoEmptyValueFromBoolean(?bool $valueIn): string
+    private function getYesNoEmptyValueFromBoolean($valueIn)
     {
         if ($valueIn === true) {
             return 'yes';
