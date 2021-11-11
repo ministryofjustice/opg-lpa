@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b7b8989269cbd611fa1744908a62aa0",
+    "content-hash": "88f3a08a9838c93ba9a2a23af112396c",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -171,16 +171,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.201.0",
+            "version": "3.202.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d2bb0296a3fe62fbc975075d7b06c41002a6517d"
+                "reference": "da75964c7ca13755337ddd63a4b643cb43f0ead0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d2bb0296a3fe62fbc975075d7b06c41002a6517d",
-                "reference": "d2bb0296a3fe62fbc975075d7b06c41002a6517d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/da75964c7ca13755337ddd63a4b643cb43f0ead0",
+                "reference": "da75964c7ca13755337ddd63a4b643cb43f0ead0",
                 "shasum": ""
             },
             "require": {
@@ -256,9 +256,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.201.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.202.0"
             },
-            "time": "2021-11-09T19:28:28+00:00"
+            "time": "2021-11-10T19:14:14+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -3401,39 +3401,6 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "time": "2021-04-13T12:33:09+00:00"
-        },
-        {
-            "name": "ministryofjustice/opg-make-logging",
-            "version": "dev-lpal-492-tidy-logger",
-            "dist": {
-                "type": "path",
-                "url": "../service-logging",
-                "reference": "9b4490c18390a846a6e362d597152d54f1d0bdf8"
-            },
-            "require": {
-                "laminas/laminas-cache": "2.9.0",
-                "laminas/laminas-cli": "^1.1",
-                "laminas/laminas-component-installer": "^2.1.1",
-                "laminas/laminas-log": "^2.13",
-                "laminas/laminas-mvc": "^3.1.1",
-                "laminas/laminas-mvc-i18n": "^1.1.1",
-                "laminas/laminas-zendframework-bridge": "^1.1.1",
-                "php": "^7.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Application\\": "module/Application/src/"
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Logging module for service for creating Lasting Power of Attorney PDF documents",
-            "homepage": "https://github.com/ministryofjustice/opg-lpa",
-            "transport-options": {
-                "relative": true
-            }
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -8209,9 +8176,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "ministryofjustice/opg-make-logging": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
