@@ -1,6 +1,5 @@
 FROM composer:2.1.11 AS composer
 
-COPY service-logging /service-logging
 COPY service-front/composer.json /app/composer.json
 COPY service-front/composer.lock /app/composer.lock
 
@@ -24,7 +23,7 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
         && apk del .build-dependencies
 
 COPY service-front /app
-COPY service-logging /service-logging
+COPY shared/logging /shared/logging
 COPY --from=composer /app/vendor /app/vendor
 COPY service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/

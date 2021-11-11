@@ -37,7 +37,7 @@
     },
     "autoload": {
         "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/", "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/"},
-        "MakeLogger\\": "../service-logging/module/MakeLogger/src/"
+        "MakeLogger\\": "../shared/logging/module/MakeLogger/src/"
     },
     "include-path": ["config/"]
 }
