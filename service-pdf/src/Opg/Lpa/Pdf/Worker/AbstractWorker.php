@@ -3,7 +3,7 @@
 namespace Opg\Lpa\Pdf\Worker;
 
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Logger\Logger;
+use MakeLogger\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\Lp1f;
 use Opg\Lpa\Pdf\Lp1h;
 use Opg\Lpa\Pdf\Lpa120;
@@ -29,7 +29,7 @@ abstract class AbstractWorker
      */
     public function __construct()
     {
-        $this->logger = Logger::getInstance();
+        use LoggerTrait;
 
         //  Copy LPA PDF template files into ram disk if they are not found
         $assetsConfig = Config::getInstance()['service']['assets'];
