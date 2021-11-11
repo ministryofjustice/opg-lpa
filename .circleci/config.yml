@@ -868,6 +868,27 @@ orbs:
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
+      lint_region_terraform:
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        executor: terraform
+        steps:
+          - checkout
+          - run:
+              name: terraform lint
+              command: terraform fmt -diff -check -recursive
+          - run:
+              name: Validate Region Terraform
+              command: |
+                terraform --version
+                cd ~/project/terraform/region
+                terraform init
+                export TF_WORKSPACE=development >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform validate
       lint_environment_terraform:
         parameters:
           workspace:
@@ -932,6 +953,29 @@ orbs:
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
 
+      apply_region_terraform:
+        #
+        # Apply the shared terraform configuration. This:
+        #   - Updates the account infrastructure;
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: development
+        steps:
+          - checkout
+          - run:
+              name: Apply Region Terraform
+              command: |
+                cd ~/project/terraform/region
+                terraform init
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform apply -lock-timeout=300s --auto-approve
+
+
       plan_check_terraform:
         # plan check - with gating check
         executor: terraform
@@ -940,7 +984,7 @@ orbs:
             description: choose account / enviroment for level to check
             default: environment
             type: enum
-            enum: ["environment", "account"]
+            enum: ["environment", "account","region"]
           workspace:
             description: Terraform workspace name
             type: string
@@ -973,7 +1017,7 @@ orbs:
 
                 echo destructive changes:
                 set +e
-                if [[ "${level}" == "account" ]]
+                if [[ "${level}" == "account" ]] || [[ "${level}" == "region" ]]
                 then
                   cat ${WORKSPACE}.log | grep -E 'destroyed|replaced'
                 else
