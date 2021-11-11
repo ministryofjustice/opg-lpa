@@ -115,18 +115,6 @@ resource "aws_s3_bucket_public_access_block" "lpa_pdf_cache" {
   restrict_public_buckets = true
 }
 
-resource "aws_kms_key" "lpa_pdf_cache" {
-  description             = "S3 bucket encryption key for lpa_pdf_cache"
-  deletion_window_in_days = 7
-  tags                    = merge(local.default_tags, local.pdf_component_tag)
-  enable_key_rotation     = true
-}
-
-resource "aws_kms_alias" "lpa_pdf_cache" {
-  name          = "alias/lpa_pdf_cache-${local.account_name}-${local.region_name}"
-  target_key_id = aws_kms_key.lpa_pdf_cache.key_id
-}
-
 data "aws_iam_policy_document" "lpa_pdf_cache_policy" {
   statement {
     sid    = "AllowSSLRequestsOnly"

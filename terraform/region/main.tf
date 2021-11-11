@@ -1,7 +1,6 @@
-#prevent in pre and prod for now
+#manual only right now - take this out later.
 module "eu-west-1" {
   source       = "./modules/region"
-  count        = local.account_name == "development" ? 1 : 0
   account      = local.account
   account_name = local.account_name
   providers = {
