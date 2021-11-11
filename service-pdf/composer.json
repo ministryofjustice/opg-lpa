@@ -30,8 +30,11 @@
         "ext-json": "*"
     },
     "autoload": {
-        "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/", "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/"},
-        "MakeLogger\\": "../shared/logging/module/MakeLogger/src/"
+        "psr-4": {
+            "Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/",
+            "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/",
+            "MakeLogger\\": "../shared/logging/module/MakeLogger/src/"
+        }
     },
     "include-path": ["config/"]
 }
