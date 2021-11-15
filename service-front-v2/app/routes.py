@@ -8,7 +8,20 @@ from app import app
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    components = os.listdir("govuk_components")
+    components.sort()
+
+    return render_template("index.html", components=components)
+
+@app.route("/components/<string:component>")
+def component(component):
+    try:
+        with open("govuk_components/{}/fixtures.json".format(component)) as json_file:
+            fixtures = json.load(json_file)
+    except FileNotFoundError:
+        raise NotFound
+
+    return render_template("component.html", fixtures=fixtures)
 
 @app.route("/completed-feedback")
 def feedback():
