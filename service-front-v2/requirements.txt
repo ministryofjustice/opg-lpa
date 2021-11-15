@@ -3,12 +3,11 @@ brotli==1.0.9
 click==7.1.2
 flask-compress==1.9.0
 flask-talisman==0.7.0
-flask==2.0.0
 flask-wtf==0.14.3
 govuk-frontend-jinja==1.5.1
-gunicorn==20.1.0
 itsdangerous==2.0.0
 markupsafe==2.0.0
 python-dotenv==0.15.0
+gunicorn
 six==1.16.0
 werkzeug==2.0.0
