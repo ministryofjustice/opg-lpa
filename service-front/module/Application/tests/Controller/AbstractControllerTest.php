@@ -24,6 +24,7 @@ use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTe
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Common\Dob;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
@@ -172,9 +173,10 @@ abstract class AbstractControllerTest extends MockeryTestCase
     protected $userDetails;
 
     /**
-     * Set up the services in default configuration - these can be adapted in the subclasses before getting the controller to test
+     * Set up the services in default configuration - these can be adapted
+     * in the subclasses before getting the controller to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->lpa = FixturesData::getPfLpa();
 
@@ -223,7 +225,9 @@ abstract class AbstractControllerTest extends MockeryTestCase
 
         $this->user = $this->getUserDetails();
 
-        $this->setIdentity(new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime('today midnight')));
+        $this->setIdentity(
+            new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime('today midnight'))
+        );
 
         //  Config array merged so it can be updated in calling test class if required
         $this->config = [
@@ -316,9 +320,15 @@ abstract class AbstractControllerTest extends MockeryTestCase
                 //  If there is no identity then the getApplication call will not be made in the abstract contructor
                 if (!is_null($this->userIdentity)) {
                     if ($this->lpa instanceof Lpa) {
-                        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn($this->lpa)->once();
+                        $this->lpaApplicationService->shouldReceive('getApplication')
+                            ->withArgs([$lpaId])
+                            ->andReturn($this->lpa)
+                            ->once();
                     } else {
-                        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn(false)->once();
+                        $this->lpaApplicationService->shouldReceive('getApplication')
+                            ->withArgs([$lpaId])
+                            ->andReturn(false)
+                            ->once();
                     }
                 }
 
@@ -410,7 +420,9 @@ abstract class AbstractControllerTest extends MockeryTestCase
     public function setMatchedRouteNameHttp($controller, $routeName, $expectedMatchedRouteNameTimes = 1)
     {
         $routeMatch = $this->getHttpRouteMatch($controller);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->times($expectedMatchedRouteNameTimes);
+        $routeMatch->shouldReceive('getMatchedRouteName')
+            ->andReturn($routeName)
+            ->times($expectedMatchedRouteNameTimes);
         return $routeMatch;
     }
 
@@ -671,11 +683,17 @@ abstract class AbstractControllerTest extends MockeryTestCase
         return $flattenAttorneyData;
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
-        //Clear out Zend containers
+        // We have what are effectively global variables to track status from Module.php into
+        // controllers, as Module.php bootstraps identity via the API. Clear out the containers
+        // so we can be sure there's nothing being carried between tests.
         $preAuthRequest = new Container('PreAuthRequest');
         $preAuthRequest->url = null;
+
+        $authFailureReason = new Container('AuthFailureReason');
+        $authFailureReason->code = null;
+        $authFailureReason->reason = null;
 
         parent::tearDown();
     }
@@ -740,6 +758,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
             $user->email = new EmailAddress([
                 'address' => 'unit@test.com',
             ]);
+
+            $user->dob = new Dob(['date' => '1957-12-17T00:00:00.000Z']);
         }
 
         return $user;

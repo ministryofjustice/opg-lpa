@@ -1,0 +1,19 @@
+NOTIFY SERVICE EMAIL TEMPLATE: EMAIL_FEEDBACK
+
+DERIVED FROM TWIG TEMPLATE: feedback.twig
+
+NOTIFY TEMPLATE ID: 3fb12879-7665-4ffe-a76f-ed90cde7a35d
+
+SUBJECT: LPA v2 User Feedback
+
+MESSAGE:
+
+# LPA service feedback
+
+* Sent: ((currentDateTime))
+* Rating: ((rating))
+* Comments:	((details))
+* Email: ((email))
+* Phone: ((phone))
+* Feedback link clicked from: ((fromPage))
+* User Agent: ((agent))

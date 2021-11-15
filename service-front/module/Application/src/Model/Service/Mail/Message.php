@@ -14,12 +14,6 @@ class Message extends LaminasMessage
 {
     private $categories = [];
 
-    /**
-     * A timestamp indicating when to send the message.
-     * If null, send immediately.
-     */
-    private $sendAt;
-
     public function __construct()
     {
         $this->setEncoding("UTF-8");
@@ -35,17 +29,5 @@ class Message extends LaminasMessage
     public function getCategories()
     {
         return $this->categories;
-    }
-
-    public function setSendAt($sendAt)
-    {
-        $this->sendAt = $sendAt;
-
-        return $this;
-    }
-
-    public function getSendAt()
-    {
-        return $this->sendAt;
     }
 }

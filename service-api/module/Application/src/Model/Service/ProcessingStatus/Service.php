@@ -19,6 +19,7 @@ class Service extends AbstractService
 {
     private const SIRIUS_STATUS_TO_LPA = [
         'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
+        'Payment Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
         'Perfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
         'Imperfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
         'Invalid' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
@@ -26,7 +27,7 @@ class Service extends AbstractService
         'Withdrawn' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
         'Registered' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
         'Cancelled' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
-        'Revoked' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED
+        'Revoked' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
     ];
 
     /**
@@ -61,7 +62,7 @@ class Service extends AbstractService
 
     public function setConfig(array $config)
     {
-        if(!isset($config['processing-status']['endpoint'])) {
+        if (!isset($config['processing-status']['endpoint'])) {
             throw new RuntimeException("Missing config: ['processing-status']['endpoint']");
         }
 
@@ -86,7 +87,6 @@ class Service extends AbstractService
         $siriusResponseArray = [];
 
         foreach ($ids as $id) {
-
             $prefixedId = $id;
 
             if (is_numeric($id)) {
@@ -111,9 +111,9 @@ class Service extends AbstractService
                 $this->getLogger()->debug('We have a result for:' . $id);
 
                 $results[$id] = $response;
-                },
-            'rejected' => function ($reason, $id){
-                $this->getLogger()->debug('Failed to get result for :' . $id .$reason);
+            },
+            'rejected' => function ($reason, $id) {
+                $this->getLogger()->debug('Failed to get result for :' . $id . $reason);
             },
         ]);
 
@@ -122,27 +122,46 @@ class Service extends AbstractService
         // Force the pool of requests to complete
         $promise->wait();
         // Handle all request response now
-        foreach ($results as $lpaId=>$result) {
+        foreach ($results as $lpaId => $result) {
             $statusCode = $result->getStatusCode();
-
             switch ($statusCode) {
                 case 200:
                     $response = $this->handleResponse($result);
-                    $siriusResponseArray[$lpaId] = $response;
+                    $siriusResponseArray[$lpaId] = [
+                        'deleted'   => false,
+                        'response'  => $response
+                    ];
                     break;
 
                 case 404:
                     // A 404 represents that details for the passed ID could not be found
-                    $siriusResponseArray[$lpaId] = null;
+                    $siriusResponseArray[$lpaId] = [
+                        'deleted'   => false,
+                        'response'  => null
+                    ];
                     break;
 
-                default:
+                case 410:
+                    // A 410 represents the LPA has recently been deleted from Sirius
+                    $siriusResponseArray[$lpaId] = [
+                        'deleted'   => true,
+                        'response'  => null
+                    ];
+                    break;
+
+                case 500:
+                case 503:
                     $this->getLogger()
-                        ->err('Unexpected response from Sirius gateway: ' . (string)$result->getBody());
-                    throw new ApiProblemException('Unexpected response from Sirius gateway: ' . $statusCode);
+                    ->err('Bad response from Sirius gateway: ' . (string)$result->getBody());
+                    throw new ApiProblemException('Bad response from Sirius gateway: ' . $statusCode);
+
+                default:
+                    $this->getLogger()->err(
+                        'Unexpected response from Sirius gateway: ' . (string)$result->getBody()
+                    );
+                    break;
             } //end switch
         } //end for
-
         return $siriusResponseArray;
     }
 
@@ -165,7 +184,7 @@ class Service extends AbstractService
     {
         $responseBody = json_decode($result->getBody(), true);
 
-        if (is_null($responseBody)){
+        if (is_null($responseBody)) {
             return null;
         }
 
@@ -176,19 +195,19 @@ class Service extends AbstractService
 
         $return = [];
 
-        if (isset($responseBody['registrationDate'])){
+        if (isset($responseBody['registrationDate'])) {
             $return['registrationDate'] = $responseBody['registrationDate'];
         }
-        if (isset($responseBody['receiptDate'])){
+        if (isset($responseBody['receiptDate'])) {
             $return['receiptDate'] = $responseBody['receiptDate'];
         }
-        if (isset($responseBody['rejectedDate'])){
+        if (isset($responseBody['rejectedDate'])) {
             $return['rejectedDate'] = $responseBody['rejectedDate'];
         }
-        if (isset($responseBody['invalidDate'])){
+        if (isset($responseBody['invalidDate'])) {
             $return['invalidDate'] = $responseBody['invalidDate'];
         }
-        if (isset($responseBody['withdrawnDate'])){
+        if (isset($responseBody['withdrawnDate'])) {
             $return['withdrawnDate'] = $responseBody['withdrawnDate'];
         }
         if (isset($responseBody['dispatchDate'])) {

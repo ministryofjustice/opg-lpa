@@ -5,6 +5,8 @@ namespace ApplicationTest\Controller\Authenticated;
 use Application\Controller\Authenticated\AboutYouController;
 use Application\Form\User\AboutYou;
 use ApplicationTest\Controller\AbstractControllerTest;
+use Hamcrest\MatcherAssert;
+use Hamcrest\Matchers;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\User\User;
@@ -19,7 +21,7 @@ class AboutYouControllerTest extends AbstractControllerTest
     private $form;
     private $postData = [];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -42,7 +44,23 @@ class AboutYouControllerTest extends AbstractControllerTest
 
         //  Set up the form
         $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you'])->once();
-        $this->form->shouldReceive('bind')->withArgs([$this->user->flatten()])->once();
+
+        $expectedUserData = $this->user->flatten();
+
+        // date is split into constituent parts when DOB is parsed, so modify the expectation;
+        // see AbstractControllerTest->getUser() where the user fixture is created
+        $expectedUserData['dob-date'] = [
+            'day' => 17,
+            'month' => 12,
+            'year' => 1957
+        ];
+
+        $this->form->shouldReceive('bind')
+            ->with(Mockery::on(function ($userData) use ($expectedUserData) {
+                MatcherAssert::assertThat($expectedUserData, Matchers::equalTo($userData));
+                return true;
+            }))
+            ->once();
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();
@@ -117,7 +135,23 @@ class AboutYouControllerTest extends AbstractControllerTest
 
         //  Set up form
         $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you/new'])->once();
-        $this->form->shouldReceive('bind')->withArgs([$this->user->flatten()])->once();
+
+        $expectedUserData = $this->user->flatten();
+
+        // date is split into constituent parts when DOB is parsed, so modify the expectation;
+        // see AbstractControllerTest->getUser() where the user fixture is created
+        $expectedUserData['dob-date'] = [
+            'day' => 17,
+            'month' => 12,
+            'year' => 1957
+        ];
+
+        $this->form->shouldReceive('bind')
+            ->with(Mockery::on(function ($userData) use ($expectedUserData) {
+                MatcherAssert::assertThat($expectedUserData, Matchers::equalTo($userData));
+                return true;
+            }))
+            ->once();
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();

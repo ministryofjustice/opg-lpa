@@ -64,6 +64,14 @@ Password: <enter lpapass>
 
 You should now have a psql command line on the postgres server.
 
+## Manually accessing the API
+
+Example of how to get an authentication token for username + password in dev:
+
+```
+curl -i -L -X POST -H "Content-Type: application/json" -d '{"username": "seeded_test_user@digital.justice.gov.uk", "password": "Pass1234"}' "http://localhost:7001/v2/authenticate"
+```
+
 ## License
 
 The Lasting Power of Attorney Attorney API Service is released under the MIT license, a copy of which can be found in [LICENSE](LICENSE).

@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "front" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app]"
+  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = merge(local.default_tags, local.front_component_tag)
@@ -182,6 +182,12 @@ locals {
         "protocol" : "tcp"
       }
     ],
+    "dependsOn" : [
+      {
+        "containerName" : "app_v2",
+        "condition" : "START"
+      }
+    ]
     "volumesFrom" : [],
     "logConfiguration" : {
       "logDriver" : "awslogs",
@@ -197,7 +203,8 @@ locals {
       { "name" : "TIMEOUT", "value" : "60" },
       { "name" : "CONTAINER_VERSION", "value" : var.container_version },
       { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name },
-      { "name" : "OPG_LPA_ENDPOINTS_FRONT_V2", "value" : "http://${local.front_v2_service_fqdn}" }
+      { "name" : "APP_V2_HOST", "value" : "127.0.0.1" },
+      { "name" : "APP_V2_PORT", "value" : "8005" },
     ]
     }
   )
@@ -229,6 +236,7 @@ locals {
         { "name" : "OPG_LPA_FRONT_CSRF_SALT", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.name}" },
         { "name" : "OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_webhook_token.name}" },
         { "name" : "OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_api_key.name}" },
+        { "name" : "OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
         { "name" : "OPG_LPA_FRONT_GOV_PAY_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.name}" },
         { "name" : "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
         { "name" : "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
@@ -257,7 +265,8 @@ locals {
         { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
         { "name" : "OPG_LPA_OS_PLACES_HUB_ENDPOINT", "value" : "https://api.os.uk/search/places/v1/postcode" },
         { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache.primary_endpoint_address}" },
-        { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name }
+        { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name },
+        { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" }
       ]
     }
   )
@@ -268,11 +277,11 @@ locals {
       "essential" : true,
       "image" : "${data.aws_ecr_repository.lpa_front_v2_app.repository_url}:${var.container_version}",
       "mountPoints" : [],
-      "name" : "app",
+      "name" : "app_v2",
       "portMappings" : [
         {
-          "containerPort" : 80,
-          "hostPort" : 80,
+          "containerPort" : 8005,
+          "hostPort" : 8005,
           "protocol" : "tcp"
         }
       ],
@@ -303,7 +312,8 @@ locals {
         { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
         { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
         { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
-        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache.primary_endpoint_address}" }
+        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache.primary_endpoint_address}" },
+        { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" }
       ]
     }
   )

@@ -94,7 +94,11 @@ class AuthController extends AbstractBaseController
                                 $formFlowChecker = new FormFlowChecker($lpa);
                                 $destinationRoute = $formFlowChecker->backToForm();
 
-                                return $this->redirect()->toRoute($destinationRoute, ['lpa-id' => $lpa->id], $formFlowChecker->getRouteOptions($destinationRoute));
+                                return $this->redirect()->toRoute(
+                                    $destinationRoute,
+                                    ['lpa-id' => $lpa->id],
+                                    $formFlowChecker->getRouteOptions($destinationRoute)
+                                );
                             }
                         }
 
@@ -104,7 +108,9 @@ class AuthController extends AbstractBaseController
 
                     //  If necessary set a flash message showing that the user account will now remain active
                     if (in_array('inactivity-flags-cleared', $result->getMessages())) {
-                        $this->flashMessenger()->addWarningMessage('Thanks for logging in. Your LPA account will stay open for another 9 months.');
+                        $this->flashMessenger()->addWarningMessage(
+                            'Thanks for logging in. Your LPA account will stay open for another 9 months.'
+                        );
                     }
 
                     // Else Send them to the dashboard...
@@ -133,12 +139,14 @@ class AuthController extends AbstractBaseController
             }
         }
 
-        $isTimeout = ( $this->params('state') == 'timeout' );
+        $isTimeout = ($this->params('state') == 'timeout');
+        $isInternalSystemError = ($this->params('state') == 'internalSystemError');
 
         return new ViewModel([
             'form' => $form,
             'authError' => $authError,
-            'isTimeout' => $isTimeout
+            'isTimeout' => $isTimeout,
+            'isInternalSystemError' => $isInternalSystemError,
         ]);
     }
 

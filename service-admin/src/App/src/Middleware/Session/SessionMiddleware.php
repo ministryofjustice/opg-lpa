@@ -15,13 +15,13 @@ use Psr\Http\Server\RequestHandlerInterface;
 class SessionMiddleware implements MiddlewareInterface
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $jwtConfig;
 
     /**
      * SignInHandler constructor.
-     * @param array $jwtConfig
+     * @param array<string, mixed> $jwtConfig
      */
     public function __construct(array $jwtConfig)
     {

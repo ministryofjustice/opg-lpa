@@ -33,7 +33,7 @@ class UserSearchHandler extends AbstractHandler
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new UserSearch();
 
@@ -53,8 +53,14 @@ class UserSearchHandler extends AbstractHandler
             $result = $this->userService->search($email);
 
             if ($result === false) {
+                // Traversable|array
+                $formMessages = $form->getMessages();
+                if (!is_array($formMessages)) {
+                    $formMessages = iterator_to_array($formMessages);
+                }
+
                 // Set error message
-                $messages = array_merge($form->getMessages(), [
+                $messages = array_merge($formMessages, [
                     'email' => [
                         'No user found for email address'
                     ]

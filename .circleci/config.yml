@@ -144,6 +144,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build
           ]
@@ -159,6 +160,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build
           ]
@@ -188,7 +190,7 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @Reusable"
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CleanupFixtures"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases]
 
@@ -241,6 +243,14 @@ path_to_live: &path_to_live
         name: seeding_docker_build
         ecr_repository_name_prefix: online-lpa/seeding
         service_path: service-seeding
+        build_web: false
+        unit_test: false
+        filters: { branches: { only: [main] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: flask_docker_build
+        ecr_repository_name_prefix: online-lpa/front_v2
+        service_path: service-front-v2
         build_web: false
         unit_test: false
         filters: { branches: { only: [main] } }
@@ -345,6 +355,7 @@ path_to_live: &path_to_live
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            flask_docker_build,
             perfplat-lambda-docker-worker-build-preproduction,
             perfplat-lambda-docker-worker-build-production,
             perfplat-lambda-docker-api-build-preproduction,
@@ -361,6 +372,7 @@ path_to_live: &path_to_live
             admin_docker_build,
             api_docker_build,
             pdf_docker_build,
+            flask_docker_build,
             perfplat-lambda-docker-worker-build-preproduction,
             perfplat-lambda-docker-worker-build-production,
             perfplat-lambda-docker-api-build-preproduction,
@@ -389,7 +401,7 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @Reusable"
+        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CleanupFixtures"
         workspace: preproduction
         filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases]

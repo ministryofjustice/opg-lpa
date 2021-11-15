@@ -5,23 +5,23 @@ namespace App\Service\Authentication;
 class Identity
 {
     /**
-     * @var string
+     * @var ?string
      */
     private $username;
 
     /**
-     * @var string
+     * @var ?string
      */
     private $userId;
 
     /**
-     * @var string
+     * @var ?string
      */
     private $token;
 
     /**
      * Identity constructor.
-     * @param array $data
+     * @param array<string, string> $data
      */
     public function __construct(array $data)
     {
@@ -31,7 +31,7 @@ class Identity
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getUsername()
     {
@@ -39,7 +39,8 @@ class Identity
     }
 
     /**
-     * @param $username
+     * @param string $username
+     * @return void
      */
     public function setUsername($username)
     {
@@ -47,7 +48,7 @@ class Identity
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getUserId()
     {
@@ -55,7 +56,8 @@ class Identity
     }
 
     /**
-     * @param $userId
+     * @param string $userId
+     * @return void
      */
     public function setUserId($userId)
     {
@@ -63,7 +65,7 @@ class Identity
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getToken()
     {
@@ -71,7 +73,8 @@ class Identity
     }
 
     /**
-     * @param $token
+     * @param string $token
+     * @return void
      */
     public function setToken($token)
     {

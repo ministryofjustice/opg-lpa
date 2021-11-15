@@ -18,13 +18,21 @@ resource "aws_elasticache_replication_group" "front_cache" {
   engine                        = "redis"
   engine_version                = "5.0.6"
   node_type                     = "cache.t2.micro"
-  number_cache_clusters         = 2
+  number_cache_clusters         = local.cache_cluster_count
   transit_encryption_enabled    = true
   at_rest_encryption_enabled    = true
   automatic_failover_enabled    = true
-
-  subnet_group_name  = aws_elasticache_subnet_group.private_subnets.name
-  security_group_ids = [aws_security_group.front_cache.id]
+  maintenance_window            = "wed:05:00-wed:09:00"
+  snapshot_window               = "02:00-04:50"
+  notification_topic_arn        = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
+  subnet_group_name             = aws_elasticache_subnet_group.private_subnets.name
+  security_group_ids            = [aws_security_group.front_cache.id]
 
   tags = merge(local.default_tags, local.front_component_tag)
+}
+
+
+locals {
+  cache_cluster_count   = 2
+  cache_member_clusters = tolist(aws_elasticache_replication_group.front_cache.member_clusters)
 }

@@ -4,11 +4,16 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
+use Application\Logging\LoggerTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Model\Service\Mail\MessageFactory;
+use Application\Model\Service\RedisClient\RedisClient;
+use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\System\DynamoCronLock;
+use Application\View\Helper\LocalViewRenderer;
 use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
@@ -20,7 +25,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
-use Opg\Lpa\Logger\LoggerTrait;
+use Redis;
 use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
@@ -28,6 +33,8 @@ use Twig\TwigFunction;
 
 class Module implements FormElementProviderInterface
 {
+    use LoggerTrait;
+
     public function onBootstrap(MvcEvent $e)
     {
         $eventManager        = $e->getApplication()->getEventManager();
@@ -57,12 +64,14 @@ class Module implements FormElementProviderInterface
             $path = $request->getUri()->getPath();
 
             // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
-            if (!strstr($request->getServer('SCRIPT_NAME'), 'phpunit') &&
+            if (
+                !strstr($request->getServer('SCRIPT_NAME'), 'phpunit') &&
                 !in_array($path, [
                     // URLs excluded from creating a session
                     '/ping/elb',
                     '/ping/json',
-                ])) {
+                ])
+            ) {
                 $this->bootstrapSession($e);
                 $this->bootstrapIdentity($e, $path != '/session-state');
             }
@@ -112,11 +121,18 @@ class Module implements FormElementProviderInterface
             try {
                 $info = $sm->get('UserService')->getTokenInfo($identity->token());
 
-                if (is_array($info) && isset($info['expiresIn'])) {
+                if ($info['success'] && !is_null($info['expiresIn'])) {
                     // update the time the token expires in the session
                     $identity->tokenExpiresIn($info['expiresIn']);
                 } else {
                     $auth->clearIdentity();
+
+                    // Record that identity was cleared because of a 500 error (normally db-related)
+                    if ($info['failureCode'] >= 500) {
+                        $authFailureReason = new Container('AuthFailureReason');
+                        $authFailureReason->reason = 'Internal system error';
+                        $authFailureReason->code = $info['failureCode'];
+                    }
                 }
             } catch (ApiException $ex) {
                 $auth->clearIdentity();
@@ -181,14 +197,12 @@ class Module implements FormElementProviderInterface
                 },
 
                 'DynamoDbCronClient' => function (ServiceLocatorInterface $sm) {
-
                     $config = $sm->get('config')['cron']['lock']['dynamodb']['client'];
 
                     return new DynamoDbClient($config);
                 },
 
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
-
                     $config = $sm->get('config')['cron']['lock']['dynamodb'];
 
                     $config['keyPrefix'] = $sm->get('config')['stack']['name'];
@@ -207,6 +221,37 @@ class Module implements FormElementProviderInterface
                     ]);
                 },
 
+                'MessageFactory' => function (ServiceLocatorInterface $sm) {
+                    $localViewRenderer = new LocalViewRenderer($sm->get('TwigEmailRenderer'));
+                    return new MessageFactory($sm->get('config'), $localViewRenderer);
+                },
+
+                'SaveHandler' => function (ServiceLocatorInterface $sm) {
+                    $config = $sm->get('config');
+
+                    $redisUrl = $config['session']['redis']['url'];
+                    $ttlMs = $config['session']['redis']['ttlMs'];
+
+                    $request = $sm->get('Request');
+                    $logger = $this->getLogger();
+
+                    $filter = function () use ($request, $logger) {
+                        $shouldWrite = !$request->getHeaders()->has('X-SessionReadOnly');
+
+                        if ($shouldWrite) {
+                            $msg = 'Writing session for request';
+                        } else {
+                            $msg = 'IGNORING session write for request marked with X-SessionReadOnly';
+                        }
+                        $logger->debug('XXXXXXXXXXXXXXXXXXXXXXXXXXX ' . $msg . '; path = ' .
+                            $request->getUri()->getPath());
+
+                        return $shouldWrite;
+                    };
+
+                    return new FilteringSaveHandler($redisUrl, $ttlMs, [$filter], new Redis());
+                },
+
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
                     $loader = new FilesystemLoader('module/Application/view/email');
 
@@ -218,6 +263,7 @@ class Module implements FormElementProviderInterface
 
                     $env->registerUndefinedFunctionCallback(function ($name) use ($viewHelperManager, $renderer) {
                         if (!$viewHelperManager->has($name)) {
+                            $this->getLogger()->debug('no Twig function called ' . $name . ' for rendering emails');
                             return false;
                         }
 
@@ -242,7 +288,7 @@ class Module implements FormElementProviderInterface
     {
         return array(
             'factories' => array(
-                'StaticAssetPath' => function( $sm ){
+                'StaticAssetPath' => function ($sm) {
                     $config = $sm->get('Config');
                     return new \Application\View\Helper\StaticAssetPath($config['version']['cache']);
                 },

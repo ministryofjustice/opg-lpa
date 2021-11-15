@@ -4,8 +4,14 @@ namespace ApplicationTest\Model\Service\Feedback;
 
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Feedback\Feedback;
+use Application\Model\Service\Mail\MailParameters;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
+use Laminas\Mail\Exception\InvalidArgumentException;
+use Laminas\Mail\Message;
+use DateTime;
 use Exception;
+use Hamcrest\Matchers;
+use Hamcrest\MatcherAssert;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -21,45 +27,84 @@ class FeedbackTest extends AbstractEmailServiceTest
      */
     private $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->apiClient = Mockery::mock(Client::class);
-
         $this->service = new Feedback(
             $this->authenticationService,
-            ['sendFeedbackEmailTo' => 'test@email.com'],
-            $this->twigEmailRenderer,
-            $this->mailTransport
+            $this->config,
+            $this->mailTransport,
+            $this->helperPluginManager
         );
 
+        $this->apiClient = Mockery::mock(Client::class);
         $this->service->setApiClient($this->apiClient);
     }
 
-    public function testAdd() : void
+    public function testAdd(): void
     {
         $this->apiClient->shouldReceive('httpPost')->andReturnTrue();
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-feedback', ['test' => 'data']])
+        $templateData = [
+            'rating' => 'very-satisfied',
+            'details' => 'details',
+            'email' => 'foo@bar.com',
+            'phone' => '0111456789',
+            'fromPage' => '/home',
+            'agent' => 'Mozilla',
+        ];
+
+        $expectedData = [
+            'currentDateTime' => Matchers::matchesPattern('/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/'),
+            'rating' => Matchers::equalTo($templateData['rating']),
+            'details' => Matchers::equalTo($templateData['details']),
+            'email' => Matchers::equalTo($templateData['email']),
+            'phone' => Matchers::equalTo($templateData['phone']),
+            'fromPage' => Matchers::equalTo($templateData['fromPage']),
+            'agent' => Matchers::equalTo($templateData['agent']),
+        ];
+
+        // Check the data we interpolate into the template looks right
+        $this->mailTransport->shouldReceive('send')
+            ->with(Mockery::on(function ($mailParams) use ($expectedData) {
+                $actualData = $mailParams->getData();
+
+                foreach ($expectedData as $key => $matcher) {
+                    MatcherAssert::assertThat($actualData[$key], $matcher);
+                }
+
+                MatcherAssert::assertThat(
+                    array_keys($actualData),
+                    Matchers::equalTo(array_keys($expectedData))
+                );
+
+                return true;
+            }))
             ->once();
 
-        $result = $this->service->add(['test' => 'data']);
+        $result = $this->service->add($templateData);
 
         $this->assertTrue($result);
     }
 
-    public function testAddException() : void
+    public function testAddException(): void
     {
         $this->apiClient->shouldReceive('httpPost')->andReturnTrue();
 
-        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
-            ->withArgs(['test@email.com', 'email-feedback', ['test' => 'data']])
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::anInstanceOf(MailParameters::class))
             ->once()
-            ->andThrow(new Exception('Test exception'));
+            ->andThrow(new InvalidArgumentException('Test exception'));
 
-        $result = $this->service->add(['test' => 'data']);
+        $result = $this->service->add([
+            'rating' => 'very-satisfied',
+            'details' => 'details',
+            'email' => '',
+            'phone' => '',
+            'fromPage' => '/home',
+            'agent' => 'Mozilla',
+        ]);
 
         $this->assertFalse($result);
     }

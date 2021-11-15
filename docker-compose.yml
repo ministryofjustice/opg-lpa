@@ -103,6 +103,7 @@ services:
     image: lpa-front-web
     depends_on:
       - front-app
+      - flask-app
     volumes:
       - ./service-front/public:/web
     build:
@@ -112,18 +113,19 @@ services:
       APP_HOST: front-app
       APP_PORT: 9000
       NGINX_LOG_LEVEL: warn
-      OPG_LPA_ENDPOINTS_FRONT_V2: "flask-app"
+      APP_V2_HOST: flask-app
+      APP_V2_PORT: 8005
 
   flask-app:
     container_name: lpa-flask-app
     image: lpa-flask-app
-    volumes:
-      - ./service-front-v2:/makelpa
     build:
       context: ./
       dockerfile: service-front-v2/docker/app/Dockerfile
+    environment:
+      AWS_XRAY_SDK_ENABLED: "false"
     ports:
-      - 8005:80
+      - 8005:8005
 
   front-app:
     container_name: lpa-front-app
@@ -162,7 +164,9 @@ services:
       XDEBUG_MODE: 'debug'
       XDEBUG_CONFIG: client_host=host.docker.internal client_port=9003
 
+      OPG_LPA_FRONT_EMAIL_TRANSPORT: notify
       OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY: "${OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY}"
+      OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY: "${OPG_LPA_API_NOTIFY_API_KEY}"
       OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"

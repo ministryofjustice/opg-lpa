@@ -1,9 +1,15 @@
 <?php
 
+$DYNAMO_DB_CONFIG = [
+    'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
+    'version' => '2012-08-10',
+    'region' => 'eu-west-1',
+];
+
 return [
 
     'version' => [
-        'cache' => ( getenv('OPG_DOCKER_TAG') !== false ) ? abs( crc32( getenv('OPG_DOCKER_TAG') ) ) : time(),
+        'cache' => (getenv('OPG_DOCKER_TAG') !== false) ? abs(crc32(getenv('OPG_DOCKER_TAG'))) : time(),
         'tag' => getenv('OPG_DOCKER_TAG'),
     ],
 
@@ -20,14 +26,15 @@ return [
 
     'redirects' => [
         'index' => 'https://www.gov.uk/power-of-attorney/make-lasting-power',
-        //'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
-        'logout' => getenv('FRONT_DOMAIN').'/completed-feedback',
+        'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
+        // Once feedback form is live, this will become:
+        //'logout' => getenv('FRONT_DOMAIN').'/completed-feedback',
     ],
 
     'admin' => [
 
         'dynamodb' => [
-            'client' => getDynamoClientConfig(),
+            'client' => $DYNAMO_DB_CONFIG,
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
             ],
@@ -41,7 +48,7 @@ return [
         'lock' => [
 
             'dynamodb' => [
-                'client' => getDynamoClientConfig(),
+                'client' => $DYNAMO_DB_CONFIG,
                 'settings' => [
                     'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
@@ -57,7 +64,6 @@ return [
 
         // ini session.* settings...
         'native_settings' => [
-
             // The cookie name used in the session
             'name' => 'lpa2',
 
@@ -74,17 +80,19 @@ return [
             // Don't accept uninitialized session IDs
             'use_strict_mode' => true,
 
-            // Time before a session can be garbage collected.
-            // (time since the session was last accessed)
-            'gc_maxlifetime' => (60 * 60 * 3), // 3 hours
-
             // The probability of GC running is gc_probability/gc_divisor
             'gc_probability' => 0,
-            'gc_divisor' => 20,
+        ],
+
+        'redis' => [
+            'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL'),
+
+            // TTL for Redis keys in milliseconds
+            'ttlMs' => (1000 * 60 * 60 * 3), // 3 hours,
         ],
 
         'dynamodb' => [
-            'client' => getDynamoClientConfig(),
+            'client' => $DYNAMO_DB_CONFIG,
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
                 // Whether Time To Live is enabled on the sesson table
@@ -93,7 +101,8 @@ return [
                 'ttl_attribute' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ATTRIBUTE') ?: 'expires',
                 'batch_config' => [
                     // Sleep before each flush to rate limit the garbage collection.
-                    'before' => function(){ },
+                    'before' => function () {
+                    },
                 ]
             ],
             'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
@@ -112,6 +121,9 @@ return [
     ],
 
     'email' => [
+        // should reference a key within this array which provides
+        // implementation-specific configuration
+        'transport' => getenv('OPG_LPA_FRONT_EMAIL_TRANSPORT') ?: 'sendgrid',
 
         'sendgrid' => [
             'key'     => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY') ?: null,
@@ -119,6 +131,10 @@ return [
                 'token' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN') ?: null,
             ],
         ], //sendgrid
+
+        'notify' => [
+            'key' => getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: null,
+        ],
 
         'sender' => [
                 'default' => [
@@ -159,6 +175,7 @@ return [
     ], // log
 
     'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
+
     'processing-status' => [
         'track-from-date' => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2019-04-01',
 
@@ -167,12 +184,3 @@ return [
         'expected-working-days-before-receipt' => 15,
     ],
 ];
-
-function getDynamoClientConfig()
-{
-    return [
-        'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
-        'version' => '2012-08-10',
-        'region' => 'eu-west-1',
-    ];
-}

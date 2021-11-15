@@ -10,5 +10,5 @@ use Laminas\Authentication\Result as ZendResult;
  */
 class Result extends ZendResult
 {
-    const FAILURE_ACCOUNT_LOCKED = -403;
+    public const FAILURE_ACCOUNT_LOCKED = -403;
 }

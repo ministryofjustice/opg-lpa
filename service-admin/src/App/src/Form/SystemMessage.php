@@ -13,12 +13,15 @@ use Laminas\Validator\StringLength;
  */
 class SystemMessage extends AbstractForm
 {
+    /**
+     * @var int
+     */
     private $maxMessageLength = 8000;
 
     /**
      * SystemMessage constructor
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function __construct($options = [])
     {
