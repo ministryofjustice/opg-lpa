@@ -35,4 +35,11 @@ Compress(app)
 Talisman(app, content_security_policy=csp, strict_transport_security_max_age=3600)
 csrf = CSRFProtect(app)
 
+# set up WTForms and related assets
+WTFormsHelpers(app)
+
+assets = Environment(app)
+js = Bundle("src/js/*.js", filters="jsmin", output="dist/js/custom-%(version)s.js")
+assets.register("js", js)
+
 from app import routes
