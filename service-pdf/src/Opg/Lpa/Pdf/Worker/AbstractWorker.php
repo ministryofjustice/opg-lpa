@@ -22,14 +22,13 @@ abstract class AbstractWorker
      *
      * @var Logger
      */
-    protected $logger;
+    use LoggerTrait;
 
     /**
      * AbstractWorker constructor
      */
     public function __construct()
     {
-        use LoggerTrait;
 
         //  Copy LPA PDF template files into ram disk if they are not found
         $assetsConfig = Config::getInstance()['service']['assets'];

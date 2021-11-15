@@ -30,7 +30,6 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
      * @var Logger
      */
     use LoggerTrait;
-    //protected $logger;  TODO remove when OK
 
     /**
      * Config utility

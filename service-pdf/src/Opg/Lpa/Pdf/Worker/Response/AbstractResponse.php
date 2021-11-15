@@ -31,7 +31,6 @@ abstract class AbstractResponse
      * @var Logger
      */
     use LoggerTrait;
-    //protected $logger;  TODO remove
 
     /**
      * AbstractResponse constructor
