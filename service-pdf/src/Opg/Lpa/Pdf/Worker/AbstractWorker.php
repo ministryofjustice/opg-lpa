@@ -36,7 +36,7 @@ abstract class AbstractWorker
         $templatePathOnDisk = $assetsConfig['template_path_on_ram_disk'];
 
         if (!\file_exists($templatePathOnDisk)) {
-            $this->logger->info('Making template path on RAM disk', [
+            $this->getLogger()->info('Making template path on RAM disk', [
                 'path' => $templatePathOnDisk,
             ]);
 
@@ -50,7 +50,7 @@ abstract class AbstractWorker
             if (!file_exists($templatePathOnDisk . '/' . $pathInfo['basename'])) {
                 $dest = $templatePathOnDisk . '/' . $pathInfo['basename'];
 
-                $this->logger->info('Copying PDF source to RAM disk', [
+                $this->getLogger()->info('Copying PDF source to RAM disk', [
                     'destination' => $dest,
                 ]);
 
@@ -126,7 +126,7 @@ abstract class AbstractWorker
             $loggingParams['filePath'] = $pdfFilePath;
             $pdfSizeK = filesize($pdfFilePath) / 1024;
 
-            $this->logger->debug('----------------- Generated PDF for LPA ' .
+            $this->getLogger()->debug('----------------- Generated PDF for LPA ' .
                 $lpaId . ' at path ' . $pdfFilePath .
                 ' (PDF size Kb = ' . $pdfSizeK . ')');
 
@@ -142,9 +142,9 @@ abstract class AbstractWorker
         $message = $docId . ': ' . $message;
 
         if ($isError) {
-            $this->logger->err($message, $loggingParams);
+            $this->getLogger()->err($message, $loggingParams);
         } else {
-            $this->logger->info($message, $loggingParams);
+            $this->getLogger()->info($message, $loggingParams);
         }
     }
 

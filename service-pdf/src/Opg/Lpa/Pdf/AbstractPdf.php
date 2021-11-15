@@ -120,7 +120,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
             $this->formattedLpaRef = Formatter::id($lpa->id);
 
             //  Log a message for this PDF creation
-            $this->logger->info('Creating ' . $pdfFileName . ' for ' . $this->formattedLpaRef, [
+            $this->getLogger()->info('Creating ' . $pdfFileName . ' for ' . $this->formattedLpaRef, [
                 'lpaId' => $lpa->id
             ]);
 
