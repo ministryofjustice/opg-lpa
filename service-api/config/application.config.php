@@ -51,12 +51,12 @@ return array(
         // 'check_dependencies' => true,
     ),
     'listeners' => [
-        'Application\Logging\ErrorEventListener',
+        'MakeLogger\Logging\ErrorEventListener',
     ],
     // Should be compatible with Laminas\ServiceManager\Config.
     'service_manager' => [
         'factories' => [
-            'Application\Logging\ErrorEventListener'  => 'Application\Logging\ErrorEventListener',
+            'MakeLogger\Logging\ErrorEventListener'  => 'MakeLogger\Logging\ErrorEventListener',
         ],
     ],
 );

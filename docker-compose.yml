@@ -93,6 +93,7 @@ services:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
 
       OPG_LPA_COMMON_LAMBDA_ENDPOINT: localstack:4566
+      FRONT_DOMAIN: localhost:7002
 
   # ---------------------------
   # Front
@@ -102,6 +103,7 @@ services:
     image: lpa-front-web
     depends_on:
       - front-app
+      - flask-app
     volumes:
       - ./service-front/public:/web
     build:
@@ -111,6 +113,19 @@ services:
       APP_HOST: front-app
       APP_PORT: 9000
       NGINX_LOG_LEVEL: warn
+      APP_V2_HOST: flask-app
+      APP_V2_PORT: 8005
+
+  flask-app:
+    container_name: lpa-flask-app
+    image: lpa-flask-app
+    build:
+      context: ./
+      dockerfile: service-front-v2/docker/app/Dockerfile
+    environment:
+      AWS_XRAY_SDK_ENABLED: "false"
+    ports:
+      - 8005:8005
 
   front-app:
     container_name: lpa-front-app
@@ -163,6 +178,7 @@ services:
     image: composer:latest
     volumes:
       - ./service-front:/app
+      - ./shared/logging:/shared/logging
     command:
       - install
       - --prefer-dist
@@ -264,6 +280,7 @@ services:
     image: composer:latest
     volumes:
       - ./service-api:/app
+      - ./shared/logging:/shared/logging
     command:
       - install
       - --prefer-dist
@@ -331,6 +348,7 @@ services:
     image: composer:latest
     volumes:
       - ./service-admin:/app
+      - ./shared/logging:/shared/logging
     command:
       - install
       - --prefer-dist
@@ -385,6 +403,7 @@ services:
     image: composer:latest
     volumes:
       - ./service-pdf:/app
+      - ./shared/logging:/shared/logging
     command:
       - install
       - --prefer-dist

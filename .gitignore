@@ -26,6 +26,7 @@ cypress/activation_emails/*.passwordreset
 cypress/activation_emails/noaccountpasswordreset.*
 cypress/activation_emails/unrecognized.*
 cypress/integration/Stitched*
+cypress/integration/examples/
 **/build
 /cypress/screenshots/
 /cypress/fixtures/
@@ -39,6 +40,8 @@ service-front/public/assets/v2/js/application.js.map
 service-front/public/assets/v2/css/fonts.css
 service-front/public/assets/v2/css/govuk-template-print.css
 service-front/public/assets/v2/css/govuk-template.css
+service-front-v2/app/static
+service-front-v2/govuk_components
 .phpunit.result.cache
 cypress/integration/common/local_dev_only.js
 *.egg-info

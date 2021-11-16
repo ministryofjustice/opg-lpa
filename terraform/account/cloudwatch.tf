@@ -13,7 +13,8 @@ resource "aws_cloudwatch_log_group" "online-lpa" {
 }
 
 data "aws_cloudwatch_log_group" "cloudtrail" {
-  name = "online_lpa_cloudtrail_${local.account_name}"
+  name     = "online_lpa_cloudtrail_${local.account_name}"
+  provider = aws.eu-west-1
 }
 
 resource "aws_cloudwatch_log_metric_filter" "breakglass_metric" {

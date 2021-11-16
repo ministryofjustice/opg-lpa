@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
-use Application\Logging\Logger;
+use MakeLogger\Logging\Logger;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;

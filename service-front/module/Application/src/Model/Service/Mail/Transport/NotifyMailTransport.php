@@ -4,7 +4,7 @@ namespace Application\Model\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;

@@ -5,7 +5,7 @@ namespace ApplicationTest\Logging;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-use Application\Logging\TraceIdProcessor;
+use MakeLogger\Logging\TraceIdProcessor;
 
 class TraceIdProcessorTest extends MockeryTestCase
 {

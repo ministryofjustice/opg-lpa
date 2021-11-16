@@ -3,7 +3,7 @@ namespace Application\Model\Service\System;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 
 class DynamoCronLock
 {
