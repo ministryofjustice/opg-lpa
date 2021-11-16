@@ -23,7 +23,7 @@ return [
     ],
 
     'listeners' => [
-        'Application\Logging\ErrorEventListener',
+        'MakeLogger\Logging\ErrorEventListener',
     ],
 
     'service_manager' => [
@@ -47,7 +47,7 @@ return [
             'UserService'                   => 'Application\Model\Service\User\Details',
         ],
         'factories' => [
-            'Application\Logging\ErrorEventListener'  => 'Application\Logging\ErrorEventListener',
+            'MakeLogger\Logging\ErrorEventListener'  => 'MakeLogger\Logging\ErrorEventListener',
         ],
     ],
 

@@ -1,4 +1,4 @@
-FROM composer:2.1.9 AS composer
+FROM composer:2.1.11 AS composer
 
 COPY service-pdf/composer.json /app/composer.json
 COPY service-pdf/composer.lock /app/composer.lock
@@ -25,6 +25,7 @@ RUN wget https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/buil
 COPY service-pdf/bin/pdftk pdftk
 RUN chmod +x pdftk
 
+COPY shared/logging /shared/logging
 COPY service-pdf /app
 COPY --from=composer /app/vendor /app/vendor
 

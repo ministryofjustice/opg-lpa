@@ -7,7 +7,7 @@ use Laminas\Log\Writer\Stream as StreamWriter;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-use Application\Logging\Logger;
+use MakeLogger\Logging\Logger;
 
 class LoggerTest extends MockeryTestCase
 {

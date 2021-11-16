@@ -1,21 +1,3 @@
-# variables for terraform.tfvars.json
-variable "account_mapping" {
-  type = map(any)
-}
-
-variable "accounts" {
-  type = map(
-    object({
-      account_id        = string
-      is_production     = string
-      retention_in_days = number
-    })
-  )
-}
-
-variable "pagerduty_token" {
-}
-
 locals {
   opg_project                 = "lpa"
   pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
