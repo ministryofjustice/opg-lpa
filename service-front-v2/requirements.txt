@@ -1,6 +1,7 @@
 aws_xray_sdk==2.8.0
 brotli==1.0.9
 click==7.1.2
+flask==2.0.0
 flask-assets==2.0
 flask-compress==1.9.0
 flask-talisman==0.7.0
@@ -10,6 +11,6 @@ govuk-frontend-wtf==0.3.0
 itsdangerous==2.0.0
 markupsafe==2.0.0
 python-dotenv==0.15.0
-gunicorn
+gunicorn==20.1.0
 six==1.16.0
 werkzeug==2.0.0
