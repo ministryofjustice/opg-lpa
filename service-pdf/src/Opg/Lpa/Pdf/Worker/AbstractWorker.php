@@ -3,7 +3,7 @@
 namespace Opg\Lpa\Pdf\Worker;
 
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Logger\Logger;
+use MakeLogger\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\Lp1f;
 use Opg\Lpa\Pdf\Lp1h;
 use Opg\Lpa\Pdf\Lpa120;
@@ -22,21 +22,20 @@ abstract class AbstractWorker
      *
      * @var Logger
      */
-    protected $logger;
+    use LoggerTrait;
 
     /**
      * AbstractWorker constructor
      */
     public function __construct()
     {
-        $this->logger = Logger::getInstance();
 
         //  Copy LPA PDF template files into ram disk if they are not found
         $assetsConfig = Config::getInstance()['service']['assets'];
         $templatePathOnDisk = $assetsConfig['template_path_on_ram_disk'];
 
         if (!\file_exists($templatePathOnDisk)) {
-            $this->logger->info('Making template path on RAM disk', [
+            $this->getLogger()->info('Making template path on RAM disk', [
                 'path' => $templatePathOnDisk,
             ]);
 
@@ -50,7 +49,7 @@ abstract class AbstractWorker
             if (!file_exists($templatePathOnDisk . '/' . $pathInfo['basename'])) {
                 $dest = $templatePathOnDisk . '/' . $pathInfo['basename'];
 
-                $this->logger->info('Copying PDF source to RAM disk', [
+                $this->getLogger()->info('Copying PDF source to RAM disk', [
                     'destination' => $dest,
                 ]);
 
@@ -126,7 +125,7 @@ abstract class AbstractWorker
             $loggingParams['filePath'] = $pdfFilePath;
             $pdfSizeK = filesize($pdfFilePath) / 1024;
 
-            $this->logger->debug('----------------- Generated PDF for LPA ' .
+            $this->getLogger()->debug('----------------- Generated PDF for LPA ' .
                 $lpaId . ' at path ' . $pdfFilePath .
                 ' (PDF size Kb = ' . $pdfSizeK . ')');
 
@@ -142,9 +141,9 @@ abstract class AbstractWorker
         $message = $docId . ': ' . $message;
 
         if ($isError) {
-            $this->logger->err($message, $loggingParams);
+            $this->getLogger()->err($message, $loggingParams);
         } else {
-            $this->logger->info($message, $loggingParams);
+            $this->getLogger()->info($message, $loggingParams);
         }
     }
 

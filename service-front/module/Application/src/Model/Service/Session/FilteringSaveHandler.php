@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model\Service\Session;
 
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use InvalidArgumentException;
 use Redis;

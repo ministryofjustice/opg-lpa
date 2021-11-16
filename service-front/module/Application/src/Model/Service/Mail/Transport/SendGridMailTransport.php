@@ -16,7 +16,7 @@ use SendGrid\Mail\Mail as SendGridMail;
 use SendGrid\Mail\PlainTextContent as SendGridPlainTextContent;
 use SendGrid\Mail\To as SendGridToEmailAddress;
 use DateTime;
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Application\Model\Service\Mail\Message;
 use Application\Model\Service\Mail\MessageFactory;
 use Application\Model\Service\Mail\MailParameters;

@@ -8,7 +8,7 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Application\Logging\Logger;
+use MakeLogger\Logging\Logger;
 use Laminas\EventManager\EventManager;
 use Laminas\EventManager\ResponseCollection;
 use Laminas\Http\Header\ContentType;

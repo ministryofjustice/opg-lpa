@@ -1,5 +1,5 @@
 <?php
-namespace Application\Logging;
+namespace MakeLogger\Logging;
 
 use Laminas\Log\Processor\ProcessorInterface;
 
