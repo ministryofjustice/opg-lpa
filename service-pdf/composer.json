@@ -8,11 +8,6 @@
             "type": "vcs",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
             "no-api": true
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/ministryofjustice/opg-lpa-logger",
-            "no-api": true
         }
     ],
     "require": {
@@ -23,7 +18,6 @@
         "laminas/laminas-crypt": "^3.3.1",
         "laminas/laminas-filter": "^2.9.4",
         "ministryofjustice/opg-lpa-datamodels": "^13.2",
-        "ministryofjustice/opg-lpa-logger": "^5.0",
         "laminas/laminas-barcode": "^2.5",
         "tecnickcom/tcpdf": "6.4.1",
         "setasign/fpdi-tcpdf": "^2.0",
@@ -36,7 +30,11 @@
         "ext-json": "*"
     },
     "autoload": {
-        "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/", "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/"}
+        "psr-4": {
+            "Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/",
+            "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/",
+            "MakeLogger\\": "../shared/logging/module/MakeLogger/src/"
+        }
     },
     "include-path": ["config/"]
 }
