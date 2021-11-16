@@ -5,7 +5,7 @@ namespace Application\Controller\Version2\Auth;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;

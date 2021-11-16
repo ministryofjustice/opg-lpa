@@ -57,7 +57,7 @@ class SqsWorker extends AbstractWorker
 
                 $lpaId = $lpaMessage['lpaId'];
 
-                $this->logger->debug('----------------- RETRIEVED SQS MESSAGE ' .
+                $this->getLogger()->debug('----------------- RETRIEVED SQS MESSAGE ' .
                     $sqsMessage['MessageId'] . ' AT ' . microtime(true) .
                     ' TO GENERATE PDF FOR LPA ' . $lpaId);
 
@@ -67,7 +67,7 @@ class SqsWorker extends AbstractWorker
                 // Decode the returned JSON into an array
                 $body = json_decode($body, true);
 
-                $this->logger->info("New job found on queue", [
+                $this->getLogger()->info("New job found on queue", [
                     'jobId' => $lpaMessage['jobId'],
                     'lpaId' => $lpaId,
                 ]);
@@ -80,12 +80,12 @@ class SqsWorker extends AbstractWorker
                     // Generate the PDF
                     $this->run($lpaMessage['jobId'], $body['type'], $body['lpa']);
 
-                    $this->logger->info("----------------- DONE - Generation time: ".
+                    $this->getLogger()->info("----------------- DONE - Generation time: ".
                         (microtime(true) - $startTime) .
                         " seconds to make PDF for LPA " . $lpaId);
 
                 } catch (\Exception $e) {
-                    $this->logger->err("Error generating PDF", [
+                    $this->getLogger()->err("Error generating PDF", [
                         'jobId' => $lpaMessage['jobId'],
                         'lpaId' => $lpaMessage['lpaId'],
                     ]);
@@ -100,11 +100,11 @@ class SqsWorker extends AbstractWorker
                 ]);
 
             } else {
-                $this->logger->debug("No message found in queue for this poll, finishing thread.");
+                $this->getLogger()->debug("No message found in queue for this poll, finishing thread.");
             }
 
         } catch (\Exception $e) {
-            $this->logger->emerg("Exception in SqsWorker: ".$e->getMessage());
+            $this->getLogger()->emerg("Exception in SqsWorker: ".$e->getMessage());
             sleep(5);
         }
 
