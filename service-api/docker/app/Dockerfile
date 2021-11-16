@@ -22,6 +22,7 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postg
   && apk del .build-dependencies
 
 COPY service-api /app
+COPY shared/logging /shared/logging
 COPY --from=composer /app/vendor /app/vendor
 COPY service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
