@@ -3,7 +3,7 @@ namespace Application\Model\DataAccess\Repository\Application;
 
 use RuntimeException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Application\Logging\Logger;
+use MakeLogger\Logging\Logger;
 
 trait ApplicationRepositoryTrait {
 

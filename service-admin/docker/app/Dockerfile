@@ -17,6 +17,7 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
         && docker-php-ext-install bcmath \
         && apk del .build-dependencies
 
+COPY shared/logging /shared/logging
 COPY service-admin /app
 COPY --from=composer /app/vendor /app/vendor
 COPY service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/

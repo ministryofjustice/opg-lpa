@@ -11,7 +11,7 @@ use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryInterface
 use Application\Model\Service\AbstractService;
 use Mockery;
 use Mockery\MockInterface;
-use Application\Logging\Logger;
+use MakeLogger\Logging\Logger;
 
 abstract class AbstractServiceBuilder
 {

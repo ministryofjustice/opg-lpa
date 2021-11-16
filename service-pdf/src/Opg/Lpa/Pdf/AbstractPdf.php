@@ -5,7 +5,7 @@ namespace Opg\Lpa\Pdf;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Logger\Logger;
+use MakeLogger\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\PdftkFactory;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Exception;
@@ -29,7 +29,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
      *
      * @var Logger
      */
-    protected $logger;
+    use LoggerTrait;
 
     /**
      * Config utility
@@ -80,7 +80,6 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
         }
         $this->pdftkFactory = $pdftkFactory;
 
-        $this->logger = Logger::getInstance();
         $this->config = Config::getInstance();
 
         //  Determine the PDF template file to use and, if applicable, check it exists
@@ -120,7 +119,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
             $this->formattedLpaRef = Formatter::id($lpa->id);
 
             //  Log a message for this PDF creation
-            $this->logger->info('Creating ' . $pdfFileName . ' for ' . $this->formattedLpaRef, [
+            $this->getLogger()->info('Creating ' . $pdfFileName . ' for ' . $this->formattedLpaRef, [
                 'lpaId' => $lpa->id
             ]);
 

@@ -3,7 +3,7 @@
 namespace Application\Library\Authentication\Adapter;
 
 use Application\Library\Authentication\Identity;
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Adapter\AdapterInterface;

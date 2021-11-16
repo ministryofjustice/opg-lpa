@@ -7,7 +7,7 @@ use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
 use Exception;

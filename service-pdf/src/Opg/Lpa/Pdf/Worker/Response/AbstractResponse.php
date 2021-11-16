@@ -3,7 +3,7 @@
 namespace Opg\Lpa\Pdf\Worker\Response;
 
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Logger\Logger;
+use MakeLogger\Logging\LoggerTrait;
 use SplFileInfo;
 
 /**
@@ -30,7 +30,7 @@ abstract class AbstractResponse
      *
      * @var Logger
      */
-    protected $logger;
+    use LoggerTrait;
 
     /**
      * AbstractResponse constructor
@@ -41,7 +41,6 @@ abstract class AbstractResponse
     {
         $this->docId = $docId;
         $this->config = Config::getInstance();
-        $this->logger = Logger::getInstance();
     }
 
     /**

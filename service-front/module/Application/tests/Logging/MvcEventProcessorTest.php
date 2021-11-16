@@ -7,7 +7,7 @@ use Laminas\Stdlib\RequestInterface as Request;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-use Application\Logging\MvcEventProcessor;
+use MakeLogger\Logging\MvcEventProcessor;
 
 class MvcEventProcessorTest extends MockeryTestCase
 {
