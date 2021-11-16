@@ -49,3 +49,4 @@ __pycache__
 **/build
 .coverage
 .php-cs-fixer.cache
+service-front-v2/govuk_components
