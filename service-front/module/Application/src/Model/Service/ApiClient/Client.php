@@ -5,7 +5,7 @@ namespace Application\Model\Service\ApiClient;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient as HttpClientInterface;
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 
 class Client

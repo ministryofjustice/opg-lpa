@@ -1,6 +1,4 @@
-resource "aws_kms_key" "secrets_encryption_key" {
-  enable_key_rotation = true
-}
+
 
 # common
 resource "aws_secretsmanager_secret" "opg_lpa_common_admin_accounts" {

@@ -4,7 +4,7 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
@@ -352,7 +352,7 @@ class Module implements FormElementProviderInterface
 
     /**
      * Show 500 page on MVC exceptions.
-     * NB logging of errors is handled by Application\Logging\ErrorEventListener,
+     * NB logging of errors is handled by MakeLogger\Logging\ErrorEventListener,
      * which is attached to these events in config.
      *
      * @param MvcEvent $e

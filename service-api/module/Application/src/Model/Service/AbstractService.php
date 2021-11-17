@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service;
 
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 
 abstract class AbstractService
 {

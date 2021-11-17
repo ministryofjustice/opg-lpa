@@ -1,10 +1,10 @@
 <?php
 
-namespace Application\Logging;
+namespace MakeLogger\Logging;
 
 /**
  * Trait LoggerTrait
- * @package Application\Logging
+ * @package MakeLogger\Logging
  */
 trait LoggerTrait
 {
@@ -26,7 +26,7 @@ trait LoggerTrait
     /**
      * @return Logger $logger
      */
-    protected function getLogger()
+    public function getLogger()
     {
         if (!$this->logger instanceof Logger) {
             $this->logger = new Logger();

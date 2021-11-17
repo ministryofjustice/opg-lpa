@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model\DataAccess\Postgres;
 
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 
 
