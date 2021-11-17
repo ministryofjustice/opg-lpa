@@ -178,6 +178,7 @@ services:
     image: composer:latest
     volumes:
       - ./service-front:/app
+      - ./shared/logging:/shared/logging
     command:
       - install
       - --prefer-dist
@@ -279,6 +280,7 @@ services:
     image: composer:latest
     volumes:
       - ./service-api:/app
+      - ./shared/logging:/shared/logging
     command:
       - install
       - --prefer-dist
@@ -346,6 +348,7 @@ services:
     image: composer:latest
     volumes:
       - ./service-admin:/app
+      - ./shared/logging:/shared/logging
     command:
       - install
       - --prefer-dist
@@ -400,6 +403,7 @@ services:
     image: composer:latest
     volumes:
       - ./service-pdf:/app
+      - ./shared/logging:/shared/logging
     command:
       - install
       - --prefer-dist

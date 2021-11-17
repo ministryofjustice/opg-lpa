@@ -23,7 +23,7 @@ class S3Response extends AbstractResponse
      */
     public function save(SplFileInfo $file)
     {
-        $this->logger->info('Response received: ' . $file->getRealPath());
+        $this->getLogger()->info('Response received: ' . $file->getRealPath());
 
         //  Get the file contents and encrypt them
         $fileContents = file_get_contents($file->getRealPath());
@@ -44,10 +44,10 @@ class S3Response extends AbstractResponse
             $s3->putObject($file);
 
         } catch (S3Exception $e) {
-            $this->logger->emerg('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
+            $this->getLogger()->emerg('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
             throw $e;
         }
 
-        $this->logger->info('Saved to S3 in ' . $workerSettingsConfig['Bucket']);
+        $this->getLogger()->info('Saved to S3 in ' . $workerSettingsConfig['Bucket']);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Mail;
 
-use Application\Logging\LoggerTrait;
+use MakeLogger\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Message;
 use Application\View\Helper\LocalViewRenderer;
