@@ -148,6 +148,7 @@ pr_build: &pr_build
         requires:
           [
             cancel_previous_jobs,
+            dev_account_apply_terraform,
             dev_infra_approval_terraform_apply_region_pr_build,
           ]
 
