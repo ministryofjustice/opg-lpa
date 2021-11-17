@@ -180,6 +180,7 @@ pr_build: &pr_build
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build,
+            perfplat-lambda-docker-build
           ]
 
     - ecr_scan_results:
