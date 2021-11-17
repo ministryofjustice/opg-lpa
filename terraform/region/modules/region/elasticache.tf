@@ -7,8 +7,7 @@ resource "aws_security_group" "front_cache" {
 
 resource "aws_elasticache_subnet_group" "private_subnets" {
   name       = "${local.account_name_short}-${local.region_name}-elasticache-private-subnets"
-  subnet_ids = data.aws_subnet_ids.private.ids
-  #change this once state imported.
+  subnet_ids = aws_subnet.private[*].id
 }
 
 

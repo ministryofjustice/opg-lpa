@@ -1,13 +1,13 @@
 #tfsec:ignore:AWS018 - adding a description is a destructive change.
 resource "aws_security_group" "front_cache" {
   name   = "front-cache"
-  vpc_id = aws_default_vpc.default.id
+  vpc_id = data.aws_vpc.default.id
   tags   = merge(local.default_tags, local.front_component_tag)
 }
 
 resource "aws_elasticache_subnet_group" "private_subnets" {
   name       = "private-subnets"
-  subnet_ids = aws_subnet.private[*].id
+  subnet_ids = data.aws_subnet_ids.private.ids
 }
 
 
