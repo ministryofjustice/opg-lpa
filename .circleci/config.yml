@@ -410,6 +410,8 @@ path_to_live: &path_to_live
             perfplat-lambda-docker-worker-build-production,
             perfplat-lambda-docker-api-build-preproduction,
             perfplat-lambda-docker-api-build-production,
+            perfplat-lambda-docker-build-preproduction,
+            perfplat-lambda-docker-build-production
           ]
 
     - ecr_scan_results:
