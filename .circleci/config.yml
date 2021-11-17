@@ -347,6 +347,13 @@ path_to_live: &path_to_live
         filters: { branches: { only: [main] } }
 
     - infrastructure_and_deployment/plan_check_terraform:
+        name: preprod_region_plan_check_terraform_pr_build
+        workspace: preproduction
+        terraform_level: region
+        approval_step: "preprod_infra_approval_terraform_apply_region_pr_build"
+        filters: { branches: { only: [main] } }
+
+    - infrastructure_and_deployment/plan_check_terraform:
         name: preprod_environment_plan_check_terraform_pr_build
         workspace: preproduction
         terraform_level: environment
@@ -355,6 +362,11 @@ path_to_live: &path_to_live
 
     - hold_for_approval_tf:
         name: preprod_infra_approval_terraform_apply_account_pr_build
+        type: approval
+        filters: { branches: { only: [main] } }
+
+    - hold_for_approval_tf:
+        name: preprod_infra_approval_terraform_apply_region_pr_build
         type: approval
         filters: { branches: { only: [main] } }
 
@@ -369,6 +381,16 @@ path_to_live: &path_to_live
         filters: { branches: { only: [main] } }
         requires: [preprod_infra_approval_terraform_apply_account_pr_build]
 
+    - infrastructure_and_deployment/apply_region_terraform:
+        name: preprod_region_apply_terraform
+        workspace: preproduction
+        filters: { branches: { only: [main] } }
+        requires:
+          [
+            preprod_infra_approval_terraform_apply_region_pr_build,
+            preprod_account_apply_terraform
+          ]
+
     - infrastructure_and_deployment/apply_environment_terraform:
         name: preprod_environment_apply_terraform
         workspace: preproduction
@@ -376,6 +398,7 @@ path_to_live: &path_to_live
         requires:
           [
             preprod_account_apply_terraform,
+            preprod_region_apply_terraform,
             preprod_infra_approval_terraform_apply_environment_pr_build,
             front_docker_build,
             admin_docker_build,
@@ -451,9 +474,22 @@ path_to_live: &path_to_live
             preprod_test_cypress_remaining_tests,
           ]
 
+    - infrastructure_and_deployment/apply_region_terraform:
+        name: prod_region_apply_terraform
+        workspace: production
+        filters: { branches: { only: [main] } }
+        requires:
+          [
+            prod_account_apply_terraform
+          ]
+
     - infrastructure_and_deployment/apply_environment_terraform:
         name: prod_environment_apply_terraform
-        requires: [prod_account_apply_terraform]
+        requires:
+          [
+            prod_account_apply_terraform,
+            prod_region_apply_terraform
+          ]
         filters: { branches: { only: [main] } }
         workspace: production
 
@@ -959,7 +995,7 @@ orbs:
 
       apply_account_terraform:
         #
-        # Apply the shared terraform configuration. This:
+        # Apply the account level terraform configuration. This:
         #   - Updates the account infrastructure;
         #
         executor: terraform
@@ -981,8 +1017,8 @@ orbs:
 
       apply_region_terraform:
         #
-        # Apply the shared terraform configuration. This:
-        #   - Updates the account infrastructure;
+        # Apply the region level terraform configuration. This:
+        #   - Updates the region specific infrastructure;
         #
         executor: terraform
         parameters:
