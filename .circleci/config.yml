@@ -83,6 +83,10 @@ pr_build: &pr_build
         name: lint_account_terraform_pr_build
         filters: { branches: { ignore: [main] } }
 
+    - infrastructure_and_deployment/lint_region_terraform:
+        name: lint_region_terraform_pr_build
+        filters: { branches: { ignore: [main] } }
+
     - infrastructure_and_deployment/lint_environment_terraform:
         name: lint_environment_terraform_pr_build
         filters: { branches: { ignore: [main] } }
@@ -100,6 +104,20 @@ pr_build: &pr_build
         type: approval
         filters: { branches: { ignore: [main] } }
         requires: [lint_account_terraform_pr_build]
+
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: dev_region_plan_check_terraform_pr_build
+        workspace: development
+        terraform_level: region
+        approval_step: "dev_infra_approval_terraform_apply_region_pr_build"
+        filters: { branches: { ignore: [main] } }
+        requires: [cancel_previous_jobs, lint_region_terraform_pr_build]
+
+    - hold_for_approval_tf:
+        name: dev_infra_approval_terraform_apply_region_pr_build
+        type: approval
+        filters: { branches: { ignore: [main] } }
+        requires: [lint_region_terraform_pr_build]
 
     - infrastructure_and_deployment/plan_check_terraform:
         name: dev_environment_plan_check_terraform_pr_build
@@ -123,12 +141,27 @@ pr_build: &pr_build
             cancel_previous_jobs,
             dev_infra_approval_terraform_apply_account_pr_build,
           ]
+    - infrastructure_and_deployment/apply_region_terraform:
+        name: dev_region_apply_terraform
+        workspace: development
+        filters: { branches: { ignore: [main] } }
+        requires:
+          [
+            cancel_previous_jobs,
+            dev_account_apply_terraform,
+            dev_infra_approval_terraform_apply_region_pr_build,
+          ]
 
     - infrastructure_and_deployment/apply_email_terraform:
         name: email_apply_terraform
         workspace: development
         filters: { branches: { ignore: [main] } }
-        requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
+        requires:
+          [
+            cancel_previous_jobs,
+            lint_account_terraform_pr_build,
+            lint_region_terraform_pr_build,
+          ]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: dev_environment_apply_terraform
@@ -139,6 +172,7 @@ pr_build: &pr_build
             lint_environment_terraform_pr_build,
             dev_infra_approval_terraform_apply_environment_pr_build,
             dev_account_apply_terraform,
+            dev_region_apply_terraform,
             front_docker_build,
             admin_docker_build,
             api_docker_build,
@@ -146,7 +180,8 @@ pr_build: &pr_build
             seeding_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
-            perfplat-lambda-docker-api-build
+            perfplat-lambda-docker-api-build,
+            perfplat-lambda-docker-build
           ]
 
     - ecr_scan_results:
@@ -162,7 +197,7 @@ pr_build: &pr_build
             seeding_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
-            perfplat-lambda-docker-api-build
+            perfplat-lambda-docker-api-build,
           ]
 
     - infrastructure_and_deployment/seed_environment_databases:
@@ -202,16 +237,13 @@ pr_build: &pr_build
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [main] } }
-        requires:
-          [
-            dev_seed_environment_databases
-          ]
+        requires: [dev_seed_environment_databases]
 
 path_to_live: &path_to_live
   jobs:
     - build_containers_and_push_to_ecr/node_build_web:
         name: node_build_web
-        filters: { branches: { only: [ main ] } }
+        filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
@@ -289,7 +321,7 @@ path_to_live: &path_to_live
         lambda_name: perfplat-api
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-api-ci
-        filters: { branches: { only: [ main ] } }
+        filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-worker-build-production
@@ -307,13 +339,20 @@ path_to_live: &path_to_live
         lambda_name: perfplat-api
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-api-ci
-        filters: { branches: { only: [ main ] } }
+        filters: { branches: { only: [main] } }
 
     - infrastructure_and_deployment/plan_check_terraform:
         name: preprod_account_plan_check_terraform_pr_build
         workspace: preproduction
         terraform_level: account
         approval_step: "preprod_infra_approval_terraform_apply_account_pr_build"
+        filters: { branches: { only: [main] } }
+
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: preprod_region_plan_check_terraform_pr_build
+        workspace: preproduction
+        terraform_level: region
+        approval_step: "preprod_infra_approval_terraform_apply_region_pr_build"
         filters: { branches: { only: [main] } }
 
     - infrastructure_and_deployment/plan_check_terraform:
@@ -329,6 +368,11 @@ path_to_live: &path_to_live
         filters: { branches: { only: [main] } }
 
     - hold_for_approval_tf:
+        name: preprod_infra_approval_terraform_apply_region_pr_build
+        type: approval
+        filters: { branches: { only: [main] } }
+
+    - hold_for_approval_tf:
         name: preprod_infra_approval_terraform_apply_environment_pr_build
         type: approval
         filters: { branches: { only: [main] } }
@@ -337,9 +381,16 @@ path_to_live: &path_to_live
         name: preprod_account_apply_terraform
         workspace: preproduction
         filters: { branches: { only: [main] } }
+        requires: [preprod_infra_approval_terraform_apply_account_pr_build]
+
+    - infrastructure_and_deployment/apply_region_terraform:
+        name: preprod_region_apply_terraform
+        workspace: preproduction
+        filters: { branches: { only: [main] } }
         requires:
           [
-            preprod_infra_approval_terraform_apply_account_pr_build,
+            preprod_infra_approval_terraform_apply_region_pr_build,
+            preprod_account_apply_terraform
           ]
 
     - infrastructure_and_deployment/apply_environment_terraform:
@@ -349,6 +400,7 @@ path_to_live: &path_to_live
         requires:
           [
             preprod_account_apply_terraform,
+            preprod_region_apply_terraform,
             preprod_infra_approval_terraform_apply_environment_pr_build,
             front_docker_build,
             admin_docker_build,
@@ -360,6 +412,8 @@ path_to_live: &path_to_live
             perfplat-lambda-docker-worker-build-production,
             perfplat-lambda-docker-api-build-preproduction,
             perfplat-lambda-docker-api-build-production,
+            perfplat-lambda-docker-build-preproduction,
+            perfplat-lambda-docker-build-production
           ]
 
     - ecr_scan_results:
@@ -424,9 +478,22 @@ path_to_live: &path_to_live
             preprod_test_cypress_remaining_tests,
           ]
 
+    - infrastructure_and_deployment/apply_region_terraform:
+        name: prod_region_apply_terraform
+        workspace: production
+        filters: { branches: { only: [main] } }
+        requires:
+          [
+            prod_account_apply_terraform
+          ]
+
     - infrastructure_and_deployment/apply_environment_terraform:
         name: prod_environment_apply_terraform
-        requires: [prod_account_apply_terraform]
+        requires:
+          [
+            prod_account_apply_terraform,
+            prod_region_apply_terraform
+          ]
         filters: { branches: { only: [main] } }
         workspace: production
 
@@ -475,10 +542,10 @@ orbs:
     executors:
       python:
         docker:
-        - image: circleci/python
-          auth:
-            username: $DOCKER_USER
-            password: $DOCKER_ACCESS_TOKEN
+          - image: circleci/python
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
         resource_class: small
     commands:
       notify:
@@ -587,7 +654,6 @@ orbs:
                 export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq .Credentials.SecretAccessKey | xargs)
                 export AWS_SESSION_TOKEN=$(echo $temp_role | jq .Credentials.SessionToken | xargs)
                 aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin << parameters.ecr >>
-
 
     executors:
       python:
@@ -745,7 +811,7 @@ orbs:
             type: string
             default: Dockerfile
         environment:
-            ECR_URL: << parameters.account_id >>.dkr.ecr.eu-west-1.amazonaws.com/<< parameters.container_repo_account >>/<< parameters.lambda_name >>
+          ECR_URL: << parameters.account_id >>.dkr.ecr.eu-west-1.amazonaws.com/<< parameters.container_repo_account >>/<< parameters.lambda_name >>
         steps:
           - checkout
           - install_aws_cli
@@ -868,6 +934,27 @@ orbs:
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
+      lint_region_terraform:
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        executor: terraform
+        steps:
+          - checkout
+          - run:
+              name: terraform lint
+              command: terraform fmt -diff -check -recursive
+          - run:
+              name: Validate Region Terraform
+              command: |
+                terraform --version
+                cd ~/project/terraform/region
+                terraform init
+                export TF_WORKSPACE=development >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform validate
       lint_environment_terraform:
         parameters:
           workspace:
@@ -912,7 +999,7 @@ orbs:
 
       apply_account_terraform:
         #
-        # Apply the shared terraform configuration. This:
+        # Apply the account level terraform configuration. This:
         #   - Updates the account infrastructure;
         #
         executor: terraform
@@ -932,6 +1019,28 @@ orbs:
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
 
+      apply_region_terraform:
+        #
+        # Apply the region level terraform configuration. This:
+        #   - Updates the region specific infrastructure;
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: development
+        steps:
+          - checkout
+          - run:
+              name: Apply Region Terraform
+              command: |
+                cd ~/project/terraform/region
+                terraform init
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform apply -lock-timeout=300s --auto-approve
+
       plan_check_terraform:
         # plan check - with gating check
         executor: terraform
@@ -940,7 +1049,7 @@ orbs:
             description: choose account / enviroment for level to check
             default: environment
             type: enum
-            enum: ["environment", "account"]
+            enum: ["environment", "account", "region"]
           workspace:
             description: Terraform workspace name
             type: string
@@ -973,7 +1082,7 @@ orbs:
 
                 echo destructive changes:
                 set +e
-                if [[ "${level}" == "account" ]]
+                if [[ "${level}" == "account" ]] || [[ "${level}" == "region" ]]
                 then
                   cat ${WORKSPACE}.log | grep -E 'destroyed|replaced'
                 else
@@ -1374,8 +1483,8 @@ jobs:
           password: $DOCKER_ACCESS_TOKEN
     resource_class: small
     parameters:
-          account_id:
-            type: string
+      account_id:
+        type: string
     steps:
       - checkout
       - run:
