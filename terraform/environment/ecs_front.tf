@@ -49,9 +49,9 @@ resource "aws_security_group_rule" "front_ecs_service_ingress" {
 }
 
 // from front to Elasticache (new regional one)
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_ecs_service_elasticache_region_ingress" {
   type                     = "ingress"
+  description              = "allows service front access to elasticache"
   from_port                = 0
   to_port                  = 6379
   protocol                 = "tcp"
