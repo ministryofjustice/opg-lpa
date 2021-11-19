@@ -48,7 +48,18 @@ resource "aws_security_group_rule" "front_ecs_service_ingress" {
   source_security_group_id = aws_security_group.front_loadbalancer.id
 }
 
-// from front to Elasticache
+// from front to Elasticache (new regional one)
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
+resource "aws_security_group_rule" "front_ecs_service_elasticache_region_ingress" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = data.aws_security_group.front_cache_region.id
+  source_security_group_id = aws_security_group.front_ecs_service.id
+}
+
+// from front to Elasticache (legacy - remove after.)
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_ecs_service_elasticache_ingress" {
   type                     = "ingress"
@@ -264,7 +275,7 @@ locals {
         { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : aws_sqs_queue.pdf_fifo_queue.id },
         { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
         { "name" : "OPG_LPA_OS_PLACES_HUB_ENDPOINT", "value" : "https://api.os.uk/search/places/v1/postcode" },
-        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache.primary_endpoint_address}" },
+        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache_region.primary_endpoint_address}" },
         { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name },
         { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" }
       ]
@@ -312,7 +323,7 @@ locals {
         { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
         { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
         { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
-        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache.primary_endpoint_address}" },
+        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache_region.primary_endpoint_address}" },
         { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" }
       ]
     }
