@@ -157,7 +157,7 @@ class Service extends AbstractService
 
                 default:
                     $this->getLogger()->err(
-                        'Unexpected response from Sirius gateway: ' . (string)$result->getBody()
+                        'Unexpected response from Sirius gateway: ' . $statusCode. (string)$result->getBody()
                     );
                     break;
             } //end switch
