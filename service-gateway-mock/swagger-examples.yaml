@@ -16,6 +16,7 @@ paths:
                     cancellationDate: null
                     invalidDate: null
                     withdrawnDate: null
+                    statusDate: '2021-02-28'
                     status: Pending
                 returned_rejected:
                   value:
@@ -27,6 +28,7 @@ paths:
                     cancellationDate: null
                     invalidDate: null
                     withdrawnDate: null
+                    statusDate: '2021-02-14'
                     status: Rejected
                 returned_registered:
                   value:
@@ -38,6 +40,7 @@ paths:
                     cancellationDate: null
                     invalidDate: null
                     withdrawnDate: null
+                    statusDate: '2021-03-04'
                     status: Registered
                 returned_registered_and_dispatched:
                   value:
@@ -49,6 +52,7 @@ paths:
                     cancellationDate: null
                     invalidDate: null
                     withdrawnDate: null
+                    statusDate: '2021-05-03'
                     status: Registered
                 returned_invalid:
                   value:
@@ -60,6 +64,7 @@ paths:
                     cancellationDate: null
                     invalidDate: '2021-01-05'
                     withdrawnDate: null
+                    statusDate: '2021-01-05'
                     status: Invalid
                 returned_withdrawn:
                   value:
@@ -71,6 +76,7 @@ paths:
                     cancellationDate: null
                     invalidDate: null
                     withdrawnDate: '2020-05-06'
+                    statusDate: '2020-05-06'
                     status: Withdrawn
                 checking:
                   value:
@@ -82,6 +88,7 @@ paths:
                     cancellationDate: null
                     invalidDate: null
                     withdrawnDate: null
+                    statusDate: '2020-11-21'
                     status: Perfect
                 received_payment_pending:
                   value:
@@ -93,7 +100,21 @@ paths:
                     cancellationDate: null
                     invalidDate: null
                     withdrawnDate: null
+                    statusDate: '2021-10-03'
                     status: Payment Pending
+                received_payment_unpaid:
+                  value:
+                    onlineLpaId: A33718377327
+                    receiptDate: '2021-10-03'
+                    rejectedDate: null
+                    dispatchDate: '2021-10-06'
+                    registrationDate: '2021-10-07'
+                    registrationDate: null
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: null
+                    statusDate: '2021-10-10'
+                    status: Registered
         '410':
           content:
             application/json:
