@@ -1,4 +1,4 @@
-@Reusable
+@CreateLpa
 Feature: Reusable HW LPA details
 
   I want to be able to visit the dashboard and reuse HW LPA details
