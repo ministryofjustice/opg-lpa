@@ -8,8 +8,10 @@ locals {
 
   opg_project                 = "lpa"
   account_name                = lookup(var.account_mapping, terraform.workspace, "development")
+  account_name_short          = local.account.account_name_short
   account                     = var.accounts[local.account_name]
   environment                 = terraform.workspace
+  region_name                 = "eu-west-1"
   cert_prefix_public_facing   = local.environment == "production" ? "www." : "*."
   cert_prefix_internal        = local.account_name == "production" ? "" : "*."
   dns_namespace_env           = local.environment == "production" ? "" : "${local.environment}."
