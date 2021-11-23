@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Reusable PF LPA details
 
   I want to be able to visit the dashboard and reuse PF LPA details

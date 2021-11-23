@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add Applicant to a Property and Finance LPA
 
     I want to add an Applicant to a Property and Finance LPA

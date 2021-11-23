@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Fee Reduction for a Property and Finance LPA
 
     I want to set Fee Reduction for a Property and Finance LPA

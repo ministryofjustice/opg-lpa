@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add Replacement Attorneys to a Property and Finance LPA
 
     I want to add Replacement Attorneys to a Property and Finance LPA
