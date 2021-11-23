@@ -157,7 +157,7 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "eu-west-1",
+          "awslogs-region" : "${local.region_name}",
           "awslogs-stream-prefix" : "${local.environment}.admin-web.online-lpa"
         }
       },
@@ -189,7 +189,7 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "eu-west-1",
+          "awslogs-region" : "${local.region_name}",
           "awslogs-stream-prefix" : "${local.environment}.admin-app.online-lpa"
         }
       },

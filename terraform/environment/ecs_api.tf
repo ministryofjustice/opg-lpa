@@ -245,7 +245,7 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "eu-west-1",
+          "awslogs-region" : "${local.region_name}",
           "awslogs-stream-prefix" : "${local.environment}.api-web.online-lpa"
         }
       },
@@ -277,7 +277,7 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "eu-west-1",
+          "awslogs-region" : "${local.region_name}",
           "awslogs-stream-prefix" : "${local.environment}.api-app.online-lpa"
         }
       },
@@ -311,7 +311,7 @@ locals {
         { "name" : "OPG_NGINX_SSL_FORCE_REDIRECT", "value" : "TRUE" },
         { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
         { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
-        { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : "https://sqs.eu-west-1.amazonaws.com/${local.account.account_id}/lpa-pdf-queue-${local.environment}.fifo" }
+        { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : "https://sqs.${local.region_name}.amazonaws.com/${local.account.account_id}/lpa-pdf-queue-${local.environment}.fifo" }
       ]
     }
   )
