@@ -156,7 +156,6 @@ reset-mock-sirius:
 	docker-compose build --no-cache mocksirius
 
 # only reset the api container
-# only reset the api container
 .PHONY: reset-api
 reset-api:
 	@${MAKE} dc-down
