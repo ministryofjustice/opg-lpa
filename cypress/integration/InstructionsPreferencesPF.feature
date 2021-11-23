@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Specify Instructions and Preferences for a Property and Finance LPA
 
     I want to specify Instructions and Preferences for a Property and Finance LPA

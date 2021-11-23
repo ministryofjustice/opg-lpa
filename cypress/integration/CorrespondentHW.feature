@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add a correspondent to a Health and Welfare LPA
 
     I want to add a correspondent to a Health and Welfare LPA

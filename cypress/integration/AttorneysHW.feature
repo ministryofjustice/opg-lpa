@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add attorneys to a Health and Welfare LPA
 
     I want to add attorneys to a Health and Welfare LPA

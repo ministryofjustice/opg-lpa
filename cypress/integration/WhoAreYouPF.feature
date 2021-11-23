@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Who Are You for a Property and Finance LPA
 
     I want to set Who Are You for a Property and Finance LPA
