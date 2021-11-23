@@ -59,17 +59,6 @@ resource "aws_security_group_rule" "front_ecs_service_elasticache_region_ingress
   source_security_group_id = aws_security_group.front_ecs_service.id
 }
 
-// from front to Elasticache (legacy - remove after.)
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
-resource "aws_security_group_rule" "front_ecs_service_elasticache_ingress" {
-  type                     = "ingress"
-  from_port                = 0
-  to_port                  = 6379
-  protocol                 = "tcp"
-  security_group_id        = data.aws_security_group.front_cache.id
-  source_security_group_id = aws_security_group.front_ecs_service.id
-}
-
 // Anything out
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_ecs_service_egress" {

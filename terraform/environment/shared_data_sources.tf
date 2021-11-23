@@ -33,11 +33,3 @@ data "aws_acm_certificate" "public_facing_certificate" {
 data "aws_iam_role" "ecs_autoscaling_service_role" {
   name = "AWSServiceRoleForApplicationAutoScaling_ECSService"
 }
-
-#keep as is as we want to destroy after new one in place.
-data "aws_elasticache_replication_group" "front_cache" {
-  replication_group_id = "front-cache-replication-group"
-}
-data "aws_security_group" "front_cache" {
-  name = "front-cache"
-}
