@@ -1362,7 +1362,19 @@ orbs:
               name: Run cypress tests
               command: |
                 # if errors occured, we need to restart cypress_tests to copy screenshots from it.  Note, in an ideal world we'd do this using a docker volume, but circle doesn't support that
-                docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_CI=true -e CYPRESS_TAGS="<<parameters.cypress_tags>>" -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" --entrypoint "./cypress/start.sh" --name cypress_tests cypress:latest && exit 0 || (docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1)
+                docker run -it \
+                  -e AWS_ACCESS_KEY_ID \
+                  -e AWS_SECRET_ACCESS_KEY \
+                  -e AWS_SESSION_TOKEN \
+                  -e CYPRESS_CI=true \
+                  -e CYPRESS_NO_COMMAND_LOG=1 \
+                  -e "CYPRESS_numTestsKeptInMemory=1" \
+                  -e CYPRESS_TAGS="<<parameters.cypress_tags>>" \
+                  -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" \
+                  -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" \
+                  --entrypoint "./cypress/start.sh" \
+                  --name cypress_tests cypress:latest && exit 0 || \
+                  (docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1)
           - store_artifacts:
               path: screenshots
           - run:
