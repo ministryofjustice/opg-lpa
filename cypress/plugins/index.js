@@ -60,5 +60,9 @@ module.exports = (on, config) => {
     },
   });
 
+  on('task', {
+    failed: require('cypress-failed-log/src/failed')(),
+  })
+
   return config;
 }
