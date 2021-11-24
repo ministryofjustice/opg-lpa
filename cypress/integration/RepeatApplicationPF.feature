@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Repeat Application for a Property and Finance LPA
 
     I want to set Repeat Application for a Property and Finance LPA

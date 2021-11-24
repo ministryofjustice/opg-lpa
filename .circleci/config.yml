@@ -225,7 +225,9 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CleanupFixtures"
+        # remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run. Statuses is currently excluded until we can get Sirus mock
+        # to run in CI.  CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run
+        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CorrespondentReuse"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases]
 
@@ -455,7 +457,7 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_remaining_tests
-        cypress_tags: "not @SignUp and not @CreateLpa and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CleanupFixtures"
+        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CorrespondentReuse"
         workspace: preproduction
         filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases]

@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add attorneys to a Property and Finance LPA
 
     I want to add attorneys to a Property and Finance LPA

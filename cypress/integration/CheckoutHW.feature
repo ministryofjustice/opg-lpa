@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Checkout for a Health and Welfare LPA
 
     I want to Checkout for a Health and Welfare LPA
