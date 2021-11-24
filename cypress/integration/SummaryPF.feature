@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: View Summary for a Property and Finance LPA
 
     I want to view the summary for a Property and Finance LPA

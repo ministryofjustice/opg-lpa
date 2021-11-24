@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add a Certificate Provider to a Health and Welfare LPA
 
     I want to add a Certificate Provider to a Health and Welfare LPA

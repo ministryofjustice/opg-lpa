@@ -95,6 +95,7 @@ dc-build-clean:
 	docker rmi lpa-front-web || true; \
 	docker rmi lpa-front-app || true; \
 	docker rmi seeding || true; \
+	docker rmi mocksirius || true; \
 	docker rmi opg-lpa_local-config; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
@@ -142,6 +143,17 @@ reset-flask:
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker rmi lpa-flask-app || true; \
 	docker-compose build --no-cache flask-app
+
+.PHONY: reset-mock-sirius
+reset-mock-sirius:
+	@${MAKE} dc-down
+	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
+	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
+	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
+	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	docker rmi mocksirius || true; \
+	docker-compose build --no-cache mocksirius
 
 # only reset the api container
 .PHONY: reset-api

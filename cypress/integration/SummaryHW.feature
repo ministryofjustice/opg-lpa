@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: View Summary for Health and Welfare LPA
 
     I want to view the summary for a Health and Welfare LPA
