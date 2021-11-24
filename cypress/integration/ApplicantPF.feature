@@ -16,7 +16,7 @@ Feature: Add Applicant to a Property and Finance LPA
         Then I am taken to the applicant page
         When I click "save"
         Then I see in the page text
-            | There is a problem |
+            | There is delibrately break the build here a problem |
             | Select the person who is applying to register the LPA |
         And I see "Error" in the title
         # select the donor as applicant
