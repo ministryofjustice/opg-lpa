@@ -70,7 +70,6 @@ class MailTransportFactoryTest extends MockeryTestCase
             ->withArgs(['Config'])
             ->once()
             ->andReturn(['email' => []]);
-        // TODO this will need tweaking
 
         $this->expectException(RuntimeException::class);
         (new MailTransportFactory())($container, null, null);
