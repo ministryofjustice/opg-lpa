@@ -123,14 +123,7 @@ return [
     'email' => [
         // should reference a key within this array which provides
         // implementation-specific configuration
-        'transport' => getenv('OPG_LPA_FRONT_EMAIL_TRANSPORT') ?: 'sendgrid',
-
-        'sendgrid' => [
-            'key'     => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY') ?: null,
-            'webhook' => [
-                'token' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN') ?: null,
-            ],
-        ], //sendgrid
+        'transport' => getenv('OPG_LPA_FRONT_EMAIL_TRANSPORT') ?: null,
 
         'notify' => [
             'key' => getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: null,

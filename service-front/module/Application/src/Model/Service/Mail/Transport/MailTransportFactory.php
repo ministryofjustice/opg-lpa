@@ -9,7 +9,6 @@ use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use SendGrid;
 use Twig\Environment as TwigEnvironment;
 use RuntimeException;
 
@@ -40,18 +39,7 @@ class MailTransportFactory implements FactoryInterface
             $transport = $emailConfig['transport'];
         }
 
-        if ($transport === 'sendgrid') {
-            $sendGridConfig = $emailConfig['sendgrid'];
-
-            if (!isset($sendGridConfig['key'])) {
-                throw new RuntimeException('Sendgrid settings not found');
-            }
-
-            $client = new SendGrid($sendGridConfig['key']);
-            $messageFactory = $container->get('MessageFactory');
-
-            return new SendGridMailTransport($client->client, $messageFactory);
-        } elseif ($transport === 'notify') {
+        if ($transport === 'notify') {
             if (!isset($emailConfig['notify']['key'])) {
                 throw new RuntimeException('Notify API settings not found');
             }
