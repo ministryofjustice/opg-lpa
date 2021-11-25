@@ -12,21 +12,21 @@
     ],
     "require": {
         "php": "^8.0",
-        "aws/aws-sdk-php": "^3.91",
-        "mikehaertl/php-pdftk": "0.2.1",
+        "aws/aws-sdk-php": "^3.204.5",
+        "mikehaertl/php-pdftk": "0.11",
         "zendframework/zendpdf": "^2.0.2",
-        "laminas/laminas-crypt": "^3.3.1",
-        "laminas/laminas-filter": "^2.9.4",
-        "ministryofjustice/opg-lpa-datamodels": "^13.2",
-        "laminas/laminas-barcode": "^2.5",
-        "tecnickcom/tcpdf": "6.4.1",
-        "setasign/fpdi-tcpdf": "^2.0",
+        "laminas/laminas-crypt": "^3.4.0",
+        "laminas/laminas-filter": "^2.12.0",
+        "ministryofjustice/opg-lpa-datamodels": "^13.8",
+        "laminas/laminas-barcode": "^2.9",
+        "tecnickcom/tcpdf": "6.4.2",
+        "setasign/fpdi-tcpdf": "^2.3",
         "laminas/laminas-zendframework-bridge": "^1.1.1",
-        "laminas/laminas-log": "^2.12"
+        "laminas/laminas-log": "^2.13"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0",
-        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^9.5.10",
+        "mockery/mockery": "^1.4.4",
         "ext-json": "*"
     },
     "autoload": {
