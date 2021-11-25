@@ -15,7 +15,7 @@
         "sort-packages": true
     },
     "require": {
-        "php": "^7.4",
+        "php": "^8.0",
         "aws/aws-sdk-php": "^3.81",
         "guzzlehttp/guzzle": "^6.3",
         "ministryofjustice/opg-lpa-datamodels": "^13.3",
