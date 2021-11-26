@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Specify Instructions and Preferences for a Health and Welfare LPA
 
     I want to specify Instructions and Preferences for a Health and Welfare LPA

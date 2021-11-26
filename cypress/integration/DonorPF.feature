@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add donor to Property and Finance LPA
 
     I want to add a donor to a Property and Finance LPA

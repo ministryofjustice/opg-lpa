@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Clone Property and Finance LPA starting from the Type page
 
     I want to go to the type page and clone a Property and Finance LPA
