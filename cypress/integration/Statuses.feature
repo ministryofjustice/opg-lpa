@@ -43,6 +43,9 @@ Feature: Status display for LPAs
         # receipt date, Payment Pending status on Sirius
         And the LPA with ID "48218451245" should display with status "Received"
 
+        # status date and Return - unpaid status on Sirius
+        And the LPA with ID "15527329531" should display with status "Processed"
+
     @focus
     Scenario: The status message page for an LPA has the title "Status message" (LPAL-432)
         Given I log in as appropriate test user
@@ -143,3 +146,13 @@ Feature: Status display for LPAs
         Then I am taken to the detail page for LPA with ID "48218451245"
         And I see "A482 1845 1245" in the page text
         And the LPA status is shown as "Received"
+
+    @focus
+    Scenario: An LPA which is received and is Payment Pending displays as "Processed" on its status page (LPAL-549)
+        Given I log in as appropriate test user
+        When I am taken to the dashboard page
+        And I click on the View "processed" message link for LPA with ID "15527329531"
+        Then I am taken to the detail page for LPA with ID "15527329531"
+        And I see "A155 2732 9531" in the page text
+        And the LPA status is shown as "Processed"
+        And I do not see "donor and all attorneys on the LPA will get a letter" in the page text

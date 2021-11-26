@@ -261,8 +261,9 @@ class StatusController extends AbstractRestfulController
                         // set found to true here as we got a processing status
                         // from Sirius
                         $results[$lpaId] = [
-                            'found'  => true,
-                            'status' => $data['status'],
+                            'found'        => true,
+                            'status'       => $data['status'],
+                            'returnUnpaid' => $data['returnUnpaid']
                         ];
 
                         continue;

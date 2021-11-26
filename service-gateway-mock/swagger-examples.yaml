@@ -18,6 +18,7 @@ paths:
                     withdrawnDate: null
                     statusDate: '2021-02-28'
                     status: Pending
+                    statusDate: '2021-03-28'
                 returned_rejected:
                   value:
                     onlineLpaId: A88668805824
@@ -30,6 +31,7 @@ paths:
                     withdrawnDate: null
                     statusDate: '2021-02-14'
                     status: Rejected
+                    statusDate: '2021-03-28'
                 returned_registered:
                   value:
                     onlineLpaId: A68582508781
@@ -42,6 +44,7 @@ paths:
                     withdrawnDate: null
                     statusDate: '2021-03-04'
                     status: Registered
+                    statusDate: '2021-03-28'
                 returned_registered_and_dispatched:
                   value:
                     onlineLpaId: A32004638272
@@ -54,6 +57,7 @@ paths:
                     withdrawnDate: null
                     statusDate: '2021-05-03'
                     status: Registered
+                    statusDate: '2021-05-28'
                 returned_invalid:
                   value:
                     onlineLpaId: A93348314693
@@ -66,6 +70,7 @@ paths:
                     withdrawnDate: null
                     statusDate: '2021-01-05'
                     status: Invalid
+                    statusDate: '2021-02-28'
                 returned_withdrawn:
                   value:
                     onlineLpaId: A43476377885
@@ -78,6 +83,7 @@ paths:
                     withdrawnDate: '2020-05-06'
                     statusDate: '2020-05-06'
                     status: Withdrawn
+                    statusDate: '2021-05-28'
                 checking:
                   value:
                     onlineLpaId: A54171193342
@@ -90,6 +96,7 @@ paths:
                     withdrawnDate: null
                     statusDate: '2020-11-21'
                     status: Perfect
+                    statusDate: '2021-01-28'
                 received_payment_pending:
                   value:
                     onlineLpaId: A48218451245
@@ -104,17 +111,17 @@ paths:
                     status: Payment Pending
                 received_payment_unpaid:
                   value:
-                    onlineLpaId: A33718377327
-                    receiptDate: '2021-10-03'
+                    onlineLpaId: A15527329531
+                    receiptDate: '2020-02-21'
                     rejectedDate: null
-                    dispatchDate: '2021-10-06'
-                    registrationDate: '2021-10-07'
+                    dispatchDate: '2020-02-27'
+                    registrationDate: null
                     registrationDate: null
                     cancellationDate: null
                     invalidDate: null
                     withdrawnDate: null
-                    statusDate: '2021-10-10'
-                    status: Registered
+                    statusDate: '2020-02-27'
+                    status: Return - unpaid
         '410':
           content:
             application/json:
@@ -122,3 +129,13 @@ paths:
                 deleted:
                   value:
                     onlineLpaId: A97998888883
+                    receiptDate: '2021-10-03'
+                    rejectedDate: null
+                    dispatchDate: null
+                    registrationDate: null
+                    registrationDate: null
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: null
+                    statusDate: null
+                    status: null
