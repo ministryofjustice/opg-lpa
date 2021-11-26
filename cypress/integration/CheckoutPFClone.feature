@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Checkout for a Property and Finance LPA
 
     I want to Checkout for a Property and Finance LPA

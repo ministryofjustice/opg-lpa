@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add Replacement Attorneys to a Health and Welfare LPA
 
     I want to Add Replacement Attorneys to a Health and Welfare LPA

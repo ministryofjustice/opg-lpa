@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add a correspondent to a Property and Finance LPA
 
     I want to add a correspondent to a Property and Finance LPA

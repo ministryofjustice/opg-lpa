@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add Applicant to a Health and Welfare LPA
 
     I want to add an Applicant to a Health and Welfare LPA

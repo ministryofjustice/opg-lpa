@@ -32,6 +32,7 @@ variable "accounts" {
       deletion_protection          = bool
       always_on                    = bool
       log_retention_in_days        = number
+      account_name_short           = string
       autoscaling = object({
         front = object({
           minimum = number

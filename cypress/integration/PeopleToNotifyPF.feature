@@ -1,4 +1,4 @@
-@CreateLpa
+@PartOfStitchedRun
 Feature: Add People to Notify to a Property and Finance LPA
 
     I want to add People to Notify to a Property and Finance LPA
