@@ -173,12 +173,7 @@ class Service extends AbstractService
      */
     private function buildHeaders()
     {
-        $headers = [
-            'Accept'        => 'application/json',
-            'Content-type'  => 'application/json'
-        ];
-
-        return $headers;
+        return ['Accept' => 'application/json'];
     }
 
     private function handleResponse(ResponseInterface $result)
@@ -233,7 +228,8 @@ class Service extends AbstractService
                 $status = 'Processed';
             }
 
-            if ($responseBody['status'] === self::SIRIUS_STATUS_TO_LPA[10]) { # Return - unpaid status
+            // We set a returnUnpaid as this is required to differentiate from returned
+            if ($responseBody['status'] === 'Return - unpaid') { # Return - unpaid status
                 $return['dispatchDate'] = $responseBody['statusDate'];
                 $return['returnUnpaid'] = true;
             }
