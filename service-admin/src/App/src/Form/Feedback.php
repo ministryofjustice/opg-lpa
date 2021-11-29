@@ -43,7 +43,7 @@ class Feedback extends AbstractForm
     /**
      * @return bool
      */
-    public function isValid()
+    public function isValid(): bool
     {
         if (parent::isValid()) {
             if ($this->getDateValue('start-date') <= $this->getDateValue('end-date')) {
