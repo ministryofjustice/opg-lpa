@@ -12,7 +12,7 @@ class Correspondence extends AbstractValidator
         self::AT_LEAST_ONE_SELECTED => 'at-least-one-option-needs-to-be-selected',
     ];
 
-    public function isValid($value)
+    public function isValid($value): bool
     {
         $this->setValue($value);
 

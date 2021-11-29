@@ -17,7 +17,7 @@ class Password extends AbstractValidator
         self::MUST_INCLUDE_UPPER_CASE => 'must-include-upper-case',
     ];
 
-    public function isValid($value)
+    public function isValid($value): bool
     {
         $isValid = true;
 
