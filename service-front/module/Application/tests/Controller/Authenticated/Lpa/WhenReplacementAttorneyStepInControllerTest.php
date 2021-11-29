@@ -77,7 +77,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
 
         $this->setPostValid($this->form, $this->postDataLast);
-        $this->form->shouldReceive('setValidationGroup')->withArgs(['when'])->once();
+        $this->form->shouldReceive('setValidationGroup')->withArgs([['when']])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataLast)->once();
         $this->lpaApplicationService->shouldReceive('setReplacementAttorneyDecisions')
             ->withArgs(function ($lpa, $replacementAttorneyDecisions) {
@@ -99,7 +99,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $this->setPostValid($this->form, $this->postDataLast);
-        $this->form->shouldReceive('setValidationGroup')->withArgs(['when'])->once();
+        $this->form->shouldReceive('setValidationGroup')->withArgs([['when']])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataLast)->once();
         $this->lpaApplicationService->shouldReceive('setReplacementAttorneyDecisions')
             ->withArgs(function ($lpa, $replacementAttorneyDecisions) {
