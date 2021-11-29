@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cafd79ba54dc9a9579939cdf0c9469da",
+    "content-hash": "f8f9cc38fbf7bfd0fa76ade5d9ef1e73",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -5911,6 +5911,147 @@
                 "source": "https://github.com/hamcrest/hamcrest-php/tree/v2.0.1"
             },
             "time": "2020-07-09T08:09:16+00:00"
+        },
+        {
+            "name": "laminas/laminas-dom",
+            "version": "2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-dom.git",
+                "reference": "7e85e8d7d2980c716944b8bb8e4a83c0a0dbe91b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-dom/zipball/7e85e8d7d2980c716944b8bb8e4a83c0a0dbe91b",
+                "reference": "7e85e8d7d2980c716944b8bb8e4a83c0a0dbe91b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "laminas/laminas-zendframework-bridge": "^1.1",
+                "php": "^7.3 || ~8.0.0"
+            },
+            "replace": {
+                "zendframework/zend-dom": "^2.7.2"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "^2.1.4",
+                "phpunit/phpunit": "^9.4.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7.x-dev",
+                    "dev-develop": "2.8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Dom\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "provides tools for working with DOM documents and structures",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "dom",
+                "laminas"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-dom/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-dom/issues",
+                "rss": "https://github.com/laminas/laminas-dom/releases.atom",
+                "source": "https://github.com/laminas/laminas-dom"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2021-01-11T14:54:37+00:00"
+        },
+        {
+            "name": "laminas/laminas-test",
+            "version": "4.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-test.git",
+                "reference": "ab2e01ed9c3061877d35f46ac5f64199f4ce3dd6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-test/zipball/ab2e01ed9c3061877d35f46ac5f64199f4ce3dd6",
+                "reference": "ab2e01ed9c3061877d35f46ac5f64199f4ce3dd6",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-dom": "^2.8",
+                "laminas/laminas-eventmanager": "^3.0",
+                "laminas/laminas-http": "^2.13",
+                "laminas/laminas-mvc": "^3.0",
+                "laminas/laminas-servicemanager": "^3.0.3",
+                "laminas/laminas-stdlib": "^3.3",
+                "laminas/laminas-uri": "^2.5",
+                "laminas/laminas-view": "^2.6.3",
+                "laminas/laminas-zendframework-bridge": "^1.1",
+                "php": "^7.3 || ~8.0.0",
+                "phpunit/phpunit": "^8.0 || ^9.0"
+            },
+            "replace": {
+                "zendframework/zend-test": "^3.3.0"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~2.2.1",
+                "laminas/laminas-i18n": "^2.6",
+                "laminas/laminas-log": "^2.7.1",
+                "laminas/laminas-modulemanager": "^2.7.1",
+                "laminas/laminas-mvc-plugin-flashmessenger": "^1.0",
+                "laminas/laminas-serializer": "^2.6.1",
+                "laminas/laminas-session": "^2.8.5",
+                "laminas/laminas-validator": "^2.8",
+                "mikey179/vfsstream": "^1.6.8",
+                "psalm/plugin-phpunit": "^0.16.0",
+                "vimeo/psalm": "^4.7"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Test\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Tools to facilitate unit testing of laminas-mvc applications",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "laminas",
+                "test"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-test/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-test/issues",
+                "rss": "https://github.com/laminas/laminas-test/releases.atom",
+                "source": "https://github.com/laminas/laminas-test"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2021-07-06T03:48:28+00:00"
         },
         {
             "name": "mockery/mockery",
