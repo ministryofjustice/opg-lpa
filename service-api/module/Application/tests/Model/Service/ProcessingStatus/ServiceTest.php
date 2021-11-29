@@ -251,4 +251,22 @@ class ServiceTest extends MockeryTestCase
 
         $this->assertEquals($expectedResult, $statusResult);
     }
+
+    public function testGetProcessedStatusForReturnUnpaid()
+    {
+        $this->setUpSigning();
+        $returnStatus = 200;
+        $returnBody = '{"status": "Return - unpaid", "statusDate": "2021-02-08"}';
+        $this->setUpRequest($returnStatus, $returnBody);
+        $statusResult = $this->service->getStatuses([1000000000]);
+
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => false,
+                'response'  => ['status' => 'Processed', 'dispatchDate' => '2021-02-08', 'returnUnpaid' => true]
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $statusResult);
+    }
 }
