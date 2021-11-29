@@ -19,7 +19,7 @@ class Date extends DateValidator
         parent::__construct($options);
     }
 
-    public function isValid($value)
+    public function isValid($value): bool
     {
         if (is_array($value)) {
             if (!array_key_exists('year', $value) || !array_key_exists('month', $value) || !array_key_exists('day', $value)) {
