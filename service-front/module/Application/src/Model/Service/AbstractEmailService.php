@@ -22,9 +22,8 @@ abstract class AbstractEmailService extends AbstractService
 
     /**
      * Email template references. Individual MailTransportInterface
-     * implementations may map these to different rendering mechanisms (e.g. Twig
-     * to create HTML bodies for SendGrid) or 3rd party identifiers (e.g. Notify
-     * template IDs)
+     * implementations may map these to appropriate rendering mechanisms (e.g. 
+     * 3rd party identifiers (e.g. Notify template IDs)
      */
     public const EMAIL_ACCOUNT_ACTIVATE                = 'email-account-activate';
     public const EMAIL_FEEDBACK                        = 'email-feedback';
@@ -36,7 +35,6 @@ abstract class AbstractEmailService extends AbstractService
     public const EMAIL_PASSWORD_RESET                  = 'email-password-reset';
     public const EMAIL_PASSWORD_RESET_NO_ACCOUNT       = 'email-password-reset-no-account';
     public const EMAIL_ACCOUNT_DUPLICATION_WARNING     = 'email-account-duplication-warning';
-    public const EMAIL_SENDGRID_BOUNCE                 = 'email-sendgrid-bounce';
 
     /**
      * AbstractEmailService constructor.

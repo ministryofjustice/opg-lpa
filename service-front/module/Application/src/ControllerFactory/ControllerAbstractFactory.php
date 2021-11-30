@@ -18,7 +18,6 @@ use Application\Controller\General\ForgotPasswordController;
 use Application\Controller\General\GuidanceController;
 use Application\Controller\General\PingController;
 use Application\Controller\General\RegisterController;
-use Application\Controller\General\SendgridController;
 use Application\Controller\General\StatsController;
 use Application\Controller\General\VerifyEmailAddressController;
 use Interop\Container\ContainerInterface;
@@ -82,9 +81,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         ReuseDetailsController::class => [
             'setRouter' => 'Router'
-        ],
-        SendgridController::class => [
-            'setMailTransport' => 'MailTransport'
         ],
         StatsController::class => [
             'setStatsService' => 'StatsService',
