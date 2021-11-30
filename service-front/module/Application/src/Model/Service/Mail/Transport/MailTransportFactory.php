@@ -9,7 +9,6 @@ use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use SendGrid;
 use Twig\Environment as TwigEnvironment;
 use RuntimeException;
 
@@ -35,35 +34,15 @@ class MailTransportFactory implements FactoryInterface
     {
         $emailConfig = $container->get('Config')['email'];
 
-        $transport = null;
-        if (isset($emailConfig['transport'])) {
-            $transport = $emailConfig['transport'];
+        if (!isset($emailConfig['notify']['key'])) {
+            throw new RuntimeException('Notify API settings not found');
         }
 
-        if ($transport === 'sendgrid') {
-            $sendGridConfig = $emailConfig['sendgrid'];
+        $notifyClient = new NotifyClient([
+            'apiKey' => $emailConfig['notify']['key'],
+            'httpClient' => new Guzzle6Wrapper()
+        ]);
 
-            if (!isset($sendGridConfig['key'])) {
-                throw new RuntimeException('Sendgrid settings not found');
-            }
-
-            $client = new SendGrid($sendGridConfig['key']);
-            $messageFactory = $container->get('MessageFactory');
-
-            return new SendGridMailTransport($client->client, $messageFactory);
-        } elseif ($transport === 'notify') {
-            if (!isset($emailConfig['notify']['key'])) {
-                throw new RuntimeException('Notify API settings not found');
-            }
-
-            $notifyClient = new NotifyClient([
-                'apiKey' => $emailConfig['notify']['key'],
-                'httpClient' => new Guzzle6Wrapper()
-            ]);
-
-            return new NotifyMailTransport($notifyClient);
-        }
-
-        throw new RuntimeException('Unable to instantiate email transport; transport is set to ' . $transport);
+        return new NotifyMailTransport($notifyClient);
     }
 }

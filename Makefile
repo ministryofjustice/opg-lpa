@@ -1,9 +1,5 @@
 SHELL := '/bin/bash'
 
-# Must be set to some string.
-# Used to send notifications to end users from service-front.
-SENDGRID ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_email_sendgrid_api_key | jq -r .'SecretString')
-
 # Used by service-front for making payments.
 # Can be disabled in dev, just don't offer to pay when completing LPA.
 GOVPAY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_gov_pay_key | jq -r .'SecretString')
@@ -29,29 +25,25 @@ reset:
 
 .PHONY: dc-run
 dc-run:
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker-compose run front-composer | xargs -L1 echo front-composer: &
 
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	sleep 20; docker-compose run admin-composer | xargs -L1 echo admin-composer: &
 
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	sleep 20; docker-compose run api-composer | xargs -L1 echo api-composer: &
 
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
@@ -63,8 +55,7 @@ dc-run:
 # The name of the network created here must match the one in the docker-compose.yml.
 .PHONY: dc-up
 dc-up:
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
@@ -74,7 +65,7 @@ dc-up:
 # target for users outside MoJ to run the stack without 3rd party integrations
 .PHONY: dc-up-out
 dc-up-out:
-	@${MAKE} dc-up SENDGRID=- GOVPAY=- NOTIFY=- ORDNANCESURVEY=-
+	@${MAKE} dc-up GOVPAY=- NOTIFY=- ORDNANCESURVEY=-
 
 .PHONY: dc-build
 dc-build:
@@ -124,8 +115,7 @@ reset-front:
 .PHONY: reset-front-web
 reset-front-web:
 	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
@@ -136,8 +126,7 @@ reset-front-web:
 .PHONY: reset-flask
 reset-flask:
 	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
@@ -147,8 +136,7 @@ reset-flask:
 .PHONY: reset-mock-sirius
 reset-mock-sirius:
 	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
@@ -179,22 +167,19 @@ dc-front-unit-tests:
 dc-unit-tests:
 	@${MAKE} dc-front-unit-tests
 
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker-compose run admin-app /app/vendor/bin/phpunit
 
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker-compose run api-app /app/vendor/bin/phpunit
 
-	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
-	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
