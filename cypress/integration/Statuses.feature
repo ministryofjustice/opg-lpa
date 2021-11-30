@@ -98,6 +98,7 @@ Feature: Status display for LPAs
         Then I am taken to the detail page for LPA with ID "32004638272"
         And I see "A320 0463 8272" in the page text
         And the LPA status is shown as "Processed"
+        And I see "donor and all attorneys on the LPA will get a letter" in the page text
 
         # dispatch date is 03/05/21
         And the date by which the LPA should be received is shown as "24/05/21"
@@ -156,3 +157,6 @@ Feature: Status display for LPAs
         And I see "A155 2732 9531" in the page text
         And the LPA status is shown as "Processed"
         And I do not see "donor and all attorneys on the LPA will get a letter" in the page text
+
+        # Return unpaid status was set on statusDate which becomes dispatch date of 27/02/20
+        And the date by which the LPA should be received is shown as "19/03/20"
