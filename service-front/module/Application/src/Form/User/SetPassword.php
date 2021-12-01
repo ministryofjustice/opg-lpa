@@ -94,7 +94,7 @@ class SetPassword extends AbstractCsrfForm
         parent::init();
     }
 
-    public function isValid(): bool
+    public function isValid()
     {
         //  If the skip confirm password flag has been passed then set the password value as the password confirm value to pass validation
         if (array_key_exists('skip_confirm_password', $this->data) && !empty($this->data['skip_confirm_password'])) {
