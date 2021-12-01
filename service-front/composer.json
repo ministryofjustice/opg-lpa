@@ -22,7 +22,6 @@
         "aws/aws-sdk-php": "^3.91",
         "ministryofjustice/opg-lpa-datamodels": "^13.8",
         "michelf/php-markdown": "^1.8",
-        "alphagov/pay-integration-php": "^1.0",
         "php-http/guzzle6-adapter": "^1.1",
         "soundasleep/html2text": "^0.5.0",
         "laminas/laminas-component-installer": "^2.1.1",
@@ -53,7 +52,8 @@
     "autoload": {
         "psr-4": {
             "Application\\": "module/Application/src/",
-            "MakeLogger\\": "../shared/logging/module/MakeLogger/src/"
+            "MakeLogger\\": "../shared/logging/module/MakeLogger/src/",
+            "Alphagov\\Pay\\": "module/Alphagov/Pay/src/"
         }
     }
 }
