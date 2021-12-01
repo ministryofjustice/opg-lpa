@@ -41,7 +41,7 @@ class Csrf extends LaminasCsrfValidator
      * @param  mixed $context
      * @return bool
      */
-    public function isValid($value, $context = null): bool
+    public function isValid($value, $context = null)
     {
         $hash = $this->getHash(true);
 

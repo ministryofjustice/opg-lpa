@@ -77,7 +77,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $controller = $this->getController(RepeatApplicationController::class);
 
         $this->setPostInvalid($this->form, $this->postDataNoRepeat);
-        $this->form->shouldReceive('setValidationGroup')->withArgs([['isRepeatApplication']])->once();
+        $this->form->shouldReceive('setValidationGroup')->withArgs(['isRepeatApplication'])->once();
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();
@@ -110,7 +110,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $controller = $this->getController(RepeatApplicationController::class);
 
         $this->setPostValid($this->form, $this->postDataNoRepeat);
-        $this->form->shouldReceive('setValidationGroup')->withArgs([['isRepeatApplication']])->once();
+        $this->form->shouldReceive('setValidationGroup')->withArgs(['isRepeatApplication'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataNoRepeat)->once();
         $this->lpaApplicationService->shouldReceive('deleteRepeatCaseNumber')
             ->withArgs([$this->lpa])->andReturn(false)->once();
@@ -168,7 +168,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $this->setPostValid($this->form, $this->postDataNoRepeat);
-        $this->form->shouldReceive('setValidationGroup')->withArgs([['isRepeatApplication']])->once();
+        $this->form->shouldReceive('setValidationGroup')->withArgs(['isRepeatApplication'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataNoRepeat)->once();
         $this->lpaApplicationService->shouldReceive('deleteRepeatCaseNumber')
             ->withArgs([$this->lpa])->andReturn(true)->once();

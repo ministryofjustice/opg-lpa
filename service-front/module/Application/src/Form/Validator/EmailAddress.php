@@ -12,7 +12,7 @@ class EmailAddress extends LaminasEmailAddressValidator
      * @param string $value
      * @return bool
      */
-    public function isValid($value): bool
+    public function isValid($value)
     {
         $valid = parent::isValid($value);
 
