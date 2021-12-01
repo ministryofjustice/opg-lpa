@@ -263,7 +263,7 @@
     "jsbn": "^0.1.1",
     "jsesc": "^2.5.2",
     "json-parse-better-errors": "^1.0.2",
-    "json-schema": "^0.2.3",
+    "json-schema": "^0.4.0",
     "json-schema-traverse": "^0.4.1",
     "json-stable-stringify": "^0.0.1",
     "json-stringify-safe": "^5.0.1",
