@@ -111,14 +111,6 @@ class MessageFactory
                 'opg-lpa-signup-email-duplication',
             ],
         ],
-        AbstractEmailService::EMAIL_SENDGRID_BOUNCE => [
-            'template' => 'bounce.twig',
-            'categories' => [
-                'opg',
-                'opg-lpa',
-                'opg-lpa-autoresponse',
-            ],
-        ],
     ];
 
     /**

@@ -133,20 +133,6 @@ return [
                 ],
             ], // feedback-thanks
 
-            'sendgrid-bounce' => [
-                'type' => 'Laminas\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/email/bounce/:token',
-                    'constraints' => [
-                        'token' => '[a-zA-Z0-9]+',
-                    ],
-                    'defaults' => [
-                        'controller' => 'General\SendgridController',
-                        'action'     => 'bounce',
-                    ],
-                ],
-            ], // sendgrid-bounce
-
             'guidance' => [
                 'type' => 'Laminas\Router\Http\Segment',
                 'options' => [

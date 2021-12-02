@@ -5,7 +5,7 @@ namespace Application\Model\Service\Mail;
 /**
  * Collects together the data required to send an email.
  * The "from"/"reply to" email address on the email is
- * currently not required by either SendGrid or Notify
+ * currently not required by Notify
  * and is therefore not stored here.
  *
  * If other implementations of MailTransportInterface
