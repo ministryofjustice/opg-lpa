@@ -252,11 +252,6 @@ abstract class AbstractControllerTest extends MockeryTestCase
                 ],
             ],
             'email' => [
-                'sendgrid' => [
-                    'webhook' => [
-                        'token' => 'ValidToken',
-                    ],
-                ],
                 'sender' => [
                     'default' => [
                         'name' => 'Unit Tests',
