@@ -113,4 +113,19 @@ data "aws_iam_policy_document" "execution_role" {
       data.aws_secretsmanager_secret.performance_platform_db_password.arn
     ]
   }
+
+  statement {
+    effect = "Allow"
+
+    resources = [data.aws_kms_alias.secrets_encryption_alias.target_key_arn]
+
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyPair",
+      "kms:GenerateDataKeyPairWithoutPlaintext",
+      "kms:GenerateDataKeyWithoutPlaintext",
+      "kms:DescribeKey",
+    ]
+  }
 }
