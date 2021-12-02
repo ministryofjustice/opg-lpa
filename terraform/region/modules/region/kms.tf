@@ -2,6 +2,12 @@ resource "aws_kms_key" "secrets_encryption_key" {
   enable_key_rotation = true
 }
 
+resource "aws_kms_alias" "secrets_encryption_alias" {
+  name          = "alias/secrets_encryption_key-${terraform.workspace}"
+  target_key_id = aws_kms_key.secrets_encryption_key.key_id
+}
+
+
 resource "aws_kms_key" "lpa_pdf_cache" {
   description             = "S3 bucket encryption key for lpa_pdf_cache"
   deletion_window_in_days = 7
