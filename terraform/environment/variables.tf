@@ -6,6 +6,14 @@ variable "account_mapping" {
   type = map(any)
 }
 
+variable "default_role" {
+  default = "opg-lpa-ci"
+}
+
+variable "management_role" {
+  default = "opg-lpa-ci"
+}
+
 variable "lambda_container_version" {
   type    = string
   default = "latest"
