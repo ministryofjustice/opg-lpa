@@ -33,3 +33,7 @@ data "aws_acm_certificate" "public_facing_certificate" {
 data "aws_iam_role" "ecs_autoscaling_service_role" {
   name = "AWSServiceRoleForApplicationAutoScaling_ECSService"
 }
+
+data "aws_kms_alias" "secrets_encryption_alias" {
+  name = "alias/secrets_encryption_key-${local.account_name}"
+}
