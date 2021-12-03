@@ -446,6 +446,8 @@ services:
       - mocksirius
     ports:
       - 7010:5000
+    environment:
+      OPG_LPA_STATUS_ENDPOINT: ""
 
   mocksirius:
     container_name: mocksirius
