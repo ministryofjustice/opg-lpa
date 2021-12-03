@@ -28,6 +28,7 @@ class Service extends AbstractService
         'Registered' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
         'Cancelled' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
         'Revoked' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+        'Return - unpaid' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED
     ];
 
     /**
@@ -172,12 +173,7 @@ class Service extends AbstractService
      */
     private function buildHeaders()
     {
-        $headers = [
-            'Accept'        => 'application/json',
-            'Content-type'  => 'application/json'
-        ];
-
-        return $headers;
+        return ['Accept' => 'application/json'];
     }
 
     private function handleResponse(ResponseInterface $result)
@@ -230,6 +226,12 @@ class Service extends AbstractService
             // as service-front wants "Processed" rather than "Returned" (LPAL-92)
             if ($status === Lpa::SIRIUS_PROCESSING_STATUS_RETURNED) {
                 $status = 'Processed';
+            }
+
+            // We set a returnUnpaid as this is required to differentiate from returned
+            if ($responseBody['status'] === 'Return - unpaid') { # Return - unpaid status
+                $return['dispatchDate'] = $responseBody['statusDate'];
+                $return['returnUnpaid'] = true;
             }
 
             $return['status'] = $status;
