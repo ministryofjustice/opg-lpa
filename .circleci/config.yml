@@ -35,6 +35,7 @@ pr_build: &pr_build
         name: mock_gateway_docker_build
         ecr_repository_name_prefix: online-lpa/mockgateway
         service_path: service-gateway-mock
+        dockerfile_path: service-gateway-mock
         dockerfile_name: Dockerfile-gateway
         filters: { branches: { ignore: [ main ] } }
 
@@ -42,6 +43,7 @@ pr_build: &pr_build
         name: mock_sirius_docker_build
         ecr_repository_name_prefix: online-lpa/mocksirius
         service_path: service-gateway-mock
+        dockerfile_path: service-gateway-mock
         dockerfile_name: Dockerfile-mocksirius
         filters: { branches: { ignore: [ main ] } }
 
