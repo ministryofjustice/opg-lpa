@@ -62,7 +62,7 @@ class Service extends AbstractService
 
     public function setConfig(array $config)
     {
-        if (!isset($config['processing-status']['endpoint'])) {
+        if (!isset($config['processing-status']['endpoint']) || !$config['processing-status']['endpoint']) {
             throw new RuntimeException("Missing config: ['processing-status']['endpoint']");
         }
 
