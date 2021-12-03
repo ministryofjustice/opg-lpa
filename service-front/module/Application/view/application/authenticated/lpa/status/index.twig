@@ -90,9 +90,11 @@
                     <li>could not be registered - we’ll also say why we could not register it and what to do next</li>
                 </ul>
 
-                <p>The donor and all attorneys on the LPA will get a letter telling them the outcome.</p>
+                {% if returnUnpaid != 'true' %}
+                    <p>The donor and all attorneys on the LPA will get a letter telling them the outcome.</p>
+                {% endif %}
 
-                <p>If the LPA or the letters have not arrived by <span data-cy="lpa-should-receive-by-date">{{ shouldReceiveByDate|date('d/m/y') }}</span>, please call 0300 456 0300.</p>
+                <p>The letter and LPA were sent by second class post. If they have not arrived by <span data-cy="lpa-should-receive-by-date">{{ shouldReceiveByDate|date('d/m/y') }}</span>, please call 0300 456 0300.</p>
 
                 <p>Opening times: Monday, Tuesday, Thursday, Friday 9.30am to 5pm. Wednesday 10am to 5pm.</p>
             </div>

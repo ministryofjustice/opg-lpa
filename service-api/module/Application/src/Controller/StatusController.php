@@ -248,6 +248,8 @@ class StatusController extends AbstractRestfulController
                         $data['withdrawnDate'] = $this->getValue($lpaDetail['response'], 'withdrawnDate');
                         $data['dispatchDate'] = $this->getValue($lpaDetail['response'], 'dispatchDate');
 
+                        $data['returnUnpaid'] = $this->getValue($lpaDetail['response'], 'returnUnpaid');
+
                         // If we found a record in the db, try to update it
                         // (the decision of whether to run the update is made
                         // in updateMetadata)
@@ -259,8 +261,9 @@ class StatusController extends AbstractRestfulController
                         // set found to true here as we got a processing status
                         // from Sirius
                         $results[$lpaId] = [
-                            'found'  => true,
-                            'status' => $data['status'],
+                            'found'        => true,
+                            'status'       => $data['status'],
+                            'returnUnpaid' => $data['returnUnpaid']
                         ];
 
                         continue;
