@@ -107,7 +107,7 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.api_web}, ${local.api_app}]"
+  container_definitions    = local.api_container_definitions
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = merge(local.default_tags, local.api_component_tag)
@@ -293,7 +293,7 @@ locals {
         { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : local.db.endpoint },
         { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(local.db.port) },
         { "name" : "OPG_LPA_POSTGRES_NAME", "value" : local.db.name },
-        { "name" : "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value" : local.account.sirius_api_gateway_endpoint },
+        { "name" : "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value" : local.sirius_api_gateway },
         { "name" : "OPG_LPA_API_TRACK_FROM_DATE", "value" : local.track_from_date },
         { "name" : "OPG_LPA_SEED_DATA", "value" : "true" },
         { "name" : "OPG_LPA_STACK_NAME", "value" : local.environment },
