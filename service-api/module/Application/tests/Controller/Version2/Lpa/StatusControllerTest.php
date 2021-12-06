@@ -67,7 +67,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
                 ]
             ]);
 
@@ -93,6 +93,7 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Processed',
+                    'returnUnpaid' => null
                 ]
             ]
         ), $result);
@@ -117,7 +118,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
                 ]
             ]);
 
@@ -143,6 +144,7 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Checking',
+                    'returnUnpaid' => null
                 ]
             ]
         ), $result);
@@ -182,7 +184,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Received' , 'receiptDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Received' , 'receiptDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
                 ]
             ]);
 
@@ -193,6 +195,7 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Received',
+                    'returnUnpaid' => null
                 ]
             ]
         ), $result);
@@ -217,7 +220,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Checking' , 'registrationDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Checking' , 'registrationDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
                 ]
             ]);
 
@@ -243,6 +246,7 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Checking',
+                    'returnUnpaid' => null
                 ]
             ]
         ), $result);
@@ -297,6 +301,7 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Processed',
+                    'returnUnpaid' => null
                 ]
             ]
         ), $result);
@@ -325,7 +330,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
                 ]
             ]);
 
@@ -351,6 +356,7 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Checking',
+                    'returnUnpaid' => null
                 ]
             ]
         ), $result);
@@ -404,7 +410,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => null,'rejectedDate' => null]
+                    'response'  => ['status' => null,'rejectedDate' => null, 'returnUnpaid' => null]
                 ]
             ]);
 
@@ -448,6 +454,7 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Checking',
+                'returnUnpaid' => null
             ]]), $result);
     }
 
@@ -481,6 +488,7 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Checking',
+                'returnUnpaid' => null
             ]]), $result);
     }
 
@@ -531,6 +539,7 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Checking',
+                'returnUnpaid' => null
             ]]), $result);
     }
 
@@ -566,6 +575,79 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Processed',
+                'returnUnpaid' => null
+            ]]), $result);
+    }
+
+    public function testGetLpaAlreadyProcessedWithReturnUnpaidSetTrue()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['id' => 98766, 'completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Pending'
+            ]]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->applicationsService->shouldReceive('filterByIdsAndUser')
+            ->withArgs([['98766'], '12345'])
+            ->once()
+            ->andReturn([$lpa]);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98766' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Processed','dispatchDate' => new DateTime('2019-02-15'), 'returnUnpaid' => true]
+                ]
+            ]);
+        $this->applicationsService->shouldReceive('patch')->once();
+
+        $result = $this->statusController->get('98766');
+
+        $this->assertEquals(new Json([
+            '98766' => [
+                'found' => true,
+                'status' => 'Processed',
+                'returnUnpaid' => true
+            ]]), $result);
+    }
+
+    public function testGetLpaAlreadyProcessedWithReturnUnpaidSetNull()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['id' => 98766, 'completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Pending'
+            ]]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->applicationsService->shouldReceive('filterByIdsAndUser')
+            ->withArgs([['98766'], '12345'])
+            ->once()
+            ->andReturn([$lpa]);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98766' => [
+                    'deleted'   => false,
+                    'response'  => ['status' => 'Processed','dispatchDate' => new DateTime('2019-02-15')]
+                ]
+            ]);
+        $this->applicationsService->shouldReceive('patch')->once();
+
+        $result = $this->statusController->get('98766');
+
+        $this->assertEquals(new Json([
+            '98766' => [
+                'found' => true,
+                'status' => 'Processed',
+                'returnUnpaid' => null
             ]]), $result);
     }
 
@@ -641,10 +723,12 @@ class StatusControllerTest extends AbstractControllerTest
             98765 => [
                 'found' => true,
                 'status' => 'Processed',
+                'returnUnpaid' => null
             ],
             98766 => [
                 'found' => true,
                 'status' => 'Received',
+                'returnUnpaid' => null
             ]
         ]), $result);
     }
@@ -681,6 +765,7 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Processed',
+                'returnUnpaid' => null
             ]]), $result);
     }
 
@@ -716,6 +801,7 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Processed',
+                'returnUnpaid' => null
             ]]), $result);
     }
 
