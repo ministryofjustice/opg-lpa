@@ -18,6 +18,7 @@ class StatusController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
         $lpaStatus = null;
+        $returnUnpaid = false;
 
         if ($lpa->getCompletedAt() instanceof DateTime) {
             $lpaStatus = 'completed';
@@ -32,6 +33,7 @@ class StatusController extends AbstractLpaController
                 $lpaId = $lpa->getId();
                 if (array_key_exists($lpaId, $lpaStatusDetails) && $lpaStatusDetails[$lpaId]['found'] == true) {
                     $lpaStatus = strtolower($lpaStatusDetails[$lpa->getId()]['status']);
+                    $returnUnpaid = isset($lpaStatusDetails[$lpaId]['returnUnpaid']);
                 }
             }
         }
@@ -87,6 +89,7 @@ class StatusController extends AbstractLpaController
         return new ViewModel([
             'lpa'                 => $lpa,
             'shouldReceiveByDate' => $shouldReceiveByDate,
+            'returnUnpaid'        => $returnUnpaid,
             'status'              => $lpaStatus,
             'doneStatuses'        => $doneStatuses,
             'canGenerateLPA120'   => $lpa->canGenerateLPA120(),
