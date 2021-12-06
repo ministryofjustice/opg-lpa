@@ -8,7 +8,7 @@ RUN apt-get update && \
 RUN pip3 install boto3 requests
 
 RUN npm install --save-dev axe-core \
-    cypress-cucumber-preprocessor cypress-plugin-tab cypress-failed-log
+    cypress-cucumber-preprocessor cypress-plugin-tab cypress-failed-log cli-table@0.3.9 strip-ansi
 
 ENV CYPRESS_VIDEO=false
 ENV CYPRESS_RUN_A11Y_TESTS=true

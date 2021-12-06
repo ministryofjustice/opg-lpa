@@ -13,6 +13,7 @@ return array(
         'Laminas\Validator',
         'Laminas\ApiTools\ApiProblem',
         'LmcRbacMvc',
+        'Laminas\Cache\Storage\Adapter\Memory',
         'Application',
     ),
     // These are various options for the listeners attached to the ModuleManager
