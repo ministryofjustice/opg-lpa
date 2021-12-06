@@ -13,6 +13,7 @@ return array(
         'Laminas\Validator',
         'Laminas\ApiTools\ApiProblem',
         'LmcRbacMvc',
+        'Laminas\ZendFrameworkBridge',
         'Application',
     ),
     // These are various options for the listeners attached to the ModuleManager
