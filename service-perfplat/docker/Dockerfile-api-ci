@@ -16,7 +16,7 @@ RUN pip install -r /service-perfplat/api-requirements.txt --target ${LAMBDA_TASK
 FROM public.ecr.aws/lambda/python:3.8
 
 # fixes security issues detected in build.
-RUN yum update -y rpm openssl
+RUN yum update -y rpm openssl nss nss-util nss-softokn nspr
 
 RUN yum install -y postgresql && \
     yum clean all && \
