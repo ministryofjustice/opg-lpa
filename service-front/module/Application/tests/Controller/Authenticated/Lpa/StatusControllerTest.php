@@ -29,6 +29,22 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals('', $result->getTemplate());
     }
 
+    public function testIndexActionWithReturnUnpaid()
+    {
+        /** @var StatusController $controller */
+        $controller = $this->getController(TestableStatusController::class);
+
+        $this->lpaApplicationService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn(['91333263035' => ['found' => true, 'status' => 'Processed', 'returnUnpaid' => true]]);
+
+        /** @var ViewModel $result */
+        $result = $controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+    }
+
     public function testIndexActionInvalidStatus()
     {/** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
