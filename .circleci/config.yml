@@ -41,8 +41,9 @@ pr_build: &pr_build
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: mock_sirius_docker_build
-        ecr_repository_name_prefix: online-lpa/mocksirius
-        service_path: service-gateway-mock
+        account_id: "050256574573"
+        container_repo_account: development
+        lambda_name: mocksirius
         dockerfile_path: service-gateway-mock
         dockerfile_name: Dockerfile-mocksirius
         filters: { branches: { ignore: [ main ] } }
