@@ -31,7 +31,7 @@ pr_build: &pr_build
         service_path: service-admin
         filters: { branches: { ignore: [main] } }
 
-    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_other:
         name: mock_gateway_docker_build
         ecr_repository_name_prefix: online-lpa/mockgateway
         service_path: service-gateway-mock
@@ -772,7 +772,64 @@ orbs:
                   # Else, push branch tag only
                   docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG}
                 fi
+      checkout_docker_build_push_other:
+        executor: python
+        parameters:
+          ecr_url:
+            type: string
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com
+          ecr_repository_name_prefix:
+            type: string
+          service_path:
+            type: string
+          dockerfile_path:
+            type: string
+          dockerfile_name:
+            type: string
+            default: Dockerfile
+          unit_test:
+            type: boolean
+            default: true
+            description: Execute unit tests during this build
 
+        steps:
+          - checkout
+          - install_aws_cli
+          - setup_remote_docker:
+              version: 20.10.6
+              docker_layer_caching: false
+          - attach_workspace:
+              at: ~/project
+          - dockerhub_login
+          - run:
+              name: Build container
+              command: |
+              echo $ECR_URL
+              docker build --file << parameters.dockerfile_path >>/<<parameters.dockerfile_name>> --progress=plain --no-cache --tag ${ECR_URL}:latest .
+          - run:
+              name: Run unit tests
+              command: |
+                if << parameters.unit_test >> ; then
+                  docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
+                  docker exec tests docker-php-ext-enable xdebug
+                  docker exec tests /app/vendor/bin/phpunit -d memory_limit=256M
+                else
+                  echo "phpunit tests not required for this service"
+                fi
+          - ecr_login
+          - run:
+              name: Push container
+              command: |
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+                echo $ECR_URL
+                docker tag ${ECR_URL}:latest ${ECR_URL}:${IMAGE_TAG}
+                if [ "${CIRCLE_BRANCH}" == "main" ]; then
+                  # We want all of the tags pushed
+                  docker push ${ECR_URL}
+                else
+                  docker push ${ECR_URL}:${IMAGE_TAG}
+                fi
       node_build_web:
         #
         # Build frontend assets (css, js)
