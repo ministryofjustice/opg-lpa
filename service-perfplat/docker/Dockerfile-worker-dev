@@ -17,6 +17,10 @@ FROM public.ecr.aws/lambda/python:3.8
 
 # fixes security issues detected in build.
 RUN yum update -y rpm openssl curl
+RUN yum update nss
+RUN yum update nss-util
+RUN yum update nss-softokn
+RUN yum update nspr
 
 RUN yum install -y postgresql && \
     yum clean all && \
