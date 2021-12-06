@@ -804,8 +804,8 @@ orbs:
           - run:
               name: Build container
               command: |
-              echo $ECR_URL
-              docker build --file << parameters.dockerfile_path >>/<<parameters.dockerfile_name>> --progress=plain --no-cache --tag ${ECR_URL}:latest .
+                echo $ECR_URL
+                docker build --file << parameters.dockerfile_path >>/<<parameters.dockerfile_name>> --progress=plain --no-cache --tag ${ECR_URL}:latest .
           - run:
               name: Run unit tests
               command: |
