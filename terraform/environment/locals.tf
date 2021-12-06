@@ -21,12 +21,8 @@ locals {
   front_dns                   = "front.lpa"
   admin_dns                   = "admin.lpa"
   pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
-  api_container_definitions   = local.account_name == "development" ?
-                                "[${local.api_web}, ${local.api_app}, ${local.mock_gateway}, ${local.mock_sirius}]" :
-                                "[${local.api_web}, ${local.api_app}]"
-  sirius_api_gateway          = local.account_name == "development" ?
-                                "http://gateway:5000/lpa-online-tool/lpas/" :
-                                local.account.sirius_api_gateway_endpoint
+  api_container_definitions   = local.account_name == "development" ? "[${local.api_web}, ${local.api_app}, ${local.mock_gateway}, ${local.mock_sirius}]" : "[${local.api_web}, ${local.api_app}]"
+  sirius_api_gateway          = local.account_name == "development" ? "http://gateway:5000/lpa-online-tool/lpas/" : local.account.sirius_api_gateway_endpoint
 
   mandatory_moj_tags = {
     business-unit = "OPG"
