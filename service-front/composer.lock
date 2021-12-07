@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0063c541d18b6c4bcb51e7843431ff4c",
+    "content-hash": "aa25a612e24d7afc19934acf51183c25",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -1604,60 +1604,63 @@
         },
         {
             "name": "laminas/laminas-form",
-            "version": "2.17.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-form.git",
-                "reference": "2a18e6724739f3f1875d30a6bb8ecedb3da5242e"
+                "reference": "beee25df568f1140d5553eabe51f97c6643f0464"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-form/zipball/2a18e6724739f3f1875d30a6bb8ecedb3da5242e",
-                "reference": "2a18e6724739f3f1875d30a6bb8ecedb3da5242e",
+                "url": "https://api.github.com/repos/laminas/laminas-form/zipball/beee25df568f1140d5553eabe51f97c6643f0464",
+                "reference": "beee25df568f1140d5553eabe51f97c6643f0464",
                 "shasum": ""
             },
             "require": {
-                "laminas/laminas-hydrator": "^3.2 || ^4.0",
-                "laminas/laminas-inputfilter": "^2.10",
-                "laminas/laminas-stdlib": "^3.3",
-                "laminas/laminas-zendframework-bridge": "^1.1",
-                "php": "^7.3 || ~8.0.0"
+                "laminas/laminas-hydrator": "^4.3.0",
+                "laminas/laminas-inputfilter": "^2.13.0",
+                "laminas/laminas-stdlib": "^3.6.1",
+                "php": "^7.4 || ~8.0.0 || ~8.1.0"
             },
             "conflict": {
-                "laminas/laminas-code": "<3.5.0 || >=4.0.0"
-            },
-            "replace": {
-                "zendframework/zend-form": "^2.14.3"
+                "doctrine/annotations": "<1.12.0",
+                "laminas/laminas-captcha": "<2.11.0",
+                "laminas/laminas-eventmanager": "<3.4.0",
+                "laminas/laminas-i18n": "<2.12.0",
+                "laminas/laminas-recaptcha": "<3.4.0",
+                "laminas/laminas-servicemanager": "<3.10.0",
+                "laminas/laminas-view": "<2.14.0"
             },
             "require-dev": {
-                "doctrine/annotations": "^1.10.4",
-                "laminas/laminas-cache": "^2.9.0",
-                "laminas/laminas-captcha": "^2.9.0",
-                "laminas/laminas-code": "^3.5.0",
-                "laminas/laminas-coding-standard": "^1.0.0",
-                "laminas/laminas-escaper": "^2.6.1",
-                "laminas/laminas-eventmanager": "^3.3.0",
-                "laminas/laminas-filter": "^2.9.4",
-                "laminas/laminas-i18n": "^2.10.3",
-                "laminas/laminas-recaptcha": "^3.2.0",
-                "laminas/laminas-servicemanager": "^3.4.1",
-                "laminas/laminas-session": "^2.9.3",
-                "laminas/laminas-text": "^2.7.1",
-                "laminas/laminas-validator": "^2.13.4",
-                "laminas/laminas-view": "^2.11.4",
-                "phpspec/prophecy-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.4.2",
-                "psalm/plugin-phpunit": "^0.15.1",
-                "vimeo/psalm": "^4.7"
+                "doctrine/annotations": "^1.12.0",
+                "ext-intl": "*",
+                "laminas/laminas-captcha": "^2.11.0",
+                "laminas/laminas-coding-standard": "^2.3.0",
+                "laminas/laminas-db": "^2.13.4",
+                "laminas/laminas-escaper": "^2.9.0",
+                "laminas/laminas-eventmanager": "^3.4.0",
+                "laminas/laminas-filter": "^2.13.0",
+                "laminas/laminas-i18n": "^2.12.0",
+                "laminas/laminas-modulemanager": "^2.11.0",
+                "laminas/laminas-recaptcha": "^3.4.0",
+                "laminas/laminas-servicemanager": "^3.10.0",
+                "laminas/laminas-session": "^2.12.0",
+                "laminas/laminas-text": "^2.9.0",
+                "laminas/laminas-validator": "^2.15.1",
+                "laminas/laminas-view": "^2.14.0",
+                "phpspec/prophecy-phpunit": "^2.0.1",
+                "phpunit/phpunit": "^9.5.10",
+                "psalm/plugin-phpunit": "^0.16.1",
+                "vimeo/psalm": "^4.13.1"
             },
             "suggest": {
-                "laminas/laminas-captcha": "^2.9, required for using CAPTCHA form elements",
-                "laminas/laminas-code": "^3.5, required to use laminas-form annotations support",
-                "laminas/laminas-eventmanager": "^3.3, reuired for laminas-form annotations support",
-                "laminas/laminas-i18n": "^2.10, required when using laminas-form view helpers",
-                "laminas/laminas-recaptcha": "^3.2, in order to use the ReCaptcha form element",
-                "laminas/laminas-servicemanager": "^3.4.1, required to use the form factories or provide services",
-                "laminas/laminas-view": "^2.11.4, required for using the laminas-form view helpers"
+                "doctrine/annotations": "^1.12, required to use laminas-form annotations support",
+                "laminas/laminas-captcha": "^2.11, required for using CAPTCHA form elements",
+                "laminas/laminas-eventmanager": "^3.4, reuired for laminas-form annotations support",
+                "laminas/laminas-i18n": "^2.12, required when using laminas-form view helpers",
+                "laminas/laminas-recaptcha": "^3.4, in order to use the ReCaptcha form element",
+                "laminas/laminas-servicemanager": "^3.10, required to use the form factories or provide services",
+                "laminas/laminas-view": "^2.14, required for using the laminas-form view helpers"
             },
             "type": "library",
             "extra": {
@@ -1695,7 +1698,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-05-24T08:07:30+00:00"
+            "time": "2021-12-03T06:38:20+00:00"
         },
         {
             "name": "laminas/laminas-http",
