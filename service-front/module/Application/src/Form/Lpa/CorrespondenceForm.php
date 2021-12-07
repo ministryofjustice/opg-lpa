@@ -33,8 +33,8 @@ class CorrespondenceForm extends AbstractMainFlowForm
         'correspondence' => [
             'type' => 'Application\Form\Fieldset\Correspondence',
             'options' => [
-                'checked_value' => true,
-                'unchecked_value' => false,
+                'checked_value' => 'true',
+                'unchecked_value' => 'false',
             ],
             'validators' => [
                 [
