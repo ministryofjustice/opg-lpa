@@ -35,8 +35,8 @@ pr_build: &pr_build
         name: mock_gateway_docker_build
         ecr_repository_name_prefix: online-lpa/mock_gateway
         service_path: service-gateway-mock
-        dockerfile_path: service-gateway-mock
-        dockerfile_name: Dockerfile-gateway
+        dockerfile_path: service-gateway-mock/docker
+        dockerfile_name: Dockerfile-gateway-ci
         filters: { branches: { ignore: [ main ] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
@@ -44,8 +44,8 @@ pr_build: &pr_build
         account_id: "050256574573"
         container_repo_account: development
         lambda_name: mock_sirius
-        dockerfile_path: service-gateway-mock
-        dockerfile_name: Dockerfile-mocksirius
+        dockerfile_path: service-gateway-mock/docker
+        dockerfile_name: Dockerfile-mocksirius-ci
         filters: { branches: { ignore: [ main ] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:

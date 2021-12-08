@@ -441,7 +441,7 @@ services:
     image: gateway
     build:
       context: ./service-gateway-mock
-      dockerfile: ./Dockerfile-gateway
+      dockerfile: ./docker/Dockerfile-gateway-dev
     depends_on:
       - mocksirius
     ports:
@@ -454,7 +454,7 @@ services:
     image: mocksirius
     build:
       context: ./service-gateway-mock
-      dockerfile: ./Dockerfile-mocksirius
+      dockerfile: ./docker/Dockerfile-mocksirius-dev
     ports:
       - 7011:5000
 
