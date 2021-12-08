@@ -5,8 +5,7 @@ data "aws_ecr_repository" "lpa_api_mock_gateway" {
 }
 
 data "aws_ecr_repository" "lpa_api_mock_sirius" {
-  provider = aws.management
-  name     = "online-lpa/mock_sirius"
+  name     = "${local.account_name}/mock_sirius"
 }
 
 //-----------------------------------------------
