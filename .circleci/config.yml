@@ -807,12 +807,12 @@ orbs:
               name: Build container
               command: |
                 echo << parameters.ecr_url >>
-                docker build --file << parameters.dockerfile_path >>/<<parameters.dockerfile_name>> --progress=plain --no-cache --tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >> .
+                docker build --file << parameters.dockerfile_path >>/<<parameters.dockerfile_name>> --progress=plain --no-cache --tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:latest .
           - run:
               name: Run unit tests
               command: |
                 if << parameters.unit_test >> ; then
-                  docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
+                  docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:latest
                   docker exec tests docker-php-ext-enable xdebug
                   docker exec tests /app/vendor/bin/phpunit -d memory_limit=256M
                 else
