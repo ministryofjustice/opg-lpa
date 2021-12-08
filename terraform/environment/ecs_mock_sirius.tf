@@ -1,12 +1,12 @@
 
 data "aws_ecr_repository" "lpa_api_mock_gateway" {
   provider = aws.management
-  name     = "online-lpa/mockgateway"
+  name     = "online-lpa/mock_gateway"
 }
 
 data "aws_ecr_repository" "lpa_api_mock_sirius" {
   provider = aws.management
-  name     = "online-lpa/mocksirius"
+  name     = "online-lpa/mock_sirius"
 }
 
 //-----------------------------------------------
