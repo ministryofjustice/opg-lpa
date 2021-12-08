@@ -19,7 +19,7 @@
     "require": {
         "php": "^8.0",
         "guzzlehttp/guzzle": "^6.3",
-        "aws/aws-sdk-php": "^3.91",
+        "aws/aws-sdk-php": "^3.204.5",
         "ministryofjustice/opg-lpa-datamodels": "^13.8",
         "michelf/php-markdown": "^1.9.1",
         "php-http/guzzle6-adapter": "^2.0.2",
@@ -45,21 +45,8 @@
         "alphagov/notifications-php-client": "^3.2",
         "psr/http-client": "^1.0.1"
     },
-    "replace": {
-        "laminas/laminas-cache-storage-adapter-apc": "*",
-        "laminas/laminas-cache-storage-adapter-apcu": "*",
-        "laminas/laminas-cache-storage-adapter-blackhole": "*",
-        "laminas/laminas-cache-storage-adapter-dba": "*",
-        "laminas/laminas-cache-storage-adapter-ext-mongodb": "*",
-        "laminas/laminas-cache-storage-adapter-memcache": "*",
-        "laminas/laminas-cache-storage-adapter-memcached": "*",
-        "laminas/laminas-cache-storage-adapter-mongodb": "*",
-        "laminas/laminas-cache-storage-adapter-wincache": "*",
-        "laminas/laminas-cache-storage-adapter-xcache": "*",
-        "laminas/laminas-cache-storage-adapter-zend-server": "*"
-    },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^9.5.10",
         "mockery/mockery": "^1.4.4",
         "laminas/laminas-test": "^4.0"
     },
