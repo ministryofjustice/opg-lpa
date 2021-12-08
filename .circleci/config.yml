@@ -37,6 +37,7 @@ pr_build: &pr_build
         service_path: service-gateway-mock
         dockerfile_path: service-gateway-mock/docker
         dockerfile_name: Dockerfile-gateway-ci
+        unit_test: false
         filters: { branches: { ignore: [ main ] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
