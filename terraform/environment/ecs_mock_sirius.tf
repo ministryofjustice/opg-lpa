@@ -5,7 +5,7 @@ data "aws_ecr_repository" "lpa_api_mock_gateway" {
 }
 
 data "aws_ecr_repository" "lpa_api_mock_sirius" {
-  name     = "${local.account_name}/mock_sirius"
+  name = "${local.account_name}/mock_sirius"
 }
 
 //-----------------------------------------------
