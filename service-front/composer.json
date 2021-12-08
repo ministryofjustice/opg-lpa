@@ -27,7 +27,7 @@
         "laminas/laminas-component-installer": "^2.5.1",
         "laminas/laminas-mvc": "^3.2",
         "laminas/laminas-authentication": "^2.8",
-        "laminas/laminas-cache": "^2.11.0",
+        "laminas/laminas-cache": "^2.9.0",
         "laminas/laminas-form": "^2.16.0",
         "laminas/laminas-session": "^2.12.0",
         "laminas/laminas-math": "^3.4",
@@ -40,7 +40,7 @@
         "theiconic/php-ga-measurement-protocol": "^2.9",
         "laminas/laminas-zendframework-bridge": "^1.1.1",
         "laminas/laminas-log": "^2.13",
-        "guzzlehttp/psr7": "^1.2",
+        "guzzlehttp/psr7": "^1.4",
         "alphagov/notifications-php-client": "^3.2",
         "psr/http-client": "^1.0.1"
     },
