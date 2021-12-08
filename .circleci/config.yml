@@ -824,13 +824,13 @@ orbs:
               command: |
                 export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
-                echo $ECR_URL
-                docker tag ${ECR_URL}:latest ${ECR_URL}:${IMAGE_TAG}
+                echo << parameters.ecr_url >>
+                docker tag << parameters.ecr_url >>:latest << parameters.ecr_url >>:${IMAGE_TAG}
                 if [ "${CIRCLE_BRANCH}" == "main" ]; then
                   # We want all of the tags pushed
-                  docker push ${ECR_URL}
+                  docker push << parameters.ecr_url >>
                 else
-                  docker push ${ECR_URL}:${IMAGE_TAG}
+                  docker push << parameters.ecr_url >>:${IMAGE_TAG}
                 fi
       node_build_web:
         #
