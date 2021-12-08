@@ -21,7 +21,7 @@ locals {
       "name" : "gateway",
       "portMappings" : [
         {
-          "containerPort" : 7010,
+          "containerPort" : 5000,
           "hostPort" : 5000,
           "protocol" : "tcp"
         }
@@ -50,7 +50,7 @@ locals {
       "name" : "mocksirius",
       "portMappings" : [
         {
-          "containerPort" : 7011,
+          "containerPort" : 5000,
           "hostPort" : 5000,
           "protocol" : "tcp"
         }
