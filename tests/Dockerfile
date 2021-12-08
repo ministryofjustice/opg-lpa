@@ -1,4 +1,4 @@
-FROM composer:2.1.11 AS composer
+FROM composer:2.1.14 AS composer
 
 COPY tests/composer.json /app/composer.json
 COPY tests/composer.lock /app/composer.lock
