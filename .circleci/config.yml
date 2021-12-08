@@ -828,9 +828,10 @@ orbs:
                 docker tag << parameters.ecr_url >>:latest << parameters.ecr_url >>:${IMAGE_TAG}
                 if [ "${CIRCLE_BRANCH}" == "main" ]; then
                   # We want all of the tags pushed
-                  docker push << parameters.ecr_url >>
+                  docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:${IMAGE_TAG} << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:latest
+                  docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>
                 else
-                  docker push << parameters.ecr_url >>:${IMAGE_TAG}
+                  docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:${IMAGE_TAG}
                 fi
       node_build_web:
         #
