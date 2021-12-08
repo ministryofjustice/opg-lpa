@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6a6ec691d76719f014d089c85b98776b",
+    "content-hash": "f8f9cc38fbf7bfd0fa76ade5d9ef1e73",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -5824,28 +5824,27 @@
         },
         {
             "name": "laminas/laminas-test",
-            "version": "4.0.x-dev",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-test.git",
-                "reference": "f05cb361bbcd1c2e7192688405e4bf5ad77c07ae"
+                "reference": "396a8179aaa4f161f73979e626533c8f35d16ddd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-test/zipball/f05cb361bbcd1c2e7192688405e4bf5ad77c07ae",
-                "reference": "f05cb361bbcd1c2e7192688405e4bf5ad77c07ae",
+                "url": "https://api.github.com/repos/laminas/laminas-test/zipball/396a8179aaa4f161f73979e626533c8f35d16ddd",
+                "reference": "396a8179aaa4f161f73979e626533c8f35d16ddd",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-eventmanager": "^3.0",
-                "laminas/laminas-http": "^2.13",
-                "laminas/laminas-mvc": "^3.0",
+                "laminas/laminas-http": "^2.15.0",
+                "laminas/laminas-mvc": "^3.3.0",
                 "laminas/laminas-servicemanager": "^3.0.3",
-                "laminas/laminas-stdlib": "^3.3",
                 "laminas/laminas-uri": "^2.5",
-                "laminas/laminas-view": "^2.6.3",
-                "php": "^7.3 || ~8.0.0",
-                "phpunit/phpunit": "^8.4.3 || ^9.0",
+                "laminas/laminas-view": "^2.13.1",
+                "php": "^7.3 || ~8.0.0 || ~8.1.0",
+                "phpunit/phpunit": "^8.5.14 || ^9.0",
                 "symfony/css-selector": "^5.4 || ^6.0",
                 "symfony/dom-crawler": "^5.4 || ^6.0"
             },
@@ -5853,19 +5852,19 @@
                 "zendframework/zend-test": "*"
             },
             "require-dev": {
-                "laminas/laminas-coding-standard": "~2.2.1",
+                "laminas/laminas-coding-standard": "~2.3.0",
                 "laminas/laminas-i18n": "^2.6",
                 "laminas/laminas-log": "^2.7.1",
                 "laminas/laminas-modulemanager": "^2.7.1",
-                "laminas/laminas-mvc-plugin-flashmessenger": "^1.0",
+                "laminas/laminas-mvc-plugin-flashmessenger": "^1.4.0",
                 "laminas/laminas-serializer": "^2.6.1",
-                "laminas/laminas-session": "^2.8.5",
+                "laminas/laminas-session": "^2.12.0",
+                "laminas/laminas-stdlib": "^3.6.0",
                 "laminas/laminas-validator": "^2.8",
                 "mikey179/vfsstream": "^1.6.8",
                 "psalm/plugin-phpunit": "^0.16.0",
                 "vimeo/psalm": "^4.7"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -5896,7 +5895,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-12-06T18:01:29+00:00"
+            "time": "2021-12-08T12:38:36+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -6301,16 +6300,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.14.0",
+            "version": "v1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "d86dfc2e2a3cd366cee475e52c6bb3bbc371aa0e"
+                "reference": "bbcd7380b0ebf3961ee21409db7b38bc31d69a13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/d86dfc2e2a3cd366cee475e52c6bb3bbc371aa0e",
-                "reference": "d86dfc2e2a3cd366cee475e52c6bb3bbc371aa0e",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/bbcd7380b0ebf3961ee21409db7b38bc31d69a13",
+                "reference": "bbcd7380b0ebf3961ee21409db7b38bc31d69a13",
                 "shasum": ""
             },
             "require": {
@@ -6362,9 +6361,9 @@
             ],
             "support": {
                 "issues": "https://github.com/phpspec/prophecy/issues",
-                "source": "https://github.com/phpspec/prophecy/tree/1.14.0"
+                "source": "https://github.com/phpspec/prophecy/tree/v1.15.0"
             },
-            "time": "2021-09-10T09:02:12+00:00"
+            "time": "2021-12-08T12:19:24+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
