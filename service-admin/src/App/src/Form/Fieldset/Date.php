@@ -97,7 +97,7 @@ class Date extends Fieldset
      * @param null $elementName
      * @return array<string, mixed>
      */
-    public function getMessages($elementName = null)
+    public function getMessages($elementName = null): array
     {
         $messages = parent::getMessages($elementName);
 
