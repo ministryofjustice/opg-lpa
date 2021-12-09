@@ -33,7 +33,6 @@ server {
     }
 
     location / {
-        proxy_set_header Prefer example=$swagger_example;
-        proxy_pass {$OPG_LPA_STATUS_ENDPOINT}
+        proxy_pass {$OPG_LPA_STATUS_ENDPOINT};
     }
 }
