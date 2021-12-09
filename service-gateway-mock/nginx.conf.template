@@ -33,6 +33,6 @@ server {
     }
 
     location / {
-        proxy_pass {$OPG_LPA_STATUS_ENDPOINT};
+        proxy_pass $OPG_LPA_STATUS_ENDPOINT;
     }
 }
