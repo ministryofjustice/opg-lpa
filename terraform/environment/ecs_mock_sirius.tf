@@ -5,7 +5,8 @@ data "aws_ecr_repository" "lpa_api_mock_gateway" {
 }
 
 data "aws_ecr_repository" "lpa_api_mock_sirius" {
-  name = "${local.account_name}/mock_sirius"
+  provider = aws.management
+  name = "online-lpa//mock_sirius"
 }
 
 //-----------------------------------------------
@@ -21,8 +22,8 @@ locals {
       "name" : "gateway",
       "portMappings" : [
         {
-          "containerPort" : 5000,
-          "hostPort" : 5000,
+          "containerPort" : 5010,
+          "hostPort" : 5010,
           "protocol" : "tcp"
         }
       ],
@@ -50,8 +51,8 @@ locals {
       "name" : "mocksirius",
       "portMappings" : [
         {
-          "containerPort" : 5000,
-          "hostPort" : 5000,
+          "containerPort" : 5011,
+          "hostPort" : 5011,
           "protocol" : "tcp"
         }
       ],

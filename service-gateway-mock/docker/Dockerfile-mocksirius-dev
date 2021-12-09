@@ -15,5 +15,5 @@ RUN cd /app/ && \
     python3 merge_yaml.py lpa-openapi.yml swagger-examples.yaml > swagger.yaml && \
     chmod +x run.sh
 
-# starts the mock server on port 5000
+# starts the mock server on port 5011
 ENTRYPOINT ["/app/run.sh"]

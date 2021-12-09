@@ -29,7 +29,7 @@ server {
 
     location ~ (A91155453023|A54171193342|A68582508781|A88668805824|A93348314693|A43476377885|A32004638272|A48218451245|A15527329531|A97998888883) {
         proxy_set_header Prefer example=$swagger_example;
-        proxy_pass http://mocksirius:5000;
+        proxy_pass http://mocksirius:5011;
     }
 
     location / {

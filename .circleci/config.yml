@@ -40,13 +40,13 @@ pr_build: &pr_build
         unit_test: false
         filters: { branches: { ignore: [ main ] } }
 
-    - build_containers_and_push_to_ecr/docker_build_lambda_image:
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_other:
         name: mock_sirius_docker_build
-        account_id: "050256574573"
-        container_repo_account: development
-        lambda_name: mock_sirius
+        ecr_repository_name_prefix: online-lpa/mock_sirius
+        service_path: service-gateway-mock
         dockerfile_path: service-gateway-mock/docker
         dockerfile_name: Dockerfile-mocksirius-ci
+        unit_test: false
         filters: { branches: { ignore: [ main ] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
@@ -807,7 +807,7 @@ orbs:
               name: Build container
               command: |
                 echo << parameters.ecr_url >>
-                docker build --file << parameters.dockerfile_path >>/<<parameters.dockerfile_name>> --progress=plain --no-cache --tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:latest .
+                docker build --file << parameters.dockerfile_path >>/<< parameters.dockerfile_name >> --progress=plain --no-cache --tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:latest .
           - run:
               name: Run unit tests
               command: |
@@ -824,8 +824,7 @@ orbs:
               command: |
                 export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
-                echo << parameters.ecr_url >>
-                docker tag << parameters.ecr_url >>:latest << parameters.ecr_url >>:${IMAGE_TAG}
+                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:latest << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:${IMAGE_TAG}
                 if [ "${CIRCLE_BRANCH}" == "main" ]; then
                   # We want all of the tags pushed
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:${IMAGE_TAG} << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:latest

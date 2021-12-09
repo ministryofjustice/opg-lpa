@@ -445,7 +445,7 @@ services:
     depends_on:
       - mocksirius
     ports:
-      - 7010:5000
+      - 7010:5010
     environment:
       OPG_LPA_STATUS_ENDPOINT: ""
 
@@ -456,7 +456,7 @@ services:
       context: ./service-gateway-mock
       dockerfile: ./docker/Dockerfile-mocksirius-dev
     ports:
-      - 7011:5000
+      - 7011:5011
 
   # ---------------------------
   # performance platform
