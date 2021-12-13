@@ -7,6 +7,8 @@ RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-auto
 
 FROM php:8.0-cli-alpine
 
+ENV LOG4J_FORMAT_MSG_NO_LOOKUPS true
+
 RUN apk add --upgrade apk-tools
 RUN apk upgrade --available
 
