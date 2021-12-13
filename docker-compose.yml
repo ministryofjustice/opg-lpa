@@ -445,9 +445,10 @@ services:
     depends_on:
       - mocksirius
     ports:
-      - 7010:5010
+      - 7000:5000
     environment:
-      OPG_LPA_STATUS_ENDPOINT: ""
+      OPG_LPA_MOCK_SIRIUS_ADDRESS: http://mocksirius:5011
+      OPG_LPA_STATUS_ENDPOINT: http://mocksirius:5011
 
   mocksirius:
     container_name: mocksirius

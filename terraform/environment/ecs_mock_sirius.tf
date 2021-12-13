@@ -22,8 +22,8 @@ locals {
       "name" : "gateway",
       "portMappings" : [
         {
-          "containerPort" : 5010,
-          "hostPort" : 5010,
+          "containerPort" : 5000,
+          "hostPort" : 5000,
           "protocol" : "tcp"
         }
       ],
@@ -37,7 +37,8 @@ locals {
         }
       }
       "environment" : [
-        { "name" : "OPG_LPA_STATUS_ENDPOINT", "value" : local.account.sirius_api_gateway_endpoint }
+        { "name" : "OPG_LPA_STATUS_ENDPOINT", "value" : local.account.sirius_api_gateway_endpoint },
+        { "name" : "OPG_LPA_MOCK_SIRIUS_ADDRESS", "value" : "http://localhost:5011"}
       ]
     }
   )
