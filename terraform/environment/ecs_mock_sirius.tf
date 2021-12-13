@@ -38,7 +38,7 @@ locals {
       }
       "environment" : [
         { "name" : "OPG_LPA_STATUS_ENDPOINT", "value" : local.account.sirius_api_gateway_endpoint },
-        { "name" : "OPG_LPA_MOCK_SIRIUS_ADDRESS", "value" : "http://localhost:5011"}
+        { "name" : "OPG_LPA_MOCK_SIRIUS_ADDRESS", "value" : "http://localhost:5011" }
       ]
     }
   )
