@@ -171,7 +171,7 @@ class FormRadioTest extends TestCase
 
         $helper = new FormRadio();
 
-        $html = $helper->outputOption($radio, 1);
+        $html = $helper->outputOption($radio, '1');
 
         $expected = '<div>' .
             '<input type="radio" name="test-radio" id="test-radio-1" value="1" ' .
