@@ -1,5 +1,5 @@
 resource "aws_lb_target_group" "front" {
-  name                 = "${local.environment}-front"
+  name                 = "${var.environment_name}-front"
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
@@ -14,25 +14,25 @@ resource "aws_lb_target_group" "front" {
     matcher             = 200
   }
   depends_on = [aws_lb.front]
-  tags       = merge(local.default_tags, local.front_component_tag)
+  tags       = merge(local.default_opg_tags, local.front_component_tag)
 }
 
 resource "aws_lb" "front" {
-  name = "${local.environment}-front"
+  name = "${var.environment_name}-front"
   #tfsec:ignore:AWS005 - public facing load balancer
   internal                   = false
   load_balancer_type         = "application"
   subnets                    = data.aws_subnet_ids.public.ids
-  tags                       = merge(local.default_tags, local.front_component_tag)
+  tags                       = merge(local.default_opg_tags, local.front_component_tag)
   drop_invalid_header_fields = true
 
   security_groups = [
     aws_security_group.front_loadbalancer.id,
   ]
-  enable_deletion_protection = local.account_name == "development" ? false : true
+  enable_deletion_protection = var.account_name == "development" ? false : true
   access_logs {
     bucket  = data.aws_s3_bucket.access_log.bucket
-    prefix  = "${local.environment}-front"
+    prefix  = "${var.environment_name}-front"
     enabled = true
   }
 }
@@ -53,10 +53,10 @@ resource "aws_lb_listener" "front_loadbalancer" {
 
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "front_loadbalancer" {
-  name        = "${local.environment}-front-loadbalancer"
+  name        = "${var.environment_name}-front-loadbalancer"
   description = "Allow inbound traffic"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_tags, local.front_component_tag)
+  tags        = merge(local.default_opg_tags, local.front_component_tag)
 
 }
 
@@ -72,7 +72,7 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress" {
 
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
-  count     = local.environment == "production" ? 1 : 0
+  count     = var.environment_name == "production" ? 1 : 0
   type      = "ingress"
   from_port = 443
   to_port   = 443
