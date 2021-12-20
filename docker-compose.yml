@@ -160,7 +160,7 @@ services:
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-front-app
-      # ENABLE_XDEBUG: 'true'
+      ENABLE_XDEBUG: 'true'
       XDEBUG_MODE: 'debug'
       XDEBUG_CONFIG: client_host=host.docker.internal client_port=9003
 
@@ -337,7 +337,7 @@ services:
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
-      # ENABLE_XDEBUG: 'true'
+      ENABLE_XDEBUG: 'true'
       PHP_IDE_CONFIG: serverName=lpa-admin-app
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       XDEBUG_MODE: 'debug'
