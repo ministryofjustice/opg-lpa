@@ -14,7 +14,6 @@ RUN apk add --update --no-cache postgresql-libs
 
 # Postgres dev lib is temporary
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev \
-  && pecl clear-cache \
   && docker-php-ext-install pgsql pdo_pgsql \
   && docker-php-ext-install bcmath \
   && docker-php-ext-install opcache \

@@ -11,7 +11,6 @@ RUN apk upgrade --available
 RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
-        && pecl clear-cache \
         && docker-php-ext-install intl \
         && docker-php-ext-install bcmath \
         && apk del .build-dependencies
