@@ -14,7 +14,6 @@ RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
         && pecl install redis \
-        && pecl clear-cache \
         && docker-php-ext-enable redis \
         && docker-php-ext-install intl \
         && docker-php-ext-install bcmath \
