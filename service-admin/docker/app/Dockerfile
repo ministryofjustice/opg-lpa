@@ -21,7 +21,8 @@ COPY --from=composer /app/vendor /app/vendor
 COPY service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
-RUN if [[ -z "${ENABLE_XDEBUG}" ]] ; then \
+ARG ENABLE_XDEBUG=0
+RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
       pecl install xdebug ; \
       docker-php-ext-enable xdebug ; \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \

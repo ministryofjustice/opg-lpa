@@ -29,7 +29,8 @@ COPY service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
-RUN if [[ -z "${ENABLE_XDEBUG}" ]] ; then \
+ARG ENABLE_XDEBUG=0
+RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
       pecl install xdebug ; \
       docker-php-ext-enable xdebug ; \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
