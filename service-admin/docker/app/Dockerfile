@@ -11,7 +11,6 @@ RUN apk upgrade --available
 RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
-        && pecl install xdebug \
         && pecl clear-cache \
         && docker-php-ext-install intl \
         && docker-php-ext-install bcmath \
@@ -24,6 +23,7 @@ COPY service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 RUN if [[ -z "${ENABLE_XDEBUG}" ]] ; then \
+      pecl install xdebug ; \
       docker-php-ext-enable xdebug ; \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \

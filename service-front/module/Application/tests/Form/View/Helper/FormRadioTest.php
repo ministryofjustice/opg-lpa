@@ -18,7 +18,7 @@ class FormRadioTest extends TestCase
             5 => 'Option value 5',
         ];
 
-        $radio = new Radio('fred');
+        $radio = new Radio();
         $radio->setName('test-name');
         $radio->setValueOptions($options);
 
@@ -65,7 +65,7 @@ class FormRadioTest extends TestCase
             5 => 'Option value 5',
         ];
 
-        $radio = new Radio('fred');
+        $radio = new Radio(';
         $radio->setName('test-name');
         $radio->setValueOptions($options);
         $radio->setAttributes(['div-attributes' => ['class' => 'test_class']]);
@@ -127,7 +127,7 @@ class FormRadioTest extends TestCase
             ],
         ];
 
-        $radio = new Radio('fred');
+        $radio = new Radio(';
         $radio->setName('test-name');
         $radio->setAttributes(['div-attributes' => ['class' => 'all-class']]);
         $radio->setValueOptions($options);
@@ -165,7 +165,7 @@ class FormRadioTest extends TestCase
             5 => 'Option value 5',
         ];
 
-        $radio = new Radio('fred');
+        $radio = new Radio();
         $radio->setName('test-radio');
         $radio->setValueOptions($options);
 

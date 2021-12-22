@@ -14,7 +14,6 @@ RUN apk add --update --no-cache postgresql-libs
 
 # Postgres dev lib is temporary
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev \
-  && pecl install xdebug \
   && pecl clear-cache \
   && docker-php-ext-install pgsql pdo_pgsql \
   && docker-php-ext-install bcmath \
@@ -31,6 +30,7 @@ COPY service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
 RUN if [[ -z "${ENABLE_XDEBUG}" ]] ; then \
+      pecl install xdebug ; \
       docker-php-ext-enable xdebug ; \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \

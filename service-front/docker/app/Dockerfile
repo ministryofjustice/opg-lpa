@@ -14,7 +14,6 @@ RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
         && pecl install redis \
-        && pecl install xdebug \
         && pecl clear-cache \
         && docker-php-ext-enable redis \
         && docker-php-ext-install intl \
@@ -32,6 +31,7 @@ COPY service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
 RUN if [[ -z "${ENABLE_XDEBUG}" ]] ; then \
+      pecl install xdebug ; \
       docker-php-ext-enable xdebug ; \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
