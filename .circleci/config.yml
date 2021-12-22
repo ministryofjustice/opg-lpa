@@ -714,11 +714,7 @@ orbs:
           - run:
               name: Build app container
               command: |
-                if << parameters.unit_test >> ; then
-                  docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --build-arg ENABLE_DEBUG="true" --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
-                else
-                  docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
-                fi
+                docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
           - run:
               name: Run unit tests
               command: |
