@@ -6,6 +6,14 @@ variable "account_mapping" {
   type = map(any)
 }
 
+variable "default_role" {
+  default = "opg-lpa-ci"
+}
+
+variable "management_role" {
+  default = "opg-lpa-ci"
+}
+
 variable "lambda_container_version" {
   type    = string
   default = "latest"
@@ -14,6 +22,7 @@ variable "lambda_container_version" {
 variable "accounts" {
   type = map(
     object({
+      dr_enabled                   = bool
       performance_platform_enabled = bool
       pagerduty_service_name       = string
       account_id                   = string
@@ -33,6 +42,11 @@ variable "accounts" {
       always_on                    = bool
       log_retention_in_days        = number
       account_name_short           = string
+      regions = map(
+        object({
+          region     = string
+          is_primary = string
+      }))
       autoscaling = object({
         front = object({
           minimum = number

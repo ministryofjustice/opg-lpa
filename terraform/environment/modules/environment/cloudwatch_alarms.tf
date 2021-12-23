@@ -2,8 +2,8 @@
 resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   actions_enabled     = true
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  alarm_description   = "5XX Errors returned to front users for ${local.environment}"
-  alarm_name          = "${local.environment} public front 5XX errors"
+  alarm_description   = "5XX Errors returned to front users for ${var.environment_name}"
+  alarm_name          = "${var.environment_name} public front 5XX errors"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
   dimensions = {
@@ -16,7 +16,7 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   period                    = 60
   statistic                 = "Sum"
-  tags                      = merge(local.default_tags, local.front_component_tag)
+  tags                      = merge(local.default_opg_tags, local.front_component_tag)
   threshold                 = 2
   treat_missing_data        = "notBreaching"
 }
@@ -25,8 +25,8 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
 resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   actions_enabled     = true
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  alarm_description   = "5XX Errors returned to admin users for ${local.environment}"
-  alarm_name          = "${local.environment} admin front 5XX errors"
+  alarm_description   = "5XX Errors returned to admin users for ${var.environment_name}"
+  alarm_name          = "${var.environment_name} admin front 5XX errors"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
   dimensions = {
@@ -39,14 +39,14 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   period                    = 60
   statistic                 = "Sum"
-  tags                      = merge(local.default_tags, local.admin_component_tag)
+  tags                      = merge(local.default_opg_tags, local.admin_component_tag)
   threshold                 = 2
   treat_missing_data        = "notBreaching"
 }
 
 resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   actions_enabled     = true
-  alarm_name          = "${local.environment} pdf messages awaiting processing"
+  alarm_name          = "${var.environment_name} pdf messages awaiting processing"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
   alarm_description   = "number of pdf requests in queue"
   namespace           = "AWS/SQS"
@@ -60,7 +60,7 @@ resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   evaluation_periods  = 1
   datapoints_to_alarm = 1
   statistic           = "Sum"
-  tags                = merge(local.default_tags, local.pdf_component_tag)
+  tags                = merge(local.default_opg_tags, local.pdf_component_tag)
   threshold           = 6
   treat_missing_data  = "notBreaching"
 }

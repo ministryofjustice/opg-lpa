@@ -4,14 +4,14 @@
 resource "aws_security_group" "seeding_ecs_service" {
   name_prefix = "${terraform.workspace}-seeding-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_tags, local.seeding_component_tag)
+  tags        = merge(local.default_opg_tags, local.seeding_component_tag)
 }
 
 //----------------------------------
 // Anything out except production
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "seeding_ecs_service_egress" {
-  count     = local.environment == "production" ? 0 : 1
+  count     = var.environment_name == "production" ? 0 : 1
   type      = "egress"
   from_port = 0
   to_port   = 0
@@ -25,7 +25,7 @@ resource "aws_security_group_rule" "seeding_ecs_service_egress" {
 // seeding ECS Service Task level config
 
 resource "aws_ecs_task_definition" "seeding" {
-  count                    = local.environment == "production" ? 0 : 1
+  count                    = var.environment_name == "production" ? 0 : 1
   family                   = "${terraform.workspace}-seeding"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "seeding" {
   container_definitions    = "[${local.seeding_app}]"
   task_role_arn            = aws_iam_role.seeding_task_role[count.index].arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_tags, local.seeding_component_tag)
+  tags                     = merge(local.default_opg_tags, local.seeding_component_tag)
 }
 
 
@@ -42,10 +42,10 @@ resource "aws_ecs_task_definition" "seeding" {
 // Permissions
 
 resource "aws_iam_role" "seeding_task_role" {
-  count              = local.environment == "production" ? 0 : 1
-  name               = "${local.environment}-seeding-task-role"
+  count              = var.environment_name == "production" ? 0 : 1
+  name               = "${var.environment_name}-seeding-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = merge(local.default_tags, local.seeding_component_tag)
+  tags               = merge(local.default_opg_tags, local.seeding_component_tag)
 }
 
 data "aws_ecr_repository" "lpa_seeding_app" {
@@ -76,8 +76,8 @@ locals {
         "logDriver": "awslogs",
         "options": {
             "awslogs-group": "${aws_cloudwatch_log_group.application_logs.name}",
-            "awslogs-region": "${local.region_name}",
-            "awslogs-stream-prefix": "${local.environment}.seeding.online-lpa"
+            "awslogs-region": "${var.region_name}",
+            "awslogs-stream-prefix": "${var.environment_name}.seeding.online-lpa"
         }
     },
     "secrets": [
@@ -88,7 +88,7 @@ locals {
       { "name": "OPG_LPA_POSTGRES_NAME", "value": "${local.db.name}"},
       { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${local.db.endpoint}"},
       { "name": "OPG_LPA_POSTGRES_PORT", "value": "${local.db.port}"},
-      { "name": "OPG_LPA_STACK_ENVIRONMENT", "value" : "${local.account_name}"}
+      { "name": "OPG_LPA_STACK_ENVIRONMENT", "value" : "${var.account_name}"}
       ]
     }
   EOF
