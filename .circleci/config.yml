@@ -876,8 +876,8 @@ orbs:
           - run:
               name: Install Terraform
               command: |
-                export TERRAFORM_VERSION=1.0.0
-                export TERRAFORM_SHA256SUM=8be33cc3be8089019d95eb8f546f35d41926e7c1e5deff15792e969dde573eb5
+                export TERRAFORM_VERSION=1.1.2
+                export TERRAFORM_SHA256SUM=734efa82e2d0d3df8f239ce17f7370dabd38e535d21e64d35c73e45f35dfa95c
                 curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                 echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
                 sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
@@ -907,7 +907,7 @@ orbs:
         resource_class: small
       terraform:
         docker:
-          - image: hashicorp/terraform:1.0.0
+          - image: hashicorp/terraform:1.1.2
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -1530,7 +1530,7 @@ jobs:
                                             --account_id <<parameters.account_id>>
   workspace_cleanup:
     docker:
-      - image: hashicorp/terraform:1.0.0
+      - image: hashicorp/terraform:1.1.2
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
