@@ -14,7 +14,7 @@ terraform {
       version = "~> 3.0"
     }
     pagerduty = {
-      source  = "pagerduty/pagerduty"
+      source  = "PagerDuty/pagerduty"
       version = "~> 2.0"
     }
   }
