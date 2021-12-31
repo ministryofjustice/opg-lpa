@@ -1,6 +1,7 @@
 aws-vault exec identity -- terraform state pull > account.tfstate
 cp account.tfstate account.tfstate.backup
 
+
 aws-vault exec identity -- terraform state rm "aws_cloudwatch_log_group.vpc_flow_logs"
 aws-vault exec identity -- terraform state rm "aws_flow_log.vpc_flow_logs"
 aws-vault exec identity -- terraform state rm "aws_db_subnet_group.data_persistence"
