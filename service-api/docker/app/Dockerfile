@@ -1,4 +1,4 @@
-FROM composer:2.1.11 AS composer
+FROM composer:2.2.3 AS composer
 
 COPY service-api/composer.json /app/composer.json
 COPY service-api/composer.lock /app/composer.lock
