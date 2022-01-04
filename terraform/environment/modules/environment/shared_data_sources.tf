@@ -1,21 +1,21 @@
 data "aws_security_group" "front_cache_region" {
-  name = "${local.account_name_short}-${local.region_name}-front-cache"
+  name = "${local.account_name_short}-${var.region_name}-front-cache"
 }
 
 data "aws_elasticache_replication_group" "front_cache_region" {
-  replication_group_id = "${local.account_name_short}-${local.region_name}-front-cache-rg"
+  replication_group_id = "${local.account_name_short}-${var.region_name}-front-cache-rg"
 }
 
 data "aws_s3_bucket" "access_log" {
-  bucket = "online-lpa-${local.account_name}-${local.region_name}-lb-access-logs"
+  bucket = "online-lpa-${var.account_name}-${var.region_name}-lb-access-logs"
 }
 
 data "aws_s3_bucket" "lpa_pdf_cache" {
-  bucket = lower("online-lpa-pdf-cache-${local.account_name}-${local.region_name}")
+  bucket = lower("online-lpa-pdf-cache-${var.account_name}-${var.region_name}")
 }
 
 data "aws_kms_key" "lpa_pdf_cache" {
-  key_id = "alias/lpa_pdf_cache-${local.account_name}"
+  key_id = "alias/lpa_pdf_cache-${var.account_name}"
 }
 
 data "aws_acm_certificate" "certificate_front" {
@@ -35,5 +35,5 @@ data "aws_iam_role" "ecs_autoscaling_service_role" {
 }
 
 data "aws_kms_alias" "secrets_encryption_alias" {
-  name = "alias/secrets_encryption_key-${local.account_name}"
+  name = "alias/secrets_encryption_key-${var.account_name}"
 }

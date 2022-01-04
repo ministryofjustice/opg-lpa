@@ -1,11 +1,11 @@
 data "aws_ecr_repository" "performance_platform_worker" {
-  name = "${local.account_name}/perfplat-worker"
+  name = "${var.account_name}/perfplat-worker"
 }
 
 module "performance_platform_worker" {
   source            = "./modules/lambda_function"
-  count             = local.account.performance_platform_enabled == true ? 1 : 0
-  lambda_name       = "${local.environment}-perfplat-worker" #limited to 32 chars hence shortened
+  count             = var.account.performance_platform_enabled == true ? 1 : 0
+  lambda_name       = "${var.environment_name}-perfplat-worker" #limited to 32 chars hence shortened
   description       = "Function to take Cloudwatch Logs Subscription Filters and send them to SQS"
   working_directory = "/var/task"
   environment_variables = {
@@ -19,11 +19,11 @@ module "performance_platform_worker" {
 
   ecr_arn                     = data.aws_ecr_repository.performance_platform_worker.arn
   lambda_role_policy_document = data.aws_iam_policy_document.performance_platform_worker_lambda_function_policy[0].json
-  tags                        = merge(local.default_tags, local.performance_platform_component_tag)
+  tags                        = merge(local.default_opg_tags, local.performance_platform_component_tag)
 }
 
 data "aws_iam_policy_document" "performance_platform_worker_lambda_function_policy" {
-  count = local.account.performance_platform_enabled == true ? 1 : 0
+  count = var.account.performance_platform_enabled == true ? 1 : 0
   statement {
     sid       = "AllowSQSAccess"
     effect    = "Allow"
@@ -38,22 +38,22 @@ data "aws_iam_policy_document" "performance_platform_worker_lambda_function_poli
 }
 
 data "aws_ecr_repository" "performance_platform_api" {
-  name = "${local.account_name}/perfplat-api"
+  name = "${var.account_name}/perfplat-api"
 }
 
 module "performance_platform_api" {
   source            = "./modules/lambda_function"
-  count             = local.account.performance_platform_enabled == true ? 1 : 0
-  lambda_name       = "${local.environment}-perfplat-api"
+  count             = var.account.performance_platform_enabled == true ? 1 : 0
+  lambda_name       = "${var.environment_name}-perfplat-api"
   description       = "Function to take requests via REST-API for data ingestion & presentation for Make an LPA"
   working_directory = "/var/task"
   image_uri         = "${data.aws_ecr_repository.performance_platform_api.repository_url}:${var.lambda_container_version}"
 
   ecr_arn                     = data.aws_ecr_repository.performance_platform_api.arn
   lambda_role_policy_document = data.aws_iam_policy_document.performance_platform_api_lambda_function_policy[0].json
-  tags                        = merge(local.default_tags, local.performance_platform_component_tag)
+  tags                        = merge(local.default_opg_tags, local.performance_platform_component_tag)
 }
 
 data "aws_iam_policy_document" "performance_platform_api_lambda_function_policy" {
-  count = local.account.performance_platform_enabled == true ? 1 : 0
+  count = var.account.performance_platform_enabled == true ? 1 : 0
 }

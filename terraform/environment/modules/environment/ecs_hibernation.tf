@@ -1,5 +1,5 @@
 module "dev_weekdays" {
-  count            = local.account_name == "development" ? 1 : 0
+  count            = var.account_name == "development" ? 1 : 0
   source           = "./modules/ecs_scheduled_scaling"
   name             = "daytime"
   ecs_cluster_name = aws_ecs_cluster.online-lpa.name
@@ -8,22 +8,22 @@ module "dev_weekdays" {
   service_config = {
     tostring(aws_ecs_service.admin.name) = {
       scale_down_to = 0
-      scale_up_to   = local.account.autoscaling.admin.maximum
+      scale_up_to   = var.account.autoscaling.admin.maximum
       target        = module.admin_ecs_autoscaling.appautoscaling_target
     }
     tostring(aws_ecs_service.api.name) = {
       scale_down_to = 0
-      scale_up_to   = local.account.autoscaling.api.maximum
+      scale_up_to   = var.account.autoscaling.api.maximum
       target        = module.api_ecs_autoscaling.appautoscaling_target
     }
     tostring(aws_ecs_service.front.name) = {
       scale_down_to = 0
-      scale_up_to   = local.account.autoscaling.front.maximum
+      scale_up_to   = var.account.autoscaling.front.maximum
       target        = module.front_ecs_autoscaling.appautoscaling_target
     }
     tostring(aws_ecs_service.pdf.name) = {
       scale_down_to = 0
-      scale_up_to   = local.account.autoscaling.pdf.maximum
+      scale_up_to   = var.account.autoscaling.pdf.maximum
       target        = module.pdf_ecs_autoscaling.appautoscaling_target
     }
   }

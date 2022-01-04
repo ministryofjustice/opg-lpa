@@ -1,5 +1,5 @@
 resource "aws_lb_target_group" "admin" {
-  name                 = "${local.environment}-admin"
+  name                 = "${var.environment_name}-admin"
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
@@ -14,24 +14,24 @@ resource "aws_lb_target_group" "admin" {
     matcher             = 200
   }
   depends_on = [aws_lb.admin]
-  tags       = merge(local.default_tags, local.admin_component_tag)
+  tags       = merge(local.default_opg_tags, local.admin_component_tag)
 }
 
 resource "aws_lb" "admin" {
-  name = "${local.environment}-admin"
+  name = "${var.environment_name}-admin"
   #tfsec:ignore:AWS005 - public facing load balancer
   internal                   = false
   load_balancer_type         = "application"
   subnets                    = data.aws_subnet_ids.public.ids
-  tags                       = merge(local.default_tags, local.admin_component_tag)
+  tags                       = merge(local.default_opg_tags, local.admin_component_tag)
   drop_invalid_header_fields = true
   security_groups = [
     aws_security_group.admin_loadbalancer.id,
   ]
-  enable_deletion_protection = local.account_name == "development" ? false : true
+  enable_deletion_protection = var.account_name == "development" ? false : true
   access_logs {
     bucket  = data.aws_s3_bucket.access_log.bucket
-    prefix  = "${local.environment}-admin"
+    prefix  = "${var.environment_name}-admin"
     enabled = true
   }
 }
@@ -52,10 +52,10 @@ resource "aws_lb_listener" "admin_loadbalancer" {
 
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "admin_loadbalancer" {
-  name        = "${local.environment}-admin-loadbalancer"
+  name        = "${var.environment_name}-admin-loadbalancer"
   description = "Allow inbound traffic"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_tags, local.admin_component_tag)
+  tags        = merge(local.default_opg_tags, local.admin_component_tag)
 }
 
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
@@ -70,7 +70,7 @@ resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
 
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_loadbalancer_ingress_production" {
-  count     = local.environment == "production" ? 1 : 0
+  count     = var.environment_name == "production" ? 1 : 0
   type      = "ingress"
   from_port = 443
   to_port   = 443

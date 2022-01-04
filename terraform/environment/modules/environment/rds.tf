@@ -8,20 +8,20 @@ data "aws_iam_role" "rds_enhanced_monitoring" {
 }
 
 data "aws_sns_topic" "rds_events" {
-  name = "${local.account_name}-rds-events"
+  name = "${var.account_name}-rds-events"
 }
 
 resource "aws_db_instance" "api" {
-  count                               = local.account.always_on ? 1 : 0
-  identifier                          = lower("api-${local.environment}")
+  count                               = var.account.always_on ? 1 : 0
+  identifier                          = lower("api-${var.environment_name}")
   name                                = "api2"
   allocated_storage                   = 10
   max_allocated_storage               = 100
   storage_type                        = "gp2"
   storage_encrypted                   = true
-  skip_final_snapshot                 = local.account.skip_final_snapshot
+  skip_final_snapshot                 = var.account.skip_final_snapshot
   engine                              = "postgres"
-  engine_version                      = local.account.psql_engine_version
+  engine_version                      = var.account.psql_engine_version
   instance_class                      = "db.m3.medium"
   port                                = "5432"
   kms_key_id                          = data.aws_kms_key.rds.arn
@@ -32,9 +32,9 @@ resource "aws_db_instance" "api" {
   auto_minor_version_upgrade          = true
   maintenance_window                  = "wed:05:00-wed:09:00"
   multi_az                            = true
-  backup_retention_period             = local.account.backup_retention_period
-  deletion_protection                 = local.account.deletion_protection
-  tags                                = merge(local.default_tags, local.db_component_tag)
+  backup_retention_period             = var.account.backup_retention_period
+  deletion_protection                 = var.account.deletion_protection
+  tags                                = merge(local.default_opg_tags, local.db_component_tag)
   allow_major_version_upgrade         = true
   monitoring_interval                 = 30
   monitoring_role_arn                 = data.aws_iam_role.rds_enhanced_monitoring.arn
@@ -50,7 +50,7 @@ resource "aws_db_instance" "api" {
 // since aurora is not in use yet for pre and production,
 // we'll revisit alarms as the serverless setup is different
 module "aws_rds_api_alarms" {
-  count                                     = local.account.always_on ? 1 : 0
+  count                                     = var.account.always_on ? 1 : 0
   source                                    = "lorenzoaiello/rds-alarms/aws"
   version                                   = "2.1.0"
   db_instance_id                            = aws_db_instance.api[0].id
@@ -62,39 +62,39 @@ module "aws_rds_api_alarms" {
   anomaly_band_width                        = "10"
   evaluation_period                         = "10"
   db_instance_class                         = "db.m3.medium"
-  prefix                                    = "${local.environment}-"
-  tags                                      = merge(local.default_tags, local.db_component_tag)
+  prefix                                    = "${var.environment_name}-"
+  tags                                      = merge(local.default_opg_tags, local.db_component_tag)
 }
 
 module "api_aurora" {
   auto_minor_version_upgrade    = true
   source                        = "./modules/aurora"
-  count                         = local.account.aurora_enabled ? 1 : 0
-  aurora_serverless             = local.account.aurora_serverless
+  count                         = var.account.aurora_enabled ? 1 : 0
+  aurora_serverless             = var.account.aurora_serverless
   account_id                    = data.aws_caller_identity.current.account_id
-  apply_immediately             = !local.account.deletion_protection
+  apply_immediately             = !var.account.deletion_protection
   cluster_identifier            = "api2"
   db_subnet_group_name          = "data-persistence-subnet-default"
-  deletion_protection           = local.account.deletion_protection
+  deletion_protection           = var.account.deletion_protection
   database_name                 = "api2"
-  engine_version                = local.account.psql_engine_version
-  environment                   = local.environment
+  engine_version                = var.account.psql_engine_version
+  environment                   = var.environment_name
   master_username               = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   master_password               = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  instance_count                = local.account.aurora_instance_count
+  instance_count                = var.account.aurora_instance_count
   instance_class                = "db.t3.medium"
   kms_key_id                    = data.aws_kms_key.rds.arn
-  replication_source_identifier = local.account.always_on ? aws_db_instance.api[0].arn : ""
-  skip_final_snapshot           = !local.account.deletion_protection
+  replication_source_identifier = var.account.always_on ? aws_db_instance.api[0].arn : ""
+  skip_final_snapshot           = !var.account.deletion_protection
   vpc_security_group_ids        = [aws_security_group.rds-api.id]
-  tags                          = merge(local.default_tags, local.db_component_tag)
+  tags                          = merge(local.default_opg_tags, local.db_component_tag)
   copy_tags_to_snapshot         = true
 }
 
 resource "aws_db_parameter_group" "postgres-db-params" {
-  name        = lower("postgres-db-params-${local.environment}")
+  name        = lower("postgres-db-params-${var.environment_name}")
   description = "default postgres rds parameter group"
-  family      = local.account.psql_parameter_group_family
+  family      = var.account.psql_parameter_group_family
   parameter {
     name         = "log_min_duration_statement"
     value        = "500"
@@ -116,19 +116,19 @@ resource "aws_db_parameter_group" "postgres-db-params" {
 }
 
 resource "aws_security_group" "rds-client" {
-  name                   = "rds-client-${local.environment}"
-  description            = "rds access for ${local.environment}"
+  name                   = "rds-client-${var.environment_name}"
+  description            = "rds access for ${var.environment_name}"
   vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
-  tags                   = merge(local.default_tags, local.db_component_tag)
+  tags                   = merge(local.default_opg_tags, local.db_component_tag)
 }
 
 resource "aws_security_group" "rds-api" {
-  name                   = "rds-api-${local.environment}"
+  name                   = "rds-api-${var.environment_name}"
   description            = "api rds access"
   vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
-  tags                   = merge(local.default_tags, local.db_component_tag)
+  tags                   = merge(local.default_opg_tags, local.db_component_tag)
 
   lifecycle {
     create_before_destroy = true

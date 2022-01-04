@@ -6,9 +6,9 @@ resource "local_file" "environment_pipeline_tasks_config" {
 locals {
 
   environment_pipeline_tasks_config = {
-    account_id                  = local.account.account_id
+    account_id                  = var.account.account_id
     cluster_name                = aws_ecs_cluster.online-lpa.name
-    environment                 = local.environment
+    environment                 = var.environment_name
     front_fqdn                  = aws_route53_record.front.fqdn
     admin_fqdn                  = aws_route53_record.admin.fqdn
     public_facing_fqdn          = aws_route53_record.public_facing_lastingpowerofattorney.fqdn
