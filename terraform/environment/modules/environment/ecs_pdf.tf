@@ -5,7 +5,7 @@ resource "aws_ecs_service" "pdf" {
   name                  = "pdf"
   cluster               = aws_ecs_cluster.online-lpa.id
   task_definition       = aws_ecs_task_definition.pdf.arn
-  desired_count         = local.account.autoscaling.pdf.minimum
+  desired_count         = var.account.autoscaling.pdf.minimum
   launch_type           = "FARGATE"
   platform_version      = "1.3.0"
   propagate_tags        = "TASK_DEFINITION"
@@ -17,7 +17,7 @@ resource "aws_ecs_service" "pdf" {
   }
 
   depends_on = [aws_iam_role.pdf_task_role, aws_iam_role.execution_role]
-  tags       = merge(local.default_tags, local.pdf_component_tag)
+  tags       = merge(local.default_opg_tags, local.pdf_component_tag)
 
 }
 
@@ -26,9 +26,9 @@ resource "aws_ecs_service" "pdf" {
 
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "pdf_ecs_service" {
-  name_prefix = "${local.environment}-pdf-ecs-service"
+  name_prefix = "${var.environment_name}-pdf-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_tags, local.pdf_component_tag)
+  tags        = merge(local.default_opg_tags, local.pdf_component_tag)
 }
 
 //----------------------------------
@@ -48,7 +48,7 @@ resource "aws_security_group_rule" "pdf_ecs_service_egress" {
 // pdf ECS Service Task level config
 
 resource "aws_ecs_task_definition" "pdf" {
-  family                   = "${local.environment}-pdf"
+  family                   = "${var.environment_name}-pdf"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 2048
@@ -56,20 +56,20 @@ resource "aws_ecs_task_definition" "pdf" {
   container_definitions    = "[${local.pdf_app}]"
   task_role_arn            = aws_iam_role.pdf_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_tags, local.pdf_component_tag)
+  tags                     = merge(local.default_opg_tags, local.pdf_component_tag)
 }
 
 //----------------
 // Permissions
 
 resource "aws_iam_role" "pdf_task_role" {
-  name               = "${local.environment}-pdf-task-role"
+  name               = "${var.environment_name}-pdf-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = merge(local.default_tags, local.pdf_component_tag)
+  tags               = merge(local.default_opg_tags, local.pdf_component_tag)
 }
 
 resource "aws_iam_role_policy" "pdf_permissions_role" {
-  name   = "${local.environment}-pdfApplicationPermissions"
+  name   = "${var.environment_name}-pdfApplicationPermissions"
   policy = data.aws_iam_policy_document.pdf_permissions_role.json
   role   = aws_iam_role.pdf_task_role.id
 }
@@ -171,8 +171,8 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${local.region_name}",
-          "awslogs-stream-prefix" : "${local.environment}.pdf-app.online-lpa"
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment_name}.pdf-app.online-lpa"
         }
       },
       "secrets" : [
@@ -180,9 +180,9 @@ locals {
       ],
       "environment" : [
 
-        { "name" : "OPG_LPA_STACK_NAME", "value" : local.environment },
+        { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
-        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : local.account_name },
+        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
         { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
         { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
         { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },

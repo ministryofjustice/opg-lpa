@@ -5,7 +5,7 @@ resource "aws_ecs_service" "front" {
   name                  = "front"
   cluster               = aws_ecs_cluster.online-lpa.id
   task_definition       = aws_ecs_task_definition.front.arn
-  desired_count         = local.account.autoscaling.front.minimum
+  desired_count         = var.account.autoscaling.front.minimum
   launch_type           = "FARGATE"
   platform_version      = "1.3.0"
   propagate_tags        = "TASK_DEFINITION"
@@ -23,7 +23,7 @@ resource "aws_ecs_service" "front" {
   }
 
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
-  tags       = merge(local.default_tags, local.front_component_tag)
+  tags       = merge(local.default_opg_tags, local.front_component_tag)
 }
 
 //----------------------------------
@@ -31,9 +31,9 @@ resource "aws_ecs_service" "front" {
 
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "front_ecs_service" {
-  name_prefix = "${local.environment}-front-ecs-service"
+  name_prefix = "${var.environment_name}-front-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_tags, local.front_component_tag)
+  tags        = merge(local.default_opg_tags, local.front_component_tag)
 
 }
 
@@ -75,7 +75,7 @@ resource "aws_security_group_rule" "front_ecs_service_egress" {
 // front ECS Service Task level config
 
 resource "aws_ecs_task_definition" "front" {
-  family                   = "${local.environment}-front"
+  family                   = "${var.environment_name}-front"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 256
@@ -83,7 +83,7 @@ resource "aws_ecs_task_definition" "front" {
   container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_tags, local.front_component_tag)
+  tags                     = merge(local.default_opg_tags, local.front_component_tag)
 
 }
 
@@ -91,14 +91,14 @@ resource "aws_ecs_task_definition" "front" {
 // Permissions
 
 resource "aws_iam_role" "front_task_role" {
-  name               = "${local.environment}-front-task-role"
+  name               = "${var.environment_name}-front-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = merge(local.default_tags, local.front_component_tag)
+  tags               = merge(local.default_opg_tags, local.front_component_tag)
 
 }
 
 resource "aws_iam_role_policy" "front_permissions_role" {
-  name   = "${local.environment}-frontApplicationPermissions"
+  name   = "${var.environment_name}-frontApplicationPermissions"
   policy = data.aws_iam_policy_document.front_permissions_role.json
   role   = aws_iam_role.front_task_role.id
 }
@@ -194,7 +194,7 @@ locals {
       "options" : {
         "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
         "awslogs-region" : "eu-west-1",
-        "awslogs-stream-prefix" : "${local.environment}.front-web.online-lpa"
+        "awslogs-stream-prefix" : "${var.environment_name}.front-web.online-lpa"
       }
     },
     "environment" : [
@@ -202,7 +202,7 @@ locals {
       { "name" : "APP_PORT", "value" : "9000" },
       { "name" : "TIMEOUT", "value" : "60" },
       { "name" : "CONTAINER_VERSION", "value" : var.container_version },
-      { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name },
+      { "name" : "AWS_ACCOUNT_TYPE", "value" : var.account_name },
       { "name" : "APP_V2_HOST", "value" : "127.0.0.1" },
       { "name" : "APP_V2_PORT", "value" : "8005" },
     ]
@@ -228,8 +228,8 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${local.region_name}",
-          "awslogs-stream-prefix" : "${local.environment}.front-app.online-lpa"
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment_name}.front-app.online-lpa"
         }
       },
       "secrets" : [
@@ -247,9 +247,9 @@ locals {
         { "name" : "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value" : "${local.dns_namespace_env}${local.front_dns}" },
         { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "${local.dns_namespace_env}${local.front_dns} localhost 127.0.0.1" },
         { "name" : "OPG_LPA_FRONT_TRACK_FROM_DATE", "value" : local.track_from_date },
-        { "name" : "OPG_LPA_STACK_NAME", "value" : local.environment },
+        { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
-        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : local.account_name },
+        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
         { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
         { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
         { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },
@@ -265,7 +265,7 @@ locals {
         { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
         { "name" : "OPG_LPA_OS_PLACES_HUB_ENDPOINT", "value" : "https://api.os.uk/search/places/v1/postcode" },
         { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache_region.primary_endpoint_address}" },
-        { "name" : "AWS_ACCOUNT_TYPE", "value" : local.account_name },
+        { "name" : "AWS_ACCOUNT_TYPE", "value" : var.account_name },
         { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" }
       ]
     }
@@ -290,8 +290,8 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${local.region_name}",
-          "awslogs-stream-prefix" : "${local.environment}.front-v2-app.online-lpa"
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment_name}.front-v2-app.online-lpa"
         }
       },
       "secrets" : [
@@ -301,9 +301,9 @@ locals {
         { "name" : "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value" : "${local.dns_namespace_env}${local.front_dns}" },
         { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "${local.dns_namespace_env}${local.front_dns} localhost 127.0.0.1" },
         { "name" : "OPG_LPA_FRONT_TRACK_FROM_DATE", "value" : local.track_from_date },
-        { "name" : "OPG_LPA_STACK_NAME", "value" : local.environment },
+        { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
-        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : local.account_name },
+        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
         { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
         { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
         { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },

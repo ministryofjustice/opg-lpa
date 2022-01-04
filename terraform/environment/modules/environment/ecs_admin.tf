@@ -5,7 +5,7 @@ resource "aws_ecs_service" "admin" {
   name                  = "admin"
   cluster               = aws_ecs_cluster.online-lpa.id
   task_definition       = aws_ecs_task_definition.admin.arn
-  desired_count         = local.account.autoscaling.admin.minimum
+  desired_count         = var.account.autoscaling.admin.minimum
   launch_type           = "FARGATE"
   platform_version      = "1.3.0"
   propagate_tags        = "TASK_DEFINITION"
@@ -23,7 +23,7 @@ resource "aws_ecs_service" "admin" {
   }
 
   depends_on = [aws_lb.admin, aws_iam_role.admin_task_role, aws_iam_role.execution_role]
-  tags       = merge(local.default_tags, local.admin_component_tag)
+  tags       = merge(local.default_opg_tags, local.admin_component_tag)
 }
 
 //----------------------------------
@@ -31,9 +31,9 @@ resource "aws_ecs_service" "admin" {
 
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "admin_ecs_service" {
-  name_prefix = "${local.environment}-admin-ecs-service"
+  name_prefix = "${var.environment_name}-admin-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_tags, local.admin_component_tag)
+  tags        = merge(local.default_opg_tags, local.admin_component_tag)
 }
 
 // 80 in from the ELB
@@ -63,7 +63,7 @@ resource "aws_security_group_rule" "admin_ecs_service_egress" {
 // admin ECS Service Task level config
 
 resource "aws_ecs_task_definition" "admin" {
-  family                   = "${local.environment}-admin"
+  family                   = "${var.environment_name}-admin"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 256
@@ -71,20 +71,20 @@ resource "aws_ecs_task_definition" "admin" {
   container_definitions    = "[${local.admin_web}, ${local.admin_app}]"
   task_role_arn            = aws_iam_role.admin_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_tags, local.admin_component_tag)
+  tags                     = merge(local.default_opg_tags, local.admin_component_tag)
 }
 
 //----------------
 // Permissions
 
 resource "aws_iam_role" "admin_task_role" {
-  name               = "${local.environment}-admin-task-role"
+  name               = "${var.environment_name}-admin-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = merge(local.default_tags, local.admin_component_tag)
+  tags               = merge(local.default_opg_tags, local.admin_component_tag)
 }
 
 resource "aws_iam_role_policy" "admin_permissions_role" {
-  name   = "${local.environment}-adminApplicationPermissions"
+  name   = "${var.environment_name}-adminApplicationPermissions"
   policy = data.aws_iam_policy_document.admin_permissions_role.json
   role   = aws_iam_role.admin_task_role.id
 }
@@ -157,8 +157,8 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${local.region_name}",
-          "awslogs-stream-prefix" : "${local.environment}.admin-web.online-lpa"
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment_name}.admin-web.online-lpa"
         }
       },
       "environment" : [
@@ -189,8 +189,8 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${local.region_name}",
-          "awslogs-stream-prefix" : "${local.environment}.admin-app.online-lpa"
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment_name}.admin-app.online-lpa"
         }
       },
       "secrets" : [
@@ -200,9 +200,9 @@ locals {
       ],
       "environment" : [
         { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "${local.dns_namespace_env}${local.admin_dns} localhost 127.0.0.1" },
-        { "name" : "OPG_LPA_STACK_NAME", "value" : local.environment },
+        { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
-        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : local.account_name },
+        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
         { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
         { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
         { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },

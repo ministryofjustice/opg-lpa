@@ -1,5 +1,5 @@
 data "pagerduty_service" "pagerduty" {
-  name = local.account.pagerduty_service_name
+  name = var.account.pagerduty_service_name
 }
 
 data "pagerduty_service" "pagerduty_ops" {
@@ -11,13 +11,13 @@ data "pagerduty_vendor" "cloudwatch" {
 }
 
 resource "pagerduty_service_integration" "cloudwatch_integration" {
-  name    = "${data.pagerduty_vendor.cloudwatch.name} ${local.environment} Environment"
+  name    = "${data.pagerduty_vendor.cloudwatch.name} ${var.environment_name} Environment"
   service = data.pagerduty_service.pagerduty.id
   vendor  = data.pagerduty_vendor.cloudwatch.id
 }
 
 resource "pagerduty_service_integration" "cloudwatch_integration_ops" {
-  name    = "${data.pagerduty_vendor.cloudwatch.name} ${local.environment} Environment Ops"
+  name    = "${data.pagerduty_vendor.cloudwatch.name} ${var.environment_name} Environment Ops"
   service = data.pagerduty_service.pagerduty_ops.id
   vendor  = data.pagerduty_vendor.cloudwatch.id
 }
