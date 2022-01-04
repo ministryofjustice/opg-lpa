@@ -202,4 +202,9 @@ class FormRadio extends LaminasFormRadioHelper
 
         return implode($this->getSeparator(), $combinedMarkup);
     }
+
+    public function setViewForTesting()
+    {
+        $this->view = "Set To Something Non-Null To Allow Unit Testing";
+    }
 }

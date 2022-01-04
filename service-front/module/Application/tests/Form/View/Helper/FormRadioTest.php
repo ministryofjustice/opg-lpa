@@ -31,6 +31,7 @@ class FormRadioTest extends TestCase
         $radio->setValueOptions($options);
 
         $helper = new FormRadio();
+        $helper->setViewForTesting();
 
         $html = $helper($radio);
 
@@ -79,6 +80,7 @@ class FormRadioTest extends TestCase
         $radio->setAttributes(['div-attributes' => ['class' => 'test_class']]);
 
         $helper = new FormRadio();
+        $helper->setViewForTesting();
 
         $html = $helper($radio);
 
@@ -141,6 +143,7 @@ class FormRadioTest extends TestCase
         $radio->setValueOptions($options);
 
         $helper = new FormRadio();
+        $helper->setViewForTesting();
 
         $html = $helper($radio);
 
@@ -178,6 +181,7 @@ class FormRadioTest extends TestCase
         $radio->setValueOptions($options);
 
         $helper = new FormRadio();
+        $helper->setViewForTesting();
 
         $html = $helper->outputOption($radio, 1);
 
