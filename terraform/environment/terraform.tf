@@ -17,12 +17,12 @@ terraform {
       version = "~> 2.0"
     }
     pagerduty = {
-      source  = "pagerduty/pagerduty"
-      version = "~> 1.7"
+      source  = "PagerDuty/pagerduty"
+      version = "~> 2.0"
     }
   }
 
-  required_version = ">= 1.0"
+  required_version = ">= 1.1.2"
 }
 
 provider "aws" {
