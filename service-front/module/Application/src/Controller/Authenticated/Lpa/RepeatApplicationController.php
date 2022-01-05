@@ -25,9 +25,7 @@ class RepeatApplicationController extends AbstractLpaController
             $form->setData($postData);
 
             if ($postData['isRepeatApplication'] != 'is-repeat') {
-                $form->setValidationGroup(
-                    array('isRepeatApplication')
-                );
+                $form->setValidationGroup(['isRepeatApplication']);
             }
 
             if ($form->isValid()) {

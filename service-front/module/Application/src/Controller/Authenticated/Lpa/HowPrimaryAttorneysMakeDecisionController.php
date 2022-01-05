@@ -31,7 +31,7 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
             $postData = $this->request->getPost();
 
             if ($postData['how'] != PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                $form->setValidationGroup(array('how'));
+                $form->setValidationGroup(['how']);
             }
 
             // set data for validation
