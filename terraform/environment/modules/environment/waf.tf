@@ -1,5 +1,5 @@
 data "aws_wafv2_web_acl" "main" {
-  name  = "${local.account_name}-${local.region_name}-web-acl"
+  name  = "${var.account_name}-${var.region_name}-web-acl"
   scope = "REGIONAL"
 }
 
