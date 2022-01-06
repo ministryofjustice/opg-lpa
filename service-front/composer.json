@@ -55,5 +55,10 @@
             "MakeLogger\\": "../shared/logging/module/MakeLogger/src/",
             "Alphagov\\Pay\\": "module/Alphagov/Pay/src/"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "laminas/laminas-component-installer": true
+        }
     }
 }
