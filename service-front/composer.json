@@ -27,7 +27,8 @@
         "laminas/laminas-component-installer": "^2.5.1",
         "laminas/laminas-mvc": "^3.2",
         "laminas/laminas-authentication": "^2.8",
-        "laminas/laminas-cache": "^2.9.0",
+        "laminas/laminas-cache": "3.1.2",
+        "laminas/laminas-cache-storage-adapter-memory": "2.0",
         "laminas/laminas-form": "^2.17",
         "laminas/laminas-session": "^2.12.0",
         "laminas/laminas-math": "^3.4",
@@ -43,6 +44,19 @@
         "guzzlehttp/psr7": "^1.4",
         "alphagov/notifications-php-client": "^3.2",
         "psr/http-client": "^1.0.1"
+    },
+    "replace": {
+        "laminas/laminas-cache-storage-adapter-apc": "*",
+        "laminas/laminas-cache-storage-adapter-apcu": "*",
+        "laminas/laminas-cache-storage-adapter-blackhole": "*",
+        "laminas/laminas-cache-storage-adapter-dba": "*",
+        "laminas/laminas-cache-storage-adapter-ext-mongodb": "*",
+        "laminas/laminas-cache-storage-adapter-memcache": "*",
+        "laminas/laminas-cache-storage-adapter-memcached": "*",
+        "laminas/laminas-cache-storage-adapter-mongodb": "*",
+        "laminas/laminas-cache-storage-adapter-wincache": "*",
+        "laminas/laminas-cache-storage-adapter-xcache": "*",
+        "laminas/laminas-cache-storage-adapter-zend-server": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
