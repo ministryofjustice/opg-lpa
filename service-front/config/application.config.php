@@ -16,6 +16,7 @@ return array(
         'Laminas\Router',
         'Laminas\Validator',
         'Laminas\ZendFrameworkBridge',
+        'Laminas\Cache\Storage\Adapter\Memory',
         'Application',
         //ZfcTwig MUST be the last module!
         //note that at this time that ZfcTwig has not been given a new Laminas namespace 
