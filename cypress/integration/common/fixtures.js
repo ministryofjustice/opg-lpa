@@ -25,7 +25,7 @@ After({ tags: "@CleanupFixtures" }, () => {
 
         cy.get('@signedUpUserEmail').then(signedUpUserEmail => {
             if (signedUpUserEmail !== null) {
-                cy.runPythonApiCommand("manageUsers.py deleteIfExists " + signedUpUserEmail + " Pass1234").its('stdout').then(deleteResult => {
+                cy.runPythonApiCommand("manageUsers.py deleteIfExists " + signedUpUserEmail + " " + Cypress.env('seeded_password')).its('stdout').then(deleteResult => {
                     cy.log("Deleting user with ID " + signedUpUserEmail + " gave result " + deleteResult);
                 });
             }
@@ -199,7 +199,7 @@ Then(`I create PF LPA test fixture with donor, single attorney, cert provider, i
 })
 
 Then(`an existing user has the email {string}`, (email) => {
-    cy.runPythonApiCommand("manageUsers.py getOrCreate " + email + " Pass1234").its('stdout').then(getUserResult => {
+    cy.runPythonApiCommand("manageUsers.py getOrCreate " + email + " " + Cypress.env('seeded_password')).its('stdout').then(getUserResult => {
         const getUserResultObj = JSON.parse(getUserResult);
         if (getUserResultObj.success) {
             cy.wrap(email).as('signedUpUserEmail');
