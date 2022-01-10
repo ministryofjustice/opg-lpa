@@ -17,7 +17,7 @@ When("I choose a new password", () => {
 });
 
 When("I try to change password with a mismatch", () => {
-        cy.get("[data-cy=password_current]").clear().type('Pass1234');
+        cy.get("[data-cy=password_current]").clear().type(Cypress.env('seeded_password'));
         cy.get("[data-cy=password]").clear().type(Cypress.env('password'));
         cy.get("[data-cy=password_confirm]").clear().type("mismatchedpassword1234");
         cy.get('[data-cy=save-new-password]').click();
