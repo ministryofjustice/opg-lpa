@@ -1,24 +1,7 @@
 Feature: Change Personal Details
 
     I want to be able to change my personal details
-
-    @focus
-    Scenario: Change password with mismatched details
-    # Changing password successfully is covered in Password.feature, but we retain this scenario in this feature as it can be tested standalone with seeded user thus
-    # not requiring a signup to have run first
-        Given I ignore application exceptions
-        When I log in as seeded user
-        And I visit link containing "Your details"
-        Then I am taken to "/user/about-you"
-        When I visit link containing "Change Password"
-        Then I am taken to "/user/change-password"
-        When I try to change password with a mismatch
-        Then I am taken to "/user/change-password"
-        And I see in the page text
-            | There is a problem |
-            | Enter matching passwords |
-        And I see "Error" in the title
-
+    # for Password changes , see seperate Password.feature
     @focus
     Scenario: Change email 
         Given I ignore application exceptions
