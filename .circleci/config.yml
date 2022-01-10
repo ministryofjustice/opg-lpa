@@ -53,18 +53,7 @@ pr_build: &pr_build
         filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
-        name: perfplat-lambda-docker-build
-        account_id: "050256574573"
-        container_repo_account: development
-        lambda_name: perfplat-worker
-        dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { ignore: [main] } }
-
-    - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-worker-build
-        account_id: "050256574573"
-        container_repo_account: development
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
@@ -72,8 +61,6 @@ pr_build: &pr_build
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-api-build
-        account_id: "050256574573"
-        container_repo_account: development
         lambda_name: perfplat-api
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-api-ci
@@ -180,13 +167,11 @@ pr_build: &pr_build
             seeding_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
-            perfplat-lambda-docker-api-build,
-            perfplat-lambda-docker-build
+            perfplat-lambda-docker-api-build
           ]
 
     - ecr_scan_results:
         name: ecr_scan_results_development
-        account_id: "050256574573"
         filters: { branches: { ignore: [main] } }
         requires:
           [
@@ -289,55 +274,16 @@ path_to_live: &path_to_live
         unit_test: false
         filters: { branches: { only: [main] } }
 
+
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
-        name: perfplat-lambda-docker-build-preproduction
-        account_id: "987830934591"
-        container_repo_account: preproduction
+        name: perfplat-lambda-docker-worker-build
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-worker-ci
         filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
-        name: perfplat-lambda-docker-build-production
-        account_id: "980242665824"
-        container_repo_account: production
-        lambda_name: perfplat-worker
-        dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { only: [main] } }
-
-    - build_containers_and_push_to_ecr/docker_build_lambda_image:
-        name: perfplat-lambda-docker-worker-build-preproduction
-        account_id: "987830934591"
-        container_repo_account: preproduction
-        lambda_name: perfplat-worker
-        dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { only: [main] } }
-
-    - build_containers_and_push_to_ecr/docker_build_lambda_image:
-        name: perfplat-lambda-docker-api-build-preproduction
-        account_id: "987830934591"
-        container_repo_account: preproduction
-        lambda_name: perfplat-api
-        dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-api-ci
-        filters: { branches: { only: [main] } }
-
-    - build_containers_and_push_to_ecr/docker_build_lambda_image:
-        name: perfplat-lambda-docker-worker-build-production
-        account_id: "980242665824"
-        container_repo_account: production
-        lambda_name: perfplat-worker
-        dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-worker-ci
-        filters: { branches: { only: [main] } }
-
-    - build_containers_and_push_to_ecr/docker_build_lambda_image:
-        name: perfplat-lambda-docker-api-build-production
-        account_id: "980242665824"
-        container_repo_account: production
+        name: perfplat-lambda-docker-api-build
         lambda_name: perfplat-api
         dockerfile_path: service-perfplat/docker
         dockerfile_name: Dockerfile-api-ci
@@ -410,17 +356,12 @@ path_to_live: &path_to_live
             pdf_docker_build,
             seeding_docker_build,
             flask_docker_build,
-            perfplat-lambda-docker-worker-build-preproduction,
-            perfplat-lambda-docker-worker-build-production,
-            perfplat-lambda-docker-api-build-preproduction,
-            perfplat-lambda-docker-api-build-production,
-            perfplat-lambda-docker-build-preproduction,
-            perfplat-lambda-docker-build-production
+            perfplat-lambda-docker-api-build,
+            perfplat-lambda-docker-worker-build,
           ]
 
     - ecr_scan_results:
         name: ecr_scan_results_main
-        account_id: "980242665824"
         filters: { branches: { only: [main] } }
         requires:
           [
@@ -429,10 +370,8 @@ path_to_live: &path_to_live
             api_docker_build,
             pdf_docker_build,
             flask_docker_build,
-            perfplat-lambda-docker-worker-build-preproduction,
-            perfplat-lambda-docker-worker-build-production,
-            perfplat-lambda-docker-api-build-preproduction,
-            perfplat-lambda-docker-api-build-production,
+            perfplat-lambda-docker-api-build,
+            perfplat-lambda-docker-worker-build,
           ]
 
     - infrastructure_and_deployment/seed_environment_databases:
@@ -801,10 +740,9 @@ orbs:
         #
         executor: python
         parameters:
-          account_id:
+          ecr_url:
             type: string
-          container_repo_account:
-            type: string
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com
           lambda_name:
             type: string
           dockerfile_path:
@@ -813,7 +751,7 @@ orbs:
             type: string
             default: Dockerfile
         environment:
-          ECR_URL: << parameters.account_id >>.dkr.ecr.eu-west-1.amazonaws.com/<< parameters.container_repo_account >>/<< parameters.lambda_name >>
+          ECR_URL: <<parameters.ecr_url >>/<< parameters.lambda_name >>
         steps:
           - checkout
           - install_aws_cli
@@ -826,9 +764,7 @@ orbs:
               command: |
                 echo $ECR_URL
                 docker build --file << parameters.dockerfile_path >>/<<parameters.dockerfile_name>> --tag ${ECR_URL}:latest .
-          - ecr_login_lambda:
-              ecr: << parameters.account_id >>.dkr.ecr.eu-west-1.amazonaws.com
-              account_id: << parameters.account_id >>
+          - ecr_login
           - run:
               name: Push container
               command: |
@@ -1496,9 +1432,6 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
     resource_class: small
-    parameters:
-      account_id:
-        type: string
     steps:
       - checkout
       - run:
@@ -1514,20 +1447,6 @@ jobs:
                                            --branch $CIRCLE_BRANCH \
                                            --slack_channel $BUILD_SLACK_CHANNEL \
                                            --slack_token $SLACK_ACCESS_TOKEN
-      - run:
-          name: Check ECR Scan Results for Lambda containers
-          command: |
-            sudo pip3 install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
-            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
-            echo $IMAGE_TAG
-            cd scripts/pipeline/check_ecr_scan_results/
-            python aws_ecr_scan_results.py  --search perfplat \
-                                            --tag ${IMAGE_TAG} \
-                                            --build_url $CIRCLE_BUILD_URL \
-                                            --branch $CIRCLE_BRANCH \
-                                            --slack_channel $BUILD_SLACK_CHANNEL \
-                                            --slack_token $SLACK_ACCESS_TOKEN \
-                                            --account_id <<parameters.account_id>>
   workspace_cleanup:
     docker:
       - image: hashicorp/terraform:1.1.2
