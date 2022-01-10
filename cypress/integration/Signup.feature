@@ -77,10 +77,6 @@ Feature: Signup
         And I click "save"
         Then I am taken to the lpa type page
         And I see "What type of LPA do you want to make?" in the page text
-        # logout test done here for consistency with original Casper tests
-        # cypress seems t choke on being redirected off our site though
-        # When I logout
-        #Then I am taken to the post logout url
 
     @focus
     # this scenario must run after the user has saved their details for the first time
