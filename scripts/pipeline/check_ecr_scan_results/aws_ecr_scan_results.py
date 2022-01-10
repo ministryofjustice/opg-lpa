@@ -1,48 +1,34 @@
 import argparse
+import datetime
 import json
 import os
+import sys
 import traceback
+from datetime import date, datetime
 
 import boto3
 import boto3.exceptions
+import botocore
 import jinja2
 from jinja2.loaders import FileSystemLoader
 from slack_sdk import WebClient
 
-
 class ECRScanChecker:
-
-    aws_account_id = ''
     aws_iam_session = ''
     aws_ecr_client = ''
-    images_to_check = []
-    tag = ''
-    report = ''
-    result_limit = ''
-    test_mode = False
-    slack_channel = ''
-    slack_token = ''
-    search_terms = []
-    branch = ''
-    build_url = ''
+    aws_inspector2_client = ''
+    aws_account_id = ''
 
-    def __init__(self, args):
-        self.search_terms = [s.strip() for s in args.search.split(",")]
-        self.result_limit = int(args.result_limit)
-        self.aws_account_id = args.account_id
-        self.test_mode = args.test_mode
-        self.slack_channel = args.slack_channel
-        self.slack_token =  args.slack_token
-        self.tag = args.tag
-        self.branch = args.branch
-        self.build_url = args.build_url
+    def __init__(self,account_id):
+
 
         self.template_environment = jinja2.Environment(
             loader=FileSystemLoader("templates"))
-
+        self.aws_account_id = account_id
         self.set_iam_role_session()
         self.set_ecr_client()
-        self.images_to_check = self.get_repositories(self.search_terms)
+        self.set_aws_inspector2_client()
+
 
     def render(self, template_file, template_vars):
         tmpl = self.template_environment.get_template(template_file)
@@ -59,24 +45,39 @@ class ECRScanChecker:
             return "information_source"
         return "grey_question"
 
+
+    @staticmethod
+    def get_aws_client(client_type, aws_iam_session, region='eu-west-1'):
+        client = boto3.client(
+            client_type,
+            region_name=region,
+            aws_access_key_id=aws_iam_session['Credentials']['AccessKeyId'],
+            aws_secret_access_key=aws_iam_session['Credentials']['SecretAccessKey'],
+            aws_session_token=aws_iam_session['Credentials']['SessionToken'])
+        return client
+
     def set_ecr_client(self):
-        self.aws_ecr_client = boto3.client(
+        self.aws_ecr_client = self.get_aws_client(
             'ecr',
-            region_name='eu-west-1',
-            aws_access_key_id=self.aws_iam_session['Credentials']['AccessKeyId'],
-            aws_secret_access_key=self.aws_iam_session['Credentials']['SecretAccessKey'],
-            aws_session_token=self.aws_iam_session['Credentials']['SessionToken']
-            )
+            self.aws_iam_session
+        )
+
+    def set_aws_inspector2_client(self):
+        self.aws_inspector2_client = self.get_aws_client(
+            'inspector2',
+            self.aws_iam_session
+        )
 
     def set_iam_role_session(self):
+        role_arn = ''
         if os.getenv('CI'):
-            role_arn = f"arn:aws:iam::{self.aws_account_id}:role/opg-lpa-ci"
+            role_arn = f'arn:aws:iam::{self.aws_account_id}:role/opg-lpa-ci'
         else:
-            role_arn = f"arn:aws:iam::{self.aws_account_id}:role/operator"
+            role_arn = f'arn:aws:iam::{self.aws_account_id}:role/operator'
 
         sts = boto3.client(
             'sts',
-            region_name='eu-west-1',
+            region_name='eu-west-1'
         )
 
         session = sts.assume_role(
@@ -86,120 +87,160 @@ class ECRScanChecker:
         )
         self.aws_iam_session = session
 
-    def get_repositories(self, search_terms):
-        images_to_check = []
+    def get_repositories(self, search):
+        search_terms =  [s.strip() for s in search.split(",")]
+        repos_to_check = []
         response = self.aws_ecr_client.describe_repositories()
         for repository in response["repositories"]:
             for search_term in search_terms:
-                if search_term != None and search_term in repository["repositoryName"]:
-                    images_to_check.append(repository["repositoryName"])
-        return images_to_check
+                if search_term is not None and search_term in repository["repositoryName"]:
+                    repos_to_check.append(repository["repositoryName"])
+        return repos_to_check
 
-    def wait_for_scan_completion(self, image, tag):
-        try:
-            waiter = self.aws_ecr_client.get_waiter('image_scan_complete')
-            waiter.wait(
-                repositoryName=image,
-                imageId={
-                    'imageTag': tag
-                },
-                WaiterConfig={
-                    'Delay': 5,
-                    'MaxAttempts': 60
-                }
-            )
-        except:
-            print(f"No ECR image scan results for image {image}, tag {tag}")
-
-    def get_ecr_scan_findings(self, image, tag):
+    def get_ecr_scan_findings(self, image, tag, result_limit):
         response = self.aws_ecr_client.describe_image_scan_findings(
             repositoryName=image,
             imageId={
                 'imageTag': tag
             },
-            maxResults=self.result_limit
+            maxResults=result_limit
         )
         return response
 
-    def wait_for_scans(self):
-        print("Waiting for ECR scans to complete...")
-        for image in self.images_to_check:
-            print(f"scanning for {image}")
-            self.wait_for_scan_completion(image, self.tag)
-        print("ECR image scans complete")
-
-    def generate_report(self):
+    def generate_report(
+        self,
+        repositories,
+        tag ,
+        push_date,
+        report_limit,
+        branch,
+        build_url
+        ):
         print("Checking ECR scan results...")
-        for image in self.images_to_check:
+        report = ''
+        for image in repositories:
+            print(image)
             try:
-                findings = self.get_ecr_scan_findings(
-                    image, self.tag)["imageScanFindings"]
-
+                findings = self.list_findings(image,tag,push_date,self.aws_account_id,report_limit)
+                print(findings)
                 if findings["findings"] != []:
                     counts = findings["findingSeverityCounts"]
-                    titleInfo = {
+                    title_info = {
                         "image": image,
                         "counts": counts,
-                        "report_limit": self.result_limit
+                        "report_limit": report_limit
                     }
 
 
-                    self.report = self.render("header.j2", titleInfo)
-                    findingResults = []
+                    report = self.render("header.j2", title_info)
+                    finding_results = []
 
                     for finding in findings["findings"]:
-                        findingResult = {
-                            "cve_tag": finding["name"],
-                            "emoji": self.get_severity_emoji(finding["severity"]),
-                            "severity": finding["severity"],
-                            "cve_link": finding["uri"],
-                            "image": image,
-                            "tag": self.tag
-                        }
-                        findingResult["description"] = "None"
+                        finding_result = self.summarise_finding(finding,tag,image)
+                        finding_results.append(finding_result)
+                    report += self.render("finding.j2", {"results": finding_results})
+                else:
+                    report += self.render("no_scan_results.j2", {"image": image})
 
-                        if "description" in finding:
-                            # make json string,strip start and end quotes
-                            findingResult["description"] = json.dumps(finding["description"])[1:-1]
-                        findingResults.append(findingResult)
-                    self.report += self.render("finding.j2", {"results": findingResults})
-            except self.aws_ecr_client.exceptions.ImageNotFoundException as e:
-                print(f"skipping finding check for image: {image} tag: {self.tag} - no image present")
+            except self.aws_ecr_client.exceptions.ImageNotFoundException:
+                print(f"skipping finding check for image: {image} tag: {tag} - no image present")
                 continue
 
-            except Exception as e:
+            except botocore.exceptions.ClientError as error:
                 print(
-                    f"Unable to get ECR image scan results for image {image}, tag {self.tag}")
-                print(f"The following error occurred:{e}")
+                    f"Unable to get ECR image scan results for image {image}, tag {tag}")
+                print(f"The following error occurred:{error}")
+                print(error.response['Error']['Code'],
+                      error.response['Error']['Message'])
                 print('trace:')
                 traceback.print_exc()
-
-        if not self.report:
-            self.report = self.render("no_scan_results.j2", {"image": image})
-
-        self.write_build_details()
+                sys.exit(1)
 
 
-    def write_build_details(self):
-        build_vars = {
-           "branch": self.branch,
-            "build_url": self.build_url
+
+        report += self.write_build_details(branch,build_url)
+        return report
+
+
+    def list_findings(self, repository_name, tag, push_date, aws_account_id, report_limit):
+        date_start_inclusive = datetime.combine(
+            push_date, datetime.min.time())
+
+        date_end_inclusive = datetime.combine(
+            push_date, datetime.max.time())
+
+        response = self.aws_inspector2_client.list_findings(
+            filterCriteria={
+                'awsAccountId': [
+                    {
+                        'comparison': 'EQUALS',
+                        'value': str(aws_account_id)
+                    },
+                ],
+                'ecrImagePushedAt': [
+                    {
+                        'endInclusive': date_end_inclusive,
+                        'startInclusive': date_start_inclusive
+                    },
+                ],
+                'ecrImageRepositoryName': [
+                    {
+                        'comparison': 'EQUALS',
+                        'value': repository_name
+                    },
+                ],
+                'ecrImageTags': [
+                    {
+                        'comparison': 'EQUALS',
+                        'value': tag
+                    },
+                ],
+            },
+            maxResults=report_limit,
+            sortCriteria={
+                'field': 'SEVERITY',
+                'sortOrder': 'DESC'
+            }
+        )
+        return response
+
+    def summarise_finding(self, finding, tag, image):
+        finding_result = {
+            "cve_tag": finding["name"],
+            "emoji": self.get_severity_emoji(finding["severity"]),
+            "severity": finding["severity"],
+            "cve_link": finding["uri"],
+            "image": image,
+            "tag": tag
         }
 
-        self.report += self.render("footer.j2", build_vars)
+        finding_result["description"] = "None"
+
+        if "description" in finding:
+                            # make json string,strip start and end quotes
+            finding_result["description"] = json.dumps(finding["description"])[1:-1]
+        return finding_result
+
+    def write_build_details(self,branch, build_url):
+        build_vars = {
+           "branch": branch,
+            "build_url": build_url
+        }
+
+        return self.render("footer.j2", build_vars)
 
 
-    def post_to_slack(self):
-        message_content = {"blocks": self.report}
+    def post_to_slack(self, report, slack_channel, slack_token,test_mode):
+        message_content = {"blocks": report}
         message = json.loads(self.render("message.j2", message_content))
 
-        if self.test_mode:
+        if test_mode:
             print("TEST MODE - not sending to slack.")
             print(message)
         else:
             print("sending slack message...")
-            client = WebClient(token=self.slack_token)
-            client.chat_postMessage(channel=self.slack_channel,
+            client = WebClient(token=slack_token)
+            client.chat_postMessage(channel=slack_channel,
                                     blocks=message['blocks'],
                                     text="Scan Results Received")
 
@@ -234,14 +275,27 @@ def main():
     parser.add_argument("--build_url",
                         default="N/A",
                         help="build tool URL")
+    parser.add_argument('--ecr_push_date',
+                        default=date.today(),
+                        help='ECR Image push datetime in format YYYY-MM-dd')
 
     args = parser.parse_args()
 
 
-    work = ECRScanChecker(args)
-    work.wait_for_scans()
-    work.generate_report()
-    work.post_to_slack()
+    work = ECRScanChecker(args.account_id)
+
+    repos_to_check = work.get_repositories(args.search)
+
+    report = work.generate_report(
+        repos_to_check,
+        args.tag,
+        args.ecr_push_date,
+        args.result_limit,
+        args.branch,
+        args.build_url
+    )
+
+    work.post_to_slack(report,args.slack_channel,args.slack_token, args.test_mode)
 
 
 if __name__ == "__main__":
