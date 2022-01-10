@@ -16,6 +16,14 @@ When("I choose a new password", () => {
         cy.OPGCheckA11y();
 });
 
+When("I try to change password with a mismatch", () => {
+        cy.get("[data-cy=password_current]").clear().type('Pass1234');
+        cy.get("[data-cy=password]").clear().type(Cypress.env('password'));
+        cy.get("[data-cy=password_confirm]").clear().type("mismatchedpassword1234");
+        cy.get('[data-cy=save-new-password]').click();
+        cy.OPGCheckA11y();
+});
+
 When("I change password back to my old one", () => {
     // change from new password back to original cypress password
         cy.get("[data-cy=password_current]").clear().type(newPassword);
