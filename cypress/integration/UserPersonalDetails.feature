@@ -1,6 +1,6 @@
-Feature: Change Personal Details
+Feature: Change User Personal Details
 
-    I want to be able to change my personal details
+    As a user of Make an Lpa I want to be able to change my personal details
     # for Password changes , see seperate Password.feature
     @focus
     Scenario: Change email 
