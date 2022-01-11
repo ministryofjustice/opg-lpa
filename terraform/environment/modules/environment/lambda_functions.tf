@@ -1,6 +1,6 @@
 data "aws_ecr_repository" "performance_platform_worker" {
   provider = aws.management
-  name = "perfplat-worker"
+  name     = "perfplat-worker"
 }
 
 module "performance_platform_worker" {
@@ -40,7 +40,7 @@ data "aws_iam_policy_document" "performance_platform_worker_lambda_function_poli
 
 data "aws_ecr_repository" "performance_platform_api" {
   provider = aws.management
-  name = "perfplat-api"
+  name     = "perfplat-api"
 }
 
 module "performance_platform_api" {
