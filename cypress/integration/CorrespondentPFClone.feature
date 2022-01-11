@@ -20,11 +20,6 @@ Feature: Add a correspondent to a Property and Finance LPA
 
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        # first test - do nothing and ensure the donor is correspondent as default
-        When I click "save"
-        Then I am taken to the who are you page
-        Then I see "The LPA will be sent to Mrs Nancy Garrison" in the page text
-
         # second test , choose certificate provider as correspondent
         When I click the last occurrence of "accordion-view-change"
         Then I am taken to the correspondent page
