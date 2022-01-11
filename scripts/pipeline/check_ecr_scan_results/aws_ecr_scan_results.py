@@ -23,7 +23,7 @@ class ECRScanChecker:
 
 
         self.template_environment = jinja2.Environment(
-            loader=FileSystemLoader("templates"))
+            loader=FileSystemLoader('templates'))
         self.aws_account_id = account_id
         self.set_iam_role_session()
         self.set_ecr_client()
@@ -35,15 +35,15 @@ class ECRScanChecker:
         return tmpl.render(**template_vars)
 
     def get_severity_emoji(self, severity):
-        if severity == "CRITICAL":
-            return "siren"
-        if severity == "HIGH":
-            return "x"
-        if severity == "MEDIUM":
-            return "sign-warning"
-        if severity == "LOW":
-            return "information_source"
-        return "grey_question"
+        if severity == 'CRITICAL':
+            return 'siren'
+        if severity == 'HIGH':
+            return 'x'
+        if severity == 'MEDIUM':
+            return 'sign-warning'
+        if severity == 'LOW':
+            return 'information_source'
+        return 'grey_question'
 
 
     @staticmethod
@@ -88,13 +88,13 @@ class ECRScanChecker:
         self.aws_iam_session = session
 
     def get_repositories(self, search):
-        search_terms =  [s.strip() for s in search.split(",")]
+        search_terms =  [s.strip() for s in search.split(',')]
         repos_to_check = []
         response = self.aws_ecr_client.describe_repositories()
-        for repository in response["repositories"]:
+        for repository in response['repositories']:
             for search_term in search_terms:
-                if search_term is not None and search_term in repository["repositoryName"]:
-                    repos_to_check.append(repository["repositoryName"])
+                if search_term is not None and search_term in repository['repositoryName']:
+                    repos_to_check.append(repository['repositoryName'])
         return repos_to_check
 
     def get_ecr_scan_findings(self, image, tag, result_limit):
@@ -116,40 +116,40 @@ class ECRScanChecker:
         branch,
         build_url
         ):
-        print("Checking ECR scan results...")
+        print('Checking ECR scan results...')
         report = ''
         for image in repositories:
             print(image)
             try:
                 findings = self.list_findings(image,tag,push_date,self.aws_account_id,report_limit)
                 print(findings)
-                if findings["findings"] != []:
-                    counts = findings["findingSeverityCounts"]
+                if findings['findings'] != []:
+                    counts = findings['findingSeverityCounts']
                     title_info = {
-                        "image": image,
-                        "counts": counts,
-                        "report_limit": report_limit
+                        'image': image,
+                        'counts': counts,
+                        'report_limit': report_limit
                     }
 
 
-                    report = self.render("header.j2", title_info)
+                    report = self.render('header.j2', title_info)
                     finding_results = []
 
-                    for finding in findings["findings"]:
+                    for finding in findings['findings']:
                         finding_result = self.summarise_finding(finding,tag,image)
                         finding_results.append(finding_result)
-                    report += self.render("finding.j2", {"results": finding_results})
+                    report += self.render('finding.j2', {'results': finding_results})
                 else:
-                    report += self.render("no_scan_results.j2", {"image": image})
+                    report += self.render('no_scan_results.j2', {'image': image})
 
             except self.aws_ecr_client.exceptions.ImageNotFoundException:
-                print(f"skipping finding check for image: {image} tag: {tag} - no image present")
+                print(f'skipping finding check for image: {image} tag: {tag} - no image present')
                 continue
 
             except botocore.exceptions.ClientError as error:
                 print(
-                    f"Unable to get ECR image scan results for image {image}, tag {tag}")
-                print(f"The following error occurred:{error}")
+                    f'Unable to get ECR image scan results for image {image}, tag {tag}')
+                print(f'The following error occurred:{error}')
                 print(error.response['Error']['Code'],
                       error.response['Error']['Message'])
                 print('trace:')
@@ -206,75 +206,75 @@ class ECRScanChecker:
 
     def summarise_finding(self, finding, tag, image):
         finding_result = {
-            "cve_tag": finding["name"],
-            "emoji": self.get_severity_emoji(finding["severity"]),
-            "severity": finding["severity"],
-            "cve_link": finding["uri"],
-            "image": image,
-            "tag": tag
+            'cve_tag': finding['name'],
+            'emoji': self.get_severity_emoji(finding['severity']),
+            'severity': finding['severity'],
+            'cve_link': finding['uri'],
+            'image': image,
+            'tag': tag
         }
 
-        finding_result["description"] = "None"
+        finding_result['description'] = 'None'
 
-        if "description" in finding:
+        if 'description' in finding:
                             # make json string,strip start and end quotes
-            finding_result["description"] = json.dumps(finding["description"])[1:-1]
+            finding_result['description'] = json.dumps(finding['description'])[1:-1]
         return finding_result
 
     def write_build_details(self,branch, build_url):
         build_vars = {
-           "branch": branch,
-            "build_url": build_url
+           'branch': branch,
+            'build_url': build_url
         }
 
-        return self.render("footer.j2", build_vars)
+        return self.render('footer.j2', build_vars)
 
 
     def post_to_slack(self, report, slack_channel, slack_token,test_mode):
-        message_content = {"blocks": report}
-        message = json.loads(self.render("message.j2", message_content))
+        message_content = {'blocks': report}
+        message = json.loads(self.render('message.j2', message_content))
 
         if test_mode:
-            print("TEST MODE - not sending to slack.")
+            print('TEST MODE - not sending to slack.')
             print(message)
         else:
-            print("sending slack message...")
+            print('sending slack message...')
             client = WebClient(token=slack_token)
             client.chat_postMessage(channel=slack_channel,
                                     blocks=message['blocks'],
-                                    text="Scan Results Received")
+                                    text='Scan Results Received')
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Check ECR Scan results for all service container images.")
-    parser.add_argument("--search",
-                        default="",
-                        help="a comma separated list of repository names to partial match:"
-                        "for example online-lpa,perfplat")
-    parser.add_argument("--tag",
-                        default="latest",
-                        help="Image tag to check scan results for.")
-    parser.add_argument("--result_limit",
+        description='Check ECR Scan results for all service container images.')
+    parser.add_argument('--search',
+                        default='',
+                        help='a comma separated list of repository names to partial match:'
+                        'for example online-lpa,perfplat')
+    parser.add_argument('--tag',
+                        default='latest',
+                        help='Image tag to check scan results for.')
+    parser.add_argument('--result_limit',
                         default=5,
-                        help="How many results for each image to return. Defaults to 5")
-    parser.add_argument("--slack_token",
-                        help="slack api token to use")
-    parser.add_argument("--slack_channel",
-                        help="slack channel to post to")
-    parser.add_argument("--test_mode",
-                        help="run the script in test mode, does not post to slack",
-                        dest="test_mode",
-                        action="store_true")
-    parser.add_argument("--account_id",
-                        default="311462405659",
-                        help="Optionally specify account for scan, defauts to the management account")
-    parser.add_argument("--branch",
-                        default="N/A",
-                        help="branch for build")
-    parser.add_argument("--build_url",
-                        default="N/A",
-                        help="build tool URL")
+                        help='How many results for each image to return. Defaults to 5')
+    parser.add_argument('--slack_token',
+                        help='slack api token to use')
+    parser.add_argument('--slack_channel',
+                        help='slack channel to post to')
+    parser.add_argument('--test_mode',
+                        help='run the script in test mode, does not post to slack',
+                        dest='test_mode',
+                        action='store_true')
+    parser.add_argument('--account_id',
+                        default='311462405659',
+                        help='Optionally specify account for scan, defauts to the management account')
+    parser.add_argument('--branch',
+                        default='N/A',
+                        help='branch for build')
+    parser.add_argument('--build_url',
+                        default='N/A',
+                        help='build tool URL')
     parser.add_argument('--ecr_push_date',
                         default=date.today(),
                         help='ECR Image push datetime in format YYYY-MM-dd')
@@ -298,5 +298,5 @@ def main():
     work.post_to_slack(report,args.slack_channel,args.slack_token, args.test_mode)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
