@@ -17,12 +17,12 @@ Feature: Add a correspondent to a Property and Finance LPA
         When I click "save"
         Then I am taken to the who are you page
         Then I see "The LPA will be sent to Mrs Nancy Garrison" in the page text
+        When I click the last occurrence of "accordion-view-change"
+        Then I am taken to the correspondent page
 
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
         # second test , choose certificate provider as correspondent
-        When I click the last occurrence of "accordion-view-change"
-        Then I am taken to the correspondent page
         And I can find "change-correspondent" with data-inited
         When I click "change-correspondent"
         Then I can find "form-reuse-details"
