@@ -18,18 +18,21 @@
 {# form fields config #}
 {{ password.setAttributes({
     id: 'password_current',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'password_current'
 }) ? ''}}
 
 {{ email.setAttributes({
     id: 'email',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'email'
 }) ? ''}}
 
 {{ email_confirm.setAttributes({
     id: 'email_confirm',
     autocomplete: 'off',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'email_confirm'
 }) ? ''}}
 
 {# form fields labels #}
@@ -47,7 +50,7 @@
 
         <div class="form-group">
             <label class="form-label" for="email_current">Current email address</label>
-            <input type="text" name="email_current" id="email_current" autocomplete="off" class="form-control disabled" value="{{ currentEmailAddress }}" disabled="disabled">
+            <input type="text" name="email_current" id="email_current" data-cy="email_current" autocomplete="off" class="form-control disabled" value="{{ currentEmailAddress }}" disabled="disabled">
         </div>
 
         {{ macros.formGroup(password) }}
@@ -55,7 +58,7 @@
         {{ macros.formGroup(email_confirm) }}
 
         <div class="form-group">
-            <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new email address">
+            <input type="submit" name="submit" id="signin-form-submit" class="button" data-cy='save-new-email' value="Save new email address">
             <a href="{{ cancelUrl }}" class="button button-secondary js-cancel" data-cy="form-cancel">Cancel</a>
         </div>
 
