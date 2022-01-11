@@ -7,14 +7,18 @@ Feature: Add a correspondent to a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with donor, single attorney, cert provider, people to notify, instructions, preferences, applicant
 
-    @focus 
+    @focus @CleanupFixtures
     Scenario: Create LPA normal path
         When I log in as appropriate test user
-
         And I visit the correspondent page for the test fixture lpa
         Then I am taken to the correspondent page
+        # first test - do nothing and ensure the donor is correspondent as default (note that this will only be the case running tests locally with fixtures, whereas
+        # for stitched clone run, the attorney has already been set as the correspondent on the who-is-registering page
+        When I click "save"
+        Then I am taken to the who are you page
+        Then I see "The LPA will be sent to Mrs Nancy Garrison" in the page text
+
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
-        #
 
         # first test - do nothing and ensure the donor is correspondent as default
         When I click "save"
