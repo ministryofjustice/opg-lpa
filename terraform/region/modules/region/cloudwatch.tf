@@ -36,7 +36,7 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
   ok_actions                = [aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn]
   period                    = "60"
   statistic                 = "Sum"
-  threshold                 = 50000000
+  threshold                 = 95000000
   treat_missing_data        = "notBreaching"
   dimensions = {
     CacheClusterId = element(local.cache_member_clusters, count.index)
