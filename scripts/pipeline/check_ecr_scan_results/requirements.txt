@@ -1,3 +1,4 @@
+botocore
 jinja2
 slack_sdk
 boto3
