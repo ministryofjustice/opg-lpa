@@ -110,7 +110,7 @@ reset-front:
 
 # hard reset only the front app container - cleaning up vendor folders too, useful when changing versions of deps
 .PHONY: hard-reset-front
-reset-front:
+hard-reset-front:
 	@${MAKE} dc-down
 	@docker system prune -f --volumes; \
 	docker rmi lpa-front-app || true; \
