@@ -125,7 +125,6 @@ hard-reset-front:
 # soft reset only the front app container without no-cache option.  quickest rebuild but runs risk of some staleness if not every change is picked up 
 soft-reset-front:
 	@${MAKE} dc-down
-	docker rmi lpa-front-app || true; \
 	docker-compose build front-app
 
 # only reset the front web container - uesful for quick reset after nginx.conf tweak
@@ -137,7 +136,6 @@ reset-front-web:
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker rmi lpa-front-web || true; \
-	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	docker-compose build --no-cache front-web
 
 .PHONY: reset-flask
@@ -160,16 +158,12 @@ reset-mock-sirius:
 	docker rmi mocksirius || true; \
 	docker-compose build --no-cache mocksirius
 
-# only reset the api container
+# hard reset only the api app container
 .PHONY: reset-api
 reset-api:
 	@${MAKE} dc-down
-	@docker system prune -f --volumes; \
-	docker rmi lpa-api-web || true; \
 	docker rmi lpa-api-app || true; \
 	rm -fr ./service-api/vendor; \
-	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
-	docker-compose build --no-cache api-web
 	docker-compose build --no-cache api-app
 
 .PHONY: dc-down
