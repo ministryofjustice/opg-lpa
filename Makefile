@@ -97,19 +97,35 @@ dc-build-clean:
 	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache
 
-# only reset the front container - uesful for quick reset when only been working on front component
+# standard reset only the front app container - useful for quick reset when only been working on front component
+# compared to soft reset, this currently cleans up volumes too. this may turn out not to be needed , we
+# may be able to go to always soft reset
 .PHONY: reset-front
 reset-front:
 	@${MAKE} dc-down
 	@docker system prune -f --volumes; \
-	docker rmi lpa-front-web || true; \
+	docker rmi lpa-front-app || true; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
+	docker-compose build --no-cache front-app
+
+# hard reset only the front app container - cleaning up vendor folders too, useful when changing versions of deps
+.PHONY: hard-reset-front
+reset-front:
+	@${MAKE} dc-down
+	@docker system prune -f --volumes; \
 	docker rmi lpa-front-app || true; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
 	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
-	docker-compose build --no-cache front-web
+	docker-compose build --no-cache front-app
+
+.PHONY: soft-reset-front
+# soft reset only the front app container - 
+soft-reset-front:
+	@${MAKE} dc-down
+	docker rmi lpa-front-app || true; \
 	docker-compose build --no-cache front-app
 
 # only reset the front web container - uesful for quick reset after nginx.conf tweak
