@@ -133,10 +133,11 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 'true'
+        ENABLE_XDEBUG: 1
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
-      - ./service-front:/app
+      - ./service-front/module:/app/module
+      - ./service-front/config:/app/config
     depends_on:
       - dynamodb
       - localstack
@@ -227,10 +228,11 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 'true'
+        ENABLE_XDEBUG: 1
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
-      - ./service-api:/app
+      - ./service-api/module:/app/module
+      - ./service-api/config:/app/config
     depends_on:
       - dynamodb
       - localstack
@@ -298,8 +300,6 @@ services:
       - ./service-admin/public:/web
     build:
       context: ./
-      args:
-        ENABLE_XDEBUG: 'true'
       dockerfile: service-admin/docker/web/Dockerfile
     environment:
       APP_HOST: admin-app
@@ -312,6 +312,8 @@ services:
     build:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
+      args:
+        ENABLE_XDEBUG: 1
     volumes:
       - ./service-admin:/app
     depends_on:
