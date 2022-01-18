@@ -122,11 +122,11 @@ reset-front:
 	docker-compose build --no-cache front-app
 
 .PHONY: soft-reset-front
-# soft reset only the front app container - 
+# soft reset only the front app container without no-cache option.  quickest rebuild but runs risk of some staleness if not every change is picked up 
 soft-reset-front:
 	@${MAKE} dc-down
 	docker rmi lpa-front-app || true; \
-	docker-compose build --no-cache front-app
+	docker-compose build front-app
 
 # only reset the front web container - uesful for quick reset after nginx.conf tweak
 .PHONY: reset-front-web
