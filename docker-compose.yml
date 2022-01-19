@@ -132,12 +132,16 @@ services:
     image: lpa-front-app
     build:
       context: ./
+# Build the container with debug on. This will run a lttle slower but debug will always be available
       args:
         ENABLE_XDEBUG: 1
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
+# to speed running, volumes are restricted to source code that may change while container is running
       - ./service-front/module:/app/module
       - ./service-front/config:/app/config
+      - ./service-front/node_modules:/app/node_modules
+      - ./service-front/assets:/app/assets
     depends_on:
       - dynamodb
       - localstack
@@ -227,10 +231,12 @@ services:
     image: lpa-api-app
     build:
       context: ./
+# Build the container with debug on. This will run a lttle slower but debug will always be available
       args:
         ENABLE_XDEBUG: 1
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
+# to speed running, volumes are restricted to source code that may change while container is running
       - ./service-api/module:/app/module
       - ./service-api/config:/app/config
     depends_on:
@@ -312,10 +318,13 @@ services:
     build:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
+# Build the container with debug on. This will run a lttle slower but debug will always be available
       args:
         ENABLE_XDEBUG: 1
     volumes:
-      - ./service-admin:/app
+# to speed running, volumes are restricted to source code that may change while container is running
+      - ./service-admin/src:/app/src
+      - ./service-admin/config:/app/config
     depends_on:
       - dynamodb
       - localstack
@@ -387,6 +396,7 @@ services:
     build:
       context: ./
       dockerfile: service-pdf/docker/app/Dockerfile
+# Other containers are built with debug on. Lines could be put here to build pdf with debug, but not doing as default due to pdf being slow already
     environment:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
 
