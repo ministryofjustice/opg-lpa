@@ -22,7 +22,7 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
-# enable debug if needed. Should only be used locally, and is set in docker-compose.yml
+# Enable debug if needed. Should only be used locally
 ARG ENABLE_XDEBUG=0
 RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
     pecl install xdebug ; \
@@ -35,7 +35,9 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
     echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
 fi
 
+# Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
+
 COPY service-front /app
 COPY shared/logging /shared/logging
 COPY --from=composer /app/vendor /app/vendor

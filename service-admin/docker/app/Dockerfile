@@ -12,15 +12,9 @@ RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
         && docker-php-ext-install intl \
-        && docker-php-ext-install bcmath \
-        && apk del .build-dependencies
+        && docker-php-ext-install bcmath 
 
-COPY shared/logging /shared/logging
-COPY service-admin /app
-COPY --from=composer /app/vendor /app/vendor
-COPY service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
-
+# Enable debug if needed. Should only be used locally
 ARG ENABLE_XDEBUG=0
 RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
       pecl install xdebug ; \
@@ -32,6 +26,15 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
       echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     fi ;
+
+# Clean up build dependencies, but only after everything else we need has been installed
+RUN apk del .build-dependencies
+
+COPY shared/logging /shared/logging
+COPY service-admin /app
+COPY --from=composer /app/vendor /app/vendor
+COPY service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 WORKDIR /app
 

@@ -12,10 +12,26 @@ RUN apk upgrade --available
 
 RUN apk update \
     && apk add --no-cache openjdk8-jre gcc make musl-dev pkgconfig bash\
-    && apk add --no-cache --update --virtual buildDeps autoconf \
-    && pecl install xdebug \
-    && pecl clear-cache \
-    && apk del buildDeps
+    && apk add --no-cache --update --virtual buildDeps autoconf 
+
+# Enable debug if needed. Should only be used locally.
+ARG ENABLE_XDEBUG=0
+RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
+    pecl install xdebug ; \
+    docker-php-ext-enable xdebug ; \
+    echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+fi
+
+# Clean up cache and build dependencies, but only after everything else we need has been installed
+RUN pecl clear-cache
+RUN apk del buildDeps
+RUN apk del .build-dependencies
+
 WORKDIR /usr/local/bin/
 # This is version 3.2.1 of this tool, we will need to check this regularly.
 # PDFTK does have a community based docker container, but the version is not up to date.
