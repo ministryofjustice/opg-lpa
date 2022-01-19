@@ -23,16 +23,9 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
 # Enable debug if needed. Should only be used locally
-ARG ENABLE_XDEBUG=0
-RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
-    pecl install xdebug ; \
-    docker-php-ext-enable xdebug ; \
-    echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-    echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-    echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-    echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-    echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-    echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+ARG INSTALL_XDEBUG=0
+RUN if [[ $INSTALL_XDEBUG = 1 ]] ; then \
+    pecl install xdebug; \
 fi
 
 # Clean up build dependencies, but only after everything else we need has been installed
@@ -46,4 +39,13 @@ COPY service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 WORKDIR /app
 
-CMD php-fpm
+# On startup, enable xdebug if required. Note this would require the container to have been built with INSTALL_DEBUG set
+CMD ([[ -z "${ENABLE_XDEBUG}" ]] || docker-php-ext-enable xdebug; \
+    echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+) \
+  && php-fpm
