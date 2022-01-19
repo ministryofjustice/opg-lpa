@@ -132,9 +132,9 @@ services:
     image: lpa-front-app
     build:
       context: ./
-# Build the container with debug on. This will run a lttle slower but debug will always be available
+# Install xdebug during container build. To use the debugger, ENABLE_DEBUG also must be set in the environment section below
       args:
-        ENABLE_XDEBUG: 1
+        INSTALL_XDEBUG: 1
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
 # to speed running, volumes are restricted to source code that may change while container is running
@@ -167,6 +167,8 @@ services:
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-front-app
+      # enable debug is recommended to default to on for front app because it is frequently useful to be able to debug the front-app 
+      ENABLE_XDEBUG: 'true'
 
       OPG_LPA_FRONT_EMAIL_TRANSPORT: notify
       OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY: "${OPG_LPA_API_NOTIFY_API_KEY}"
@@ -231,9 +233,9 @@ services:
     image: lpa-api-app
     build:
       context: ./
-# Build the container with debug on. This will run a lttle slower but debug will always be available
+# Install xdebug during container build. To use the debugger, ENABLE_DEBUG also must be set in the environment section below
       args:
-        ENABLE_XDEBUG: 1
+        INSTALL_XDEBUG: 1
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
 # to speed running, volumes are restricted to source code that may change while container is running
@@ -280,6 +282,8 @@ services:
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
+      # enable debug is recommended to default to off for api to avoid slowness. Turn this on if you ever need to debug the api
+      # ENABLE_XDEBUG: 'true'
 
   api-composer:
     image: composer:latest
@@ -318,9 +322,9 @@ services:
     build:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
-# Build the container with debug on. This will run a lttle slower but debug will always be available
+# Install xdebug during container build. To use the debugger, ENABLE_DEBUG also must be set in the environment section below
       args:
-        ENABLE_XDEBUG: 1
+        INSTALL_XDEBUG: 1
     volumes:
 # to speed running, volumes are restricted to source code that may change while container is running
       - ./service-admin/src:/app/src
@@ -349,6 +353,8 @@ services:
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-admin-app
+      # enable debug is recommended to default to off for admin app to avoid slowness, as admin is rarely debugged. Turn this on if you wish to debug the admin app
+      # ENABLE_XDEBUG: 'true'
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
   admin-composer:
