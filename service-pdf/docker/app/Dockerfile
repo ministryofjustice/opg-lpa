@@ -27,10 +27,8 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
     echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
 fi
 
-# Clean up cache and build dependencies, but only after everything else we need has been installed
-RUN pecl clear-cache
+# Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del buildDeps
-RUN apk del .build-dependencies
 
 WORKDIR /usr/local/bin/
 # This is version 3.2.1 of this tool, we will need to check this regularly.
