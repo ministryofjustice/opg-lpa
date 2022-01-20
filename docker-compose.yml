@@ -231,9 +231,9 @@ services:
     image: lpa-api-app
     build:
       context: ./
-# Build the container with debug on. This will run a lttle slower but debug will always be available
+# Enable debug is recommended to default to off for api to avoid slowness. Turn this on if you ever need to debug the api
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: 0
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
 # to speed running, volumes are restricted to source code that may change while container is running
@@ -318,9 +318,9 @@ services:
     build:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
-# Build the container with debug on. This will run a lttle slower but debug will always be available
+# enable debug is recommended to default to off for admin app to avoid slowness, as admin is rarely debugged. Turn this on if you wish to debug the admin app
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: 0
     volumes:
 # to speed running, volumes are restricted to source code that may change while container is running
       - ./service-admin/src:/app/src
