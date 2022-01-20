@@ -132,9 +132,9 @@ services:
     image: lpa-front-app
     build:
       context: ./
-# Build the container with debug on. This will run a lttle slower but debug will always be available
+# Ideally, debug would always be enabled for front-app, as we often want to debug it. In practice, this still runs too slowly so we leave it off as default
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: 0
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
 # to speed running, volumes are restricted to source code that may change while container is running
