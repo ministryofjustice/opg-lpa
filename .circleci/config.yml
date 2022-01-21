@@ -1135,7 +1135,7 @@ orbs:
           - run:
               name: Run seeding ecs task
               command: |
-                python scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
+                python3 scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
 
       run_healthcheck_test:
         #
