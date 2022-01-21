@@ -126,7 +126,6 @@ class ECRScanChecker:
             report = ''
             try:
                 findings = self.list_findings(image,tag,push_date,self.aws_account_id,report_limit)
-                print(json.dumps(findings, indent=4, sort_keys=True, default=str))
                 if findings['findings'] != []:
                     title_info = {
                         'image': image,
