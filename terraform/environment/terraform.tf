@@ -7,6 +7,22 @@ terraform {
     role_arn       = "arn:aws:iam::311462405659:role/opg-lpa-ci"
     dynamodb_table = "remote_lock"
   }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
+    }
+    pagerduty = {
+      source  = "PagerDuty/pagerduty"
+      version = "~> 2.0"
+    }
+  }
+
+  required_version = ">= 1.1.2"
 }
 
 provider "aws" {
@@ -14,7 +30,19 @@ provider "aws" {
   assume_role {
     role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
+
   }
+
+}
+
+provider "aws" {
+  region = "eu-west-2"
+  alias  = "eu_west_2"
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
+    session_name = "terraform-session"
+  }
+
 }
 
 provider "aws" {
@@ -24,14 +52,7 @@ provider "aws" {
     role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
-}
 
-variable "default_role" {
-  default = "opg-lpa-ci"
-}
-
-variable "management_role" {
-  default = "opg-lpa-ci"
 }
 
 provider "aws" {
@@ -43,16 +64,9 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  region = "eu-west-1"
-  alias  = "legacy-lpa"
-  assume_role {
-    role_arn     = "arn:aws:iam::550790013665:role/${var.default_role}"
-    session_name = "terraform-session"
-  }
-}
-
-
 provider "pagerduty" {
   token = var.pagerduty_token
 }
+
+
+data "aws_region" "current" {}
