@@ -183,6 +183,7 @@ pr_build: &pr_build
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build,
+            dev_environment_apply_terraform
           ]
 
     - infrastructure_and_deployment/seed_environment_databases:
