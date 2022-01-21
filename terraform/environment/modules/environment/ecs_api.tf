@@ -5,7 +5,7 @@ resource "aws_ecs_service" "api" {
   name                  = "api"
   cluster               = aws_ecs_cluster.online-lpa.id
   task_definition       = aws_ecs_task_definition.api.arn
-  desired_count         = local.account.autoscaling.api.minimum
+  desired_count         = var.account.autoscaling.api.minimum
   launch_type           = "FARGATE"
   platform_version      = "1.3.0"
   propagate_tags        = "TASK_DEFINITION"
@@ -22,7 +22,7 @@ resource "aws_ecs_service" "api" {
   service_registries {
     registry_arn = aws_service_discovery_service.api.arn
   }
-  tags = merge(local.default_tags, local.api_component_tag)
+  tags = merge(local.default_opg_tags, local.api_component_tag)
 }
 
 //-----------------------------------------------
@@ -58,7 +58,7 @@ locals {
 resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_tags, local.api_component_tag)
+  tags        = merge(local.default_opg_tags, local.api_component_tag)
 }
 
 //----------------------------------
@@ -110,7 +110,7 @@ resource "aws_ecs_task_definition" "api" {
   container_definitions    = local.api_container_definitions
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_tags, local.api_component_tag)
+  tags                     = merge(local.default_opg_tags, local.api_component_tag)
 }
 
 
@@ -118,13 +118,13 @@ resource "aws_ecs_task_definition" "api" {
 // Permissions
 
 resource "aws_iam_role" "api_task_role" {
-  name               = "${local.environment}-api-task-role"
+  name               = "${var.environment_name}-api-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = merge(local.default_tags, local.api_component_tag)
+  tags               = merge(local.default_opg_tags, local.api_component_tag)
 }
 
 resource "aws_iam_role_policy" "api_permissions_role" {
-  name   = "${local.environment}-apiApplicationPermissions"
+  name   = "${var.environment_name}-apiApplicationPermissions"
   policy = data.aws_iam_policy_document.api_permissions_role.json
   role   = aws_iam_role.api_task_role.id
 }
@@ -170,7 +170,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
 
     resources = [
-      local.account.sirius_api_gateway_arn,
+      var.account.sirius_api_gateway_arn,
     ]
   }
   statement {
@@ -245,8 +245,8 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${local.region_name}",
-          "awslogs-stream-prefix" : "${local.environment}.api-web.online-lpa"
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment_name}.api-web.online-lpa"
         }
       },
       "environment" : [
@@ -277,8 +277,8 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${local.region_name}",
-          "awslogs-stream-prefix" : "${local.environment}.api-app.online-lpa"
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment_name}.api-app.online-lpa"
         }
       },
       "secrets" : [
@@ -289,18 +289,18 @@ locals {
         { "name" : "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
       ],
       "environment" : [
-        { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "api api-${local.environment}.${local.account_name} localhost 127.0.0.1" },
+        { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
         { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : local.db.endpoint },
         { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(local.db.port) },
         { "name" : "OPG_LPA_POSTGRES_NAME", "value" : local.db.name },
         { "name" : "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value" : local.sirius_api_gateway },
         { "name" : "OPG_LPA_API_TRACK_FROM_DATE", "value" : local.track_from_date },
         { "name" : "OPG_LPA_SEED_DATA", "value" : "true" },
-        { "name" : "OPG_LPA_STACK_NAME", "value" : local.environment },
+        { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
-        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : local.account_name },
+        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
         { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
-        { "name" : "OPG_LPA_AUTH_TOKEN_TTL", "value" : tostring(local.account.auth_token_ttl_secs) },
+        { "name" : "OPG_LPA_AUTH_TOKEN_TTL", "value" : tostring(var.account.auth_token_ttl_secs) },
         { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
         { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },
         { "name" : "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-sessions.name },
@@ -311,7 +311,7 @@ locals {
         { "name" : "OPG_NGINX_SSL_FORCE_REDIRECT", "value" : "TRUE" },
         { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
         { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
-        { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : "https://sqs.${local.region_name}.amazonaws.com/${local.account.account_id}/lpa-pdf-queue-${local.environment}.fifo" }
+        { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : "https://sqs.${var.region_name}.amazonaws.com/${var.account.account_id}/lpa-pdf-queue-${var.environment_name}.fifo" }
       ]
     }
   )
