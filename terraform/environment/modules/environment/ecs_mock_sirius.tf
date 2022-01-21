@@ -32,12 +32,12 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${local.region_name}",
-          "awslogs-stream-prefix" : "${local.environment}.mock-gateway.online-lpa"
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment}.mock-gateway.online-lpa"
         }
       }
       "environment" : [
-        { "name" : "OPG_LPA_STATUS_ENDPOINT", "value" : local.account.sirius_api_gateway_endpoint },
+        { "name" : "OPG_LPA_STATUS_ENDPOINT", "value" : var.account.sirius_api_gateway_endpoint },
         { "name" : "OPG_LPA_MOCK_SIRIUS_ADDRESS", "value" : "http://localhost:5011" }
       ]
     }
@@ -62,8 +62,8 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${local.region_name}",
-          "awslogs-stream-prefix" : "${local.environment}.mock-sirius.online-lpa"
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment}.mock-sirius.online-lpa"
         }
       }
     }
