@@ -122,12 +122,12 @@ class ECRScanChecker:
             print(image)
             try:
                 findings = self.list_findings(image,tag,push_date,self.aws_account_id,report_limit)
-                print(findings)
+                print(json.dumps(findings, indent=4, sort_keys=True, default=str))
                 if findings['findings'] != []:
-                    counts = findings['findingSeverityCounts']
+                    counts = len(findings)
+                    print(counts)
                     title_info = {
                         'image': image,
-                        'counts': counts,
                         'report_limit': report_limit
                     }
 
@@ -206,10 +206,9 @@ class ECRScanChecker:
 
     def summarise_finding(self, finding, tag, image):
         finding_result = {
-            'cve_tag': finding['name'],
+            'title': finding['title'],
             'emoji': self.get_severity_emoji(finding['severity']),
             'severity': finding['severity'],
-            'cve_link': finding['uri'],
             'image': image,
             'tag': tag
         }
