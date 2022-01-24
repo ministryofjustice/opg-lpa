@@ -17,7 +17,14 @@
     "type": "section",
     "text": {
         "type": "mrkdwn",
-        "text": "*CVE*: {{ item.cve_tag }}"
+        "text": "*Title*: {{ item.title }}"
+    }
+},
+{
+    "type": "section",
+    "text": {
+        "type": "mrkdwn",
+        "text": "*Type*: {{ item.type }}"
     }
 },
 {
@@ -26,14 +33,6 @@
         "type": "mrkdwn",
         "text": "*Description*:\n {{ item.description }}"
     }
-},
-{
-    "type": "section",
-    "text": {
-        "type": "mrkdwn",
-        "text": "*Link*: {{ item.cve_link }}"
-    }
-
 },
 {
     "type": "divider"
