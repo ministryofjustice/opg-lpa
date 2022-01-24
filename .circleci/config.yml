@@ -373,6 +373,7 @@ path_to_live: &path_to_live
             flask_docker_build,
             perfplat-lambda-docker-api-build,
             perfplat-lambda-docker-worker-build,
+            preprod_environment_apply_terraform
           ]
 
     - infrastructure_and_deployment/seed_environment_databases:
