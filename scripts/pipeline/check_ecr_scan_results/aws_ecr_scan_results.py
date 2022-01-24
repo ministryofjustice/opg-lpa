@@ -205,7 +205,8 @@ class ECRScanChecker:
             'emoji': self.get_severity_emoji(finding['severity']),
             'severity': finding['severity'],
             'image': image,
-            'tag': tag
+            'tag': tag,
+            'type' : finding['type']
         }
 
         finding_result['description'] = 'None'
