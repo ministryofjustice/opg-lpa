@@ -14,6 +14,7 @@
         "php": "^8.0",
         "aws/aws-sdk-php": "^3.204.5",
         "mikehaertl/php-pdftk": "0.2.1",
+        "mikehaertl/php-shellcommand": "1.6.4 as 1.0.2",
         "zendframework/zendpdf": "^2.0.2",
         "laminas/laminas-crypt": "^3.4.0",
         "laminas/laminas-filter": "^2.12.0",
