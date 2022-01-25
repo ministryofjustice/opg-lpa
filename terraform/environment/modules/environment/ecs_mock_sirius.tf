@@ -33,7 +33,7 @@ locals {
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
           "awslogs-region" : "${var.region_name}",
-          "awslogs-stream-prefix" : "${var.environment}.mock-gateway.online-lpa"
+          "awslogs-stream-prefix" : "${var.environment_name}.mock-gateway.online-lpa"
         }
       }
       "environment" : [
@@ -63,7 +63,7 @@ locals {
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
           "awslogs-region" : "${var.region_name}",
-          "awslogs-stream-prefix" : "${var.environment}.mock-sirius.online-lpa"
+          "awslogs-stream-prefix" : "${var.environment_name}.mock-sirius.online-lpa"
         }
       }
     }
