@@ -8,22 +8,6 @@
 {
     "type" : "section",
     "text" : {
-        "type" : "mrkdwn",
-        "text" : "*Counts by Severity:*"
-    }
-},
-{% for value in counts.items() %}
-{
-    "type" : "section",
-    "text" : {
-        "type" : "mrkdwn",
-        "text" : "Severity {{ key }}: *{{ value }}*"
-    }
-},
-{% endfor %}
-{
-    "type" : "section",
-    "text" : {
         "type" : "plain_text",
         "text" : "Displaying the first {{ report_limit }} findings:"
 
