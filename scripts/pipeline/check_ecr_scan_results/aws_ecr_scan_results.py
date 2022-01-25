@@ -114,23 +114,23 @@ class ECRScanChecker:
         push_date,
         report_limit,
         branch,
-        build_url
+        build_url,
+        slack_channel,
+        slack_token,
+        test_mode
         ):
         print('Checking ECR scan results...')
-        report = ''
+
         for image in repositories:
-            print(image)
+            print(f'image: {image}')
+            report = ''
             try:
                 findings = self.list_findings(image,tag,push_date,self.aws_account_id,report_limit)
-                print(findings)
                 if findings['findings'] != []:
-                    counts = findings['findingSeverityCounts']
                     title_info = {
                         'image': image,
-                        'counts': counts,
                         'report_limit': report_limit
                     }
-
 
                     report = self.render('header.j2', title_info)
                     finding_results = []
@@ -141,7 +141,8 @@ class ECRScanChecker:
                     report += self.render('finding.j2', {'results': finding_results})
                 else:
                     report += self.render('no_scan_results.j2', {'image': image})
-
+                report += self.write_build_details(branch,build_url)
+                self.post_to_slack(report,slack_channel,slack_token,test_mode)
             except self.aws_ecr_client.exceptions.ImageNotFoundException:
                 print(f'skipping finding check for image: {image} tag: {tag} - no image present')
                 continue
@@ -155,12 +156,6 @@ class ECRScanChecker:
                 print('trace:')
                 traceback.print_exc()
                 sys.exit(1)
-
-
-
-        report += self.write_build_details(branch,build_url)
-        return report
-
 
     def list_findings(self, repository_name, tag, push_date, aws_account_id, report_limit):
         date_start_inclusive = datetime.combine(
@@ -206,12 +201,12 @@ class ECRScanChecker:
 
     def summarise_finding(self, finding, tag, image):
         finding_result = {
-            'cve_tag': finding['name'],
+            'title': finding['title'],
             'emoji': self.get_severity_emoji(finding['severity']),
             'severity': finding['severity'],
-            'cve_link': finding['uri'],
             'image': image,
-            'tag': tag
+            'tag': tag,
+            'type' : finding['type']
         }
 
         finding_result['description'] = 'None'
@@ -268,7 +263,7 @@ def main():
                         action='store_true')
     parser.add_argument('--account_id',
                         default='311462405659',
-                        help='Optionally specify account for scan, defauts to the management account')
+                        help='Optionally specify account for scan, defaults to the management account')
     parser.add_argument('--branch',
                         default='N/A',
                         help='branch for build')
@@ -286,17 +281,17 @@ def main():
 
     repos_to_check = work.get_repositories(args.search)
 
-    report = work.generate_report(
+    work.generate_report(
         repos_to_check,
         args.tag,
         args.ecr_push_date,
         args.result_limit,
         args.branch,
-        args.build_url
+        args.build_url,
+        args.slack_channel,
+        args.slack_token,
+        args.test_mode
     )
-
-    work.post_to_slack(report,args.slack_channel,args.slack_token, args.test_mode)
-
 
 if __name__ == '__main__':
     main()
