@@ -1,8 +1,0 @@
-aws-vault exec identity -- terraform state mv -state=environment.tfstate -state-out=environment_module.tfstate "module.admin_ecs_autoscaling" "module.eu-west-1.module.admin_ecs_autoscaling"
-aws-vault exec identity -- terraform state mv -state=environment.tfstate -state-out=environment_module.tfstate "module.api_aurora[0]" "module.eu-west-1.module.api_aurora[0]"
-aws-vault exec identity -- terraform state mv -state=environment.tfstate -state-out=environment_module.tfstate "module.api_ecs_autoscaling" "module.eu-west-1.module.api_ecs_autoscaling"
-aws-vault exec identity -- terraform state mv -state=environment.tfstate -state-out=environment_module.tfstate "module.dev_weekdays[0]" "module.eu-west-1.module.dev_weekdays[0]"
-aws-vault exec identity -- terraform state mv -state=environment.tfstate -state-out=environment_module.tfstate "module.front_ecs_autoscaling" "module.eu-west-1.module.front_ecs_autoscaling"
-aws-vault exec identity -- terraform state mv -state=environment.tfstate -state-out=environment_module.tfstate "module.pdf_ecs_autoscaling" "module.eu-west-1.module.pdf_ecs_autoscaling"
-aws-vault exec identity -- terraform state mv -state=environment.tfstate -state-out=environment_module.tfstate "module.performance_platform_api[0]" "module.eu-west-1.module.performance_platform_api[0]"
-aws-vault exec identity -- terraform state mv -state=environment.tfstate -state-out=environment_module.tfstate "module.performance_platform_worker[0]" "module.eu-west-1.module.performance_platform_worker[0]"
