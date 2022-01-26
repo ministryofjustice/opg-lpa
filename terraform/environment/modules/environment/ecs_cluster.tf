@@ -117,7 +117,10 @@ data "aws_iam_policy_document" "execution_role" {
   statement {
     effect = "Allow"
 
-    resources = [data.aws_kms_alias.secrets_encryption_alias.target_key_arn]
+    resources = [
+      data.aws_kms_alias.secrets_encryption_alias.target_key_arn,
+      data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn
+      ]
 
     actions = [
       "kms:Decrypt",
