@@ -1,7 +1,7 @@
 @Admin
 Feature: Admin
 
-  I want to be able to visit the admin page and log in
+  I want to be able to visit the admin page and carry out admin functions
 
   @focus
   Scenario: Log in to admin, find users, search for deleted user
@@ -27,48 +27,79 @@ Feature: Admin
     Then deleted user is displayed with deletion date of "5th May 2021 at 12:21:20 pm"
 
   @focus
-  Scenario: Set and remove a system message on user facing site
+  Scenario: Set a system message 
     Given I visit the admin sign-in page
     And I log in to admin
     And I click "system-message-link"
     Then I am taken to the system message page
-
     # set message to display on front end
     When I type "Your pizza is burning" into "message"
     And I click "submit-button"
-    And I see "System message set" in the page text
+    Then I see "System message set" in the page text
 
-    # remove message to display on front end
-    Then I clear the value in "message"
-    And I click "submit-button"
-    And I see "System message removed" in the page text
+  @focus
+    # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
+  Scenario: System message should now be set on user-facing site. 
+    When I visit "/home"
+    Then I see "Your pizza is burning" in the page text
+    When I visit "/login"
+    Then I see "Your pizza is burning" in the page text
 
-  Scenario: Set and remove a system message on user facing site consecutively
+  @focus
+  Scenario: Remove system message 
     Given I visit the admin sign-in page
     And I log in to admin
     And I click "system-message-link"
-    Then I am taken to the system message page
+    # remove message to display on front end
+    When I clear the value in "message"
+    And I click "submit-button"
+    Then I see "System message removed" in the page text
 
+  @focus
+    # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
+  Scenario: System message should now be removed on user-facing site. 
+    When I visit "/home"
+    Then I do not see "Your pizza is burning" in the page text
+    When I visit "/login"
+    Then I do not see "Your pizza is burning" in the page text
+
+  @focus
+  Scenario: Set and remove a system message consecutively i:e having previously set and removed it, we do this again to ensure it still works
+    Given I visit the admin sign-in page
+    And I log in to admin
+    And I click "system-message-link"
     # set message to display on front end
     When I type "Your pizza is burning" into "message"
     And I click "submit-button"
-    And I see "System message set" in the page text
+    Then I see "System message set" in the page text
 
+  @focus
+    # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
+  Scenario: System message should now be set on user-facing site. 
+    When I visit "/home"
+    Then I see "Your pizza is burning" in the page text
+    When I visit "/login"
+    Then I see "Your pizza is burning" in the page text
+
+  @focus
+  Scenario: Remove second system message 
+    Given I visit the admin sign-in page
+    And I log in to admin
+    And I click "system-message-link"
     # remove message to display on front end
-    Then I clear the value in "message"
+    When I clear the value in "message"
     And I click "submit-button"
-    And I see "System message removed" in the page text
+    Then I see "System message removed" in the page text
 
-    # set message to display on front end
-    When I type "Your pizza is burning" into "message"
-    And I click "submit-button"
-    And I see "System message set" in the page text
+  @focus
+    # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
+  Scenario: System message should now be removed on user-facing site. 
+    When I visit "/home"
+    Then I do not see "Your pizza is burning" in the page text
+    When I visit "/login"
+    Then I do not see "Your pizza is burning" in the page text
 
-    # remove message to display on front end
-    Then I clear the value in "message"
-    And I click "submit-button"
-    And I see "System message removed" in the page text
-
+  @focus
   Scenario: Try to set empty message on system message
     Given I visit the admin sign-in page
     And I log in to admin
