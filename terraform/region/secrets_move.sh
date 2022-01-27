@@ -1,0 +1,14 @@
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.api_rds_password  aws_secretsmanager_secret.api_rds_password
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.api_rds_username aws_secretsmanager_secret.api_rds_username
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret aws_secretsmanager_secret.opg_lpa_admin_jwt_secret
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_api_notify_api_key aws_secretsmanager_secret.opg_lpa_api_notify_api_key
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_common_admin_accounts aws_secretsmanager_secret.opg_lpa_common_admin_accounts
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_front_csrf_salt aws_secretsmanager_secret.opg_lpa_front_csrf_salt
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_api_key aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_api_key
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_webhook_token aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_webhook_token
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key aws_secretsmanager_secret.opg_lpa_front_gov_pay_key
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.opg_lpa_pdf_owner_password aws_secretsmanager_secret.opg_lpa_pdf_owner_password
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.performance_platform_db_password aws_secretsmanager_secret.performance_platform_db_password
+  aws-vault exec identity -- terraform state mv module.eu-west-1.aws_secretsmanager_secret.performance_platform_db_username aws_secretsmanager_secret.performance_platform_db_username
