@@ -1,19 +1,39 @@
-FROM stoplight/prism:4
+FROM alpine as base
 
-RUN apk add python3 py3-pip
+RUN apk add --no-cache \
+      nodejs \
+      npm \
+      python3 \
+      py3-pip
 
-COPY /service-gateway-mock/scripts /service-gateway-mock/swagger-examples.yaml /service-gateway-mock/run.sh /app/
+WORKDIR /app
+COPY /service-gateway-mock/scripts ./scripts
+COPY /service-gateway-mock/swagger-examples.yaml ./swagger-examples.yaml
+COPY /service-gateway-mock/run.sh ./run.sh
+
+RUN npm install -g @stoplight/prism-cli
+
+FROM base as production
+COPY . .
+
+WORKDIR /app
+RUN addgroup -S node && adduser -S -g node node \
+    && mkdir -p /home/node/Downloads /app \
+    && chown -R node:node /home/node \
+    && chown -R node:node /app
+
+RUN npm install -g @stoplight/prism-cli
 
 # get the Sirius API gateway swagger file, add examples, make run script executable;
 # this removes the invalid ${allowed_roles} from lpa-openapi.yml which prevents
 # it being parsed as YAML
-RUN cd /app/ && \
-    wget https://raw.githubusercontent.com/ministryofjustice/opg-data-lpa/master/lambda_functions/v1/openapi/lpa-openapi.yml && \
+RUN wget https://raw.githubusercontent.com/ministryofjustice/opg-data-lpa/master/lambda_functions/v1/openapi/lpa-openapi.yml && \
     sed -i -e 's|${allowed_roles}||' lpa-openapi.yml && \
     pip3 install --upgrade pip && \
-    pip3 install -r requirements.txt && \
-    python3 merge_yaml.py lpa-openapi.yml swagger-examples.yaml > swagger.yaml && \
+    pip3 install -r ./scripts/requirements.txt && \
+    python3 ./scripts/merge_yaml.py lpa-openapi.yml swagger-examples.yaml > swagger.yaml && \
     chmod +x run.sh
 
+USER node
 # starts the mock server on port 5011
 ENTRYPOINT ["/app/run.sh"]
