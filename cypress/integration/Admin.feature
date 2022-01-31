@@ -44,6 +44,8 @@ Feature: Admin
     Then I see "Your pizza is burning" in the page text
     When I visit "/login"
     Then I see "Your pizza is burning" in the page text
+    When I visit "/signup"
+    Then I see "Your pizza is burning" in the page text
 
   @focus
   Scenario: Remove system message 
@@ -61,6 +63,8 @@ Feature: Admin
     When I visit "/home"
     Then I do not see "Your pizza is burning" in the page text
     When I visit "/login"
+    Then I do not see "Your pizza is burning" in the page text
+    When I visit "/signup"
     Then I do not see "Your pizza is burning" in the page text
 
   @focus
@@ -80,6 +84,8 @@ Feature: Admin
     Then I see "Your pizza is burning" in the page text
     When I visit "/login"
     Then I see "Your pizza is burning" in the page text
+    When I visit "/signup"
+    Then I see "Your pizza is burning" in the page text
 
   @focus
   Scenario: Remove second system message 
@@ -97,6 +103,8 @@ Feature: Admin
     When I visit "/home"
     Then I do not see "Your pizza is burning" in the page text
     When I visit "/login"
+    Then I do not see "Your pizza is burning" in the page text
+    When I visit "/signup"
     Then I do not see "Your pizza is burning" in the page text
 
   @focus
