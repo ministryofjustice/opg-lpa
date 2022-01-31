@@ -28,7 +28,7 @@
         "laminas/laminas-mvc": "^3.1.1",
         "laminas/laminas-authentication": "^2.7",
         "laminas/laminas-cache": "2.9.0",
-        "laminas/laminas-form": "^2.14",
+        "laminas/laminas-form": "^3.1",
         "laminas/laminas-session": "^2.9.3",
         "laminas/laminas-math": "^3.2.0",
         "laminas/laminas-crypt": "^3.3.1",
