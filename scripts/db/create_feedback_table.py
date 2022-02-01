@@ -1,8 +1,6 @@
 from sqlalchemy import *
 import os
-  #OPG_LPA_POSTGRES_HOSTNAME: "postgres"
-# TODO env vars specified in docker-compose, for this, and those should also be in CI
-pgConnectionString = 'postgresql+psycopg2://' + os.getenv('OPG_LPA_POSTGRES_USERNAME') + ':' + os.getenv('OPG_LPA_POSTGRES_PASSWORD') + '@localhost/' + os.getenv('OPG_LPA_POSTGRES_NAME')
+pgConnectionString = 'postgresql+psycopg2://' + os.getenv('OPG_LPA_POSTGRES_USERNAME') + ':' + os.getenv('OPG_LPA_POSTGRES_PASSWORD') + '@' + os.getenv('OPG_LPA_POSTGRES_HOSTNAME') + '/' + os.getenv('OPG_LPA_POSTGRES_NAME')
       
 engine = create_engine(pgConnectionString)
 #engine = create_engine('postgresql+psycopg2://lpauser:lpapass@localhost/lpadb')
@@ -28,9 +26,9 @@ def show_perf_feedback_table_details():
 #print(inspector.get_table_names())
 
 if inspector.has_table('perf_feedback'):
-  print('perf_feedback already exists')
+  print('perf_feedback table already exists')
 else:
   create_perf_feedback_table()
 
-print('perf_feedback contains:')
+print('perf_feedback table contains:')
 show_perf_feedback_table_details()
