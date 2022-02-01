@@ -1,4 +1,4 @@
 FROM nginx:stable-alpine
 COPY gateway-nginx.conf.template /nginx.conf.template
 
-CMD envsubst '${OPG_LPA_STATUS_ENDPOINT}, ${OPG_LPA_MOCK_SIRIUS_ADDRESS}' < /nginx.conf.template > /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"
+CMD envsubst '${OPG_LPA_STATUS_ENDPOINT} ${OPG_LPA_MOCK_SIRIUS_ADDRESS}' < /nginx.conf.template > /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"
