@@ -1,7 +1,5 @@
 FROM python:3.8-alpine
 
-RUN apk update && apk add postgresql-dev 
-
 RUN pip install awscli psycopg2-binary sqlalchemy
 
 ENV WAITFORIT_VERSION="v2.4.1"
