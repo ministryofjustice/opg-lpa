@@ -94,6 +94,11 @@ services:
 
       OPG_LPA_COMMON_LAMBDA_ENDPOINT: localstack:4566
       FRONT_DOMAIN: localhost:7002
+      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
+      OPG_LPA_POSTGRES_PORT: "5432"
+      OPG_LPA_POSTGRES_NAME: "lpadb"
+      OPG_LPA_POSTGRES_USERNAME: "lpauser"
+      OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
   # ---------------------------
   # Front
