@@ -35,7 +35,7 @@ locals {
           "awslogs-region" : "${var.region_name}",
           "awslogs-stream-prefix" : "${var.environment_name}.mock-gateway.online-lpa"
         }
-      }
+      },
       "environment" : [
         { "name" : "OPG_LPA_STATUS_ENDPOINT", "value" : var.account.sirius_api_gateway_endpoint },
         { "name" : "OPG_LPA_MOCK_SIRIUS_ADDRESS", "value" : "http://127.0.0.1:5011" }
