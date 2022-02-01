@@ -72,14 +72,15 @@ services:
   local-config:
     container_name: lpa-local-config
     build:
-      context: ./local-config/
-      dockerfile: ./Dockerfile
+      context: ./
+      dockerfile: ./local-config/Dockerfile
     depends_on:
       - dynamodb
       - postgres
       - localstack
     volumes:
       - ./local-config/:/app/
+      - ./scripts/db/:/app/db
     environment:
       AWS_ACCESS_KEY_ID: "-"
       AWS_SECRET_ACCESS_KEY: "-"
