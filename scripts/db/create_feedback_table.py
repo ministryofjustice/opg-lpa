@@ -1,9 +1,9 @@
 from sqlalchemy import *
 import os
-pgConnectionString = 'postgresql+psycopg2://' + os.getenv('OPG_LPA_POSTGRES_USERNAME') + ':' + os.getenv('OPG_LPA_POSTGRES_PASSWORD') + '@' + os.getenv('OPG_LPA_POSTGRES_HOSTNAME') + '/' + os.getenv('OPG_LPA_POSTGRES_NAME')
+pgConnStringTemplate = 'postgresql+psycopg2://{username}:{password}@{hostname}/{dbname}'
+pgConnectionString = pgConnStringTemplate.format(username = os.getenv('OPG_LPA_POSTGRES_USERNAME') , password = os.getenv('OPG_LPA_POSTGRES_PASSWORD') , hostname = os.getenv('OPG_LPA_POSTGRES_HOSTNAME') , dbname = os.getenv('OPG_LPA_POSTGRES_NAME'))
       
 engine = create_engine(pgConnectionString)
-#engine = create_engine('postgresql+psycopg2://lpauser:lpapass@localhost/lpadb')
 metadata = MetaData()
 conn = engine.connect()
 inspector = inspect(conn)
