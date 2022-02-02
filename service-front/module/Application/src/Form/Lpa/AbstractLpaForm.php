@@ -69,7 +69,7 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
      *
      * @see \Laminas\Form\Form::isValid()
      */
-    public function isValid()
+    public function isValid(): bool
     {
         $result = parent::isValid();
 

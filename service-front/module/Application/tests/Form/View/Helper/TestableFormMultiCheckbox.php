@@ -15,4 +15,9 @@ class TestableFormMultiCheckbox extends FormMultiCheckbox
     ): string {
         return $this->renderOptions($element, $options, $selectedOptions, $attributes);
     }
+
+    public function setViewForTesting()
+    {
+        $this->view = "Set To Something Non-Null To Allow Unit Testing";
+    }
 }
