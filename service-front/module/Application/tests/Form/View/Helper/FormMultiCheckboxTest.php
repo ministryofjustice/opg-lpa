@@ -18,8 +18,10 @@ class FormMultiCheckboxTest extends TestCase
         ];
 
         $checkbox = new MultiCheckbox();
+        $checkbox->setValueOptions($options);
 
         $helper = new TestableFormMultiCheckbox();
+        $helper->setViewForTesting();
 
         $html = $helper->callRenderOptions($checkbox, $options, [0], []);
 
@@ -59,7 +61,9 @@ class FormMultiCheckboxTest extends TestCase
         ];
 
         $checkbox = new MultiCheckbox();
+        $checkbox->setValueOptions($options);
         $helper = new TestableFormMultiCheckbox();
+        $helper->setViewForTesting();
 
         $html = $helper->callRenderOptions($checkbox, $options, [0], []);
 
