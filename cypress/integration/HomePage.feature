@@ -43,7 +43,8 @@ Feature: Homepage
     Given I visit "/home"
     Then I can navigate through "details" elements using the tab key
 
-  @focus
+    # temporarily disabled due to cypress issue.
+    #@focus
   Scenario: Sufficient contrast on home page elements (LPAL-256)
     Given I visit "/home"
     When I wait for focus on "guidance-to-making-an-lpa-link"
