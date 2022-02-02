@@ -67,5 +67,3 @@ aws sqs create-queue \
 --attributes="${ATTR}" \
 --region=${DEFAULT_REGION} \
 --endpoint=http://${OPG_LPA_COMMON_SQS_ENDPOINT}
-
-python db/create_feedback_table.py
