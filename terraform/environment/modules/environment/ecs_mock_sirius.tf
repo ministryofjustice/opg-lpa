@@ -47,7 +47,7 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      "image" : "${data.aws_ecr_repository.lpa_api_mock_gateway.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_api_mock_sirius.repository_url}:${var.container_version}",
       "mountPoints" : [],
       "name" : "mocksirius",
       "portMappings" : [
