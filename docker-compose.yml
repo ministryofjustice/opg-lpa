@@ -450,6 +450,27 @@ services:
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
   # ---------------------------
+  # Create PerfPlat table
+  create-perfplat-table:
+    container_name: create-perfplat-table
+    image: create-perfplat-table
+    build:
+      context: ./
+      dockerfile: service-create-perfplat-table/docker/app/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      OPG_LPA_STACK_NAME: "local"
+      OPG_LPA_STACK_ENVIRONMENT: "dev"
+      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
+      OPG_LPA_POSTGRES_PORT: "5432"
+      OPG_LPA_POSTGRES_NAME: "lpadb"
+      OPG_LPA_POSTGRES_USERNAME: "lpauser"
+      OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+      OPG_LPA_POSTGRES_APIV2_USERNAME: "v2user"
+      OPG_LPA_POSTGRES_APIV2_PASSWORD: "v2pass"
+
+  # ---------------------------
   # Sirius gateway mock
   gateway:
     container_name: gateway

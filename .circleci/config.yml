@@ -191,23 +191,28 @@ pr_build: &pr_build
         filters: { branches: { ignore: [main] } }
         requires: [dev_environment_apply_terraform]
 
+    - infrastructure_and_deployment/create_perfplat_table:
+        name: dev_create_perfplat_table
+        filters: { branches: { ignore: [main] } }
+        requires: [dev_environment_apply_terraform]
+
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedpf
         cypress_tags: "@StitchedPF"
         filters: { branches: { ignore: [main] } }
-        requires: [dev_seed_environment_databases]
+        requires: [dev_seed_environment_databases, dev_create_perfplat_table]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedpfclone
         cypress_tags: "@StitchedClone"
         filters: { branches: { ignore: [main] } }
-        requires: [dev_seed_environment_databases]
+        requires: [dev_seed_environment_databases, dev_create_perfplat_table]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_stitchedhw
         cypress_tags: "@StitchedHW"
         filters: { branches: { ignore: [main] } }
-        requires: [dev_seed_environment_databases]
+        requires: [dev_seed_environment_databases, dev_create_perfplat_table]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_remaining_tests
@@ -215,17 +220,17 @@ pr_build: &pr_build
         # to run in CI.  CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run
         cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CorrespondentReuse"
         filters: { branches: { ignore: [main] } }
-        requires: [dev_seed_environment_databases]
+        requires: [dev_seed_environment_databases, dev_create_perfplat_table]
 
     - infrastructure_and_deployment/run_functional_test:
         name: run_functional_test
         filters: { branches: { ignore: [main] } }
-        requires: [dev_seed_environment_databases]
+        requires: [dev_seed_environment_databases, dev_create_perfplat_table]
 
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [main] } }
-        requires: [dev_seed_environment_databases]
+        requires: [dev_seed_environment_databases, dev_create_perfplat_table]
 
 path_to_live: &path_to_live
   jobs:
@@ -382,32 +387,38 @@ path_to_live: &path_to_live
         filters: { branches: { only: [main] } }
         requires: [preprod_environment_apply_terraform]
 
+    - infrastructure_and_deployment/create_perfplat_table:
+        name: preprod_create_perfplat_table
+        workspace: preproduction
+        filters: { branches: { only: [main] } }
+        requires: [preprod_environment_apply_terraform]
+
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_stitchedpf
         cypress_tags: "@StitchedPF"
         workspace: preproduction
         filters: { branches: { only: [main] } }
-        requires: [preprod_seed_environment_databases]
+        requires: [preprod_seed_environment_databases, preprod_create_perfplat_table]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_stitchedhw
         cypress_tags: "@StitchedHW"
         workspace: preproduction
         filters: { branches: { only: [main] } }
-        requires: [preprod_seed_environment_databases]
+        requires: [preprod_seed_environment_databases, preprod_create_perfplat_table]
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_remaining_tests
         cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CorrespondentReuse"
         workspace: preproduction
         filters: { branches: { only: [main] } }
-        requires: [preprod_seed_environment_databases]
+        requires: [preprod_seed_environment_databases, preprod_create_perfplat_table]
 
     - infrastructure_and_deployment/run_functional_test:
         name: preprod_test_functional
         workspace: preproduction
         filters: { branches: { only: [main] } }
-        requires: [preprod_seed_environment_databases]
+        requires: [preprod_seed_environment_databases, preprod_create_perfplat_table]
 
     - infrastructure_and_deployment/apply_account_terraform:
         name: prod_account_apply_terraform
@@ -1138,6 +1149,29 @@ orbs:
               name: Run seeding ecs task
               command: |
                 python3 scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
+
+      create_perfplat_table:
+        #
+        # Create the performance table for perf platform with associated postgres user
+        #
+        executor: python
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - attach_workspace:
+              at: /tmp
+          - run:
+              name: Install python dependencies
+              command: |
+                pip install -r scripts/pipeline/requirements.txt --user
+          - run:
+              name: Run create perfplat table ecs task
+              command: |
+                python3 scripts/pipeline/start_create_perfplat_table_task/ecs_start_create_perfplat_table_task.py
 
       run_healthcheck_test:
         #
