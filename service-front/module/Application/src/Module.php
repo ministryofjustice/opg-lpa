@@ -49,7 +49,7 @@ class Module implements FormElementProviderInterface
         register_shutdown_function(function () {
             $error = error_get_last();
 
-            if ($error['type'] === E_ERROR) {
+            if (($error['type'] ?? null) === E_ERROR) {
                 // This is a fatal error, we have no exception and no nice view to render
                 // The fatal error will have been logged already prior to writing this message
                 echo 'An unknown server error has occurred.';

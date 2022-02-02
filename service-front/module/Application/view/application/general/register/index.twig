@@ -69,6 +69,8 @@
     <p>If you already have a registered LPA and want to use it online, go to the <a href="https://www.gov.uk/use-lasting-power-of-attorney" data-journey-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.</p>
 </div>
 
+{{ systemMessage() }}
+
 {# begin form #}
 {{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}

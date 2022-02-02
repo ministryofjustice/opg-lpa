@@ -5,9 +5,17 @@ namespace ApplicationTest\Form\View\Helper;
 use Application\Form\View\Helper\FormRadio;
 use PHPUnit\Framework\TestCase;
 use Laminas\Form\Element\Radio;
+use Laminas\Form\Form;
 
 class FormRadioTest extends TestCase
 {
+    protected $form;
+
+    protected function setUp(): void
+    {
+        $this->form = new Form();
+    }
+
     public function testRender()
     {
         $options = [
@@ -23,6 +31,7 @@ class FormRadioTest extends TestCase
         $radio->setValueOptions($options);
 
         $helper = new FormRadio();
+        $helper->setViewForTesting();
 
         $html = $helper($radio);
 
@@ -71,6 +80,7 @@ class FormRadioTest extends TestCase
         $radio->setAttributes(['div-attributes' => ['class' => 'test_class']]);
 
         $helper = new FormRadio();
+        $helper->setViewForTesting();
 
         $html = $helper($radio);
 
@@ -133,6 +143,7 @@ class FormRadioTest extends TestCase
         $radio->setValueOptions($options);
 
         $helper = new FormRadio();
+        $helper->setViewForTesting();
 
         $html = $helper($radio);
 
@@ -170,6 +181,7 @@ class FormRadioTest extends TestCase
         $radio->setValueOptions($options);
 
         $helper = new FormRadio();
+        $helper->setViewForTesting();
 
         $html = $helper->outputOption($radio, 1);
 

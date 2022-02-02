@@ -77,7 +77,7 @@ class FormRadio extends LaminasFormRadioHelper
         array $options,
         array $selectedOptions,
         array $attributes
-    ) {
+    ): string {
         $escapeHtmlHelper = $this->getEscapeHtmlHelper();
         $labelHelper      = $this->getLabelHelper();
         $globalLabelAttributes = [];
@@ -201,5 +201,10 @@ class FormRadio extends LaminasFormRadioHelper
         }
 
         return implode($this->getSeparator(), $combinedMarkup);
+    }
+
+    public function setViewForTesting()
+    {
+        $this->view = "Set To Something Non-Null To Allow Unit Testing";
     }
 }

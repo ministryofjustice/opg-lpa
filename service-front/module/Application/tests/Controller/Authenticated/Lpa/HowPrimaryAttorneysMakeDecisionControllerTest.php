@@ -71,7 +71,7 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
         $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
 
         $this->setPostInvalid($this->form, $this->postData);
-        $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
+        $this->form->shouldReceive('setValidationGroup')->withArgs([['how']])->once();
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();
@@ -88,7 +88,7 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
         $response = new Response();
 
         $this->setPostValid($this->form, $this->postData);
-        $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
+        $this->form->shouldReceive('setValidationGroup')->withArgs([['how']])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/how-primary-attorneys-make-decision');
@@ -109,7 +109,7 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
         $postData['how'] = AbstractDecisions::LPA_DECISION_HOW_JOINTLY;
 
         $this->setPostValid($this->form, $postData);
-        $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
+        $this->form->shouldReceive('setValidationGroup')->withArgs([['how']])->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
             ->withArgs(function ($lpa, $primaryAttorneyDecisions) {
