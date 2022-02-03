@@ -121,7 +121,7 @@ class DynamoDbKeyValueStore
 
             $success = true;
 
-            return $result['Item']['value']['B'];
+            return $result['Item']['value']['B'] ?? null;
         } catch (Exception $e) {
             // Ignore exception
         }

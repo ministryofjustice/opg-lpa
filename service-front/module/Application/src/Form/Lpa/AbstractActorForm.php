@@ -103,18 +103,19 @@ abstract class AbstractActorForm extends AbstractLpaForm
     protected function convertFormDataForModel($formData)
     {
         //  If it exists transfer the dob array into a string
-        if (array_key_exists('dob-date', $formData) && is_array($formData['dob-date'])) {
-            $dobDateArr = $formData['dob-date'];
+        $formDataAsArray = (array) $formData;
+        if (array_key_exists('dob-date', $formDataAsArray) && is_array($formDataAsArray['dob-date'])) {
+            $dobDateArr = $formDataAsArray['dob-date'];
             $dobDateStr = null;
 
             if (!empty($dobDateArr['year']) && !empty($dobDateArr['month']) && !empty($dobDateArr['day'])) {
                 $dobDateStr = $dobDateArr['year'] . '-' . $dobDateArr['month'] . '-' . $dobDateArr['day'];
             }
 
-            $formData['dob-date'] = $dobDateStr;
+            $formDataAsArray['dob-date'] = $dobDateStr;
         }
 
-        $dataForModel = parent::convertFormDataForModel($formData);
+        $dataForModel = parent::convertFormDataForModel($formDataAsArray);
 
         if (isset($dataForModel['email']) && ($dataForModel['email']['address'] == "")) {
             $dataForModel['email'] = null;
