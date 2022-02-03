@@ -1,0 +1,97 @@
+//----------------------------------
+// The Api service's Security Groups
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
+resource "aws_security_group" "create_perfplat_table_ecs_service" {
+  name_prefix = "${terraform.workspace}-create_perfplat_table-ecs-service"
+  vpc_id      = data.aws_vpc.default.id
+  tags        = merge(local.default_opg_tags, local.create_perfplat_table_component_tag)
+}
+
+//----------------------------------
+// Anything out except production
+#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
+resource "aws_security_group_rule" "create_perfplat_table_ecs_service_egress" {
+  count     = var.environment_name == "production" ? 0 : 1
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
+  #tfsec:ignore:AWS007 - anything out
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.create_perfplat_table_ecs_service.id
+}
+
+//--------------------------------------
+// create_perfplat_table ECS Service Task level config
+
+resource "aws_ecs_task_definition" "create_perfplat_table" {
+  count                    = var.environment_name == "production" ? 0 : 1
+  family                   = "${terraform.workspace}-create_perfplat_table"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 2048
+  memory                   = 4096
+  container_definitions    = "[${local.create_perfplat_table_app}]"
+  task_role_arn            = aws_iam_role.create_perfplat_table_task_role[count.index].arn
+  execution_role_arn       = aws_iam_role.execution_role.arn
+  tags                     = merge(local.default_opg_tags, local.create_perfplat_table_component_tag)
+}
+
+
+//----------------
+// Permissions
+
+resource "aws_iam_role" "create_perfplat_table_task_role" {
+  count              = var.environment_name == "production" ? 0 : 1
+  name               = "${var.environment_name}-create_perfplat_table-task-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
+  tags               = merge(local.default_opg_tags, local.create_perfplat_table_component_tag)
+}
+
+data "aws_ecr_repository" "lpa_create_perfplat_table_app" {
+  provider = aws.management
+  name     = "online-lpa/create_perfplat_table_app"
+}
+
+//-----------------------------------------------
+// create_perfplat_table ECS Service Task Container level config
+
+locals {
+  create_perfplat_table_app = <<EOF
+  {
+    "cpu": 1,
+    "essential": true,
+    "image": "${data.aws_ecr_repository.lpa_create_perfplat_table_app.repository_url}:${var.container_version}",
+    "mountPoints": [],
+    "name": "app",
+    "portMappings": [
+        {
+            "containerPort": 9000,
+            "hostPort": 9000,
+            "protocol": "tcp"
+        }
+    ],
+    "volumesFrom": [],
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "${aws_cloudwatch_log_group.application_logs.name}",
+            "awslogs-region": "${var.region_name}",
+            "awslogs-stream-prefix": "${var.environment_name}.create_perfplat_table.online-lpa"
+        }
+    },
+    "secrets": [
+      { "name": "OPG_LPA_POSTGRES_USERNAME", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
+      { "name": "OPG_LPA_POSTGRES_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" }
+      { "name": "OPG_LPA_POSTGRES_APIV2_USERNAME", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.perfplat_api_rds_username.name}" },
+      { "name": "OPG_LPA_POSTGRES_APIV2_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.perfplat_api_rds_password.name}" }
+    ],
+    "environment": [
+      { "name": "OPG_LPA_POSTGRES_NAME", "value": "${local.db.name}"},
+      { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${local.db.endpoint}"},
+      { "name": "OPG_LPA_POSTGRES_PORT", "value": "${local.db.port}"},
+      { "name": "OPG_LPA_STACK_ENVIRONMENT", "value" : "${var.account_name}"}
+      ]
+    }
+  EOF
+}
