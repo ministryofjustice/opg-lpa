@@ -173,7 +173,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
-            create_perfplat_docker_build,
+            create_perfplat_table_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build
@@ -189,7 +189,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
-            create_perfplat_docker_build,
+            create_perfplat_table_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build,
