@@ -4,32 +4,36 @@ pgConnStringTemplate = 'postgresql+psycopg2://{username}:{password}@{hostname}/{
 pgConnectionString = pgConnStringTemplate.format(username = os.getenv('OPG_LPA_POSTGRES_USERNAME') , password = os.getenv('OPG_LPA_POSTGRES_PASSWORD') , hostname = os.getenv('OPG_LPA_POSTGRES_HOSTNAME') , dbname = os.getenv('OPG_LPA_POSTGRES_NAME'))
       
 engine = create_engine(pgConnectionString)
-conn = engine.connect()
-inspector = inspect(conn)
+v2user = os.getenv('OPG_LPA_POSTGRES_APIV2_USERNAME')
 
-def remove_apiv2_user():
-    sQL = "REVOKE ALL PRIVILEGES ON TABLE \"perf_feedback\" FROM v2user;"
-    engine.execute(sQL)
-    sQL = "DROP USER v2user"
-    engine.execute(sQL)
+def apiv2_user_exists():
+    sQL = "SELECT 1 FROM pg_roles WHERE ROLNAME = '{user}'".format(user = v2user)
+    rawConn = engine.raw_connection()
+    cur = rawConn.cursor()
+    cur.execute(sQL)
+    userCount = cur.rowcount 
+    cur.close()
+    return userCount > 0
 
 def create_apiv2_user():
-    # using OPG_LPA_POSTGRES_APIV2 blah, create the user if not already there
-    #sQL = "DO $$ begin if not exists (select from pg_roles where rolname = 'v2user') then CREATE USER v2user WITH PASSWORD 'v2pass'; end if; end $$ ;"
-    sQL = "CREATE USER v2user WITH PASSWORD 'v2pass'"
+    print("Creating {user} user.".format(user = v2user))
+    sQL = "CREATE USER {user} WITH PASSWORD '{password}'".format(user = v2user, password = os.getenv('OPG_LPA_POSTGRES_APIV2_PASSWORD'))
     engine.execute(sQL)
 
 def grant_privileges():
-    # grant privileges on perfplat table
-    sQL = "GRANT ALL PRIVILEGES ON TABLE \"perf_feedback\" TO v2user;"
+    sQL = "GRANT ALL PRIVILEGES ON TABLE \"perf_feedback\" TO {user};".format(user = v2user)
     engine.execute(sQL)
 
+conn = engine.connect()
+inspector = inspect(conn)
 if not inspector.has_table('perf_feedback'):
-  print('Cannot find perf_feedback table in db. Table needs to exist in order to grant privileges to user. Exiting ....')
-  exit()
+    print('Cannot find perf_feedback table in db. Table needs to exist in order to grant privileges to user. Exiting ....')
+    exit()
 else:
-  print('Found perf_feedback table')
+    print('Found perf_feedback table')
 
-remove_apiv2_user()
-create_apiv2_user()
-grant_privileges()
+if apiv2_user_exists():
+    print('apiv2 user already exists.')
+else:
+    create_apiv2_user()
+    grant_privileges()
