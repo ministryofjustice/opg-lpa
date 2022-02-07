@@ -23,11 +23,11 @@ map $request_uri $swagger_example {
     default         'NOTFOUND';
 }
 
-log_format proxy_pass '[$time_local] - "Proxy-pass"'
-                      '"$request" $status';
+log_format proxy_pass '[$time_local] - Proxy-pass -'
+                      '$request $status';
 
-log_format sirius_request '[$time_local] - "Sirius-request"'
-                          '"$request" $status';
+log_format sirius_request '[$time_local] - Sirius-request -'
+                          '$request $status';
 
 server {
     server_name gateway;
