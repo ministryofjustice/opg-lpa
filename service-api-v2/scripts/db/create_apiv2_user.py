@@ -1,13 +1,17 @@
 from sqlalchemy import *
 import os
-pgConnStringTemplate = 'postgresql+psycopg2://{username}:{password}@{hostname}/{dbname}'
-pgConnectionString = pgConnStringTemplate.format(username = os.getenv('OPG_LPA_POSTGRES_USERNAME') , password = os.getenv('OPG_LPA_POSTGRES_PASSWORD') , hostname = os.getenv('OPG_LPA_POSTGRES_HOSTNAME') , dbname = os.getenv('OPG_LPA_POSTGRES_NAME'))
+
+postgresUrl = 'postgresql+psycopg2://{}:{}@{}/{}'.format(
+        os.getenv('OPG_LPA_POSTGRES_USERNAME') , 
+        os.getenv('OPG_LPA_POSTGRES_PASSWORD') , 
+        os.getenv('OPG_LPA_POSTGRES_HOSTNAME') , 
+        os.getenv('OPG_LPA_POSTGRES_NAME'))
       
-engine = create_engine(pgConnectionString)
+engine = create_engine(postgresUrl)
 v2user = os.getenv('OPG_LPA_POSTGRES_APIV2_USERNAME')
 
 def apiv2_user_exists():
-    sQL = "SELECT 1 FROM pg_roles WHERE ROLNAME = '{user}'".format(user = v2user)
+    sQL = "SELECT 1 FROM pg_roles WHERE ROLNAME = '{}'".format(v2user)
     rawConn = engine.raw_connection()
     cur = rawConn.cursor()
     cur.execute(sQL)
@@ -16,12 +20,12 @@ def apiv2_user_exists():
     return userCount > 0
 
 def create_apiv2_user():
-    print("Creating {user} user.".format(user = v2user))
-    sQL = "CREATE USER {user} WITH PASSWORD '{password}'".format(user = v2user, password = os.getenv('OPG_LPA_POSTGRES_APIV2_PASSWORD'))
+    print("Creating {} user.".format(v2user))
+    sQL = "CREATE USER {} WITH PASSWORD '{}'".format(v2user, os.getenv('OPG_LPA_POSTGRES_APIV2_PASSWORD'))
     engine.execute(sQL)
 
 def grant_privileges():
-    sQL = "GRANT ALL PRIVILEGES ON TABLE \"perf_feedback\" TO {user};".format(user = v2user)
+    sQL = "GRANT ALL PRIVILEGES ON TABLE \"perf_feedback\" TO {};".format(v2user)
     engine.execute(sQL)
 
 conn = engine.connect()
