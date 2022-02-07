@@ -5,6 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
+# OPG specific .  os module needed to parse environment vars to get db connection string
+import os
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -56,6 +59,12 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
+    # OPG specific - get sqlalchemy url from environment vars
+    pgConnStringTemplate = 'postgresql+psycopg2://{username}:{password}@{hostname}/{dbname}'
+    postgresUrl = pgConnStringTemplate.format(username = os.getenv('OPG_LPA_POSTGRES_USERNAME') , password = os.getenv('OPG_LPA_POSTGRES_PASSWORD') , hostname = os.getenv('OPG_LPA_POSTGRES_HOSTNAME') , dbname = os.getenv('OPG_LPA_POSTGRES_NAME'))
+    config.set_main_option('sqlalchemy.url',postgresUrl)
+    # end of OPG specific code
+
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
