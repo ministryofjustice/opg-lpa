@@ -2,6 +2,10 @@
     "$schema": "https://raw.githubusercontent.com/ministryofjustice/opg-repository-reporting/main/schema/v0.0.1.json",
     "owners": ["make-an-lpa"],
     "dependencies": [
-        "https://github.com/ministryofjustice/opg-data-lpa"
+        "https://github.com/ministryofjustice/opg-data-lpa",
+        "https://github.com/ministryofjustice/opg-sirius",
+        "https://github.com/ministryofjustice/performance-data",
+        "https://github.com/ministryofjustice/opg-data",
+        "https://github.com/ministryofjustice/opg-pact-broker"
     ]
 } 
