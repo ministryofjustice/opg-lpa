@@ -4,12 +4,11 @@ RUN pip install awscli psycopg2-binary sqlalchemy alembic
 
 RUN alembic init alembic
 
-#RUN apk add --update --no-cache postgresql-client
-
-#RUN rm -rf /var/cache/apk/* /tmp/*
+COPY service-api-v2/ /app/
 
 COPY scripts/db /app
 
 WORKDIR /app
 
-CMD python create_feedback_table.py
+CMD alembic upgrade head
+#CMD alembic upgrade head && python create_feedback_table.py
