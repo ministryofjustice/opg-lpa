@@ -74,7 +74,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: An LPA which is received and is Pending displays as "Received" on its status page (LPAL-92)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "received" message link for LPA with ID "91155453023"
         Then I am taken to the detail page for LPA with ID "91155453023"
@@ -83,7 +83,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: A registered LPA with no dispatch date displays as "Checking" on its status page (LPAL-92)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "checking" message link for LPA with ID "68582508781"
         Then I am taken to the detail page for LPA with ID "68582508781"
@@ -92,7 +92,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: A registered and dispatched LPA displays as "Processed" with dispatch date + 15 working days on its status page (LPAL-92)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "processed" message link for LPA with ID "32004638272"
         Then I am taken to the detail page for LPA with ID "32004638272"
@@ -105,7 +105,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: A rejected LPA displays as "Processed" with rejection date + 15 working days on its status page (LPAL-92)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "processed" message link for LPA with ID "88668805824"
         Then I am taken to the detail page for LPA with ID "88668805824"
@@ -117,7 +117,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: A withdrawn LPA displays as "Processed" with withdrawn date + 15 working days on its status page (LPAL-92)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "processed" message link for LPA with ID "43476377885"
         Then I am taken to the detail page for LPA with ID "43476377885"
@@ -129,7 +129,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: An invalid LPA displays as "Processed" with invalid date + 15 working days on its status page (LPAL-92)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "processed" message link for LPA with ID "93348314693"
         Then I am taken to the detail page for LPA with ID "93348314693"
@@ -141,7 +141,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: An LPA which is received and is Payment Pending displays as "Received" on its status page (LPAL-543)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "received" message link for LPA with ID "48218451245"
         Then I am taken to the detail page for LPA with ID "48218451245"
@@ -150,7 +150,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: An LPA which is received and is Payment Pending displays as "Processed" on its status page (LPAL-549)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "processed" message link for LPA with ID "15527329531"
         Then I am taken to the detail page for LPA with ID "15527329531"
