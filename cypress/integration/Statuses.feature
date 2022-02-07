@@ -8,7 +8,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: I can see accurate statuses for my LPA applications on the dashboard (LPAL-92)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
 
         # The statuses tested here are seeded into the test database; their
         # Sirius statuses are then mocked via the swagger-example.yaml and
@@ -48,7 +48,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: The status message page for an LPA has the title "Status message" (LPAL-432)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "waiting" message link for LPA with ID "33718377316"
         And I am taken to the detail page for LPA with ID "33718377316"
@@ -56,7 +56,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: An LPA which has not been received yet displays as "Waiting" on its status page (LPAL-92)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "waiting" message link for LPA with ID "33718377316"
         Then I am taken to the detail page for LPA with ID "33718377316"
@@ -65,7 +65,7 @@ Feature: Status display for LPAs
 
     @focus
     Scenario: An LPA which is received and is Perfect displays as "Checking" on its status page (LPAL-92)
-        Given I log in as appropriate test user
+        Given I log in as seeded user
         When I am taken to the dashboard page
         And I click on the View "checking" message link for LPA with ID "54171193342"
         Then I am taken to the detail page for LPA with ID "54171193342"
