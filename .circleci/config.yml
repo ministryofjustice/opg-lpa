@@ -52,6 +52,14 @@ pr_build: &pr_build
         unit_test: false
         filters: { branches: { ignore: [main] } }
 
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: create_perfplat_table_docker_build
+        ecr_repository_name_prefix: online-lpa/create_perfplat_table
+        service_path: service-create-perfplat-table
+        build_web: false
+        unit_test: false
+        filters: { branches: { ignore: [main] } }
+
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-worker-build
         lambda_name: perfplat-worker
@@ -165,6 +173,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            create_perfplat_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build
@@ -180,6 +189,7 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            create_perfplat_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
             perfplat-lambda-docker-api-build,
@@ -273,13 +283,20 @@ path_to_live: &path_to_live
         filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: create_perfplat_table_docker_build
+        ecr_repository_name_prefix: online-lpa/create_perfplat_table
+        service_path: service-create-perfplat-table
+        build_web: false
+        unit_test: false
+        filters: { branches: { only: [main] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: flask_docker_build
         ecr_repository_name_prefix: online-lpa/front_v2
         service_path: service-front-v2
         build_web: false
         unit_test: false
         filters: { branches: { only: [main] } }
-
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-worker-build
