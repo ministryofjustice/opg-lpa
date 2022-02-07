@@ -1,6 +1,8 @@
 FROM python:3.8-alpine
 
-RUN pip install awscli psycopg2-binary sqlalchemy
+RUN pip install awscli psycopg2-binary sqlalchemy alembic
+
+RUN alembic init alembic
 
 #RUN apk add --update --no-cache postgresql-client
 
