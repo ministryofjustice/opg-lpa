@@ -11,7 +11,7 @@ engine = create_engine(postgresUrl)
 v2user = os.getenv('OPG_LPA_POSTGRES_APIV2_USERNAME')
 
 def apiv2_user_exists():
-    sQL = "SELECT 1 FROM pg_roles WHERE ROLNAME = '{}'".format(v2user)
+    sQL = f"SELECT 1 FROM pg_roles WHERE ROLNAME = '{v2user}'"
     rawConn = engine.raw_connection()
     cur = rawConn.cursor()
     cur.execute(sQL)
@@ -20,12 +20,12 @@ def apiv2_user_exists():
     return userCount > 0
 
 def create_apiv2_user():
-    print("Creating {} user.".format(v2user))
-    sQL = "CREATE USER {} WITH PASSWORD '{}'".format(v2user, os.getenv('OPG_LPA_POSTGRES_APIV2_PASSWORD'))
+    print(f"Creating {v2user} user.")
+    sQL = f"CREATE USER {v2user} WITH PASSWORD '{os.getenv('OPG_LPA_POSTGRES_APIV2_PASSWORD')}'"
     engine.execute(sQL)
 
 def grant_privileges():
-    sQL = "GRANT ALL PRIVILEGES ON TABLE \"perf_feedback\" TO {};".format(v2user)
+    sQL = f"GRANT ALL PRIVILEGES ON TABLE \"perf_feedback\" TO {v2user};"
     engine.execute(sQL)
 
 conn = engine.connect()
