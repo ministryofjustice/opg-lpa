@@ -192,7 +192,7 @@ class ECSMonitor:
 
 def main():
     parser = argparse.ArgumentParser(
-        description=f"Start the {self.taskName} task for the Make an LPA database")
+        description=f"Start the seeding task for the Make an LPA database")
 
     parser.add_argument("config_file_path", nargs='?', default="/tmp/environment_pipeline_tasks_config.json", type=str,
                         help="Path to config file produced by terraform")
