@@ -8,16 +8,6 @@ metadata = MetaData()
 conn = engine.connect()
 inspector = inspect(conn)
 
-def create_perf_feedback_table():
-    print('creating perf feedback table.')
-    feedback = Table('perf_feedback', metadata,
-        Column('id', Integer, primary_key=True),
-        Column('rating', String(2), nullable=False), # up to 2-letter acronynm , VS = very satisfied , etc
-        Column('comment', String(1200), nullable=False),
-        Column('datetime', DateTime(), nullable=False),
-    )
-    feedback.create(engine)
-
 def show_perf_feedback_table_details():
   columns = inspector.get_columns('perf_feedback')
   for column in columns:
@@ -31,8 +21,8 @@ def create_apiv2_user():
 
 if inspector.has_table('perf_feedback'):
   print('perf_feedback table already exists')
+  print('perf_feedback table contains:')
+  show_perf_feedback_table_details()
 else:
-  create_perf_feedback_table()
+  print('perf_feedback table not there ')
 
-print('perf_feedback table contains:')
-show_perf_feedback_table_details()

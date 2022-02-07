@@ -6,9 +6,6 @@ RUN alembic init alembic
 
 COPY service-api-v2/ /app/
 
-COPY scripts/db /app
-
 WORKDIR /app
 
-CMD alembic upgrade head
-#CMD alembic upgrade head && python create_feedback_table.py
+CMD alembic upgrade head && python scripts/db/create_apiv2_user.py
