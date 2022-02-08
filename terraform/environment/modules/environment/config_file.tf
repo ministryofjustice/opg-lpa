@@ -15,6 +15,6 @@ locals {
     tag                         = var.container_version
     db_client_security_group_id = aws_security_group.rds-client.id
     seeding_security_group_id   = aws_security_group.seeding_ecs_service.id
-    create_perfplat_table_security_group_id   = aws_security_group.create_perfplat_table__ecs_service.id
+    create_perfplat_table_security_group_id   = aws_security_group.create_perfplat_table_ecs_service.id
   }
 }
