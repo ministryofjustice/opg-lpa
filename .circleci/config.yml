@@ -1188,7 +1188,7 @@ orbs:
           - run:
               name: Run create perfplat table ecs task
               command: |
-                python3 -m venv venv
+                python3 -m venv venv --system-site-packages
                 . venv/bin/activate
                 pip install -e scripts/pipeline/lib
                 python3 scripts/pipeline/start_create_perfplat_table_task/ecs_start_create_perfplat_table_task.py
