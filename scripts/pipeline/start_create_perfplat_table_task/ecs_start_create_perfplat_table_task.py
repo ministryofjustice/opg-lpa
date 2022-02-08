@@ -1,4 +1,26 @@
+import argparse
+import sys
 from ECSMonitor import *
-# dummy script to start with while getting this running in CI
-print("%%%%%%%%%%%%%%%%% running create perfplat table script %%%%%%%%%%%%%")
-printSomething()
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=f"Start the create feedback table task for the Make an LPA database")
+
+    parser.add_argument("config_file_path", nargs='?', default="/tmp/environment_pipeline_tasks_config.json", type=str,
+                        help="Path to config file produced by terraform")
+
+    args = parser.parse_args()
+
+    work = ECSMonitor(args.config_file_path, 'create_perfplat_table')
+    work.run_task()
+    work.wait_for_task_to_start()
+    work.print_task_logs()
+
+    # at this point, the task has finished: see print_task_logs() where
+    # we check for this
+
+    # get the task exit code and use this as the exit code for this script
+    return work.get_task_exit_code()
+
+if __name__ == "__main__":
+    sys.exit(main())
