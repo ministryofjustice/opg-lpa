@@ -1,12 +1,7 @@
 import urllib.request
 import boto3
-import argparse
 import json
 import os
-import sys
-
-def printSomething():
-    print("testing ECSMonitor")
 
 class ECSMonitor:
     aws_account_id = ''
@@ -23,11 +18,12 @@ class ECSMonitor:
     task = ''
     nextForwardToken = ''
     logStreamName = ''
-    taskName = 'seeding'
+    taskName = ''
 
-    def __init__(self, config_file):
+    def __init__(self, config_file, nameOfTask):
         self.read_parameters_from_file(config_file)
         self.set_iam_role_session()
+        self.taskName = nameOfTask
 
         self.aws_ecs_client = boto3.client(
             'ecs',
@@ -191,27 +187,3 @@ class ECSMonitor:
 
         self.get_logs()
         print("task stopped running")
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description=f"Start the seeding task for the Make an LPA database")
-
-    parser.add_argument("config_file_path", nargs='?', default="/tmp/environment_pipeline_tasks_config.json", type=str,
-                        help="Path to config file produced by terraform")
-
-    args = parser.parse_args()
-
-    work = ECSMonitor(args.config_file_path)
-    work.run_task()
-    work.wait_for_task_to_start()
-    work.print_task_logs()
-
-    # at this point, the task has finished: see print_task_logs() where
-    # we check for this
-
-    # get the task exit code and use this as the exit code for this script
-    return work.get_task_exit_code()
-
-if __name__ == "__main__":
-    sys.exit(main())
