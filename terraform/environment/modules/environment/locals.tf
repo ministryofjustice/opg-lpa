@@ -73,7 +73,7 @@ locals {
     component = "seeding"
   }
 
-  create_perfplat_table_component_tag = {
-    component = "create_perfplat_table"
+  feedbackdb_component_tag = {
+    component = "feedbackdb"
   }
 }
