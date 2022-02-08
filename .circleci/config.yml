@@ -1165,6 +1165,9 @@ orbs:
           - run:
               name: Run seeding ecs task
               command: |
+                python3 -m venv venv --system-site-packages
+                . venv/bin/activate
+                pip install -e scripts/pipeline/lib
                 python3 scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
 
       create_perfplat_table:
