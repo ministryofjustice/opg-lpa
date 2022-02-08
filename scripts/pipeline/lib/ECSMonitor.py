@@ -21,9 +21,9 @@ class ECSMonitor:
     taskName = ''
 
     def __init__(self, config_file, nameOfTask):
+        self.taskName = nameOfTask
         self.read_parameters_from_file(config_file)
         self.set_iam_role_session()
-        self.taskName = nameOfTask
 
         self.aws_ecs_client = boto3.client(
             'ecs',
