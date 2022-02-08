@@ -11,7 +11,7 @@ def main():
 
     args = parser.parse_args()
 
-    work = ECSMonitor(args.config_file_path)
+    work = ECSMonitor(args.config_file_path, 'seeding')
     work.run_task()
     work.wait_for_task_to_start()
     work.print_task_logs()
