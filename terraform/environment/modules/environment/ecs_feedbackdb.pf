@@ -1,16 +1,16 @@
 //----------------------------------
 // The Api service's Security Groups
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
-resource "aws_security_group" "create_perfplat_table_ecs_service" {
-  name_prefix = "${terraform.workspace}-create_perfplat_table-ecs-service"
+resource "aws_security_group" "feedbackdb_ecs_service" {
+  name_prefix = "${terraform.workspace}-feedbackdb-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_opg_tags, local.create_perfplat_table_component_tag)
+  tags        = merge(local.default_opg_tags, local.feedbackdb_component_tag)
 }
 
 //----------------------------------
 // Anything out except production
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
-resource "aws_security_group_rule" "create_perfplat_table_ecs_service_egress" {
+resource "aws_security_group_rule" "feedbackdb_ecs_service_egress" {
   count     = var.environment_name == "production" ? 0 : 1
   type      = "egress"
   from_port = 0
@@ -18,50 +18,50 @@ resource "aws_security_group_rule" "create_perfplat_table_ecs_service_egress" {
   protocol  = "-1"
   #tfsec:ignore:AWS007 - anything out
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.create_perfplat_table_ecs_service.id
+  security_group_id = aws_security_group.feedbackdb_ecs_service.id
 }
 
 //--------------------------------------
-// create_perfplat_table ECS Service Task level config
+// feedbackdb ECS Service Task level config
 
-resource "aws_ecs_task_definition" "create_perfplat_table" {
+resource "aws_ecs_task_definition" "feedbackdb" {
   count                    = var.environment_name == "production" ? 0 : 1
-  family                   = "${terraform.workspace}-create_perfplat_table"
+  family                   = "${terraform.workspace}-feedbackdb"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.create_perfplat_table_app}]"
-  task_role_arn            = aws_iam_role.create_perfplat_table_task_role[count.index].arn
+  container_definitions    = "[${local.feedbackdb_app}]"
+  task_role_arn            = aws_iam_role.feedbackdb_task_role[count.index].arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_opg_tags, local.create_perfplat_table_component_tag)
+  tags                     = merge(local.default_opg_tags, local.feedbackdb_component_tag)
 }
 
 
 //----------------
 // Permissions
 
-resource "aws_iam_role" "create_perfplat_table_task_role" {
+resource "aws_iam_role" "feedbackdb_task_role" {
   count              = var.environment_name == "production" ? 0 : 1
-  name               = "${var.environment_name}-create_perfplat_table-task-role"
+  name               = "${var.environment_name}-feedbackdb-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = merge(local.default_opg_tags, local.create_perfplat_table_component_tag)
+  tags               = merge(local.default_opg_tags, local.feedbackdb_component_tag)
 }
 
-data "aws_ecr_repository" "lpa_create_perfplat_table_app" {
+data "aws_ecr_repository" "lpa_feedbackdb_app" {
   provider = aws.management
-  name     = "online-lpa/create_perfplat_table_app"
+  name     = "online-lpa/feedbackdb_app"
 }
 
 //-----------------------------------------------
-// create_perfplat_table ECS Service Task Container level config
+// feedbackdb ECS Service Task Container level config
 
 locals {
-  create_perfplat_table_app = <<EOF
+  feedbackdb_app = <<EOF
   {
     "cpu": 1,
     "essential": true,
-    "image": "${data.aws_ecr_repository.lpa_create_perfplat_table_app.repository_url}:${var.container_version}",
+    "image": "${data.aws_ecr_repository.lpa_feedbackdb_app.repository_url}:${var.container_version}",
     "mountPoints": [],
     "name": "app",
     "portMappings": [
@@ -77,7 +77,7 @@ locals {
         "options": {
             "awslogs-group": "${aws_cloudwatch_log_group.application_logs.name}",
             "awslogs-region": "${var.region_name}",
-            "awslogs-stream-prefix": "${var.environment_name}.create_perfplat_table.online-lpa"
+            "awslogs-stream-prefix": "${var.environment_name}.feedbackdb.online-lpa"
         }
     },
     "secrets": [
