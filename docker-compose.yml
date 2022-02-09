@@ -452,8 +452,11 @@ services:
       context: ./
       dockerfile: service-feedbackdb/docker/app/Dockerfile
     depends_on:
-  # depend upon local-config to ensure postgres is up properly
+      - localstack
       - local-config
+      - api-app
+      - postgres
+      - api-composer
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
