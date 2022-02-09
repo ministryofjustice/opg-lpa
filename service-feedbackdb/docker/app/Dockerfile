@@ -8,4 +8,4 @@ COPY service-feedback/ /app/
 
 WORKDIR /app
 
-CMD alembic upgrade head && python scripts/db/create_apiv2_user.py
+CMD alembic upgrade head && python scripts/db/create_feedback_user.py

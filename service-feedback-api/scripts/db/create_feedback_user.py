@@ -8,10 +8,10 @@ postgresUrl = 'postgresql+psycopg2://{}:{}@{}/{}'.format(
         os.getenv('OPG_LPA_POSTGRES_NAME'))
       
 engine = create_engine(postgresUrl)
-v2user = os.getenv('OPG_LPA_POSTGRES_APIV2_USERNAME')
+feedbackuser = os.getenv('OPG_LPA_POSTGRES_FEEDBACK_USERNAME')
 
-def apiv2_user_exists():
-    sQL = f"SELECT 1 FROM pg_roles WHERE ROLNAME = '{v2user}'"
+def feedback_user_exists():
+    sQL = f"SELECT 1 FROM pg_roles WHERE ROLNAME = '{feedbackuser}'"
     rawConn = engine.raw_connection()
     cur = rawConn.cursor()
     cur.execute(sQL)
@@ -19,13 +19,13 @@ def apiv2_user_exists():
     cur.close()
     return userCount > 0
 
-def create_apiv2_user():
-    print(f"Creating {v2user} user.")
-    sQL = f"CREATE USER {v2user} WITH PASSWORD '{os.getenv('OPG_LPA_POSTGRES_APIV2_PASSWORD')}'"
+def create_feedback_user():
+    print(f"Creating {feedbackuser} user.")
+    sQL = f"CREATE USER {feedbackuser} WITH PASSWORD '{os.getenv('OPG_LPA_POSTGRES_FEEDBACK_PASSWORD')}'"
     engine.execute(sQL)
 
 def grant_privileges():
-    sQL = f"GRANT ALL PRIVILEGES ON TABLE \"perf_feedback\" TO {v2user};"
+    sQL = f"GRANT ALL PRIVILEGES ON TABLE \"perf_feedback\" TO {feedbackuser};"
     engine.execute(sQL)
 
 conn = engine.connect()
@@ -36,8 +36,8 @@ if not inspector.has_table('perf_feedback'):
 else:
     print('Found perf_feedback table')
 
-if apiv2_user_exists():
-    print('apiv2 user already exists.')
+if feedback_user_exists():
+    print('feedback user already exists.')
 else:
-    create_apiv2_user()
+    create_feedback_user()
     grant_privileges()
