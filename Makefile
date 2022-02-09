@@ -86,6 +86,7 @@ dc-build-clean:
 	docker rmi lpa-front-web || true; \
 	docker rmi lpa-front-app || true; \
 	docker rmi seeding || true; \
+	docker rmi gateway || true; \
 	docker rmi mocksirius || true; \
 	docker rmi opg-lpa_local-config; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
@@ -96,20 +97,35 @@ dc-build-clean:
 	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache
 
-# only reset the front container - uesful for quick reset when only been working on front component
+# standard reset only the front app container - useful for quick reset when only been working on front component
+# compared to soft reset, this currently cleans up volumes too. this may turn out not to be needed , we
+# may be able to go to always soft reset
 .PHONY: reset-front
 reset-front:
 	@${MAKE} dc-down
 	@docker system prune -f --volumes; \
-	docker rmi lpa-front-web || true; \
+	docker rmi lpa-front-app || true; \
+	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
+	docker-compose build --no-cache front-app
+
+# hard reset only the front app container - cleaning up vendor folders too, useful when changing versions of deps
+.PHONY: hard-reset-front
+hard-reset-front:
+	@${MAKE} dc-down
+	@docker system prune -f --volumes; \
 	docker rmi lpa-front-app || true; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
 	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
-	docker-compose build --no-cache front-web
 	docker-compose build --no-cache front-app
+
+.PHONY: soft-reset-front
+# soft reset only the front app container without no-cache option.  quickest rebuild but runs risk of some staleness if not every change is picked up 
+soft-reset-front:
+	@${MAKE} dc-down
+	docker-compose build front-app
 
 # only reset the front web container - uesful for quick reset after nginx.conf tweak
 .PHONY: reset-front-web
@@ -120,7 +136,6 @@ reset-front-web:
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker rmi lpa-front-web || true; \
-	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	docker-compose build --no-cache front-web
 
 .PHONY: reset-flask
@@ -143,16 +158,12 @@ reset-mock-sirius:
 	docker rmi mocksirius || true; \
 	docker-compose build --no-cache mocksirius
 
-# only reset the api container
+# hard reset only the api app container
 .PHONY: reset-api
 reset-api:
 	@${MAKE} dc-down
-	@docker system prune -f --volumes; \
-	docker rmi lpa-api-web || true; \
 	docker rmi lpa-api-app || true; \
 	rm -fr ./service-api/vendor; \
-	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
-	docker-compose build --no-cache api-web
 	docker-compose build --no-cache api-app
 
 .PHONY: dc-down
@@ -199,7 +210,7 @@ integration-api-local:
 cypress-local:
 	docker rm -f cypress_tests || true
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" --entrypoint ./cypress/start.sh -v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests cypress:latest
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" -e "CYPRESS_TAGS=@StitchedPF" --entrypoint ./cypress/start.sh -v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests cypress:latest
 
 .PHONY: cypress-local-shell
 cypress-local-shell:

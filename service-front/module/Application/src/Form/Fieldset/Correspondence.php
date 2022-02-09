@@ -64,7 +64,7 @@ class Correspondence extends Fieldset
         parent::setMessages($messages);
     }
 
-    public function getMessages($elementName = null)
+    public function getMessages($elementName = null): array
     {
         return $this->messages;
     }
