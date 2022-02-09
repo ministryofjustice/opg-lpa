@@ -72,7 +72,7 @@ services:
   local-config:
     container_name: lpa-local-config
     build:
-      context: ./local-config
+      context: ./local-config/
       dockerfile: ./Dockerfile
     depends_on:
       - dynamodb
