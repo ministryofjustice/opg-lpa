@@ -55,7 +55,7 @@ pr_build: &pr_build
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: feedbackdb_docker_build
         ecr_repository_name_prefix: online-lpa/feedbackdb
-        service_path: service-create-perfplat-table
+        service_path: service-feedbackdb
         build_web: false
         unit_test: false
         filters: { branches: { ignore: [main] } }
@@ -285,7 +285,7 @@ path_to_live: &path_to_live
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: feedbackdb_docker_build
         ecr_repository_name_prefix: online-lpa/feedbackdb
-        service_path: service-create-perfplat-table
+        service_path: service-feedbackdb
         build_web: false
         unit_test: false
         filters: { branches: { only: [main] } }
@@ -1172,7 +1172,7 @@ orbs:
 
       feedbackdb:
         #
-        # Create the performance table for perf platform with associated postgres user
+        # Create the feedback table for perf platform with associated postgres user
         #
         executor: python
         parameters:
@@ -1189,7 +1189,7 @@ orbs:
               command: |
                 pip install -r scripts/pipeline/requirements.txt --user
           - run:
-              name: Run create perfplat table ecs task
+              name: Run feedback ecs task
               command: |
                 python3 -m venv venv --system-site-packages
                 . venv/bin/activate
