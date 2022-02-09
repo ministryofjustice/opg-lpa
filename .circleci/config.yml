@@ -378,6 +378,7 @@ path_to_live: &path_to_live
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
+            feedbackdb_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-api-build,
             perfplat-lambda-docker-worker-build,
@@ -467,6 +468,12 @@ path_to_live: &path_to_live
           ]
         filters: { branches: { only: [main] } }
         workspace: production
+
+    - infrastructure_and_deployment/feedbackdb:
+        name: prod_feedbackdb
+        workspace: production
+        filters: { branches: { only: [main] } }
+        requires: [prod_environment_apply_terraform]
 
     - infrastructure_and_deployment/run_healthcheck_test:
         name: test_healthcheck_prod
