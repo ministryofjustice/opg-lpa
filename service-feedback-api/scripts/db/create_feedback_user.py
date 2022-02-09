@@ -29,7 +29,13 @@ def grant_privileges():
     engine.execute(sQL)
 
 def has_privileges():
-    pass
+    sQL = f"SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE table_name = 'perf_feedback' AND grantee = '{feedbackuser}'"
+    rawConn = engine.raw_connection()
+    cur = rawConn.cursor()
+    cur.execute(sQL)
+    userCount = cur.rowcount 
+    cur.close()
+    return userCount > 0
 
 conn = engine.connect()
 inspector = inspect(conn)
@@ -47,4 +53,12 @@ else:
         print('feedback user created succesfully.')
     else:
         print('ERROR : feedback user does not appear to have been created.')
+
+if has_privileges():
+    print('feedback user already has privileges on perfplat table.')
+else:
     grant_privileges()
+    if has_privileges():
+        print('privileges for feedback user have successfully been granted on perf_feedback table.')
+    else:
+        print('ERROR : granting of privileges on perf_feedback table for feedback user appears to have failed.')
