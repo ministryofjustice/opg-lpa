@@ -76,3 +76,11 @@ data "aws_secretsmanager_secret_version" "performance_platform_db_username" {
 data "aws_secretsmanager_secret_version" "performance_platform_db_password" {
   secret_id = data.aws_secretsmanager_secret.performance_platform_db_password.id
 }
+
+data "aws_secretsmanager_secret_version" "feedback_db_username" {
+  secret_id = data.aws_secretsmanager_secret.feedback_db_username.id
+}
+
+data "aws_secretsmanager_secret_version" "feedback_db_password" {
+  secret_id = data.aws_secretsmanager_secret.feedback_db_password.id
+}

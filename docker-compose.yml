@@ -467,8 +467,8 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
-      OPG_LPA_POSTGRES_APIV2_USERNAME: "v2user"
-      OPG_LPA_POSTGRES_APIV2_PASSWORD: "v2pass"
+      OPG_LPA_POSTGRES_FEEDBACK_USERNAME: "feedbackuser"
+      OPG_LPA_POSTGRES_FEEDBACK_PASSWORD: "feedbackpass"
 
   # ---------------------------
   # Sirius gateway mock
