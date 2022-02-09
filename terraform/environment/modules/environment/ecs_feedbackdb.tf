@@ -82,7 +82,7 @@ locals {
     },
     "secrets": [
       { "name": "OPG_LPA_POSTGRES_USERNAME", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
-      { "name": "OPG_LPA_POSTGRES_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" }
+      { "name": "OPG_LPA_POSTGRES_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
       { "name": "OPG_LPA_POSTGRES_FEEDBACK_USERNAME", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.performance_platform_db_username.name}" },
       { "name": "OPG_LPA_POSTGRES_FEEDBACK_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.performance_platform_db_password.name}" }
     ],
