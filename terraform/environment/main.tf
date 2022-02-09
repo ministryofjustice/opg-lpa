@@ -10,9 +10,10 @@ module "eu-west-1" {
   management_role          = var.management_role
   default_role             = var.default_role
 
+  global_cluster_identifier = local.account.aurora_global ? aws_rds_global_cluster.api[0].id : null
 
   providers = {
-    aws            = aws
+    aws            = aws.eu_west_1
     aws.management = aws.management
   }
 }

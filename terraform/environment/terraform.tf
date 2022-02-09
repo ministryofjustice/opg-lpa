@@ -32,7 +32,15 @@ provider "aws" {
     session_name = "terraform-session"
 
   }
+}
 
+provider "aws" {
+  region = "eu-west-1"
+  alias  = "eu_west_1"
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
+    session_name = "terraform-session"
+  }
 }
 
 provider "aws" {
@@ -42,7 +50,6 @@ provider "aws" {
     role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
-
 }
 
 provider "aws" {
@@ -52,7 +59,6 @@ provider "aws" {
     role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
-
 }
 
 provider "aws" {

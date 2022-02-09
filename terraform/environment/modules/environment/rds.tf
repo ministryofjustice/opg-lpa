@@ -71,9 +71,10 @@ module "api_aurora" {
   source                        = "./modules/aurora"
   count                         = var.account.aurora_enabled ? 1 : 0
   aurora_serverless             = var.account.aurora_serverless
+  aurora_global                 = var.account.aurora_global
   account_id                    = data.aws_caller_identity.current.account_id
   apply_immediately             = !var.account.deletion_protection
-  cluster_identifier            = "api2"
+  regional_cluster_identifier   = "api2"
   db_subnet_group_name          = "data-persistence-subnet-default"
   deletion_protection           = var.account.deletion_protection
   database_name                 = "api2"
@@ -85,6 +86,7 @@ module "api_aurora" {
   instance_class                = "db.t3.medium"
   kms_key_id                    = data.aws_kms_key.rds.arn
   replication_source_identifier = var.account.always_on ? aws_db_instance.api[0].arn : ""
+  global_cluster_identifier     = var.account.aurora_global ? var.global_cluster_identifier : ""
   skip_final_snapshot           = !var.account.deletion_protection
   vpc_security_group_ids        = [aws_security_group.rds-api.id]
   tags                          = merge(local.default_opg_tags, local.db_component_tag)

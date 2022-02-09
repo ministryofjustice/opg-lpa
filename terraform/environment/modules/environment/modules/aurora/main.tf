@@ -1,10 +1,20 @@
+locals {
+  is_global_cluster                 = var.aurora_global && !var.aurora_serverless
+  global_cluster_identifier         = local.is_global_cluster ? var.global_cluster_identifier : ""
+  replication_source_identifier_set = length(var.replication_source_identifier) > 0
+  regional_cluster_db_name          = local.replication_source_identifier_set || local.is_global_cluster ? null : var.database_name
+  regional_cluster_username         = local.replication_source_identifier_set && !local.is_global_cluster ? "" : var.master_username
+  regional_cluster_password         = local.replication_source_identifier_set && !local.is_global_cluster ? "" : var.master_password
+}
+
 resource "aws_rds_cluster" "cluster" {
   count                               = var.aurora_serverless ? 0 : 1
   apply_immediately                   = var.apply_immediately
+  global_cluster_identifier           = local.global_cluster_identifier
   availability_zones                  = var.availability_zones
   backup_retention_period             = var.backup_retention_period
-  cluster_identifier                  = "${var.cluster_identifier}-${var.environment}"
-  database_name                       = var.database_name
+  cluster_identifier                  = "${var.regional_cluster_identifier}-${var.environment}"
+  database_name                       = local.regional_cluster_db_name
   db_subnet_group_name                = var.db_subnet_group_name
   deletion_protection                 = var.deletion_protection
   engine                              = var.engine
@@ -12,8 +22,8 @@ resource "aws_rds_cluster" "cluster" {
   enabled_cloudwatch_logs_exports     = ["postgresql"]
   final_snapshot_identifier           = "${var.database_name}-${var.environment}-final-snapshot"
   kms_key_id                          = var.kms_key_id
-  master_username                     = var.master_username
-  master_password                     = var.master_password
+  master_username                     = local.regional_cluster_username
+  master_password                     = local.regional_cluster_password
   preferred_backup_window             = "00:20-00:50"
   preferred_maintenance_window        = "sun:01:00-sun:01:30"
   replication_source_identifier       = var.replication_source_identifier
@@ -23,8 +33,8 @@ resource "aws_rds_cluster" "cluster" {
   tags                                = var.tags
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
   lifecycle {
-    ignore_changes  = [replication_source_identifier]
-    prevent_destroy = true
+    ignore_changes = [replication_source_identifier]
+
   }
 }
 
@@ -33,11 +43,11 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   db_subnet_group_name            = var.db_subnet_group_name
   depends_on                      = [aws_rds_cluster.cluster]
-  cluster_identifier              = "${var.cluster_identifier}-${var.environment}"
+  cluster_identifier              = "${var.regional_cluster_identifier}-${var.environment}"
   copy_tags_to_snapshot           = var.copy_tags_to_snapshot
   engine                          = var.engine
   engine_version                  = var.engine_version
-  identifier                      = "${var.cluster_identifier}-${var.environment}-${count.index}"
+  identifier                      = "${var.regional_cluster_identifier}-${var.environment}-${count.index}"
   instance_class                  = var.instance_class
   monitoring_interval             = 30
   monitoring_role_arn             = "arn:aws:iam::${var.account_id}:role/rds-enhanced-monitoring"
@@ -51,15 +61,11 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
     update = var.timeout_update
     delete = var.timeout_delete
   }
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "aws_rds_cluster" "cluster_serverless" {
-  count                        = var.aurora_serverless ? 1 : 0
-  cluster_identifier           = "${var.cluster_identifier}-${var.environment}"
+  count                        = var.aurora_serverless && !var.aurora_global ? 1 : 0
+  cluster_identifier           = "${var.regional_cluster_identifier}-${var.environment}"
   apply_immediately            = var.apply_immediately
   availability_zones           = var.availability_zones
   backup_retention_period      = var.backup_retention_period

@@ -1,10 +1,12 @@
 variable "account_id" { type = string }
 variable "apply_immediately" {}
 variable "aurora_serverless" { default = false }
+variable "aurora_global" { default = false }
 variable "auto_minor_version_upgrade" { default = false }
 variable "availability_zones" { default = ["eu-west-1a", "eu-west-1b", "eu-west-1c"] }
 variable "backup_retention_period" { default = 14 }
-variable "cluster_identifier" {}
+variable "regional_cluster_identifier" {}
+variable "global_cluster_identifier" {}
 variable "deletion_protection" {}
 variable "database_name" {}
 variable "db_subnet_group_name" {}
