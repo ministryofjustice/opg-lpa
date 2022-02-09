@@ -450,13 +450,13 @@ services:
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
   # ---------------------------
-  # Create PerfPlat table
-  create-perfplat-table:
-    container_name: create-perfplat-table
-    image: create-perfplat-table
+  # Create feedback table and db user for PerfPlat 
+  feedbackdb:
+    container_name: feedbackdb
+    image: feedbackdb
     build:
       context: ./
-      dockerfile: service-create-perfplat-table/docker/app/Dockerfile
+      dockerfile: service-feedbackdb/docker/app/Dockerfile
     depends_on:
       - postgres
     environment:
