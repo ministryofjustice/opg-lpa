@@ -28,6 +28,9 @@ def grant_privileges():
     sQL = f"GRANT ALL PRIVILEGES ON TABLE \"perf_feedback\" TO {feedbackuser};"
     engine.execute(sQL)
 
+def has_privileges():
+    pass
+
 conn = engine.connect()
 inspector = inspect(conn)
 if not inspector.has_table('perf_feedback'):
@@ -40,4 +43,8 @@ if feedback_user_exists():
     print('feedback user already exists.')
 else:
     create_feedback_user()
+    if feedback_user_exists():
+        print('feedback user created succesfully.')
+    else:
+        print('ERROR : feedback user does not appear to have been created.')
     grant_privileges()
