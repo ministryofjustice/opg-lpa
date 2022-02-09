@@ -37,6 +37,7 @@ variable "accounts" {
       psql_parameter_group_family            = string
       aurora_enabled                         = bool
       aurora_serverless                      = bool
+      aurora_global                          = bool
       aurora_instance_count                  = number
       deletion_protection                    = bool
       always_on                              = bool
