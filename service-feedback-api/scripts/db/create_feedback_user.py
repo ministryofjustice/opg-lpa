@@ -52,7 +52,7 @@ else:
     if feedback_user_exists():
         print('feedback user created succesfully.')
     else:
-        print('ERROR : feedback user does not appear to have been created.')
+        print('ERROR : creation of feedback user appears to have failed.')
 
 if has_privileges():
     print('feedback user already has privileges on perfplat table.')
