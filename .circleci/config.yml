@@ -1168,7 +1168,7 @@ orbs:
                 python3 -m venv venv --system-site-packages
                 . venv/bin/activate
                 pip install -e scripts/pipeline/lib
-                python3 scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
+                python3 scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py --task_name seeding
 
       feedbackdb:
         #
@@ -1194,7 +1194,7 @@ orbs:
                 python3 -m venv venv --system-site-packages
                 . venv/bin/activate
                 pip install -e scripts/pipeline/lib
-                python3 scripts/pipeline/start_feedbackdb_task/ecs_start_feedbackdb_task.py
+                python3 scripts/pipeline/start_feedbackdb_task/ecs_start_feedbackdb_task.py --task_name feedbackdb
 
       run_healthcheck_test:
         #

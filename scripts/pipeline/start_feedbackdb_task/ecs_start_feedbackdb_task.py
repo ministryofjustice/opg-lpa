@@ -8,10 +8,11 @@ def main():
 
     parser.add_argument("config_file_path", nargs='?', default="/tmp/environment_pipeline_tasks_config.json", type=str,
                         help="Path to config file produced by terraform")
+    parser.add_argument("task_name", nargs='?', type=str, help="Name of AWS task that we want to start")
 
     args = parser.parse_args()
 
-    work = ECSMonitor(args.config_file_path, 'feedbackdb')
+    work = ECSMonitor(args.config_file_path, args.task_name)
     work.run_task()
     work.wait_for_task_to_start()
     work.print_task_logs()
