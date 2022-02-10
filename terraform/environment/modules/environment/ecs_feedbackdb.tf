@@ -11,7 +11,6 @@ resource "aws_security_group" "feedbackdb_ecs_service" {
 // Anything out except production
 #tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "feedbackdb_ecs_service_egress" {
-  count     = var.environment_name == "production" ? 0 : 1
   type      = "egress"
   from_port = 0
   to_port   = 0
@@ -25,7 +24,6 @@ resource "aws_security_group_rule" "feedbackdb_ecs_service_egress" {
 // feedbackdb ECS Service Task level config
 
 resource "aws_ecs_task_definition" "feedbackdb" {
-  count                    = var.environment_name == "production" ? 0 : 1
   family                   = "${terraform.workspace}-feedbackdb"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
@@ -42,7 +40,6 @@ resource "aws_ecs_task_definition" "feedbackdb" {
 // Permissions
 
 resource "aws_iam_role" "feedbackdb_task_role" {
-  count              = var.environment_name == "production" ? 0 : 1
   name               = "${var.environment_name}-feedbackdb-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = merge(local.default_opg_tags, local.feedbackdb_component_tag)
