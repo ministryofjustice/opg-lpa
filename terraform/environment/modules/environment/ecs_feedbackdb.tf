@@ -30,7 +30,7 @@ resource "aws_ecs_task_definition" "feedbackdb" {
   cpu                      = 2048
   memory                   = 4096
   container_definitions    = "[${local.feedbackdb_app}]"
-  task_role_arn            = aws_iam_role.feedbackdb_task_role[count.index].arn
+  task_role_arn            = aws_iam_role.feedbackdb_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = merge(local.default_opg_tags, local.feedbackdb_component_tag)
 }
