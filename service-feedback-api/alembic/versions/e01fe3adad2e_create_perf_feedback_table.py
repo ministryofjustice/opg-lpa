@@ -20,7 +20,7 @@ def upgrade():
     op.create_table(
         'perf_feedback',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('rating', sa.String(2), nullable=False), # up to 2-letter acronynm , VS = very satisfied , etc
+        sa.Column('rating', sa.Integer, nullable=False), 
         sa.Column('comment', sa.String(1200), nullable=False),
         sa.Column('datetime', sa.DateTime(), nullable=False)
     )
