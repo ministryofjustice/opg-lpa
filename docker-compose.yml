@@ -444,6 +444,31 @@ services:
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
   # ---------------------------
+  # Create feedback table and db user for PerfPlat 
+  feedbackdb:
+    container_name: feedbackdb
+    image: feedbackdb
+    build:
+      context: ./
+      dockerfile: service-feedbackdb/docker/app/Dockerfile
+    depends_on:
+      - localstack
+      - local-config
+      - api-app
+      - postgres
+      - api-composer
+    environment:
+      OPG_LPA_STACK_NAME: "local"
+      OPG_LPA_STACK_ENVIRONMENT: "dev"
+      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
+      OPG_LPA_POSTGRES_PORT: "5432"
+      OPG_LPA_POSTGRES_NAME: "lpadb"
+      OPG_LPA_POSTGRES_USERNAME: "lpauser"
+      OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+      OPG_LPA_POSTGRES_FEEDBACK_USERNAME: "feedbackuser"
+      OPG_LPA_POSTGRES_FEEDBACK_PASSWORD: "feedbackpass"
+
+  # ---------------------------
   # Sirius gateway mock
   gateway:
     container_name: gateway
