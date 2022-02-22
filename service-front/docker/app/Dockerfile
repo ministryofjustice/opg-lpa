@@ -10,6 +10,9 @@ FROM php:8.0-fpm-alpine
 RUN apk add --upgrade apk-tools
 RUN apk upgrade --available
 
+# security fix for expat
+RUN apk upgrade expat
+
 RUN apk add --update --no-cache icu 
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
