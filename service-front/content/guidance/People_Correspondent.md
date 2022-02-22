@@ -1,9 +1,5 @@
 ## Correspondent
 
-<div class="moj-banner moj-banner__message">
-    <p class="bold-small">Read our guidance on <a href="https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak#think-carefully-about-who-should-be-sent-the-registered-lpa">being a correspondent during the coronavirus outbreak</a></p>
-</div>
-
 The correspondent is the person we’ll send the LPA to once it is registered.
 
 They’re also the person we’ll contact if we need to:
