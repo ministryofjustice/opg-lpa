@@ -51,7 +51,7 @@ Feature: Password
       And I use password reset email to visit the link
 
       # first try a mismatch 
-      When I try to change password with a mismatch
+      When I try to change password with a mismatch on forgotten password link
       Then I see in the page text
           | There is a problem |
           | Enter matching passwords |
