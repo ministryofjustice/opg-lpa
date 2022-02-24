@@ -54,3 +54,7 @@ cd ~/environment/opg-lpa/docs/runbooks/maintenance_mode
   --environment preproduction \
   --disable_maintenance_mode
 ```
+
+### Note
+
+If you get a permission related error trying to run this script you may require the `breakglass` to do so. In this case, please contact your webops team member or the community channel.
