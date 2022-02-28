@@ -14,6 +14,7 @@ return array(
         'Laminas\ApiTools\ApiProblem',
         'LmcRbacMvc',
         'Laminas\Cache\Storage\Adapter\Memory',
+        'Laminas\ZendFrameworkBridge',
         'Application',
     ),
     // These are various options for the listeners attached to the ModuleManager
