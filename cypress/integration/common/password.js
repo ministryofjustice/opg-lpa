@@ -16,6 +16,21 @@ When("I choose a new password", () => {
         cy.OPGCheckA11y();
 });
 
+When("I try to change password with a mismatch", () => {
+        cy.get("[data-cy=password_current]").clear().type(Cypress.env('seeded_password'));
+        cy.get("[data-cy=password]").clear().type("mismatchedpassword2345");
+        cy.get("[data-cy=password_confirm]").clear().type("mismatchedpassword1234");
+        cy.get('[data-cy=save-new-password]').click();
+        cy.OPGCheckA11y();
+});
+
+When("I try to change password with a mismatch on forgotten password link", () => {
+        cy.get("[data-cy=password]").clear().type("mismatchedpassword2345");
+        cy.get("[data-cy=password_confirm]").clear().type("mismatchedpassword1234");
+        cy.get('[data-cy=reset-my-password]').click();
+        cy.OPGCheckA11y();
+});
+
 When("I change password back to my old one", () => {
     // change from new password back to original cypress password
         cy.get("[data-cy=password_current]").clear().type(newPassword);

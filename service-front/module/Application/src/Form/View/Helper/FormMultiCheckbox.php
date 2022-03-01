@@ -22,7 +22,7 @@ class FormMultiCheckbox extends LaminasFormMultiCheckbox
         array $options,
         array $selectedOptions,
         array $attributes
-    ) {
+    ): string {
         $escapeHtmlHelper = $this->getEscapeHtmlHelper();
         $labelHelper      = $this->getLabelHelper();
         $globalLabelAttributes = [];
