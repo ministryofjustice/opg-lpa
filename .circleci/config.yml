@@ -477,7 +477,7 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_healthcheck_test:
         name: test_healthcheck_prod
-        requires: [prod_environment_apply_terraform]
+        requires: [prod_feedbackdb]
         filters: { branches: { only: [main] } }
         workspace: production
 
