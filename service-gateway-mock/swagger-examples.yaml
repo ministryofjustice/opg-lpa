@@ -122,13 +122,3 @@ paths:
                 deleted:
                   value:
                     onlineLpaId: A97998888883
-                    receiptDate: '2021-10-03'
-                    rejectedDate: null
-                    dispatchDate: null
-                    registrationDate: null
-                    registrationDate: null
-                    cancellationDate: null
-                    invalidDate: null
-                    withdrawnDate: null
-                    statusDate: null
-                    status: null

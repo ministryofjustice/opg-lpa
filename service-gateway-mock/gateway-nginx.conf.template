@@ -23,11 +23,21 @@ map $request_uri $swagger_example {
     default         'NOTFOUND';
 }
 
-log_format proxy_pass '[$time_local] - Proxy-pass -'
-                      '$request $status';
+log_format proxy_pass escape=json '{'
+                       '"local_time": $time_local, '
+                      '"request_type": "Proxy-pass", '
+                      '"request": "$request", '
+                      '"status": "$status", '
+                      '"trace_id": "$trace_id", '
+                      '}';
 
-log_format sirius_request '[$time_local] - Sirius-request -'
-                          '$request $status';
+log_format sirius_request escape=json '{'
+                         '"local_time": $time_local, '
+                        '"request_type": "Sirius-request", '
+                        '"request": "$request", '
+                        '"status": "$status", '
+                        '"trace_id": "$trace_id", '
+                        '}';
 
 server {
     server_name gateway;
@@ -43,5 +53,6 @@ server {
         access_log /var/log/nginx/access.log sirius_request;
         proxy_pass $OPG_LPA_STATUS_ENDPOINT;
         proxy_pass_request_headers on;
+        proxy_pass_request_body on;
     }
 }

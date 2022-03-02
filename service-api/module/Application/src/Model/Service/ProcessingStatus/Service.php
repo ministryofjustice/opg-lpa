@@ -97,6 +97,7 @@ class Service extends AbstractService
             $url = new Uri($this->processingStatusServiceUri . $prefixedId);
             $requests[$id] = new Request('GET', $url, $this->buildHeaders());
             $requests[$id] = $this->awsSignature->signRequest($requests[$id], $this->credentials);
+            $this->getLogger()->info(json_encode($requests[$id]));
         } //end of request loop
 
         // build pool
@@ -158,7 +159,7 @@ class Service extends AbstractService
 
                 default:
                     $this->getLogger()->err(
-                        'Unexpected response from Sirius gateway: ' . $statusCode. (string)$result->getBody()
+                        'Unexpected response from Sirius gateway: ' . $statusCode . (string)$result->getBody()
                     );
                     break;
             } //end switch
