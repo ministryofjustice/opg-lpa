@@ -28,7 +28,7 @@ log_format proxy_pass escape=json '{'
                       '"request_type": "Proxy-pass", '
                       '"request": "$request", '
                       '"status": "$status", '
-                      '"trace_id": "$trace_id", '
+                      # '"trace_id": "$trace_id", '
                       '}';
 
 log_format sirius_request escape=json '{'
@@ -36,7 +36,7 @@ log_format sirius_request escape=json '{'
                         '"request_type": "Sirius-request", '
                         '"request": "$request", '
                         '"status": "$status", '
-                        '"trace_id": "$trace_id", '
+                        # '"trace_id": "$trace_id", '
                         '}';
 
 server {
