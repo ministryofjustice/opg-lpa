@@ -74,4 +74,8 @@ locals {
   seeding_component_tag = {
     component = "seeding"
   }
+
+  feedbackdb_component_tag = {
+    component = "feedbackdb"
+  }
 }
