@@ -1,4 +1,5 @@
 <?php
+
 namespace ApplicationTest\Model\Service\Payment\Helper;
 
 use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
@@ -12,7 +13,7 @@ class PaymentTest extends AbstractHttpControllerTestCase
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
     }
@@ -57,15 +58,11 @@ class PaymentTest extends AbstractHttpControllerTestCase
     {
         $id = LpaIdHelper::constructPaymentTransactionId('123');
 
-        $parts = explode('-', $id);
-
-        $this->assertTrue(count($parts) == 2);
-
         $this->assertEquals(
             '00000000123',
-            $parts[0]
+            $id
         );
 
-        $this->assertTrue(is_numeric($parts[1]));
+        $this->assertTrue(is_numeric($id));
     }
 }
