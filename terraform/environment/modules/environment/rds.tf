@@ -3,12 +3,21 @@ data "aws_kms_key" "rds" {
   key_id = "alias/aws/rds"
 }
 
+data "aws_kms_key" "multi_region_db_snapshot_key" {
+  key_id  = "arn:aws:kms:${local.region_name}:${var.account.account_id}:alias/mrk_db_snapshot_key-${local.account_name}"
+}
+
 data "aws_iam_role" "rds_enhanced_monitoring" {
   name = "rds-enhanced-monitoring"
 }
 
 data "aws_sns_topic" "rds_events" {
   name = "${var.account_name}-rds-events"
+}
+
+data "aws_db_snapshot" "api_snapshot"{
+  db_instance_id = lower("api-${var.environment_name}")
+  most_recent    = true
 }
 
 resource "aws_db_instance" "api" {
@@ -24,7 +33,7 @@ resource "aws_db_instance" "api" {
   engine_version                      = var.account.psql_engine_version
   instance_class                      = "db.m3.medium"
   port                                = "5432"
-  kms_key_id                          = data.aws_kms_key.rds.arn
+  kms_key_id                          = var.is_primary ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
   username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   password                            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
   parameter_group_name                = aws_db_parameter_group.postgres-db-params.name
@@ -43,6 +52,7 @@ resource "aws_db_instance" "api" {
   performance_insights_enabled        = true
   performance_insights_kms_key_id     = data.aws_kms_key.rds.arn
   copy_tags_to_snapshot               = true
+  snapshot_identifier                 = !var.is_primary ? data.aws_db_snapshot.api_snapshot.id : null
 }
 
 // setup a bunch of alarms that are useful for our needs
