@@ -156,4 +156,4 @@ resource "aws_security_group_rule" "rds-api" {
 }
 
 
-data "aws_caller_identity" "current" {}
+
