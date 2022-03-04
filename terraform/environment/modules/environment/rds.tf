@@ -16,6 +16,7 @@ data "aws_sns_topic" "rds_events" {
 }
 
 data "aws_db_snapshot" "api_snapshot" {
+  count                  = !local.is_primary_region && var.account.always_on ? 1 : 0
   db_instance_identifier = lower("api-${var.environment_name}")
   most_recent            = true
 }
