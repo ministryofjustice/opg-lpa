@@ -16,8 +16,8 @@ data "aws_sns_topic" "rds_events" {
 }
 
 data "aws_db_snapshot" "api_snapshot" {
-  db_instance_id = lower("api-${var.environment_name}")
-  most_recent    = true
+  db_instance_identifier = lower("api-${var.environment_name}")
+  most_recent            = true
 }
 
 resource "aws_db_instance" "api" {
