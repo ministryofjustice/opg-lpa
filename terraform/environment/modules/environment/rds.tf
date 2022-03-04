@@ -4,7 +4,7 @@ data "aws_kms_key" "rds" {
 }
 
 data "aws_kms_key" "multi_region_db_snapshot_key" {
-  key_id = "arn:aws:kms:${local.region_name}:${var.account.account_id}:alias/mrk_db_snapshot_key-${local.account_name}"
+  key_id = "arn:aws:kms:${local.region_name}:${var.account.account_id}:alias/mrk_db_snapshot_key-${var.account_name}"
 }
 
 data "aws_iam_role" "rds_enhanced_monitoring" {
@@ -154,6 +154,4 @@ resource "aws_security_group_rule" "rds-api" {
   source_security_group_id = aws_security_group.rds-client.id
   security_group_id        = aws_security_group.rds-api.id
 }
-
-
 
