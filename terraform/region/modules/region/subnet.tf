@@ -8,6 +8,9 @@ data "aws_subnet_ids" "private" {
   tags = {
     Name = "private*"
   }
+  depends_on = [
+    aws_subnet.private
+  ]
 }
 
 resource "aws_default_subnet" "public" {
@@ -51,4 +54,8 @@ data "aws_subnet_ids" "data_persistence" {
     name   = "tag:Name"
     values = ["private"]
   }
+
+  depends_on = [
+    aws_subnet.private
+  ]
 }
