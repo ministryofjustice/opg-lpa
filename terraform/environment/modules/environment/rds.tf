@@ -3,6 +3,7 @@ data "aws_kms_key" "rds" {
   key_id = "alias/aws/rds"
 }
 
+
 data "aws_kms_key" "multi_region_db_snapshot_key" {
   key_id = "arn:aws:kms:${local.region_name}:${var.account.account_id}:alias/mrk_db_snapshot_key-${var.account_name}"
 }
