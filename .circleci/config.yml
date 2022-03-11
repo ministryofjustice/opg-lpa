@@ -520,7 +520,7 @@ orbs:
     executors:
       python:
         docker:
-          - image: circleci/python
+          - image: cimg/python
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -636,14 +636,14 @@ orbs:
     executors:
       python:
         docker:
-          - image: circleci/python
+          - image: cimg/python
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
       ruby-node:
         docker:
-          - image: circleci/ruby:3.0.1-node
+          - image: cimg/ruby:3.0.1-node
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -858,21 +858,7 @@ orbs:
     executors:
       python:
         docker:
-          - image: circleci/python
-            auth:
-              username: $DOCKER_USER
-              password: $DOCKER_ACCESS_TOKEN
-        resource_class: small
-      python-build:
-        docker:
-          - image: python:alpine
-            auth:
-              username: $DOCKER_USER
-              password: $DOCKER_ACCESS_TOKEN
-        resource_class: small
-      python-browsers:
-        docker:
-          - image: circleci/python:3.6-stretch-browsers
+          - image: cimg/python
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -1393,7 +1379,7 @@ orbs:
 jobs:
   cancel_redundant_builds:
     docker:
-      - image: circleci/python
+      - image: cimg/python
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1412,7 +1398,7 @@ jobs:
 
   slack_notify_domain:
     docker:
-      - image: circleci/python
+      - image: cimg/python
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1452,7 +1438,7 @@ jobs:
             echo Admin Domain: $ADMIN_DOMAIN
   slack_notify_production_release:
     docker:
-      - image: circleci/python
+      - image: cimg/python
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1492,7 +1478,7 @@ jobs:
             echo Admin Domain: $ADMIN_DOMAIN
   ecr_scan_results:
     docker:
-      - image: circleci/python
+      - image: cimg/python
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
