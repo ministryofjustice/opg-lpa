@@ -605,7 +605,7 @@ orbs:
         steps:
           - run:
               name: Install AWS CLI
-              command: sudo pip install awscli --upgrade
+              command: pip install awscli --upgrade
 
       ecr_login:
         steps:
@@ -842,7 +842,7 @@ orbs:
         steps:
           - run:
               name: Install AWS CLI
-              command: sudo pip install awscli --upgrade
+              command: pip install awscli --upgrade
       install_terraform:
         steps:
           - run:
@@ -853,7 +853,7 @@ orbs:
                 curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                 echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
                 sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
-                sudo unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /bin
+                unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /bin
                 rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     executors:
       python:
@@ -1489,7 +1489,7 @@ jobs:
       - run:
           name: Check ECR Scan Results for ECS containers
           command: |
-            sudo pip install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
+            pip install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
             export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             echo $IMAGE_TAG
             cd scripts/pipeline/check_ecr_scan_results/
