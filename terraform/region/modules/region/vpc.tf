@@ -23,7 +23,10 @@ resource "aws_eip" "nat" {
 }
 
 data "aws_internet_gateway" "default" {
-  vpc_id = aws_default_vpc.default.id
+  filter {
+    name   = "attachment.vpc-id"
+    values = [aws_default_vpc.default.id]
+  }
 }
 
 resource "aws_route_table_association" "private" {
@@ -74,7 +77,7 @@ resource "aws_route_table" "private" {
 resource "aws_route" "default" {
   route_table_id         = aws_default_route_table.default.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = data.aws_internet_gateway.default.id
+  gateway_id             = data.aws_internet_gateway.default.internet_gateway_id
 }
 
 resource "aws_route" "private" {
