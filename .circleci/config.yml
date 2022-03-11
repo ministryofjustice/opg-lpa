@@ -605,7 +605,7 @@ orbs:
         steps:
           - run:
               name: Install AWS CLI
-              command: sudo pip3 install awscli --upgrade
+              command: sudo pip install awscli --upgrade
 
       ecr_login:
         steps:
@@ -842,7 +842,7 @@ orbs:
         steps:
           - run:
               name: Install AWS CLI
-              command: sudo pip3 install awscli --upgrade
+              command: sudo pip install awscli --upgrade
       install_terraform:
         steps:
           - run:
@@ -1389,6 +1389,7 @@ jobs:
       - run:
           name: Cancel Redundant Builds
           command: |
+            pip install -r scripts/pipeline/cancel_previous_jobs/requirements.txt
             python scripts/pipeline/cancel_previous_jobs/cancel_redundant_builds.py \
             --circle_project_username ${CIRCLE_PROJECT_USERNAME} \
             --circle_project_reponame ${CIRCLE_PROJECT_REPONAME} \
@@ -1488,7 +1489,7 @@ jobs:
       - run:
           name: Check ECR Scan Results for ECS containers
           command: |
-            sudo pip3 install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
+            sudo pip install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
             export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             echo $IMAGE_TAG
             cd scripts/pipeline/check_ecr_scan_results/
