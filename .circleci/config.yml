@@ -520,7 +520,7 @@ orbs:
     executors:
       python:
         docker:
-          - image: cimg/python
+          - image: cimg/python:3.10
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -636,7 +636,7 @@ orbs:
     executors:
       python:
         docker:
-          - image: cimg/python
+          - image: cimg/python:3.10
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -858,7 +858,7 @@ orbs:
     executors:
       python:
         docker:
-          - image: cimg/python
+          - image: cimg/python:3.10
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -1379,7 +1379,7 @@ orbs:
 jobs:
   cancel_redundant_builds:
     docker:
-      - image: cimg/python
+      - image: cimg/python:3.10
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1398,7 +1398,7 @@ jobs:
 
   slack_notify_domain:
     docker:
-      - image: cimg/python
+      - image: cimg/python:3.10
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1438,7 +1438,7 @@ jobs:
             echo Admin Domain: $ADMIN_DOMAIN
   slack_notify_production_release:
     docker:
-      - image: cimg/python
+      - image: cimg/python:3.10
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1478,7 +1478,7 @@ jobs:
             echo Admin Domain: $ADMIN_DOMAIN
   ecr_scan_results:
     docker:
-      - image: cimg/python
+      - image: cimg/python:3.10
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
