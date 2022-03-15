@@ -593,7 +593,7 @@ orbs:
 
   build_containers_and_push_to_ecr:
     orbs:
-      docker: cimg/base:stable
+      docker: circleci/docker@2.0.3
     commands:
       dockerhub_login:
         steps:
@@ -819,7 +819,7 @@ orbs:
     orbs:
       my_slack:
         <<: *slack_orb
-      docker: cimg/base:stable
+      docker: circleci/docker@2.0.3
     commands:
       dockerhub_login:
         steps:
