@@ -2,7 +2,7 @@
 FROM public.ecr.aws/lambda/python:3.8 AS base
 
 # fixes security issues detected in build.
-RUN yum update -y rpm openssl nss nss-util nss-softokn nspr expat cyrus-sasl-lib 
+RUN yum update -y rpm openssl nss nss-util nss-softokn nspr expat cyrus-sasl-lib
 
 # Dependencies required to install psycopg2 (postgres driver)
 # used in SQLAlchemy
