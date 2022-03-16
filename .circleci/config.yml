@@ -708,7 +708,7 @@ orbs:
                 echo $IMAGE_TAG
                 if << parameters.build_web >> ; then
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:${IMAGE_TAG}
-                  if [ "${CIRCLE_BRANCH}" ==  "LPAL-695-adjust-docker-tag" ]; then
+                  if [ "${CIRCLE_BRANCH}" == "main" ]; then
                     # If main, push branch tag and latest
                     docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:${IMAGE_TAG} << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:latest
                     docker push -a << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web
@@ -723,7 +723,7 @@ orbs:
                 export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
                 docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG}
-                if [ "${CIRCLE_BRANCH}" == "LPAL-695-adjust-docker-tag" ]; then
+                if [ "${CIRCLE_BRANCH}" == "main" ]; then
                   # If main, push branch tag and latest
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG} << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
                   docker push -a << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
@@ -808,7 +808,7 @@ orbs:
                 echo $IMAGE_TAG
                 echo $ECR_URL
                 docker tag ${ECR_URL}:latest ${ECR_URL}:${IMAGE_TAG}
-                if [ "${CIRCLE_BRANCH}" == "LPAL-695-adjust-docker-tag" ]; then
+                if [ "${CIRCLE_BRANCH}" == "main" ]; then
                   # We want all of the tags pushed
                   docker push -a ${ECR_URL}
                 else
