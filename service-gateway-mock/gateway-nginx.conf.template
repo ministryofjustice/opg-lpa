@@ -53,7 +53,7 @@ server {
     location / {
         access_log /var/log/nginx/access.log sirius_request;
         proxy_pass $OPG_LPA_STATUS_ENDPOINT;
-        prox_set_header Host $OPG_LPA_API_FQDN;
+        proxy_set_header Host $OPG_LPA_API_FQDN;
         proxy_pass_request_headers on;
         proxy_pass_request_body on;
     }
