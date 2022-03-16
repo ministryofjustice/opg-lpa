@@ -708,7 +708,7 @@ orbs:
                 echo $IMAGE_TAG
                 if << parameters.build_web >> ; then
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:${IMAGE_TAG}
-                  if [ "${CIRCLE_BRANCH}" == "LPAL-695-adjust-docker-tag" ]; then
+                  if [ "${CIRCLE_BRANCH}" ==  "LPAL-695-adjust-docker-tag" ]; then
                     # If main, push branch tag and latest
                     docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:${IMAGE_TAG} << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:latest
                     docker push -a << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web
