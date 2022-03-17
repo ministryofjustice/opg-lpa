@@ -6,7 +6,7 @@
 FROM amazonlinux:2
 
 # fixes security issues detected in build.
-RUN yum update -y nss nss-util nss-softokn nspr
+RUN yum update -y nss nss-util nss-softokn nspr expat cyrus-sasl-lib
 
 RUN yum install -y zip jq wget python3 git && \
     pip3 install awscli
