@@ -18,6 +18,8 @@ locals {
   front_dns                   = "front.lpa"
   admin_dns                   = "admin.lpa"
   pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
+  region_name                 = var.account.regions[data.aws_region.current.name].region
+  is_primary_region           = var.account.regions[data.aws_region.current.name].is_primary
 
   mandatory_moj_tags = {
     business-unit = "OPG"

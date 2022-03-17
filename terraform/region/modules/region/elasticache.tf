@@ -1,7 +1,7 @@
 #tfsec:ignore:AWS018 - adding a description is a destructive change.
 resource "aws_security_group" "front_cache" {
   name   = "${local.account_name_short}-${local.region_name}-front-cache"
-  vpc_id = data.aws_vpc.default.id
+  vpc_id = aws_default_vpc.default.id
   tags   = merge(local.default_tags, local.front_component_tag)
 }
 
