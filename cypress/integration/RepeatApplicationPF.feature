@@ -23,6 +23,12 @@ Feature: Repeat Application for a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | If you are making a repeat application, you need to enter the case number given to you by the Office of the Public Guardian. | 
+        When I type "12345678910121213" into "repeatCaseNumber"
+        And I click "save"
+        When I click element marked "Confirm and continue"
+        Then I see in the page text
+            | There is a problem |
+            | Case Number must be twelve letters or fewer |
         # for PF we test typing in a case number. The other scenario where this is not a repeat, is covered in HW feature
         When I type "12345678" into "repeatCaseNumber"
         And I click "save"
