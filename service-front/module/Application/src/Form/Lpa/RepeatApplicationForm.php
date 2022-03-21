@@ -3,6 +3,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Laminas\Validator\StringLength;
 
 class RepeatApplicationForm extends AbstractMainFlowForm
 {
@@ -39,7 +40,16 @@ class RepeatApplicationForm extends AbstractMainFlowForm
             'validators' => [
                 [
                     'name' => 'Digits',
-                ]
+                ],
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'max'      => 12,
+                        'messages' => [
+                            StringLength::TOO_LONG => 'max-length-%max%',
+                        ],
+                    ],
+                ],
             ],
         ],
     ];

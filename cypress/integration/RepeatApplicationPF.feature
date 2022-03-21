@@ -29,8 +29,9 @@ Feature: Repeat Application for a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | Case Number must be twelve letters or fewer |
-        # for PF we test typing in a case number. The other scenario where this is not a repeat, is covered in HW feature
-        When I type "12345678" into "repeatCaseNumber"
+            # for PF we test typing in a case number. The other scenario where this is not a repeat, is covered in HW feature
+        When I clear the value in "repeatCaseNumber"
+        And I type "12345678" into "repeatCaseNumber"
         And I click "save"
         Then I can see popup
         When I click element marked "Confirm and continue"
