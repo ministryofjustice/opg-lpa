@@ -477,7 +477,7 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_healthcheck_test:
         name: test_healthcheck_prod
-        requires: [prod_environment_apply_terraform]
+        requires: [prod_feedbackdb]
         filters: { branches: { only: [main] } }
         workspace: production
 
@@ -520,7 +520,7 @@ orbs:
     executors:
       python:
         docker:
-          - image: circleci/python
+          - image: cimg/python:3.10
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -593,7 +593,7 @@ orbs:
 
   build_containers_and_push_to_ecr:
     orbs:
-      docker: circleci/docker@1.6.0
+      docker: circleci/docker@2.0.3
     commands:
       dockerhub_login:
         steps:
@@ -605,7 +605,7 @@ orbs:
         steps:
           - run:
               name: Install AWS CLI
-              command: sudo pip3 install awscli --upgrade
+              command: pip install awscli --upgrade
 
       ecr_login:
         steps:
@@ -636,14 +636,14 @@ orbs:
     executors:
       python:
         docker:
-          - image: circleci/python
+          - image: cimg/python:3.10
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
       ruby-node:
         docker:
-          - image: circleci/ruby:3.0.1-node
+          - image: cimg/ruby:3.0.1-node
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -711,7 +711,7 @@ orbs:
                   if [ "${CIRCLE_BRANCH}" == "main" ]; then
                     # If main, push branch tag and latest
                     docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:${IMAGE_TAG} << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:latest
-                    docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web
+                    docker push -a << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web
                   else
                     # Else, push branch tag only
                     docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:${IMAGE_TAG}
@@ -726,7 +726,7 @@ orbs:
                 if [ "${CIRCLE_BRANCH}" == "main" ]; then
                   # If main, push branch tag and latest
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG} << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
-                  docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
+                  docker push -a << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
                 else
                   # Else, push branch tag only
                   docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG}
@@ -810,7 +810,7 @@ orbs:
                 docker tag ${ECR_URL}:latest ${ECR_URL}:${IMAGE_TAG}
                 if [ "${CIRCLE_BRANCH}" == "main" ]; then
                   # We want all of the tags pushed
-                  docker push ${ECR_URL}
+                  docker push -a ${ECR_URL}
                 else
                   docker push ${ECR_URL}:${IMAGE_TAG}
                 fi
@@ -819,7 +819,7 @@ orbs:
     orbs:
       my_slack:
         <<: *slack_orb
-      docker: circleci/docker@1.6.0
+      docker: circleci/docker@2.0.3
     commands:
       dockerhub_login:
         steps:
@@ -842,7 +842,7 @@ orbs:
         steps:
           - run:
               name: Install AWS CLI
-              command: sudo pip3 install awscli --upgrade
+              command: pip install awscli --upgrade
       install_terraform:
         steps:
           - run:
@@ -858,21 +858,7 @@ orbs:
     executors:
       python:
         docker:
-          - image: circleci/python
-            auth:
-              username: $DOCKER_USER
-              password: $DOCKER_ACCESS_TOKEN
-        resource_class: small
-      python-build:
-        docker:
-          - image: python:alpine
-            auth:
-              username: $DOCKER_USER
-              password: $DOCKER_ACCESS_TOKEN
-        resource_class: small
-      python-browsers:
-        docker:
-          - image: circleci/python:3.6-stretch-browsers
+          - image: cimg/python:3.10
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -1393,7 +1379,7 @@ orbs:
 jobs:
   cancel_redundant_builds:
     docker:
-      - image: circleci/python
+      - image: cimg/python:3.10
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1403,6 +1389,7 @@ jobs:
       - run:
           name: Cancel Redundant Builds
           command: |
+            pip install -r scripts/pipeline/cancel_previous_jobs/requirements.txt
             python scripts/pipeline/cancel_previous_jobs/cancel_redundant_builds.py \
             --circle_project_username ${CIRCLE_PROJECT_USERNAME} \
             --circle_project_reponame ${CIRCLE_PROJECT_REPONAME} \
@@ -1412,7 +1399,7 @@ jobs:
 
   slack_notify_domain:
     docker:
-      - image: circleci/python
+      - image: cimg/python:3.10
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1452,7 +1439,7 @@ jobs:
             echo Admin Domain: $ADMIN_DOMAIN
   slack_notify_production_release:
     docker:
-      - image: circleci/python
+      - image: cimg/python:3.10
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1492,7 +1479,7 @@ jobs:
             echo Admin Domain: $ADMIN_DOMAIN
   ecr_scan_results:
     docker:
-      - image: circleci/python
+      - image: cimg/python:3.10
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
@@ -1502,7 +1489,7 @@ jobs:
       - run:
           name: Check ECR Scan Results for ECS containers
           command: |
-            sudo pip3 install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
+            pip install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
             export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
             echo $IMAGE_TAG
             cd scripts/pipeline/check_ecr_scan_results/

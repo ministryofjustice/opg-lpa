@@ -1,13 +1,12 @@
-data "aws_vpc" "default" {
-  default = true
-}
-
 data "aws_subnet_ids" "private" {
-  vpc_id = data.aws_vpc.default.id
+  vpc_id = aws_default_vpc.default.id
 
   tags = {
     Name = "private*"
   }
+  depends_on = [
+    aws_subnet.private
+  ]
 }
 
 resource "aws_default_subnet" "public" {
@@ -51,4 +50,8 @@ data "aws_subnet_ids" "data_persistence" {
     name   = "tag:Name"
     values = ["private"]
   }
+
+  depends_on = [
+    aws_subnet.private
+  ]
 }
