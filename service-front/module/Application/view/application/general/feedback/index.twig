@@ -19,6 +19,7 @@
 {% set type = form.get('rating') %}
 {% set details = form.get('details') %}
 {% set email = form.get('email') %}
+{% set name = form.get('name') %}
 {% set phone = form.get('phone') %}
 
 {{ details.setAttributes({
@@ -36,6 +37,14 @@
     maxlength: 100,
     class: 'form-control',
     'data-cy': 'feedback-email'
+}) ? ''}}
+
+{{ name.setAttributes({
+    id: 'name',
+    type: 'name',
+    maxlength: 100,
+    class: 'form-control',
+    'data-cy': 'feedback-name'
 }) ? ''}}
 
 {{ phone.setAttributes({
@@ -78,6 +87,14 @@
             {{ formElementErrorsV2(details) }}
             <span class="form-hint">2000 characters max</span>
             {{ formElement(details) }}
+        </div>
+
+        <div class="form-group {{ name.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ name.getAttribute('id') }}">
+                Your name 
+            </label>
+            {{ formElementErrorsV2(email) }}
+            {{ formElement(name) }}
         </div>
 
         <div class="form-group {{ email.getMessages|length >0 ? 'form-group-error'}}">
