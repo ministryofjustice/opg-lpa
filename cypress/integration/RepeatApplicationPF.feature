@@ -29,10 +29,18 @@ Feature: Repeat Application for a Property and Finance LPA
         When I click element marked "Confirm and continue"
         Then I see in the page text
             | There is a problem |
-            | Case Number must be twelve digits or fewer |
+            | Case Number must be twelve digits |
+        # test less than 12 digits in case number
+        When I clear the value in "repeatCaseNumber"
+        And I type "1234" into "repeatCaseNumber"
+        And I click "save"
+        When I click element marked "Confirm and continue"
+        Then I see in the page text
+            | There is a problem |
+            | Case Number must be twelve digits |
        # for PF we test typing in a case number. The other scenario where this is not a repeat, is covered in HW feature
         When I clear the value in "repeatCaseNumber"
-        And I type "12345678" into "repeatCaseNumber"
+        And I type "123456789012" into "repeatCaseNumber"
         And I click "save"
         Then I can see popup
         When I click element marked "Confirm and continue"

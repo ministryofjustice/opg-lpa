@@ -50,6 +50,15 @@ class RepeatApplicationForm extends AbstractMainFlowForm
                         ],
                     ],
                 ],
+                [
+                    'name'    => 'StringLength',
+                    'options' => [
+                        'min'      => 12,
+                        'messages' => [
+                            StringLength::TOO_SHORT => 'min-length-%min%',
+                        ],
+                    ],
+                ],
             ],
         ],
     ];
