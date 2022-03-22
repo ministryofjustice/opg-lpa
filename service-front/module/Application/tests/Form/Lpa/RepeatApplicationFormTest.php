@@ -39,7 +39,7 @@ class RepeatApplicationFormTest extends MockeryTestCase
     {
         $this->form->setData(array_merge([
             'isRepeatApplication' => 'is-repeat',
-            'repeatCaseNumber'    => 12345678,
+            'repeatCaseNumber'    => 123456789012,
         ], $this->getCsrfData()));
 
         $this->assertTrue($this->form->isValid());

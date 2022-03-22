@@ -2,7 +2,7 @@
 Feature: Repeat Application for a Property and Finance LPA
 
     I want to set Repeat Application for a Property and Finance LPA
-
+ 
     Background:
         Given I ignore application exceptions
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you
@@ -23,8 +23,24 @@ Feature: Repeat Application for a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | If you are making a repeat application, you need to enter the case number given to you by the Office of the Public Guardian. | 
-        # for PF we test typing in a case number. The other scenario where this is not a repeat, is covered in HW feature
-        When I type "12345678" into "repeatCaseNumber"
+        # test more than 12 digits in case number
+        When I type "12345678910121213" into "repeatCaseNumber"
+        And I click "save"
+        When I click element marked "Confirm and continue"
+        Then I see in the page text
+            | There is a problem |
+            | Case Number must be twelve digits |
+        # test less than 12 digits in case number
+        When I clear the value in "repeatCaseNumber"
+        And I type "1234" into "repeatCaseNumber"
+        And I click "save"
+        When I click element marked "Confirm and continue"
+        Then I see in the page text
+            | There is a problem |
+            | Case Number must be twelve digits |
+       # for PF we test typing in a case number. The other scenario where this is not a repeat, is covered in HW feature
+        When I clear the value in "repeatCaseNumber"
+        And I type "123456789012" into "repeatCaseNumber"
         And I click "save"
         Then I can see popup
         When I click element marked "Confirm and continue"
