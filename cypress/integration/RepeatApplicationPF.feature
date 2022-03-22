@@ -2,7 +2,7 @@
 Feature: Repeat Application for a Property and Finance LPA
 
     I want to set Repeat Application for a Property and Finance LPA
-
+ 
     Background:
         Given I ignore application exceptions
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you
