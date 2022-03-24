@@ -21,7 +21,7 @@ resource "aws_sns_topic" "rds_events" {
 }
 
 resource "aws_db_event_subscription" "rds_events" {
-  name      = "${local.account_name}-rds-event-sub"
-  sns_topic = aws_sns_topic.rds_events.arn
-  event_categories = [ "All" ]
+  name             = "${local.account_name}-rds-event-sub"
+  sns_topic        = aws_sns_topic.rds_events.arn
+  event_categories = ["All"]
 }
