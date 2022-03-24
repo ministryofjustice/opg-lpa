@@ -57,9 +57,9 @@ resource "aws_db_instance" "api" {
   snapshot_identifier                 = !local.is_primary_region ? data.aws_db_snapshot.api_snapshot[0].id : null
 
   lifecycle {
-     ignore_changes = [
-       latest_restorable_time
-     ]
+    ignore_changes = [
+      latest_restorable_time
+    ]
   }
 }
 
