@@ -1,7 +1,7 @@
 ## Certificate providers
 
 An LPA must have a certificate provider. They must sign the LPA.
-
+  
 The certificate provider is an impartial person who helps protect the donor’s interests by checking that the donor understands the LPA and is making it of their own free will.
 
 ### The certificate provider's role
