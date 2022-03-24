@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_log_group" "aws_route53_resolver_query_log" {
-  count             = local.account.dns_firewall.enabled ? 1 : 0
+  count             = var.account.dns_firewall.enabled ? 1 : 0
   name              = "${var.environment_name}-${var.region_name}-make-an-lpa-aws-route53-resolver-query-log-config"
   retention_in_days = 400
   kms_key_id        = aws_kms_key.cloudwatch.arn
@@ -12,13 +12,13 @@ resource "aws_cloudwatch_log_group" "aws_route53_resolver_query_log" {
 }
 
 resource "aws_route53_resolver_query_log_config" "egress" {
-  count           = local.account.dns_firewall.enabled ? 1 : 0
+  count           = var.account.dns_firewall.enabled ? 1 : 0
   name            = "egress"
   destination_arn = aws_cloudwatch_log_group.aws_route53_resolver_query_log[0].arn
 }
 
 resource "aws_route53_resolver_query_log_config_association" "egress" {
-  count                        = local.account.dns_firewall.enabled ? 1 : 0
+  count                        = var.account.dns_firewall.enabled ? 1 : 0
   resolver_query_log_config_id = aws_route53_resolver_query_log_config.egress[0].id
   resource_id                  = aws_default_vpc.default.id
 }
@@ -40,25 +40,25 @@ locals {
   ]
 }
 resource "aws_route53_resolver_firewall_domain_list" "egress_allow" {
-  count   = local.account.dns_firewall.enabled ? 1 : 0
-  name    = "egress_allowed_${local.environment_name}"
-  domains = concat(local.interpolated_dns, local.account.dns_firewall.domains_allowed)
+  count   = var.account.dns_firewall.enabled ? 1 : 0
+  name    = "egress_allowed_${var.environment_name}"
+  domains = concat(local.interpolated_dns, var.account.dns_firewall.domains_allowed)
 }
 
 resource "aws_route53_resolver_firewall_domain_list" "egress_block" {
-  count   = local.account.dns_firewall.enabled ? 1 : 0
-  name    = "egress_blocked_${local.environment_name}"
-  domains = local.account.dns_firewall.domains_blocked
+  count   = var.account.dns_firewall.enabled ? 1 : 0
+  name    = "egress_blocked_${var.environment_name}"
+  domains = var.account.dns_firewall.domains_blocked
 }
 
 resource "aws_route53_resolver_firewall_rule_group" "egress" {
-  count = local.account.dns_firewall.enabled ? 1 : 0
-  name  = "egress_${local.environment_name}"
+  count = var.account.dns_firewall.enabled ? 1 : 0
+  name  = "egress_${var.environment_name}"
 }
 
 resource "aws_route53_resolver_firewall_rule" "egress_allow" {
-  count                   = local.account.dns_firewall.enabled ? 1 : 0
-  name                    = "egress_allowed_${local.environment_name}"
+  count                   = var.account.dns_firewall.enabled ? 1 : 0
+  name                    = "egress_allowed_${var.environment_name}"
   action                  = "ALLOW"
   firewall_domain_list_id = aws_route53_resolver_firewall_domain_list.egress_allow[0].id
   firewall_rule_group_id  = aws_route53_resolver_firewall_rule_group.egress[0].id
@@ -66,8 +66,8 @@ resource "aws_route53_resolver_firewall_rule" "egress_allow" {
 }
 
 resource "aws_route53_resolver_firewall_rule" "egress_block" {
-  count  = local.account.dns_firewall.enabled ? 1 : 0
-  name   = "egress_blocked_${local.environment_name}"
+  count  = var.account.dns_firewall.enabled ? 1 : 0
+  name   = "egress_blocked_${var.environment_name}"
   action = "ALERT"
   # action                  = "BLOCK"
   # block_response          = "NODATA"
@@ -77,8 +77,8 @@ resource "aws_route53_resolver_firewall_rule" "egress_block" {
 }
 
 resource "aws_route53_resolver_firewall_rule_group_association" "egress" {
-  count                  = local.account.dns_firewall.enabled ? 1 : 0
-  name                   = "egress_${local.environment_name}"
+  count                  = var.account.dns_firewall.enabled ? 1 : 0
+  name                   = "egress_${var.environment_name}"
   firewall_rule_group_id = aws_route53_resolver_firewall_rule_group.egress[0].id
   priority               = 300
   vpc_id                 = aws_default_vpc.default.id
@@ -86,7 +86,7 @@ resource "aws_route53_resolver_firewall_rule_group_association" "egress" {
 
 
 resource "aws_cloudwatch_query_definition" "dns_firewall_statistics" {
-  count = local.account.dns_firewall.enabled ? 1 : 0
+  count = var.account.dns_firewall.enabled ? 1 : 0
   name  = "DNS Firewall Queries/DNS Firewall Statistics"
 
   log_group_names = [aws_cloudwatch_log_group.aws_route53_resolver_query_log[0].name]
