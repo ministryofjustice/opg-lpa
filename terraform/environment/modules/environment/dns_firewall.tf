@@ -2,7 +2,7 @@ resource "aws_cloudwatch_log_group" "aws_route53_resolver_query_log" {
   count             = var.account.dns_firewall.enabled ? 1 : 0
   name              = "${var.environment_name}-${var.region_name}-make-an-lpa-aws-route53-resolver-query-log-config"
   retention_in_days = 400
-  kms_key_id        = aws_kms_key.cloudwatch.arn
+  #kms_key_id        = data.aws_kms_key.cloudwatch.arn
   tags = merge(
     local.default_opg_tags,
     local.shared_component_tag, {
@@ -20,7 +20,7 @@ resource "aws_route53_resolver_query_log_config" "egress" {
 resource "aws_route53_resolver_query_log_config_association" "egress" {
   count                        = var.account.dns_firewall.enabled ? 1 : 0
   resolver_query_log_config_id = aws_route53_resolver_query_log_config.egress[0].id
-  resource_id                  = aws_default_vpc.default.id
+  resource_id                  = data.aws_vpc.default.id
 }
 
 locals {
@@ -81,7 +81,7 @@ resource "aws_route53_resolver_firewall_rule_group_association" "egress" {
   name                   = "egress_${var.environment_name}"
   firewall_rule_group_id = aws_route53_resolver_firewall_rule_group.egress[0].id
   priority               = 300
-  vpc_id                 = aws_default_vpc.default.id
+  vpc_id                 = data.aws_vpc.default.id
 }
 
 
