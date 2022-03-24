@@ -58,5 +58,10 @@
             "Application\\": "module/Application/src/",
             "MakeLogger\\": "../shared/logging/module/MakeLogger/src/"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "laminas/laminas-component-installer": true
+        }
     }
 }
