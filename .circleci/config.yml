@@ -1044,9 +1044,9 @@ orbs:
                 set +e
                 if [[ "${level}" == "account" ]] || [[ "${level}" == "region" ]]
                 then
-                  cat ${WORKSPACE}.log | grep -E 'destroyed|replaced|has changed'
+                  cat ${WORKSPACE}.log | grep -E 'destroyed|replaced'
                 else
-                  cat ${WORKSPACE}.log | grep -E 'aws_security*|aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced|has changed'
+                  cat ${WORKSPACE}.log | grep -E 'aws_security*|aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*|engine_version' | grep -E 'destroyed|replaced|engine_version'
                 fi
                   if [[ "$?" -eq 0 ]]
                 then
