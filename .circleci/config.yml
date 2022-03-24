@@ -884,7 +884,9 @@ orbs:
           - checkout
           - run:
               name: terraform lint
-              command: terraform fmt -diff -check -recursive
+              command: |
+                cd ~/project/terraform/account
+                terraform fmt -diff -check -recursive
           - run:
               name: Validate Account Terraform
               command: |
@@ -905,7 +907,9 @@ orbs:
           - checkout
           - run:
               name: terraform lint
-              command: terraform fmt -diff -check -recursive
+              command: |
+                cd ~/project/terraform/region
+                terraform fmt -diff -check -recursive
           - run:
               name: Validate Region Terraform
               command: |
