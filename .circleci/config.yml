@@ -884,7 +884,9 @@ orbs:
           - checkout
           - run:
               name: terraform lint
-              command: terraform fmt -diff -check -recursive
+              command: |
+                cd ~/project/terraform/account
+                terraform fmt -diff -check -recursive
           - run:
               name: Validate Account Terraform
               command: |
@@ -905,7 +907,9 @@ orbs:
           - checkout
           - run:
               name: terraform lint
-              command: terraform fmt -diff -check -recursive
+              command: |
+                cd ~/project/terraform/region
+                terraform fmt -diff -check -recursive
           - run:
               name: Validate Region Terraform
               command: |
@@ -1046,15 +1050,15 @@ orbs:
                 then
                   cat ${WORKSPACE}.log | grep -E 'destroyed|replaced'
                 else
-                  cat ${WORKSPACE}.log | grep -E 'aws_security*|aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
+                  cat ${WORKSPACE}.log | grep -E 'aws_security*|aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*|engine_version' | grep -E 'destroyed|replaced|engine_version'
                 fi
                   if [[ "$?" -eq 0 ]]
                 then
-                   echo terraform log scan found a possible destructive change.
+                   echo terraform log scan found a possible destructive change, or an external change not aligned with the configuration.
                    echo please review before approval.
                    exit 1
                 else
-                    echo terraform log scan found no destructive changes. auto-approval will take place.
+                    echo terraform log scan found no relevant changes. auto-approval will take place.
                     exit 0
                 fi
 
