@@ -2,7 +2,7 @@ resource "aws_cloudwatch_log_group" "aws_route53_resolver_query_log" {
   count             = var.account.dns_firewall.enabled ? 1 : 0
   name              = "${var.environment_name}-${var.region_name}-make-an-lpa-aws-route53-resolver-query-log-config"
   retention_in_days = 400
-  kms_key_id        = data.aws_kms_key.cloudwatch.arn
+  kms_key_id        = data.aws_kms_key.cloudwatch_encryption.arn
   tags = merge(
     local.default_opg_tags,
     local.shared_component_tag, {
