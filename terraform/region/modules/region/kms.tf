@@ -20,6 +20,8 @@ resource "aws_kms_alias" "lpa_pdf_cache" {
   target_key_id = aws_kms_key.lpa_pdf_cache.key_id
 }
 
+# See the following link for further information
+# https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html
 resource "aws_kms_key" "cloudwatch_encryption" {
   description             = "encryption key for cloudwatch"
   deletion_window_in_days = 7
