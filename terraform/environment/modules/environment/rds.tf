@@ -55,6 +55,12 @@ resource "aws_db_instance" "api" {
   performance_insights_kms_key_id     = data.aws_kms_key.rds.arn
   copy_tags_to_snapshot               = true
   snapshot_identifier                 = !local.is_primary_region ? data.aws_db_snapshot.api_snapshot[0].id : null
+
+  lifecycle {
+    ignore_changes = [
+      latest_restorable_time
+    ]
+  }
 }
 
 // setup a bunch of alarms that are useful for our needs
