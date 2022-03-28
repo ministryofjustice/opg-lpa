@@ -12,7 +12,6 @@ The donor must add instructions if:
 
 * they appointed their attorneys jointly, and want the remaining attorneys to be able to continue make decisions if one of the attorneys dies or is unable to act
 * they appointed their attorneys to act jointly for some decisions and jointly and severally for others, and want the remaining attorneys to be able to continue making the joint decisions if one of the attorneys dies or is unable to act
-* they’re making a property and finance LPA and the donor has, or wants to have, investments in a discretionary management scheme
 
 You can find more information about these instructions below.
 
@@ -97,22 +96,15 @@ Examples:
 * My attorneys must not sell my home unless, in my doctor's opinion, I can no longer live independently.
 * My attorneys must send annual accounts to my brother and sister.
 
-#### Discretionary management schemes
+#### Discretionary Investment Management
 
-A discretionary management scheme (DMS) is a type of investment where investment decisions are taken by the scheme manager, such as a bank.
+Discretionary investment management is a form of investment management in which buy and sell decisions are made by a portfolio manager for a client's account.
 
-The donor must include instructions in their property and finance LPA if they:
+The term "discretionary" refers to the fact that investment decisions are made at the portfolio manager's discretion.
 
-* have investments in a DMS and want that to continue
-* want to allow their attorneys to invest their money in a DMS
+In circumstances where you already have investments that are managed on your behalf by an investment professional (known as discretionary investment management), or would like to allow your attorneys to use any scheme involving discretionary investment management, you should consider taking legal advice on whether it is necessary to make specific provision for this in your LPA.
 
-In these cases the donor should include instruction wording like this:
-
-"My attorneys may transfer my investments into a discretionary management scheme. Or, if I already had investments in a discretionary management scheme before I lost capacity to make financial decisions, I want the scheme to continue. I understand in both cases that managers of the scheme will make investment decisions and my investments will be held in their names or the names of their nominees."
-
-OPG cannot guarantee that DMSs will accept this wording. The donor may also want to seek legal advice before they speak to their DMS.
-
-If the LPA does not include appropriate instructions about DMSs and the donor has lost capacity, their attorneys will have to apply to the Court of Protection to allow them to use a DMS.
+This is because at least one major financial institution has taken the position that existing contracts relating to discretionary investment management schemes will come to an end on the loss of capacity of the donor of an LPA, and that any new investments by attorneys in discretionary investment management schemes will only be permitted if there is an express instruction on the matter in the LPA.
 
 ### Instructions on health and welfare LPAs
 
