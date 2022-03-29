@@ -35,7 +35,7 @@ locals {
     "secretsmanager.${data.aws_region.current.name}.amazonaws.com.${data.aws_region.current.name}.compute.internal.",
     "${replace(data.aws_elasticache_replication_group.front_cache_region.primary_endpoint_address, "master", "*")}.",
     "311462405659.dkr.ecr.eu-west-1.amazonaws.com.",
-    "api.${var.environment_name}-internal."
+    "api.${var.environment_name}.internal."
 
   ]
 }
@@ -62,7 +62,7 @@ resource "aws_route53_resolver_firewall_rule" "egress_allow" {
   action                  = "ALLOW"
   firewall_domain_list_id = aws_route53_resolver_firewall_domain_list.egress_allow[0].id
   firewall_rule_group_id  = aws_route53_resolver_firewall_rule_group.egress[0].id
-  priority                = 200
+  priority                = 500
 }
 
 resource "aws_route53_resolver_firewall_rule" "egress_block" {
@@ -80,7 +80,7 @@ resource "aws_route53_resolver_firewall_rule_group_association" "egress" {
   count                  = var.account.dns_firewall.enabled ? 1 : 0
   name                   = "egress_${var.environment_name}"
   firewall_rule_group_id = aws_route53_resolver_firewall_rule_group.egress[0].id
-  priority               = 300
+  priority               = 600
   vpc_id                 = data.aws_vpc.default.id
 }
 
