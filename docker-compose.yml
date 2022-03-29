@@ -287,6 +287,12 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
 
+  feedback-api:
+    container_name: lpa-feedback-api
+    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/rest-api
+    ports:
+      - 9004:8005
+
   api-composer:
     image: composer:latest
     volumes:
