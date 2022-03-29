@@ -13,7 +13,7 @@ locals{
 }
 
 resource "aws_service_discovery_private_dns_namespace" "internal" {
-  name = dns_namespace_internal
+  name = local.dns_namespace_internal
   vpc  = data.aws_vpc.default.id
 }
 
