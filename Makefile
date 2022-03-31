@@ -176,10 +176,10 @@ dc-front-unit-tests:
 
 .PHONY: dc-unit-tests
 dc-unit-tests:
-	@${MAKE} dc-front-unit-tests \
-	docker-compose run admin-app /app/vendor/bin/phpunit \
-	docker-compose run api-app /app/vendor/bin/phpunit \
-	docker-compose run pdf-app /app/vendor/bin/phpunit \
+	@${MAKE} dc-front-unit-tests 
+	@docker-compose run admin-app /app/vendor/bin/phpunit
+	@docker-compose run api-app /app/vendor/bin/phpunit
+	@docker-compose run pdf-app /app/vendor/bin/phpunit
 
 .PHONY: functional-local
 functional-local:
