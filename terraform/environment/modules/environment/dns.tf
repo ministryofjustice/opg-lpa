@@ -8,8 +8,8 @@ data "aws_route53_zone" "live_service_lasting_power_of_attorney" {
   name     = "lastingpowerofattorney.service.gov.uk"
 }
 
-locals{
-   dns_namespace_internal = var.account_name == "development" ? "${var.environment_name}.internal" : "${var.environment_name}-internal"
+locals {
+  dns_namespace_internal = var.account_name == "development" ? "${var.account_name}.${var.environment_name}.internal" : "${var.environment_name}-internal"
 }
 
 resource "aws_service_discovery_private_dns_namespace" "internal" {
