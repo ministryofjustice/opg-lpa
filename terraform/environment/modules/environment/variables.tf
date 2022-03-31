@@ -60,11 +60,6 @@ variable "account" {
         maximum = number
       })
     })
-    dns_firewall = object({
-      enabled         = bool
-      domains_allowed = list(string)
-      domains_blocked = list(string)
-    })
   })
 }
 
