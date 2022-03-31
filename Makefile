@@ -176,21 +176,10 @@ dc-front-unit-tests:
 
 .PHONY: dc-unit-tests
 dc-unit-tests:
-	@${MAKE} dc-front-unit-tests
-
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run admin-app /app/vendor/bin/phpunit
-
-	@docker-compose run api-app /app/vendor/bin/phpunit
-
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run pdf-app /app/vendor/bin/phpunit
+	@${MAKE} dc-front-unit-tests \
+	docker-compose run admin-app /app/vendor/bin/phpunit \
+	docker-compose run api-app /app/vendor/bin/phpunit \
+	docker-compose run pdf-app /app/vendor/bin/phpunit \
 
 .PHONY: functional-local
 functional-local:
