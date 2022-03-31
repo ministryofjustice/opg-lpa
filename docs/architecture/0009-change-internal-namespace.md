@@ -8,11 +8,15 @@ Proposed (31/03/2022)
 
 ## Context
 
-Currently it is hard to filter as the `-internal` suffix does not have it's own "part", and presents issues when you have multiple ephemeral environments in the AWS dev account.
+Currently it is hard to filter the `-internal` suffix for service discovery namespaces in Route 53 Resolver DNS firewall. the Domain name used  does not have it's own "parts", and presents issues when you have multiple ephemeral environments in the AWS dev account, when setting up rules.
+
+For details of the route 53 Reolver DNS Firewall see: <https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-dns-firewall.html>
+For details of the service discovery private namespaces see:
+<https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-discovery.html>
 
 ## Proposal
 
-in order to do proper filtering on the DNS Firewall, we need to change the DNS entries used for Service discovery, so that it is easier to support.
+In order to do proper filtering on the DNS Firewall, we need to change the DNS entries used for Service discovery, so that it is easier to support.
 
 We propose that this is changed from the current format of
 
@@ -24,12 +28,16 @@ api.${environment_name}-internal
 To
 
 ``` HCL
-api.${environment_name}.internal
+api.${environment_name}.${account_name}.internal  # development only
+api.${account_name}.internal # production and preproduction only
 ```
 
-where `${environment_name}` refers to ephemeral or fixed environment as defined by terraform e.g. `PR1234` or `production`
+Where:
 
-this means we can filter on all allowed `.internal` egress on DNS firewall, and has the benefit of making the namespace more canonical, as it represents entries used for internal only use.
+- `${environment_name}` refers to ephemeral  as defined by terraform e.g. `PR1234`
+- `${account_name}` refers to the designated account e.g. `production`, `preproduction` or `development`
+
+this means we can filter on all allowed `${account_name}.internal` egress on DNS firewall, and has the benefit of making the namespace more canonical, as it represents entries used for internal only use, also identifying which AWS account alias it comes from.
 
 ## Decision
 
@@ -42,10 +50,10 @@ API's:
 - That use domains e.g. service discovery in AWS
 - that are not exposed to other external services i.e. internal only
 
-Should use `.internal` suffix in the domain name.
+Should use `${account_name}.internal` suffix in the domain name.
 
 ## Consequences
 
-We will be able to filter on anything that ends `.internal` in firewall rules.
+We will be able to filter on anything that ends `${account_name}.internal` in firewall rules.
 
 It will require some down time in non development accounts/environment for our existing set up. This will be mitigated by performing the change in a maintenance window.
