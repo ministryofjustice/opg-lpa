@@ -11,6 +11,11 @@ variable "account" {
         region     = string
         is_primary = string
     }))
+    dns_firewall = object({
+      enabled         = bool
+      domains_allowed = list(string)
+      domains_blocked = list(string)
+    })
   })
 }
 
