@@ -2,6 +2,8 @@
 
 The Office of the Public Guardian Lasting Power of Attorney online service: Managed by opg-org-infra &amp; Terraform.
 
+[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=for-the-badge&logo=github&label=MoJ%20Compliant&query=%24.data%5B%3F%28%40.name%20%3D%3D%20%22opg-lpa%22%29%5D.status&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fgithub_repositories)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/github_repositories#opg-lpa "Link to report")
+
 ## Pre-requisites for Local Development
 
 Set up software on your machine required to run the application locally:
@@ -157,15 +159,17 @@ The load tests are located in `tests/load`. They are written using [locust](http
 
 To run the load tests:
 
-1.  Start the stack (see above).
-1.  Create a virtualenv: `virtualenv -p python3 ~/.loadtestsvenv` (substitute your preferred
+1. Start the stack (see above).
+1. Create a virtualenv: `virtualenv -p python3 ~/.loadtestsvenv` (substitute your preferred
 path for the virtual environment).
-1.  Install dependencies:
+1. Install dependencies:
+
     ```bash
     cd tests/load
     pip install -e .
     ```
-1.  Run the test suite: `run_load_tests.sh tests/suite.py`
+
+1. Run the test suite: `run_load_tests.sh tests/suite.py`
     The tests run indefinitely until you interrupt them. Reports are written to `build/load_tests`.
     Running `run_load_tests.sh` without arguments shows the available switches.
 
