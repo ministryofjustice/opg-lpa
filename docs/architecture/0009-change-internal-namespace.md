@@ -8,11 +8,11 @@ Proposed (31/03/2022)
 
 ## Context
 
-Currently it is hard to filter the `-internal` suffix for service discovery namespaces in Route 53 Resolver DNS firewall. the Domain name used  does not have it's own "parts", and presents issues when you have multiple ephemeral environments in the AWS dev account, when setting up rules.
+Currently it is hard to filter the `-internal` suffix for service discovery namespaces in Route 53 Resolver DNS firewall. the Domain name used does not have it's own "parts", and presents issues when you have multiple ephemeral environments in the AWS dev account, when setting up rules.
 
-For details of the route 53 Reolver DNS Firewall see: <https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-dns-firewall.html>
-For details of the service discovery private namespaces see:
-<https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-discovery.html>
+For details of the route 53 Reolver DNS Firewall see: [https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-dns-firewall.html](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-dns-firewall.html)
+
+For details of the service discovery private namespaces see: [https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-discovery.html](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-discovery.html)
 
 ## Proposal
 
@@ -21,9 +21,7 @@ In order to do proper filtering on the DNS Firewall, we need to change the DNS e
 We propose that this is changed from the current format of
 
 ``` HCL
-
 api.${environment_name}-internal
-```
 
 To
 
@@ -34,7 +32,7 @@ api.${account_name}.internal # production and preproduction only
 
 Where:
 
-- `${environment_name}` refers to ephemeral  as defined by terraform e.g. `PR1234`
+- `${environment_name}` refers to ephemeral as defined by terraform e.g. `PR1234`
 - `${account_name}` refers to the designated account e.g. `production`, `preproduction` or `development`
 
 this means we can filter on all allowed `${account_name}.internal` egress on DNS firewall, and has the benefit of making the namespace more canonical, as it represents entries used for internal only use, also identifying which AWS account alias it comes from.
