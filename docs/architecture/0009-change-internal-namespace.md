@@ -42,6 +42,7 @@ this means we can filter on all allowed `${account_name}.internal` egress on DNS
 To use this in development account initially, but to follow up with this in non development accounts when we have availability to have downtime, as this change will require the API ECS Service to be recreated.
 
 To review this decision, and ensure alignment with other teams within OPG, and adjust accordingly.
+to document in OPG Technical Guidance in this [ADR](https://docs.opg.service.justice.gov.uk/documentation/adrs/adr-002.html#adr-002-application-domain-names)
 
 API's:
 
