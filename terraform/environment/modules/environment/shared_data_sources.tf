@@ -18,6 +18,10 @@ data "aws_kms_key" "lpa_pdf_cache" {
   key_id = "alias/lpa_pdf_cache-${var.account_name}"
 }
 
+data "aws_kms_key" "cloudwatch_encryption" {
+  key_id = "alias/cloudwatch_encryption-${var.account_name}"
+}
+
 data "aws_acm_certificate" "certificate_front" {
   domain = "${local.cert_prefix_internal}${local.dns_namespace_dev_prefix}front.lpa.opg.service.justice.gov.uk"
 }
@@ -41,3 +45,7 @@ data "aws_kms_alias" "secrets_encryption_alias" {
 data "aws_kms_alias" "multi_region_secrets_encryption_alias" {
   name = "alias/mrk_secrets_encryption_key-${var.account_name}"
 }
+
+data "aws_region" "current" {}
+
+data "aws_caller_identity" "current" {}

@@ -3,14 +3,14 @@ Feature: Change User Personal Details
     As a user of Make an Lpa I want to be able to change my personal details
     # for Password changes , see seperate Password.feature
     @focus
-    Scenario: Change email 
+    Scenario: Change email
         Given I ignore application exceptions
         When I log in as seeded user
         And I visit link containing "Your details"
         Then I am taken to "/user/about-you"
         When I visit link containing "Change Email Address"
         Then I am taken to "/user/change-email-address"
-        And I see "email_current" prepopulated with "seeded_test_user@digital.justice.gov.uk" 
+        And I see "email_current" prepopulated with "seeded_test_user@digital.justice.gov.uk"
         When I try to change email address with a mismatch
         Then I am taken to "/user/change-email-address"
         And I see in the page text
@@ -28,8 +28,8 @@ Feature: Change User Personal Details
         When I try to change email address correctly
         Then I see "We've emailed a link to anewemail@digital.justice.gov.uk. You'll need to click on the link so we know this email address is correct" in the page text
 
-    @focus
-    Scenario: Change address 
+
+    Scenario: Change address
         Given I ignore application exceptions
         When I log in as seeded user
         And I visit link containing "Your details"
