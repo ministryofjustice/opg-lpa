@@ -8,7 +8,7 @@ function main() {
 }
 
 function install_tools() {
-  sudo amazon-linux-extras install postgresql10 jq -y
+  sudo amazon-linux-extras install postgresql10 -y
   sudo yum install jq -y
 }
 
