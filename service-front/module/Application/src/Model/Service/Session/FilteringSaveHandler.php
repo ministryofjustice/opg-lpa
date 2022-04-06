@@ -128,7 +128,7 @@ class FilteringSaveHandler implements SaveHandlerInterface
     }
 
     // $savePath and $sessionName are ignored
-    public function open($savePath, $sessionName)
+    public function open(string $savePath, string $sessionName): bool
     {
         $result = FALSE;
 
@@ -146,12 +146,12 @@ class FilteringSaveHandler implements SaveHandlerInterface
         return $result;
     }
 
-    public function close()
+    public function close(): bool
     {
         return $this->redisClient->close();
     }
 
-    public function read($id)
+    public function read(string $id): string|false
     {
         $key = $this->getKey($id);
         $data = $this->redisClient->get($key);
@@ -175,7 +175,7 @@ class FilteringSaveHandler implements SaveHandlerInterface
      * the session is not written. We still return TRUE so that PHP's
      * session machinery knows that the save handler has done its job.
      */
-    public function write($id, $data)
+    public function write(string $id, string $data): bool
     {
         // Ignore writes if any filter returns FALSE
         $doWrite = TRUE;
@@ -204,14 +204,14 @@ class FilteringSaveHandler implements SaveHandlerInterface
         }
     }
 
-    public function destroy($id)
+    public function destroy(string $id): bool
     {
         $this->redisClient->del($this->getKey($id));
         return TRUE;
     }
 
     // no-op, as we let Redis clean up expired keys and rely on TTL
-    public function gc($maxlifetime)
+    public function gc(int $max_lifetime): int|false
     {
         return TRUE;
     }

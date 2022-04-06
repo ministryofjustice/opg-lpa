@@ -195,6 +195,6 @@ class FilteringSaveHandlerTest extends MockeryTestCase
     public function testGc()
     {
         $redisMock = $this->makeSaveHandlerWithMock('tcp://barhost:6737');
-        $this->assertSame(TRUE, $this->saveHandler->gc(1));
+        $this->assertSame(1, $this->saveHandler->gc(1));
     }
 }
