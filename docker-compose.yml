@@ -403,7 +403,6 @@ services:
       - local-config
       - api-app
       - postgres
-      - api-composer
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
