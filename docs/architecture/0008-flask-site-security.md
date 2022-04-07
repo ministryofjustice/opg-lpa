@@ -1,4 +1,4 @@
-# 0003. Flask site security
+# 0008. Flask site security
 
 Date: 2021-09-03
 
@@ -45,7 +45,7 @@ Should not install unnecessary features or frameworks. We base the flask contain
 
 A06:2021 Vulnerable and outdated components
 We should ensure versions of components are kept up to date.  On initial release, we have an older version of flask pinned, but we have a story to get all
-the necessary components working with later flask, and ultimately stop pinning the version and use dependabot to keep components updated. 
+the necessary components working with later flask, and ultimately stop pinning the version and use dependabot to keep components updated.
 
 A07:2021  Identification and Authentication failures (formerly Broken Authentication) :
 We aim to share session info with PHP , this will happen only when we get to forms that require authenticating to view.
