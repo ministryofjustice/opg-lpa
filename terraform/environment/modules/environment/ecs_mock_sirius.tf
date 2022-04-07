@@ -2,6 +2,10 @@
 data "aws_ecr_repository" "lpa_api_mock_gateway" {
   provider = aws.management
   name     = "online-lpa/mock_gateway"
+  # Required due to requesting the FQDN of api web
+  depends_on = [
+    data.aws_ecr_repository.lpa_api_web
+  ]
 }
 
 data "aws_ecr_repository" "lpa_api_mock_sirius" {
