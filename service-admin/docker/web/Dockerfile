@@ -5,8 +5,8 @@ RUN chown -R nginx:nginx /var/cache/nginx && \
         chown -R nginx:nginx /etc/nginx/conf.d && \
         mkdir /usr/local/bin/confd && \
         chown -R nginx:nginx /usr/local/bin/confd
-RUN chmod -R 777 /etc/nginx/conf.d
-
+RUN chmod -R 777 /etc/nginx/conf.d && \
+    chmod -R 777 /usr/local/bin/confd
 USER nginx
 
 # Add Confd to configure nginx on start
@@ -17,6 +17,5 @@ RUN  wget -q -P /usr/local/bin/confd "https://github.com/kelseyhightower/confd/r
 COPY --chown=nginx:nginx service-admin/public /web
 COPY --chown=nginx:nginx service-admin/docker/web/etc /etc
 
-
-CMD confd -onetime -backend env \
+CMD /usr/local/bin/confd -onetime -backend env \
   && nginx -g "daemon off;"
