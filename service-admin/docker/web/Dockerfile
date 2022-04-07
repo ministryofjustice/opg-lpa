@@ -1,14 +1,22 @@
 FROM nginx:stable-alpine
 
-RUN adduser -D -g '' user
+RUN chown -R nginx:nginx /var/cache/nginx && \
+        chown -R nginx:nginx /var/log/nginx && \
+        chown -R nginx:nginx /etc/nginx/conf.d && \
+        mkdir /usr/local/bin/confd && \
+        chown -R nginx:nginx /usr/local/bin/confd
+RUN chmod -R 777 /etc/nginx/conf.d
+
+USER nginx
+
 # Add Confd to configure nginx on start
 ENV CONFD_VERSION="0.16.0"
-RUN wget -q -O /usr/local/bin/confd "https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-linux-amd64" \
+RUN  wget -q -P /usr/local/bin/confd "https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-linux-amd64" \
   && chmod +x /usr/local/bin/confd
 
-COPY --chown=user:user service-admin/public /web
-COPY --chown=user:user service-admin/docker/web/etc /etc
+COPY --chown=nginx:nginx service-admin/public /web
+COPY --chown=nginx:nginx service-admin/docker/web/etc /etc
 
-USER "user"
-CMD sudo confd -onetime -backend env \
-  && sudo nginx -g "daemon off;"
+
+CMD confd -onetime -backend env \
+  && nginx -g "daemon off;"
