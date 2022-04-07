@@ -11,4 +11,4 @@ COPY --chown=user:user service-admin/docker/web/etc /etc
 
 USER "user"
 CMD confd -onetime -backend env \
-  && nginx -g "daemon off;"
+  && sudo nginx -g "daemon off;"
