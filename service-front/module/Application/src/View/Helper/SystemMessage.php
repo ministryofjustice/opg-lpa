@@ -21,7 +21,7 @@ class SystemMessage extends AbstractHelper
     {
         $message = $this->cache->getItem('system-message');
 
-        if ($message !== NULL) {
+        if ($message !== null) {
             $message = trim($message);
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\Service\Session;
 
 use MakeLogger\Logging\LoggerTrait;
@@ -6,7 +7,6 @@ use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use InvalidArgumentException;
 use Redis;
 use RedisException;
-
 
 /**
  * Custom save handler to which write filters can be applied.
@@ -130,17 +130,19 @@ class FilteringSaveHandler implements SaveHandlerInterface
     // $savePath and $sessionName are ignored
     public function open(string $savePath, string $sessionName): bool
     {
-        $result = FALSE;
+        $result = false;
 
         try {
             // this will throw a RedisException if the Redis server is unavailable
             $result = $this->redisClient->connect($this->redisHost, $this->redisPort);
-        }
-        catch (RedisException $e) {
-            $this->getLogger()->err(sprintf('Unable to connect to Redis server at %s:%s',
-                $this->redisHost, $this->redisPort));
+        } catch (RedisException $e) {
+            $this->getLogger()->err(sprintf(
+                'Unable to connect to Redis server at %s:%s',
+                $this->redisHost,
+                $this->redisPort
+            ));
             $this->getLogger()->err($e);
-            $result = FALSE;
+            $result = false;
         }
 
         return $result;
@@ -158,13 +160,17 @@ class FilteringSaveHandler implements SaveHandlerInterface
 
         // Redis returns FALSE if a key doesn't exist, but
         // PHP expects an empty string to be returned in that situation
-        if ($data === FALSE) {
+        if ($data === false) {
             $data = '';
         }
 
         $this->getLogger()->debug(
-            sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Reading session data at %s; key = %s; session data = %s',
-                microtime(TRUE), $key, $data)
+            sprintf(
+                'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Reading session data at %s; key = %s; session data = %s',
+                microtime(true),
+                $key,
+                $data
+            )
         );
 
         return $data;
@@ -178,10 +184,10 @@ class FilteringSaveHandler implements SaveHandlerInterface
     public function write(string $id, string $data): bool
     {
         // Ignore writes if any filter returns FALSE
-        $doWrite = TRUE;
+        $doWrite = true;
         foreach ($this->filters as $_ => $filter) {
             if (!$filter()) {
-                $doWrite = FALSE;
+                $doWrite = false;
                 break;
             }
         }
@@ -189,30 +195,36 @@ class FilteringSaveHandler implements SaveHandlerInterface
         $key = $this->getKey($id);
 
         if ($doWrite) {
-            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; key = %s; session data = %s',
-                microtime(TRUE), $key, $data));
+            $this->getLogger()->debug(sprintf(
+                'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; key = %s; session data = %s',
+                microtime(true),
+                $key,
+                $data
+            ));
 
             $this->sessionWritesAttempted += 1;
 
             return $this->redisClient->setEx($key, $this->ttl, $data);
-        }
-        else {
-            $this->getLogger()->debug(sprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for key %s',
-                microtime(TRUE), $key));
+        } else {
+            $this->getLogger()->debug(sprintf(
+                'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for key %s',
+                microtime(true),
+                $key
+            ));
 
-            return TRUE;
+            return true;
         }
     }
 
     public function destroy(string $id): bool
     {
         $this->redisClient->del($this->getKey($id));
-        return TRUE;
+        return true;
     }
 
     // no-op, as we let Redis clean up expired keys and rely on TTL
     public function gc(int $max_lifetime): int|false
     {
-        return TRUE;
+        return true;
     }
 }
