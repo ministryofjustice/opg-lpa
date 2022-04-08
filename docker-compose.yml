@@ -444,7 +444,7 @@ services:
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
   # ---------------------------
-  # Create feedback table and db user for PerfPlat 
+  # Create feedback table and db user for PerfPlat
   feedbackdb:
     container_name: feedbackdb
     image: feedbackdb

@@ -16,7 +16,7 @@ RUN apk add --update --no-cache postgresql-libs
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev \
   && docker-php-ext-install pgsql pdo_pgsql \
   && docker-php-ext-install bcmath \
-  && docker-php-ext-install opcache 
+  && docker-php-ext-install opcache
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"

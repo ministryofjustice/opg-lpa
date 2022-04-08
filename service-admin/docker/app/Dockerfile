@@ -12,7 +12,7 @@ RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
         && docker-php-ext-install intl \
-        && docker-php-ext-install bcmath 
+        && docker-php-ext-install bcmath
 
 # Enable debug if needed. Should only be used locally
 ARG ENABLE_XDEBUG=0
