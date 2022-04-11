@@ -1,7 +1,9 @@
 FROM composer:2.1.11 AS composer
 
-COPY service-api/composer.json /app/composer.json
-COPY service-api/composer.lock /app/composer.lock
+RUN adduser -D -g '' appuser
+
+COPY --chown=appuser:appuser service-admin/composer.json /app/composer.json
+COPY --chown=appuser:appuser service-admin/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
@@ -16,7 +18,7 @@ RUN apk add --update --no-cache postgresql-libs
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev \
   && docker-php-ext-install pgsql pdo_pgsql \
   && docker-php-ext-install bcmath \
-  && docker-php-ext-install opcache 
+  && docker-php-ext-install opcache
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
@@ -37,13 +39,16 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
 
-COPY service-api /app
-COPY shared/logging /shared/logging
-COPY --from=composer /app/vendor /app/vendor
-COPY service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=appuser:appuser service-api /app
+COPY --chown=appuser:appuser shared/logging /shared/logging
+COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
+COPY --chown=appuser:appuser service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=appuser:appuser service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+
+RUN chmod +x /app/docker/app/db-migrations.sh
 
 WORKDIR /app
 
-CMD chmod +x /app/docker/app/db-migrations.sh && /app/docker/app/db-migrations.sh \
-  && php-fpm
+USER appuser
+
+CMD  /app/docker/app/db-migrations.sh && php-fpm
