@@ -2,8 +2,8 @@ FROM composer:2.1.11 AS composer
 
 RUN adduser -D -g '' appuser
 
-COPY --chown=appuser:appuser service-admin/composer.json /app/composer.json
-COPY --chown=appuser:appuser service-admin/composer.lock /app/composer.lock
+COPY --chown=appuser:appuser service-api/composer.json /app/composer.json
+COPY --chown=appuser:appuser service-api/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
