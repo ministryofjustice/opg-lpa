@@ -1,15 +1,15 @@
 FROM composer:2.1.11 AS composer
 
-RUN adduser -D -g '' user
+RUN adduser -D -g '' appuser
 
-COPY --chown=user:user service-admin/composer.json /app/composer.json
-COPY --chown=user:user service-admin/composer.lock /app/composer.lock
+COPY --chown=appuser:appuser service-admin/composer.json /app/composer.json
+COPY --chown=appuser:appuser service-admin/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
 FROM php:8.0-fpm-alpine
 
-RUN adduser -D -g '' user
+RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade apk-tools
 RUN apk upgrade --available
@@ -34,12 +34,12 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
-COPY --chown=user:user shared/logging /shared/logging
-COPY --chown=user:user service-admin /app
-COPY --chown=user:user --from=composer /app/vendor /app/vendor
-COPY --chown=user:user service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY --chown=user:user service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=appuser:appuser shared/logging /shared/logging
+COPY --chown=appuser:appuser service-admin /app
+COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
+COPY --chown=appuser:appuser service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=appuser:appuser service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 WORKDIR /app
-USER user
+USER appuser
 
 CMD php-fpm
