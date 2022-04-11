@@ -9,6 +9,8 @@ RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-auto
 
 FROM php:8.0-fpm-alpine3.14
 
+RUN adduser -D -g '' appuser
+
 RUN apk add --upgrade apk-tools
 RUN apk upgrade --available
 # Postgres lib needs to remain in the container
