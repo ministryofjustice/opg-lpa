@@ -6,7 +6,7 @@ RUN chown -R nginx:nginx /var/cache/nginx && \
         touch /run/nginx.pid && \
         chown -R nginx:nginx /run/nginx.pid
 
-RUN chmod -R 777 /etc/nginx/conf.d
+RUN chmod o+rwx /etc/nginx/conf.d
 
 
 # Add Confd to configure nginx on start
