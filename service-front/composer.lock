@@ -4,26 +4,26 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d291df0d61ab5af1e42c264710a5d50",
+    "content-hash": "558ec834baf93517d1274d6da0bbed8b",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
-            "version": "3.2.0",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alphagov/notifications-php-client.git",
-                "reference": "973a115dccbb2f8cec991c5ac77860e57d2f2230"
+                "reference": "853aacf681a08f935ac8302e48efbb4521592a80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alphagov/notifications-php-client/zipball/973a115dccbb2f8cec991c5ac77860e57d2f2230",
-                "reference": "973a115dccbb2f8cec991c5ac77860e57d2f2230",
+                "url": "https://api.github.com/repos/alphagov/notifications-php-client/zipball/853aacf681a08f935ac8302e48efbb4521592a80",
+                "reference": "853aacf681a08f935ac8302e48efbb4521592a80",
                 "shasum": ""
             },
             "require": {
-                "firebase/php-jwt": "^5.0",
+                "firebase/php-jwt": "^v6.1.0",
                 "guzzlehttp/psr7": "^1.2",
-                "php": ">=5.4"
+                "php": ">=7.1"
             },
             "require-dev": {
                 "php-http/curl-client": "*",
@@ -59,9 +59,9 @@
             "description": "PHP client for GOV.UK Notifications",
             "support": {
                 "issues": "https://github.com/alphagov/notifications-php-client/issues",
-                "source": "https://github.com/alphagov/notifications-php-client/tree/master"
+                "source": "https://github.com/alphagov/notifications-php-client/tree/4.0.1"
             },
-            "time": "2020-08-11T07:44:45+00:00"
+            "time": "2022-04-07T10:06:54+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -115,16 +115,17 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.218.3",
+
+            "version": "3.219.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "a1bd2174db1255598344570e88c864cb18ab84f7"
+                "reference": "b35b86022c76c7f6b13d3f1be35cb317f582e253"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a1bd2174db1255598344570e88c864cb18ab84f7",
-                "reference": "a1bd2174db1255598344570e88c864cb18ab84f7",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b35b86022c76c7f6b13d3f1be35cb317f582e253",
+                "reference": "b35b86022c76c7f6b13d3f1be35cb317f582e253",
                 "shasum": ""
             },
             "require": {
@@ -132,9 +133,9 @@
                 "ext-json": "*",
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
-                "guzzlehttp/guzzle": "^5.3.3|^6.2.1|^7.0",
+                "guzzlehttp/guzzle": "^5.3.3 || ^6.2.1 || ^7.0",
                 "guzzlehttp/promises": "^1.4.0",
-                "guzzlehttp/psr7": "^1.7.0|^2.0",
+                "guzzlehttp/psr7": "^1.7.0 || ^2.1.1",
                 "mtdowling/jmespath.php": "^2.6",
                 "php": ">=5.5"
             },
@@ -149,7 +150,7 @@
                 "ext-sockets": "*",
                 "nette/neon": "^2.3",
                 "paragonie/random_compat": ">= 2",
-                "phpunit/phpunit": "^4.8.35|^5.4.3",
+                "phpunit/phpunit": "^4.8.35 || ^5.6.3",
                 "psr/cache": "^1.0",
                 "psr/simple-cache": "^1.0",
                 "sebastian/comparator": "^1.2.3"
@@ -200,9 +201,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.218.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.219.1"
             },
-            "time": "2022-04-05T18:15:32+00:00"
+            "time": "2022-04-11T18:15:54+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -413,23 +414,23 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v5.5.1",
+            "version": "v6.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "83b609028194aa042ea33b5af2d41a7427de80e6"
+                "reference": "fbb2967a3a68b07e37678c00c0cf51165051495f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/83b609028194aa042ea33b5af2d41a7427de80e6",
-                "reference": "83b609028194aa042ea33b5af2d41a7427de80e6",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/fbb2967a3a68b07e37678c00c0cf51165051495f",
+                "reference": "fbb2967a3a68b07e37678c00c0cf51165051495f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": "^7.1||^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": ">=4.8 <=9"
+                "phpunit/phpunit": "^7.5||9.5"
             },
             "suggest": {
                 "paragonie/sodium_compat": "Support EdDSA (Ed25519) signatures when libsodium is not present"
@@ -464,9 +465,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v5.5.1"
+                "source": "https://github.com/firebase/php-jwt/tree/v6.1.0"
             },
-            "time": "2021-11-08T20:18:51+00:00"
+            "time": "2022-03-23T18:26:04+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1258,16 +1259,16 @@
         },
         {
             "name": "laminas/laminas-crypt",
-            "version": "3.6.0",
+            "version": "3.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-crypt.git",
-                "reference": "ad2c29c289a4bc837b37a7650f5178edda0fc548"
+                "reference": "a0008a26b1904801ff73281f608e8de10d6deaad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-crypt/zipball/ad2c29c289a4bc837b37a7650f5178edda0fc548",
-                "reference": "ad2c29c289a4bc837b37a7650f5178edda0fc548",
+                "url": "https://api.github.com/repos/laminas/laminas-crypt/zipball/a0008a26b1904801ff73281f608e8de10d6deaad",
+                "reference": "a0008a26b1904801ff73281f608e8de10d6deaad",
                 "shasum": ""
             },
             "require": {
@@ -1275,14 +1276,14 @@
                 "ext-mbstring": "*",
                 "laminas/laminas-math": "^3.4",
                 "laminas/laminas-stdlib": "^3.6",
-                "php": "^7.3 || ~8.0.0 || ~8.1.0"
+                "php": "^7.4 || ~8.0.0 || ~8.1.0"
             },
             "conflict": {
                 "zendframework/zend-crypt": "*"
             },
             "require-dev": {
-                "laminas/laminas-coding-standard": "~1.0.0",
-                "phpunit/phpunit": "^9.3"
+                "laminas/laminas-coding-standard": "~2.3.0",
+                "phpunit/phpunit": "^9.5.11"
             },
             "suggest": {
                 "ext-openssl": "Required for most features of Laminas\\Crypt"
@@ -1317,7 +1318,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-12-06T01:25:27+00:00"
+            "time": "2022-04-12T08:31:36+00:00"
         },
         {
             "name": "laminas/laminas-escaper",
@@ -1383,35 +1384,36 @@
         },
         {
             "name": "laminas/laminas-eventmanager",
-            "version": "3.4.0",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-eventmanager.git",
-                "reference": "a93fd278c97b2d41ebbce5ba048a24e3e6f580ba"
+                "reference": "41f7209428f37cab9573365e361f4078209aaafa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-eventmanager/zipball/a93fd278c97b2d41ebbce5ba048a24e3e6f580ba",
-                "reference": "a93fd278c97b2d41ebbce5ba048a24e3e6f580ba",
+                "url": "https://api.github.com/repos/laminas/laminas-eventmanager/zipball/41f7209428f37cab9573365e361f4078209aaafa",
+                "reference": "41f7209428f37cab9573365e361f4078209aaafa",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.3 || ~8.0.0 || ~8.1.0"
+                "php": "^7.4 || ~8.0.0 || ~8.1.0"
             },
             "conflict": {
+                "container-interop/container-interop": "<1.2",
                 "zendframework/zend-eventmanager": "*"
             },
             "require-dev": {
-                "container-interop/container-interop": "^1.1",
                 "laminas/laminas-coding-standard": "~2.2.1",
                 "laminas/laminas-stdlib": "^3.6",
                 "phpbench/phpbench": "^1.1",
                 "phpspec/prophecy-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.5.5"
+                "phpunit/phpunit": "^9.5.5",
+                "psr/container": "^1.1.2 || ^2.0.2"
             },
             "suggest": {
-                "container-interop/container-interop": "^1.1, to use the lazy listeners feature",
-                "laminas/laminas-stdlib": "^2.7.3 || ^3.0, to use the FilterChain feature"
+                "laminas/laminas-stdlib": "^2.7.3 || ^3.0, to use the FilterChain feature",
+                "psr/container": "^1.1.2 || ^2.0.2, to use the lazy listeners feature"
             },
             "type": "library",
             "autoload": {
@@ -1445,7 +1447,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-09-07T22:35:32+00:00"
+            "time": "2022-04-06T21:05:17+00:00"
         },
         {
             "name": "laminas/laminas-filter",
