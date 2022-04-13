@@ -1,11 +1,15 @@
 FROM composer:2.1.11 AS composer
 
-COPY service-pdf/composer.json /app/composer.json
-COPY service-pdf/composer.lock /app/composer.lock
+RUN adduser -D -g '' appuser
+
+COPY --chown=appuser:appuser service-pdf/composer.json /app/composer.json
+COPY --chown=appuser:appuser service-pdf/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
 FROM php:8.0-cli-alpine
+
+RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade apk-tools
 RUN apk upgrade --available
@@ -15,7 +19,7 @@ RUN apk upgrade expat
 
 RUN apk update \
     && apk add --no-cache openjdk8-jre gcc make musl-dev pkgconfig bash\
-    && apk add --no-cache --update --virtual buildDeps autoconf 
+    && apk add --no-cache --update --virtual buildDeps autoconf
 
 # Enable debug if needed. Should only be used locally.
 ARG ENABLE_XDEBUG=0
@@ -39,13 +43,15 @@ WORKDIR /usr/local/bin/
 
 RUN wget https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/build/libs/pdftk-all.jar
 
-COPY service-pdf/bin/pdftk pdftk
-RUN chmod +x pdftk
+COPY --chown=appuser:appuser service-pdf/bin/pdftk pdftk
+COPY --chown=appuser:appuser shared/logging /shared/logging
+COPY --chown=appuser:appuser service-pdf /app
+COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
 
-COPY shared/logging /shared/logging
-COPY service-pdf /app
-COPY --from=composer /app/vendor /app/vendor
+RUN chmod o+x pdftk
 
 WORKDIR /app
+
+USER appuser
 
 CMD /app/bin/start.sh
