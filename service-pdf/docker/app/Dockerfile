@@ -50,8 +50,10 @@ COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
 
 RUN chmod o+x pdftk
 # user doesn't have access to tmp
-RUN  chmod ugo+rwx /tmp
+
 WORKDIR /app
+RUN chown -R appuser:app /tmp
+RUN chmod ugo+rwx /tmp
 
 USER appuser
 
