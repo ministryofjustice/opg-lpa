@@ -14,8 +14,9 @@ RUN wget -q -O /usr/local/bin/confd "https://github.com/kelseyhightower/confd/re
   && chown -R nginx:nginx /usr/local/bin/confd \
   && chmod +x /usr/local/bin/confd
 
-COPY service-front/public /web
-COPY service-front/docker/web/etc /etc
+USER nginx
+COPY --chown=nginx:nginx service-front/public /web
+COPY --chown=nginx:nginx service-front/docker/web/etc /etc
 
 CMD confd -onetime -backend env \
   && nginx -g "daemon off;"
