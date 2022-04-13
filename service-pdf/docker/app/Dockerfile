@@ -52,7 +52,7 @@ RUN chmod o+x pdftk
 # user doesn't have access to tmp
 
 WORKDIR /app
-RUN chown -R appuser:app /tmp
+RUN chown -R appuser:appuser /tmp
 RUN chmod ugo+rwx /tmp
 
 USER appuser
