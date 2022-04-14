@@ -52,6 +52,7 @@ data "aws_iam_policy_document" "cloudwatch_encryption_kms" {
     }
   }
 
+
   statement {
     sid       = "Allow Key to be used for Encryption"
     effect    = "Allow"

@@ -122,7 +122,7 @@ hard-reset-front:
 	docker-compose build --no-cache front-app
 
 .PHONY: soft-reset-front
-# soft reset only the front app container without no-cache option.  quickest rebuild but runs risk of some staleness if not every change is picked up 
+# soft reset only the front app container without no-cache option.  quickest rebuild but runs risk of some staleness if not every change is picked up
 soft-reset-front:
 	@${MAKE} dc-down
 	docker-compose build front-app
@@ -205,6 +205,14 @@ functional-local:
 integration-api-local:
 	docker build -f ./service-api/docker/app/Dockerfile -t integration-api-tests .;\
 	docker run -it --network="host" --rm integration-api-tests  sh -c "cd /app/tests/integration && php ../../vendor/bin/phpunit -v"
+
+.PHONY: test-pdf-local
+test-pdf-local:
+	docker build -f ./service-pdf/docker/app/Dockerfile -t pdf-tests .;\
+	docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name pdf-test-run pdf-tests; \
+	docker exec pdf-test-run /app/vendor/bin/phpunit -d memory_limit=256M; \
+	docker stop pdf-test-run;
+	docker rm pdf-test-run;
 
 .PHONY: cypress-local
 cypress-local:

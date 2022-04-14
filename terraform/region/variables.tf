@@ -22,6 +22,11 @@ variable "accounts" {
       is_production      = string
       retention_in_days  = number
       dr_enabled         = bool
+      dns_firewall = object({
+        enabled         = bool
+        domains_allowed = list(string)
+        domains_blocked = list(string)
+      })
       regions = map(
         object({
           region     = string
