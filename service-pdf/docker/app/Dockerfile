@@ -48,12 +48,10 @@ COPY --chown=appuser:appuser shared/logging /shared/logging
 COPY --chown=appuser:appuser service-pdf /app
 COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
 
-RUN chmod o+x pdftk
+RUN chmod u+x pdftk
 # user doesn't have access to tmp
 
 WORKDIR /app
-RUN mkdir /tmp && chown -R appuser:appuser /tmp
-RUN chmod ugo+rwx /tmp
 
 USER appuser
 
