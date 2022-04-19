@@ -115,6 +115,7 @@
         },
         {
             "name": "aws/aws-sdk-php",
+
             "version": "3.219.1",
             "source": {
                 "type": "git",
@@ -7832,5 +7833,5 @@
         "php": "^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
