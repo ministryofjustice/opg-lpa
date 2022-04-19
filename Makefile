@@ -199,6 +199,14 @@ integration-api-local:
 	docker build -f ./service-api/docker/app/Dockerfile -t integration-api-tests .;\
 	docker run -it --network="host" --rm integration-api-tests  sh -c "cd /app/tests/integration && php ../../vendor/bin/phpunit -v"
 
+.PHONY: test-pdf-local
+test-pdf-local:
+	docker build -f ./service-pdf/docker/app/Dockerfile -t pdf-tests .;\
+	docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name pdf-test-run pdf-tests; \
+	docker exec pdf-test-run /app/vendor/bin/phpunit -d memory_limit=256M; \
+	docker stop pdf-test-run;
+	docker rm pdf-test-run;
+
 .PHONY: cypress-local
 cypress-local:
 	docker rm -f cypress_tests || true
