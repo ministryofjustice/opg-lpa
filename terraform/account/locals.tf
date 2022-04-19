@@ -1,7 +1,6 @@
 locals {
   opg_project                 = "lpa"
   pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
-  pager_duty_db_service_name  = "${local.pagerduty_account_prefix} Make a Lasting Power of Attorney Database Alerts"
   account_name                = lookup(var.account_mapping, terraform.workspace, "development")
   account                     = var.accounts[local.account_name]
   account_id                  = local.account.account_id
