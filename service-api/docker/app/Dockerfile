@@ -1,11 +1,15 @@
 FROM composer:2.3.3 AS composer
 
-COPY service-api/composer.json /app/composer.json
-COPY service-api/composer.lock /app/composer.lock
+RUN adduser -D -g '' appuser
+
+COPY --chown=appuser:appuser service-api/composer.json /app/composer.json
+COPY --chown=appuser:appuser service-api/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
 FROM php:8.0-fpm-alpine3.14
+
+RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade apk-tools
 RUN apk upgrade --available
@@ -37,13 +41,16 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
 
-COPY service-api /app
-COPY shared/logging /shared/logging
-COPY --from=composer /app/vendor /app/vendor
-COPY service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=appuser:appuser service-api /app
+COPY --chown=appuser:appuser shared/logging /shared/logging
+COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
+COPY --chown=appuser:appuser service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=appuser:appuser service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+
+RUN chmod +x /app/docker/app/db-migrations.sh
 
 WORKDIR /app
 
-CMD chmod +x /app/docker/app/db-migrations.sh && /app/docker/app/db-migrations.sh \
-  && php-fpm
+USER appuser
+
+CMD  /app/docker/app/db-migrations.sh && php-fpm
