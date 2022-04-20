@@ -422,11 +422,6 @@ class CommunicationTest extends AbstractEmailServiceTest
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
 
-        // We are testing moneyFormat()
-        $this->service->shouldReceive('moneyFormat')
-            ->with('200000.00')
-            ->andReturn('200,000.00');
-
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -473,11 +468,6 @@ class CommunicationTest extends AbstractEmailServiceTest
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
-
-        // We are testing moneyFormat()
-        $this->service->shouldReceive('moneyFormat')
-            ->with('200000.00')
-            ->andReturn('200,000.00');
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
@@ -528,11 +518,6 @@ class CommunicationTest extends AbstractEmailServiceTest
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
 
-        // We are testing moneyFormat()
-        $this->service->shouldReceive('moneyFormat')
-            ->with('200000.00')
-            ->andReturn('200,000.00');
-
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -578,11 +563,6 @@ class CommunicationTest extends AbstractEmailServiceTest
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
-
-        // We are testing moneyFormat()
-        $this->service->shouldReceive('moneyFormat')
-            ->with('200000.00')
-            ->andReturn('200,000.00');
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
