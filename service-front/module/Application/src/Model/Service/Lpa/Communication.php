@@ -51,9 +51,14 @@ class Communication extends AbstractEmailService
         // The template we use depends on whether we have a payment reference or not;
         // note that $lpa->payment is not null when we create an LPA through the site,
         // even if there was no fee paid (presumably there's a payment with amount 0)
-        $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION;
+        $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
+
+        if (!is_null($lpa->payment) && is_null($lpa->payment->reference)) {
+            $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
+        }
+
         if (!is_null($lpa->payment) && !is_null($lpa->payment->reference)) {
-            $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT;
+            $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
 
             // Add extra data to the LPA registration email if a payment was made
             $amount = '';
