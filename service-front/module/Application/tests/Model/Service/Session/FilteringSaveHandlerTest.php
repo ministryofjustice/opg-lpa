@@ -1,4 +1,5 @@
 <?php
+
 namespace ApplicationTest\Model\Service\Session;
 
 use Application\Model\Service\Session\FilteringSaveHandler;
@@ -9,11 +10,11 @@ use Redis;
 use RedisException;
 use ReflectionProperty;
 
-
 class FilteringSaveHandlerTest extends MockeryTestCase
 {
     // returns the mock for setting expectations
-    private function makeSaveHandlerWithMock(string $redisUrl): Redis {
+    private function makeSaveHandlerWithMock(string $redisUrl): Redis
+    {
         $redisMock = Mockery::Mock(Redis::class);
         $this->saveHandler = new FilteringSaveHandler($redisUrl, 1000, [], $redisMock);
         return $redisMock;
@@ -37,15 +38,19 @@ class FilteringSaveHandlerTest extends MockeryTestCase
 
         // redisMock should not receive a call to set the value,
         // as the filters should prevent the write from happening
-        $redisMock->shouldNotReceive('setEx')->with(FilteringSaveHandler::SESSION_PREFIX . 'foo', 100, 'bar')->andReturn(TRUE);
+        $redisMock->shouldNotReceive('setEx')->with(
+            FilteringSaveHandler::SESSION_PREFIX . 'foo',
+            100,
+            'bar'
+        )->andReturn(true);
 
         $filter = function () {
-            return FALSE;
+            return false;
         };
         $saveHandler = new FilteringSaveHandler('tcp://localhost', 100, [$filter], $redisMock);
         $actual = $saveHandler->write('foo', 'bar');
 
-        $this->assertSame(TRUE, $actual);
+        $this->assertSame(true, $actual);
         $this->assertSame(0, $saveHandler->sessionWritesAttempted);
     }
 
@@ -76,7 +81,7 @@ class FilteringSaveHandlerTest extends MockeryTestCase
 
     public function testOpenException(): void
     {
-        $expected = FALSE;
+        $expected = false;
 
         $redisMock = $this->makeSaveHandlerWithMock('tcp://foohost');
         $redisMock->shouldReceive('connect')
@@ -90,12 +95,12 @@ class FilteringSaveHandlerTest extends MockeryTestCase
 
     public function testOpenSuccess(): void
     {
-        $expected = TRUE;
+        $expected = true;
 
         $redisMock = $this->makeSaveHandlerWithMock('tcp://foohost');
         $redisMock->shouldReceive('connect')
             ->with('foohost', 6379)
-            ->andReturn(TRUE);
+            ->andReturn(true);
 
         $actual = $this->saveHandler->open('ignoredSavePath', 'ignoredSessionName');
 
@@ -104,12 +109,12 @@ class FilteringSaveHandlerTest extends MockeryTestCase
 
     public function testWriteError(): void
     {
-        $expected = FALSE;
+        $expected = false;
 
         $redisMock = $this->makeSaveHandlerWithMock('tcp://foohost');
         $redisMock->shouldReceive('setEx')
             ->with(FilteringSaveHandler::SESSION_PREFIX . 'foo', 1000, 'bar')
-            ->andReturn(FALSE);
+            ->andReturn(false);
 
         $actual = $this->saveHandler->write('foo', 'bar');
 
@@ -122,11 +127,11 @@ class FilteringSaveHandlerTest extends MockeryTestCase
         $redisMock = $this->makeSaveHandlerWithMock('tcp://foohost');
         $redisMock->shouldReceive('setEx')
             ->with(FilteringSaveHandler::SESSION_PREFIX . 'foo', 1000, 'bar')
-            ->andReturn(TRUE);
+            ->andReturn(true);
 
         $actual = $this->saveHandler->write('foo', 'bar');
 
-        $this->assertSame(TRUE, $actual);
+        $this->assertSame(true, $actual);
         $this->assertSame(1, $this->saveHandler->sessionWritesAttempted);
     }
 
@@ -137,13 +142,13 @@ class FilteringSaveHandlerTest extends MockeryTestCase
 
         // filter which always returns FALSE - i.e. write should be ignored
         $filter = function () {
-            return FALSE;
+            return false;
         };
         $this->saveHandler->addFilter($filter);
 
         $actual = $this->saveHandler->write('foo', 'bar');
 
-        $this->assertSame(TRUE, $actual);
+        $this->assertSame(true, $actual);
         $this->assertSame(0, $this->saveHandler->sessionWritesAttempted);
     }
 
@@ -154,7 +159,7 @@ class FilteringSaveHandlerTest extends MockeryTestCase
         $redisMock = $this->makeSaveHandlerWithMock('tcp://foohost');
         $redisMock->shouldReceive('get')
             ->with(FilteringSaveHandler::SESSION_PREFIX . 'baz')
-            ->andReturn(FALSE);
+            ->andReturn(false);
 
         $actual = $this->saveHandler->read('baz');
 
@@ -179,8 +184,8 @@ class FilteringSaveHandlerTest extends MockeryTestCase
     {
         $redisMock = $this->makeSaveHandlerWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('close')
-            ->andReturn(TRUE);
-        $this->assertSame(TRUE, $this->saveHandler->close());
+            ->andReturn(true);
+        $this->assertSame(true, $this->saveHandler->close());
     }
 
     public function testDestroy()
@@ -188,13 +193,13 @@ class FilteringSaveHandlerTest extends MockeryTestCase
         $redisMock = $this->makeSaveHandlerWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('del')
             ->with(FilteringSaveHandler::SESSION_PREFIX . 'boo')
-            ->andReturn(TRUE);
-        $this->assertSame(TRUE, $this->saveHandler->destroy('boo'));
+            ->andReturn(true);
+        $this->assertSame(true, $this->saveHandler->destroy('boo'));
     }
 
     public function testGc()
     {
         $redisMock = $this->makeSaveHandlerWithMock('tcp://barhost:6737');
-        $this->assertSame(TRUE, $this->saveHandler->gc(1));
+        $this->assertSame(1, $this->saveHandler->gc(1));
     }
 }
