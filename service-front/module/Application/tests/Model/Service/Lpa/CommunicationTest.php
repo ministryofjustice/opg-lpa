@@ -298,6 +298,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
                 'reference' => '12345678',
                 'date' => new DateTime('2021-09-24 07:54:00'),
+                'reducedFeeReceivesBenefits' => 'true',
             ]),
         ]);
 
@@ -355,6 +356,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
                 'reference' => '12345678',
                 'date' => new DateTime('2021-09-24 07:54:00'),
+                'reducedFeeAwardedDamages' => 'true',
             ]),
         ]);
 
@@ -509,6 +511,7 @@ class CommunicationTest extends AbstractEmailServiceTest
             'payment' => new Payment([
                 'method' => 'cheque',
                 'amount' => '110.00',
+                'reducedFeeLowIncome' => 'true',
             ]),
         ]);
 
@@ -554,7 +557,8 @@ class CommunicationTest extends AbstractEmailServiceTest
             ]),
             'payment' => new Payment([
                 'method' => 'cheque',
-                'amount' => '110.00',
+                'amount' => '41.00',
+                'reducedFeeUniversalCredit' => 'true',
             ]),
         ]);
 
