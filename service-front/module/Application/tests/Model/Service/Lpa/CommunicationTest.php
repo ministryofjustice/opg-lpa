@@ -87,7 +87,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // What we expect to pass to the mail transport
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3,
             [
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
@@ -144,7 +144,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // What we expect to pass to the mail transport
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3,
             [
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
@@ -197,7 +197,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com', 'paymentfrom@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
@@ -255,7 +255,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com', 'paymentfrom@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
@@ -316,7 +316,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com', 'paymentfrom@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
@@ -374,7 +374,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com', 'paymentfrom@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
@@ -427,7 +427,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
@@ -474,7 +474,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
@@ -524,7 +524,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
@@ -571,7 +571,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION,
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
