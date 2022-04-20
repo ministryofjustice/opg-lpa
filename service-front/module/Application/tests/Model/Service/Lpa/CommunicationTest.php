@@ -45,7 +45,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         $this->service->setUserDetailsSession($userDetailSession);
     }
 
-    public function testSendRegistrationCompleteEmailWithoutPayment(): void
+    public function testSendRegistrationCompleteEmailWithoutPaymentButWithPersonToNotify(): void
     {
         $lpa = new Lpa([
             'document' => new Document([
@@ -102,7 +102,11 @@ class CommunicationTest extends AbstractEmailServiceTest
         $this->assertTrue($result);
     }
 
-    public function testSendRegistrationCompleteEmailWithPayment(): void
+    public function testSendRegistrationCompleteEmailWithoutPaymentOrPersonToNotify(): void
+    {
+    }
+
+    public function testSendRegistrationCompleteEmailWithPaymentAndPersonToNotify(): void
     {
         $lpa = new Lpa([
             'document' => new Document([
@@ -157,6 +161,19 @@ class CommunicationTest extends AbstractEmailServiceTest
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+    }
+
+
+    public function testSendRegistrationCompleteEmailWithPaymentNoPersonToNotify(): void
+    {
+    }
+
+    public function testSendRegistrationCompleteEmailWithReducedPaymentAndPersonToNotify(): void
+    {
+    }
+
+    public function testSendRegistrationCompleteEmailWithPaymentNoPersonToNotify(): void
+    {
     }
 
     public function testSendRegistrationCompleteEmailSendFails(): void
