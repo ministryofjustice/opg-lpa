@@ -411,10 +411,8 @@ class CommunicationTest extends AbstractEmailServiceTest
                 new NotifiedPerson(),
             ],
             'payment' => new Payment([
-                'amount' => '200000.00',
-                'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
-                'reference' => '12345678',
-                'date' => new DateTime('2021-09-24 07:54:00'),
+                'method' => 'cheque',
+                'amount' => '110.00',
             ]),
         ]);
 
@@ -431,18 +429,14 @@ class CommunicationTest extends AbstractEmailServiceTest
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
-            ['test@email.com', 'paymentfrom@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT,
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => 'A22222222',
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
-                'lpaTypeTitleCase' => 'Health and welfare',
-                'lpaPaymentReference' => '12345678',
-                'lpaPaymentDate' => '24 September 2021 - 8:54am',
-                'paymentAmount' => '200,000.00',
             ]
         );
 
@@ -469,10 +463,8 @@ class CommunicationTest extends AbstractEmailServiceTest
                 ]
             ]),
             'payment' => new Payment([
-                'amount' => '200000.00',
-                'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
-                'reference' => '12345678',
-                'date' => new DateTime('2021-09-24 07:54:00'),
+                'method' => 'cheque',
+                'amount' => '110.00',
             ]),
         ]);
 
@@ -489,18 +481,14 @@ class CommunicationTest extends AbstractEmailServiceTest
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
-            ['test@email.com', 'paymentfrom@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT,
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => 'A22222222',
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
-                'lpaTypeTitleCase' => 'Health and welfare',
-                'lpaPaymentReference' => '12345678',
-                'lpaPaymentDate' => '24 September 2021 - 8:54am',
-                'paymentAmount' => '200,000.00',
             ]
         );
 
@@ -529,10 +517,8 @@ class CommunicationTest extends AbstractEmailServiceTest
                 new NotifiedPerson(),
             ],
             'payment' => new Payment([
-                'amount' => '200000.00',
-                'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
-                'reference' => '12345678',
-                'date' => new DateTime('2021-09-24 07:54:00'),
+                'method' => 'cheque',
+                'amount' => '110.00',
             ]),
         ]);
 
@@ -549,18 +535,14 @@ class CommunicationTest extends AbstractEmailServiceTest
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
-            ['test@email.com', 'paymentfrom@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT,
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => 'A22222222',
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
-                'lpaTypeTitleCase' => 'Health and welfare',
-                'lpaPaymentReference' => '12345678',
-                'lpaPaymentDate' => '24 September 2021 - 8:54am',
-                'paymentAmount' => '200,000.00',
             ]
         );
 
@@ -586,10 +568,8 @@ class CommunicationTest extends AbstractEmailServiceTest
                 ]
             ]),
             'payment' => new Payment([
-                'amount' => '200000.00',
-                'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
-                'reference' => '12345678',
-                'date' => new DateTime('2021-09-24 07:54:00'),
+                'method' => 'cheque',
+                'amount' => '110.00',
             ]),
         ]);
 
@@ -606,18 +586,14 @@ class CommunicationTest extends AbstractEmailServiceTest
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
-            ['test@email.com', 'paymentfrom@email.com'],
-            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT,
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION,
             [
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => 'A22222222',
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
-                'lpaTypeTitleCase' => 'Health and welfare',
-                'lpaPaymentReference' => '12345678',
-                'lpaPaymentDate' => '24 September 2021 - 8:54am',
-                'paymentAmount' => '200,000.00',
             ]
         );
 
