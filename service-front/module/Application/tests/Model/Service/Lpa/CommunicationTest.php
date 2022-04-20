@@ -6,6 +6,7 @@ use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Mail\MailParameters;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use DateTime;
 use Hamcrest\MatcherAssert;
 use Hamcrest\Matchers;
@@ -52,6 +53,9 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
                     'name' => new LongName('{"title":"Dr", "first":"Pete", "last":"Vamoose"}')
+                ],
+                "peopleToNotify" => [
+                    new NotifiedPerson(),
                 ]
             ])
         ]);
@@ -168,6 +172,9 @@ class CommunicationTest extends AbstractEmailServiceTest
                     'name' => new LongName('{"title":"Father", "first":"Spodo", "last":"Komodo"}')
                 ]
             ]),
+            "peopleToNotify" => [
+                new NotifiedPerson(),
+            ],
             'payment' => new Payment([
                 'amount' => '200000.00',
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
@@ -283,6 +290,9 @@ class CommunicationTest extends AbstractEmailServiceTest
                     'name' => new LongName('{"title":"Father", "first":"Spodo", "last":"Komodo"}')
                 ]
             ]),
+            "peopleToNotify" => [
+                new NotifiedPerson(),
+            ],
             'payment' => new Payment([
                 'amount' => '200000.00',
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
@@ -397,6 +407,9 @@ class CommunicationTest extends AbstractEmailServiceTest
                     'name' => new LongName('{"title":"Father", "first":"Spodo", "last":"Komodo"}')
                 ]
             ]),
+            "peopleToNotify" => [
+                new NotifiedPerson(),
+            ],
             'payment' => new Payment([
                 'amount' => '200000.00',
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
@@ -512,6 +525,9 @@ class CommunicationTest extends AbstractEmailServiceTest
                     'name' => new LongName('{"title":"Father", "first":"Spodo", "last":"Komodo"}')
                 ]
             ]),
+            "peopleToNotify" => [
+                new NotifiedPerson(),
+            ],
             'payment' => new Payment([
                 'amount' => '200000.00',
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
