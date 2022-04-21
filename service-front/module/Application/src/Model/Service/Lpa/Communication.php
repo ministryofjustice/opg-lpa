@@ -88,11 +88,47 @@ class Communication extends AbstractEmailService
                 // we don't have a payment reference, so its a cheque
                 $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
             }
+
+            var_dump($lpa->document);
+            var_dump($lpa->payment);
+            // here, regardless what email type, add to data,  PTN if there's a PTN, reduced fee if there's a reduced fee
+            if (!empty($lpa->document->peopleToNotify)) { 
+                if (is_null($lpa->payment->reducedFeeReceivesBenefits) && is_null($lpa->payment->reducedFeeAwardedDamages) 
+                && is_null($lpa->payment->reducedFeeLowIncome) && is_null($lpa->payment->reducedFeeUniversalCredit) ) {
+                    // we do not have reduced fee but we do have Person(s) to Notify
+                    // TODO make it simple append
+                    $data = array_merge($data, [
+                        'PTNOnly' => true,
+                    ]);
+                }
+                else {
+                    // we have reduced fee and Person(s) to Notify
+                    $data = array_merge($data, [
+                        'FeeFormPTN' => true,
+                    ]);
+                }
+            }
+            else {
+                if (! (is_null($lpa->payment->reducedFeeReceivesBenefits) && is_null($lpa->payment->reducedFeeAwardedDamages) 
+                && is_null($lpa->payment->reducedFeeLowIncome) && is_null($lpa->payment->reducedFeeUniversalCredit) ) ) {
+                    // we have reduced fee, but not Person(s) to Notify
+                    $data = array_merge($data, [
+                        'FeeFormOnly' => true,
+                    ]);
+                }
+            } 
         }
         else {
             // we have no payment
-             $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
+            $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
+            if (!empty($lpa->document->peopleToNotify)) { 
+                    $data = array_merge($data, [
+                        'PTNOnly' => true,
+                    ]);
+            }
         }
+
+        var_dump($data);
 
         try {
             $mailParameters = new MailParameters($to, $emailTemplateRef, $data);

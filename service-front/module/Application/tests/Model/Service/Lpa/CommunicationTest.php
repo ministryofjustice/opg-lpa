@@ -54,9 +54,15 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'donor' => [
                     'name' => new LongName('{"title":"Dr", "first":"Pete", "last":"Vamoose"}')
                 ],
-                "peopleToNotify" => [
-                    new NotifiedPerson(),
-                ]
+                'peopleToNotify' => [
+                   new NotifiedPerson([
+                    "name" => [
+                        "title" => "Miss",
+                        "first" => "Elizabeth",
+                        "last" => "Stout",
+                    ],
+                 ]),
+               ]
             ])
         ]);
 
@@ -94,6 +100,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaId' => 'A111 111 1111',
                 'viewDocsUrl' => 'https://view.docs.url',
                 'checkDatesUrl' => 'https://check.dates.url',
+                'PTNOnly' => true,
             ]
         );
 
@@ -170,11 +177,17 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
                     'name' => new LongName('{"title":"Father", "first":"Spodo", "last":"Komodo"}')
+                ],
+                'peopleToNotify' => [
+                   new NotifiedPerson([
+                    "name" => [
+                        "title" => "Miss",
+                        "first" => "Elizabeth",
+                        "last" => "Stout",
+                    ],
+                  ]),
                 ]
             ]),
-            "peopleToNotify" => [
-                new NotifiedPerson(),
-            ],
             'payment' => new Payment([
                 'amount' => '200000.00',
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
@@ -208,6 +221,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
                 'paymentAmount' => '200,000.00',
+                'PTNOnly' => true,
             ]
         );
 
@@ -288,17 +302,23 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
                     'name' => new LongName('{"title":"Father", "first":"Spodo", "last":"Komodo"}')
+                ],
+                'peopleToNotify' => [
+                   new NotifiedPerson([
+                    "name" => [
+                        "title" => "Miss",
+                        "first" => "Elizabeth",
+                        "last" => "Stout",
+                    ],
+                  ]),
                 ]
             ]),
-            "peopleToNotify" => [
-                new NotifiedPerson(),
-            ],
             'payment' => new Payment([
                 'amount' => '200000.00',
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
                 'reference' => '12345678',
                 'date' => new DateTime('2021-09-24 07:54:00'),
-                'reducedFeeReceivesBenefits' => 'true',
+                'reducedFeeReceivesBenefits' => true,
             ]),
         ]);
 
@@ -327,6 +347,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
                 'paymentAmount' => '200,000.00',
+                'FeeFormPTN' => true,
             ]
         );
 
@@ -356,7 +377,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
                 'reference' => '12345678',
                 'date' => new DateTime('2021-09-24 07:54:00'),
-                'reducedFeeAwardedDamages' => 'true',
+                'reducedFeeAwardedDamages' => true,
             ]),
         ]);
 
@@ -385,6 +406,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
                 'paymentAmount' => '200,000.00',
+                'FeeFormOnly' => true,
             ]
         );
 
@@ -407,11 +429,17 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
                     'name' => new LongName('{"title":"Father", "first":"Spodo", "last":"Komodo"}')
-                ]
+                ],
+                'peopleToNotify' => [
+                   new NotifiedPerson([
+                    "name" => [
+                        "title" => "Miss",
+                        "first" => "Elizabeth",
+                        "last" => "Stout",
+                    ],
+                 ]),
+               ]
             ]),
-            "peopleToNotify" => [
-                new NotifiedPerson(),
-            ],
             'payment' => new Payment([
                 'method' => 'cheque',
                 'amount' => '110.00',
@@ -434,6 +462,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaId' => 'A22222222',
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
+                'PTNOnly' => true,
             ]
         );
 
@@ -503,15 +532,21 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
                     'name' => new LongName('{"title":"Father", "first":"Spodo", "last":"Komodo"}')
-                ]
+                ],
+                'peopleToNotify' => [
+                   new NotifiedPerson([
+                    "name" => [
+                        "title" => "Miss",
+                        "first" => "Elizabeth",
+                        "last" => "Stout",
+                    ],
+                 ]),
+              ],
             ]),
-            "peopleToNotify" => [
-                new NotifiedPerson(),
-            ],
             'payment' => new Payment([
                 'method' => 'cheque',
                 'amount' => '110.00',
-                'reducedFeeLowIncome' => 'true',
+                'reducedFeeLowIncome' => true,
             ]),
         ]);
 
@@ -531,6 +566,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaId' => 'A22222222',
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
+                'FeeFormPTN' => true,
             ]
         );
 
@@ -558,7 +594,7 @@ class CommunicationTest extends AbstractEmailServiceTest
             'payment' => new Payment([
                 'method' => 'cheque',
                 'amount' => '41.00',
-                'reducedFeeUniversalCredit' => 'true',
+                'reducedFeeUniversalCredit' => true,
             ]),
         ]);
 
@@ -578,6 +614,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaId' => 'A22222222',
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
+                'FeeFormOnly' => true,
             ]
         );
 
