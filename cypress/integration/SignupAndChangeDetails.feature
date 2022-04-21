@@ -26,3 +26,12 @@ Feature: SignupAndChangeDetails
           | address-postcode| PC45 9JA |
         And I click "save"
         Then I am taken to the lpa type page
+
+    @focus
+    Scenario: Mismatched passwords in password change screen result in error message instead of raw 500 page (LPAL-651)
+        Given I log in as "SignupAndChangeDetailsUser" test user
+        And I visit the your details page
+        And I visit link containing "Your details"
+        And I visit link containing "Change Password"
+        When I try to change password with a mismatch
+        Then I see "Enter matching passwords" in the page text
