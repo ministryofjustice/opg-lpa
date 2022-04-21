@@ -48,42 +48,50 @@ class Communication extends AbstractEmailService
             'checkDatesUrl' => $this->url('lpa/date-check', ['lpa-id' => $lpa->id], ['force_canonical' => true]),
         ];
 
-        // The template we use depends on whether we have a payment reference or not;
+        // The template we use depends on whether we have a payment or not and whether
+        // the payment has a reference (for online payments) or not (for cheque payments);
         // note that $lpa->payment is not null when we create an LPA through the site,
         // even if there was no fee paid (presumably there's a payment with amount 0)
-        $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
 
-        if (!is_null($lpa->payment) && is_null($lpa->payment->reference)) {
-            $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
+        if (!is_null($lpa->payment)) {
+            // we have a payment  
+            if (!is_null($lpa->payment->reference)) {
+                // we have a payment reference, so this is an online payment
+                $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
+
+                // Add extra data to the LPA registration email 
+                $amount = '';
+                if (isset($lpa->payment->amount)) {
+                    $amount = $this->moneyFormat($lpa->payment->amount);
+                }
+
+                // Assume datetimes are in Europe/London timezone as all our users are in the UK
+                $paymentDate = '';
+                if (isset($lpa->payment->date)) {
+                    $lpa->payment->date->setTimezone(new DateTimeZone('Europe/London'));
+                    $paymentDate = $lpa->payment->date->format('j F Y - g:ia');
+                }
+
+                $data = array_merge($data, [
+                    'lpaTypeTitleCase' => $lpaTypeTitleCase,
+                    'lpaPaymentReference' => $lpa->payment->reference,
+                    'lpaPaymentDate' => $paymentDate,
+                    'paymentAmount' => $amount,
+                ]);
+
+                // If we have a separate payment address, send the email to that also
+                if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userEmailAddress))) {
+                    $to[] = (string) $lpa->payment->email;
+                }
+            }
+            else {
+                // we don't have a payment reference, so its a cheque
+                $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
+            }
         }
-
-        if (!is_null($lpa->payment) && !is_null($lpa->payment->reference)) {
-            $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
-
-            // Add extra data to the LPA registration email if a payment was made
-            $amount = '';
-            if (isset($lpa->payment->amount)) {
-                $amount = $this->moneyFormat($lpa->payment->amount);
-            }
-
-            // Assume datetimes are in Europe/London timezone as all our users are in the UK
-            $paymentDate = '';
-            if (isset($lpa->payment->date)) {
-                $lpa->payment->date->setTimezone(new DateTimeZone('Europe/London'));
-                $paymentDate = $lpa->payment->date->format('j F Y - g:ia');
-            }
-
-            $data = array_merge($data, [
-                'lpaTypeTitleCase' => $lpaTypeTitleCase,
-                'lpaPaymentReference' => $lpa->payment->reference,
-                'lpaPaymentDate' => $paymentDate,
-                'paymentAmount' => $amount,
-            ]);
-
-            // If we have a separate payment address, send the email to that also
-            if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userEmailAddress))) {
-                $to[] = (string) $lpa->payment->email;
-            }
+        else {
+            // we have no payment
+             $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
         }
 
         try {
