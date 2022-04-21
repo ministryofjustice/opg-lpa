@@ -89,14 +89,11 @@ class Communication extends AbstractEmailService
                 $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
             }
 
-            var_dump($lpa->document);
-            var_dump($lpa->payment);
             // here, regardless what email type, add to data,  PTN if there's a PTN, reduced fee if there's a reduced fee
             if (!empty($lpa->document->peopleToNotify)) { 
                 if (is_null($lpa->payment->reducedFeeReceivesBenefits) && is_null($lpa->payment->reducedFeeAwardedDamages) 
                 && is_null($lpa->payment->reducedFeeLowIncome) && is_null($lpa->payment->reducedFeeUniversalCredit) ) {
                     // we do not have reduced fee but we do have Person(s) to Notify
-                    // TODO make it simple append
                     $data = array_merge($data, [
                         'PTNOnly' => true,
                     ]);
@@ -127,8 +124,6 @@ class Communication extends AbstractEmailService
                     ]);
             }
         }
-
-        var_dump($data);
 
         try {
             $mailParameters = new MailParameters($to, $emailTemplateRef, $data);
