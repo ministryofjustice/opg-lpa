@@ -1,5 +1,11 @@
 import { When } from "cypress-cucumber-preprocessor/steps";
 
+When(`I log in as {string} test user`, (name) => {
+    let user = Cypress.env(name + "-user");
+    let password = Cypress.env(name + "-password");
+    logIn(user, password)
+})
+
 When(`I log in with user {string} password {string}`, (user, password) => {
     logIn(user, password);
 })
