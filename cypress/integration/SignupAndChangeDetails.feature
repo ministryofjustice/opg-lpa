@@ -33,5 +33,14 @@ Feature: SignupAndChangeDetails
         And I visit the your details page
         And I visit link containing "Your details"
         And I visit link containing "Change Password"
-        When I try to change password with a mismatch
+        When I try to change password for "SignupAndChangeDetailsUser" with a mismatch
         Then I see "Enter matching passwords" in the page text
+
+    @focus
+    Scenario: Mismatched email addresses in email change screen result in error message instead of raw 500 page (LPAL-651)
+        Given I log in as "SignupAndChangeDetailsUser" test user
+        And I visit the your details page
+        And I visit link containing "Your details"
+        And I visit link containing "Change Email Address"
+        When I try to change email address for "SignupAndChangeDetailsUser" with a mismatch
+        Then I see "The emails did not match" in the page text
