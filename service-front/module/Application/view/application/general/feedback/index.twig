@@ -84,7 +84,7 @@
 
         <div class="form-group {{ email.getMessages|length >0 ? 'form-group-error'}}">
             <label class="heading-medium flush--top text" for="{{ email.getAttribute('id') }}">
-                Your email address (optional)
+                Your email address
             </label>
             {{ formElementErrorsV2(email) }}
             {{ formElement(email) }}
@@ -92,7 +92,7 @@
 
         <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
             <label class="heading-medium flush--top text" for="{{ phone.getAttribute('id') }}">
-                Your phone number (optional)
+                Your phone number
             </label>
             {{ formElementErrorsV2(phone) }}
             {{ formElement(phone) }}
