@@ -43,4 +43,4 @@ Feature: SignupAndChangeDetails
         And I visit link containing "Your details"
         And I visit link containing "Change Email Address"
         When I try to change email address for "SignupAndChangeDetailsUser" with a mismatch
-        Then I see "The emails did not match" in the page text
+        Then I see "Enter matching email addresses" in the page text
