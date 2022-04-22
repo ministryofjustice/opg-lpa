@@ -263,22 +263,26 @@ tests automatically as result.
 
 ### Updating composer dependencies
 
-Composer install is run when the app containers are built, and on a standard `docker-compose up`.
+Composer install is run when the app containers are built, and on a standard `make dc-up`.
 
-It can also be run independently with:
+However, if you upgrade a package in composer.json for one or more services, you'll need to update the corresponding lock file(s).
+
+This can be done with:
 
 ```bash
-docker-compose run <service>-composer
+docker run -v `pwd`/service-front/:/app/ composer update --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 ```
 
-New packages can be added with:
+(replacing `service-front` with the path to the application component you are adding a package to; note that you'll need to do this for the following commands as well)
+
+Packages can be added with:
 
 ```bash
-docker-compose run <service>-composer composer require author/package
+docker run -v `pwd`/service-front/:/app/ composer require author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 ```
 
 Packages can be removed with:
 
 ```bash
-docker-compose run <service>-composer composer remove author/package
+docker run -v `pwd`/service-front/:/app/ composer remove author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 ```
