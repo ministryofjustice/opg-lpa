@@ -153,7 +153,6 @@ class Communication extends AbstractEmailService
         }
 
         try {
-            var_dump($data);
             $mailParameters = new MailParameters($to, $emailTemplateRef, $data);
             $this->getMailTransport()->send($mailParameters);
         } catch (ExceptionInterface $ex) {
