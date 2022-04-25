@@ -75,7 +75,6 @@ class Communication extends AbstractEmailService
                     $refundDate = $lpa->payment->date->add(new DateInterval('P42D'))->format('j F Y');
                 }
 
-
                 $data = array_merge($data, [
                     'lpaTypeTitleCase' => $lpaTypeTitleCase,
                     'lpaPaymentReference' => $lpa->payment->reference,
@@ -117,9 +116,18 @@ class Communication extends AbstractEmailService
                 }
             }
             else {
-                if (! (is_null($lpa->payment->reducedFeeReceivesBenefits) && is_null($lpa->payment->reducedFeeAwardedDamages) 
-                && is_null($lpa->payment->reducedFeeLowIncome) && is_null($lpa->payment->reducedFeeUniversalCredit) ) ) {
-                    // we have reduced fee, but not Person(s) to Notify
+                if (is_null($lpa->payment->reducedFeeReceivesBenefits) && is_null($lpa->payment->reducedFeeAwardedDamages) 
+                && is_null($lpa->payment->reducedFeeLowIncome) && is_null($lpa->payment->reducedFeeUniversalCredit) ) {
+                    // we have no reduced fee, and no Person(s) to Notify
+                    $data = array_merge($data, [
+                        'PTNOnly' => false,
+                        'FeeFormOnly' => false,
+                        'FeeFormPTN' => false,
+                        'remission' => false,
+                    ]);
+                }
+                else {
+                    // we have reduced fee, but no Person(s) to Notify
                     $data = array_merge($data, [
                         'PTNOnly' => false,
                         'FeeFormOnly' => true,
@@ -145,6 +153,7 @@ class Communication extends AbstractEmailService
         }
 
         try {
+            var_dump($data);
             $mailParameters = new MailParameters($to, $emailTemplateRef, $data);
             $this->getMailTransport()->send($mailParameters);
         } catch (ExceptionInterface $ex) {
