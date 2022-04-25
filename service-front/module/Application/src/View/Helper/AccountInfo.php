@@ -10,9 +10,12 @@ use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Model\ViewModel;
+use MakeLogger\Logging\LoggerTrait;
 
 class AccountInfo extends AbstractHelper
 {
+    use LoggerTrait;
+
     /**
      * @var AuthenticationService
      */
@@ -110,7 +113,8 @@ class AccountInfo extends AbstractHelper
             $this->userDetailsSession->hasOneOrMoreLPAs == false
         ) {
             $lpasSummaries = $this->lpaApplicationService->getLpaSummaries();
-            $this->userDetailsSession->hasOneOrMoreLPAs = ($lpasSummaries['total'] > 0);
+            $this->userDetailsSession->hasOneOrMoreLPAs =
+                (array_key_exists('total', $lpasSummaries) && $lpasSummaries['total'] > 0);
         }
 
         $params['hasOneOrMoreLPAs'] = $this->userDetailsSession->hasOneOrMoreLPAs;

@@ -46,7 +46,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
         try {
             $result = $this->apiClient->httpGet($target);
             return new Lpa($result);
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
@@ -87,10 +88,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
     public function createApplication()
     {
         try {
-            $result = $this->apiClient->httpPost(sprintf('/v2/user/%s/applications', $this->getUserId()));
-
-            return new Lpa($result);
-        } catch (ApiException $ex) {}
+            return new Lpa(
+                $this->apiClient->httpPost(sprintf('/v2/user/%s/applications', $this->getUserId()))
+            );
+        } catch (ApiException $ex) {
+            $this->getLogger()->err('ApiException thrown when creating LPA application');
+        }
 
         return false;
     }
@@ -107,10 +110,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
         $target = sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId);
 
         try {
-            $result = $this->apiClient->httpPatch($target, $data);
-
-            return new Lpa($result);
-        } catch (ApiException $ex) {}
+            return new Lpa($this->apiClient->httpPatch($target, $data));
+        } catch (ApiException $ex) {
+            $this->getLogger()->err('ApiException thrown when updating LPA application');
+        }
 
         return false;
     }
@@ -151,18 +154,18 @@ class Application extends AbstractService implements ApiClientAwareInterface
             ]);
         }
 
-        //  Get the response and check it's contents
+        $result = [
+            'applications' => []
+        ];
+
+        //  Get the response and check its contents
         try {
             $result = $this->apiClient->httpGet(
                 sprintf('/v2/user/%s/applications', $this->getUserId()),
                 $queryParams
             );
         } catch (ApiException $ex) {
-            throw new RuntimeException('missing-fields');
-        }
-
-        if (!isset($result['applications'])) {
-            throw new RuntimeException('missing-fields');
+            $this->getLogger()->err('ApiException thrown when fetching LPA application summaries');
         }
 
         $trackFromDate = new DateTime($this->getConfig()['processing-status']['track-from-date']);
@@ -232,8 +235,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                         $refreshTracking = true;
                     }
                 }
-            }
-            else if ($lpa->getCreatedAt() instanceof DateTime) {
+            } elseif ($lpa->getCreatedAt() instanceof DateTime) {
                 $progress = 'Created';
             }
 
@@ -264,7 +266,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
     {
         try {
             return $this->apiClient->httpGet(sprintf('/v2/user/%s/applications/%s/seed', $this->getUserId(), $lpaId));
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
@@ -279,8 +282,11 @@ class Application extends AbstractService implements ApiClientAwareInterface
     public function getPdf($lpaId, $pdfType)
     {
         try {
-            return $this->apiClient->httpGet(sprintf('/v2/user/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfType));
-        } catch (ApiException $ex) {}
+            return $this->apiClient->httpGet(
+                sprintf('/v2/user/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfType)
+            );
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
@@ -299,7 +305,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         try {
             return $this->apiClient->httpGet($target, [], false);
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
@@ -328,7 +335,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
                 return true;
             }
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
@@ -357,7 +365,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
                 return true;
             }
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
@@ -382,7 +391,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
                 return true;
             }
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
@@ -396,7 +406,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setWhoAreYou(Lpa $lpa, WhoAreYou $whoAreYou)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/who-are-you', $this->getUserId(), $lpa->id), $whoAreYou->toArray());
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/who-are-you', $this->getUserId(), $lpa->id),
+            $whoAreYou->toArray()
+        );
 
         if (is_array($result)) {
             $lpa->whoAreYouAnswered = true;
@@ -438,7 +451,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setDonor(Lpa $lpa, Donor $donor)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/donor', $this->getUserId(), $lpa->id), $donor->toArray());
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/donor', $this->getUserId(), $lpa->id),
+            $donor->toArray()
+        );
 
         if (is_array($result)) {
             $lpa->document->donor = new Donor($result);
@@ -458,7 +474,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPrimaryAttorneyDecisions(Lpa $lpa, PrimaryAttorneyDecisions $primaryAttorneyDecisions)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/primary-attorney-decisions', $this->getUserId(), $lpa->id), $primaryAttorneyDecisions->toArray());
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/primary-attorney-decisions', $this->getUserId(), $lpa->id),
+            $primaryAttorneyDecisions->toArray()
+        );
 
         if (is_array($result)) {
             $lpa->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions($result);
@@ -479,7 +498,15 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPrimaryAttorney(Lpa $lpa, AbstractAttorney $primaryAttorney, $primaryAttorneyId)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/primary-attorneys/%s', $this->getUserId(), $lpa->id, $primaryAttorneyId), $primaryAttorney->toArray());
+        $result = $this->executePut(
+            sprintf(
+                '/v2/user/%s/applications/%s/primary-attorneys/%s',
+                $this->getUserId(),
+                $lpa->id,
+                $primaryAttorneyId
+            ),
+            $primaryAttorney->toArray()
+        );
 
         if (is_array($result)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -513,7 +540,15 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setReplacementAttorney(Lpa $lpa, AbstractAttorney $replacementAttorney, $replacementAttorneyId)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/replacement-attorneys/%s', $this->getUserId(), $lpa->id, $replacementAttorneyId), $replacementAttorney->toArray());
+        $result = $this->executePut(
+            sprintf(
+                '/v2/user/%s/applications/%s/replacement-attorneys/%s',
+                $this->getUserId(),
+                $lpa->id,
+                $replacementAttorneyId
+            ),
+            $replacementAttorney->toArray()
+        );
 
         if (is_array($result)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -544,9 +579,14 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * @param ReplacementAttorneyDecisions $replacementAttorneyDecisions
      * @return bool
      */
-    public function setReplacementAttorneyDecisions(Lpa $lpa, ReplacementAttorneyDecisions $replacementAttorneyDecisions)
-    {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/replacement-attorney-decisions', $this->getUserId(), $lpa->id), $replacementAttorneyDecisions->toArray());
+    public function setReplacementAttorneyDecisions(
+        Lpa $lpa,
+        ReplacementAttorneyDecisions $replacementAttorneyDecisions
+    ) {
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/replacement-attorney-decisions', $this->getUserId(), $lpa->id),
+            $replacementAttorneyDecisions->toArray()
+        );
 
         if (is_array($result)) {
             $lpa->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions($result);
@@ -566,7 +606,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setCertificateProvider(Lpa $lpa, CertificateProvider $certificateProvider)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/certificate-provider', $this->getUserId(), $lpa->id), $certificateProvider->toArray());
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/certificate-provider', $this->getUserId(), $lpa->id),
+            $certificateProvider->toArray()
+        );
 
         if (is_array($result)) {
             $lpa->document->certificateProvider = new CertificateProvider($result);
@@ -587,7 +630,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setNotifiedPerson(Lpa $lpa, NotifiedPerson $notifiedPerson, $notifiedPersonId)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/notified-people/%s', $this->getUserId(), $lpa->id, $notifiedPersonId), $notifiedPerson->toArray());
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/notified-people/%s', $this->getUserId(), $lpa->id, $notifiedPersonId),
+            $notifiedPerson->toArray()
+        );
 
         if (is_array($result)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -660,9 +706,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setWhoIsRegistering(Lpa $lpa, $whoIsRegistering)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/who-is-registering', $this->getUserId(), $lpa->id), [
-            'whoIsRegistering' => $whoIsRegistering,
-        ]);
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/who-is-registering', $this->getUserId(), $lpa->id),
+            [
+                'whoIsRegistering' => $whoIsRegistering,
+            ]
+        );
 
         if (is_array($result)) {
             $lpa->document->whoIsRegistering = $result['whoIsRegistering'];
@@ -682,7 +731,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setCorrespondent(Lpa $lpa, Correspondence $correspondent)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id), $correspondent->toArray());
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id),
+            $correspondent->toArray()
+        );
 
         if (is_array($result)) {
             $lpa->document->correspondent = new Correspondence($result);
@@ -702,9 +754,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setRepeatCaseNumber(Lpa $lpa, $repeatCaseNumber)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/repeat-case-number', $this->getUserId(), $lpa->id), [
-            'repeatCaseNumber' => $repeatCaseNumber,
-        ]);
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/repeat-case-number', $this->getUserId(), $lpa->id),
+            [
+                'repeatCaseNumber' => $repeatCaseNumber,
+            ]
+        );
 
         if (is_array($result)) {
             $lpa->repeatCaseNumber = $result['repeatCaseNumber'];
@@ -724,7 +779,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPayment(Lpa $lpa, Payment $payment)
     {
-        $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/payment', $this->getUserId(), $lpa->id), $payment->toArray());
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/payment', $this->getUserId(), $lpa->id),
+            $payment->toArray()
+        );
 
         if (is_array($result)) {
             $lpa->payment = new Payment($result);
@@ -766,7 +824,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deletePrimaryAttorney(Lpa $lpa, $primaryAttorneyId)
     {
-        $target = sprintf('/v2/user/%s/applications/%s/primary-attorneys/%s', $this->getUserId(), $lpa->id, $primaryAttorneyId);
+        $target = sprintf(
+            '/v2/user/%s/applications/%s/primary-attorneys/%s',
+            $this->getUserId(),
+            $lpa->id,
+            $primaryAttorneyId
+        );
 
         if ($this->executeDelete($target)) {
             //  Remove the deleted attorney
@@ -792,7 +855,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteReplacementAttorney(Lpa $lpa, $replacementAttorneyId)
     {
-        $target = sprintf('/v2/user/%s/applications/%s/replacement-attorneys/%s', $this->getUserId(), $lpa->id, $replacementAttorneyId);
+        $target = sprintf(
+            '/v2/user/%s/applications/%s/replacement-attorneys/%s',
+            $this->getUserId(),
+            $lpa->id,
+            $replacementAttorneyId
+        );
 
         if ($this->executeDelete($target)) {
             //  Remove the deleted attorney
@@ -837,7 +905,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteNotifiedPerson(Lpa $lpa, $notifiedPersonId)
     {
-        $target = sprintf('/v2/user/%s/applications/%s/notified-people/%s', $this->getUserId(), $lpa->id, $notifiedPersonId);
+        $target = sprintf(
+            '/v2/user/%s/applications/%s/notified-people/%s',
+            $this->getUserId(),
+            $lpa->id,
+            $notifiedPersonId
+        );
 
         if ($this->executeDelete($target)) {
             //  Remove the deleted person to notify
@@ -901,14 +974,17 @@ class Application extends AbstractService implements ApiClientAwareInterface
     public function lockLpa(Lpa $lpa)
     {
         try {
-            $result = $this->apiClient->httpPost(sprintf('/v2/user/%s/applications/%s/lock', $this->getUserId(), $lpa->id));
+            $result = $this->apiClient->httpPost(
+                sprintf('/v2/user/%s/applications/%s/lock', $this->getUserId(), $lpa->id)
+            );
 
             if (is_array($result)) {
                 $lpa->locked = true;
 
                 return true;
             }
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
@@ -922,7 +998,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
     {
         try {
             return $this->apiClient->httpPut($target, $jsonBody);
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
@@ -937,7 +1014,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $this->apiClient->httpDelete($target);
 
             return true;
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
