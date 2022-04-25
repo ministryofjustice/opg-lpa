@@ -96,12 +96,18 @@ class Communication extends AbstractEmailService
                     // we do not have reduced fee but we do have Person(s) to Notify
                     $data = array_merge($data, [
                         'PTNOnly' => true,
+                        'FeeFormOnly' => false,
+                        'FeeFormPTN' => false,
+                        'remission' => false,
                     ]);
                 }
                 else {
                     // we have reduced fee and Person(s) to Notify
                     $data = array_merge($data, [
+                        'PTNOnly' => false,
+                        'FeeFormOnly' => false,
                         'FeeFormPTN' => true,
+                        'remission' => true,
                     ]);
                 }
             }
@@ -110,7 +116,10 @@ class Communication extends AbstractEmailService
                 && is_null($lpa->payment->reducedFeeLowIncome) && is_null($lpa->payment->reducedFeeUniversalCredit) ) ) {
                     // we have reduced fee, but not Person(s) to Notify
                     $data = array_merge($data, [
+                        'PTNOnly' => false,
                         'FeeFormOnly' => true,
+                        'FeeFormPTN' => false,
+                        'remission' => true,
                     ]);
                 }
             } 
@@ -118,9 +127,14 @@ class Communication extends AbstractEmailService
         else {
             // we have no payment
             $emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
-            if (!empty($lpa->document->peopleToNotify)) { 
+            if (empty($lpa->document->peopleToNotify)) { 
                     $data = array_merge($data, [
-                        'PTNOnly' => true,
+                        'PTN' => false,
+                    ]);
+            }
+            else {
+                    $data = array_merge($data, [
+                        'PTN' => true,
                     ]);
             }
         }

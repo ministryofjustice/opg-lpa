@@ -100,7 +100,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaId' => 'A111 111 1111',
                 'viewDocsUrl' => 'https://view.docs.url',
                 'checkDatesUrl' => 'https://check.dates.url',
-                'PTNOnly' => true,
+                'PTN' => true,
             ]
         );
 
@@ -158,6 +158,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaId' => 'A111 111 1111',
                 'viewDocsUrl' => 'https://view.docs.url',
                 'checkDatesUrl' => 'https://check.dates.url',
+                'PTN' => false,
             ]
         );
 
@@ -222,6 +223,9 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
                 'paymentAmount' => '200,000.00',
                 'PTNOnly' => true,
+                'FeeFormOnly' => false,
+                'FeeFormPTN' => false,
+                'remission' => false,
             ]
         );
 
@@ -347,7 +351,10 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
                 'paymentAmount' => '200,000.00',
+                'PTNOnly' => false,
+                'FeeFormOnly' => false,
                 'FeeFormPTN' => true,
+                'remission' => true,
             ]
         );
 
@@ -406,7 +413,10 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
                 'paymentAmount' => '200,000.00',
+                'PTNOnly' => false,
                 'FeeFormOnly' => true,
+                'FeeFormPTN' => false,
+                'remission' => true,
             ]
         );
 
@@ -463,6 +473,9 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
                 'PTNOnly' => true,
+                'FeeFormOnly' => false,
+                'FeeFormPTN' => false,
+                'remission' => false,
             ]
         );
 
@@ -566,7 +579,10 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaId' => 'A22222222',
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
+                'PTNOnly' => false,
+                'FeeFormOnly' => false,
                 'FeeFormPTN' => true,
+                'remission' => true,
             ]
         );
 
@@ -614,7 +630,10 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaId' => 'A22222222',
                 'viewDocsUrl' => 'https://some.url',
                 'checkDatesUrl' => 'https://some.url',
+                'PTNOnly' => false,
                 'FeeFormOnly' => true,
+                'FeeFormPTN' => false,
+                'remission' => true,
             ]
         );
 
