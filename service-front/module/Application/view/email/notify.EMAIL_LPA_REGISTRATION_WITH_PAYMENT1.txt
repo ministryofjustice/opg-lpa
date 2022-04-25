@@ -1,0 +1,45 @@
+NOTIFY SERVICE EMAIL TEMPLATE: EMAIL_LPA_REGISTRATION_WITH_PAYMENT1
+
+NOTIFY TEMPLATE ID: e462a4f3-db4a-4748-aecb-7b1b5c653e58
+
+Online LPA ID: ((lpaId))
+
+# LPA payment confirmation
+
+We have received the application fee for ((donorName))'s property and finance LPA.
+
+* Payment reference number: ((lpaPaymentReference))
+* Date of payment: ((lpaPaymentDate))
+* Amount paid: £((paymentAmount))
+
+# What you need to do next
+
+* Sign in to your account to download and print the LPA
+((feeFormOnly?? and fee remissions form)) ((PTNOnly?? and people to notify letters)) ((feeFormPTN?? fee remissions form, and fee remissions form)): ((viewDocsURL))
+* Get everyone to sign the LPA in the right order – instructions are on the LPA cover sheet. Once everyone’s signed, you can check the order is correct here: ((checkDatesUrl))
+* Post the LPA to us for registration ((remission??along with the fee remission form and supporting evidence)).
+
+If we do not receive the LPA by ((date)), we'll refund the application  fee.  
+
+You can still post the LPA after you've been refunded - we will contact you and ask you to pay the fee again or you can send a cheque with the LPA.
+
+^ Remember, an LPA must be registered before it can be used.
+
+---
+
+This is an automatic email - please do not reply to this address.
+
+# Contact us
+
+Email: customerservices@publicguardian.gov.uk
+
+Call: 0300 456 0300
+Monday to Friday (except Wednesday) 9.30am to 5pm
+Wednesday 10am to 5pm
+
+Textphone: 0115 934 2778
+
+Office of the Public Guardian
+PO Box 16185
+Birmingham B2 2WH
+https://www.lastingpowerofattorney.service.gov.uk/home
