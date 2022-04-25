@@ -226,6 +226,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'FeeFormOnly' => false,
                 'FeeFormPTN' => false,
                 'remission' => false,
+                'date' => '5 November 2021',
             ]
         );
 
@@ -284,6 +285,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
                 'paymentAmount' => '200,000.00',
+                'date' => '5 November 2021',
             ]
         );
 
@@ -355,6 +357,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'FeeFormOnly' => false,
                 'FeeFormPTN' => true,
                 'remission' => true,
+                'date' => '5 November 2021',
             ]
         );
 
@@ -417,6 +420,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'FeeFormOnly' => true,
                 'FeeFormPTN' => false,
                 'remission' => true,
+                'date' => '5 November 2021',
             ]
         );
 

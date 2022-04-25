@@ -7,6 +7,7 @@ use Application\Model\Service\Mail\MailParameters;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use DateTime;
 use DateTimeZone;
+use DateInterval;
 use Exception;
 use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Session\Container;
@@ -67,16 +68,20 @@ class Communication extends AbstractEmailService
 
                 // Assume datetimes are in Europe/London timezone as all our users are in the UK
                 $paymentDate = '';
+                $refundDate = '';
                 if (isset($lpa->payment->date)) {
                     $lpa->payment->date->setTimezone(new DateTimeZone('Europe/London'));
                     $paymentDate = $lpa->payment->date->format('j F Y - g:ia');
+                    $refundDate = $lpa->payment->date->add(new DateInterval('P42D'))->format('j F Y');
                 }
+
 
                 $data = array_merge($data, [
                     'lpaTypeTitleCase' => $lpaTypeTitleCase,
                     'lpaPaymentReference' => $lpa->payment->reference,
                     'lpaPaymentDate' => $paymentDate,
                     'paymentAmount' => $amount,
+                    'date' => $refundDate,
                 ]);
 
                 // If we have a separate payment address, send the email to that also
