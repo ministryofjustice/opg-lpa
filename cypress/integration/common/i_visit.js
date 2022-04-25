@@ -14,6 +14,10 @@ Then(`I visit the dashboard`, () => {
     cy.visit('/user/dashboard');
 })
 
+Then(`I visit the your details page`, () => {
+    cy.visit('/user/about-you');
+})
+
 Then(`I visit the type page`, () => {
     cy.visitWithChecks('/lpa/type');
 })

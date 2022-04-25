@@ -15,7 +15,7 @@ Feature: Change User Personal Details
         Then I am taken to "/user/change-email-address"
         And I see in the page text
             | There is a problem |
-            | The emails did not match |
+            | Enter matching email addresses |
         And I see "Error" in the title
 
         When I try to change to invalid email address
