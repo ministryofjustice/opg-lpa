@@ -23,29 +23,20 @@ class StatusController extends AbstractRestfulController
 
     /**
      * Name of the identifier used in the routes to this RESTful controller
-     *
-     * @var string
      */
+    /* @var string */
     protected $identifierName = 'lpaIds';
 
-    /**
-     * @var $applicationsService ApplicationsService
-     */
+    /* @var $applicationsService ApplicationsService */
     private $applicationsService;
 
-    /**
-     * @var $authorizationService AuthorizationService
-     */
+    /* @var $authorizationService AuthorizationService */
     private $authorizationService;
 
-    /**
-     * @var $processingStatusService ProcessingStatusService
-     */
+    /* @var $processingStatusService ProcessingStatusService */
     private $processingStatusService;
 
-    /**
-     * @var $routeUserId string
-     */
+    /* @var $routeUserId string */
     private $routeUserId;
 
     /**
@@ -74,14 +65,14 @@ class StatusController extends AbstractRestfulController
     }
 
     /**
-     * @param MvcEvent $event
+     * @param MvcEvent $e
      * @return mixed|ApiProblemResponse
      * @throws ApiProblemException
      */
-    public function onDispatch(MvcEvent $event)
+    public function onDispatch(MvcEvent $e)
     {
         //  If possible get the user and LPA from the ID values in the route
-        $this->routeUserId = $event->getRouteMatch()->getParam('userId');
+        $this->routeUserId = $e->getRouteMatch()->getParam('userId');
 
         if (empty($this->routeUserId)) {
             //  userId MUST be present in the URL
@@ -93,10 +84,10 @@ class StatusController extends AbstractRestfulController
         }
 
         try {
-            return parent::onDispatch($event);
-        } catch (UnauthorizedException $e) {
+            return parent::onDispatch($e);
+        } catch (UnauthorizedException $ex) {
             return new ApiProblemResponse(new ApiProblem(401, 'Access Denied'));
-        } catch (LockedException $e) {
+        } catch (LockedException $ex) {
             return new ApiProblemResponse(new ApiProblem(403, 'LPA has been locked'));
         }
     }
@@ -130,16 +121,16 @@ class StatusController extends AbstractRestfulController
     }
 
     // returns true if the value of at least one key in $array1 is different
-    // from that key in $array2, and the value in $array1 is not null (we
-    // don't bother to save null values to the metadata unless the value
-    // for the same key in $array2 is *not* null)
-    private function hasDifference($array1, $array2) : bool
+    // from that key in $array2
+    private function hasDifference($array1, $array2): bool
     {
         foreach ($array1 as $key => $array1Value) {
             $array2Value = $this->getValue($array2, $key);
 
-            if ($array1Value != $array2Value
-            && (!is_null($array1Value) || (is_null($array1Value) && !is_null($array2Value)))) {
+            if (
+                $array1Value != $array2Value
+                && (!is_null($array1Value) || !is_null($array2Value))
+            ) {
                 return true;
             }
         }
@@ -153,7 +144,7 @@ class StatusController extends AbstractRestfulController
      * not found, does not have a processing status, or does not belong to this user. Otherwise returns
      * {"found": true, "status": "<processing status>"}
      *
-     * @param string $ids
+     * @param mixed $ids
      * @return Json
      * @throws Exception
      * @throws \Http\Client\Exception
@@ -192,8 +183,7 @@ class StatusController extends AbstractRestfulController
                     'status' => $this->getValue($lpaMetas[$id], LPA::SIRIUS_PROCESSING_STATUS),
                     'inDb' => true,
                 ];
-            }
-            else {
+            } else {
                 // We found no record for it
                 $dbResults[$id] = [
                     'status' => null,
@@ -205,11 +195,11 @@ class StatusController extends AbstractRestfulController
         // This is our eventual return value
         $results = [];
 
-        if (!empty($allIdsToCheckStatusInSirius)) {
+        if (count($allIdsToCheckStatusInSirius) > 0) {
             // LPA-3534 Log the request
             $this->getLogger()->info(
                 'All application ids to check in Sirius :' .
-                implode("','",$allIdsToCheckStatusInSirius) .
+                implode("','", $allIdsToCheckStatusInSirius) .
                 "'"
             );
             $this->getLogger()->info(
@@ -221,15 +211,13 @@ class StatusController extends AbstractRestfulController
             $siriusResponseArray = $this->processingStatusService->getStatuses($allIdsToCheckStatusInSirius);
             // Update the results for the status received back from Sirius
             foreach ($siriusResponseArray as $lpaId => $lpaDetail) {
-
                 // If the processStatusService didn't get a response for
                 // this LPA (it hasn't been received yet), the detail is null
                 // and the LPA will display as "Waiting"
                 if (is_null($lpaDetail['response'])) {
                     $results[$lpaId] = ['found' => false];
-                }
-                // There was a status returned by processStatusService
-                else {
+                } else {
+                    // There was a status returned by processStatusService
                     $dbResult = $dbResults[$lpaId];
                     $dbProcessingStatus = $this->getValue($dbResult, 'status');
 

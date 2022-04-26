@@ -53,13 +53,13 @@ abstract class AbstractAuthController extends AbstractRestfulController
     /**
      * Execute the request
      *
-     * @param MvcEvent $event
+     * @param MvcEvent $e
      * @return mixed|ApiProblem|ApiProblemResponse
      * @throws ApiProblemException
      */
-    public function onDispatch(MvcEvent $event)
+    public function onDispatch(MvcEvent $e)
     {
-        $return = parent::onDispatch($event);
+        $return = parent::onDispatch($e);
 
         if ($return instanceof ApiProblem) {
             return new ApiProblemResponse($return);

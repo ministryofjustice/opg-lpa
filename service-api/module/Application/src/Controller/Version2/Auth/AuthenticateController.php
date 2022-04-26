@@ -2,21 +2,20 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use \DateTime;
+use DateTime;
+use Application\Model\Service\AbstractService;
 use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use RuntimeException;
 
 class AuthenticateController extends AbstractAuthController
 {
     /**
-     * TODO - Refactor later...
-     * NOTE - Present to satisfy requirement in AbstractAuthController
-     *
-     * @return null
+     * @return AbstractService
      */
     protected function getService()
     {
-        return null;
+        throw new RuntimeException('getService method not implemented for AuthenticateController');
     }
 
     /**
@@ -114,7 +113,7 @@ class AuthenticateController extends AbstractAuthController
     {
         $token = $this->getRequest()->getHeader('CheckedToken');
 
-        if($token == null) {
+        if ($token == null) {
             return new ApiProblem(400, 'No CheckedToken was specified in the header');
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Library\Http\Response;
 
 use Laminas\Http\Response;
@@ -9,14 +10,15 @@ use Laminas\Http\Response;
  * Class NoContent
  * @package Application\Library\Http\Response
  */
-class File extends Response {
-
-    const TYPE_PDF = 'application/pdf';
+class File extends Response
+{
+    public const TYPE_PDF = 'application/pdf';
 
     protected $contentType;
 
-    public function __construct( $data, $contentType ){
-        $this->setContent( $data );
+    public function __construct($data, $contentType)
+    {
+        $this->setContent($data);
         $this->contentType = $contentType;
     }
 
@@ -33,11 +35,10 @@ class File extends Response {
         $headers = parent::getHeaders();
 
         $headers->clearHeaders()
-            ->addHeaderLine( 'Content-Type', $this->contentType)
-            ->addHeaderLine( 'Content-Disposition', 'attachment')
-            ->addHeaderLine( 'Content-Length', strlen( $this->getContent() ) );
+            ->addHeaderLine('Content-Type', $this->contentType)
+            ->addHeaderLine('Content-Disposition', 'attachment')
+            ->addHeaderLine('Content-Length', '' . strlen($this->getContent()));
 
         return $headers;
     }
-
-} // class
+}
