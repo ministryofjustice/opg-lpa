@@ -62,8 +62,12 @@ class CommunicationTest extends AbstractEmailServiceTest
                         "last" => "Stout",
                     ],
                  ]),
-               ]
-            ])
+                ],
+            ]),
+         // note that the system represents no payment, by having a payment object with the reason for no payment set within it
+            'payment' => new Payment([
+                 'reducedFeeLowIncome' => true,
+            ]),
         ]);
 
         // The service is partially mocked so we don't have to mess
@@ -120,8 +124,12 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
                     'name' => new LongName('{"title":"Dr", "first":"Pete", "last":"Vamoose"}')
-                ]
-            ])
+                ],
+            ]),
+         // note that the system represents no payment, by having a payment object with the reason for no payment set within it
+           'payment' => new Payment([
+                'reducedFeeLowIncome' => true,
+            ]),
         ]);
 
         // The service is partially mocked so we don't have to mess
@@ -328,7 +336,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
                 'reference' => '12345678',
                 'date' => new DateTime('2021-09-24 07:54:00'),
-                'reducedFeeReceivesBenefits' => true,
+                'reducedFeeLowIncome' => true,
             ]),
         ]);
 
@@ -391,7 +399,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'email' => new EmailAddress(['address' => 'paymentfrom@email.com']),
                 'reference' => '12345678',
                 'date' => new DateTime('2021-09-24 07:54:00'),
-                'reducedFeeAwardedDamages' => true,
+                'reducedFeeLowIncome' => true,
             ]),
         ]);
 
@@ -622,7 +630,7 @@ class CommunicationTest extends AbstractEmailServiceTest
             'payment' => new Payment([
                 'method' => 'cheque',
                 'amount' => '41.00',
-                'reducedFeeUniversalCredit' => true,
+                'reducedFeeLowIncome' => true,
             ]),
         ]);
 
@@ -666,6 +674,9 @@ class CommunicationTest extends AbstractEmailServiceTest
         $lpa = new Lpa([
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW
+            ]),
+            'payment' => new Payment([
+                 'reducedFeeLowIncome' => true,
             ]),
         ]);
 
