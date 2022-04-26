@@ -239,7 +239,6 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            //->with(Matchers::equalTo($expectedMailParams));
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
@@ -302,7 +301,6 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            //->with(Matchers::equalTo($expectedMailParams));
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
@@ -374,7 +372,6 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            //->with(Matchers::equalTo($expectedMailParams));
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
@@ -437,7 +434,6 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            //->with(Matchers::equalTo($expectedMailParams));
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
@@ -476,7 +472,11 @@ class CommunicationTest extends AbstractEmailServiceTest
         $this->service->shouldReceive('formatLpaId')
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
-            ->andReturn('https://some.url');
+                      ->andReturn('https://some.url');
+        
+        $this->service->shouldReceive('moneyFormat')
+            ->with('110.00')
+            ->andReturn('110.00');
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
@@ -492,11 +492,11 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'FeeFormOnly' => false,
                 'FeeFormPTN' => false,
                 'remission' => false,
+                'feeAmount' => '110.00',
             ]
         );
 
         $this->mailTransport->shouldReceive('send')
-            //->with(Matchers::equalTo($expectedMailParams));
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
@@ -528,6 +528,10 @@ class CommunicationTest extends AbstractEmailServiceTest
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
+        
+        $this->service->shouldReceive('moneyFormat')
+            ->with('110.00')
+            ->andReturn('110.00');
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
@@ -543,11 +547,11 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'FeeFormOnly' => false,
                 'FeeFormPTN' => false,
                 'remission' => false,
+                'feeAmount' => '110.00',
             ]
         );
 
         $this->mailTransport->shouldReceive('send')
-            //->with(Matchers::equalTo($expectedMailParams));
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
@@ -588,6 +592,10 @@ class CommunicationTest extends AbstractEmailServiceTest
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
+        
+        $this->service->shouldReceive('moneyFormat')
+            ->with('110.00')
+            ->andReturn('110.00');
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
@@ -603,11 +611,11 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'FeeFormOnly' => false,
                 'FeeFormPTN' => true,
                 'remission' => true,
+                'feeAmount' => '110.00',
             ]
         );
 
         $this->mailTransport->shouldReceive('send')
-            //->with(Matchers::equalTo($expectedMailParams));
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
@@ -639,6 +647,10 @@ class CommunicationTest extends AbstractEmailServiceTest
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
+        
+        $this->service->shouldReceive('moneyFormat')
+            ->with('41.00')
+            ->andReturn('41.00');
 
         // Expected data passed to send()
         $expectedMailParams = new MailParameters(
@@ -654,11 +666,11 @@ class CommunicationTest extends AbstractEmailServiceTest
                 'FeeFormOnly' => true,
                 'FeeFormPTN' => false,
                 'remission' => true,
+                'feeAmount' => '41.00',
             ]
         );
 
         $this->mailTransport->shouldReceive('send')
-            //->with(Matchers::equalTo($expectedMailParams));
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;

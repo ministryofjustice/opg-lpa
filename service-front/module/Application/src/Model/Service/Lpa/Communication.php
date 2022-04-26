@@ -66,7 +66,7 @@ class Communication extends AbstractEmailService
         else {
             if ($lpa->payment->method == 'cheque') {
             // we have a cheque payment
-                $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
+                $this->setUpEmailFieldsForChequePayment($lpa);
                 $this->setUpEmailFieldsForPayments($lpa);
             }
             else {
@@ -98,39 +98,49 @@ class Communication extends AbstractEmailService
 
     public function setUpEmailFieldsForOnlinePayment(Lpa $lpa)
     {
-        // fill out the fields appropriately that apply only to Online payments
-        
-            $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
+        $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
 
-            // Add extra data to the LPA registration email 
-            $amount = '';
-            if (isset($lpa->payment->amount)) {
-                $amount = $this->moneyFormat($lpa->payment->amount);
-            }
+        $amount = '';
+        if (isset($lpa->payment->amount)) {
+            $amount = $this->moneyFormat($lpa->payment->amount);
+        }
 
-            // Assume datetimes are in Europe/London timezone as all our users are in the UK
-            $paymentDate = '';
-            $refundDate = '';
-            if (isset($lpa->payment->date)) {
-                $lpa->payment->date->setTimezone(new DateTimeZone('Europe/London'));
-                $paymentDate = $lpa->payment->date->format('j F Y - g:ia');
-                $refundDate = $lpa->payment->date->add(new DateInterval('P42D'))->format('j F Y');
-            }
+        // Assume datetimes are in Europe/London timezone as all our users are in the UK
+        $paymentDate = '';
+        $refundDate = '';
+        if (isset($lpa->payment->date)) {
+            $lpa->payment->date->setTimezone(new DateTimeZone('Europe/London'));
+            $paymentDate = $lpa->payment->date->format('j F Y - g:ia');
+            $refundDate = $lpa->payment->date->add(new DateInterval('P42D'))->format('j F Y');
+        }
 
-            $this->data = array_merge($this->data, [
-                'lpaTypeTitleCase' => $this->lpaTypeTitleCase,
-                'lpaPaymentReference' => $lpa->payment->reference,
-                'lpaPaymentDate' => $paymentDate,
-                'paymentAmount' => $amount,
-                'date' => $refundDate,
-            ]);
+        $this->data = array_merge($this->data, [
+            'lpaTypeTitleCase' => $this->lpaTypeTitleCase,
+            'lpaPaymentReference' => $lpa->payment->reference,
+            'lpaPaymentDate' => $paymentDate,
+            'paymentAmount' => $amount,
+            'date' => $refundDate,
+        ]);
 
-            // If we have a separate payment address, send the email to that also
-            if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($this->userEmailAddress))) {
-                $this->to[] = (string) $lpa->payment->email;
-            }
+        // If we have a separate payment address, send the email to that also
+        if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($this->userEmailAddress))) {
+            $this->to[] = (string) $lpa->payment->email;
+        }
     } 
 
+    public function setUpEmailFieldsForChequePayment(Lpa $lpa)
+    {
+        $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
+
+        $amount = '';
+        if (isset($lpa->payment->amount)) {
+            $amount = $this->moneyFormat($lpa->payment->amount);
+        }
+
+        $this->data = array_merge($this->data, [
+            'feeAmount' => $amount,
+        ]);
+    }
 
     public function setUpEmailFieldsForPayments(Lpa $lpa)
     {
