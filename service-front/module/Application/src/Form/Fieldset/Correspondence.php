@@ -23,8 +23,8 @@ class Correspondence extends Fieldset
             'name' => 'contactByEmail',
             'type' => 'Checkbox',
             'options' => [
-                'checked_value' => true,
-                'unchecked_value' => false,
+                'checked_value' => '1',
+                'unchecked_value' => '0',
             ],
         ]);
 
@@ -32,8 +32,8 @@ class Correspondence extends Fieldset
             'name' => 'contactByPhone',
             'type' => 'Checkbox',
             'options' => [
-                'checked_value' => true,
-                'unchecked_value' => false,
+                'checked_value' => '1',
+                'unchecked_value' => '0',
             ],
         ]);
 
@@ -41,8 +41,8 @@ class Correspondence extends Fieldset
             'name' => 'contactByPost',
             'type' => 'Checkbox',
             'options' => [
-                'checked_value' => true,
-                'unchecked_value' => false,
+                'checked_value' => '1',
+                'unchecked_value' => '0',
             ],
         ]);
 

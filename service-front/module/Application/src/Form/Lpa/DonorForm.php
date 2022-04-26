@@ -40,8 +40,8 @@ class DonorForm extends AbstractActorForm
         'canSign' => [
             'type' => 'Checkbox',
             'options' => [
-                'checked_value'   => false,
-                'unchecked_value' => true,
+                'checked_value'   => '0',
+                'unchecked_value' => '1',
             ],
         ],
         'submit' => [
