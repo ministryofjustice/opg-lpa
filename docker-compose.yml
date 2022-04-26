@@ -142,6 +142,7 @@ services:
       - ./service-front/config:/app/config
       - ./service-front/node_modules:/app/node_modules
       - ./service-front/assets:/app/assets
+      - ./service-front/vendor:/app/vendor
     depends_on:
       - dynamodb
       - localstack
@@ -226,6 +227,7 @@ services:
 # to speed running, volumes are restricted to source code that may change while container is running
       - ./service-api/module:/app/module
       - ./service-api/config:/app/config
+      - ./service-api/vendor:/app/vendor
     depends_on:
       - dynamodb
       - localstack
@@ -299,6 +301,7 @@ services:
 # to speed running, volumes are restricted to source code that may change while container is running
       - ./service-admin/src:/app/src
       - ./service-admin/config:/app/config
+      - ./service-admin/vendor:/app/vendor
     depends_on:
       - dynamodb
       - localstack

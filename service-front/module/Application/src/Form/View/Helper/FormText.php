@@ -7,8 +7,8 @@ namespace Application\Form\View\Helper;
 use Laminas\Form\ElementInterface;
 use Laminas\Form\View\Helper\FormInput;
 
-class FormText extends FormInput {
-
+class FormText extends FormInput
+{
     /**
      * Attributes valid for the input tag type="text"
      * Includes Global Attribute inputmode
@@ -41,7 +41,7 @@ class FormText extends FormInput {
      * @param  ElementInterface $element
      * @return string
      */
-    protected function getType(ElementInterface $element)
+    protected function getType(ElementInterface $element): string
     {
         return 'text';
     }
