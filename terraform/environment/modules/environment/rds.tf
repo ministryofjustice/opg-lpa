@@ -13,7 +13,7 @@ data "aws_iam_role" "rds_enhanced_monitoring" {
 }
 
 data "aws_sns_topic" "rds_events" {
-  name = "${var.account_name}-rds-events"
+  name = "${var.account_name}-${local.region_name}-rds-events"
 }
 
 data "aws_db_snapshot" "api_snapshot" {
