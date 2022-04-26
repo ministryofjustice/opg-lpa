@@ -1,12 +1,13 @@
 <?php
+
 namespace Application\Model\DataAccess\Repository\Application;
 
 use DateTime;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-interface ApplicationRepositoryInterface {
-
+interface ApplicationRepositoryInterface
+{
     /**
      * Get an LPA by ID, and user ID if provided
      *
@@ -14,7 +15,16 @@ interface ApplicationRepositoryInterface {
      * @param string $userId
      * @return array|null
      */
-    public function getById(int $id, ?string $userId = null) : ?array;
+    public function getById(int $id, ?string $userId = null): ?array;
+
+    /**
+     * Get LPAs whose IDs are in $lpaIds for the specified user
+     *
+     * @param array $lpaIds Array of LPA IDs which must be matched
+     * @param string $userId ID of the user to get LPAs for
+     * @return Traversable containing LPA items
+     */
+    public function getByIdsAndUser(array $lpaIds, string $userId): Traversable;
 
     /**
      * Counts the number of results for the given criteria.
@@ -22,27 +32,27 @@ interface ApplicationRepositoryInterface {
      * @param array $criteria
      * @return int
      */
-    public function count(array $criteria) : int;
+    public function count(array $criteria): int;
 
     /**
      * @param array $criteria
      * @param array $options
      * @return Traversable
      */
-    public function fetch(array $criteria, array $options = []) : Traversable;
+    public function fetch(array $criteria, array $options = []): Traversable;
 
     /**
      * @param string $userId
      * @param array $options
      * @return Traversable
      */
-    public function fetchByUserId(string $userId, array $options = []) : Traversable;
+    public function fetchByUserId(string $userId, array $options = []): Traversable;
 
     /**
      * @param Lpa $lpa
      * @return bool
      */
-    public function insert(Lpa $lpa) : bool;
+    public function insert(Lpa $lpa): bool;
 
     /**
      * Update the LPA
@@ -50,14 +60,14 @@ interface ApplicationRepositoryInterface {
      * @param Lpa $lpa
      * @return bool
      */
-    public function update(Lpa $lpa) : bool;
+    public function update(Lpa $lpa): bool;
 
     /**
      * @param int $lpaId
      * @param string $userId
      * @return bool
      */
-    public function deleteById(int $lpaId, string $userId) : bool;
+    public function deleteById(int $lpaId, string $userId): bool;
 
     /**
      * Get the count of LPAs between two dates for the timestamp field name provided
@@ -74,7 +84,7 @@ interface ApplicationRepositoryInterface {
      * @param string $timestampFieldName
      * @return int
      */
-    public function countBetween(Datetime $start, Datetime $end, string $timestampFieldName) : int;
+    public function countBetween(Datetime $start, Datetime $end, string $timestampFieldName): int;
 
     /**
      * Count the number of LPAs started but not created for a given LPA type
@@ -82,7 +92,7 @@ interface ApplicationRepositoryInterface {
      * @param $lpaType
      * @return int
      */
-    public function countStartedForType(string $lpaType) : int;
+    public function countStartedForType(string $lpaType): int;
 
     /**
      * Count the number of LPAs created but not completed for a given LPA type
@@ -90,7 +100,7 @@ interface ApplicationRepositoryInterface {
      * @param $lpaType
      * @return int
      */
-    public function countCreatedForType(string $lpaType) : int;
+    public function countCreatedForType(string $lpaType): int;
 
     /**
      * Count the number of LPAs waiting for a given LPA type
@@ -98,7 +108,7 @@ interface ApplicationRepositoryInterface {
      * @param $lpaType
      * @return int
      */
-    public function countWaitingForType(string $lpaType) : int;
+    public function countWaitingForType(string $lpaType): int;
 
     /**
      * Count the number of LPAs being checked for a given LPA type
@@ -106,7 +116,7 @@ interface ApplicationRepositoryInterface {
      * @param $lpaType
      * @return int
      */
-    public function countCheckingForType(string $lpaType) : int;
+    public function countCheckingForType(string $lpaType): int;
 
     /**
      * Count the number of LPAs received for a given LPA type
@@ -114,7 +124,7 @@ interface ApplicationRepositoryInterface {
      * @param $lpaType
      * @return int
      */
-    public function countReceivedForType(string $lpaType) : int;
+    public function countReceivedForType(string $lpaType): int;
 
     /**
      * Count the number of LPAs processed for a given LPA type
@@ -122,7 +132,7 @@ interface ApplicationRepositoryInterface {
      * @param $lpaType
      * @return int
      */
-    public function countProcessedForType(string $lpaType) : int;
+    public function countProcessedForType(string $lpaType): int;
 
     /**
      * Count the number of LPAs completed for a given LPA type
@@ -130,14 +140,14 @@ interface ApplicationRepositoryInterface {
      * @param $lpaType
      * @return int
      */
-    public function countCompletedForType(string $lpaType) : int;
+    public function countCompletedForType(string $lpaType): int;
 
     /**
      * Count the number of deleted LPAs
      *
      * @return int
      */
-    public function countDeleted() : int;
+    public function countDeleted(): int;
 
     /**
      * Returns a list of lpa counts and user counts, in order to
@@ -148,7 +158,7 @@ interface ApplicationRepositoryInterface {
      *
      * @return array
      */
-    public function getLpasPerUser() : array;
+    public function getLpasPerUser(): array;
 
     /**
      * Get the number of completed LPAs - with additional criteria if provided
@@ -158,7 +168,7 @@ interface ApplicationRepositoryInterface {
      * @param array $additionalCriteria
      * @return int
      */
-    public function countCompletedBetween(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+    public function countCompletedBetween(Datetime $start, Datetime $end, array $additionalCriteria = []): int;
 
     /**
      * Get the number of completed LPAs with a correspondent that has entered an email address
@@ -167,7 +177,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentEmail(Datetime $start, Datetime $end) : int;
+    public function countCompletedBetweenCorrespondentEmail(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of completed LPAs with a correspondent that has entered phone number
@@ -176,7 +186,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentPhone(Datetime $start, Datetime $end) : int;
+    public function countCompletedBetweenCorrespondentPhone(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of completed LPAs with a correspondent that has entered a postal address
@@ -185,7 +195,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentPost(Datetime $start, Datetime $end) : int;
+    public function countCompletedBetweenCorrespondentPost(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of completed LPAs with a correspondent that has requested to be contacted in English
@@ -194,7 +204,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentEnglish(Datetime $start, Datetime $end) : int;
+    public function countCompletedBetweenCorrespondentEnglish(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of completed LPAs with a correspondent that has requested to be contacted in Welsh
@@ -203,7 +213,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentWelsh(Datetime $start, Datetime $end) : int;
+    public function countCompletedBetweenCorrespondentWelsh(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of completed LPAs with preferences
@@ -212,7 +222,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenWithPreferences(Datetime $start, Datetime $end) : int;
+    public function countCompletedBetweenWithPreferences(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of completed LPAs with instructions
@@ -221,7 +231,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenWithInstructions(Datetime $start, Datetime $end) : int;
+    public function countCompletedBetweenWithInstructions(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of completed LPAs by LPA type
@@ -231,7 +241,7 @@ interface ApplicationRepositoryInterface {
      * @param string $lpaType
      * @return int
      */
-    public function countCompletedBetweenByType(Datetime $start, Datetime $end, string $lpaType) : int;
+    public function countCompletedBetweenByType(Datetime $start, Datetime $end, string $lpaType): int;
 
     /**
      * Get the number of completed LPAs by canSign response
@@ -241,7 +251,7 @@ interface ApplicationRepositoryInterface {
      * @param bool $canSignValue
      * @return int
      */
-    public function countCompletedBetweenByCanSign(Datetime $start, Datetime $end, bool $canSignValue) : int;
+    public function countCompletedBetweenByCanSign(Datetime $start, Datetime $end, bool $canSignValue): int;
 
     /**
      * Get the number of completed LPAs with at least one of the actor type defined
@@ -251,7 +261,7 @@ interface ApplicationRepositoryInterface {
      * @param string $actorType
      * @return int
      */
-    public function countCompletedBetweenHasActors(Datetime $start, Datetime $end, string $actorType) : int;
+    public function countCompletedBetweenHasActors(Datetime $start, Datetime $end, string $actorType): int;
 
     /**
      * Get the number of completed LPAs with none of the actor type
@@ -261,7 +271,7 @@ interface ApplicationRepositoryInterface {
      * @param string $actorType
      * @return int
      */
-    public function countCompletedBetweenHasNoActors(Datetime $start, Datetime $end, string $actorType) : int;
+    public function countCompletedBetweenHasNoActors(Datetime $start, Datetime $end, string $actorType): int;
 
     /**
      * Get the number of completed LPAs with multiple actors of the type
@@ -271,7 +281,7 @@ interface ApplicationRepositoryInterface {
      * @param string $actorType
      * @return int
      */
-    public function countCompletedBetweenHasMultipleActors(Datetime $start, Datetime $end, string $actorType) : int;
+    public function countCompletedBetweenHasMultipleActors(Datetime $start, Datetime $end, string $actorType): int;
 
     /**
      * Get the number of completed LPAs where the donor is registering
@@ -280,7 +290,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenDonorRegistering(Datetime $start, Datetime $end) : int;
+    public function countCompletedBetweenDonorRegistering(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of completed LPAs where an attorney is registering
@@ -289,7 +299,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenAttorneyRegistering(Datetime $start, Datetime $end) : int;
+    public function countCompletedBetweenAttorneyRegistering(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of completed LPAs with a case number
@@ -299,7 +309,7 @@ interface ApplicationRepositoryInterface {
      * @param bool $hasCaseNumber
      * @return int
      */
-    public function countCompletedBetweenCaseNumber(Datetime $start, Datetime $end, bool $hasCaseNumber) : int;
+    public function countCompletedBetweenCaseNumber(Datetime $start, Datetime $end, bool $hasCaseNumber): int;
 
     /**
      * Get the number of completed LPAs with the fee options set as provided
@@ -312,7 +322,14 @@ interface ApplicationRepositoryInterface {
      * @param ?bool $reducedFeeUniversalCredit
      * @return int
      */
-    public function countCompletedBetweenFeeType(Datetime $start, Datetime $end, ?bool $reducedFeeReceivesBenefits, ?bool $reducedFeeAwardedDamages, ?bool $reducedFeeLowIncome, ?bool $reducedFeeUniversalCredit) : int;
+    public function countCompletedBetweenFeeType(
+        Datetime $start,
+        Datetime $end,
+        ?bool $reducedFeeReceivesBenefits,
+        ?bool $reducedFeeAwardedDamages,
+        ?bool $reducedFeeLowIncome,
+        ?bool $reducedFeeUniversalCredit
+    ): int;
 
     /**
      * Get the number of completed LPAs with the payment type defined
@@ -322,10 +339,15 @@ interface ApplicationRepositoryInterface {
      * @param string $paymentType
      * @return int
      */
-    public function countCompletedBetweenPaymentType(Datetime $start, Datetime $end, string $paymentType) : int;
+    public function countCompletedBetweenPaymentType(
+        Datetime $start,
+        Datetime $end,
+        string $paymentType
+    ): int;
 
     /**
-     * Get the number of completed LPAs with the attorney decisions (primary or replacement) set to the type and value provided
+     * Get the number of completed LPAs with the attorney decisions
+     * (primary or replacement) set to the type and value provided
      *
      * @param Datetime $start
      * @param Datetime $end
@@ -334,7 +356,13 @@ interface ApplicationRepositoryInterface {
      * @param string $decisionValue
      * @return int
      */
-    public function countCompletedBetweenWithAttorneyDecisions(Datetime $start, Datetime $end, string $attorneyDecisionsType, string $decisionType, string $decisionValue) : int;
+    public function countCompletedBetweenWithAttorneyDecisions(
+        Datetime $start,
+        Datetime $end,
+        string $attorneyDecisionsType,
+        string $decisionType,
+        string $decisionValue
+    ): int;
 
     /**
      * Get the number of completed LPAs with a trust set as an attorney
@@ -344,7 +372,7 @@ interface ApplicationRepositoryInterface {
      * @param string $attorneyType
      * @return int
      */
-    public function countCompletedBetweenWithTrust(Datetime $start, Datetime $end, string $attorneyType) : int;
+    public function countCompletedBetweenWithTrust(Datetime $start, Datetime $end, string $attorneyType): int;
 
     /**
      * Get the number of completed LPAs where the certificate provider is skipped or not
@@ -354,7 +382,11 @@ interface ApplicationRepositoryInterface {
      * @param bool $isSkipped
      * @return int
      */
-    public function countCompletedBetweenCertificateProviderSkipped(Datetime $start, Datetime $end, bool $isSkipped) : int;
+    public function countCompletedBetweenCertificateProviderSkipped(
+        Datetime $start,
+        Datetime $end,
+        bool $isSkipped
+    ): int;
 
     /**
      * Get the number of returned LPAs
@@ -363,7 +395,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countReturnedBetween(Datetime $start, Datetime $end) : int;
+    public function countReturnedBetween(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of returned LPAs
@@ -373,7 +405,7 @@ interface ApplicationRepositoryInterface {
      * @param array $additionalCriteria
      * @return int
      */
-    public function countReturned(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+    public function countReturned(Datetime $start, Datetime $end, array $additionalCriteria = []): int;
 
     /**
      * Get the number of LPAs being checked
@@ -382,7 +414,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countCheckedBetween(Datetime $start, Datetime $end) : int;
+    public function countCheckedBetween(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of LPAs being checked
@@ -392,7 +424,7 @@ interface ApplicationRepositoryInterface {
      * @param array $additionalCriteria
      * @return int
      */
-    public function countChecking(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+    public function countChecking(Datetime $start, Datetime $end, array $additionalCriteria = []): int;
 
     /**
      * Get the number of LPAs received
@@ -401,7 +433,7 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countReceivedBetween(Datetime $start, Datetime $end) : int;
+    public function countReceivedBetween(Datetime $start, Datetime $end): int;
 
     /**
      * Get the number of LPAs received
@@ -411,7 +443,7 @@ interface ApplicationRepositoryInterface {
      * @param array $additionalCriteria
      * @return int
      */
-    public function countReceived(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+    public function countReceived(Datetime $start, Datetime $end, array $additionalCriteria = []): int;
 
     /**
      * Get the number of LPAs waiting
@@ -420,5 +452,5 @@ interface ApplicationRepositoryInterface {
      * @param Datetime $end
      * @return int
      */
-    public function countWaitingBetween(Datetime $start, Datetime $end) : int;
+    public function countWaitingBetween(Datetime $start, Datetime $end): int;
 }

@@ -103,7 +103,7 @@ class DbWrapper
      *     ],
      * ]
      *
-     * @return ResultInterface<mixed>
+     * @return ResultInterface
      */
     public function select(string $tableName, array $criteria = [], array $options = []): ResultInterface
     {

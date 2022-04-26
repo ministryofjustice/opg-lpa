@@ -317,7 +317,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * NB: When an account is deleted, the document it kept, leaving only _id and a new deletedAt field.
      *
      * @param $id
-     * @return bool|null
+     * @return bool
      */
     public function delete(string $id): bool
     {
@@ -348,7 +348,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * Activates a user account
      *
      * @param $token
-     * @return bool|null
+     * @return bool
      */
     public function activate(string $token): bool
     {
@@ -686,20 +686,20 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      *
-     * @param ProfileUserModel $user
+     * @param ProfileUserModel $data
      * @return bool
      */
-    public function saveProfile(ProfileUserModel $user): bool
+    public function saveProfile(ProfileUserModel $data): bool
     {
-        $data = $user->toArray();
+        $user = $data->toArray();
 
         // Remove unwarned fields
-        unset($data['id'], $data['createdAt'], $data['updatedAt']);
+        unset($user['id'], $user['createdAt'], $user['updatedAt']);
 
         return $this->updateRow(
-            ['id' => $user->getId()],
+            ['id' => $data->getId()],
             [
-                'profile' => json_encode($data),
+                'profile' => json_encode($user),
             ]
         );
     }

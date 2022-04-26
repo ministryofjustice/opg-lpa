@@ -29,7 +29,7 @@ use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 class Module
 {
-    const VERSION = '3.0.3-dev';
+    public const VERSION = '3.0.3-dev';
 
     public function onBootstrap(MvcEvent $e)
     {
@@ -41,7 +41,7 @@ class Module
 
         if (!$request instanceof ConsoleRequest) {
             // Setup authentication listener...
-            $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
+            $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener(), 'authenticate'], 500);
 
             // Register error handler for dispatch and render errors;
             // priority is set to 100 here so that the global MvcEventListener
@@ -92,7 +92,8 @@ class Module
                     }
 
                     $dbconf = $config['db']['postgres']['default'];
-                    $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};port={$dbconf['port']};dbname={$dbconf['dbname']}";
+                    $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};" .
+                        "port={$dbconf['port']};dbname={$dbconf['dbname']}";
 
                     return new ZendDbAdapter([
                         'dsn' => $dsn,
@@ -154,7 +155,7 @@ class Module
             ], // factories
 
         ];
-    } // function
+    }
 
     public function getConfig()
     {
@@ -165,10 +166,12 @@ class Module
      * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
      *
      * @param MvcEvent $e
-     * @return ApiProblemResponse
+     * @return ApiProblemResponse|null
      */
     public function handleError(MvcEvent $e)
     {
+        $response = null;
+
         // Marshall an ApiProblem and view model based on the exception
         $exception = $e->getParam('exception');
 
@@ -179,8 +182,8 @@ class Module
             $e->stopPropagation();
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
-
-            return $response;
         }
+
+        return $response;
     }
 }
