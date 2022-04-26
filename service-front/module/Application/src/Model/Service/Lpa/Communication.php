@@ -71,18 +71,8 @@ class Communication extends AbstractEmailService
             }
             else {
                 // we have a zero payment, which is effectively no payment at this time (OPG may later contact the customer for payment)
-                $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
-                if (empty($lpa->document->peopleToNotify)) { 
-                        $this->data = array_merge($this->data, [
-                            'PTN' => false,
-                        ]);
-                }
-                else {
-                        $this->data = array_merge($this->data, [
-                            'PTN' => true,
-                        ]);
-                }
-            }
+                $this->setUpEmailFieldsForNoPayment($lpa);
+           }
         }
 
         try {
@@ -140,6 +130,22 @@ class Communication extends AbstractEmailService
         $this->data = array_merge($this->data, [
             'feeAmount' => $amount,
         ]);
+    }
+
+    public function setUpEmailFieldsForNoPayment(Lpa $lpa)
+    {
+        $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
+
+        if (empty($lpa->document->peopleToNotify)) { 
+                $this->data = array_merge($this->data, [
+                    'PTN' => false,
+                ]);
+        }
+        else {
+                $this->data = array_merge($this->data, [
+                    'PTN' => true,
+                ]);
+        }
     }
 
     public function setUpEmailFieldsForPayments(Lpa $lpa)
