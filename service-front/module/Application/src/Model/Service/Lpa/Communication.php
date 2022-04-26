@@ -59,73 +59,30 @@ class Communication extends AbstractEmailService
         // note that $lpa->payment is not null when we create an LPA through the site,
         // even if there was no fee paid (there's sometimes a payment with amount 0 e:g if person receives universal credit)
 
-        if (!is_null($lpa->payment)) {
-            // we have a payment  
-            if (!is_null($lpa->payment->reference)) {
-                // we have a payment reference, so this is an online payment
-                $this->setUpEmailFieldsForOnlinePayment($lpa);
-            }
-            else {
-                // we don't have a payment reference, so its a cheque
-                $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
-            }
-
-            // here, regardless what email type, add to data,  PTN if there's a PTN, reduced fee if there's a reduced fee
-            if (!empty($lpa->document->peopleToNotify)) { 
-                if (is_null($lpa->payment->reducedFeeReceivesBenefits) && is_null($lpa->payment->reducedFeeAwardedDamages) 
-                && is_null($lpa->payment->reducedFeeLowIncome) && is_null($lpa->payment->reducedFeeUniversalCredit) ) {
-                    // we do not have reduced fee but we do have Person(s) to Notify
-                    $this->data = array_merge($this->data, [
-                        'PTNOnly' => true,
-                        'FeeFormOnly' => false,
-                        'FeeFormPTN' => false,
-                        'remission' => false,
-                    ]);
-                }
-                else {
-                    // we have reduced fee and Person(s) to Notify
-                    $this->data = array_merge($this->data, [
-                        'PTNOnly' => false,
-                        'FeeFormOnly' => false,
-                        'FeeFormPTN' => true,
-                        'remission' => true,
-                    ]);
-                }
-            }
-            else {
-                if (is_null($lpa->payment->reducedFeeReceivesBenefits) && is_null($lpa->payment->reducedFeeAwardedDamages) 
-                && is_null($lpa->payment->reducedFeeLowIncome) && is_null($lpa->payment->reducedFeeUniversalCredit) ) {
-                    // we have no reduced fee, and no Person(s) to Notify
-                    $this->data = array_merge($this->data, [
-                        'PTNOnly' => false,
-                        'FeeFormOnly' => false,
-                        'FeeFormPTN' => false,
-                        'remission' => false,
-                    ]);
-                }
-                else {
-                    // we have reduced fee, but no Person(s) to Notify
-                    $this->data = array_merge($this->data, [
-                        'PTNOnly' => false,
-                        'FeeFormOnly' => true,
-                        'FeeFormPTN' => false,
-                        'remission' => true,
-                    ]);
-                }
-            } 
+        if (!is_null($lpa->payment->reference)) {
+            // we have a payment reference, so this is an online payment
+            $this->setUpEmailFieldsForOnlinePayment($lpa);
+            $this->setUpEmailFieldsForPayments($lpa);
         }
         else {
-            // we have no payment
-            $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
-            if (empty($lpa->document->peopleToNotify)) { 
-                    $this->data = array_merge($this->data, [
-                        'PTN' => false,
-                    ]);
+            if ($lpa->payment->method == 'cheque') {
+            // we have a cheque payment
+                $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
+                $this->setUpEmailFieldsForPayments($lpa);
             }
             else {
-                    $this->data = array_merge($this->data, [
-                        'PTN' => true,
-                    ]);
+                // we have no payment
+                $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
+                if (empty($lpa->document->peopleToNotify)) { 
+                        $this->data = array_merge($this->data, [
+                            'PTN' => false,
+                        ]);
+                }
+                else {
+                        $this->data = array_merge($this->data, [
+                            'PTN' => true,
+                        ]);
+                }
             }
         }
 
@@ -142,6 +99,8 @@ class Communication extends AbstractEmailService
 
     public function setUpEmailFieldsForOnlinePayment(Lpa $lpa)
     {
+        // fill out the fields appropriately that apply only to Online payments
+        
             $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
 
             // Add extra data to the LPA registration email 
@@ -172,6 +131,53 @@ class Communication extends AbstractEmailService
                 $this->to[] = (string) $lpa->payment->email;
             }
     } 
+
+
+    public function setUpEmailFieldsForPayments(Lpa $lpa)
+    {
+        // fill out email fields appropriately that apply to cheque and online payments
+        //
+        if (!empty($lpa->document->peopleToNotify)) { 
+            if (is_null($lpa->payment->reducedFeeLowIncome) ) {
+                // we do not have reduced fee but we do have Person(s) to Notify
+                $this->data = array_merge($this->data, [
+                    'PTNOnly' => true,
+                    'FeeFormOnly' => false,
+                    'FeeFormPTN' => false,
+                    'remission' => false,
+                ]);
+            }
+            else {
+                // we have reduced fee and Person(s) to Notify
+                $this->data = array_merge($this->data, [
+                    'PTNOnly' => false,
+                    'FeeFormOnly' => false,
+                    'FeeFormPTN' => true,
+                    'remission' => true,
+                ]);
+            }
+        }
+        else {
+            if (is_null($lpa->payment->reducedFeeLowIncome))  {
+                // we have no reduced fee, and no Person(s) to Notify
+                $this->data = array_merge($this->data, [
+                    'PTNOnly' => false,
+                    'FeeFormOnly' => false,
+                    'FeeFormPTN' => false,
+                    'remission' => false,
+                ]);
+            }
+            else {
+                // we have reduced fee, but no Person(s) to Notify
+                $this->data = array_merge($this->data, [
+                    'PTNOnly' => false,
+                    'FeeFormOnly' => true,
+                    'FeeFormPTN' => false,
+                    'remission' => true,
+                ]);
+            }
+        } 
+    }
 
     public function setUserDetailsSession(Container $userDetailsSession)
     {
