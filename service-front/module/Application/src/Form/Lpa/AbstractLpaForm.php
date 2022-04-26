@@ -110,11 +110,14 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
     /**
      * Convert model validation response to Zend Form validation messages format.
      *
-     * @param ValidatorResponse $validationResponse: e.g. {storage: ['name.first'=>['value'=>'', 'messages'=>[0=>'cannot-be-blank'],],]}
+     * @param ValidatorResponse $validationResponse: e.g.
+     *     {storage: ['name.first'=>['value'=>'', 'messages'=>[0=>'cannot-be-blank'],],]}
      * @return array: e.g. ['name-first'=>'cannot-be-blank',]
      * or
-     * @param ValidatorResponse $validationResponse: e.g. {storage: ['address.address2/postcode'=>['value'=>'', 'messages'=>[0=>'cannot-be-null'],],]}
-     * @return array: e.g. ['address-address2'=>'linked-1-cannot-be-null','address-postcode'=>'linked-1-cannot-be-null',]
+     * @param ValidatorResponse $validationResponse: e.g.
+     *     {storage: ['address.address2/postcode'=>['value'=>'', 'messages'=>[0=>'cannot-be-null'],],]}
+     * @return array: e.g.
+     *     ['address-address2'=>'linked-1-cannot-be-null','address-postcode'=>'linked-1-cannot-be-null',]
      */
     protected function modelValidationMessageConverter(ValidatorResponse $validationResponse, $context = null)
     {

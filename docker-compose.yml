@@ -142,6 +142,7 @@ services:
       - ./service-front/config:/app/config
       - ./service-front/node_modules:/app/node_modules
       - ./service-front/assets:/app/assets
+      - ./service-front/vendor:/app/vendor
     depends_on:
       - dynamodb
       - localstack
@@ -176,19 +177,6 @@ services:
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
 
       OPG_LPA_OS_PLACES_HUB_ENDPOINT : "https://api.os.uk/search/places/v1/postcode"
-
-  front-composer:
-    image: composer:latest
-    volumes:
-      - ./service-front:/app
-      - ./shared/logging:/shared/logging
-    command:
-      - install
-      - --prefer-dist
-      - --no-interaction
-      - --no-scripts
-      - --optimize-autoloader
-      - --ignore-platform-reqs
 
   front-ssl:
     container_name: lpa-front-ssl
@@ -239,6 +227,7 @@ services:
 # to speed running, volumes are restricted to source code that may change while container is running
       - ./service-api/module:/app/module
       - ./service-api/config:/app/config
+      - ./service-api/vendor:/app/vendor
     depends_on:
       - dynamodb
       - localstack
@@ -281,19 +270,6 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
 
-  api-composer:
-    image: composer:latest
-    volumes:
-      - ./service-api:/app
-      - ./shared/logging:/shared/logging
-    command:
-      - install
-      - --prefer-dist
-      - --no-interaction
-      - --no-scripts
-      - --optimize-autoloader
-      - --ignore-platform-reqs
-
   # ---------------------------
   # Admin
 
@@ -325,6 +301,7 @@ services:
 # to speed running, volumes are restricted to source code that may change while container is running
       - ./service-admin/src:/app/src
       - ./service-admin/config:/app/config
+      - ./service-admin/vendor:/app/vendor
     depends_on:
       - dynamodb
       - localstack
@@ -350,19 +327,6 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-admin-app
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
-
-  admin-composer:
-    image: composer:latest
-    volumes:
-      - ./service-admin:/app
-      - ./shared/logging:/shared/logging
-    command:
-      - install
-      - --prefer-dist
-      - --no-interaction
-      - --no-scripts
-      - --optimize-autoloader
-      - --ignore-platform-reqs
 
   admin-ssl:
     container_name: lpa-admin-ssl
@@ -407,19 +371,6 @@ services:
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
 
-  pdf-composer:
-    image: composer:latest
-    volumes:
-      - ./service-pdf:/app
-      - ./shared/logging:/shared/logging
-    command:
-      - install
-      - --prefer-dist
-      - --no-interaction
-      - --no-scripts
-      - --optimize-autoloader
-      - --ignore-platform-reqs
-
   # ---------------------------
   # Seeding
   seeding:
@@ -433,7 +384,6 @@ services:
       - local-config
       - api-app
       - postgres
-      - api-composer
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -456,7 +406,6 @@ services:
       - local-config
       - api-app
       - postgres
-      - api-composer
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
