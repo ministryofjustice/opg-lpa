@@ -54,8 +54,7 @@ class Communication extends AbstractEmailService
             'checkDatesUrl' => $this->url('lpa/date-check', ['lpa-id' => $lpa->id], ['force_canonical' => true]),
         ];
 
-        // The template we use depends on whether we have a payment or not and whether
-        // the payment has a reference (for online payments) or not (for cheque payments);
+        // We use 3 templates, for Cheque payment, Online payment or No payment
         // note that $lpa->payment is not null when we create an LPA through the site,
         // even if there was no fee paid (there's sometimes a payment with amount 0 e:g if person receives universal credit)
 
@@ -71,7 +70,7 @@ class Communication extends AbstractEmailService
                 $this->setUpEmailFieldsForPayments($lpa);
             }
             else {
-                // we have no payment
+                // we have a zero payment, which is effectively no payment at this time (OPG may later contact the customer for payment)
                 $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
                 if (empty($lpa->document->peopleToNotify)) { 
                         $this->data = array_merge($this->data, [

@@ -44,24 +44,8 @@ class MessageFactory
                 'opg-lpa-feedback',
             ],
         ],
-        /*AbstractEmailService::EMAIL_LPA_REGISTRATION => [
-            'template' => 'lpa-registration.twig',
-            'categories' => [
-                'opg',
-                'opg-lpa',
-                'opg-lpa-complete-registration',
-            ],
-        ],
-        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT => [
-            'template' => 'lpa-registration-with-payment.twig',
-            'categories' => [
-                'opg',
-                'opg-lpa',
-                'opg-lpa-complete-registration',
-            ],
-        ],*/
         AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1 => [
-            'template' => 'lpa-registration-with-payment1.twig',
+            'template' => 'lpa-registration-with-payment.twig',
             'categories' => [
                 'opg',
                 'opg-lpa',
@@ -69,7 +53,7 @@ class MessageFactory
             ],
         ],
         AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 => [
-            'template' => 'lpa-registration-with-cheque-payment2.twig',
+            'template' => 'lpa-registration-with-payment.twig',
             'categories' => [
                 'opg',
                 'opg-lpa',
@@ -77,7 +61,7 @@ class MessageFactory
             ],
         ],
         AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3 => [
-            'template' => 'lpa-registration-with-no-payment3.twig',
+            'template' => 'lpa-registration-with-payment.twig',
             'categories' => [
                 'opg',
                 'opg-lpa',

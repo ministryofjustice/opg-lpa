@@ -32,8 +32,6 @@ class NotifyMailTransport implements MailTransportInterface
     private $defaultTemplateMap = [
        AbstractEmailService::EMAIL_FEEDBACK => '3fb12879-7665-4ffe-a76f-ed90cde7a35d',
        AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE => '32aea199-3b82-4e2d-8228-f2cd8b58c40a',
-       //AbstractEmailService::EMAIL_LPA_REGISTRATION => '10cde4ec-ca11-4e92-8396-782e3e8dc9b1',
-       //AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT => '1657a34a-b61b-4dfa-a530-153462d45dc5',
        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1 => 'e462a4f3-db4a-4748-aecb-7b1b5c653e58',
        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 => '6779a351-b53e-4267-8eb7-7f24193e3026',
        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3 => 'b84aa41d-c94e-4bb7-8747-28b9d6ed0d6c',
