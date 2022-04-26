@@ -46,11 +46,3 @@ resource "aws_sns_topic_subscription" "cloudwatch_account_ops_sns_subscription" 
   endpoint_auto_confirms = true
   endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.cloudwatch_integration.integration_key}/enqueue"
 }
-
-
-resource "aws_sns_topic_subscription" "rds_events_sns_subscription" {
-  topic_arn              = aws_sns_topic.rds_events.arn
-  protocol               = "https"
-  endpoint_auto_confirms = true
-  endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.db_alerts_integration.integration_key}/enqueue"
-}
