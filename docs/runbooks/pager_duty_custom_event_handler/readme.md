@@ -13,7 +13,7 @@ On rare occasions, for example when running DR, Pager Duty will need to be manua
 
 Generally, this is a one off process, only used when setting up a new region. Note: each account has differing code to filter out noise, dev having the most noise. Production also has some filtering too, e.g. for backups.
 
-However, follow step 2 any time we need to alter some of the snippets to change the code. for example to improve filtering, refactor it etc. after initial creation.
+However, follow step 2 any time we need to alter some of the snippets for example to improve filtering, refactor it etc. after initial creation.
 
 ## Prerequisites
 
