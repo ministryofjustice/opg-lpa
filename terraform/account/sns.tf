@@ -14,13 +14,3 @@ resource "aws_sns_topic" "cloudwatch_to_account_ops_alerts" {
   name = "CloudWatch-to-PagerDuty-${local.account_name}-account-ops-alert"
   tags = merge(local.default_tags, local.shared_component_tag)
 }
-
-resource "aws_sns_topic" "rds_events" {
-  name = "${local.account_name}-rds-events"
-  tags = merge(local.default_tags, local.db_component_tag)
-}
-
-resource "aws_db_event_subscription" "rds_events" {
-  name      = "${local.account_name}-rds-event-sub"
-  sns_topic = aws_sns_topic.rds_events.arn
-}
