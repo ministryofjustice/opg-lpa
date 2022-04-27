@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
-use Application\Model\Service\ApiClient\Guzzle6Wrapper;
+use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -40,7 +40,7 @@ class MailTransportFactory implements FactoryInterface
 
         $notifyClient = new NotifyClient([
             'apiKey' => $emailConfig['notify']['key'],
-            'httpClient' => new Guzzle6Wrapper()
+            'httpClient' => new GuzzleAdapter()
         ]);
 
         return new NotifyMailTransport($notifyClient);
