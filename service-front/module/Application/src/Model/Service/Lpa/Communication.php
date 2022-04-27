@@ -28,13 +28,12 @@ class Communication extends AbstractEmailService
     private $data;
     private $to;
     private $lpaTypeTitleCase;
-    private $userEmailAddress;
 
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
         // Get the signed in user's email address.
-        $this->userEmailAddress = $this->userDetailsSession->user->email->address;
-        $this->to = [$this->userEmailAddress];
+        $userEmailAddress = $this->userDetailsSession->user->email->address;
+        $this->to = [$userEmailAddress];
 
         $this->lpaTypeTitleCase = 'Health and welfare';
         if ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_PF) {
@@ -60,7 +59,7 @@ class Communication extends AbstractEmailService
 
         if (!is_null($lpa->payment->reference)) {
             // we have a payment reference, so this is an online payment
-            $this->setUpEmailFieldsForOnlinePayment($lpa);
+            $this->setUpEmailFieldsForOnlinePayment($lpa, $userEmailAddress);
             $this->setUpEmailFieldsForPayments($lpa);
         }
         else {
@@ -86,7 +85,7 @@ class Communication extends AbstractEmailService
         return true;
     }
 
-    public function setUpEmailFieldsForOnlinePayment(Lpa $lpa)
+    public function setUpEmailFieldsForOnlinePayment(Lpa $lpa, String $userEmailAddress)
     {
         $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
 
@@ -113,7 +112,7 @@ class Communication extends AbstractEmailService
         ]);
 
         // If we have a separate payment address, send the email to that also
-        if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($this->userEmailAddress))) {
+        if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userEmailAddress))) {
             $this->to[] = (string) $lpa->payment->email;
         }
     } 
