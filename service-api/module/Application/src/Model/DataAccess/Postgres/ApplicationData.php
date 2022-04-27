@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
@@ -16,16 +17,15 @@ use Application\Model\DataAccess\Repository\Application as ApplicationRepository
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Library\DateTime as MillisecondDateTime;
 
-
 class ApplicationData extends AbstractBase implements ApplicationRepository\ApplicationRepositoryInterface
 {
-    const APPLICATIONS_TABLE = 'applications';
+    public const APPLICATIONS_TABLE = 'applications';
 
     /**
      * The columns in the Postgres database
      */
-    const TABLE_COLUMNS = ['id', 'user', 'updatedAt', 'startedAt', 'createdAt', 'completedAt', 'lockedAt', 'locked',
-                            'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document', 'payment', 'metadata'];
+    public const TABLE_COLUMNS = ['id', 'user', 'updatedAt', 'startedAt', 'createdAt', 'completedAt',
+        'lockedAt', 'locked', 'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document', 'payment', 'metadata'];
 
     /**
      * Maps LPA object fields to Postgres' fields.
@@ -33,7 +33,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Lpa $lpa
      * @return array
      */
-    private function mapLpaToPostgres(Lpa $lpa) : array
+    private function mapLpaToPostgres(Lpa $lpa): array
     {
         // Filter out un-allowed columns.
         $data = array_intersect_key($lpa->toArray(), array_flip(self::TABLE_COLUMNS));
@@ -52,9 +52,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param array $data
      * @return array
      */
-    private function mapPostgresToLpaCompatible(array $data) : array
+    private function mapPostgresToLpaCompatible(array $data): array
     {
-        return array_merge($data,[
+        return array_merge($data, [
             'document' => is_null($data['document']) ? null : json_decode($data['document'], true),
             'payment' => is_null($data['payment']) ? null : json_decode($data['payment'], true),
             'metadata' => is_null($data['metadata']) ? null : json_decode($data['metadata'], true),
@@ -66,7 +66,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param array $options
      * @return Traversable
      */
-    public function fetch(array $criteria, array $options = []) : Traversable
+    public function fetch(array $criteria, array $options = []): Traversable
     {
         $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, $options);
 
@@ -82,7 +82,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $userId
      * @return array|null
      */
-    public function getById(int $id, ?string $userId = null) : ?array
+    public function getById(int $id, ?string $userId = null): ?array
     {
         $criteria = ['id' => $id];
         if (is_string($userId)) {
@@ -104,7 +104,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param array $criteria
      * @return int
      */
-    public function count(array $criteria) : int
+    public function count(array $criteria): int
     {
         $options = [
             'columns' => ['count' => new Expression('count(*)')]
@@ -125,7 +125,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param array $options
      * @return Traversable
      */
-    public function fetchByUserId(string $userId, array $options = []) : Traversable
+    public function fetchByUserId(string $userId, array $options = []): Traversable
     {
         return $this->fetch(['user' => $userId], $options);
     }
@@ -136,7 +136,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $userId ID of the user to get LPAs for
      * @return Traversable containing LPA items
      */
-    public function getByIdsAndUser(array $lpaIds, string $userId) : Traversable
+    public function getByIdsAndUser(array $lpaIds, string $userId): Traversable
     {
         $criteria = [
             'user' => $userId,
@@ -151,7 +151,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @return bool
      * @throws \Exception
      */
-    public function insert(Lpa $lpa) : bool
+    public function insert(Lpa $lpa): bool
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::APPLICATIONS_TABLE);
@@ -164,8 +164,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         try {
             $statement->execute();
-        }
-        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
+        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             // If it's a key clash, re-try with new values.
             if ($e->getPrevious() instanceof PDOException) {
                 $pdoException = $e->getPrevious();
@@ -188,7 +187,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Lpa $lpa
      * @return bool
      */
-    public function update(Lpa $lpa) : bool
+    public function update(Lpa $lpa): bool
     {
         // Check to ensure the LPA isn't locked.
         $inDbLpa = $this->getById($lpa->getId());
@@ -214,8 +213,14 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             if (!($lpa->getCreatedAt() instanceof DateTime)) {
                 $lpa->setCreatedAt(new MillisecondDateTime());
             }
-        }
-        else {
+        } else {
+            // The opg-lpa-datamodels code base doesn't specifically allow
+            // a null for the createdAt date in the method declaration,
+            // but this doesn't seem to cause us any problems, so just
+            // ignore the psalm error about it.
+            /**
+             * @psalm-suppress NullArgument
+             */
             $lpa->setCreatedAt(null);
         }
 
@@ -225,8 +230,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             if (!($lpa->getCompletedAt() instanceof DateTime) && $lpa->isLocked()) {
                 $lpa->setCompletedAt(new MillisecondDateTime());
             }
-        }
-        else {
+        } else {
             $lpa->setCompletedAt(null);
         }
 
@@ -272,7 +276,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $userId
      * @return bool
      */
-    public function deleteById(int $lpaId, string $userId) : bool
+    public function deleteById(int $lpaId, string $userId): bool
     {
         $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::APPLICATIONS_TABLE);
@@ -326,7 +330,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $timestampFieldName
      * @return int
      */
-    public function countBetween(Datetime $start, Datetime $end, string $timestampFieldName) : int
+    public function countBetween(Datetime $start, Datetime $end, string $timestampFieldName): int
     {
         return $this->count([
             new Operator($timestampFieldName, Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $start->format('c')),
@@ -340,7 +344,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param $lpaType
      * @return int
      */
-    public function countStartedForType(string $lpaType) : int
+    public function countStartedForType(string $lpaType): int
     {
         return $this->count([
             new IsNotNull('startedAt'),
@@ -355,7 +359,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param $lpaType
      * @return int
      */
-    public function countCreatedForType(string $lpaType) : int
+    public function countCreatedForType(string $lpaType): int
     {
         return $this->count([
             new IsNotNull('createdAt'),
@@ -370,7 +374,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param $lpaType
      * @return int
      */
-    public function countWaitingForType(string $lpaType) : int
+    public function countWaitingForType(string $lpaType): int
     {
         $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
         return $this->count([
@@ -387,7 +391,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param $lpaType
      * @return int
      */
-    public function countCompletedForType(string $lpaType) : int
+    public function countCompletedForType(string $lpaType): int
     {
         $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
         return $this->count([
@@ -403,7 +407,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param $lpaType
      * @return int
      */
-    public function countCheckingForType(string $lpaType) : int
+    public function countCheckingForType(string $lpaType): int
     {
         return $this->count([
             new IsNotNull('completedAt'),
@@ -418,7 +422,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param $lpaType
      * @return int
      */
-    public function countReceivedForType(string $lpaType) : int
+    public function countReceivedForType(string $lpaType): int
     {
         return $this->count([
             new IsNotNull('completedAt'),
@@ -433,7 +437,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param $lpaType
      * @return int
      */
-    public function countProcessedForType(string $lpaType) : int
+    public function countProcessedForType(string $lpaType): int
     {
         return $this->count([
             new IsNotNull('completedAt'),
@@ -447,7 +451,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      *
      * @return int
      */
-    public function countDeleted() : int
+    public function countDeleted(): int
     {
         return $this->count([
             new IsNull('user'),
@@ -463,7 +467,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      *
      * @return array
      */
-    public function getLpasPerUser() : array
+    public function getLpasPerUser(): array
     {
         /*
          The query is:
@@ -486,7 +490,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $selectTwo->group('lpa_count');
         $selectTwo->order('lpa_count DESC');
 
-        $query = 'WITH lpa_counts AS(' . $sql->buildSqlString($selectOne). ') ' . $sql->buildSqlString($selectTwo);
+        $query = 'WITH lpa_counts AS(' . $sql->buildSqlString($selectOne) . ') ' . $sql->buildSqlString($selectTwo);
 
         $results = $this->dbWrapper->rawQuery($query)->toArray();
 
@@ -510,7 +514,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param array $additionalCriteria
      * @return int
      */
-    public function countCompletedBetween(Datetime $start, Datetime $end, array $additionalCriteria = []) : int
+    public function countCompletedBetween(Datetime $start, Datetime $end, array $additionalCriteria = []): int
     {
         return $this->count(array_merge([
             new Operator('completedAt', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $start->format('c')),
@@ -525,7 +529,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentEmail(Datetime $start, Datetime $end) : int
+    public function countCompletedBetweenCorrespondentEmail(Datetime $start, Datetime $end): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("document -> 'correspondent' ->> 'email' IS NOT NULL")
@@ -539,7 +543,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentPhone(Datetime $start, Datetime $end) : int
+    public function countCompletedBetweenCorrespondentPhone(Datetime $start, Datetime $end): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("document -> 'correspondent' ->> 'phone' IS NOT NULL")
@@ -553,7 +557,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentPost(Datetime $start, Datetime $end) : int
+    public function countCompletedBetweenCorrespondentPost(Datetime $start, Datetime $end): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("(document -> 'correspondent' ->> 'contactByPost')::BOOLEAN = TRUE")
@@ -567,7 +571,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentEnglish(Datetime $start, Datetime $end) : int
+    public function countCompletedBetweenCorrespondentEnglish(Datetime $start, Datetime $end): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("(document -> 'correspondent' ->> 'contactInWelsh')::BOOLEAN = FALSE")
@@ -581,7 +585,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentWelsh(Datetime $start, Datetime $end) : int
+    public function countCompletedBetweenCorrespondentWelsh(Datetime $start, Datetime $end): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("(document -> 'correspondent' ->> 'contactInWelsh')::BOOLEAN = TRUE")
@@ -595,7 +599,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenWithPreferences(Datetime $start, Datetime $end) : int
+    public function countCompletedBetweenWithPreferences(Datetime $start, Datetime $end): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("document ->> 'preference' <> ''")
@@ -609,7 +613,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenWithInstructions(Datetime $start, Datetime $end) : int
+    public function countCompletedBetweenWithInstructions(Datetime $start, Datetime $end): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("document ->> 'instruction' <> ''")
@@ -624,7 +628,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $lpaType
      * @return int
      */
-    public function countCompletedBetweenByType(Datetime $start, Datetime $end, string $lpaType) : int
+    public function countCompletedBetweenByType(Datetime $start, Datetime $end, string $lpaType): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("document ->> 'type' = ?", $lpaType)
@@ -639,7 +643,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param bool $canSignValue
      * @return int
      */
-    public function countCompletedBetweenByCanSign(Datetime $start, Datetime $end, bool $canSignValue) : int
+    public function countCompletedBetweenByCanSign(Datetime $start, Datetime $end, bool $canSignValue): int
     {
         $canSign = ($canSignValue) ? 'TRUE' : 'FALSE';
 
@@ -656,7 +660,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $actorType
      * @return int
      */
-    public function countCompletedBetweenHasActors(Datetime $start, Datetime $end, string $actorType) : int
+    public function countCompletedBetweenHasActors(Datetime $start, Datetime $end, string $actorType): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("json_array_length((document ->> ?)::JSON) > 0", $actorType)
@@ -671,7 +675,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $actorType
      * @return int
      */
-    public function countCompletedBetweenHasNoActors(Datetime $start, Datetime $end, string $actorType) : int
+    public function countCompletedBetweenHasNoActors(Datetime $start, Datetime $end, string $actorType): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("json_array_length((document ->> ?)::JSON) = 0", $actorType)
@@ -686,7 +690,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $actorType
      * @return int
      */
-    public function countCompletedBetweenHasMultipleActors(Datetime $start, Datetime $end, string $actorType) : int
+    public function countCompletedBetweenHasMultipleActors(Datetime $start, Datetime $end, string $actorType): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("json_array_length((document ->> ?)::JSON) > 1", $actorType)
@@ -700,7 +704,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenDonorRegistering(Datetime $start, Datetime $end) : int
+    public function countCompletedBetweenDonorRegistering(Datetime $start, Datetime $end): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("document ->> 'whoIsRegistering' = ?", 'donor')
@@ -714,7 +718,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenAttorneyRegistering(Datetime $start, Datetime $end) : int
+    public function countCompletedBetweenAttorneyRegistering(Datetime $start, Datetime $end): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("document ->> 'whoIsRegistering' <> ?", 'donor')
@@ -729,14 +733,13 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param bool $hasCaseNumber
      * @return int
      */
-    public function countCompletedBetweenCaseNumber(Datetime $start, Datetime $end, bool $hasCaseNumber) : int
+    public function countCompletedBetweenCaseNumber(Datetime $start, Datetime $end, bool $hasCaseNumber): int
     {
         if ($hasCaseNumber) {
             return $this->countCompletedBetween($start, $end, [
                 new IsNotNull('repeatCaseNumber')
             ]);
-        }
-        else {
+        } else {
             return $this->countCompletedBetween($start, $end, [
                 new IsNull('repeatCaseNumber')
             ]);
@@ -754,13 +757,27 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param bool $reducedFeeUniversalCredit
      * @return int
      */
-    public function countCompletedBetweenFeeType(Datetime $start, Datetime $end, ?bool $reducedFeeReceivesBenefits, ?bool $reducedFeeAwardedDamages, ?bool $reducedFeeLowIncome, ?bool $reducedFeeUniversalCredit) : int
-    {
+    public function countCompletedBetweenFeeType(
+        Datetime $start,
+        Datetime $end,
+        ?bool $reducedFeeReceivesBenefits,
+        ?bool $reducedFeeAwardedDamages,
+        ?bool $reducedFeeLowIncome,
+        ?bool $reducedFeeUniversalCredit
+    ): int {
         // Map the values
-        $reducedFeeReceivesBenefits = (is_null($reducedFeeReceivesBenefits)) ? 'IS NULL' : (($reducedFeeReceivesBenefits) ? '= TRUE' : '= FALSE');
-        $reducedFeeAwardedDamages = (is_null($reducedFeeAwardedDamages)) ? 'IS NULL'   : (($reducedFeeAwardedDamages) ? '= TRUE' : '= FALSE');
-        $reducedFeeLowIncome = (is_null($reducedFeeLowIncome)) ? 'IS NULL'        : (($reducedFeeLowIncome) ? '= TRUE' : '= FALSE');
-        $reducedFeeUniversalCredit = (is_null($reducedFeeUniversalCredit)) ? 'IS NULL'  : (($reducedFeeUniversalCredit) ? '= TRUE' : '= FALSE');
+        $reducedFeeReceivesBenefits = is_null($reducedFeeReceivesBenefits) ?
+            'IS NULL' :
+            ($reducedFeeReceivesBenefits ? '= TRUE' : '= FALSE');
+        $reducedFeeAwardedDamages = is_null($reducedFeeAwardedDamages) ?
+            'IS NULL' :
+            ($reducedFeeAwardedDamages ? '= TRUE' : '= FALSE');
+        $reducedFeeLowIncome = is_null($reducedFeeLowIncome) ?
+            'IS NULL' :
+            ($reducedFeeLowIncome ? '= TRUE' : '= FALSE');
+        $reducedFeeUniversalCredit = is_null($reducedFeeUniversalCredit) ?
+            'IS NULL' :
+            ($reducedFeeUniversalCredit ? '= TRUE' : '= FALSE');
 
         return $this->countCompletedBetween($start, $end, [
             new Expression("(payment ->> 'reducedFeeReceivesBenefits')::BOOLEAN " . $reducedFeeReceivesBenefits),
@@ -887,7 +904,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $paymentType
      * @return int
      */
-    public function countCompletedBetweenPaymentType(Datetime $start, Datetime $end, string $paymentType) : int
+    public function countCompletedBetweenPaymentType(Datetime $start, Datetime $end, string $paymentType): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("payment ->> 'method' = ?", $paymentType)
@@ -895,7 +912,8 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     }
 
     /**
-     * Get the number of completed LPAs with the attorney decisions (primary or replacement) set to the type and value provided
+     * Get the number of completed LPAs with the attorney decisions (primary or replacement)
+     * set to the type and value provided
      *
      * @param Datetime $start
      * @param Datetime $end
@@ -904,8 +922,13 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $decisionValue
      * @return int
      */
-    public function countCompletedBetweenWithAttorneyDecisions(Datetime $start, Datetime $end, string $attorneyDecisionsType, string $decisionType, string $decisionValue) : int
-    {
+    public function countCompletedBetweenWithAttorneyDecisions(
+        Datetime $start,
+        Datetime $end,
+        string $attorneyDecisionsType,
+        string $decisionType,
+        string $decisionValue
+    ): int {
         return $this->countCompletedBetween($start, $end, [
             new Expression("document -> '{$attorneyDecisionsType}' ->> '{$decisionType}' = ?", $decisionValue)
         ]);
@@ -919,7 +942,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param string $attorneyType
      * @return int
      */
-    public function countCompletedBetweenWithTrust(Datetime $start, Datetime $end, string $attorneyType) : int
+    public function countCompletedBetweenWithTrust(Datetime $start, Datetime $end, string $attorneyType): int
     {
         return $this->countCompletedBetween($start, $end, [
             new Expression("document -> '{$attorneyType}' @> ?", '[{"type": "trust"}]')
@@ -934,14 +957,16 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * @param bool $isSkipped
      * @return int
      */
-    public function countCompletedBetweenCertificateProviderSkipped(Datetime $start, Datetime $end, bool $isSkipped) : int
-    {
+    public function countCompletedBetweenCertificateProviderSkipped(
+        Datetime $start,
+        Datetime $end,
+        bool $isSkipped
+    ): int {
         if ($isSkipped) {
             return $this->countCompletedBetween($start, $end, [
                 new Expression("metadata @> ?", json_encode([Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => true]))
             ]);
-        }
-        else {
+        } else {
             return $this->countCompletedBetween($start, $end, [
                 new Expression("NOT(metadata @> ?)", json_encode([Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => true]))
             ]);
