@@ -102,14 +102,14 @@ abstract class AbstractAuthController extends AbstractRestfulController
      * Get data from the body content of the request
      *
      * @param $varName
-     * @return array|null|string
+     * @return mixed|null
      */
     protected function getBodyContent($varName = null)
     {
         $data = $this->processBodyContent($this->getRequest());
 
         if (is_string($varName)) {
-            //  Try to get the specific variable from the data
+            // Try to get the specific variable from the data
             return (array_key_exists($varName, $data) ? $data[$varName] : null);
         }
 
