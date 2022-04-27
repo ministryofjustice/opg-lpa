@@ -39,6 +39,12 @@ class LpaAuth implements AdapterInterface
     }
 
     /**
+     * psalm complains about catching an interface in this method; however, this is
+     * because the Laminas ExceptionInterface does not implement Throwable
+     * or extend Exception (i.e. issue is nothing to do with our code)
+     *
+     * @psalm-suppress InvalidCatch
+     *
      * @return Result
      */
     public function authenticate(): Result
