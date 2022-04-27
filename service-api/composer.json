@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "aws/aws-sdk-php": "^3.204.5",
         "ministryofjustice/opg-lpa-datamodels": "^13.8",
         "laminas/laminas-authentication": "^2.8",
