@@ -23,10 +23,10 @@ class ValidationApiProblem extends ApiProblem
 
         $validationResult = ['validation' => $response->getArrayCopy()];
 
-        if ($this->additionalDetails === null) {
+        if (!is_array($this->additionalDetails)) {
             $this->additionalDetails = $validationResult;
         } else {
-            $this->additionalDetails = array_merge($validationResult, array($this->additionalDetails));
+            $this->additionalDetails = array_merge($validationResult, $this->additionalDetails);
         }
     }
 }
