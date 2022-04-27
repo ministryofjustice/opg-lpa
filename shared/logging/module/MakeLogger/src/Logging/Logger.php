@@ -5,9 +5,11 @@ namespace MakeLogger\Logging;
 use Laminas\Log\Logger as LaminasLogger;
 use Laminas\Log\Writer\Stream as StreamWriter;
 use Laminas\Log\Formatter\Json as JsonFormatter;
+use Laminas\Stdlib\ArrayUtils;
 use MakeLogger\Logging\MvcEventProcessor;
 use MakeLogger\Logging\HeadersProcessor;
 use MakeLogger\Logging\TraceIdProcessor;
+use Traversable;
 
 /**
  * class Logger
@@ -39,11 +41,13 @@ class Logger extends LaminasLogger
      */
     public function log($priority, $message, $extra = [])
     {
-        $extra = array($extra);
+        if ($extra instanceof Traversable) {
+            $extra = ArrayUtils::iteratorToArray($extra);
+        }
 
         // HACK - get the X-Trace-Id direct from the $_SERVER global
         // if it is set
-        if (array_key_exists(TraceIdProcessor::X_TRACE_ID_HEADER_NAME, array($_SERVER))) {
+        if (array_key_exists(TraceIdProcessor::X_TRACE_ID_HEADER_NAME, $_SERVER)) {
             $extra[TraceIdProcessor::TRACE_ID_FIELD_NAME] =
                 $_SERVER[TraceIdProcessor::X_TRACE_ID_HEADER_NAME];
         }
