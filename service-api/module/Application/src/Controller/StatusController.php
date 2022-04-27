@@ -42,7 +42,7 @@ class StatusController extends AbstractRestfulController
     /**
      * Get the service to use
      *
-     * @return Service
+     * @return ApplicationsService
      */
     protected function getService()
     {
@@ -51,7 +51,7 @@ class StatusController extends AbstractRestfulController
 
     /**
      * @param AuthorizationService $authorizationService
-     * @param Service $applicationsService
+     * @param ApplicationsService $applicationsService
      * @param ProcessingStatusService $processingStatusService
      */
     public function __construct(
@@ -144,19 +144,20 @@ class StatusController extends AbstractRestfulController
      * not found, does not have a processing status, or does not belong to this user. Otherwise returns
      * {"found": true, "status": "<processing status>"}
      *
-     * @param mixed $ids
+     * @param mixed $id Comma-separated list of IDs to retrieve (named $id because AbstractRestfulController
+     *     expects that parameter name)
      * @return Json
      * @throws Exception
      * @throws \Http\Client\Exception
      */
-    public function get($ids)
+    public function get($id)
     {
         if (empty($this->routeUserId)) {
             //  userId MUST be present in the URL
             throw new ApiProblemException('User identifier missing from URL', 400);
         }
 
-        $explodedIds = explode(',', $ids);
+        $explodedIds = explode(',', $id);
 
         // Fetch requested LPAs from db, provided they are owned by the user;
         // this is [] if the db is not available for any reason
@@ -174,18 +175,18 @@ class StatusController extends AbstractRestfulController
 
         // Compare each requested ID against the ones retrieved from the db
         $dbResults = [];
-        foreach ($explodedIds as $id) {
-            $allIdsToCheckStatusInSirius[] = $id;
+        foreach ($explodedIds as $explodedId) {
+            $allIdsToCheckStatusInSirius[] = $explodedId;
 
-            if (array_key_exists($id, $lpaMetas)) {
+            if (array_key_exists($explodedId, $lpaMetas)) {
                 // We got a record from db: status=status in db
-                $dbResults[$id] = [
-                    'status' => $this->getValue($lpaMetas[$id], LPA::SIRIUS_PROCESSING_STATUS),
+                $dbResults[$explodedId] = [
+                    'status' => $this->getValue($lpaMetas[$explodedId], LPA::SIRIUS_PROCESSING_STATUS),
                     'inDb' => true,
                 ];
             } else {
                 // We found no record for it
-                $dbResults[$id] = [
+                $dbResults[$explodedId] = [
                     'status' => null,
                     'inDb' => false,
                 ];
@@ -195,96 +196,95 @@ class StatusController extends AbstractRestfulController
         // This is our eventual return value
         $results = [];
 
-        if (count($allIdsToCheckStatusInSirius) > 0) {
-            // LPA-3534 Log the request
-            $this->getLogger()->info(
-                'All application ids to check in Sirius :' .
-                implode("','", $allIdsToCheckStatusInSirius) .
-                "'"
-            );
-            $this->getLogger()->info(
-                'Count of all application ids to check in Sirius :' .
-                count($allIdsToCheckStatusInSirius)
-            );
+        // LPA-3534 Log the request
+        $this->getLogger()->info(
+            'All application ids to check in Sirius :' .
+            implode("','", $allIdsToCheckStatusInSirius) .
+            "'"
+        );
+        $this->getLogger()->info(
+            'Count of all application ids to check in Sirius :' .
+            count($allIdsToCheckStatusInSirius)
+        );
 
-            // Get status update from Sirius
-            $siriusResponseArray = $this->processingStatusService->getStatuses($allIdsToCheckStatusInSirius);
-            // Update the results for the status received back from Sirius
-            foreach ($siriusResponseArray as $lpaId => $lpaDetail) {
-                // If the processStatusService didn't get a response for
-                // this LPA (it hasn't been received yet), the detail is null
-                // and the LPA will display as "Waiting"
-                if (is_null($lpaDetail['response'])) {
-                    $results[$lpaId] = ['found' => false];
-                } else {
-                    // There was a status returned by processStatusService
-                    $dbResult = $dbResults[$lpaId];
-                    $dbProcessingStatus = $this->getValue($dbResult, 'status');
+        // Get status update from Sirius
+        $siriusResponseArray = $this->processingStatusService->getStatuses($allIdsToCheckStatusInSirius);
+        // Update the results for the status received back from Sirius
+        foreach ($siriusResponseArray as $lpaId => $lpaDetail) {
+            // If the processStatusService didn't get a response for
+            // this LPA (it hasn't been received yet), the detail is null
+            // and the LPA will display as "Waiting"
+            if (is_null($lpaDetail['response'])) {
+                $results[$lpaId] = ['found' => false];
+            } else {
+                // There was a status returned by processStatusService
+                $dbResult = $dbResults[$lpaId];
+                $dbProcessingStatus = $this->getValue($dbResult, 'status');
 
-                    // Common data, whether the status is set or not
-                    $data = [
-                        'deleted'      => $lpaDetail['deleted'],
-                        'status'       => $lpaDetail['response']['status'],
-                        'rejectedDate' => $this->getValue($lpaDetail['response'], 'rejectedDate')
-                    ];
+                // Common data, whether the status is set or not
+                $data = [
+                    'deleted'      => $lpaDetail['deleted'],
+                    'status'       => $lpaDetail['response']['status'],
+                    'rejectedDate' => $this->getValue($lpaDetail['response'], 'rejectedDate')
+                ];
 
-                    if (isset($data['status'])) {
-                        // Data we only need if status is set already
-                        $data['receiptDate'] = $this->getValue($lpaDetail['response'], 'receiptDate');
-                        $data['registrationDate'] = $this->getValue($lpaDetail['response'], 'registrationDate');
-                        $data['invalidDate'] = $this->getValue($lpaDetail['response'], 'invalidDate');
-                        $data['withdrawnDate'] = $this->getValue($lpaDetail['response'], 'withdrawnDate');
-                        $data['dispatchDate'] = $this->getValue($lpaDetail['response'], 'dispatchDate');
+                if (isset($data['status'])) {
+                    // Data we only need if status is set already
+                    $data['receiptDate'] = $this->getValue($lpaDetail['response'], 'receiptDate');
+                    $data['registrationDate'] = $this->getValue($lpaDetail['response'], 'registrationDate');
+                    $data['invalidDate'] = $this->getValue($lpaDetail['response'], 'invalidDate');
+                    $data['withdrawnDate'] = $this->getValue($lpaDetail['response'], 'withdrawnDate');
+                    $data['dispatchDate'] = $this->getValue($lpaDetail['response'], 'dispatchDate');
 
-                        $data['returnUnpaid'] = $this->getValue($lpaDetail['response'], 'returnUnpaid');
+                    $data['returnUnpaid'] = $this->getValue($lpaDetail['response'], 'returnUnpaid');
 
-                        // If we found a record in the db, try to update it
-                        // (the decision of whether to run the update is made
-                        // in updateMetadata)
-                        $metaData = $this->getValue($lpaMetas, $lpaId, []);
-                        if ($this->getValue($dbResult, 'inDb')) {
-                            $this->updateMetadata($lpaId, $metaData, $data);
-                        }
-
-                        // set found to true here as we got a processing status
-                        // from Sirius
-                        $results[$lpaId] = [
-                            'found'        => true,
-                            'status'       => $data['status'],
-                            'returnUnpaid' => $data['returnUnpaid']
-                        ];
-
-                        continue;
+                    // If we found a record in the db, try to update it
+                    // (the decision of whether to run the update is made
+                    // in updateMetadata)
+                    $metaData = $this->getValue($lpaMetas, $lpaId, []);
+                    if ($this->getValue($dbResult, 'inDb')) {
+                        $this->updateMetadata($lpaId, $metaData, $data);
                     }
 
-                    // Forcefully set found to false, as lpa has recently been deleted from Sirius
-                    // this will display "waiting" for the user
-                    if ($lpaDetail['deleted']) {
-                        $results[$lpaId] = [
-                            'found'  => false,
-                        ];
-
-                        continue;
-                    }
-
-                    // Use the db status if we got nothing from Sirius, providing there's
-                    // no rejection date
-                    if (!is_null($dbProcessingStatus) && is_null($data['rejectedDate'])) {
-                        $results[$lpaId] = [
-                            'found'  => true,
-                            'status' => $dbProcessingStatus,
-                        ];
-
-                        continue;
-                    }
-
-                    // We didn't get a status from db or Sirius
+                    // set found to true here as we got a processing status
+                    // from Sirius
                     $results[$lpaId] = [
-                        'found' => false,
+                        'found'        => true,
+                        'status'       => $data['status'],
+                        'returnUnpaid' => $data['returnUnpaid']
                     ];
+
+                    continue;
                 }
+
+                // Forcefully set found to false, as lpa has recently been deleted from Sirius
+                // this will display "waiting" for the user
+                if ($lpaDetail['deleted']) {
+                    $results[$lpaId] = [
+                        'found'  => false,
+                    ];
+
+                    continue;
+                }
+
+                // Use the db status if we got nothing from Sirius, providing there's
+                // no rejection date
+                if (!is_null($dbProcessingStatus) && is_null($data['rejectedDate'])) {
+                    $results[$lpaId] = [
+                        'found'  => true,
+                        'status' => $dbProcessingStatus,
+                    ];
+
+                    continue;
+                }
+
+                // We didn't get a status from db or Sirius
+                $results[$lpaId] = [
+                    'found' => false,
+                ];
             }
         }
+
         return new Json($results);
     }
 }

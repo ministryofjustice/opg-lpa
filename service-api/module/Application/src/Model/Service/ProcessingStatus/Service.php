@@ -170,7 +170,7 @@ class Service extends AbstractService
 
     private function handleResponse(ResponseInterface $result)
     {
-        $responseBody = json_decode($result->getBody(), true);
+        $responseBody = json_decode($result->getBody()->getContents(), true);
 
         if (is_null($responseBody)) {
             return null;

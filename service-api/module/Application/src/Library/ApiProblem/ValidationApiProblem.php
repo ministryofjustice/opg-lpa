@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Library\ApiProblem;
 
 use Opg\Lpa\DataModel\Validator\ValidatorResponseInterface;
@@ -9,11 +10,10 @@ use Opg\Lpa\DataModel\Validator\ValidatorResponseInterface;
  * Class ValidationApiProblem
  * @package Application\Library\ApiProblem
  */
-class ValidationApiProblem extends ApiProblem {
-
-
-    public function __construct( ValidatorResponseInterface $response ){
-
+class ValidationApiProblem extends ApiProblem
+{
+    public function __construct(ValidatorResponseInterface $response)
+    {
         parent::__construct(
             400,
             'Your request could not be processed due to validation error',
@@ -21,8 +21,12 @@ class ValidationApiProblem extends ApiProblem {
             'Bad Request'
         );
 
-        $this->additionalDetails = array_merge( $this->additionalDetails, [ 'validation'=>$response->getArrayCopy() ] );
+        $validationResult = ['validation' => $response->getArrayCopy()];
 
-    } // function
-
-} // class
+        if ($this->additionalDetails === null) {
+            $this->additionalDetails = $validationResult;
+        } else {
+            $this->additionalDetails = array_merge($validationResult, array($this->additionalDetails));
+        }
+    }
+}

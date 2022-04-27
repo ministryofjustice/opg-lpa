@@ -5,7 +5,6 @@ namespace MakeLogger\Logging;
 use Laminas\Log\Logger as LaminasLogger;
 use Laminas\Log\Writer\Stream as StreamWriter;
 use Laminas\Log\Formatter\Json as JsonFormatter;
-
 use MakeLogger\Logging\MvcEventProcessor;
 use MakeLogger\Logging\HeadersProcessor;
 use MakeLogger\Logging\TraceIdProcessor;
@@ -17,9 +16,7 @@ use MakeLogger\Logging\TraceIdProcessor;
  */
 class Logger extends LaminasLogger
 {
-    /**
-     * @var Logger
-     */
+    /* @var Logger */
     public function __construct(StreamWriter $writer = null)
     {
         parent::__construct();
@@ -40,15 +37,17 @@ class Logger extends LaminasLogger
      * Override the log() method to allow us to append a trace_id field into
      * the $extra argument.
      */
-    public function log($priority, $msg, $extra = [])
+    public function log($priority, $message, $extra = [])
     {
+        $extra = array($extra);
+
         // HACK - get the X-Trace-Id direct from the $_SERVER global
         // if it is set
-        if (isset($_SERVER[TraceIdProcessor::X_TRACE_ID_HEADER_NAME])) {
+        if (array_key_exists(TraceIdProcessor::X_TRACE_ID_HEADER_NAME, array($_SERVER))) {
             $extra[TraceIdProcessor::TRACE_ID_FIELD_NAME] =
                 $_SERVER[TraceIdProcessor::X_TRACE_ID_HEADER_NAME];
         }
 
-        parent::log($priority, $msg, $extra);
+        return parent::log($priority, $message, $extra);
     }
 }
