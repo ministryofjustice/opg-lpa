@@ -116,6 +116,14 @@ class ApplicationController extends AbstractLpaController
     }
 
     /**
+     * For whatever reason, laminas-mvc's (v3.3) return type for patch()
+     * is array rather than mixed (like all the other REST methods).
+     * Because we treat responses uniformly and return a response type
+     * from patch(), psalm complains about this, so that's what we're
+     * suppressing here.
+     *
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     *
      * @param $id
      * @param $data
      * @return JsonResponse|ApiProblem
