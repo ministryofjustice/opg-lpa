@@ -17,27 +17,21 @@ class LpaAuth implements AdapterInterface
 {
     use LoggerTrait;
 
-    /**
-     * @var AuthenticationService
-     */
-    private $authenticationService;
+    /* @var AuthenticationService */
+    private AuthenticationService $authenticationService;
 
-    /**
-     * @var string
-     */
-    private $token;
+    /* @var string */
+    private string $token;
 
-    /**
-     * @var array
-     */
-    private $adminAccounts;
+    /* @var array */
+    private array $adminAccounts;
 
     /**
      * @param AuthenticationService $authenticationService
-     * @param $token
+     * @param string $token
      * @param array $adminAccounts
      */
-    public function __construct(AuthenticationService $authenticationService, $token, array $adminAccounts)
+    public function __construct(AuthenticationService $authenticationService, string $token, array $adminAccounts)
     {
         $this->authenticationService = $authenticationService;
         $this->token = $token;
@@ -47,7 +41,7 @@ class LpaAuth implements AdapterInterface
     /**
      * @return Result
      */
-    public function authenticate()
+    public function authenticate(): Result
     {
         // Database errors during authentication are converted into a general 500 response from the API
         try {

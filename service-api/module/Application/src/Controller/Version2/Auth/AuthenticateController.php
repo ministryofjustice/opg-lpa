@@ -111,6 +111,11 @@ class AuthenticateController extends AbstractAuthController
      */
     public function sessionExpiryAction()
     {
+        // Suppress psalm errors caused by bug in laminas-mvc;
+        // see https://github.com/laminas/laminas-mvc/issues/77
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         */
         $token = $this->getRequest()->getHeader('CheckedToken');
 
         if ($token == null) {
@@ -138,6 +143,11 @@ class AuthenticateController extends AbstractAuthController
      */
     public function setSessionExpiryAction()
     {
+        // Suppress psalm errors caused by bug in laminas-mvc;
+        // see https://github.com/laminas/laminas-mvc/issues/77
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         */
         $token = $this->getRequest()->getHeader('CheckedToken');
 
         if ($token == null) {
