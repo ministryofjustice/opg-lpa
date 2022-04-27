@@ -151,27 +151,7 @@ class Communication extends AbstractEmailService
     {
         // fill out email fields appropriately that apply to cheque and online payments
         //
-        if (!empty($lpa->document->peopleToNotify)) { 
-            if (is_null($lpa->payment->reducedFeeLowIncome) ) {
-                // we do not have reduced fee but we do have Person(s) to Notify
-                $this->data = array_merge($this->data, [
-                    'PTNOnly' => true,
-                    'FeeFormOnly' => false,
-                    'FeeFormPTN' => false,
-                    'remission' => false,
-                ]);
-            }
-            else {
-                // we have reduced fee and Person(s) to Notify
-                $this->data = array_merge($this->data, [
-                    'PTNOnly' => false,
-                    'FeeFormOnly' => false,
-                    'FeeFormPTN' => true,
-                    'remission' => true,
-                ]);
-            }
-        }
-        else {
+        if (empty($lpa->document->peopleToNotify)) { 
             if (is_null($lpa->payment->reducedFeeLowIncome))  {
                 // we have no reduced fee, and no Person(s) to Notify
                 $this->data = array_merge($this->data, [
@@ -187,6 +167,26 @@ class Communication extends AbstractEmailService
                     'PTNOnly' => false,
                     'FeeFormOnly' => true,
                     'FeeFormPTN' => false,
+                    'remission' => true,
+                ]);
+            }
+        }
+        else {
+            if (is_null($lpa->payment->reducedFeeLowIncome) ) {
+                // we do not have reduced fee but we do have Person(s) to Notify
+                $this->data = array_merge($this->data, [
+                    'PTNOnly' => true,
+                    'FeeFormOnly' => false,
+                    'FeeFormPTN' => false,
+                    'remission' => false,
+                ]);
+            }
+            else {
+                // we have reduced fee and Person(s) to Notify
+                $this->data = array_merge($this->data, [
+                    'PTNOnly' => false,
+                    'FeeFormOnly' => false,
+                    'FeeFormPTN' => true,
                     'remission' => true,
                 ]);
             }
