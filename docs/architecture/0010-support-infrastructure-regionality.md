@@ -24,7 +24,7 @@ Thus meeting the requirements of DR capability.
 
 We also wanted to ensure the structure is future proof in order to allow for changes in the DR strategy e.g. warm standby.
 
-Note that it is not a requirement to have a warm standby,  having the capability to provision on an as need basis is useful. A back up and restore with a turn-key provision via terraform is acceptable, but a small amount of other manual steps will have to be taken, which are unavoidable due to not being available via that route. We will look to minimize these as much as possible.
+Note that whilst it is not a requirement to have a warm standby,  having the capability to provision on an as need basis is useful. A back up and restore with a turn-key provision via terraform is acceptable, but a small amount of other manual steps will have to be taken, which are unavoidable due to not being available via that route. We will look to minimize these as much as possible.
 
 We estimate that this will allow us to provision in a matter of a couple of hours or less, well within the agreed times given to the business of 24 hours.
 
