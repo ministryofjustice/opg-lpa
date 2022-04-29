@@ -71,5 +71,5 @@ This work is to be based on the structure of one of our internal services, which
 - The business will need to be aware that the recovery will still take some time. As this service is not mission critical, but a tool used to aid applicants which can be done in paper form anyway, this shouldn't be a major issue.
 - Complexity of build is increased as we have to change the CI process to cater for the additional level to be deployed, and modularization of the configuration.
 - It will slow down the build process since the terraform deployment will have the additional `region` element to apply, which is in between the `account` and `environment` dependencies.
-- We need to consider how to deal with one region being down, and unavailable, how this affects the state file.
+- We need to consider how to deal with one region being down, and unavailable, and how this affects the state file.
 - There are some DR Scenarios we need to consider, where dependencies are also being recovered or made available in different region.
