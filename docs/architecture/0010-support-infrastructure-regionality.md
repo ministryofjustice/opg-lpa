@@ -28,7 +28,7 @@ Note that whilst it is not a requirement to have a warm standby,  having the cap
 
 We estimate that this will allow us to provision in a matter of a couple of hours or less, well within the agreed times given to the business of 24 hours.
 
-In any case, we currently have the paper version available to download on the .gov website as a fall back, but this change gives the service  platform to have an extra layer of resilience.
+In any case, we currently have the paper version available to download on the .gov website as a fall back, but this change gives the service  an extra layer of resilience.
 
 ## Final Proposal
 
