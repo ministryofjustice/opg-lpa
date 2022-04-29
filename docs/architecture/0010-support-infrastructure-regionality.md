@@ -40,7 +40,7 @@ terraform
  ┣ environment #environment level resources, particularly to support ephemeral environments
 ```
 
-whilst this supports the multi environment nature of the dev account i.e. ephemeral environments, this did not at all support the service going into another region.
+Whilst this supports the multi environment nature of the dev account i.e. ephemeral environments, this did not at all support the service going into another region, as some resources are present at the account level - e.g. networking and caching, that are simply not cross region.
 
 instead we add an additional level called `region` which supported shared infrastructure in a region, whilst keeping the other levels such:
 
