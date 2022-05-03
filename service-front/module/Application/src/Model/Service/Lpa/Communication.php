@@ -26,14 +26,13 @@ class Communication extends AbstractEmailService
     private $userDetailsSession;
     private $emailTemplateRef;
     private $data;
-    private $to;
     private $lpaTypeTitleCase;
 
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
         // Get the signed in user's email address.
         $userEmailAddress = $this->userDetailsSession->user->email->address;
-        $this->to = [$userEmailAddress];
+        $to = [$userEmailAddress];
 
         $this->lpaTypeTitleCase = 'Health and welfare';
         if ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_PF) {
@@ -59,7 +58,7 @@ class Communication extends AbstractEmailService
 
         if (!is_null($lpa->payment->reference)) {
             // we have a payment reference, so this is an online payment
-            $this->setUpEmailFieldsForOnlinePayment($lpa, $userEmailAddress);
+            $to = $this->setUpEmailFieldsForOnlinePayment($lpa, $userEmailAddress, $to);
             $this->setUpEmailFieldsForPayments($lpa);
         }
         else {
@@ -75,7 +74,7 @@ class Communication extends AbstractEmailService
         }
 
         try {
-            $mailParameters = new MailParameters($this->to, $this->emailTemplateRef, $this->data);
+            $mailParameters = new MailParameters($to, $this->emailTemplateRef, $this->data);
             $this->getMailTransport()->send($mailParameters);
         } catch (ExceptionInterface $ex) {
             $this->getLogger()->err($ex);
@@ -85,7 +84,7 @@ class Communication extends AbstractEmailService
         return true;
     }
 
-    public function setUpEmailFieldsForOnlinePayment(Lpa $lpa, String $userEmailAddress)
+    public function setUpEmailFieldsForOnlinePayment(Lpa $lpa, String $userEmailAddress, Array $to)
     {
         $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
 
@@ -113,8 +112,12 @@ class Communication extends AbstractEmailService
 
         // If we have a separate payment address, send the email to that also
         if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userEmailAddress))) {
-            $this->to[] = (string) $lpa->payment->email;
+            $to = array_merge($to, [
+                (string) $lpa->payment->email
+            ]);
         }
+
+        return $to;
     } 
 
     public function setUpEmailFieldsForChequePayment(Lpa $lpa)
