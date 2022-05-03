@@ -179,6 +179,406 @@ class CommunicationTest extends AbstractEmailServiceTest
         $this->assertTrue($result);
     }
 
+    public function testSendRegistrationCompleteEmailWithoutPaymentReceivesBenefitsButWithPersonToNotify(): void
+    {
+        $lpa = new Lpa([
+            'document' => new Document([
+                'type' => Document::LPA_TYPE_PF,
+                'donor' => [
+                    'name' => new LongName('{"title":"Dr", "first":"Pete", "last":"Vamoose"}')
+                ],
+                'peopleToNotify' => [
+                   new NotifiedPerson([
+                    "name" => [
+                        "title" => "Miss",
+                        "first" => "Elizabeth",
+                        "last" => "Stout",
+                    ],
+                 ]),
+                ],
+            ]),
+         // note that the system represents no payment, by having a payment object with the reason for no payment set within it
+            'payment' => new Payment([
+                 'reducedFeeReceivesBenefits' => true,
+            ]),
+        ]);
+
+        // The service is partially mocked so we don't have to mess
+        // about with expectations on the HelperPluginManager;
+        // the formatLpaId() and url() methods on the service are just
+        // proxies through the methods on that plugin manager anyway.
+        $this->service->shouldReceive('formatLpaId')
+            ->with($lpa->id)
+            ->andReturn('A111 111 1111');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/view-docs',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://view.docs.url');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/date-check',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://check.dates.url');
+
+        // What we expect to pass to the mail transport
+        $expectedMailParams = new MailParameters(
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3,
+            [
+                'donorName' => 'Dr Pete Vamoose',
+                'lpaType' => 'property and financial affairs',
+                'lpaId' => 'A111 111 1111',
+                'viewDocsUrl' => 'https://view.docs.url',
+                'checkDatesUrl' => 'https://check.dates.url',
+                'PTN' => true,
+            ]
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParams));
+
+        // Call test method
+        $result = $this->service->sendRegistrationCompleteEmail($lpa);
+
+        $this->assertTrue($result);
+    }
+
+    public function testSendRegistrationCompleteEmailWithoutPaymentReceivesBenefitsNoPersonToNotify(): void
+    {
+        $lpa = new Lpa([
+            'document' => new Document([
+                'type' => Document::LPA_TYPE_PF,
+                'donor' => [
+                    'name' => new LongName('{"title":"Dr", "first":"Pete", "last":"Vamoose"}')
+                ],
+            ]),
+         // note that the system represents no payment, by having a payment object with the reason for no payment set within it
+           'payment' => new Payment([
+                'reducedFeeReceivesBenefits' => true,
+            ]),
+        ]);
+
+        // The service is partially mocked so we don't have to mess
+        // about with expectations on the HelperPluginManager;
+        // the formatLpaId() and url() methods on the service are just
+        // proxies through the methods on that plugin manager anyway.
+        $this->service->shouldReceive('formatLpaId')
+            ->with($lpa->id)
+            ->andReturn('A111 111 1111');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/view-docs',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://view.docs.url');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/date-check',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://check.dates.url');
+
+        // What we expect to pass to the mail transport
+        $expectedMailParams = new MailParameters(
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3,
+            [
+                'donorName' => 'Dr Pete Vamoose',
+                'lpaType' => 'property and financial affairs',
+                'lpaId' => 'A111 111 1111',
+                'viewDocsUrl' => 'https://view.docs.url',
+                'checkDatesUrl' => 'https://check.dates.url',
+                'PTN' => false,
+            ]
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParams));
+
+        // Call test method
+        $result = $this->service->sendRegistrationCompleteEmail($lpa);
+
+        $this->assertTrue($result);
+    }
+
+    public function testSendRegistrationCompleteEmailWithoutPaymentAwardedDamagesButWithPersonToNotify(): void
+    {
+        $lpa = new Lpa([
+            'document' => new Document([
+                'type' => Document::LPA_TYPE_PF,
+                'donor' => [
+                    'name' => new LongName('{"title":"Dr", "first":"Pete", "last":"Vamoose"}')
+                ],
+                'peopleToNotify' => [
+                   new NotifiedPerson([
+                    "name" => [
+                        "title" => "Miss",
+                        "first" => "Elizabeth",
+                        "last" => "Stout",
+                    ],
+                 ]),
+                ],
+            ]),
+         // note that the system represents no payment, by having a payment object with the reason for no payment set within it
+            'payment' => new Payment([
+                 'reducedFeeAwardedDamages' => true,
+            ]),
+        ]);
+
+        // The service is partially mocked so we don't have to mess
+        // about with expectations on the HelperPluginManager;
+        // the formatLpaId() and url() methods on the service are just
+        // proxies through the methods on that plugin manager anyway.
+        $this->service->shouldReceive('formatLpaId')
+            ->with($lpa->id)
+            ->andReturn('A111 111 1111');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/view-docs',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://view.docs.url');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/date-check',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://check.dates.url');
+
+        // What we expect to pass to the mail transport
+        $expectedMailParams = new MailParameters(
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3,
+            [
+                'donorName' => 'Dr Pete Vamoose',
+                'lpaType' => 'property and financial affairs',
+                'lpaId' => 'A111 111 1111',
+                'viewDocsUrl' => 'https://view.docs.url',
+                'checkDatesUrl' => 'https://check.dates.url',
+                'PTN' => true,
+            ]
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParams));
+
+        // Call test method
+        $result = $this->service->sendRegistrationCompleteEmail($lpa);
+
+        $this->assertTrue($result);
+    }
+
+    public function testSendRegistrationCompleteEmailWithoutPaymentAwardedDamagesNoPersonToNotify(): void
+    {
+        $lpa = new Lpa([
+            'document' => new Document([
+                'type' => Document::LPA_TYPE_PF,
+                'donor' => [
+                    'name' => new LongName('{"title":"Dr", "first":"Pete", "last":"Vamoose"}')
+                ],
+            ]),
+         // note that the system represents no payment, by having a payment object with the reason for no payment set within it
+           'payment' => new Payment([
+                'reducedFeeAwardedDamages' => true,
+            ]),
+        ]);
+
+        // The service is partially mocked so we don't have to mess
+        // about with expectations on the HelperPluginManager;
+        // the formatLpaId() and url() methods on the service are just
+        // proxies through the methods on that plugin manager anyway.
+        $this->service->shouldReceive('formatLpaId')
+            ->with($lpa->id)
+            ->andReturn('A111 111 1111');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/view-docs',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://view.docs.url');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/date-check',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://check.dates.url');
+
+        // What we expect to pass to the mail transport
+        $expectedMailParams = new MailParameters(
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3,
+            [
+                'donorName' => 'Dr Pete Vamoose',
+                'lpaType' => 'property and financial affairs',
+                'lpaId' => 'A111 111 1111',
+                'viewDocsUrl' => 'https://view.docs.url',
+                'checkDatesUrl' => 'https://check.dates.url',
+                'PTN' => false,
+            ]
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParams));
+
+        // Call test method
+        $result = $this->service->sendRegistrationCompleteEmail($lpa);
+
+        $this->assertTrue($result);
+    }
+
+
+    public function testSendRegistrationCompleteEmailWithoutPaymentUniversalCreditButWithPersonToNotify(): void
+    {
+        $lpa = new Lpa([
+            'document' => new Document([
+                'type' => Document::LPA_TYPE_PF,
+                'donor' => [
+                    'name' => new LongName('{"title":"Dr", "first":"Pete", "last":"Vamoose"}')
+                ],
+                'peopleToNotify' => [
+                   new NotifiedPerson([
+                    "name" => [
+                        "title" => "Miss",
+                        "first" => "Elizabeth",
+                        "last" => "Stout",
+                    ],
+                 ]),
+                ],
+            ]),
+         // note that the system represents no payment, by having a payment object with the reason for no payment set within it
+            'payment' => new Payment([
+                 'reducedFeeUniversalCredit' => true,
+            ]),
+        ]);
+
+        // The service is partially mocked so we don't have to mess
+        // about with expectations on the HelperPluginManager;
+        // the formatLpaId() and url() methods on the service are just
+        // proxies through the methods on that plugin manager anyway.
+        $this->service->shouldReceive('formatLpaId')
+            ->with($lpa->id)
+            ->andReturn('A111 111 1111');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/view-docs',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://view.docs.url');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/date-check',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://check.dates.url');
+
+        // What we expect to pass to the mail transport
+        $expectedMailParams = new MailParameters(
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3,
+            [
+                'donorName' => 'Dr Pete Vamoose',
+                'lpaType' => 'property and financial affairs',
+                'lpaId' => 'A111 111 1111',
+                'viewDocsUrl' => 'https://view.docs.url',
+                'checkDatesUrl' => 'https://check.dates.url',
+                'PTN' => true,
+            ]
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParams));
+
+        // Call test method
+        $result = $this->service->sendRegistrationCompleteEmail($lpa);
+
+        $this->assertTrue($result);
+    }
+
+    public function testSendRegistrationCompleteEmailWithoutPaymentUniversalCreditNoPersonToNotify(): void
+    {
+        $lpa = new Lpa([
+            'document' => new Document([
+                'type' => Document::LPA_TYPE_PF,
+                'donor' => [
+                    'name' => new LongName('{"title":"Dr", "first":"Pete", "last":"Vamoose"}')
+                ],
+            ]),
+         // note that the system represents no payment, by having a payment object with the reason for no payment set within it
+           'payment' => new Payment([
+                'reducedFeeUniversalCredit' => true,
+            ]),
+        ]);
+
+        // The service is partially mocked so we don't have to mess
+        // about with expectations on the HelperPluginManager;
+        // the formatLpaId() and url() methods on the service are just
+        // proxies through the methods on that plugin manager anyway.
+        $this->service->shouldReceive('formatLpaId')
+            ->with($lpa->id)
+            ->andReturn('A111 111 1111');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/view-docs',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://view.docs.url');
+
+        $this->service->shouldReceive('url')
+            ->with(
+                'lpa/date-check',
+                ['lpa-id' => $lpa->id],
+                ['force_canonical' => true],
+            )
+            ->andReturn('https://check.dates.url');
+
+        // What we expect to pass to the mail transport
+        $expectedMailParams = new MailParameters(
+            ['test@email.com'],
+            AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3,
+            [
+                'donorName' => 'Dr Pete Vamoose',
+                'lpaType' => 'property and financial affairs',
+                'lpaId' => 'A111 111 1111',
+                'viewDocsUrl' => 'https://view.docs.url',
+                'checkDatesUrl' => 'https://check.dates.url',
+                'PTN' => false,
+            ]
+        );
+
+        $this->mailTransport->shouldReceive('send')
+            ->with(Matchers::equalTo($expectedMailParams));
+
+        // Call test method
+        $result = $this->service->sendRegistrationCompleteEmail($lpa);
+
+        $this->assertTrue($result);
+    }
+
     public function testSendRegistrationCompleteEmailWithOnlinePaymentAndPersonToNotify(): void
     {
         $lpa = new Lpa([
