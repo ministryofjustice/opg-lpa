@@ -72,8 +72,11 @@ class AccountInfo extends AbstractHelper
         //  first About You step
         if ($this->userDetailsSession->user instanceof User) {
             $sessionUserName = $this->userDetailsSession->user->getName();
-
-            $params['name'] = $sessionUserName->getFirst() . ' ' . $sessionUserName->getLast();
+            if ($sessionUserName !== null) {
+                $params['name'] = $sessionUserName->getFirst() . ' ' . $sessionUserName->getLast();
+            } else {
+                $params['name'] = '';
+            }
         }
 
         //  Include last logged in date if set a view parameter
