@@ -14,7 +14,7 @@ class GenerateStatsCommandTest extends MockeryTestCase
     public function testExecuteSuccess()
     {
         $statsService = Mockery::mock(StatsService::class);
-        $statsService->shouldReceive('generate')->andReturnNull();
+        $statsService->shouldReceive('generate')->andReturn(true);
 
         $input = Mockery::mock(InputInterface::class);
         $output = Mockery::mock(OutputInterface::class);
@@ -24,6 +24,6 @@ class GenerateStatsCommandTest extends MockeryTestCase
 
         $result = $command->execute($input, $output);
 
-        $this->assertNull($result);
+        $this->assertEquals(0, $result);
     }
 }

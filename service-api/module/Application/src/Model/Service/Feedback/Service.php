@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\Service\Feedback;
 
 use DateTime;
@@ -10,7 +11,7 @@ class Service extends AbstractService
 {
     use FeedbackRepositoryTrait;
 
-    const FEEDBACK_TTL = '-2 years';
+    public const FEEDBACK_TTL = '-2 years';
 
     /**
      * @var DateTime
@@ -23,7 +24,7 @@ class Service extends AbstractService
      * @param array $feedback
      * @return bool
      */
-    public function add(array $feedback) : bool
+    public function add(array $feedback): bool
     {
         // Filter out any 'non-allowed' fields
         $allowed = ['agent', 'fromPage', 'rating', 'details', 'email', 'phone'];
@@ -47,9 +48,9 @@ class Service extends AbstractService
      *
      * @param DateTime $from
      * @param DateTime $to
-     * @return iterable
+     * @return Traversable
      */
-    public function get(DateTime $from, DateTime $to) : Traversable
+    public function get(DateTime $from, DateTime $to): Traversable
     {
         // Prune old feedback
         $this->getFeedbackRepository()->prune($this->getPruneDate());
@@ -64,7 +65,8 @@ class Service extends AbstractService
      *
      * @return DateTime
      */
-    public function getPruneDate() {
+    public function getPruneDate()
+    {
         if (isset($this->pruneBeforeDate)) {
             return $this->pruneBeforeDate;
         }
@@ -73,5 +75,4 @@ class Service extends AbstractService
 
         return $this->pruneBeforeDate;
     }
-
 }
