@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Command;
 
 use Application\Model\Service\System\Stats as StatsService;
@@ -6,7 +7,6 @@ use Laminas\ServiceManager\ServiceManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * laminas-cli command to generate stats.
@@ -44,8 +44,12 @@ class GenerateStatsCommand extends Command
     /**
      * Required method implementation
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->statsService->generate();
+        $success = $this->statsService->generate();
+        if ($success) {
+            return 0;
+        }
+        return 1;
     }
 }

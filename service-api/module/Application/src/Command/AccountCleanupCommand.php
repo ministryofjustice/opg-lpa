@@ -8,7 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * This command is triggered daily from a cron job.
  *
@@ -46,8 +45,8 @@ class AccountCleanupCommand extends Command
     /**
      * Required method implementation
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->accountCleanupService->cleanup();
+        return $this->accountCleanupService->cleanup();
     }
 }

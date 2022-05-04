@@ -53,13 +53,13 @@ abstract class AbstractAuthController extends AbstractRestfulController
     /**
      * Execute the request
      *
-     * @param MvcEvent $event
+     * @param MvcEvent $e
      * @return mixed|ApiProblem|ApiProblemResponse
      * @throws ApiProblemException
      */
-    public function onDispatch(MvcEvent $event)
+    public function onDispatch(MvcEvent $e)
     {
-        $return = parent::onDispatch($event);
+        $return = parent::onDispatch($e);
 
         if ($return instanceof ApiProblem) {
             return new ApiProblemResponse($return);
@@ -102,14 +102,14 @@ abstract class AbstractAuthController extends AbstractRestfulController
      * Get data from the body content of the request
      *
      * @param $varName
-     * @return array|null|string
+     * @return mixed|null
      */
     protected function getBodyContent($varName = null)
     {
         $data = $this->processBodyContent($this->getRequest());
 
         if (is_string($varName)) {
-            //  Try to get the specific variable from the data
+            // Try to get the specific variable from the data
             return (array_key_exists($varName, $data) ? $data[$varName] : null);
         }
 

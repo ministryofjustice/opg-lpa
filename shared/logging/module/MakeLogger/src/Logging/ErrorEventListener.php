@@ -1,11 +1,11 @@
 <?php
+
 namespace MakeLogger\Logging;
 
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\Event;
 use Laminas\Mvc\MvcEvent;
-
 use MakeLogger\Logging\LoggerTrait;
 use MakeLogger\Logging\MvcEventProcessor;
 
@@ -18,7 +18,7 @@ class ErrorEventListener extends AbstractListenerAggregate
 
     /**
      * Magic method so this class can be its own factory
-     * @return EventLogger
+     * @return ErrorEventListener
      */
     public function __invoke(): self
     {

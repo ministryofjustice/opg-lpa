@@ -76,14 +76,20 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return mixed
+     * @return object
      * @throws ApiProblemException
      * @throws Exception
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         if (!$this->canCreate($container, $requestedName)) {
-            throw new Exception(sprintf('Abstract factory %s can not create the requested service %s', get_class($this), $requestedName));
+            throw new Exception(
+                sprintf(
+                    'Abstract factory %s can not create the requested service %s',
+                    get_class($this),
+                    $requestedName
+                )
+            );
         }
 
         // Use custom factory method for AuthenticationService;
@@ -91,8 +97,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         // service-api/module/Application/src/Module.php
         if ($requestedName === 'Application\Model\Service\Authentication\Service') {
             $service = $container->get('AppAuthenticationService');
-        }
-        else {
+        } else {
             $service = new $requestedName();
         }
 
@@ -117,19 +122,32 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             }
 
             if (in_array(ApplicationRepository\ApplicationRepositoryTrait::class, $traitsUsed)) {
-                $service->setApplicationRepository($container->get(ApplicationRepository\ApplicationRepositoryInterface::class));
+                $service->setApplicationRepository(
+                    $container->get(ApplicationRepository\ApplicationRepositoryInterface::class)
+                );
             }
 
             if (in_array(FeedbackRepository\FeedbackRepositoryTrait::class, $traitsUsed)) {
-                $service->setFeedbackRepository($container->get(FeedbackRepository\FeedbackRepositoryInterface::class));
+                $service->setFeedbackRepository(
+                    $container->get(FeedbackRepository\FeedbackRepositoryInterface::class)
+                );
             }
         }
 
         //  If required load any additional services into the service
-        if (array_key_exists($requestedName, $this->additionalServices) && is_array($this->additionalServices[$requestedName])) {
+        if (
+            array_key_exists($requestedName, $this->additionalServices) &&
+            is_array($this->additionalServices[$requestedName])
+        ) {
             foreach ($this->additionalServices[$requestedName] as $setterMethod => $additionalService) {
                 if (!method_exists($service, $setterMethod)) {
-                    throw new Exception(sprintf('The setter method %s does not exist on the requested service %s', $setterMethod, $requestedName));
+                    throw new Exception(
+                        sprintf(
+                            'The setter method %s does not exist on the requested service %s',
+                            $setterMethod,
+                            $requestedName
+                        )
+                    );
                 }
 
                 $service->$setterMethod($container->get($additionalService));

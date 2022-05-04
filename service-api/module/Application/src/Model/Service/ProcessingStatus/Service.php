@@ -31,24 +31,16 @@ class Service extends AbstractService
         'Return - unpaid' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED
     ];
 
-    /**
-     * @var $httpClient HttpClient
-     */
+    /* @var $httpClient HttpClient */
     private $httpClient;
 
-    /**
-     * @var $credentials CredentialsInterface
-     */
+    /* @var $credentials CredentialsInterface */
     private $credentials;
 
-    /**
-     * @var $processingStatusServiceUri string
-     */
+    /* @var $processingStatusServiceUri string */
     private $processingStatusServiceUri;
 
-    /**
-     * @var $awsSignature SignatureV4
-     */
+    /* @var $awsSignature SignatureV4 */
     private $awsSignature;
 
     public function setClient(HttpClient $httpClient)
@@ -158,7 +150,7 @@ class Service extends AbstractService
 
                 default:
                     $this->getLogger()->err(
-                        'Unexpected response from Sirius gateway: ' . $statusCode. (string)$result->getBody()
+                        'Unexpected response from Sirius gateway: ' . $statusCode . (string)$result->getBody()
                     );
                     break;
             } //end switch
@@ -178,7 +170,7 @@ class Service extends AbstractService
 
     private function handleResponse(ResponseInterface $result)
     {
-        $responseBody = json_decode($result->getBody(), true);
+        $responseBody = json_decode($result->getBody()->getContents(), true);
 
         if (is_null($responseBody)) {
             return null;
