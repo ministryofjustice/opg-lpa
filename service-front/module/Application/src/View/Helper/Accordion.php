@@ -129,9 +129,9 @@ class Accordion extends AbstractHelper
                 // Check we can access 'this' page...
                 if ($route == $flowChecker->getNearestAccessibleRoute($route)) {
                     // Then check there are more pages...
-                    if (isset($bars[$key + 1])) {
+                    if (isset($bars[intval($key) + 1])) {
                         // And that we can access at least one of them...
-                        foreach (array_slice($bars, $key + 1) as $futureRoute) {
+                        foreach (array_slice($bars, intval($key) + 1) as $futureRoute) {
                             // If we are able to access a future route, then this page is complete.
                             if ($futureRoute == $flowChecker->getNearestAccessibleRoute($futureRoute)) {
                                 // All conditions met, so add the bar.

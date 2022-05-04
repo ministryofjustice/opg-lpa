@@ -1,6 +1,8 @@
 <?php
+
 namespace Application\View\Helper;
 
+use Laminas\Form\Form;
 use Laminas\View\Helper\AbstractHelper;
 
 class FormErrorTextExchange extends AbstractHelper
@@ -47,7 +49,6 @@ class FormErrorTextExchange extends AbstractHelper
         }
 
         foreach ($elements as $element) {
-
             $name = $element->getName();
 
             if (array_key_exists($name, $overrideMap)) {

@@ -16,34 +16,22 @@ class AccountInfo extends AbstractHelper
 {
     use LoggerTrait;
 
-    /**
-     * @var AuthenticationService
-     */
+    /* @var AuthenticationService */
     private $authenticationService;
 
-    /**
-     * @var Container
-     */
+    /* @var Container */
     private $userDetailsSession;
 
-    /**
-     * @var ViewModel
-     */
+    /* @var ViewModel */
     private $viewModel;
 
-    /**
-     * @var RouteMatch
-     */
+    /* @var RouteMatch */
     private $routeMatch;
 
-    /**
-     * @var LpaApplicationService
-     */
+    /* @var LpaApplicationService */
     private $lpaApplicationService;
 
-    /**
-     * @var LocalViewRenderer
-     */
+    /* @var LocalViewRenderer */
     private $localViewRenderer;
 
     /**
@@ -82,12 +70,10 @@ class AccountInfo extends AbstractHelper
 
         //  Only include name (and user links) if the user has set their name - i.e. they've completed the
         //  first About You step
-        if ($this->userDetailsSession->user instanceof User & $this->userDetailsSession->user->name instanceof Name) {
+        if ($this->userDetailsSession->user instanceof User) {
             $sessionUserName = $this->userDetailsSession->user->getName();
 
-            if ($sessionUserName instanceof Name) {
-                $params['name'] = $sessionUserName->getFirst() . ' ' . $sessionUserName->getLast();
-            }
+            $params['name'] = $sessionUserName->getFirst() . ' ' . $sessionUserName->getLast();
         }
 
         //  Include last logged in date if set a view parameter
