@@ -70,15 +70,15 @@ class NotifyMailTransport implements MailTransportInterface
     /**
      * Send a mail message.
      *
-     * If $mailParams contains multiple email addresses and sending
+     * If $mailParameters contains multiple email addresses and sending
      * to one throws an exception, subsequent emails will not be sent.
      *
-     * @param  MailParameters $mailParams
+     * @param  MailParameters $mailParameters
      * @throws Laminas\Mail\Exception\ExceptionInterface
      */
-    public function send(MailParameters $mailParams): void
+    public function send(MailParameters $mailParameters): void
     {
-        $templateRef = $mailParams->getTemplateRef();
+        $templateRef = $mailParameters->getTemplateRef();
         if (!array_key_exists($templateRef, $this->templateMap)) {
             throw new InvalidArgumentException(
                 'Could not find Notify template for template reference ' . $templateRef
@@ -86,12 +86,12 @@ class NotifyMailTransport implements MailTransportInterface
         }
 
         $notifyTemplateId = $this->templateMap[$templateRef];
-        $data = $mailParams->getData();
+        $data = $mailParameters->getData();
 
         // We could get clever and send these in parallel, but as we're only
         // likely to have a maximum of 2 email addresses to send to,
         // we just fire them off in serial
-        foreach ($mailParams->getToAddresses() as $toAddress) {
+        foreach ($mailParameters->getToAddresses() as $toAddress) {
             // sendEmail() may throw one of the following:
             // - Alphagov\Notifications\Exception\NotifyException
             // - Alphagov\Notifications\Exception\ApiException

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d75d629b121a57ea9b470fe0d4ee1a8",
+    "content-hash": "3e35d6df285bf20c6d523c52e021ff9f",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -3283,25 +3283,25 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "13.8.0",
+            "version": "14.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
-                "reference": "e20e0f799c88455e2af0e88f6193f1ce85e78bc1"
+                "reference": "070543818972f1309191331038ad50432e35866a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/e20e0f799c88455e2af0e88f6193f1ce85e78bc1",
-                "reference": "e20e0f799c88455e2af0e88f6193f1ce85e78bc1",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/070543818972f1309191331038ad50432e35866a",
+                "reference": "070543818972f1309191331038ad50432e35866a",
                 "shasum": ""
             },
             "require": {
                 "egulias/email-validator": "~1.2",
-                "php": "^7.1 | ^8.0",
+                "php": "^8.0 | ^8.1",
                 "symfony/validator": "^4.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.0"
+                "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "autoload": {
@@ -3313,7 +3313,7 @@
                 "MIT"
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
-            "time": "2021-04-13T12:33:09+00:00"
+            "time": "2022-04-29T14:25:28+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
