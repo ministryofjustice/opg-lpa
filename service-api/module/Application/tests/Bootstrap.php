@@ -2,7 +2,7 @@
 
 date_default_timezone_set('UTC');
 
-error_reporting(E_ALL & ~ (E_DEPRECATED|E_USER_DEPRECATED));
+error_reporting(E_ALL & ~ (E_DEPRECATED | E_USER_DEPRECATED));
 
 /**
  * Simple autoloader function to dynamically load
@@ -14,11 +14,18 @@ spl_autoload_register(function ($class) {
     $baseDirs = [
         __DIR__ . '/',
         __DIR__ . '/../src/',
+        __DIR__ . '/../../../../shared/logging/module/MakeLogger/src/',
     ];
 
     //  Strip out any leading "ApplicationTest" if present
     if (strpos($class, 'ApplicationTest\\') === 0) {
         $class = str_replace('ApplicationTest\\', '', $class);
+    }
+
+    // Replace MakeLogger\Logging with Logging; this is so we can load
+    // files from the top-level shared
+    if (strpos($class, 'MakeLogger\\Logging') !== -1) {
+        $class = str_replace('MakeLogger\\Logging', '\\Logging', $class);
     }
 
     //  Loop through the base directories to try to find the requested class

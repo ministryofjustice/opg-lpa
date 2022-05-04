@@ -9,7 +9,7 @@ use Application\Library\DateTime;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
-use \EmptyIterator;
+use EmptyIterator;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Formatter;
@@ -30,7 +30,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private $service;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -622,14 +622,14 @@ class ServiceTest extends AbstractServiceTest
         $this->assertEquals(0, $response->count());
     }
 
-    public function testFilterByIdsAndUser_ApplicationRepositoryReturnsEmptyIterator()
+    public function testFilterByIdsAndUserApplicationRepositoryReturnsEmptyTraversable()
     {
         $lpaIds = ['1234', '5678'];
         $userId = 'user1';
 
         $this->applicationRepository->shouldReceive('getByIdsAndUser')
             ->withArgs([$lpaIds, $userId])
-            ->andReturn([]);
+            ->andReturn(new \ArrayObject());
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -641,7 +641,7 @@ class ServiceTest extends AbstractServiceTest
         $this->assertEquals([], $response);
     }
 
-    public function testFilterByIdsAndUser_ApplicationRepositoryReturnsLpas()
+    public function testFilterByIdsAndUserApplicationRepositoryReturnsLpas()
     {
         $lpaIds = ['1234', '5678'];
         $userId = 'user1';
@@ -650,7 +650,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->applicationRepository->shouldReceive('getByIdsAndUser')
             ->withArgs([$lpaIds, $userId])
-            ->andReturn([$hwLpa->toArray(), $pfLpa->toArray()]);
+            ->andReturn(new \ArrayObject([$hwLpa->toArray(), $pfLpa->toArray()]));
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -710,7 +710,6 @@ class ServiceTest extends AbstractServiceTest
         $this->applicationRepository->shouldReceive('update')
             ->once()
             ->andReturnUsing(function (Lpa $lpaIn) use ($existingLpa) {
-
                 $updateTimestamp = true;
                 if (!is_null($existingLpa)) {
                     $updateTimestamp = !$lpaIn->equalsIgnoreMetadata($existingLpa);
@@ -776,8 +775,7 @@ class ServiceTest extends AbstractServiceTest
             ->andReturn($lpasCount);
 
         if ($lpasCount > 0) {
-
-            $lpasArray = array_map(function (Lpa $lpa){
+            $lpasArray = array_map(function (Lpa $lpa) {
                 return $lpa->toArray();
             }, $lpas);
 

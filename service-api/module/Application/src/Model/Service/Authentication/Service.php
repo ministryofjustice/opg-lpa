@@ -16,12 +16,12 @@ class Service extends AbstractService
     /**
      * The maximum number of consecutive login attempts before an account is locked.
      */
-    const MAX_ALLOWED_LOGIN_ATTEMPTS = 5;
+    public const MAX_ALLOWED_LOGIN_ATTEMPTS = 5;
 
     /**
      * Default number of seconds before an auth token expires.
      */
-    const TOKEN_TTL = 4500; // 75 minutes
+    public const TOKEN_TTL = 4500; // 75 minutes
 
     /**
      * The actual number of seconds before an auth token expires.
@@ -31,7 +31,7 @@ class Service extends AbstractService
     /**
      * The number of minutes to lock an account for after x failed login consecutive attempts.
      */
-    const ACCOUNT_LOCK_TIME = 900; // 15 minutes
+    public const ACCOUNT_LOCK_TIME = 900; // 15 minutes
 
     public function __construct($tokenTtl = self::TOKEN_TTL)
     {
@@ -56,9 +56,10 @@ class Service extends AbstractService
 
         if ($user->failedLoginAttempts() >= self::MAX_ALLOWED_LOGIN_ATTEMPTS) {
             // Unlock the account after 15 minutes
-            if ($user->lastFailedLoginAttemptAt() instanceof DateTime
-                && $user->lastFailedLoginAttemptAt() > new DateTime('-' . self::ACCOUNT_LOCK_TIME . " seconds")) {
-
+            if (
+                $user->lastFailedLoginAttemptAt() instanceof DateTime
+                && $user->lastFailedLoginAttemptAt() > new DateTime('-' . self::ACCOUNT_LOCK_TIME . " seconds")
+            ) {
                 return 'account-locked/max-login-attempts';
             } else {
                 // Reset field failed login counter
@@ -103,7 +104,7 @@ class Service extends AbstractService
                 // Use base62 for shorter tokens
                 $authToken = BigInteger::factory('bcmath')->baseConvert($authToken, 16, 62);
 
-                $created = (bool)$this->getUserRepository()->setAuthToken(
+                $created = $this->getUserRepository()->setAuthToken(
                     $user->id(),
                     $expires,
                     $authToken
@@ -190,13 +191,11 @@ class Service extends AbstractService
             // if we need to update, use the default expiry
             if ($needsUpdate) {
                 $expiresAt = $maxExpiresAt;
-            }
-            // not updating, just get the token's current expiresAt
-            else {
+            } else {
+                // not updating, just get the token's current expiresAt
                 $expiresAt = $token->expiresAt();
             }
-        }
-        else {
+        } else {
             // limit how far ahead expiry is set to <= the TTL for this service
             $expiresAt = min($maxExpiresAt, $expiresAt);
         }

@@ -36,7 +36,7 @@ locals {
     "secretsmanager.${data.aws_region.current.name}.amazonaws.com.${data.aws_region.current.name}.compute.internal.",
     "${replace(aws_elasticache_replication_group.front_cache.primary_endpoint_address, "master", "*")}.",
     "311462405659.dkr.ecr.eu-west-1.amazonaws.com.",
-    "${var.account_name}.internal.",
+    "${var.account_name}.opg.lpa.api.ecs.internal.",
     "api.${var.account_name}-internal."
   ]
 }

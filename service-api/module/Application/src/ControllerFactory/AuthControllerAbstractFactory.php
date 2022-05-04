@@ -29,14 +29,17 @@ class AuthControllerAbstractFactory implements AbstractFactoryInterface
      */
     public function canCreate(ContainerInterface $container, $requestedName)
     {
-        return (class_exists($requestedName) && is_subclass_of($requestedName, AuthControllers\AbstractAuthController::class));
+        return (
+            class_exists($requestedName) &&
+            is_subclass_of($requestedName, AuthControllers\AbstractAuthController::class)
+        );
     }
 
     /**
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return mixed
+     * @return object
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

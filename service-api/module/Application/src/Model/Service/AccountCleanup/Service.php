@@ -27,7 +27,7 @@ class Service extends AbstractService
     /**
      * GOV Notify template ID
      */
-    const CLEANUP_NOTIFICATION_TEMPLATE = '1acdd1fa-b463-4dac-847b-299e0ba3acb6';
+    public const CLEANUP_NOTIFICATION_TEMPLATE = '1acdd1fa-b463-4dac-847b-299e0ba3acb6';
 
     /**
      * @var array
@@ -47,8 +47,8 @@ class Service extends AbstractService
     /**
      * Warning type constants
      */
-    const WARNING_1_WEEK_NOTICE = '1-week-notice';
-    const WARNING_1_MONTH_NOTICE = '1-month-notice';
+    public const WARNING_1_WEEK_NOTICE = '1-week-notice';
+    public const WARNING_1_MONTH_NOTICE = '1-month-notice';
 
     /**
      * Warning emails config
@@ -67,7 +67,7 @@ class Service extends AbstractService
     /**
      * Execute the account cleanup
      */
-    public function cleanup()
+    public function cleanup(): int
     {
         //  Delete inactive accounts
         $expiredAccountsDeletedCount = $this->deleteExpiredAccounts();
@@ -81,14 +81,15 @@ class Service extends AbstractService
         //  Remove accounts that have not been activated
         $unactivatedAccountsDeletedCount = $this->deleteUnactivatedAccounts();
 
+        $result = 0;
 
         // Send Account Cleanup notifications to site admins.
-        if (isset($this->config['admin']['account_cleanup_notification_recipients']) &&
-            is_array($this->config['admin']['account_cleanup_notification_recipients'])) {
-
+        if (
+            isset($this->config['admin']['account_cleanup_notification_recipients']) &&
+            is_array($this->config['admin']['account_cleanup_notification_recipients'])
+        ) {
             foreach ($this->config['admin']['account_cleanup_notification_recipients'] as $recipient) {
                 try {
-
                     $this->notifyClient->sendEmail($recipient, self::CLEANUP_NOTIFICATION_TEMPLATE, [
                         'stack'                             => $this->config['stack']['name'],
                         'expiredAccountsDeletedCount'       => $expiredAccountsDeletedCount,
@@ -96,16 +97,19 @@ class Service extends AbstractService
                         'expiryAccountsWarning1MonthCount'  => $expiryAccountsWarning1MonthCount,
                         'unactivatedAccountsDeletedCount'   => $unactivatedAccountsDeletedCount,
                     ]);
-
                 } catch (NotifyException $e) {
                     // Other types of exception are worse; things still might not work tomorrow.
                     $this->getLogger()->alert('Unable to send admin notification message', [
                         'exception' => $e->getMessage()
                     ]);
+
+                    // error occurred
+                    $result = 1;
                 }
             }
+        }
 
-        } // if
+        return $result;
     }
 
     /**
@@ -127,7 +131,8 @@ class Service extends AbstractService
         $lastLoginBefore = new DateTime($warningConfig['dateShift']);
         $templateId = $warningConfig['templateId'];
 
-        echo "Sending {$warningType} warning notifications to accounts inactive since " . $lastLoginBefore->format('r') . "\n";
+        echo "Sending {$warningType} warning notifications to accounts inactive since " .
+            $lastLoginBefore->format('r') . "\n";
 
         // Pull back a list of accounts...
         $iterator = $this->getUserRepository()->getAccountsInactiveSince($lastLoginBefore, $warningType);

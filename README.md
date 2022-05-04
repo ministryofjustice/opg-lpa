@@ -179,17 +179,33 @@ The output is very verbose but can be useful for a low-level view of the HTTP la
 
 ### Cypress functional tests
 
-The cypress functional tests can be run with:
+**note**: the below assumes that the dev stack has been already started using `make dc-up`.
+
+First install cypress dependencies in the project root:
+
+```bash
+npm install .
+```
+
+The cypress functional test suite can be run with:
 
 ```bash
 make cypress-local
 ```
 
-Once you've run this command, it can be useful to start the cypress
-container and run the tests from a shell inside it. That way, you don't need
-to re-build the whole container for each test run. You can also mount your
-local test directory as a volume in the container so that you can quickly
-modify and re-run tests. To get a command-line in the cypress container, do:
+You can open the test suite and run individual tests with:
+
+```bash
+make cypress-open
+```
+
+This is usually the best way to work on and run individual tests.
+
+It can occasionally be useful to start the cypress container and run the tests from
+a shell inside it. That way, you don't need to re-build the whole container
+for each test run. You can also mount your local test directory as a volume
+in the container so that you can quickly modify and re-run tests. To get
+a command-line in the cypress container, do:
 
 ```bash
 make cypress-local-shell
@@ -205,80 +221,34 @@ run the tests:
 You can then modify the tests in your usual editor and re-run the modified tests
 with the same command without having to rebuild/restart the container.
 
-### Run the Cypress GUI via npm
-
-the recommended way to run tests for the GUI runner is using npm. see: <https://docs.cypress.io/guides/getting-started/installing-cypress/#System-requirements>. this is useful if you want to see what the tests are physically doing.
-
-**note**: the below assumes that the dev stack has been already started using `make dc-up`.
-
-Install cypress globally:
-
-```bash
-npm i -g cypress
-```
-
 The package.json in the root of the repo has all of the required dev dependancies for Cypress. Add plugins to this as needed using
 
 ```bash
 npm i <package-name> --saveDev
 ```
 
-there are 2 options available:
-
-For general use and exploratory work you can just run:
-
-```bash
-cypress open
-```
-
-Alternatively, the makefile has a default command to point at the existing cypress tests, and will list them. run the following:
-
-```bash
-make cypress-gui-npm
-```
-
-You should see a window appear with the features in it. This has been tested on Mac only so "Your Mileage May Vary" :tm:.
-
-### Run Cypress GUI via XQuartz
-
-To run the cypress tests in a GUI on Mac using XQuartz (X Windows), you need to install and start xquartz and socat :
-
-```bash
-brew install xquartz socat
-socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
-open -a Xquartz
-```
-
-If all is working, you will see XQuartz (X Window manager) running, and be able to start up a terminal.
-
-Then run cypress :
-
-```bash
-make cypress-gui-local
-```
-
-You will see the Cypress GUI, which starts a browser (Chrome and Firefox are supported) to run tests.
-You can edit tests and Cypress will (usually, although its not 100% perfect at spotting updates) re-run the
-tests automatically as result.
-
 ### Updating composer dependencies
 
-Composer install is run when the app containers are built, and on a standard `docker-compose up`.
+Composer install is run when the app containers are built, and on a standard `make dc-up`.
 
-It can also be run independently with:
+However, if you upgrade a package in composer.json for one or more services, you'll need to update the corresponding lock file(s).
+
+This can be done with:
 
 ```bash
-docker-compose run <service>-composer
+docker run -v `pwd`/service-front/:/app/ composer update --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 ```
 
-New packages can be added with:
+(replacing `service-front` with the path to the application component you are adding a package to; note that you'll need to do this for the following commands as well)
+
+Packages can be added with:
 
 ```bash
-docker-compose run <service>-composer composer require author/package
+docker run -v `pwd`/service-front/:/app/ composer require author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 ```
 
 Packages can be removed with:
 
 ```bash
-docker-compose run <service>-composer composer remove author/package
+docker run -v `pwd`/service-front/:/app/ composer remove author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 ```
