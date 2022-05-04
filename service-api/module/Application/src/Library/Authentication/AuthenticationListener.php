@@ -34,6 +34,11 @@ class AuthenticationListener
          *
          * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
          */
+        // Suppress psalm errors caused by bug in laminas-mvc;
+        // see https://github.com/laminas/laminas-mvc/issues/77
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         */
         $token = $e->getRequest()->getHeader('Token');
 
         if (!$token) {

@@ -3,7 +3,6 @@
 namespace Application\Model\Service\Users;
 
 use ArrayObject;
-
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
@@ -62,7 +61,7 @@ class Service extends AbstractService
             // Use base62 for shorter tokens
             $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
 
-            $created = (bool)$this->getUserRepository()->create($userId, [
+            $created = $this->getUserRepository()->create($userId, [
                 'identity'              => $username,
                 'active'                => false,
                 'activation_token'      => $activationToken,
@@ -251,7 +250,8 @@ class Service extends AbstractService
     /**
      * @param string $query to match against username
      * @param array $options See UserData.matchUsers()
-     * @return array of arrays (each subarray derived from a UserModel instance)
+     * @return ArrayObject<mixed, mixed> Array of arrays;
+     *     each subarray derived from a UserModel instance
      */
     public function matchUsers(string $query, array $options = [])
     {

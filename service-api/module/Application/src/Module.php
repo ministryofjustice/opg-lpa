@@ -21,7 +21,6 @@ use Http\Adapter\Guzzle6\Client as Guzzle6Client;
 use Http\Client\HttpClient;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
-use Laminas\Console\Request as ConsoleRequest;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -29,26 +28,22 @@ use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 class Module
 {
-    const VERSION = '3.0.3-dev';
+    public const VERSION = '3.0.3-dev';
 
     public function onBootstrap(MvcEvent $e)
     {
-        $eventManager        = $e->getApplication()->getEventManager();
+        $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
-        $request = $e->getApplication()->getServiceManager()->get('Request');
+        // Setup authentication listener...
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener(), 'authenticate'], 500);
 
-        if (!$request instanceof ConsoleRequest) {
-            // Setup authentication listener...
-            $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
-
-            // Register error handler for dispatch and render errors;
-            // priority is set to 100 here so that the global MvcEventListener
-            // has a chance to log it before it's converted into an API exception
-            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'), 100);
-            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'), 100);
-        }
+        // Register error handler for dispatch and render errors;
+        // priority is set to 100 here so that the global MvcEventListener
+        // has a chance to log it before it's converted into an API exception
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'), 100);
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'), 100);
     }
 
     public function getServiceConfig()
@@ -92,7 +87,8 @@ class Module
                     }
 
                     $dbconf = $config['db']['postgres']['default'];
-                    $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};port={$dbconf['port']};dbname={$dbconf['dbname']}";
+                    $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};" .
+                        "port={$dbconf['port']};dbname={$dbconf['dbname']}";
 
                     return new ZendDbAdapter([
                         'dsn' => $dsn,
@@ -154,7 +150,7 @@ class Module
             ], // factories
 
         ];
-    } // function
+    }
 
     public function getConfig()
     {
@@ -165,10 +161,12 @@ class Module
      * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
      *
      * @param MvcEvent $e
-     * @return ApiProblemResponse
+     * @return ApiProblemResponse|null
      */
     public function handleError(MvcEvent $e)
     {
+        $response = null;
+
         // Marshall an ApiProblem and view model based on the exception
         $exception = $e->getParam('exception');
 
@@ -179,8 +177,8 @@ class Module
             $e->stopPropagation();
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
-
-            return $response;
         }
+
+        return $response;
     }
 }

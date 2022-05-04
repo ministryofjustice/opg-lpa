@@ -73,7 +73,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private $logger;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -94,7 +94,11 @@ class ServiceTest extends AbstractServiceTest
         $this->setAccountsExpectations();
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'))
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            )
             // Should be called once per admin email address.
             ->times(count($this->config['admin']['account_cleanup_notification_recipients']));
 
@@ -138,7 +142,7 @@ class ServiceTest extends AbstractServiceTest
         $result = $service->cleanup();
 
         // Function doesn't return anything
-        $this->assertEquals(null, $result);
+        $this->assertEquals(1, $result);
     }
 
     public function testCleanupExpiredAccounts()
@@ -146,7 +150,11 @@ class ServiceTest extends AbstractServiceTest
         $this->setAccountsExpectations([new User(['id' => 1])]);
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
 
         $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'expired']);
@@ -180,7 +188,11 @@ class ServiceTest extends AbstractServiceTest
         $this->setAccountsExpectations([new User(['id' => 1])]);
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
 
         $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'expired']);
@@ -220,7 +232,11 @@ class ServiceTest extends AbstractServiceTest
         ])]);
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
 
         $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
 
@@ -259,7 +275,11 @@ class ServiceTest extends AbstractServiceTest
         ])]);
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
 
         $this->notifyClient->shouldReceive('sendEmail')
             ->once()
@@ -297,7 +317,11 @@ class ServiceTest extends AbstractServiceTest
         ])]);
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
 
         $this->notifyClient->shouldReceive('sendEmail')
             ->once()
@@ -337,7 +361,11 @@ class ServiceTest extends AbstractServiceTest
         ])]);
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
 
         $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
 
@@ -372,7 +400,11 @@ class ServiceTest extends AbstractServiceTest
         $this->setAccountsExpectations([], [], [], [new User(['id' => 1])]);
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
 
         $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'unactivated']);
@@ -393,8 +425,12 @@ class ServiceTest extends AbstractServiceTest
         $this->assertEquals(null, $result);
     }
 
-    private function setAccountsExpectations(array $expiredAccounts = [], array $oneWeekWarningAccounts = [], array $oneMonthWarningAccounts = [], array $unactivatedAccounts = [])
-    {
+    private function setAccountsExpectations(
+        array $expiredAccounts = [],
+        array $oneWeekWarningAccounts = [],
+        array $oneMonthWarningAccounts = [],
+        array $unactivatedAccounts = []
+    ) {
         $this->authUserRepository->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore) {
                 return $lastLoginBefore < new DateTime('-9 months +1 week')

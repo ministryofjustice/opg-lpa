@@ -60,7 +60,7 @@ class EmailController extends AbstractAuthController
 
         // Map DateTimes to strings
         $result = array_map(function ($v) {
-            return ( $v instanceof \DateTime ) ? $v->format('Y-m-d\TH:i:sO') : $v;
+            return ($v instanceof \DateTime) ? $v->format('Y-m-d\TH:i:sO') : $v;
         }, $result);
 
         $this->getLogger()->info("User successfully requested update email token", [
@@ -103,6 +103,11 @@ class EmailController extends AbstractAuthController
         ]);
 
         // Return 204 - No Content
+        // Suppress psalm errors caused by bug in laminas-mvc;
+        // see https://github.com/laminas/laminas-mvc/issues/77
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         */
         $this->response->setStatusCode(204);
 
         return new JsonModel();
