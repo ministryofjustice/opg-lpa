@@ -15,7 +15,7 @@ class Service extends AbstractService
     use PasswordValidatorTrait;
     use UserRepositoryTrait;
 
-    const TOKEN_TTL = 86400; // 24 hours
+    public const TOKEN_TTL = 86400; // 24 hours
 
     /**
      * @var AuthenticationService
@@ -94,7 +94,7 @@ class Service extends AbstractService
     /**
      * @param $token
      * @param $newPassword
-     * @return bool|string
+     * @return string|null
      */
     public function updatePasswordUsingToken($token, $newPassword)
     {

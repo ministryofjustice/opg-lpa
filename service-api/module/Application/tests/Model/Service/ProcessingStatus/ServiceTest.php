@@ -12,6 +12,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class ServiceTest extends MockeryTestCase
 {
@@ -35,7 +36,7 @@ class ServiceTest extends MockeryTestCase
      */
     private $awsSignature;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->httpClient = Mockery::mock(Client::class);
         $this->credentials = Mockery::mock(CredentialsInterface::class);
@@ -51,19 +52,22 @@ class ServiceTest extends MockeryTestCase
     public function setUpSigning($timesCalled = 1)
     {
         // We want to return the GuzzleHttp\Psr7\Request which was passed in the first argument.
-        $this->awsSignature->shouldReceive('signRequest')->times($timesCalled)->andReturnUsing(function($request){
+        $this->awsSignature->shouldReceive('signRequest')->times($timesCalled)->andReturnUsing(function ($request) {
             return $request;
         });
     }
 
-    public function setUpRequest($returnStatus = 200,
-                                 $returnBody = '{"status": "Pending","rejectedDate": null}')
-    {
+    public function setUpRequest(
+        $returnStatus = 200,
+        $returnBody = '{"status": "Pending","rejectedDate": null}'
+    ) {
         $this->response = Mockery::mock(ResponseInterface::class);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
 
         if ($returnBody != null) {
-            $this->response->shouldReceive('getBody')->andReturn($returnBody);
+            $mockBody = Mockery::mock(StreamInterface::class);
+            $mockBody->shouldReceive('getContents')->andReturn($returnBody);
+            $this->response->shouldReceive('getBody')->andReturn($mockBody);
         }
 
         $this->httpClient->shouldReceive('sendAsync')

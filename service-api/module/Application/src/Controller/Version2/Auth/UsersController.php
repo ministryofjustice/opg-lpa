@@ -68,6 +68,16 @@ class UsersController extends AbstractAuthController
         ]);
 
         // Return 204 - No Content
+        // Note: The Laminas AbstractRestfulController response member
+        // variable is an instance of Laminas\Stdlib\ResponseInterface, which doesn't
+        // have a setStatusCode() method. However, in the getResponse() method of
+        // AbstractRestfulController, we see this member variable being populated
+        // with a Laminas\Http\Response instance, which does.
+        // psalm doesn't like this, which is why we mark this as "ignored", until
+        // Laminas fixes the bug - see https://github.com/laminas/laminas-mvc/issues/77
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         */
         $this->response->setStatusCode(204);
 
         return new JsonModel();

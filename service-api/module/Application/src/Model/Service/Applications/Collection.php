@@ -16,7 +16,7 @@ class Collection extends Paginator
 
         //  Get the full details of the LPA
         foreach ($lpas as $lpa) {
-            /** @var $lpa Lpa */
+            /* @var $lpa Lpa */
             $applications[] = $lpa->toArray();
         }
 

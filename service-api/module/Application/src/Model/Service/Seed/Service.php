@@ -28,11 +28,6 @@ class Service extends AbstractService
     {
         $lpa = $this->getLpa($lpaId);
 
-        if (!is_int($lpa->seed)) {
-            return new Entity(null);
-        }
-
-        //  TODO - Change this to just use the getLpa method in the parent abstract controller?
         $lpaEntity = $this->applicationsService->fetch($lpa->seed, $userId);
 
         if (!($lpaEntity instanceof DataModelEntity)) {
@@ -42,9 +37,8 @@ class Service extends AbstractService
         /** @var Lpa $seedLpa */
         $seedLpa = $lpaEntity->getData();
 
-        //  Should need to check this, but just to be safe...
         if ($seedLpa->user != $lpa->user) {
-            return new ApiProblem(400, 'Invalid LPA identifier to seed from');
+            return new ApiProblem(400, 'LPA user does not match fetched LPA\'s user');
         }
 
         return new Entity($seedLpa);

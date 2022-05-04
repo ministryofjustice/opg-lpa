@@ -14,7 +14,7 @@ class AccountCleanupCommandTest extends MockeryTestCase
     public function testAccountCleanupCommandSuccess()
     {
         $cleanUpService = Mockery::mock(AccountCleanupService::class);
-        $cleanUpService->shouldReceive('cleanup')->andReturnNull();
+        $cleanUpService->shouldReceive('cleanup')->andReturn(0);
 
         $input = Mockery::mock(InputInterface::class);
         $output = Mockery::mock(OutputInterface::class);
@@ -24,6 +24,6 @@ class AccountCleanupCommandTest extends MockeryTestCase
 
         $result = $command->execute($input, $output);
 
-        $this->assertNull($result);
+        $this->assertEquals(0, $result);
     }
 }

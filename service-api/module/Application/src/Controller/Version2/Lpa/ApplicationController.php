@@ -49,7 +49,7 @@ class ApplicationController extends AbstractLpaController
     }
 
     /**
-     * @return JsonResponse|NoContentResponse|Paginator
+     * @return JsonResponse|NoContentResponse|Paginator|ApiProblem
      */
     public function getList()
     {
@@ -64,6 +64,8 @@ class ApplicationController extends AbstractLpaController
         //  If the page param is invalid then just get the first page
         if (!is_numeric($page) || $page < 1) {
             $page = 1;
+        } else {
+            $page = intval($page);
         }
 
         //  Create the filtered query by excluding the page query data - this should just leave the search parameter
@@ -80,14 +82,14 @@ class ApplicationController extends AbstractLpaController
             return new NoContentResponse();
         }
 
-        //  The applications collection was a success - it will be a paginator
-        /** @var Collection $result */
+        // The applications collection was a success - it will be a paginator
+        /* @var Collection $result */
 
         //  Set the page number and per page count (if valid)
         $result->setCurrentPageNumber($page);
 
         if (is_numeric($perPage) && $perPage > 0) {
-            $result->setItemCountPerPage($perPage);
+            $result->setItemCountPerPage(intval($perPage));
         }
 
         return new JsonResponse($result->toArray());
@@ -114,6 +116,14 @@ class ApplicationController extends AbstractLpaController
     }
 
     /**
+     * For whatever reason, laminas-mvc's (v3.3) return type for patch()
+     * is array rather than mixed (like all the other REST methods).
+     * Because we treat responses uniformly and return a response type
+     * from patch(), psalm complains about this, so that's what we're
+     * suppressing here.
+     *
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     *
      * @param $id
      * @param $data
      * @return JsonResponse|ApiProblem

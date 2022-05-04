@@ -6,6 +6,7 @@ use PDOException;
 use DateTime;
 use Laminas\Db\Sql\Expression as SqlExpression;
 use Laminas\Db\Sql\Sql;
+use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
@@ -129,7 +130,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $sql = $this->dbWrapper->createSql();
 
         // count applications by user
-        $subselect = $sql->select(['a' => ApplicationData::APPLICATIONS_TABLE])
+        $subselect = $sql->select()->from(['a' => ApplicationData::APPLICATIONS_TABLE])
             ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
             ->group(['user']);
 
@@ -146,7 +147,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         // main query
         // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
         // invalid SQL; but this potentially locks the code to Postgres
-        $select = $sql->select(['u' => self::USERS_TABLE])
+        $select = $sql->select()->from(['u' => self::USERS_TABLE])
             ->join(
                 ['a' => $subselect],
                 'u.id = a.user',
@@ -317,7 +318,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * NB: When an account is deleted, the document it kept, leaving only _id and a new deletedAt field.
      *
      * @param $id
-     * @return bool|null
+     * @return bool
      */
     public function delete(string $id): bool
     {
@@ -348,7 +349,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * Activates a user account
      *
      * @param $token
-     * @return bool|null
+     * @return bool
      */
     public function activate(string $token): bool
     {
@@ -686,20 +687,20 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      *
-     * @param ProfileUserModel $user
+     * @param ProfileUserModel $data
      * @return bool
      */
-    public function saveProfile(ProfileUserModel $user): bool
+    public function saveProfile(ProfileUserModel $data): bool
     {
-        $data = $user->toArray();
+        $user = $data->toArray();
 
         // Remove unwarned fields
-        unset($data['id'], $data['createdAt'], $data['updatedAt']);
+        unset($user['id'], $user['createdAt'], $user['updatedAt']);
 
         return $this->updateRow(
-            ['id' => $user->getId()],
+            ['id' => $data->getId()],
             [
-                'profile' => json_encode($data),
+                'profile' => json_encode($user),
             ]
         );
     }
