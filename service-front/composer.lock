@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e35d6df285bf20c6d523c52e021ff9f",
+    "content-hash": "5c18dab5c1bec3d7eafcaf0f816223c2",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -3283,16 +3283,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "14.0.0",
+            "version": "dev-ES_fixes_for_service_front",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
-                "reference": "070543818972f1309191331038ad50432e35866a"
+                "reference": "263b7266a98718d443b8974a6de84df58ef8c5ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/070543818972f1309191331038ad50432e35866a",
-                "reference": "070543818972f1309191331038ad50432e35866a",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/263b7266a98718d443b8974a6de84df58ef8c5ab",
+                "reference": "263b7266a98718d443b8974a6de84df58ef8c5ab",
                 "shasum": ""
             },
             "require": {
@@ -3313,7 +3313,7 @@
                 "MIT"
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
-            "time": "2022-04-29T14:25:28+00:00"
+            "time": "2022-05-04T16:20:30+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -8660,7 +8660,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "ministryofjustice/opg-lpa-datamodels": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
