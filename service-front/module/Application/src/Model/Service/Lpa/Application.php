@@ -161,10 +161,14 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         //  Get the response and check its contents
         try {
-            $result = $this->apiClient->httpGet(
+            $response = $this->apiClient->httpGet(
                 sprintf('/v2/user/%s/applications', $this->getUserId()),
                 $queryParams
             );
+
+            if (is_array($response)) {
+                $result = $response;
+            }
         } catch (ApiException $ex) {
             $this->getLogger()->err('ApiException thrown when fetching LPA application summaries');
         }
@@ -297,7 +301,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param $pdfType
-     * @return array|bool|null
+     * @return array|false
      * @throws ApiException
      */
     public function getPdfContents($lpaId, $pdfType)
@@ -305,11 +309,16 @@ class Application extends AbstractService implements ApiClientAwareInterface
         $target = sprintf('/v2/user/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType);
 
         try {
-            return $this->apiClient->httpGet($target, [], false);
+            $result = $this->apiClient->httpGet($target, [], false);
+
+            if (!is_array($result)) {
+                $result = false;
+            }
         } catch (ApiException $ex) {
+            $result = false;
         }
 
-        return false;
+        return $result;
     }
 
     /**

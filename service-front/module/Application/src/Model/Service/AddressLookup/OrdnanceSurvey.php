@@ -86,7 +86,7 @@ class OrdnanceSurvey
             throw new \RuntimeException('Error retrieving address details: bad status code');
         }
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $body = json_decode('' . $response->getBody(), true);
 
         if (isset($body['header']['totalresults']) && $body['header']['totalresults'] === 0) {
             return [];

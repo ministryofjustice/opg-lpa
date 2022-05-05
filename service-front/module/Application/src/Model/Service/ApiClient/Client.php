@@ -244,7 +244,7 @@ class Client
      */
     private function handleResponse(ResponseInterface $response, $jsonResponse = true)
     {
-        $body = $response->getBody()->__toString();
+        $body = '' . $response->getBody();
 
         if ($jsonResponse == true) {
             $body = json_decode($body, true);
