@@ -9,72 +9,81 @@ namespace Application\Model\Service\ApiClient\Response;
 class AuthResponse
 {
     /**
-     * @param array $result
-     * @return static
-     */
-    public static function buildFromResponse(array $result)
-    {
-        $authResponse = new static();
-        $authResponse->exchangeArray($result);
-
-        return $authResponse;
-    }
-
-    /**
      * The ID of the currently authenticated user.
-     *
-     * @var string
      */
+    /** @var string */
     private $userId;
 
     /**
      * The user identity
-     *
-     * @var string
      */
+    /** @var string */
     private $username;
 
     /**
      * The authentication token
-     *
-     * @var string
      */
+    /** @var string */
     private $token;
 
     /**
      * Minutes until expiry
-     *
-     * @var number
      */
+    /** @var numeric */
     private $expiresIn;
 
     /**
      * Date and time of expiry
-     *
-     * @var string
      */
+    /** @var string */
     private $expiresAt;
 
     /**
-     * The last time this user logged in
-     *
-     * @var number Timestamp
+     * Unix timestamp representing the last time this user logged in
      */
+    /** @var int */
     private $lastLogin;
 
     /**
      * Boolean value representing whether inactivity flags were cleared during the authentication
-     *
-     * @var boolean
      */
+    /** @var boolean */
     private $inactivityFlagsCleared;
 
     /**
      * The error description, if any
-     *
-     * @var string
      */
+    /** @var string */
     private $errorDescription;
+
+    /**
+     * Constructor.
+     * Populates the member variables of the instance from an array.
+     *
+     * @param array $array
+     */
+    public function __construct(array $array = [])
+    {
+        $this->userId = isset($array['userId']) ? $array['userId'] : null;
+        $this->token = isset($array['token']) ? $array['token'] : null;
+        $this->lastLogin = isset($array['last_login']) ? $array['last_login'] : null;
+        $this->username = isset($array['username']) ? $array['username'] : null;
+        $this->expiresIn = isset($array['expiresIn']) ? $array['expiresIn'] : null;
+        $this->expiresAt = isset($array['expiresAt']) ? $array['expiresAt'] : null;
+        $this->inactivityFlagsCleared = isset($array['inactivityFlagsCleared']) ?
+            $array['inactivityFlagsCleared'] : null;
+    }
+
+    /**
+     * Factory method
+     *
+     * @param array $result
+     * @return AuthResponse
+     */
+    public static function buildFromResponse(array $result)
+    {
+        return new AuthResponse($result);
+    }
 
     /**
      * @return string
@@ -82,14 +91,6 @@ class AuthResponse
     public function getUserId()
     {
         return $this->userId;
-    }
-
-    /**
-     * @param string $userId
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
     }
 
     /**
@@ -101,27 +102,11 @@ class AuthResponse
     }
 
     /**
-     * @param string $token
-     */
-    public function setToken($token)
-    {
-        $this->token = $token;
-    }
-
-    /**
      * @return number variable $expiresIn
      */
     public function getExpiresIn()
     {
         return $this->expiresIn;
-    }
-
-    /**
-     * @param number $expiresIn
-     */
-    public function setExpiresIn($expiresIn)
-    {
-        $this->expiresIn = $expiresIn;
     }
 
     /**
@@ -133,27 +118,11 @@ class AuthResponse
     }
 
     /**
-     * @param string $expiresAt
-     */
-    public function setExpiresAt($expiresAt)
-    {
-        $this->expiresAt = $expiresAt;
-    }
-
-    /**
-     * @return string variable $lastLogin
+     * @return int $lastLogin
      */
     public function getLastLogin()
     {
         return $this->lastLogin;
-    }
-
-    /**
-     * @param string $lastLogin
-     */
-    public function setLastLogin($lastLogin)
-    {
-        $this->lastLogin = $lastLogin;
     }
 
     /**
@@ -165,27 +134,11 @@ class AuthResponse
     }
 
     /**
-     * @param string $username
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-    }
-
-    /**
      * @return boolean $inactivityFlagsCleared
      */
     public function getInactivityFlagsCleared()
     {
         return $this->inactivityFlagsCleared;
-    }
-
-    /**
-     * @param boolean $inactivityFlagsCleared
-     */
-    public function setInactivityFlagsCleared($inactivityFlagsCleared)
-    {
-        $this->inactivityFlagsCleared = $inactivityFlagsCleared;
     }
 
     /**
@@ -212,21 +165,5 @@ class AuthResponse
     public function isAuthenticated()
     {
         return !empty($this->userId) && !empty($this->token) && empty($this->errorDescription);
-    }
-
-    /**
-     * Populate the member variables from an array
-     *
-     * @param array $array
-     */
-    public function exchangeArray(array $array)
-    {
-        $this->userId = isset($array['userId']) ? $array['userId'] : null;
-        $this->token = isset($array['token']) ? $array['token'] : null;
-        $this->lastLogin = isset($array['last_login']) ? $array['last_login'] : null;
-        $this->username = isset($array['username']) ? $array['username'] : null;
-        $this->expiresIn = isset($array['expiresIn']) ? $array['expiresIn'] : null;
-        $this->expiresAt = isset($array['expiresAt']) ? $array['expiresAt'] : null;
-        $this->inactivityFlagsCleared = isset($array['inactivityFlagsCleared']) ? $array['inactivityFlagsCleared'] : null;
     }
 }
