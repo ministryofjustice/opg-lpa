@@ -4,18 +4,22 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\Feedback\Feedback;
+use Laminas\Http\Header\Referer;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 
 class FeedbackController extends AbstractBaseController
 {
-    /**
-     * @var Feedback
-     */
+    /** @var Feedback */
     private $feedbackService;
 
     /**
-     * @return \Laminas\Http\Response|ViewModel
+     * Laminas indexAction() is not supposed to return an HttpResponse.
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     *
+     * @return HttpResponse|ViewModel
      * @throws \Exception
      */
     public function indexAction()
@@ -25,6 +29,7 @@ class FeedbackController extends AbstractBaseController
         $form = $this->getFormElementManager()
                      ->get('Application\Form\General\FeedbackForm');
 
+        /** @var HttpRequest */
         $request = $this->getRequest();
 
         if ($request->isPost()) {
@@ -35,7 +40,10 @@ class FeedbackController extends AbstractBaseController
 
                 //  Inject extra details into the data before passing to the feedback service to send in an email
                 $data['agent'] = $_SERVER['HTTP_USER_AGENT'];
-                $data['fromPage'] = (is_string($container->feedbackLinkClickedFromPage) ? $container->feedbackLinkClickedFromPage : 'Unknown');
+                $data['fromPage'] = (
+                    is_string($container->feedbackLinkClickedFromPage) ?
+                        $container->feedbackLinkClickedFromPage : 'Unknown'
+                );
 
                 $result = $this->feedbackService->add($data);
 
@@ -55,8 +63,11 @@ class FeedbackController extends AbstractBaseController
         } else {
             $container->setExpirationHops(1);
 
-            if ($this->getRequest()->getHeader('Referer') != false) {
-                $container->feedbackLinkClickedFromPage = $this->getRequest()->getHeader('Referer')->uri()->getPath();
+            /** @var Referer */
+            $referer = $request->getHeader('Referer');
+
+            if ($referer !== false) {
+                $container->feedbackLinkClickedFromPage = $referer->uri()->getPath();
             } else {
                 $container->feedbackLinkClickedFromPage = null;
             }
@@ -68,7 +79,7 @@ class FeedbackController extends AbstractBaseController
     }
 
     /**
-     * @return ViewModel
+     * @return HttpResponse|ViewModel
      */
     public function thanksAction()
     {

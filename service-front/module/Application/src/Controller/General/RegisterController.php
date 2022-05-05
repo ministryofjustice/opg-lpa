@@ -4,8 +4,11 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\User\Details as UserService;
+use Laminas\Http\Header\Referer;
+use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
+use ArrayIterator;
 
 class RegisterController extends AbstractBaseController
 {
@@ -28,15 +31,17 @@ class RegisterController extends AbstractBaseController
      */
     public function indexAction()
     {
+        /** @var HttpRequest */
         $request = $this->getRequest();
-
-        //  gov.uk is not allowed to point users directly at this page
-        $referer = $request->getHeader('Referer');
 
         $ga = $request->getQuery('_ga');
 
-        if ($referer != false) {
-            if ($referer->uri()->getHost() === 'www.gov.uk') {
+        // gov.uk is not allowed to point users directly at this page
+        /** @var Referer */
+        $referer = $request->getHeader('Referer');
+
+        if ($referer !== false) {
+            if (stripos($referer->uri()->getHost(), 'www.gov.uk') !== false) {
                 return $this->redirect()->toRoute('home', ['action' => 'index'], ['query' => ['_ga' => $ga]]);
             }
         }
@@ -111,6 +116,7 @@ class RegisterController extends AbstractBaseController
 
         $viewModel = new ViewModel();
 
+        /** @var HttpRequest */
         $request = $this->getRequest();
 
         if ($request->isPost()) {
