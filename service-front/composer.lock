@@ -3287,12 +3287,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
-                "reference": "263b7266a98718d443b8974a6de84df58ef8c5ab"
+                "reference": "331c9b7ce5f2c3f05a397505a00540505ed2f3e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/263b7266a98718d443b8974a6de84df58ef8c5ab",
-                "reference": "263b7266a98718d443b8974a6de84df58ef8c5ab",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/331c9b7ce5f2c3f05a397505a00540505ed2f3e5",
+                "reference": "331c9b7ce5f2c3f05a397505a00540505ed2f3e5",
                 "shasum": ""
             },
             "require": {
@@ -3313,7 +3313,7 @@
                 "MIT"
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
-            "time": "2022-05-04T16:20:30+00:00"
+            "time": "2022-05-05T07:46:31+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
