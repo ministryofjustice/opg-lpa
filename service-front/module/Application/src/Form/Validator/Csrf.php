@@ -37,8 +37,8 @@ class Csrf extends LaminasCsrfValidator
     /**
      * Does the provided token match the one generated?
      *
-     * @param  string $value
-     * @param  mixed $context
+     * @param mixed $value
+     * @param mixed $context
      * @return bool
      */
     public function isValid($value, $context = null)
@@ -84,7 +84,7 @@ class Csrf extends LaminasCsrfValidator
     {
         $salt = $this->getSalt();
 
-        if ($salt == null || empty($salt)) {
+        if (empty($salt)) {
             throw new RuntimeException('CSRF salt cannot be null or empty');
         }
 
