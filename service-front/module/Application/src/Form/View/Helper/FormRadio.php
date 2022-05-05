@@ -10,12 +10,12 @@ use Laminas\Form\View\Helper\FormRadio as LaminasFormRadioHelper;
 class FormRadio extends LaminasFormRadioHelper
 {
     /**
-     * This allows us to output a single Radio option from an Radio Element's available options.
+     * This allows us to output a single Radio option from a Radio Element's available options.
      *
-     * @param   Radio   $element
-     * @param   string  $option
-     * @param   array   $labelAttributes
-     * @return  string
+     * @param Radio $element
+     * @param string $option
+     * @param array $labelAttributes
+     * @return string
      */
     public function outputOption(Radio $element, $option, $labelAttributes = [])
     {
@@ -29,10 +29,10 @@ class FormRadio extends LaminasFormRadioHelper
             return '';
         }
 
-        $attributes         = $element->getAttributes();
+        $attributes = $element->getAttributes();
         $attributes['name'] = $name;
         $attributes['type'] = $this->getInputType();
-        $selectedOptions    = (array) $element->getValue();
+        $selectedOptions = (array) $element->getValue();
 
         if (isset($options[$option]['id'])) {
             $attributes['id'] = $options[$option]['id'];
@@ -54,7 +54,8 @@ class FormRadio extends LaminasFormRadioHelper
 
         //  If applicable render a hidden element
         if ($element->useHiddenElement() || $this->useHiddenElement) {
-            $rendered = $this->renderHiddenElement($element, $attributes) . $rendered;
+            $element->setAttributes($attributes);
+            $rendered = $this->renderHiddenElement($element) . $rendered;
         }
 
         return $rendered;
@@ -78,9 +79,9 @@ class FormRadio extends LaminasFormRadioHelper
         array $attributes
     ): string {
         $escapeHtmlHelper = $this->getEscapeHtmlHelper();
-        $labelHelper      = $this->getLabelHelper();
+        $labelHelper = $this->getLabelHelper();
         $globalLabelAttributes = [];
-        $closingBracket   = $this->getInlineClosingBracket();
+        $closingBracket = $this->getInlineClosingBracket();
 
         // Setup label attributes common to all options
         if ($element instanceof LabelAwareInterface) {
@@ -105,15 +106,15 @@ class FormRadio extends LaminasFormRadioHelper
 
             $count++;
 
-            $value           = '';
-            $label           = '';
+            $value = '';
+            $label = '';
             $inputAttributes = $attributes;
             $labelAttributes = $globalLabelAttributes;
 
-            $selected        = (isset($inputAttributes['selected'])
+            $selected = (isset($inputAttributes['selected'])
                 && $inputAttributes['type'] != 'radio'
                 && $inputAttributes['selected']);
-            $disabled        = (isset($inputAttributes['disabled']) && $inputAttributes['disabled']);
+            $disabled = (isset($inputAttributes['disabled']) && $inputAttributes['disabled']);
 
             if (is_scalar($optionSpec)) {
                 $optionSpec = [
@@ -147,9 +148,9 @@ class FormRadio extends LaminasFormRadioHelper
                 $selected = true;
             }
 
-            $inputAttributes['value']    = $value;
-            $inputAttributes['data-cy']  = $element->getName() . '-' . $value;
-            $inputAttributes['checked']  = $selected;
+            $inputAttributes['value'] = $value;
+            $inputAttributes['data-cy'] = $element->getName() . '-' . $value;
+            $inputAttributes['checked'] = $selected;
             $inputAttributes['disabled'] = $disabled;
             $inputAttributes['id'] = isset($attributes['id']) ?
                 $attributes['id'] :
@@ -188,7 +189,7 @@ class FormRadio extends LaminasFormRadioHelper
                 $divOpen = '<div ' . $this->createAttributesString($divAttributes) . '>';
             }
 
-            $markup  = $divOpen .
+            $markup = $divOpen .
                 $input .
                 $labelHelper->openTag($labelAttributes) .
                 $label .
