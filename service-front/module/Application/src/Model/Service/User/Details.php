@@ -48,7 +48,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * Update the user's basic details
      *
      * @param array $data
-     * @return array
+     * @return array|null|string
      * @throws RuntimeException
      */
     public function updateAllDetails(array $data)

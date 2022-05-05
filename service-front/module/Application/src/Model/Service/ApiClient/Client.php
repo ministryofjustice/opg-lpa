@@ -10,22 +10,15 @@ use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
-
     use LoggerTrait;
 
-    /**
-     * @var HttpClientInterface
-     */
+    /** @var HttpClientInterface */
     private $httpClient;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $apiBaseUri;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $defaultHeaders;
 
     /**
@@ -65,7 +58,7 @@ class Client
      * @param bool $jsonResponse
      * @param bool $anonymous
      * @param array|null $additionalHeaders
-     * @return array|null
+     * @return array|null|string
      * @throws \Http\Client\Exception
      */
     public function httpGet(
@@ -101,6 +94,8 @@ class Client
             default:
                 return $this->handleErrorResponse($response);
         }
+
+        return null;
     }
 
     /**
@@ -109,7 +104,7 @@ class Client
      * @param string $path
      * @param array $payload
      * @param array $additionalHeaders - extra headers to add to request
-     * @return array|null
+     * @return array|null|string
      * @throws Exception\ApiException
      * @throws \Http\Client\Exception
      */
@@ -117,11 +112,7 @@ class Client
     {
         $url = $this->apiBaseUri . $path;
 
-        $headers = $this->buildHeaders();
-
-        if (is_array($additionalHeaders)) {
-            $headers += $additionalHeaders;
-        }
+        $headers = $this->buildHeaders() + $additionalHeaders;
 
         $request = new Request('POST', $url, $headers, json_encode($payload));
 
@@ -143,7 +134,7 @@ class Client
      *
      * @param string $path
      * @param array $payload
-     * @return array
+     * @return array|null|string
      * @throws Exception\ApiException
      * @throws \Http\Client\Exception
      */
@@ -171,7 +162,7 @@ class Client
      *
      * @param string $path
      * @param array $payload
-     * @return array
+     * @return array|null|string
      * @throws Exception\ApiException
      * @throws \Http\Client\Exception
      */
@@ -222,7 +213,7 @@ class Client
      * @param bool $anonymous If true, don't include a "Token" header
      * @return array
      */
-    private function buildHeaders($anonymous = FALSE)
+    private function buildHeaders($anonymous = false)
     {
         $headers = [
             'Accept'        => 'application/json',
@@ -248,12 +239,12 @@ class Client
      *
      * @param ResponseInterface $response
      * @param bool $jsonResponse
-     * @return array
+     * @return array|string
      * @throws Exception\ApiException
      */
     private function handleResponse(ResponseInterface $response, $jsonResponse = true)
     {
-        $body = $response->getBody();
+        $body = $response->getBody()->__toString();
 
         if ($jsonResponse == true) {
             $body = json_decode($body, true);

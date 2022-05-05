@@ -29,7 +29,7 @@ class AuthResponse
     /**
      * Minutes until expiry
      */
-    /** @var numeric */
+    /** @var int */
     private $expiresIn;
 
     /**
@@ -41,7 +41,7 @@ class AuthResponse
     /**
      * Unix timestamp representing the last time this user logged in
      */
-    /** @var int */
+    /** @var string */
     private $lastLogin;
 
     /**
@@ -102,7 +102,7 @@ class AuthResponse
     }
 
     /**
-     * @return number variable $expiresIn
+     * @return int
      */
     public function getExpiresIn()
     {
@@ -110,7 +110,7 @@ class AuthResponse
     }
 
     /**
-     * @return string variable $expiresAt
+     * @return string $expiresAt
      */
     public function getExpiresAt()
     {
@@ -118,7 +118,7 @@ class AuthResponse
     }
 
     /**
-     * @return int $lastLogin
+     * @return string $lastLogin
      */
     public function getLastLogin()
     {
