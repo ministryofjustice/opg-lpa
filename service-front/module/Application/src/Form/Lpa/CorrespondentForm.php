@@ -75,31 +75,35 @@ class CorrespondentForm extends AbstractActorForm
         parent::init();
     }
 
-    public function bind($data, $flags = FormInterface::VALUES_NORMALIZED)
+    public function bind($object, $flags = FormInterface::VALUES_NORMALIZED)
     {
         //  If the data being bound represents a donor or a human attorney then the form is not editable
         //  In all other circumstances some or all of the data can be edited
-        $who = (isset($data['who']) ? $data['who'] : null);
-        $type = (isset($data['type']) ? $data['type'] : null);
+        $who = (isset($object['who']) ? $object['who'] : null);
+        $type = (isset($object['type']) ? $object['type'] : null);
 
         //  Check to see if the data should be editable
-        if ($who == Correspondence::WHO_DONOR || ($who == Correspondence::WHO_ATTORNEY && $type == 'human') || $who == Correspondence::WHO_CERTIFICATE_PROVIDER) {
+        if (
+            $who == Correspondence::WHO_DONOR ||
+            $who == Correspondence::WHO_CERTIFICATE_PROVIDER ||
+            ($who == Correspondence::WHO_ATTORNEY && $type == 'human')
+        ) {
             $this->isEditable = false;
         }
 
         //  Check to see if the data represents a trust and set any required data
         if ($type == 'trust') {
             //  Replace the who value for a trust attorney
-            $who = $data['who'] = Correspondence::WHO_ATTORNEY;
+            $who = $object['who'] = Correspondence::WHO_ATTORNEY;
 
             //  Move the name to the company field so the data binds correctly
-            $data['company'] = $data['name'];
-            unset($data['name']);
+            $object['company'] = $object['name'];
+            unset($object['name']);
         }
 
-        $this->trustSelected = ($who == Correspondence::WHO_ATTORNEY && !empty($data['company']));
+        $this->trustSelected = ($who == Correspondence::WHO_ATTORNEY && !empty($object['company']));
 
-        return parent::bind($data, $flags);
+        return parent::bind($object, $flags);
     }
 
     public function trustSelected()

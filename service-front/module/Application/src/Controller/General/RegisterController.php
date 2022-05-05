@@ -9,7 +9,6 @@ use Laminas\View\Model\ViewModel;
 
 class RegisterController extends AbstractBaseController
 {
-
     /**
      * @var UserService
      */
@@ -18,6 +17,13 @@ class RegisterController extends AbstractBaseController
     /**
      * Register a new account.
      *
+     * The Laminas MVC controller only allows ViewModel
+     * as a return type, but we return a redirect response in
+     * some cases. (Not sure why Laminas doesn't enforce this
+     * when sending responses to the client from an MVC controller,
+     * but it doesn't.) So we suppress this psalm error.
+     *
+     * @psalm-suppress ImplementedReturnTypeMismatch
      * @return ViewModel|\Laminas\Http\Response
      */
     public function indexAction()
@@ -90,7 +96,7 @@ class RegisterController extends AbstractBaseController
     /**
      * Display the form to resend the activation email or process a post
      *
-     * @return ViewModel
+     * @return ViewModel|false|\Laminas\Http\Response
      */
     public function resendEmailAction()
     {
