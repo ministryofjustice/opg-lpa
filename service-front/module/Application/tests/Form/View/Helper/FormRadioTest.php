@@ -6,6 +6,7 @@ use Application\Form\View\Helper\FormRadio;
 use PHPUnit\Framework\TestCase;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Form;
+use Laminas\View\Renderer\ConsoleRenderer;
 
 class FormRadioTest extends TestCase
 {
@@ -31,7 +32,7 @@ class FormRadioTest extends TestCase
         $radio->setValueOptions($options);
 
         $helper = new FormRadio();
-        $helper->setViewForTesting();
+        $helper->setView(new ConsoleRenderer());
 
         $html = $helper($radio);
 
@@ -80,7 +81,7 @@ class FormRadioTest extends TestCase
         $radio->setAttributes(['div-attributes' => ['class' => 'test_class']]);
 
         $helper = new FormRadio();
-        $helper->setViewForTesting();
+        $helper->setView(new ConsoleRenderer());
 
         $html = $helper($radio);
 
@@ -143,7 +144,7 @@ class FormRadioTest extends TestCase
         $radio->setValueOptions($options);
 
         $helper = new FormRadio();
-        $helper->setViewForTesting();
+        $helper->setView(new ConsoleRenderer());
 
         $html = $helper($radio);
 
@@ -181,7 +182,7 @@ class FormRadioTest extends TestCase
         $radio->setValueOptions($options);
 
         $helper = new FormRadio();
-        $helper->setViewForTesting();
+        $helper->setView(new ConsoleRenderer());
 
         $html = $helper->outputOption($radio, 1);
 

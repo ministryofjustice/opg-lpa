@@ -36,8 +36,7 @@ class FormRadio extends LaminasFormRadioHelper
 
         if (isset($options[$option]['id'])) {
             $attributes['id'] = $options[$option]['id'];
-        }
-        else if (isset($options[$option]['value'])) {
+        } elseif (isset($options[$option]['value'])) {
             $attributes['id'] = $name . '-' . $options[$option]['value'];
         } else {
             $attributes['id'] = $name . '-' . $option;
@@ -93,7 +92,7 @@ class FormRadio extends LaminasFormRadioHelper
         }
 
         $combinedMarkup = [];
-        $count          = 0;
+        $count = 0;
 
         foreach ($options as $key => $optionSpec) {
             // If multiple options are being rendered, unset the id after the
@@ -175,7 +174,6 @@ class FormRadio extends LaminasFormRadioHelper
                 $label = $escapeHtmlHelper($label);
             }
 
-
             // Setup wrapping div opening
             $divAttributes = isset($attributes['div-attributes']) ? $attributes['div-attributes'] : [];
 
@@ -201,10 +199,5 @@ class FormRadio extends LaminasFormRadioHelper
         }
 
         return implode($this->getSeparator(), $combinedMarkup);
-    }
-
-    public function setViewForTesting()
-    {
-        $this->view = "Set To Something Non-Null To Allow Unit Testing";
     }
 }
