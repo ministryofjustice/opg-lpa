@@ -10,7 +10,7 @@ use Twig\Environment as TwigEnvironment;
 
 class LocalViewRenderer
 {
-    /* @var TwigEnvironment */
+    /** @var TwigEnvironment */
     private $viewRenderer;
 
     /**

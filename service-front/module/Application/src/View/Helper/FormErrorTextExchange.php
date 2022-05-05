@@ -9,16 +9,14 @@ class FormErrorTextExchange extends AbstractHelper
 {
     /**
      * Catch-all transformations, ignorant of field name
-     *
-     * @var array - Common Generic Map
      */
+    /** @var array - Common Generic Map */
     private $commonMap = [];
 
     /**
      * Generic transformations for named fields
-     *
-     * $var array - Common Field Map
      */
+    /** $var array - Common Field Map */
     private $commonFieldMap = [];
 
     /**

@@ -22,9 +22,10 @@ class NotifyMailTransport implements MailTransportInterface
     /**
      * Map from internal template IDs to Notify template IDs
      *
-     * @var array Keys are local template IDs, as passed to send() via a MailParameters object;
+     * Keys are local template IDs, as passed to send() via a MailParameters object;
      * values are Notify template IDs
-     */
+     *
+    /** @var array */
     private $templateMap;
 
     // Default values for $templateMap; values are Notify template IDs;
@@ -43,11 +44,7 @@ class NotifyMailTransport implements MailTransportInterface
        AbstractEmailService::EMAIL_ACCOUNT_DUPLICATION_WARNING => '4c99eeff-6af9-4753-aae1-a5d46ea06815',
     ];
 
-    /**
-     * Notify client object
-     *
-     * @var NotifyClient
-     */
+    /** @var NotifyClient */
     private $client;
 
     /**
@@ -74,7 +71,7 @@ class NotifyMailTransport implements MailTransportInterface
      * to one throws an exception, subsequent emails will not be sent.
      *
      * @param  MailParameters $mailParameters
-     * @throws Laminas\Mail\Exception\ExceptionInterface
+     * @throws TransportInvalidArgumentException
      */
     public function send(MailParameters $mailParameters): void
     {
@@ -104,7 +101,7 @@ class NotifyMailTransport implements MailTransportInterface
                     'Failed sending email via Notify: ' . $ex->getMessage() . '\n' . $ex->getTraceAsString()
                 );
 
-                throw new TransportInvalidArgumentException($ex);
+                throw new TransportInvalidArgumentException($ex->getMessage());
             }
         }
     }

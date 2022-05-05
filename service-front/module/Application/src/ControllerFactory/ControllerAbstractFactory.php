@@ -38,9 +38,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
 {
     /**
      * Any additional services to be injected into the requested service using the setter method specified
-     *
-     * @var array
      */
+    /** @var array */
     private $additionalServices = [
         AboutYouController::class => [
             'setUserDetailsSession' => 'UserDetailsSession',
@@ -100,7 +99,10 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     public function canCreate(ContainerInterface $container, $requestedName)
     {
         $controllerName = $this->getControllerName($requestedName);
-        return (class_exists($controllerName) && is_subclass_of($controllerName, AbstractBaseController::class));
+        return (
+            class_exists($controllerName) &&
+            is_subclass_of($controllerName, AbstractBaseController::class)
+        );
     }
 
     /**
@@ -128,7 +130,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $controllerName = $this->getControllerName($requestedName);
 
         $formElementManager = $container->get('FormElementManager');
-        // Container is just initiated, but this is required to populate twig helper function RouteName within templates.
+        // Container is just initiated, but this is required to populate twig helper
+        // function RouteName within templates.
         $container->get('PersistentSessionDetails');
         $sessionManager = $container->get('SessionManager');
         $authenticationService = $container->get('AuthenticationService');
@@ -187,8 +190,10 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         }
 
         //  If required load any additional services into the resource
-        if (array_key_exists($controllerName, $this->additionalServices)
-            && is_array($this->additionalServices[$controllerName])) {
+        if (
+            array_key_exists($controllerName, $this->additionalServices)
+            && is_array($this->additionalServices[$controllerName])
+        ) {
             foreach ($this->additionalServices[$controllerName] as $setterMethod => $additionalService) {
                 if (!method_exists($controller, $setterMethod)) {
                     throw new Exception(sprintf(

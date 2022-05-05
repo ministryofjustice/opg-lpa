@@ -33,7 +33,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param string|null $token
-     * @return array|bool|null
+     * @return false|Lpa
      */
     public function getApplication($lpaId, string $token = null)
     {
@@ -47,6 +47,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $result = $this->apiClient->httpGet($target);
             return new Lpa($result);
         } catch (ApiException $ex) {
+            $this->getLogger()->err($ex->getMessage());
         }
 
         return false;
@@ -83,7 +84,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
     /**
      * Create a new LPA application
      *
-     * @return bool
+     * @return false|Lpa
      */
     public function createApplication()
     {
@@ -103,7 +104,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param array $data
-     * @return bool
+     * @return false|Lpa
      */
     public function updateApplication($lpaId, array $data)
     {
@@ -218,7 +219,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                     $progress = 'Waiting';
 
                     // If we already have a processing status use that instead of "Waiting" status
-                    if ($metadata !== null && array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata)) {
+                    if (array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata)) {
                         $processingStatus = $metadata[Lpa::SIRIUS_PROCESSING_STATUS];
 
                         if ($processingStatus !== null) {

@@ -317,7 +317,7 @@ class Module implements FormElementProviderInterface
      * which is attached to these events in config.
      *
      * @param MvcEvent $e
-     * @return ViewModel
+     * @return ViewModel|null
      */
     public function handleError(MvcEvent $e)
     {
@@ -330,6 +330,11 @@ class Module implements FormElementProviderInterface
             $e->getViewModel()->addChild($viewModel);
             $e->stopPropagation();
 
+            // Suppress psalm errors caused by bug in laminas-mvc;
+            // see https://github.com/laminas/laminas-mvc/issues/77
+            /**
+             * @psalm-suppress UndefinedInterfaceMethod
+             */
             $e->getResponse()->setStatusCode(500);
 
             return $viewModel;

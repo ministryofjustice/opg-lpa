@@ -10,13 +10,11 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class ReplacementAttorneyCleanup extends AbstractService
 {
-    /**
-     * @var LpaApplicationService
-     */
+    /** @var LpaApplicationService */
     private $lpaApplicationService;
 
     /**
-     * Cleanup data to to with how the Replacement Attorneys should act
+     * Cleanup data to do with how the Replacement Attorneys should act
      *
      * @param Lpa $lpa
      */
@@ -50,11 +48,15 @@ class ReplacementAttorneyCleanup extends AbstractService
         $formFlowChecker = new FormFlowChecker($lpa);
 
         // there are some decisions to remove
-        if ($decisions instanceof ReplacementAttorneyDecisions &&
-            (!empty($decisions->getWhen()) || !empty($decisions->getWhenDetails()))) {
-            if (!$formFlowChecker->lpaHasReplacementAttorney()
-               || !$lpa->hasMultiplePrimaryAttorneys()
-               || !$lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
+        if (
+            $decisions instanceof ReplacementAttorneyDecisions &&
+            (!empty($decisions->getWhen()) || !empty($decisions->getWhenDetails()))
+        ) {
+            if (
+                !$formFlowChecker->lpaHasReplacementAttorney()
+                || !$lpa->hasMultiplePrimaryAttorneys()
+                || !$lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+            ) {
                 return true;
             }
         }
@@ -73,15 +75,19 @@ class ReplacementAttorneyCleanup extends AbstractService
         $formFlowChecker = new FormFlowChecker($lpa);
 
         // there are some decisions to remove
-        if ($decisions instanceof ReplacementAttorneyDecisions &&
-            (!empty($decisions->getHow()) || !empty($decisions->getHowDetails()))) {
+        if (
+            $decisions instanceof ReplacementAttorneyDecisions &&
+            (!empty($decisions->getHow()) || !empty($decisions->getHowDetails()))
+        ) {
             if (!$lpa->hasMultipleReplacementAttorneys()) {
                 return true;
             }
 
-            if (!(count($lpa->getDocument()->getPrimaryAttorneys()) == 1) &&
+            if (
+                !(count($lpa->getDocument()->getPrimaryAttorneys()) == 1) &&
                 !($formFlowChecker->isLpaWhenReplacementAttorneyStepInWhenLastPrimaryUnableAct()) &&
-                !($lpa->hasMultiplePrimaryAttorneys() && $lpa->isHowPrimaryAttorneysMakeDecisionJointly())) {
+                !($lpa->hasMultiplePrimaryAttorneys() && $lpa->isHowPrimaryAttorneysMakeDecisionJointly())
+            ) {
                 return true;
             }
         }

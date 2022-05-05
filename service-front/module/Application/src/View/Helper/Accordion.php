@@ -13,9 +13,8 @@ class Accordion extends AbstractHelper
 
     /**
      * Full list of all the routes that can be used as bars in the accordion - in order
-     *
-     * @var array
      */
+    /** @var array */
     private $bars = [
         'lpa/form-type',
         'lpa/donor',
@@ -36,9 +35,7 @@ class Accordion extends AbstractHelper
         'lpa/fee-reduction',
     ];
 
-    /**
-     * @var RouteMatch
-     */
+    /** @var RouteMatch */
     private $routeMatch;
 
     /**

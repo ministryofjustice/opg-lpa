@@ -24,28 +24,28 @@ class AccountInfoFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /* @var AuthenticationService $authenticationService */
+        /** @var AuthenticationService $authenticationService */
         $authenticationService = $container->get('AuthenticationService');
 
-        /* @var Container $userSessionDetails */
+        /** @var Container $userSessionDetails */
         $userDetailsSession = $container->get('UserDetailsSession');
 
-        /* @var ViewManager $viewManager */
+        /** @var ViewManager $viewManager */
         $viewManager = $container->get('ViewManager');
 
-        /* @var Application $application */
+        /** @var Application $application */
         $application = $container->get('Application');
 
-        /* @var LpaApplicationService $lpaApplicationService */
+        /** @var LpaApplicationService $lpaApplicationService */
         $lpaApplicationService = $container->get('LpaApplicationService');
 
-        /* @var Environment $viewRenderer */
+        /** @var Environment $viewRenderer */
         $viewRenderer = $container->get('TwigViewRenderer');
 
-        /* @var ViewModel $viewModel */
+        /** @var ViewModel $viewModel */
         $viewModel = $viewManager->getViewModel();
 
-        /* @var RouteMatch $routeMatch */
+        /** @var RouteMatch $routeMatch */
         $routeMatch = $application->getMvcEvent()->getRouteMatch();
 
         return new AccountInfo(

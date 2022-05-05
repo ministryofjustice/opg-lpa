@@ -13,6 +13,14 @@ use Laminas\Session\Container;
 use Exception;
 use RuntimeException;
 
+/**
+ * On many of the methods in this class where we're catching
+ * Laminas\Mail\Exception\ExceptionInterface,
+ * psalm (linting) complains about catching that interface; however, this is
+ * because ExceptionInterface does not implement Throwable
+ * or extend Exception (i.e. issue is nothing to do with our code).
+ * We use `psalm-suppress InvalidCatch` to deal with these.
+ */
 class Details extends AbstractEmailService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
@@ -30,7 +38,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         try {
             return new User($this->apiClient->httpGet('/v2/user/' . $this->getUserId()));
         } catch (ApiException $ex) {
-            $this->getLogger()->err($ex);
+            $this->getLogger()->err($ex->getMessage());
         }
 
         return false;
@@ -78,6 +86,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param string $email The new email address
      * @param string $currentAddress The current email address
      * @return bool|string
+     *
+     * @psalm-suppress InvalidCatch
      */
     public function requestEmailUpdate($email, $currentAddress)
     {
@@ -106,8 +116,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex) {
-                    $logger->err($ex);
+                } catch (ExceptionInterface $ex1) {
+                    $logger->err($ex1->getMessage());
                 }
 
                 // Send the new email address an email with link to verify that
@@ -126,18 +136,18 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex) {
-                    $logger->err($ex);
+                } catch (ExceptionInterface $ex2) {
+                    $logger->err($ex2->getMessage());
                     return 'failed-sending-email';
                 }
 
                 return true;
             }
-        } catch (ApiException $ex) {
-            $logger->err($ex);
+        } catch (ApiException $ex3) {
+            $logger->err($ex3->getMessage());
 
             //  Get the real error out of the exception details
-            switch ($ex->getMessage()) {
+            switch ($ex3->getMessage()) {
                 case 'User already has this email':
                     return 'user-already-has-email';
                 case 'Email already exists for another user':
@@ -161,7 +171,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
             return true;
         } catch (ApiException $ex) {
-            $logger->err($ex);
+            $logger->err($ex->getMessage());
         }
 
         return false;
@@ -173,6 +183,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param $currentPassword
      * @param $newPassword
      * @return bool|string
+     *
+     * @psalm-suppress InvalidCatch
      */
     public function updatePassword($currentPassword, $newPassword)
     {
@@ -204,7 +216,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex) {
-                    $logger->err($ex);
+                    $logger->err($ex->getMessage());
                 }
 
                 // Update the identity with the new token to avoid being
@@ -216,7 +228,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 return true;
             }
         } catch (ApiException $ex) {
-            $logger->err($ex);
+            $logger->err($ex->getMessage());
         }
 
         return 'unknown-error';
@@ -241,7 +253,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             }
             $failureCode = null;
         } catch (ApiException $ex) {
-            $this->getLogger()->err($ex);
+            $this->getLogger()->err($ex->getMessage());
 
             $success = false;
             $expiresIn = null;
@@ -272,7 +284,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         try {
             $this->apiClient->httpDelete('/v2/user/' . $this->getUserId());
         } catch (ApiException $ex) {
-            $logger->err($ex);
+            $logger->err($ex->getMessage());
             return false;
         }
 
@@ -282,6 +294,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     /**
      * @param $email
      * @return bool|string
+     *
+     * @psalm-suppress InvalidCatch
      */
     public function requestPasswordResetEmail($email)
     {
@@ -316,7 +330,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                     try {
                         $this->getMailTransport()->send($mailParameters);
                     } catch (ExceptionInterface $ex) {
-                        $logger->err($ex);
+                        $logger->err($ex->getMessage());
                         return "failed-sending-email";
                     }
 
@@ -341,7 +355,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex) {
-                    $logger->err($ex);
+                    $logger->err($ex->getMessage());
                     return "failed-sending-email";
                 }
 
@@ -356,6 +370,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param $email
      * @param $activationToken
      * @return bool|string
+     *
+     * @psalm-suppress InvalidCatch
      */
     private function sendAccountActivateEmail($email, $activationToken)
     {
@@ -374,7 +390,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         try {
             $this->getMailTransport()->send($mailParameters);
         } catch (ExceptionInterface $ex) {
-            $this->getLogger()->err($ex);
+            $this->getLogger()->err($ex->getMessage());
             return 'failed-sending-email';
         }
 
@@ -403,12 +419,13 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 return true;
             }
         } catch (ApiException $ex) {
-            $logger->err($ex);
+            $msg = $ex->getMessage();
+            $logger->err($msg);
 
-            if ($ex->getMessage() == 'Invalid passwordToken') {
+            if ($msg === 'Invalid passwordToken') {
                 return 'invalid-token';
-            } elseif ($ex->getMessage() != null) {
-                return trim($ex->getMessage());
+            } elseif ($msg != null) {
+                return trim($msg);
             }
         }
 
@@ -421,6 +438,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param $email
      * @param $password
      * @return bool|mixed|string
+     *
+     * @psalm-suppress InvalidCatch
      */
     public function registerAccount($email, $password)
     {
@@ -449,15 +468,15 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex) {
-                    $logger->err($ex);
+                } catch (ExceptionInterface $ex1) {
+                    $logger->err($ex1->getMessage());
                     return 'failed-sending-email';
                 }
 
                 return true;
             }
-        } catch (ApiException $ex) {
-            if ($ex->getMessage() == 'username-already-exists') {
+        } catch (ApiException $ex2) {
+            if ($ex2->getMessage() == 'username-already-exists') {
                 $mailParameters = new MailParameters(
                     $email,
                     AbstractEmailService::EMAIL_ACCOUNT_DUPLICATION_WARNING
@@ -465,8 +484,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex) {
-                    $logger->err($ex);
+                } catch (ExceptionInterface $ex3) {
+                    $logger->err($ex3->getMessage());
                     return 'failed-sending-warning-email';
                 }
                 return 'address-already-registered';
@@ -497,7 +516,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 return $this->sendAccountActivateEmail($email, $result['activation_token']);
             }
         } catch (ApiException $ex) {
-            $this->getLogger()->err($ex);
+            $this->getLogger()->err($ex->getMessage());
         }
 
         //  If a proper reset token was returned, or the exception thrown was NOT account-not-activated then
@@ -525,7 +544,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
             return true;
         } catch (ApiException $ex) {
-            $logger->err($ex);
+            $logger->err($ex->getMessage());
         }
 
         $logger->info('Account activation attempt with token failed, or was already activated');

@@ -16,22 +16,22 @@ class AccountInfo extends AbstractHelper
 {
     use LoggerTrait;
 
-    /* @var AuthenticationService */
+    /** @var AuthenticationService */
     private $authenticationService;
 
-    /* @var Container */
+    /** @var Container */
     private $userDetailsSession;
 
-    /* @var ViewModel */
+    /** @var ViewModel */
     private $viewModel;
 
-    /* @var RouteMatch */
+    /** @var RouteMatch */
     private $routeMatch;
 
-    /* @var LpaApplicationService */
+    /** @var LpaApplicationService */
     private $lpaApplicationService;
 
-    /* @var LocalViewRenderer */
+    /** @var LocalViewRenderer */
     private $localViewRenderer;
 
     /**
