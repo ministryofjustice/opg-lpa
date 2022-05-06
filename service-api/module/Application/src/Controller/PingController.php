@@ -61,8 +61,7 @@ class PingController extends AbstractRestfulController
         string $queueUrl,
         string $trackMyLpaEndpoint,
         HttpClient $httpClient
-    )
-    {
+    ) {
         $this->database = $database;
         $this->sqsClient = $sqsClient;
         $this->sqsQueueUrl = $queueUrl;
@@ -79,17 +78,7 @@ class PingController extends AbstractRestfulController
     public function elbAction()
     {
         $response = $this->getResponse();
-
-        // Include a sanity check on ssl certs
-        $path = '/etc/ssl/certs/b204d74a.0';
-
-        if (!is_link($path) | !is_readable($path) || !is_link($path) || empty(file_get_contents($path))) {
-            $response->setStatusCode(500);
-            $response->setContent('Sad face');
-        } else {
-            $response->setContent('Happy face');
-        }
-
+        $response->setContent('Happy face');
         return $response;
     }
 
@@ -117,13 +106,13 @@ class PingController extends AbstractRestfulController
         // PDF Queue / SQS
 
         try {
-
             $result = $this->sqsClient->getQueueAttributes([
                 'QueueUrl' => $this->sqsQueueUrl,
                 'AttributeNames' => ['ApproximateNumberOfMessages', 'ApproximateNumberOfMessagesNotVisible'],
             ]);
 
-            if (!isset($result['Attributes']['ApproximateNumberOfMessages'])
+            if (
+                !isset($result['Attributes']['ApproximateNumberOfMessages'])
                 || !isset($result['Attributes']['ApproximateNumberOfMessagesNotVisible'])
             ) {
                 throw new Exception('Invalid count returned');
@@ -141,24 +130,23 @@ class PingController extends AbstractRestfulController
             ];
 
             $queueOk = ($count < 50);
-        } catch (Exception $ignore) {}
+        } catch (Exception $ignore) {
+        }
 
         //---------------------------------------------
         // Main database
 
         try {
-
             $this->database->getDriver()->getConnection()->connect();
 
             $zendDbOk = true;
-
-        } catch (Exception $ignore) {}
+        } catch (Exception $ignore) {
+        }
 
         //---------------------------------------------
         // OPG Gateway
 
         try {
-
             $url = new Uri($this->trackMyLpaEndpoint . 'A00000000000');
 
             $request = new Request('GET', $url, $headers = [
@@ -179,8 +167,8 @@ class PingController extends AbstractRestfulController
             if ($response->getStatusCode() === 404) {
                 $opgGateway = true;
             }
-
-        } catch (Exception $ignore) {}
+        } catch (Exception $ignore) {
+        }
 
         //---------------------------------------------
 

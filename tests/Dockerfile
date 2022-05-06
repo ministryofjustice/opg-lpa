@@ -1,11 +1,11 @@
-FROM composer:2.3.5 AS composer
+FROM composer:2.3 AS composer
 
 COPY tests/composer.json /app/composer.json
 COPY tests/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:8.1.2-cli
+FROM php:8.0-cli
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
@@ -22,7 +22,6 @@ RUN apt-get update && \
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
   docker-php-ext-install -j$(nproc) imap
-
 
 # The bitbucket location gives occasional "403 Forbidden" errors, breaking the build, so we're using our own source instead
 #ADD https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 /tmp/phantomjs.tar.bz2

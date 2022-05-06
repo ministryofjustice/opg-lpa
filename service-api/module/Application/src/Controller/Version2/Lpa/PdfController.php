@@ -27,7 +27,7 @@ class PdfController extends AbstractLpaController
 
     /**
      * @param mixed $id
-     * @return JsonResponse|NoContentResponse|ApiProblem
+     * @return JsonResponse|NoContentResponse|ApiProblem|FileResponse
      */
     public function get($id)
     {
