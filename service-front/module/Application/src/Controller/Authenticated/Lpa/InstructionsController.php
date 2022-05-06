@@ -16,8 +16,10 @@ class InstructionsController extends AbstractLpaController
             'lpa' => $lpa,
         ]);
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $postData = $request->getPost();
 
             // set data for validation
             $form->setData($postData);
@@ -28,22 +30,34 @@ class InstructionsController extends AbstractLpaController
 
                 // persist data if it has changed
 
-                if (is_null($lpa->document->instruction) || $data['instruction'] != $lpa->document->instruction) {
-                    if (!$this->getLpaApplicationService()->setInstructions($lpa, $data['instruction'])) {
-                        throw new \RuntimeException('API client failed to set LPA instructions for id: ' . $lpaId);
+                if (
+                    is_null($lpa->document->instruction) ||
+                    $data['instruction'] != $lpa->document->instruction
+                ) {
+                    $setOk = $this->getLpaApplicationService()->setInstructions($lpa, $data['instruction']);
+
+                    if (!$setOk) {
+                        throw new \RuntimeException(
+                            'API client failed to set LPA instructions for id: ' . $lpaId
+                        );
                     }
                 }
 
                 if (is_null($lpa->document->preference) || $data['preference'] != $lpa->document->preference) {
-                    if (!$this->getLpaApplicationService()->setPreferences($lpa, $data['preference'])) {
-                        throw new \RuntimeException('API client failed to set LPA preferences for id: ' . $lpaId);
+                    $setOk = $this->getLpaApplicationService()->setPreferences($lpa, $data['preference']);
+
+                    if (!$setOk) {
+                        throw new \RuntimeException(
+                            'API client failed to set LPA preferences for id: ' . $lpaId
+                        );
                     }
                 }
 
-                if (!isset($lpa->metadata)
+                if (
+                    !isset($lpa->metadata)
                     || !isset($lpa->metadata['instruction-confirmed'])
-                    || $lpa->metadata['instruction-confirmed'] !== true) {
-
+                    || $lpa->metadata['instruction-confirmed'] !== true
+                ) {
                     $this->getMetadata()->setInstructionConfirmed($this->getLpa());
                 }
 

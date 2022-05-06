@@ -3,15 +3,13 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
-use Laminas\Http\Request;
+use Laminas\Http\Request as HttpRequest;
 use Laminas\Router\RouteStackInterface;
 use Laminas\View\Model\ViewModel;
 
 class ReuseDetailsController extends AbstractLpaActorController
 {
-    /**
-     * @var RouteStackInterface
-     */
+    /** @var RouteStackInterface */
     private $router;
 
     public function indexAction()
@@ -30,35 +28,43 @@ class ReuseDetailsController extends AbstractLpaActorController
         $actorName = $queryParams['actor-name'] ?? null;
 
         if (is_null($callingUrl) || is_null($includeTrusts) || is_null($actorName)) {
-            throw new \RuntimeException('Required data missing when attempting to load the reuse details screen');
+            throw new \RuntimeException(
+                'Required data missing when attempting to load the reuse details screen'
+            );
         }
 
         //  Generate the reuse details form
         $forCorrespondent = (strpos($callingUrl, 'correspondent') !== false);
+
+        $actorReuseDetails = $this->getActorReuseDetails((bool) $includeTrusts, $forCorrespondent);
+
         $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\ReuseDetailsForm', [
-                         'actorReuseDetails' => $this->getActorReuseDetails((bool) $includeTrusts, $forCorrespondent),
+                         'actorReuseDetails' => $actorReuseDetails,
                      ]);
+
         $form->setAttribute('action', $this->getReuseDetailsUrl($queryParams));
 
-        if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 $data = $form->getData();
                 $reuseDetailsIndex = $data['reuse-details'];
 
-                //  By default the calling URI will be used as a target to return to (via a forward)
-                //  But if the trust option was selected then adapt the return URL accordingly
+                // By default the calling URI will be used as a target to return to (via a forward)
+                // But if the trust option was selected then adapt the return URL accordingly
                 $returnURL = $callingUrl . ($reuseDetailsIndex == 't' ? '-trust' : '');
 
-                //  Get the controller and action for the calling route so we can forward the details back there
+                // Get the controller and action for the calling route so we can forward the details back there
                 $controllerName = $actionName = null;
 
-                //  Match the route using a request object
-                $request = new Request();
-                $request->setUri($returnURL);
-                $routeMatch = $this->router->match($request);
+                // Match the route using a request object
+                $requestMatcher = new HttpRequest();
+                $requestMatcher->setUri($returnURL);
+                $routeMatch = $this->router->match($requestMatcher);
 
                 if ($routeMatch !== null) {
                     $controllerName = $routeMatch->getParam('controller');
@@ -67,7 +73,10 @@ class ReuseDetailsController extends AbstractLpaActorController
 
                 //  Confirm that the controller and action name have been determined
                 if (is_null($controllerName) || is_null($actionName)) {
-                    throw new \RuntimeException('Calling controller or action could not be determined for processing reuse details request');
+                    throw new \RuntimeException(
+                        'Calling controller or action could not be determined ' .
+                        'for processing reuse details request'
+                    );
                 }
 
                 return $this->forward()->dispatch($controllerName, [
