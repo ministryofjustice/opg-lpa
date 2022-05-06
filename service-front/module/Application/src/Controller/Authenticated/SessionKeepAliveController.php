@@ -3,6 +3,8 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\JsonModel;
 
 class SessionKeepAliveController extends AbstractAuthenticatedController
@@ -14,11 +16,14 @@ class SessionKeepAliveController extends AbstractAuthenticatedController
 
     public function setExpiryAction()
     {
-        if ($this->request->isPost()) {
+        /** @var HttpRequest */
+        $request = $this->request;
+
+        if ($request->isPost()) {
             // Derive expireInSeconds from request body
             $expireInSeconds = null;
 
-            $content = $this->request->getContent();
+            $content = $request->getContent();
             if ($content !== '') {
                 $decodedContent = json_decode($content, true);
                 if (array_key_exists('expireInSeconds', $decodedContent)) {
@@ -27,7 +32,9 @@ class SessionKeepAliveController extends AbstractAuthenticatedController
             }
 
             if ($expireInSeconds === null) {
+                /** @var HttpResponse */
                 $response = $this->getResponse();
+
                 $response->setStatusCode(400);
                 $response->setContent('Malformed request');
                 return $response;
@@ -37,7 +44,9 @@ class SessionKeepAliveController extends AbstractAuthenticatedController
             return new JsonModel(['remainingSeconds' => $remainingSeconds]);
         }
 
+        /** @var HttpResponse */
         $response = $this->getResponse();
+
         $response->setStatusCode(405);
         $response->setContent('Method not allowed');
         return $response;

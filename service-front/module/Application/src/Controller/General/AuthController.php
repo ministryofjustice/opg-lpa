@@ -7,7 +7,8 @@ use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Laminas\Http\Response;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
@@ -20,7 +21,10 @@ class AuthController extends AbstractBaseController
     private $lpaApplicationService;
 
     /**
-     * @return bool|\Laminas\Http\Response|ViewModel
+     * indexAction() should only return ViewModel.
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     *
+     * @return bool|HttpResponse|ViewModel
      */
     public function indexAction()
     {
@@ -41,8 +45,11 @@ class AuthController extends AbstractBaseController
 
         $authError = null;
 
-        if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+        /** @var HttpRequest */
+        $request = $this->request;
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // Check if we're going to redirect to a deep(er) link (before we kill the session)
@@ -61,7 +68,7 @@ class AuthController extends AbstractBaseController
                 $email = $form->getData()['email'];
                 $password = $form->getData()['password'];
 
-                //  Perform the authentication with the user email and password
+                // Perform the authentication with the user email and password
                 $result = $this->getAuthenticationService()
                                ->setEmail($email)
                                ->setPassword($password)
@@ -108,6 +115,10 @@ class AuthController extends AbstractBaseController
 
                     //  If necessary set a flash message showing that the user account will now remain active
                     if (in_array('inactivity-flags-cleared', $result->getMessages())) {
+                        /**
+                         * psalm doesn't understand Laminas plugins
+                         * @psalm-suppress UndefinedMagicMethod
+                         */
                         $this->flashMessenger()->addWarningMessage(
                             'Thanks for logging in. Your LPA account will stay open for another 9 months.'
                         );
@@ -159,7 +170,7 @@ class AuthController extends AbstractBaseController
     {
         $form = $this->getFormElementManager()->get('Application\Form\User\Login');
 
-        /** @var $form LoginForm */
+        /** @var LoginForm */
         $form->setAttribute('action', $this->url()->fromRoute('login'));
 
         return $form;
@@ -168,7 +179,7 @@ class AuthController extends AbstractBaseController
     /**
      * Get session state without refreshing the session
      *
-     * @return JsonModel|Response
+     * @return JsonModel|HttpResponse
      * for live session, otherwise 204
      */
     public function sessionExpiryAction()
@@ -176,7 +187,7 @@ class AuthController extends AbstractBaseController
         $remainingSeconds = $this->getAuthenticationService()->getSessionExpiry();
 
         if (!$remainingSeconds) {
-            $response =  new Response();
+            $response = new HttpResponse();
             $response->setStatusCode(204);
             return $response;
         }
@@ -187,7 +198,7 @@ class AuthController extends AbstractBaseController
     /**
      * Logs the user out by clearing the identity from the session.
      *
-     * @return \Laminas\Http\Response
+     * @return HttpResponse
      */
     public function logoutAction()
     {

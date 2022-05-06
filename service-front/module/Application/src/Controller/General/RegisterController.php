@@ -27,7 +27,7 @@ class RegisterController extends AbstractBaseController
      * but it doesn't.) So we suppress this psalm error.
      *
      * @psalm-suppress ImplementedReturnTypeMismatch
-     * @return ViewModel|\Laminas\Http\Response
+     * @return ViewModel|HttpResponse
      */
     public function indexAction()
     {

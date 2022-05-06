@@ -4,6 +4,8 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\User\Details as UserService;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 
 class ForgotPasswordController extends AbstractBaseController
@@ -17,7 +19,11 @@ class ForgotPasswordController extends AbstractBaseController
      * GET: Display's the 'Enter your email address' form.
      * POST: Sends the password reset email.
      *
-     * @return ViewModel
+     * Laminas indexAction is not supposed to return false or HttpResponse,
+     * but Laminas doesn't mind if that's what is returned...
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     *
+     * @return HttpResponse|ViewModel|false
      */
     public function indexAction()
     {
@@ -32,6 +38,7 @@ class ForgotPasswordController extends AbstractBaseController
 
         $error = null;
 
+        /** @var HttpRequest */
         $request = $this->getRequest();
 
         if ($request->isPost()) {
@@ -47,7 +54,9 @@ class ForgotPasswordController extends AbstractBaseController
                     'accountNotActivated' => ($result === 'account-not-activated'),
                 ];
 
-                return (new ViewModel($viewParams))->setTemplate('application/general/forgot-password/email-sent.twig');
+                return (new ViewModel($viewParams))->setTemplate(
+                    'application/general/forgot-password/email-sent.twig'
+                );
             }
         }
 
@@ -62,11 +71,15 @@ class ForgotPasswordController extends AbstractBaseController
      * GET: Displays the 'Enter new password' form.
      * POST: Sets the new password.
      *
-     * @return ViewModel
+     * @return ViewModel|HttpResponse
+     *
+     * Laminas HTTP responses have methods on which are not
+     * defined on the interface they say they return
+     *
+     * @psalm-suppress UndefinedInterfaceMethod
      */
     public function resetPasswordAction()
     {
-
         $token = $this->params()->fromRoute('token');
 
         if (empty($token)) {
@@ -88,7 +101,10 @@ class ForgotPasswordController extends AbstractBaseController
 
         // We have a valid reset token...
         $form = $this->getFormElementManager()->get('Application\Form\User\SetPassword');
-        $form->setAttribute('action', $this->url()->fromRoute('forgot-password/callback', ['token' => $token]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('forgot-password/callback', ['token' => $token])
+        );
 
         $error = null;
 
@@ -102,6 +118,11 @@ class ForgotPasswordController extends AbstractBaseController
 
                 // if all good, direct them back to login.
                 if ($result === true) {
+                    /**
+                     * psalm doesn't understand Laminas MVC plugins
+                     *
+                     * @psalm-suppress UndefinedMagicMethod
+                     * */
                     $this->flashMessenger()->addSuccessMessage('Password successfully reset');
 
                     // Send them to login...
@@ -109,7 +130,9 @@ class ForgotPasswordController extends AbstractBaseController
                 }
 
                 if ($result == 'invalid-token') {
-                    return (new ViewModel())->setTemplate('application/general/forgot-password/invalid-reset-token.twig');
+                    return (new ViewModel())->setTemplate(
+                        'application/general/forgot-password/invalid-reset-token.twig'
+                    );
                 }
 
                 // else there was an error
