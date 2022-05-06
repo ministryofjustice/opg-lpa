@@ -301,7 +301,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param $pdfType
-     * @return array|false
+     * @return array|false|null|string
      * @throws ApiException
      */
     public function getPdfContents($lpaId, $pdfType)
@@ -310,10 +310,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         try {
             $result = $this->apiClient->httpGet($target, [], false);
-
-            if (!is_array($result)) {
-                $result = false;
-            }
         } catch (ApiException $ex) {
             $result = false;
         }
