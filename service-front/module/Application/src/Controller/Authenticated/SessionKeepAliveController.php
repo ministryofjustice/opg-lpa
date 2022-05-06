@@ -3,7 +3,6 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
-use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\JsonModel;
 
@@ -16,8 +15,7 @@ class SessionKeepAliveController extends AbstractAuthenticatedController
 
     public function setExpiryAction()
     {
-        /** @var HttpRequest */
-        $request = $this->request;
+        $request = $this->convertRequest();
 
         if ($request->isPost()) {
             // Derive expireInSeconds from request body

@@ -4,7 +4,6 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\User\Details as UserService;
-use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 
@@ -38,8 +37,7 @@ class ForgotPasswordController extends AbstractBaseController
 
         $error = null;
 
-        /** @var HttpRequest */
-        $request = $this->getRequest();
+        $request = $this->convertRequest();
 
         if ($request->isPost()) {
             $form->setData($request->getPost());

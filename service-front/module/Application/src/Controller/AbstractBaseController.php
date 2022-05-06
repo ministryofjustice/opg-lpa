@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManager;
 use MakeLogger\Logging\LoggerTrait;
+use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\AbstractPluginManager;
@@ -51,6 +52,22 @@ abstract class AbstractBaseController extends AbstractActionController
         $this->sessionManager = $sessionManager;
         $this->authenticationService = $authenticationService;
         $this->config = $config;
+    }
+
+    /**
+     * Convert the Laminas RequestInterface object provided
+     * by $this->request into a full-fledged HttpRequest.
+     * This is primarily so we don't have to add lots of
+     * type conversions inline in child controllers.
+     *
+     * @return HttpRequest
+     */
+    protected function convertRequest()
+    {
+        /** @var HttpRequest */
+        $request = $this->request;
+
+        return $request;
     }
 
     /**

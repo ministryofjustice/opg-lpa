@@ -5,7 +5,6 @@ namespace Application\Controller\General;
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\Feedback\Feedback;
 use Laminas\Http\Header\Referer;
-use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
@@ -29,8 +28,7 @@ class FeedbackController extends AbstractBaseController
         $form = $this->getFormElementManager()
                      ->get('Application\Form\General\FeedbackForm');
 
-        /** @var HttpRequest */
-        $request = $this->getRequest();
+        $request = $this->convertRequest();
 
         if ($request->isPost()) {
             $form->setData($request->getPost());

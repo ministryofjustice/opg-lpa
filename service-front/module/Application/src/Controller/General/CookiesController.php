@@ -4,9 +4,7 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Laminas\Form\Element\Radio;
-use Laminas\Http\Header\SetCookie;
 use Laminas\Http\Request as HttpRequest;
-use Laminas\Stdlib\RequestInterface;
 use Laminas\View\Model\ViewModel;
 
 class CookiesController extends AbstractBaseController
@@ -18,8 +16,7 @@ class CookiesController extends AbstractBaseController
         $form = $this->getFormElementManager()->get('Application\Form\General\CookieConsentForm');
         $form->setAttribute('action', $this->url()->fromRoute('cookies'));
 
-        /** @var HttpRequest */
-        $request = $this->getRequest();
+        $request = $this->convertRequest();
 
         $cookiePolicy = $this->fetchPolicyCookie($request);
 

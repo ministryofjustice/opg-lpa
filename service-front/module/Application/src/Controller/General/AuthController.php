@@ -7,7 +7,6 @@ use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
@@ -45,8 +44,7 @@ class AuthController extends AbstractBaseController
 
         $authError = null;
 
-        /** @var HttpRequest */
-        $request = $this->request;
+        $request = $this->convertRequest();
 
         if ($request->isPost()) {
             $form->setData($request->getPost());

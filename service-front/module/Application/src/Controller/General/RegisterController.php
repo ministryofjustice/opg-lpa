@@ -5,7 +5,6 @@ namespace Application\Controller\General;
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\User\Details as UserService;
 use Laminas\Http\Header\Referer;
-use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use ArrayIterator;
@@ -31,8 +30,7 @@ class RegisterController extends AbstractBaseController
      */
     public function indexAction()
     {
-        /** @var HttpRequest */
-        $request = $this->getRequest();
+        $request = $this->convertRequest();
 
         $ga = $request->getQuery('_ga');
 
@@ -116,8 +114,7 @@ class RegisterController extends AbstractBaseController
 
         $viewModel = new ViewModel();
 
-        /** @var HttpRequest */
-        $request = $this->getRequest();
+        $request = $this->convertRequest();
 
         if ($request->isPost()) {
             $form->setData($request->getPost());

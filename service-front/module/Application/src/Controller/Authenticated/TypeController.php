@@ -5,7 +5,6 @@ namespace Application\Controller\Authenticated;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use RuntimeException;
@@ -24,8 +23,7 @@ class TypeController extends AbstractAuthenticatedController
         $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\TypeForm');
 
-        /** @var HttpRequest */
-        $request = $this->request;
+        $request = $this->convertRequest();
 
         if ($request->isPost()) {
             $form->setData($request->getPost());

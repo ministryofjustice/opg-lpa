@@ -4,7 +4,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
-use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Form\Element;
 use Laminas\View\Model\ViewModel;
@@ -33,8 +32,7 @@ class WhoAreYouController extends AbstractLpaController
             $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpa->id])
         );
 
-        /** @var HttpRequest */
-        $request = $this->request;
+        $request = $this->convertRequest();
 
         if ($request->isPost()) {
             $postData = $request->getPost();
