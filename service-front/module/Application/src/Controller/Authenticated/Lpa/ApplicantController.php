@@ -16,12 +16,15 @@ class ApplicantController extends AbstractLpaController
         $lpaDocument = $lpa->document;
 
         $form = $this->getFormElementManager()
-                     ->get('Application\Form\Lpa\ApplicantForm', [
-                         'lpa' => $lpa
-                     ]);
+            ->get(
+                'Application\Form\Lpa\ApplicantForm',
+                ['lpa' => $lpa]
+            );
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $postData = $request->getPost();
 
             $form->setData($postData);
 
@@ -30,7 +33,11 @@ class ApplicantController extends AbstractLpaController
                 if ($postData['whoIsRegistering'] == Correspondence::WHO_DONOR) {
                     $applicants = Correspondence::WHO_DONOR;
                 } else {
-                    if (count($lpaDocument->primaryAttorneys) > 1 && $lpaDocument->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
+                    if (
+                        count($lpaDocument->primaryAttorneys) > 1 &&
+                        $lpaDocument->primaryAttorneyDecisions->how !=
+                            PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY
+                    ) {
                         $applicants = $form->getData()['attorneyList'];
                     } else {
                         $applicants = explode(',', $form->getData()['whoIsRegistering']);
@@ -48,12 +55,15 @@ class ApplicantController extends AbstractLpaController
             }
         } else {
             if (is_array($lpaDocument->whoIsRegistering)) {
-                if (count($lpaDocument->primaryAttorneys) > 1 && $lpaDocument->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
+                if (
+                    count($lpaDocument->primaryAttorneys) > 1 &&
+                    $lpaDocument->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY
+                ) {
                     $bindingData = [
                         'whoIsRegistering' => implode(',', array_map(function ($attorney) {
                             return $attorney->id;
                         }, $lpaDocument->primaryAttorneys)),
-                        'attorneyList'     => $lpaDocument->whoIsRegistering,
+                        'attorneyList' => $lpaDocument->whoIsRegistering,
                     ];
                 } else {
                     $bindingData = ['whoIsRegistering' => implode(',', $lpaDocument->whoIsRegistering)];
@@ -65,6 +75,6 @@ class ApplicantController extends AbstractLpaController
             }
         }
 
-        return new ViewModel(['form'=>$form]);
+        return new ViewModel(['form' => $form]);
     }
 }

@@ -109,15 +109,17 @@ abstract class AbstractBaseController extends AbstractActionController
      */
     protected function checkCookie($routeName)
     {
+        $request = $this->convertRequest();
+
         // Only do a cookie check on GETs
-        if ($this->getRequest()->getMethod() !== 'GET') {
+        if ($request->getMethod() !== 'GET') {
             return true;
         }
 
         // Get the cookie names used for the session
         $sessionCookieName = $this->config['session']['native_settings']['name'];
 
-        $cookies = $this->getRequest()->getCookie();
+        $cookies = $request->getCookie();
 
         // If there cookies...
         if ($cookies !== false) {
