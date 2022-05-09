@@ -79,6 +79,8 @@ class Service extends AbstractService
         $requests = [];
         $siriusResponseArray = [];
 
+        $debugInfo = [];
+
         foreach ($ids as $id) {
             $prefixedId = $id;
 
@@ -87,6 +89,10 @@ class Service extends AbstractService
             }
 
             $url = new Uri($this->processingStatusServiceUri . $prefixedId);
+
+            $debugInfo[$id] = [];
+            $debugInfo[$id]['url'] = '' . $url;
+
             $requests[$id] = new Request('GET', $url, $this->buildHeaders());
             $requests[$id] = $this->awsSignature->signRequest($requests[$id], $this->credentials);
         } //end of request loop
@@ -102,7 +108,6 @@ class Service extends AbstractService
             'fulfilled' => function ($response, $id) use (&$results) {
                 // Each successful response
                 $this->getLogger()->debug('We have a result for:' . $id);
-
                 $results[$id] = $response;
             },
             'rejected' => function ($reason, $id) {
@@ -154,7 +159,19 @@ class Service extends AbstractService
                     );
                     break;
             } //end switch
+
+            if (isset($siriusResponseArray[$lpaId])) {
+                $debugInfo[$lpaId]['response'] = $siriusResponseArray[$lpaId];
+            } else {
+                $debugInfo[$lpaId]['response'] = 'BAD RESPONSE';
+            }
         } //end for
+
+        $this->getLogger()->debug(
+            "++++++++++++++++ JSON LPA STATUS RESPONSES: " .
+            json_encode($debugInfo)
+        );
+
         return $siriusResponseArray;
     }
 
