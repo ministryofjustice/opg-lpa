@@ -122,9 +122,20 @@ class Service extends AbstractService
         // Handle all request response now
         foreach ($results as $lpaId => $result) {
             $statusCode = $result->getStatusCode();
+            $debugInfo[$lpaId]['status_code'] = $statusCode;
+
             switch ($statusCode) {
                 case 200:
-                    $response = $this->handleResponse($result);
+                    $responseBodyString = $result->getBody()->getContents();
+
+                    $this->getLogger()->debug(
+                        '============================ SIRIUS LPA STATUS RESPONSE: ' .
+                        'lpaId=' . $lpaId .
+                        '; code=' . $statusCode .
+                        '; body=' . $responseBodyString
+                    );
+
+                    $response = $this->handleResponse($responseBodyString);
                     $siriusResponseArray[$lpaId] = [
                         'deleted'   => false,
                         'response'  => $response
@@ -132,6 +143,11 @@ class Service extends AbstractService
                     break;
 
                 case 404:
+                    $this->getLogger()->debug(
+                        '============================ SIRIUS LPA STATUS RESPONSE: ' .
+                        'lpaId=' . $lpaId . '; code=404'
+                    );
+
                     // A 404 represents that details for the passed ID could not be found
                     $siriusResponseArray[$lpaId] = [
                         'deleted'   => false,
@@ -140,6 +156,11 @@ class Service extends AbstractService
                     break;
 
                 case 410:
+                    $this->getLogger()->debug(
+                        '============================ SIRIUS LPA STATUS RESPONSE: ' .
+                        'lpaId=' . $lpaId . '; code=410'
+                    );
+
                     // A 410 represents the LPA has recently been deleted from Sirius
                     $siriusResponseArray[$lpaId] = [
                         'deleted'   => true,
@@ -149,13 +170,17 @@ class Service extends AbstractService
 
                 case 500:
                 case 503:
-                    $this->getLogger()
-                    ->err('Bad response from Sirius gateway: ' . (string)$result->getBody());
+                    $this->getLogger()->err(
+                        'Bad ' . $statusCode . ' response from Sirius gateway: ' .
+                        (string)$result->getBody()
+                    );
+
                     throw new ApiProblemException('Bad response from Sirius gateway: ' . $statusCode);
 
                 default:
                     $this->getLogger()->err(
-                        'Unexpected response from Sirius gateway: ' . $statusCode . (string)$result->getBody()
+                        'Unexpected response from Sirius gateway: ' . $statusCode .
+                        '; ' . (string)$result->getBody()
                     );
                     break;
             } //end switch
@@ -165,7 +190,7 @@ class Service extends AbstractService
             } else {
                 $debugInfo[$lpaId]['response'] = 'BAD RESPONSE';
             }
-        } //end for
+        }
 
         $this->getLogger()->debug(
             "++++++++++++++++ JSON LPA STATUS RESPONSES: " .
@@ -185,9 +210,9 @@ class Service extends AbstractService
         return ['Accept' => 'application/json'];
     }
 
-    private function handleResponse(ResponseInterface $result)
+    private function handleResponse(string $responseBodyString)
     {
-        $responseBody = json_decode($result->getBody()->getContents(), true);
+        $responseBody = json_decode($responseBodyString, true);
 
         if (is_null($responseBody)) {
             return null;
@@ -238,7 +263,7 @@ class Service extends AbstractService
             }
 
             // We set a returnUnpaid as this is required to differentiate from returned
-            if ($responseBody['status'] === 'Return - unpaid') { # Return - unpaid status
+            if ($responseBody['status'] === 'Return - unpaid') {
                 $return['dispatchDate'] = $responseBody['statusDate'];
                 $return['returnUnpaid'] = true;
             }
