@@ -508,7 +508,7 @@ workflows:
   weekly_refresh:
     triggers:
       - schedule:
-          cron: "0 3 * * 3" # 3 am (UTC) on wednesday
+          cron: "0 5 * * 3" # 5 am (UTC) on wednesday
           filters:
             branches:
               only:
