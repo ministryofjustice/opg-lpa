@@ -71,7 +71,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(400, $entity->getStatus());
-        $this->assertEquals('Invalid LPA identifier to seed from', $entity->getDetail());
+        $this->assertEquals('LPA user does not match fetched LPA\'s user', $entity->getDetail());
 
         $serviceBuilder->verify();
     }

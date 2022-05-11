@@ -59,7 +59,7 @@
 
     <fieldset>
         <div class="text">
-            <p>We will not respond to your feedback directly but will use it to improve this service. If you're happy to be contacted to give further feedback, please leave your email address or phone number.</p>
+            <p>We will not respond to your feedback directly but will use it to improve this service.</p>
             <p>If you have a question about your LPA, please email <a href="mailto:customerservices@publicguardian.gov.uk">customerservices@publicguardian.gov.uk</a> who will be able to help.</p>
         </div>
 
@@ -80,9 +80,11 @@
             {{ formElement(details) }}
         </div>
 
+        <p class="heading-medium">If you’re happy to take part in research about this service, please leave your preferred contact details.</p>
+
         <div class="form-group {{ email.getMessages|length >0 ? 'form-group-error'}}">
             <label class="heading-medium flush--top text" for="{{ email.getAttribute('id') }}">
-                Your email address (optional)
+                Your email address
             </label>
             {{ formElementErrorsV2(email) }}
             {{ formElement(email) }}
@@ -90,7 +92,7 @@
 
         <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
             <label class="heading-medium flush--top text" for="{{ phone.getAttribute('id') }}">
-                Your phone number (optional)
+                Your phone number
             </label>
             {{ formElementErrorsV2(phone) }}
             {{ formElement(phone) }}

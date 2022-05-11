@@ -19,7 +19,11 @@ class SystemMessage extends AbstractHelper
 
     public function __invoke()
     {
-        $message = trim($this->cache->getItem('system-message'));
+        $message = $this->cache->getItem('system-message');
+
+        if ($message !== null) {
+            $message = trim($message);
+        }
 
         if ($message != '') {
             echo <<<SYSMESS

@@ -19,7 +19,7 @@ locals {
 
   }
 
-  default_tags = merge(local.mandatory_moj_tags, local.optional_tags)
+  default_opg_tags = merge(local.mandatory_moj_tags, local.optional_tags)
 
   shared_component_tag = {
     component = "shared"

@@ -1,4 +1,5 @@
 <?php
+
 namespace MakeLogger\Logging;
 
 use Laminas\Log\Processor\ProcessorInterface;
@@ -20,21 +21,21 @@ class TraceIdProcessor implements ProcessorInterface
      */
     public const TRACE_ID_FIELD_NAME = 'trace_id';
 
-    public function process(array $logEvent): array
+    public function process(array $event): array
     {
         // early return if there's no "trace_id" in $extra
-        if (!array_key_exists(self::TRACE_ID_FIELD_NAME, $logEvent['extra'])) {
-            return $logEvent;
+        if (!array_key_exists(self::TRACE_ID_FIELD_NAME, $event['extra'])) {
+            return $event;
         }
 
-        $traceId = $logEvent['extra'][self::TRACE_ID_FIELD_NAME];
+        $traceId = $event['extra'][self::TRACE_ID_FIELD_NAME];
 
         if (!is_null($traceId)) {
-            $logEvent['trace_id'] = $traceId;
+            $event['trace_id'] = $traceId;
         }
 
-        unset($logEvent['extra'][self::TRACE_ID_FIELD_NAME]);
+        unset($event['extra'][self::TRACE_ID_FIELD_NAME]);
 
-        return $logEvent;
+        return $event;
     }
 }

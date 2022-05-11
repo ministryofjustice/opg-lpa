@@ -2,21 +2,20 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use \DateTime;
+use DateTime;
+use Application\Model\Service\AbstractService;
 use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use RuntimeException;
 
 class AuthenticateController extends AbstractAuthController
 {
     /**
-     * TODO - Refactor later...
-     * NOTE - Present to satisfy requirement in AbstractAuthController
-     *
-     * @return null
+     * @return AbstractService
      */
     protected function getService()
     {
-        return null;
+        throw new RuntimeException('getService method not implemented for AuthenticateController');
     }
 
     /**
@@ -112,9 +111,14 @@ class AuthenticateController extends AbstractAuthController
      */
     public function sessionExpiryAction()
     {
+        // Suppress psalm errors caused by bug in laminas-mvc;
+        // see https://github.com/laminas/laminas-mvc/issues/77
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         */
         $token = $this->getRequest()->getHeader('CheckedToken');
 
-        if($token == null) {
+        if ($token == null) {
             return new ApiProblem(400, 'No CheckedToken was specified in the header');
         }
 
@@ -139,6 +143,11 @@ class AuthenticateController extends AbstractAuthController
      */
     public function setSessionExpiryAction()
     {
+        // Suppress psalm errors caused by bug in laminas-mvc;
+        // see https://github.com/laminas/laminas-mvc/issues/77
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         */
         $token = $this->getRequest()->getHeader('CheckedToken');
 
         if ($token == null) {
