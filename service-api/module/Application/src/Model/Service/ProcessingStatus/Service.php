@@ -264,7 +264,13 @@ class Service extends AbstractService
 
             // We set a returnUnpaid as this is required to differentiate from returned
             if ($responseBody['status'] === 'Return - unpaid') {
-                $return['dispatchDate'] = $responseBody['statusDate'];
+                // statusDate should always be set, but put a guard on it so we can
+                // always have a dispatchDate set to null for the worst case
+                $return['dispatchDate'] = null;
+                if (isset($responseBody['statusDate'])) {
+                    $return['dispatchDate'] = $responseBody['statusDate'];
+                }
+
                 $return['returnUnpaid'] = true;
             }
 
