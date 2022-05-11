@@ -64,14 +64,14 @@ abstract class AbstractLpaController extends AbstractRestfulController
     /**
      * Execute the request
      *
-     * @param MvcEvent $event
+     * @param MvcEvent $e
      * @return mixed|ApiProblem|ApiProblemResponse
      * @throws ApiProblemException
      */
-    public function onDispatch(MvcEvent $event)
+    public function onDispatch(MvcEvent $e)
     {
         //  If possible get the user and LPA from the ID values in the route
-        $this->routeUserId = $event->getRouteMatch()->getParam('userId');
+        $this->routeUserId = $e->getRouteMatch()->getParam('userId');
 
         if (empty($this->routeUserId)) {
             //  userId MUST be present in the URL
@@ -79,13 +79,13 @@ abstract class AbstractLpaController extends AbstractRestfulController
         }
 
         //  The lpaId MAY be present in the URL
-        $this->lpaId = $event->getRouteMatch()->getParam('lpaId');
+        $this->lpaId = $e->getRouteMatch()->getParam('lpaId');
 
         try {
-            $return = parent::onDispatch($event);
-        } catch (UnauthorizedException $e) {
+            $return = parent::onDispatch($e);
+        } catch (UnauthorizedException $ex) {
             $return = new ApiProblem(401, 'Access Denied');
-        } catch (LockedException $e) {
+        } catch (LockedException $ex) {
             $return = new ApiProblem(403, 'LPA has been locked');
         }
 
@@ -105,7 +105,10 @@ abstract class AbstractLpaController extends AbstractRestfulController
             throw new LaminasUnauthorizedException('You need to be authenticated to access this service');
         }
 
-        if (!$this->authorizationService->isGranted('isAuthorizedToManageUser', $this->routeUserId) && !$this->authorizationService->isGranted('admin')) {
+        if (
+            !$this->authorizationService->isGranted('isAuthorizedToManageUser', $this->routeUserId) &&
+            !$this->authorizationService->isGranted('admin')
+        ) {
             throw new LaminasUnauthorizedException('You do not have permission to access this service');
         }
     }

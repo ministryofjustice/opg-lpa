@@ -12,6 +12,7 @@ spl_autoload_register(function ($class) {
     $baseDirs = [
         __DIR__ . '/',
         __DIR__ . '/../src/',
+        __DIR__ . '/../../../../shared/logging/module/MakeLogger/src/'
     ];
 
     //  Strip out any leading "ApplicationTest" if present
@@ -19,9 +20,16 @@ spl_autoload_register(function ($class) {
         $class = str_replace('ApplicationTest\\', '', $class);
     }
 
+    // Replace MakeLogger\Logging with Logging; this is so we can load
+    // files from the top-level shared
+    if (strpos($class, 'MakeLogger\\Logging') !== -1) {
+        $class = str_replace('MakeLogger\\Logging', '\\Logging', $class);
+    }
+
     //  Loop through the base directories to try to find the requested class
     foreach ($baseDirs as $baseDir) {
-        //  Replace the separators with directory separators in the relative class name, strip out any leading "ApplicationTest/" and append and with .php
+        // Replace the separators with directory separators in the relative class name
+        // and append ".php"
 
         $file = $baseDir . str_replace('\\', '/', $class) . '.php';
 

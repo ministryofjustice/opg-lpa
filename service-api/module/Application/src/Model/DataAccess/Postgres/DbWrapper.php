@@ -52,7 +52,7 @@ class DbWrapper
     /**
      * Perform a raw SQL query via the adapter.
      * @param string $query Raw SQL string to execute on adapter
-     * @return Driver\StatementInterface|ResultSet\ResultSet
+     * @return \Laminas\Db\Adapter\Driver\StatementInterface|ResultSet
      */
     public function rawQuery(string $query)
     {
@@ -84,8 +84,8 @@ class DbWrapper
      * Perform a SQL SELECT against the db.
      *
      * @param string $tableName Name of table to select against
-     * @param array<string, string|ExpressionInterface> $criteria Added to the WHERE clause; the "search"
-     * key is escaped and used for a regex match if present
+     * @param array<string, string|ExpressionInterface>|array $criteria Added to the WHERE clause;
+     *     the "search" key is escaped and used for a regex match if present
      * @param array<string, array|int|string> $options Used to set columns, LIMIT, OFFSET and SORT
      *
      * Example options:
@@ -103,7 +103,7 @@ class DbWrapper
      *     ],
      * ]
      *
-     * @return ResultInterface<mixed>
+     * @return ResultInterface
      */
     public function select(string $tableName, array $criteria = [], array $options = []): ResultInterface
     {

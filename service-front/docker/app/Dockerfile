@@ -1,11 +1,15 @@
-FROM composer:2.1.11 AS composer
+FROM composer:2.3 AS composer
 
-COPY service-front/composer.json /app/composer.json
-COPY service-front/composer.lock /app/composer.lock
+RUN adduser -D -g '' appuser
+
+COPY --chown=appuser:appuser service-front/composer.json /app/composer.json
+COPY --chown=appuser:appuser service-front/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:8.0-fpm-alpine
+FROM php:8.0-fpm-alpine3.15
+
+RUN adduser -D -g '' appuser
 #docker image on hub hasn't been upgraded yet - fixes CVE-2021-36159
 RUN apk add --upgrade apk-tools
 RUN apk upgrade --available
@@ -13,14 +17,14 @@ RUN apk upgrade --available
 # security fix for expat
 RUN apk upgrade expat
 
-RUN apk add --update --no-cache icu 
+RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
         && pecl install redis \
         && docker-php-ext-enable redis \
         && docker-php-ext-install intl \
         && docker-php-ext-install bcmath \
-        && docker-php-ext-install opcache 
+        && docker-php-ext-install opcache
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
@@ -41,12 +45,14 @@ fi
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
 
-COPY service-front /app
-COPY shared/logging /shared/logging
-COPY --from=composer /app/vendor /app/vendor
-COPY service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=appuser:appuser service-front /app
+COPY --chown=appuser:appuser shared/logging /shared/logging
+COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
+COPY --chown=appuser:appuser service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=appuser:appuser service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 WORKDIR /app
+
+USER appuser
 
 CMD php-fpm

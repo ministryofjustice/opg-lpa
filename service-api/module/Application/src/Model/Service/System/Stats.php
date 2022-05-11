@@ -32,7 +32,7 @@ class Stats extends AbstractService
     /**
      * @return bool
      */
-    public function generate()
+    public function generate(): bool
     {
         $stats = [];
 
@@ -105,8 +105,6 @@ class Stats extends AbstractService
 
         // Add the new data
         $this->getStatsRepository()->insert($stats);
-
-        //---
 
         return true;
     }

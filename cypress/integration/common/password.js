@@ -55,3 +55,12 @@ When("I log in with new password", () => {
         cy.get('[data-cy=login-submit-button]').click();
         cy.OPGCheckA11y();
 });
+
+When("I try to change password for {string} with a mismatch", (name) => {
+        let password = Cypress.env(name + "-password");
+        cy.get("[data-cy=password_current]").clear().type(password);
+        cy.get("[data-cy=password]").clear().type("mismatchedPassword2345");
+        cy.get("[data-cy=password_confirm]").clear().type("mismatchedPassword1234");
+        cy.get('[data-cy=save-new-password]').click();
+        cy.OPGCheckA11y();
+});

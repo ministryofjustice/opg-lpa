@@ -13,14 +13,14 @@ use LmcRbacMvc\Service\AuthorizationService;
  */
 class IsAuthorizedToManageUser implements AssertionInterface
 {
-    public function assert(AuthorizationService $authorization, $routeUserId = null)
+    public function assert(AuthorizationService $authorizationService, $routeUserId = null)
     {
         // We can only authorize is there's a route user...
         if (!is_string($routeUserId)) {
             return false;
         }
 
-        $tokenUser = $authorization->getIdentity();
+        $tokenUser = $authorizationService->getIdentity();
 
         //  Otherwise we can only authorize if we can get the user's id from the Identity...
         if (!is_callable([$tokenUser, 'id'])) {

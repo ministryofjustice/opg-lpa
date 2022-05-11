@@ -114,10 +114,16 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
             ->andReturn($sqlMock);
 
         $sqlMock->shouldReceive('select')
+            ->andReturn($sqlMock);
+
+        $sqlMock->shouldReceive('from')
             ->with(['a' => ApplicationData::APPLICATIONS_TABLE])
             ->andReturn($subselectMock);
 
         $sqlMock->shouldReceive('select')
+            ->andReturn($sqlMock);
+
+        $sqlMock->shouldReceive('from')
             ->with(['u' => UserData::USERS_TABLE])
             ->andReturn($selectMock);
 
