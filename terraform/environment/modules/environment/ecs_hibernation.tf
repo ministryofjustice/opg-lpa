@@ -3,7 +3,7 @@ module "dev_weekdays" {
   source           = "./modules/ecs_scheduled_scaling"
   name             = "daytime"
   ecs_cluster_name = aws_ecs_cluster.online-lpa.name
-  scale_down_time  = "cron(00 19 ? * MON-FRI *)"
+  scale_down_time  = "cron(00 23 ? * MON-FRI *)"
   scale_up_time    = "cron(30 06 ? * MON-FRI *)"
   service_config = {
     tostring(aws_ecs_service.admin.name) = {
