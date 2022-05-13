@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+cd /app
+
+echo "X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0 LOCKLOCKLOCK Calling cronlock script from service-api"
+
+bin/lock acquire --name $1 --table $2 --ttl $3 && php public/index.php $4
