@@ -218,7 +218,7 @@
     <input type="hidden" name="return-route" value="{{ returnRoute }}">
 
     <div class="date-check-person person person--full">
-        <h3 class="person-name heading-small flush--ends">{{ lpa.document.donor.name }} (the donor)</h3>
+        <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ lpa.document.donor.name }} (the donor)</h3>
         {% if donorLifeSustainingElement is defined %}
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
@@ -280,16 +280,12 @@
                 </fieldset>
 
             </div>
-
-            <div class="panel panel-border-wide text">
-                <p>Remember, if continuation sheets 1 or 2 were used, the donor must have signed them before, or on the same day as, they signed section 9. </p>
-            </div>
         </div>
     </div>
 
 
     <div class="date-check-person person person--full">
-        <h3 class="person-name heading-small flush--ends">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
+        <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
         <div class="person-address flush--ends">
             <div class="dob-element form-date {{ certificateProviderElement.getMessages|length >0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(certificateProviderElementDay) }}
@@ -358,7 +354,7 @@
         }) ? '' }}
 
         <div class="date-check-person person person--full">
-            <h3 class="person-name heading-small flush--ends">{{ attorney.name }} (attorney)</h3>
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ attorney.name }} (attorney)</h3>
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}
@@ -435,7 +431,7 @@
         }) ? '' }}
 
         <div class="date-check-person person person--full">
-            <h3 class="person-name heading-small flush--ends">{{ attorney.name }} (replacement attorney)</h3>
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ attorney.name }} (replacement attorney)</h3>
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}
@@ -512,7 +508,7 @@
         }) ? '' }}
 
         <div class="date-check-person person person--full">
-            <h3 class="person-name heading-small flush--ends">{{ applicant['name'] }} (applicant)</h3>
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ applicant['name'] }} (applicant)</h3>
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}

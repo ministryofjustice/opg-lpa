@@ -27,6 +27,11 @@ Then(`I click element marked {string}`, (text) => {
     cy.contains(text).click();
 })
 
+When(`I click {string} for LPA ID {int}`, (clickable, LpaId) => {
+		cy.get("[data-cy=lpa-" + LpaId + "]").find("[data-cy=" + clickable + "]").click();
+		cy.OPGCheckA11y();
+})
+
 // this step exists because newly signed-up user goes straight to type page whereas existing user may get taken to dashboard
 Then(`If I am on dashboard I click to create lpa`, () => {
     cy.url().then(urlStr => {
