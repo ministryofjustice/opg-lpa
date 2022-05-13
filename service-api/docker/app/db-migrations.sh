@@ -2,6 +2,8 @@
 
 cd /app
 
+echo "X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0 LOCKLOCKLOCK Calling db-migrations.sh script from service-api"
+
 seedData="${OPG_LPA_SEED_DATA:-false}"
 
 COUNTER=0

@@ -6,6 +6,8 @@ include __DIR__ . '/../vendor/autoload.php';
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 
+echo "X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0X0 LOCKLOCKLOCK Calling lock script from service-api\n";
+
 /**
  * Options:
  *      --name:     Lock name within the table.
