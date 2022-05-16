@@ -79,8 +79,6 @@ class Service extends AbstractService
         $requests = [];
         $siriusResponseArray = [];
 
-        $debugInfo = [];
-
         foreach ($ids as $id) {
             $prefixedId = $id;
 
@@ -90,12 +88,9 @@ class Service extends AbstractService
 
             $url = new Uri($this->processingStatusServiceUri . $prefixedId);
 
-            $debugInfo[$id] = [];
-            $debugInfo[$id]['url'] = '' . $url;
-
             $requests[$id] = new Request('GET', $url, $this->buildHeaders());
             $requests[$id] = $this->awsSignature->signRequest($requests[$id], $this->credentials);
-        } //end of request loop
+        }
 
         // build pool
         $results = [];
@@ -117,24 +112,17 @@ class Service extends AbstractService
 
         // Initiate transfers and create a promise
         $promise = $pool->promise();
+
         // Force the pool of requests to complete
         $promise->wait();
+
         // Handle all request response now
         foreach ($results as $lpaId => $result) {
             $statusCode = $result->getStatusCode();
-            $debugInfo[$lpaId]['status_code'] = $statusCode;
 
             switch ($statusCode) {
                 case 200:
                     $responseBodyString = $result->getBody()->getContents();
-
-                    $this->getLogger()->debug(
-                        '============================ SIRIUS LPA STATUS RESPONSE: ' .
-                        'lpaId=' . $lpaId .
-                        '; code=' . $statusCode .
-                        '; body=' . $responseBodyString
-                    );
-
                     $response = $this->handleResponse($responseBodyString);
                     $siriusResponseArray[$lpaId] = [
                         'deleted'   => false,
@@ -143,11 +131,6 @@ class Service extends AbstractService
                     break;
 
                 case 404:
-                    $this->getLogger()->debug(
-                        '============================ SIRIUS LPA STATUS RESPONSE: ' .
-                        'lpaId=' . $lpaId . '; code=404'
-                    );
-
                     // A 404 represents that details for the passed ID could not be found
                     $siriusResponseArray[$lpaId] = [
                         'deleted'   => false,
@@ -156,11 +139,6 @@ class Service extends AbstractService
                     break;
 
                 case 410:
-                    $this->getLogger()->debug(
-                        '============================ SIRIUS LPA STATUS RESPONSE: ' .
-                        'lpaId=' . $lpaId . '; code=410'
-                    );
-
                     // A 410 represents the LPA has recently been deleted from Sirius
                     $siriusResponseArray[$lpaId] = [
                         'deleted'   => true,
@@ -183,19 +161,8 @@ class Service extends AbstractService
                         '; ' . (string)$result->getBody()
                     );
                     break;
-            } //end switch
-
-            if (isset($siriusResponseArray[$lpaId])) {
-                $debugInfo[$lpaId]['response'] = $siriusResponseArray[$lpaId];
-            } else {
-                $debugInfo[$lpaId]['response'] = 'BAD RESPONSE';
             }
         }
-
-        $this->getLogger()->debug(
-            "++++++++++++++++ JSON LPA STATUS RESPONSES: " .
-            json_encode($debugInfo)
-        );
 
         return $siriusResponseArray;
     }
