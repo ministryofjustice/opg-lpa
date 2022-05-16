@@ -14,10 +14,11 @@ We have received the application fee for ((donorName))'s property and finance LP
 
 # What you need to do next
 
-* Sign in to your account to download and print the LPA
-((feeFormOnly?? and fee remissions form)) ((PTNOnly?? and people to notify letters)) ((feeFormPTN?? fee remissions form, and fee remissions form)): ((viewDocsURL))
-* Get everyone to sign the LPA in the right order – instructions are on the LPA cover sheet. Once everyone’s signed, you can check the order is correct here: ((checkDatesUrl))
-* Post the LPA to us for registration ((remission??along with the fee remission form and supporting evidence)).
+((feeFormPTN??* Sign in to your account to download and print the LPA, the fee remissions form and the person to notify letters)) ((feeFormOnly??* Sign in to your account to download and print the LPA and the fee remissions form)) ((PTNOnly??* Sign in to your account to download and print the LPA and the person to notify letters)) here ((viewDocsURL))
+* Get everyone to sign the LPA in the right order – instructions are on the LPA cover sheet. Once everyone’s signed, you can check the order is correct here ((checkDatesUrl))
+* Post the LPA to us for registration ((remission??along with the fee remissions form and supporting evidence))
+((PTNOnly??* Post each person to notify letter))
+((feeFormPTN??* Post each person to notify letter))
 
 If we do not receive the LPA by ((date)), we'll refund the application  fee.  
 

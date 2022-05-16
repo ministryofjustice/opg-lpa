@@ -8,9 +8,11 @@ Online LPA ID: ((lpaId))
 
  What you need to do next
 
-* Sign in to your account to download and print the LPA and  fee remission form ((PTN??and people to notify letters)): ((viewDocsUrl)) 
-*Get everyone to sign the LPA in the right order – instructions are on the LPA cover sheet. Once everyone’s signed, you can check the order is correct here: ((checkDatesUrl))
-* Post the LPA and fee remission form with supporting evidence to us for registration.
+* Sign in to your account to download and print the LPA and  fee remissions form ((PTN??and each person to notify letter)) here ((viewDocsUrl)) 
+*Get everyone to sign the LPA in the right order – instructions are on the LPA cover sheet. Once everyone’s signed, you can check the order is correct here ((checkDatesUrl))
+* Post the LPA and fee remissions form with supporting evidence to us for registration
+((PTN??* Post each person to notify letter))
+
 
 ^ Remember, an LPA must be registered before it can be used.
 
