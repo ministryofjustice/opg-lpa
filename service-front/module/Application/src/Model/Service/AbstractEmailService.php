@@ -25,16 +25,17 @@ abstract class AbstractEmailService extends AbstractService
      * implementations may map these to appropriate rendering mechanisms (e.g. 
      * 3rd party identifiers (e.g. Notify template IDs)
      */
-    public const EMAIL_ACCOUNT_ACTIVATE                = 'email-account-activate';
-    public const EMAIL_FEEDBACK                        = 'email-feedback';
-    public const EMAIL_LPA_REGISTRATION                = 'email-lpa-registration';
-    public const EMAIL_LPA_REGISTRATION_WITH_PAYMENT   = 'email-lpa-registration-with-payment';
-    public const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY        = 'email-new-email-address-notify';
-    public const EMAIL_NEW_EMAIL_ADDRESS_VERIFY        = 'email-new-email-address-verify';
-    public const EMAIL_PASSWORD_CHANGED                = 'email-password-changed';
-    public const EMAIL_PASSWORD_RESET                  = 'email-password-reset';
-    public const EMAIL_PASSWORD_RESET_NO_ACCOUNT       = 'email-password-reset-no-account';
-    public const EMAIL_ACCOUNT_DUPLICATION_WARNING     = 'email-account-duplication-warning';
+    public const EMAIL_ACCOUNT_ACTIVATE                      = 'email-account-activate';
+    public const EMAIL_FEEDBACK                              = 'email-feedback';
+    public const EMAIL_LPA_REGISTRATION_WITH_PAYMENT1        = 'email-lpa-registration-with-payment1';
+    public const EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 = 'email-lpa-registration-with-cheque-payment2';
+    public const EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3     = 'email-lpa-registration-with-no-payment3';
+    public const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY              = 'email-new-email-address-notify';
+    public const EMAIL_NEW_EMAIL_ADDRESS_VERIFY              = 'email-new-email-address-verify';
+    public const EMAIL_PASSWORD_CHANGED                      = 'email-password-changed';
+    public const EMAIL_PASSWORD_RESET                        = 'email-password-reset';
+    public const EMAIL_PASSWORD_RESET_NO_ACCOUNT             = 'email-password-reset-no-account';
+    public const EMAIL_ACCOUNT_DUPLICATION_WARNING           = 'email-account-duplication-warning';
 
     /**
      * AbstractEmailService constructor.
