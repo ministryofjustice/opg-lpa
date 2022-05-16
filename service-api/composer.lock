@@ -115,16 +115,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.222.7",
+            "version": "3.222.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "03d35eef5c509798d2c08587cfd9a7c33afe2260"
+                "reference": "8503d393b3ebef20241931b1abc20cb2af494cb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/03d35eef5c509798d2c08587cfd9a7c33afe2260",
-                "reference": "03d35eef5c509798d2c08587cfd9a7c33afe2260",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8503d393b3ebef20241931b1abc20cb2af494cb2",
+                "reference": "8503d393b3ebef20241931b1abc20cb2af494cb2",
                 "shasum": ""
             },
             "require": {
@@ -200,9 +200,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.222.7"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.222.12"
             },
-            "time": "2022-05-06T18:16:59+00:00"
+            "time": "2022-05-13T18:15:34+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -249,7 +249,7 @@
         },
         {
             "name": "cakephp/core",
-            "version": "4.3.8",
+            "version": "4.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/core.git",
@@ -306,7 +306,7 @@
         },
         {
             "name": "cakephp/database",
-            "version": "4.3.8",
+            "version": "4.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/database.git",
@@ -361,16 +361,16 @@
         },
         {
             "name": "cakephp/datasource",
-            "version": "4.3.8",
+            "version": "4.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/datasource.git",
-                "reference": "1a177933b3bf988dc91d9a37018cb4ddf2f47190"
+                "reference": "106ac9cb54a852f286dd2fe21e131c51f4a3d7fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/datasource/zipball/1a177933b3bf988dc91d9a37018cb4ddf2f47190",
-                "reference": "1a177933b3bf988dc91d9a37018cb4ddf2f47190",
+                "url": "https://api.github.com/repos/cakephp/datasource/zipball/106ac9cb54a852f286dd2fe21e131c51f4a3d7fb",
+                "reference": "106ac9cb54a852f286dd2fe21e131c51f4a3d7fb",
                 "shasum": ""
             },
             "require": {
@@ -415,11 +415,11 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/datasource"
             },
-            "time": "2022-03-28T14:39:10+00:00"
+            "time": "2022-05-10T07:45:43+00:00"
         },
         {
             "name": "cakephp/utility",
-            "version": "4.3.8",
+            "version": "4.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/utility.git",
@@ -3690,16 +3690,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "14.0.0",
+            "version": "14.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
-                "reference": "070543818972f1309191331038ad50432e35866a"
+                "reference": "96974593f39f534ecf34415c2d5b92d35c2766fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/070543818972f1309191331038ad50432e35866a",
-                "reference": "070543818972f1309191331038ad50432e35866a",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/96974593f39f534ecf34415c2d5b92d35c2766fb",
+                "reference": "96974593f39f534ecf34415c2d5b92d35c2766fb",
                 "shasum": ""
             },
             "require": {
@@ -3720,7 +3720,7 @@
                 "MIT"
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
-            "time": "2022-04-29T14:25:28+00:00"
+            "time": "2022-05-09T08:03:25+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
