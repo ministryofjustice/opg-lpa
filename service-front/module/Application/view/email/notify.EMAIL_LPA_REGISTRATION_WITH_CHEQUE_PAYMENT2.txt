@@ -8,11 +8,10 @@ Online LPA ID: ((lpaId))
 
 What you need to do next
 
-((feeFormPTN?? * Sign in to your account to download and print the LPA, fee remissions form and each person to notify letter))((feeFormOnly?? * Sign in to your account to download and print the LPA and fee remissions form))((PTNOnly?? * Sign in to your account to download and print the LPA  and each person to notify letter)) here ((viewDocsURL))
-
+((feeFormPTN??* Sign in to your account to download and print the LPA, fee remissions form and each person to notify letter))((feeFormOnly??* Sign in to your account to download and print the LPA and fee remissions form))
+((PTNOnly??* Sign in to your account to download and print the LPA  and each person to notify letter))here ((viewDocsURL))
 * Get everyone to sign the LPA in the right order - instructions are on the LPA cover sheet. Once everyone's signed, you can check the order is correct here ((checkDatesUrl))
 * Post the LPA to us for registration with a cheque for £((feeAmount)) made payable to ‘Office of the Public Guardian’. Please write the donor’s full name on the back of the cheque. ((remission??You also need to include the fee remissions form and supporting evidence))
-
 ((PTNOnly??* Post each person to notify letter))
 ((feeFormPTN??* Post each person to notify letter))
 
