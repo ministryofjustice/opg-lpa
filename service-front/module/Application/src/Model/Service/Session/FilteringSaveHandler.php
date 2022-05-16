@@ -164,15 +164,6 @@ class FilteringSaveHandler implements SaveHandlerInterface
             $data = '';
         }
 
-        $this->getLogger()->debug(
-            sprintf(
-                'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Reading session data at %s; key = %s; session data = %s',
-                microtime(true),
-                $key,
-                $data
-            )
-        );
-
         return $data;
     }
 
@@ -195,23 +186,11 @@ class FilteringSaveHandler implements SaveHandlerInterface
         $key = $this->getKey($id);
 
         if ($doWrite) {
-            $this->getLogger()->debug(sprintf(
-                'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; key = %s; session data = %s',
-                microtime(true),
-                $key,
-                $data
-            ));
 
             $this->sessionWritesAttempted += 1;
 
             return $this->redisClient->setEx($key, $this->ttl, $data);
         } else {
-            $this->getLogger()->debug(sprintf(
-                'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for key %s',
-                microtime(true),
-                $key
-            ));
-
             return true;
         }
     }

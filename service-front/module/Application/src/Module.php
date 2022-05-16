@@ -238,14 +238,6 @@ class Module implements FormElementProviderInterface
                     $filter = function () use ($request, $logger) {
                         $shouldWrite = !$request->getHeaders()->has('X-SessionReadOnly');
 
-                        if ($shouldWrite) {
-                            $msg = 'Writing session for request';
-                        } else {
-                            $msg = 'IGNORING session write for request marked with X-SessionReadOnly';
-                        }
-                        $logger->debug('XXXXXXXXXXXXXXXXXXXXXXXXXXX ' . $msg . '; path = ' .
-                            $request->getUri()->getPath());
-
                         return $shouldWrite;
                     };
 
