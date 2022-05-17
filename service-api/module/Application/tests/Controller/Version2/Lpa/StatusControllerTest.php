@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\StatusController;
@@ -45,8 +44,12 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService = Mockery::mock(ProcessingStatusService::class);
         $this->config = ['track-from-date' => '2019-01-01'];
 
-        $this->statusController = new StatusController($this->authorizationService,
-            $this->applicationsService, $this->processingStatusService, $this->config);
+        $this->statusController = new StatusController(
+            $this->authorizationService,
+            $this->applicationsService,
+            $this->processingStatusService,
+            $this->config
+        );
     }
 
     public function testGetWithFirstUpdateOnValidCase()
@@ -67,7 +70,11 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
+                    'response'  => [
+                        'status' => 'Processed',
+                        'rejectedDate' => new DateTime('2019-02-11'),
+                        'returnUnpaid' => null
+                    ]
                 ]
             ]);
 
@@ -118,7 +125,11 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
+                    'response'  => [
+                        'status' => 'Checking',
+                        'receiptDate' => new DateTime('2019-02-11'),
+                        'returnUnpaid' => null
+                    ]
                 ]
             ]);
 
@@ -184,7 +195,11 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Received' , 'receiptDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
+                    'response'  => [
+                        'status' => 'Received',
+                        'receiptDate' => new DateTime('2019-02-11'),
+                        'returnUnpaid' => null
+                    ]
                 ]
             ]);
 
@@ -220,7 +235,11 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Checking' , 'registrationDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
+                    'response'  => [
+                        'status' => 'Checking',
+                        'registrationDate' => new DateTime('2019-02-11'),
+                        'returnUnpaid' => null
+                    ]
                 ]
             ]);
 
@@ -330,7 +349,11 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Checking' , 'receiptDate' => new DateTime('2019-02-11'), 'returnUnpaid' => null]
+                    'response'  => [
+                        'status' => 'Checking',
+                        'receiptDate' => new DateTime('2019-02-11'),
+                        'returnUnpaid' => null
+                    ]
                 ]
             ]);
 
@@ -600,7 +623,10 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98766' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Processed','dispatchDate' => new DateTime('2019-02-15'), 'returnUnpaid' => true]
+                    'response'  => [
+                        'status' => 'Processed', 'dispatchDate' => new DateTime('2019-02-15'),
+                        'returnUnpaid' => true
+                    ]
                 ]
             ]);
         $this->applicationsService->shouldReceive('patch')->once();
@@ -854,6 +880,23 @@ class StatusControllerTest extends AbstractControllerTest
             ->once()
             ->andReturn([$lpa]);
 
+        $this->applicationsService->shouldReceive('patch')
+            ->withArgs([
+                [
+                    'metadata' => [
+                        'sirius-processing-status' => 'Waiting',
+                        'application-registration-date' => null,
+                        'application-receipt-date' => null,
+                        'application-rejected-date' => null,
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null,
+                        'application-dispatch-date' => null,
+                    ]
+                ],
+                '98765',
+                '12345'
+            ])->once();
+
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
@@ -867,7 +910,9 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->assertEquals(new Json([
             '98765' => [
-                'found' => false,
+                'found' => true,
+                'status' => 'Waiting',
+                'returnUnpaid' => null,
             ]]), $result);
     }
 }

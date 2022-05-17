@@ -46,6 +46,21 @@ Feature: Status display for LPAs
         # status date and Return - unpaid status on Sirius
         And the LPA with ID "15527329531" should display with status "Processed"
 
+        # *no* status date and Return - unpaid status on Sirius
+        And the LPA with ID "13316443118" should display with status "Processed"
+
+        # Deleted from Sirius, status returns to waiting
+        And the LPA with ID "97998888883" should display with status "Waiting"
+
+    @focus
+    Scenario: An LPA which has been deleted from sirius will display as "Waiting" on its status page (LPAL-550)
+        Given I log in as appropriate test user
+        When I am taken to the dashboard page
+        And I click on the View "waiting" message link for LPA with ID "97998888883"
+        Then I am taken to the detail page for LPA with ID "97998888883"
+        And I see "A979 9888 8883" in the page text
+        And the LPA status is shown as "Waiting"
+
     @focus
     Scenario: The status message page for an LPA has the title "Status message" (LPAL-432)
         Given I log in as appropriate test user
@@ -149,7 +164,7 @@ Feature: Status display for LPAs
         And the LPA status is shown as "Received"
 
     @focus
-    Scenario: An LPA which is received and is Payment Pending displays as "Processed" on its status page (LPAL-549)
+    Scenario: An LPA which is received and is Return - unpaid displays as "Processed" on its status page (LPAL-549)
         Given I log in as appropriate test user
         When I am taken to the dashboard page
         And I click on the View "processed" message link for LPA with ID "15527329531"
@@ -158,5 +173,18 @@ Feature: Status display for LPAs
         And the LPA status is shown as "Processed"
         And I do not see "donor and all attorneys on the LPA will get a letter" in the page text
 
-        # Return unpaid status was set on statusDate which becomes dispatch date of 27/02/20
+        # Return unpaid status was set on statusDate, which becomes dispatch date of 27/02/20
         And the date by which the LPA should be received is shown as "19/03/20"
+
+    @focus
+    Scenario: An LPA which is received and is Return - unpaid but has no status date displays as "Processed" on its status page (LPAL-550)
+        Given I log in as appropriate test user
+        When I am taken to the dashboard page
+        And I click on the View "processed" message link for LPA with ID "13316443118"
+        Then I am taken to the detail page for LPA with ID "13316443118"
+        And I see "A133 1644 3118" in the page text
+        And the LPA status is shown as "Processed"
+        And I do not see "donor and all attorneys on the LPA will get a letter" in the page text
+
+        # Return unpaid status was set but there's no statusDate
+        And the date by which the LPA should be received is shown as "15 working days"
