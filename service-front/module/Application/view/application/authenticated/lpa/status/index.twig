@@ -90,7 +90,13 @@
                     <p>The donor and all attorneys on the LPA will get a letter telling them the outcome.</p>
                 {% endif %}
 
-                <p>The letter and LPA were sent by second class post. If they have not arrived by <span data-cy="lpa-should-receive-by-date">{{ shouldReceiveByDate|date('d/m/y') }}</span>, please call 0300 456 0300.</p>
+                <p>The letter and LPA were sent by second class post. If they have not arrived
+                {% if shouldReceiveByDate != null %}
+                    by <span data-cy="lpa-should-receive">{{ shouldReceiveByDate|date('d/m/y') }}</span>,
+                {% else %}
+                    after <span data-cy="lpa-should-receive">15 working days</span>,
+                {% endif %}
+                please call 0300 456 0300.</p>
 
                 <p>Opening times: Monday, Tuesday, Thursday, Friday 9.30am to 5pm. Wednesday 10am to 5pm.</p>
             </div>
