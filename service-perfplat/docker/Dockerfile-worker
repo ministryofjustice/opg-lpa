@@ -9,7 +9,7 @@ RUN yum update -y rpm openssl curl nss nss-util nss-softokn nspr expat cyrus-sas
 RUN yum install -y gcc postgresql-devel
 
 # Install Python dependencies for worker
-COPY docker/worker-requirements.txt /service-perfplat/
+COPY service-perfplat/docker/worker-requirements.txt /service-perfplat/
 RUN pip install -r /service-perfplat/worker-requirements.txt --target ${LAMBDA_TASK_ROOT}
 
 ### Final image - contains compiled dependencies
@@ -25,7 +25,7 @@ RUN yum install -y postgresql && \
 COPY --from=base ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}
 
 # Copy lambda code to image
-COPY ./perfplat /service-perfplat/perfplat
+COPY service-perfplat/perfplat /service-perfplat/perfplat
 
 # Move the handler to the correct place in the filesystem so the lambda
 # image can reference it

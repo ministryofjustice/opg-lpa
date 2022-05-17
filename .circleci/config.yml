@@ -64,7 +64,7 @@ pr_build: &pr_build
         name: perfplat-lambda-docker-worker-build
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-worker-ci
+        dockerfile_name: Dockerfile-worker
         filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
@@ -302,7 +302,7 @@ path_to_live: &path_to_live
         name: perfplat-lambda-docker-worker-build
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-worker-ci
+        dockerfile_name: Dockerfile-worker
         filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
