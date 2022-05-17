@@ -44,15 +44,23 @@ class MessageFactory
                 'opg-lpa-feedback',
             ],
         ],
-        AbstractEmailService::EMAIL_LPA_REGISTRATION => [
-            'template' => 'lpa-registration.twig',
+        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1 => [
+            'template' => 'lpa-registration-with-payment.twig',
             'categories' => [
                 'opg',
                 'opg-lpa',
                 'opg-lpa-complete-registration',
             ],
         ],
-        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT => [
+        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 => [
+            'template' => 'lpa-registration-with-payment.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-complete-registration',
+            ],
+        ],
+        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3 => [
             'template' => 'lpa-registration-with-payment.twig',
             'categories' => [
                 'opg',

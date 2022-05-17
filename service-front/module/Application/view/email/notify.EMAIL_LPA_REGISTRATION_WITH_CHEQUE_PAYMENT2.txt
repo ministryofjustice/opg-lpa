@@ -1,0 +1,38 @@
+NOTIFY SERVICE EMAIL TEMPLATE: EMAIL_LPA_REGISTRATION_WITH_PAYMENT1
+
+NOTIFY TEMPLATE ID: 6779a351-b53e-4267-8eb7-7f24193e3026
+
+Online LPA ID: ((lpaId))
+
+# ((donorName))'s LPA is ready to print and sign
+
+What you need to do next
+
+((feeFormPTN??* Sign in to your account to download and print the LPA, fee remissions form and each person to notify letter))((feeFormOnly??* Sign in to your account to download and print the LPA and fee remissions form))
+((PTNOnly??* Sign in to your account to download and print the LPA  and each person to notify letter))here ((viewDocsURL))
+* Get everyone to sign the LPA in the right order - instructions are on the LPA cover sheet. Once everyone's signed, you can check the order is correct here ((checkDatesUrl))
+* Post the LPA to us for registration with a cheque for £((feeAmount)) made payable to ‘Office of the Public Guardian’. Please write the donor’s full name on the back of the cheque. ((remission??You also need to include the fee remissions form and supporting evidence))
+((PTNOnly??* Post each person to notify letter))
+((feeFormPTN??* Post each person to notify letter))
+
+
+^ Remember, an LPA must be registered before it can be used.
+
+---
+
+This is an automatic email - please do not reply to this address.
+
+# Contact us
+
+Email: customerservices@publicguardian.gov.uk
+
+Call: 0300 456 0300
+Monday to Friday (except Wednesday) 9.30am to 5pm
+Wednesday 10am to 5pm
+
+Textphone: 0115 934 2778
+
+Office of the Public Guardian
+PO Box 16185
+Birmingham B2 2WH
+https://www.lastingpowerofattorney.service.gov.uk/home
