@@ -46,6 +46,9 @@ curl -i -H "Authorization: sigv4 x" -k http://localhost:7010/lpa-online-tool/lpa
 # Withdrawn
 curl -i -H "Authorization: sigv4 x" -k http://localhost:7010/lpa-online-tool/lpas/A43476377885
 
+# Deleted 410 response returned which sets LPA as Waiting
+curl -i -H "Authorization: sigv4 x" -k http://localhost:7010/lpa-online-tool/lpas/A97998888883
+
 # Waiting (returns a 404 which Make front-end interprets as Waiting status, i.e.
 # the LPA application has not yet been recorded on Sirius)
 curl -i -H "Authorization: sigv4 x" -k http://localhost:7010/lpa-online-tool/lpas/A91155453023
@@ -68,4 +71,3 @@ pip install -r requirements.txt
 ```
 
 You should now be able to work on the scripts in the `scripts/` directory.
-

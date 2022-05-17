@@ -60,11 +60,11 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $result = $this->apiClient->httpGet($target);
         } catch (ApiException $ex) {
             $this->getLogger()->err($ex->getMessage());
-
             $result = null;
         }
 
-        // if an ApiException is returned, we set result to null and return found false for the id's
+        // if an ApiException is returned, we set result to null and
+        // return found => false for the ids
         if ($result == null) {
             $result = [];
 

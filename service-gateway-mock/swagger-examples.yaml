@@ -115,6 +115,18 @@ paths:
                     withdrawnDate: null
                     statusDate: '2020-02-27'
                     status: Return - unpaid
+                received_payment_unpaid_no_statusdate:
+                  value:
+                    onlineLpaId: A13316443118
+                    receiptDate: '2022-05-11'
+                    rejectedDate: null
+                    dispatchDate: null
+                    registrationDate: null
+                    registrationDate: null
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: null
+                    status: Return - unpaid
         '410':
           content:
             application/json:

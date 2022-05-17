@@ -212,21 +212,31 @@ class StatusController extends AbstractRestfulController
         // Update the results for the status received back from Sirius
         foreach ($siriusResponseArray as $lpaId => $lpaDetail) {
             // If the processStatusService didn't get a response for
-            // this LPA (it hasn't been received yet), the detail is null
-            // and the LPA will display as "Waiting"
-            if (is_null($lpaDetail['response'])) {
+            // this LPA (i.e. it hasn't been received yet), the detail is null
+            // and the LPA will display as "Waiting"; note we also get
+            // a null response for deleted (code 410) LPAs, so we guard
+            // against that here
+            if (is_null($lpaDetail['response']) && !$lpaDetail['deleted']) {
                 $results[$lpaId] = ['found' => false];
             } else {
                 // There was a status returned by processStatusService
+                // or the LPA application was deleted
                 $dbResult = $dbResults[$lpaId];
                 $dbProcessingStatus = $this->getValue($dbResult, 'status');
 
                 // Common data, whether the status is set or not
                 $data = [
-                    'deleted'      => $lpaDetail['deleted'],
-                    'status'       => $lpaDetail['response']['status'],
+                    'deleted' => $lpaDetail['deleted'],
+                    'status' => $this->getValue($lpaDetail['response'], 'status'),
                     'rejectedDate' => $this->getValue($lpaDetail['response'], 'rejectedDate')
                 ];
+
+                // If the application was deleted, treat this as if we got a "Waiting"
+                // status from Sirius; this ensures we update the status in the db so
+                // it's not stale on the next request
+                if ($lpaDetail['deleted']) {
+                    $data['status'] = 'Waiting';
+                }
 
                 if (isset($data['status'])) {
                     // Data we only need if status is set already
@@ -249,39 +259,23 @@ class StatusController extends AbstractRestfulController
                     // set found to true here as we got a processing status
                     // from Sirius
                     $results[$lpaId] = [
-                        'found'        => true,
-                        'status'       => $data['status'],
+                        'found' => true,
+                        'status' => $data['status'],
                         'returnUnpaid' => $data['returnUnpaid']
                     ];
-
-                    continue;
-                }
-
-                // Forcefully set found to false, as lpa has recently been deleted from Sirius
-                // this will display "waiting" for the user
-                if ($lpaDetail['deleted']) {
+                } elseif (!is_null($dbProcessingStatus) && is_null($data['rejectedDate'])) {
+                    // Use the db status if we got nothing from Sirius, providing there's
+                    // no rejection date
                     $results[$lpaId] = [
-                        'found'  => false,
-                    ];
-
-                    continue;
-                }
-
-                // Use the db status if we got nothing from Sirius, providing there's
-                // no rejection date
-                if (!is_null($dbProcessingStatus) && is_null($data['rejectedDate'])) {
-                    $results[$lpaId] = [
-                        'found'  => true,
+                        'found' => true,
                         'status' => $dbProcessingStatus,
                     ];
-
-                    continue;
+                } else {
+                    // We didn't get a status from db or Sirius
+                    $results[$lpaId] = [
+                        'found' => false,
+                    ];
                 }
-
-                // We didn't get a status from db or Sirius
-                $results[$lpaId] = [
-                    'found' => false,
-                ];
             }
         }
 
