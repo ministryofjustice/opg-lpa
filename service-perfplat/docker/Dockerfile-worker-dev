@@ -1,5 +1,5 @@
 ### Base image - contains dependencies required for build
-FROM public.ecr.aws/lambda/python:3.8 AS base
+FROM public.ecr.aws/lambda/python:3.9 AS base
 
 # fixes security issues detected in build.
 RUN yum update -y rpm openssl curl nss nss-util nss-softokn nspr expat cyrus-sasl-lib
@@ -13,7 +13,7 @@ COPY docker/worker-requirements.txt /service-perfplat/
 RUN pip install -r /service-perfplat/worker-requirements.txt --target ${LAMBDA_TASK_ROOT}
 
 ### Final image - contains compiled dependencies
-FROM public.ecr.aws/lambda/python:3.8
+FROM public.ecr.aws/lambda/python:3.9
 
 # fixes security issues detected in build.
 RUN yum update -y rpm openssl curl nss nss-util nss-softokn nspr
@@ -27,4 +27,8 @@ COPY --from=base ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}
 # Copy lambda code to image
 COPY ./perfplat /service-perfplat/perfplat
 
-CMD ["/service-perfplat/perfplat/worker/handler.exec"]
+# Move the handler to the correct place in the filesystem so the lambda
+# image can reference it
+RUN mv /service-perfplat/perfplat/worker/handler.py ${LAMBDA_TASK_ROOT}/app.py
+
+CMD ["app.exec"]

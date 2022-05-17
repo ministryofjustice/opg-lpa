@@ -1,5 +1,5 @@
 ### Base image - contains dependencies required for build
-FROM public.ecr.aws/lambda/python:3.8 AS base
+FROM public.ecr.aws/lambda/python:3.9 AS base
 
 # fixes security issues detected in build.
 RUN yum update -y rpm openssl nss nss-util nss-softokn nspr expat cyrus-sasl-lib
@@ -13,7 +13,7 @@ COPY docker/api-requirements.txt /service-perfplat/
 RUN pip install -r /service-perfplat/api-requirements.txt --target ${LAMBDA_TASK_ROOT}
 
 ### Final image - contains compiled dependencies
-FROM public.ecr.aws/lambda/python:3.8
+FROM public.ecr.aws/lambda/python:3.9
 
 # fixes security issues detected in build.
 RUN yum update -y rpm openssl nss nss-util nss-softokn nspr
