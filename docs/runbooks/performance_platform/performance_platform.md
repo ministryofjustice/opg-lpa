@@ -87,9 +87,9 @@ without access to the hostnames specified in docker-compose.yml.
 
 Follow these steps to set up an environment to run the perfplat code:
 
-1. `virtualenv -p python3 ~/.perfplat-venv`
+1. `python3 -m venv ~/.perfplat-venv`
 2. `source ~/.perfplat-venv/bin/active`
-3. `cd service-perfplat/src`
+3. `cd service-perfplat`
 4. `python setup.py -e.[dev]` (note that if you're using zsh, you may need
 to do `python setup.py -e.\[dev\]`)
 
@@ -124,6 +124,8 @@ Note that the body of the message contains:
 ```
 {"year": 2021, "month": 7}
 ```
+
+with "year" and "month" set to the current year and month.
 
 This demonstrates that the message sent from our queuecli script
 has reached the perfplat-queue.fifo queue. This has then triggered
