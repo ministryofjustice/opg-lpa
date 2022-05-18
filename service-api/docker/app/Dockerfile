@@ -13,6 +13,7 @@ RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade apk-tools
 RUN apk upgrade --available
+
 # Postgres lib needs to remain in the container
 RUN apk add --update --no-cache postgresql-libs
 
@@ -41,16 +42,37 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
 
-COPY --chown=appuser:appuser service-api /app
+# Core files for the application
+COPY --chown=appuser:appuser service-api/bin /app/bin
+COPY --chown=appuser:appuser service-api/db/migrations /app/db/migrations
+COPY --chown=appuser:appuser service-api/config /app/config
+COPY --chown=appuser:appuser service-api/module /app/module
+COPY --chown=appuser:appuser service-api/public /app/public
+
+# Remove test files
+RUN rm -Rf /app/module/Application/tests
+
+# Keep the composer.lock as security scanners use it
+COPY --chown=appuser:appuser service-api/composer.lock /app/composer.lock
+
+# Shared logging library
 COPY --chown=appuser:appuser shared/logging /shared/logging
+
+# Composer-installed files from the base image
 COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
+
+# PHP config files
 COPY --chown=appuser:appuser service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=appuser:appuser service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
-RUN chmod +x /app/docker/app/db-migrations.sh
+# Migration script
+COPY --chown=appuser:appuser service-api/docker/app/db-migrations.sh /app/db-migrations.sh
+COPY --chown=appuser:appuser service-api/phinx.php /app/phinx.php
+
+RUN chmod +x /app/db-migrations.sh
 
 WORKDIR /app
 
 USER appuser
 
-CMD  /app/docker/app/db-migrations.sh && php-fpm
+CMD  /app/db-migrations.sh && php-fpm
