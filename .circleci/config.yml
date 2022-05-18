@@ -64,14 +64,14 @@ pr_build: &pr_build
         name: perfplat-lambda-docker-worker-build
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-worker-ci
+        dockerfile_name: Dockerfile-worker
         filters: { branches: { ignore: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-api-build
         lambda_name: perfplat-api
         dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-api-ci
+        dockerfile_name: Dockerfile-api
         filters: { branches: { ignore: [main] } }
 
     - infrastructure_and_deployment/lint_account_terraform:
@@ -302,14 +302,14 @@ path_to_live: &path_to_live
         name: perfplat-lambda-docker-worker-build
         lambda_name: perfplat-worker
         dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-worker-ci
+        dockerfile_name: Dockerfile-worker
         filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-api-build
         lambda_name: perfplat-api
         dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-api-ci
+        dockerfile_name: Dockerfile-api
         filters: { branches: { only: [main] } }
 
     - infrastructure_and_deployment/plan_check_terraform:
