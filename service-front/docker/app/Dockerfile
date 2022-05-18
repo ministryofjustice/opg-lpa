@@ -53,8 +53,8 @@ COPY --chown=appuser:appuser service-front/data /app/data
 COPY --chown=appuser:appuser service-front/module /app/module
 COPY --chown=appuser:appuser service-front/public /app/public
 
-# Remove test files
-RUN rm -Rf /app/module/Application/tests
+# For tests in CI
+COPY --chown=appuser:appuser service-front/phpunit.xml /app/phpunit.xml
 
 # Keep the composer.lock as security scanners use it
 COPY --chown=appuser:appuser service-front/composer.lock /app/composer.lock

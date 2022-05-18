@@ -41,6 +41,10 @@ COPY --chown=appuser:appuser service-admin/config /app/config
 COPY --chown=appuser:appuser service-admin/public /app/public
 COPY --chown=appuser:appuser service-admin/src /app/src
 
+# Need this to run unit tests in CI
+COPY --chown=appuser:appuser service-admin/phpunit.xml.dist /app/phpunit.xml.dist
+COPY --chown=appuser:appuser service-admin/test /app/test
+
 COPY --chown=appuser:appuser shared/logging /shared/logging
 COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
 

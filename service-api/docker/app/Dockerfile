@@ -49,8 +49,8 @@ COPY --chown=appuser:appuser service-api/config /app/config
 COPY --chown=appuser:appuser service-api/module /app/module
 COPY --chown=appuser:appuser service-api/public /app/public
 
-# Remove test files
-RUN rm -Rf /app/module/Application/tests
+# For tests in CI
+COPY --chown=appuser:appuser service-api/phpunit.xml /app/phpunit.xml
 
 # Keep the composer.lock as security scanners use it
 COPY --chown=appuser:appuser service-api/composer.lock /app/composer.lock
