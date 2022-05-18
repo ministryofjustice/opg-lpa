@@ -20,24 +20,16 @@ use RuntimeException;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController
 {
-    /**
-     * @var LPA The LPA currently referenced in to the URL
-     */
+    /** @var LPA The LPA currently referenced in to the URL */
     private $lpa;
 
-    /**
-     * @var \Application\Model\FormFlowChecker
-     */
+    /** @var \Application\Model\FormFlowChecker */
     private $flowChecker;
 
-    /**
-     * @var ReplacementAttorneyCleanup
-     */
+    /** @var ReplacementAttorneyCleanup */
     private $replacementAttorneyCleanup;
 
-    /**
-     * @var Metadata
-     */
+    /** @var Metadata */
     private $metadata;
 
     /**
@@ -75,7 +67,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             $userService
         );
 
-        //  If there is no user identity the request will be bounced in the onDispatch function
+        // If there is no user identity the request will be bounced in the onDispatch function
         if ($authenticationService->hasIdentity()) {
             $lpa = $lpaApplicationService->getApplication((int) $lpaId);
 
@@ -91,23 +83,24 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         if (($authenticated = $this->checkAuthenticated()) !== true) {
             return $authenticated;
         }
-        
+
         if (!$this->lpa instanceof Lpa) {
             //404 error returned as either the LPA does not exist in the database, or is not associated with the user
             return $this->notFoundAction();
         }
 
-        //  If there is an identity then confirm that the LPA belongs to the user
+        // If there is an identity then confirm that the LPA belongs to the user
         if ($this->getIdentity()->id() !== $this->lpa->user) {
             throw new RuntimeException('Invalid LPA - current user can not access it');
         }
 
-        # inject lpa into layout.
-        $this->layout()->lpa = $this->lpa;
+        /** @var ViewModel */
+        $layout = $this->layout();
 
-        /**
-         * check the requested route and redirect user to the correct one if the requested route is not available.
-         */
+        // inject lpa into layout
+        $layout->lpa = $this->lpa;
+
+        // check the requested route and redirect user to the correct one if the requested route is not available.
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
 
         // get extra input query param from the request url.
@@ -127,7 +120,11 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
         // redirect to the calculated route if it is not equal to the current route
         if ($calculatedRoute != $currentRoute) {
-            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id' => $this->lpa->id], $this->getFlowChecker()->getRouteOptions($calculatedRoute));
+            return $this->redirect()->toRoute(
+                $calculatedRoute,
+                ['lpa-id' => $this->lpa->id],
+                $this->getFlowChecker()->getRouteOptions($calculatedRoute)
+            );
         }
 
         // inject lpa into view
@@ -151,17 +148,23 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             return new JsonModel(['success' => true]);
         }
 
-        //  Check that the route match is the correct type
+        // Check that the route match is the correct type
         $routeMatch = $this->getEvent()->getRouteMatch();
 
         if (!$routeMatch instanceof RouteMatch) {
-            throw new RuntimeException('RouteMatch must be an instance of Laminas\Router\Http\RouteMatch when using the moveToNextRoute function');
+            throw new RuntimeException(
+                'RouteMatch must be an instance of Laminas\Router\Http\RouteMatch for moveToNextRoute()'
+            );
         }
 
-        //  Get the current route and the LPA ID to move to the next route
+        // Get the current route and the LPA ID to move to the next route
         $nextRoute = $this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName());
 
-        return $this->redirect()->toRoute($nextRoute, ['lpa-id' => $this->lpa->id], $this->getFlowChecker()->getRouteOptions($nextRoute));
+        return $this->redirect()->toRoute(
+            $nextRoute,
+            ['lpa-id' => $this->lpa->id],
+            $this->getFlowChecker()->getRouteOptions($nextRoute)
+        );
     }
 
     /**
@@ -180,7 +183,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      */
     protected function isPopup()
     {
-        return $this->getRequest()->isXmlHttpRequest();
+        return $this->convertRequest()->isXmlHttpRequest();
     }
 
     /**
@@ -219,7 +222,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         foreach ($modelData as $l1 => $l2) {
             if (is_array($l2)) {
                 foreach ($l2 as $name => $l3) {
-                    if ($l1=='dob') {
+                    if ($l1 == 'dob') {
                         $dob = new \DateTime($l3);
                         $formData['dob-date'] = [
                                 'day'   => $dob->format('d'),
@@ -227,7 +230,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
                                 'year'  => $dob->format('Y'),
                         ];
                     } else {
-                        $formData[$l1.'-'.$name] = $l3;
+                        $formData[$l1 . '-' . $name] = $l3;
                     }
                 }
             } else {
@@ -245,5 +248,4 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     {
         return $this->metadata;
     }
-    
 }

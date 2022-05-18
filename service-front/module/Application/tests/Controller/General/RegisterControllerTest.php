@@ -14,11 +14,12 @@ use Laminas\Http\Header\Referer;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
+use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
 
 class RegisterControllerTest extends AbstractControllerTest
 {
-    const GA = 987654321987654321;
+    public const GA = 987654321987654321;
     /**
      * @var MockInterface|Registration
      */
@@ -36,13 +37,21 @@ class RegisterControllerTest extends AbstractControllerTest
         'password' => 'password'
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->form = Mockery::mock(Registration::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\Registration'])->andReturn($this->form);
+    }
+
+    private function makeMockReferer($url)
+    {
+        $uri = new Uri($url);
+        $referer = Mockery::mock(Referer::class);
+        $referer->shouldReceive('uri')->once()->andReturn($uri);
+        return $referer;
     }
 
     protected function getController(string $controllerName)
@@ -66,12 +75,16 @@ class RegisterControllerTest extends AbstractControllerTest
         $controller = $this->getController(RegisterController::class);
 
         $response = new Response();
-        $referer = new Referer();
-        $referer->setUri('http://www.gov.uk');
 
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
+
+        $referer = $this->makeMockReferer('http://www.gov.uk');
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['home', ['action' => 'index'], ['query' => ['_ga' => self::GA]]])->andReturn($response)->once();
+
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['home', ['action' => 'index'], ['query' => ['_ga' => self::GA]]])
+            ->andReturn($response)
+            ->once();
 
         $result = $controller->indexAction();
 
@@ -84,13 +97,23 @@ class RegisterControllerTest extends AbstractControllerTest
 
         $response = new Response();
 
-        $referer = new Referer();
-        $referer->setUri('https://localhost/home');
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
+
+        $referer = $this->makeMockReferer('https://localhost/home');
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
+
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['user/dashboard'])
+            ->andReturn($response)
+            ->once();
+
         $this->logger->shouldReceive('info')
-            ->withArgs(['Authenticated user attempted to access registration page', $this->userIdentity->toArray()])
+            ->withArgs(
+                [
+                    'Authenticated user attempted to access registration page',
+                    $this->userIdentity->toArray()
+                ]
+            )
             ->once();
 
         $result = $controller->indexAction();
@@ -103,10 +126,11 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->setIdentity(null);
         $controller = $this->getController(RegisterController::class);
 
-        $referer = new Referer();
-        $referer->setUri('https://localhost/home');
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
+
+        $referer = $this->makeMockReferer('https://localhost/home');
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
+
         $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -124,10 +148,11 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->setIdentity(null);
         $controller = $this->getController(RegisterController::class);
 
-        $referer = new Referer();
-        $referer->setUri('https://localhost/home');
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
+
+        $referer = $this->makeMockReferer('https://localhost/home');
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
+
         $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->setPostInvalid($this->form, $this->postData);
@@ -145,10 +170,11 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->setIdentity(null);
         $controller = $this->getController(RegisterController::class);
 
-        $referer = new Referer();
-        $referer->setUri('https://localhost/home');
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
+
+        $referer = $this->makeMockReferer('https://localhost/home');
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
+
         $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->setPostValid($this->form, $this->postData);
@@ -171,10 +197,11 @@ class RegisterControllerTest extends AbstractControllerTest
 
         $response = new Response();
 
-        $referer = new Referer();
-        $referer->setUri('https://localhost/home');
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
+
+        $referer = $this->makeMockReferer('https://localhost/home');
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
+
         $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->setPostValid($this->form, $this->postData);
@@ -182,7 +209,10 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->userDetails->shouldReceive('registerAccount')->andReturn(true);
 
         //  Set up the confirm email form
-        $this->url->shouldReceive('fromRoute')->withArgs(['register/resend-email'])->andReturn('register/resend-email')->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['register/resend-email'])
+            ->andReturn('register/resend-email')
+            ->once();
         $form = Mockery::mock(ConfirmEmail::class);
         $form->shouldReceive('setAttribute')->withArgs(['action', 'register/resend-email'])->once();
         $form->shouldReceive('populateValues')->withArgs([[

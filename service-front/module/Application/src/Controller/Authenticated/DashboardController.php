@@ -15,21 +15,21 @@ class DashboardController extends AbstractAuthenticatedController
         $search = $this->params()->fromQuery('search', null);
         $page = $this->params()->fromRoute('page', 1);
 
-        //  Set the items per page for front application lists
+        // Set the items per page for front application lists
         $lpasPerPage = 50;
 
-        //  Get the LPA list summary using a query if provided
+        // Get the LPA list summary using a query if provided
         $lpasSummary = $this->getLpaApplicationService()->getLpaSummaries($search, $page, $lpasPerPage);
         $lpas = $lpasSummary['applications'];
 
         $lpasTotalCount = $lpasSummary['total'];
 
-        //  If there are no LPAs and this is NOT a query, redirect them to create one...
+        // If there are no LPAs and this is NOT a query, redirect them to create one...
         if (is_null($search) && count($lpas) == 0) {
             return $this->createAction();
         }
 
-        //  Get the pagination control data for these results
+        // Get the pagination control data for these results
         $pagesInRange = 5;
         $paginationControlData = $this->getPaginationControlData($page, $lpasPerPage, $lpasTotalCount, $pagesInRange);
 
@@ -57,35 +57,35 @@ class DashboardController extends AbstractAuthenticatedController
      */
     private function getPaginationControlData($page, $lpasPerPage, $lpasTotalCount, $numberOfPagesInRange)
     {
-        //  Determine the total number of pages
+        // Determine the total number of pages
         $pageCount = ceil($lpasTotalCount / $lpasPerPage);
 
-        //  If the requested page is higher than allowed then set it to the highest possible value
+        // If the requested page is higher than allowed then set it to the highest possible value
         if ($page > $pageCount) {
             $page = $pageCount;
         }
 
-        //  Figure out which pages to provide specific links to - pages in range
-        //  Start the pages in range array with the current page
+        // Figure out which pages to provide specific links to - pages in range
+        // Start the pages in range array with the current page
         $pagesInRange = [$page];
 
         for ($i = 0; $i < ($numberOfPagesInRange - 1); $i++) {
-            //  Get the current lowest and highest page numbers
+            // Get the current lowest and highest page numbers
             $lowestPage = min($pagesInRange);
             $highestPage = max($pagesInRange);
 
-            //  If this is an even numbered iteration add a higher page number
+            // If this is an even numbered iteration add a higher page number
             if ($i % 2 == 0) {
-                //  Try to add a higher page number if possible
-                //  If not possible then try to add a lower page number if possible
+                // Try to add a higher page number if possible
+                // If not possible then try to add a lower page number if possible
                 if ($highestPage < $pageCount) {
                     $pagesInRange[] = ++$highestPage;
                 } elseif ($lowestPage > 1) {
                     $pagesInRange[] = --$lowestPage;
                 }
             } else {
-                //  Try to add a lower page number if possible
-                //  If not possible then try to add a higher page number if possible
+                // Try to add a lower page number if possible
+                // If not possible then try to add a higher page number if possible
                 if ($lowestPage > 1) {
                     $pagesInRange[] = --$lowestPage;
                 } elseif ($highestPage < $pageCount) {
@@ -94,10 +94,10 @@ class DashboardController extends AbstractAuthenticatedController
             }
         }
 
-        //  Sort the page numbers into order
+        // Sort the page numbers into order
         asort($pagesInRange);
 
-        //  Figure out the first and last item number that are being displayed
+        // Figure out the first and last item number that are being displayed
         $firstItemNumber = (($page - 1) * $lpasPerPage) + 1;
         $lastItemNumber = min($page * $lpasPerPage, $lpasTotalCount);
 
@@ -120,16 +120,16 @@ class DashboardController extends AbstractAuthenticatedController
     {
         $seedId = $this->params()->fromRoute('lpa-id');
 
-        //-------------------------------------
         // If we're seeding the new LPA...
-
         if ($seedId != null) {
-            //-------------------------------------
             // Create a new LPA...
-
             $lpa = $this->getLpaApplicationService()->createApplication();
 
             if (!$lpa instanceof Lpa) {
+                /**
+                 * psalm doesn't understand Laminas MVC plugins
+                 * @psalm-suppress UndefinedMagicMethod
+                 */
                 $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
 
                 return $this->redirect()->toRoute('user/dashboard');
@@ -140,14 +140,16 @@ class DashboardController extends AbstractAuthenticatedController
             $this->resetSessionCloneData($seedId);
 
             if ($result !== true) {
+                /**
+                 * psalm doesn't understand Laminas MVC plugins
+                 * @psalm-suppress UndefinedMagicMethod
+                 */
                 $this->flashMessenger()->addWarningMessage('LPA created but could not set seed');
             }
 
             // Redirect them to the first page...
             return $this->redirect()->toRoute('lpa/form-type', [ 'lpa-id' => $lpa->id ]);
         }
-
-        //---
 
         // Redirect them to the first page, no LPA created
         return $this->redirect()->toRoute('lpa-type-no-id');
@@ -192,15 +194,13 @@ class DashboardController extends AbstractAuthenticatedController
 
         $viewModel->setTemplate('application/authenticated/dashboard/confirm-delete.twig');
 
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->convertRequest()->isXmlHttpRequest()) {
             $viewModel->setTerminal(true);
             $viewModel->isPopup = true;
         }
 
         return $viewModel;
     }
-
-    //---
 
     /**
      * Displayed when the Terms of use have changed since the user last logged in.
@@ -209,8 +209,6 @@ class DashboardController extends AbstractAuthenticatedController
     {
         return new ViewModel();
     }
-
-    //------------------------------------------------------------------
 
     /**
      * This is overridden to prevent people being (accidentally?) directed to this controller post-auth.

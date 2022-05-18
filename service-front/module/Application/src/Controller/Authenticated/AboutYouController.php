@@ -8,19 +8,17 @@ use Laminas\View\Model\ViewModel;
 
 class AboutYouController extends AbstractAuthenticatedController
 {
-    /**
-     * @var Container
-     */
+    /** @var Container */
     private $userDetailsSession;
 
     /**
      * Flag to indicate if complete user details are required when accessing this controller
-     *
-     * @var bool
      */
+    /** @var bool */
     protected $requireCompleteUserDetails = false;
 
     /**
+     * @psalm-suppress ImplementedReturnTypeMismatch
      * @return \Laminas\Http\Response|ViewModel
      */
     public function indexAction()
@@ -35,18 +33,18 @@ class AboutYouController extends AbstractAuthenticatedController
 
         $form->setAttribute('action', $actionTarget);
 
-        $request = $this->getRequest();
+        $request = $this->convertRequest();
 
-        //  Get any existing data for the user
+        // Get any existing data for the user
         $userDetails = $this->getUser();
         $userDetailsArr = $userDetails->flatten();
 
         if ($request->isPost()) {
-            //  Merge any existing data - this is required for the datamodel validation that will execute in the form
+            // Merge any existing data - this is required for the datamodel validation that will execute in the form
             $data = $request->getPost()->toArray();
             $existingData = array_intersect_key($userDetailsArr, array_flip(['id', 'createdAt', 'updatedAt']));
 
-            //  Validate the new data with the existing data that doesn't change in the form
+            // Validate the new data with the existing data that doesn't change in the form
             $form->setData(array_merge($data, $existingData));
 
             if ($form->isValid()) {
@@ -56,15 +54,19 @@ class AboutYouController extends AbstractAuthenticatedController
                 // Clear the old details out the session.
                 unset($this->userDetailsSession->user);
 
-                //  Saved successful so return to dashboard with message if required
+                // Saved successful so return to dashboard with message if required
                 if (!$isNew) {
+                    /**
+                     * psalm doesn't understand Laminas MVC plugins
+                     * @psalm-suppress UndefinedMagicMethod
+                     */
                     $this->flashMessenger()->addSuccessMessage('Your details have been updated.');
                 }
 
                 return $this->redirect()->toRoute('user/dashboard');
             }
         } else {
-            //  if the user is new then ensure they are accessing the new route only
+            // if the user is new then ensure they are accessing the new route only
             if (!$isNew && is_null($userDetails->name)) {
                 return $this->redirect()->toUrl('/user/about-you/new');
             }

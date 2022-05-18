@@ -9,6 +9,10 @@ class VerifyEmailAddressController extends AbstractBaseController
 {
     /**
      * @var UserService
+     *
+     * psalm doesn't understand laminas-mvc plugins, so thinks the flashMessenger()
+     * method doesn't exist on this class; hence...
+     * @psalm-suppress UndefinedMagicMethod
      */
     private $userService;
 
@@ -25,18 +29,18 @@ class VerifyEmailAddressController extends AbstractBaseController
 
         $token = $this->params()->fromRoute('token');
 
-        if ($this->userService->updateEmailUsingToken( $token ) === true) {
-
+        if ($this->userService->updateEmailUsingToken($token) === true) {
+            /** @psalm-suppress UndefinedMagicMethod */
             $this->flashMessenger()
                 ->addSuccessMessage('Your email address was successfully updated. Please login with your new address.');
-
         } else {
+            /** @psalm-suppress UndefinedMagicMethod */
             $this->flashMessenger()
                 ->addErrorMessage('There was an error updating your email address');
         }
 
         // will either go to the login page or the dashboard
-        return $this->redirect()->toRoute( 'login' );
+        return $this->redirect()->toRoute('login');
     }
 
     public function setUserService(UserService $userService)

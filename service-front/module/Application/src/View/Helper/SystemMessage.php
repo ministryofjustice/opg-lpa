@@ -7,9 +7,7 @@ use Laminas\View\Helper\AbstractHelper;
 
 class SystemMessage extends AbstractHelper
 {
-    /**
-     * @var DynamoDbKeyValueStore
-     */
+    /** @var DynamoDbKeyValueStore */
     private $cache;
 
     public function __construct(DynamoDbKeyValueStore $cache)
