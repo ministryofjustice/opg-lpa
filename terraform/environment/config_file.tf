@@ -12,10 +12,10 @@ locals {
     admin_fqdn                   = module.environment_dns.admin_fqdn
     public_facing_fqdn           = module.environment_dns.public_facing_lastingpowerofattorney_fqdn
     tag                          = var.container_version
-    db_client_security_group_id  = !local.account.dr_enabled ? module.eu-west-1.db_client_security_group_id : module.eu-west-2[0].db_client_security_group_id
-    seeding_security_group_id    = !local.account.dr_enabled ? module.eu-west-1.seeding_security_group_id : module.eu-west-2[0].seeding_security_group_id
-    feedbackdb_security_group_id = !local.account.dr_enabled ? module.eu-west-1.feedbackdb_security_group_id : module.eu-west-2[0].feedbackdb_security_group_id
-    cluster_name                 = !local.account.dr_enabled ? module.eu-west-1.cluster_name : module.eu-west-2[0].cluster_name
+    db_client_security_group_id  = !local.dr_enabled ? module.eu-west-1.db_client_security_group_id : module.eu-west-2[0].db_client_security_group_id
+    seeding_security_group_id    = !local.dr_enabled ? module.eu-west-1.seeding_security_group_id : module.eu-west-2[0].seeding_security_group_id
+    feedbackdb_security_group_id = !local.dr_enabled ? module.eu-west-1.feedbackdb_security_group_id : module.eu-west-2[0].feedbackdb_security_group_id
+    cluster_name                 = !local.dr_enabled ? module.eu-west-1.cluster_name : module.eu-west-2[0].cluster_name
 
   }
 }

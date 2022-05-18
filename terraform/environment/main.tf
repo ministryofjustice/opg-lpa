@@ -17,7 +17,7 @@ module "eu-west-1" {
 }
 
 module "eu-west-2" {
-  count                    = local.account_name == "development" && local.account.dr_enabled ? 1 : 0
+  count                    = local.dr_enabled ? 1 : 0
   source                   = "./modules/environment"
   account                  = local.account
   account_name             = local.account_name
@@ -38,15 +38,15 @@ module "eu-west-2" {
 module "environment_dns" {
   source = "./modules/dns"
   providers = {
-    aws = aws
+    aws            = aws
     aws.management = aws.management
   }
   account_name     = local.account_name
   environment_name = local.environment_name
-  front_dns_name   = !local.account.dr_enabled ? module.eu-west-1.front_dns_name : module.eu-west-2[0].front_dns_name
-  front_zone_id    = !local.account.dr_enabled ? module.eu-west-1.front_zone_id : module.eu-west-2[0].front_zone_id
-  admin_dns_name   = !local.account.dr_enabled ? module.eu-west-1.admin_dns_name : module.eu-west-2[0].admin_dns_name
-  admin_zone_id    = !local.account.dr_enabled ? module.eu-west-1.admin_zone_id : module.eu-west-2[0].admin_zone_id
+  front_dns_name   = !local.dr_enabled ? module.eu-west-1.front_dns_name : module.eu-west-2[0].front_dns_name
+  front_zone_id    = !local.dr_enabled ? module.eu-west-1.front_zone_id : module.eu-west-2[0].front_zone_id
+  admin_dns_name   = !local.dr_enabled ? module.eu-west-1.admin_dns_name : module.eu-west-2[0].admin_dns_name
+  admin_zone_id    = !local.dr_enabled ? module.eu-west-1.admin_zone_id : module.eu-west-2[0].admin_zone_id
 
 }
 

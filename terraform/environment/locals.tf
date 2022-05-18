@@ -15,6 +15,9 @@ locals {
   admin_dns                   = "admin.lpa"
   pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
 
+  # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
+  dr_enabled = local.account_name == "development" && local.account.dr_enabled
+
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
