@@ -33,7 +33,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param string|null $token
-     * @return array|bool|null
+     * @return false|Lpa
      */
     public function getApplication($lpaId, string $token = null)
     {
@@ -47,6 +47,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $result = $this->apiClient->httpGet($target);
             return new Lpa($result);
         } catch (ApiException $ex) {
+            $this->getLogger()->err($ex->getMessage());
         }
 
         return false;
@@ -83,7 +84,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
     /**
      * Create a new LPA application
      *
-     * @return bool
+     * @return false|Lpa
      */
     public function createApplication()
     {
@@ -103,7 +104,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param array $data
-     * @return bool
+     * @return false|Lpa
      */
     public function updateApplication($lpaId, array $data)
     {
@@ -160,10 +161,14 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         //  Get the response and check its contents
         try {
-            $result = $this->apiClient->httpGet(
+            $response = $this->apiClient->httpGet(
                 sprintf('/v2/user/%s/applications', $this->getUserId()),
                 $queryParams
             );
+
+            if (is_array($response)) {
+                $result = $response;
+            }
         } catch (ApiException $ex) {
             $this->getLogger()->err('ApiException thrown when fetching LPA application summaries');
         }
@@ -218,7 +223,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                     $progress = 'Waiting';
 
                     // If we already have a processing status use that instead of "Waiting" status
-                    if ($metadata !== null && array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata)) {
+                    if (array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata)) {
                         $processingStatus = $metadata[Lpa::SIRIUS_PROCESSING_STATUS];
 
                         if ($processingStatus !== null) {
@@ -296,7 +301,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param $pdfType
-     * @return array|bool|null
+     * @return array|false|null|string
      * @throws ApiException
      */
     public function getPdfContents($lpaId, $pdfType)
@@ -304,11 +309,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
         $target = sprintf('/v2/user/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType);
 
         try {
-            return $this->apiClient->httpGet($target, [], false);
+            $result = $this->apiClient->httpGet($target, [], false);
         } catch (ApiException $ex) {
+            $result = false;
         }
 
-        return false;
+        return $result;
     }
 
     /**

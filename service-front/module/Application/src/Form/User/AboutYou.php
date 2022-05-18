@@ -4,6 +4,7 @@ namespace Application\Form\User;
 
 use Application\Form\Lpa\AbstractActorForm;
 use Opg\Lpa\DataModel\User\User;
+use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
 
 class AboutYou extends AbstractActorForm
@@ -51,20 +52,22 @@ class AboutYou extends AbstractActorForm
     }
 
     /**
-     * Set data in the form - remove the the date of birth and address data if it has been totally omitted
+     * Set data in the form - remove the the date of birth and address data
+     * if it has been totally omitted
      *
-     * @param  array $data
-     * @return self
+     * @param iterable $data
+     * @return Form&static
      */
     public function setData($data)
     {
-        $this->filterData($data);
-
+        $dataArray = (array)$data;
+        $this->filterData($dataArray);
         return parent::setData($data);
     }
 
     /**
-     * Retrieve the validated data - used AFTER form validation to retrieve an array of data before sending it to the API
+     * Retrieve the validated data - used AFTER form validation to
+     * retrieve an array of data before sending it to the API
      *
      * @param  int $flag
      * @return array|object
@@ -97,17 +100,23 @@ class AboutYou extends AbstractActorForm
     private function filterData(array &$data)
     {
         //  If the date of birth is empty then remove it here completely
-        if (array_key_exists('dob-date', $data)
+        if (
+            array_key_exists('dob-date', $data)
             && is_array($data['dob-date'])
             && empty($data['dob-date']['year'])
             && empty($data['dob-date']['month'])
-            && empty($data['dob-date']['day'])) {
-
+            && empty($data['dob-date']['day'])
+        ) {
             unset($data['dob-date']);
         }
 
         //  If the address is empty then remove it - it is optional
-        if (empty($data['address-address1']) && empty($data['address-address2']) && empty($data['address-address3']) && empty($data['address-postcode'])) {
+        if (
+            empty($data['address-address1']) &&
+            empty($data['address-address2']) &&
+            empty($data['address-address3']) &&
+            empty($data['address-postcode'])
+        ) {
             $data['address'] = null;
         }
 

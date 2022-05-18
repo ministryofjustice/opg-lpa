@@ -4,12 +4,13 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\User\Details as UserService;
+use Laminas\Http\Header\Referer;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
+use ArrayIterator;
 
 class RegisterController extends AbstractBaseController
 {
-
     /**
      * @var UserService
      */
@@ -18,19 +19,27 @@ class RegisterController extends AbstractBaseController
     /**
      * Register a new account.
      *
-     * @return ViewModel|\Laminas\Http\Response
+     * The Laminas MVC controller only allows ViewModel
+     * as a return type, but we return a redirect response in
+     * some cases. (Not sure why Laminas doesn't enforce this
+     * when sending responses to the client from an MVC controller,
+     * but it doesn't.) So we suppress this psalm error.
+     *
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     * @return ViewModel|HttpResponse
      */
     public function indexAction()
     {
-        $request = $this->getRequest();
-
-        //  gov.uk is not allowed to point users directly at this page
-        $referer = $request->getHeader('Referer');
+        $request = $this->convertRequest();
 
         $ga = $request->getQuery('_ga');
 
-        if ($referer != false) {
-            if ($referer->uri()->getHost() === 'www.gov.uk') {
+        // gov.uk is not allowed to point users directly at this page
+        /** @var Referer */
+        $referer = $request->getHeader('Referer');
+
+        if ($referer !== false) {
+            if (stripos($referer->uri()->getHost(), 'www.gov.uk') !== false) {
                 return $this->redirect()->toRoute('home', ['action' => 'index'], ['query' => ['_ga' => $ga]]);
             }
         }
@@ -90,7 +99,7 @@ class RegisterController extends AbstractBaseController
     /**
      * Display the form to resend the activation email or process a post
      *
-     * @return ViewModel
+     * @return ViewModel|false|\Laminas\Http\Response
      */
     public function resendEmailAction()
     {
@@ -105,7 +114,7 @@ class RegisterController extends AbstractBaseController
 
         $viewModel = new ViewModel();
 
-        $request = $this->getRequest();
+        $request = $this->convertRequest();
 
         if ($request->isPost()) {
             $form->setData($request->getPost());

@@ -144,7 +144,8 @@ class DownloadControllerTest extends AbstractControllerTest
             'pdf-type' => $pdfType
         ]])->andReturn($response)->once();
 
-        $this->logger->shouldReceive('info')->withArgs(['PDF status is in-queue', ['lpaId' => $this->lpa->id]])->once();
+        $this->logger->shouldReceive('info')
+            ->withArgs(['PDF status is in-queue', ['lpaId' => $this->lpa->id]])->once();
 
         $result = $controller->downloadAction();
 
@@ -178,17 +179,22 @@ class DownloadControllerTest extends AbstractControllerTest
         $headers->shouldReceive('addHeaderLine')
             ->withArgs(['Content-Disposition', 'inline; filename="Lasting-Power-of-Attorney-LP1F.pdf"'])
             ->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Transfer-Encoding', 'Binary'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Description', 'File Transfer'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Pragma', 'public'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Expires', '0'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Cache-Control', 'must-revalidate'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Length', 11])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Content-Transfer-Encoding', 'Binary'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Content-Description', 'File Transfer'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Pragma', 'public'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Expires', '0'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Cache-Control', 'must-revalidate'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+        ->withArgs(['Content-Length', 11])->andReturn($headers)->once();
 
         $userAgentHeader = Mockery::mock(HeaderInterface::class);
         $userAgentHeader->shouldReceive('getFieldValue')->andReturn('');
-        $headers->shouldReceive('get')->andReturn($userAgentHeader);
-        $this->request->shouldReceive('getHeaders')->andReturn($headers);
+        $this->request->shouldReceive('getHeaders')->with('User-Agent')->andReturn($userAgentHeader);
 
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
 
@@ -232,19 +238,25 @@ class DownloadControllerTest extends AbstractControllerTest
         $headers->shouldReceive('addHeaderLine')
             ->withArgs(['Content-Disposition', 'inline; filename="Lasting-Power-of-Attorney-LP1F.pdf"'])
             ->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Transfer-Encoding', 'Binary'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Description', 'File Transfer'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Pragma', 'public'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Expires', '0'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Cache-Control', 'must-revalidate'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Length', 11])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Content-Transfer-Encoding', 'Binary'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Content-Description', 'File Transfer'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Pragma', 'public'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Expires', '0'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Cache-Control', 'must-revalidate'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Content-Length', 11])->andReturn($headers)->once();
 
         $userAgentHeader = Mockery::mock(HeaderInterface::class);
         $userAgentHeader->shouldReceive('getFieldValue')->andReturn('');
-        $headers->shouldReceive('get')->andReturn($userAgentHeader);
-        $this->request->shouldReceive('getHeaders')->andReturn($headers);
+        $this->request->shouldReceive('getHeaders')->with('User-Agent')->andReturn($userAgentHeader);
 
-        $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
+        $this->logger->shouldReceive('info')
+            ->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
 
         $uri = Mockery::mock(Uri::class);
         $uri->shouldReceive('getHost')->andReturn('Test Host')->once();
@@ -257,7 +269,7 @@ class DownloadControllerTest extends AbstractControllerTest
             ->withArgs(['Test Host', '/test-path', 'Lasting-Power-of-Attorney-LP1F.pdf'])
             ->andThrowExceptions([$exception]);
 
-        $this->logger->shouldReceive('err')->withArgs([$exception]);
+        $this->logger->shouldReceive('err')->withArgs(['Test Exception']);
 
         $result = $controller->downloadAction();
 

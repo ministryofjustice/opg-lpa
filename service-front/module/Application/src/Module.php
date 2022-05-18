@@ -8,14 +8,15 @@ use MakeLogger\Logging\LoggerTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
-use Application\Model\Service\Mail\MessageFactory;
 use Application\Model\Service\RedisClient\RedisClient;
 use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
+use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\System\DynamoCronLock;
 use Application\View\Helper\LocalViewRenderer;
 use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
+use Closure;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
@@ -60,21 +61,19 @@ class Module implements FormElementProviderInterface
 
         $request = $e->getApplication()->getServiceManager()->get('Request');
 
-        if (!$request instanceof \Laminas\Console\Request) {
-            $path = $request->getUri()->getPath();
+        $path = $request->getUri()->getPath();
 
-            // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
-            if (
-                !strstr($request->getServer('SCRIPT_NAME'), 'phpunit') &&
-                !in_array($path, [
-                    // URLs excluded from creating a session
-                    '/ping/elb',
-                    '/ping/json',
-                ])
-            ) {
-                $this->bootstrapSession($e);
-                $this->bootstrapIdentity($e, $path != '/session-state');
-            }
+        // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
+        if (
+            !strstr($request->getServer('SCRIPT_NAME'), 'phpunit') &&
+            !in_array($path, [
+                // URLs excluded from creating a session
+                '/ping/elb',
+                '/ping/json',
+            ])
+        ) {
+            $this->bootstrapSession($e);
+            $this->bootstrapIdentity($e, $path != '/session-state');
         }
     }
 
@@ -85,6 +84,7 @@ class Module implements FormElementProviderInterface
      */
     private function bootstrapSession(MvcEvent $e)
     {
+        /** @var SessionManager $session */
         $session = $e->getApplication()->getServiceManager()->get('SessionManager');
 
         // Always starts the session.
@@ -92,8 +92,6 @@ class Module implements FormElementProviderInterface
 
         // Ensures this SessionManager is used for all Session Containers.
         Container::setDefaultManager($session);
-
-        //---
 
         $session->initialise();
     }
@@ -221,11 +219,6 @@ class Module implements FormElementProviderInterface
                     ]);
                 },
 
-                'MessageFactory' => function (ServiceLocatorInterface $sm) {
-                    $localViewRenderer = new LocalViewRenderer($sm->get('TwigEmailRenderer'));
-                    return new MessageFactory($sm->get('config'), $localViewRenderer);
-                },
-
                 'SaveHandler' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
 
@@ -244,32 +237,8 @@ class Module implements FormElementProviderInterface
                     return new FilteringSaveHandler($redisUrl, $ttlMs, [$filter], new Redis());
                 },
 
-                'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
-                    $loader = new FilesystemLoader('module/Application/view/email');
-
-                    $env = new Environment($loader);
-
-                    $viewHelperManager = $sm->get('ViewHelperManager');
-                    $renderer = new \Laminas\View\Renderer\PhpRenderer();
-                    $renderer->setHelperPluginManager($viewHelperManager);
-
-                    $env->registerUndefinedFunctionCallback(function ($name) use ($viewHelperManager, $renderer) {
-                        if (!$viewHelperManager->has($name)) {
-                            $this->getLogger()->debug('no Twig function called ' . $name . ' for rendering emails');
-                            return false;
-                        }
-
-                        $callable = [$renderer->plugin($name), '__invoke'];
-                        $options  = ['is_safe' => ['html']];
-                        return new TwigFunction('email', $callable, $options);
-                    });
-
-                    return $env;
-                },
-
                 'TwigViewRenderer' => function (ServiceLocatorInterface $sm) {
                     $loader = new FilesystemLoader('module/Application/view/application');
-
                     return new Environment($loader);
                 }
             ], // factories
@@ -348,7 +317,7 @@ class Module implements FormElementProviderInterface
      * which is attached to these events in config.
      *
      * @param MvcEvent $e
-     * @return ViewModel
+     * @return ViewModel|null
      */
     public function handleError(MvcEvent $e)
     {
@@ -361,6 +330,11 @@ class Module implements FormElementProviderInterface
             $e->getViewModel()->addChild($viewModel);
             $e->stopPropagation();
 
+            // Suppress psalm errors caused by bug in laminas-mvc;
+            // see https://github.com/laminas/laminas-mvc/issues/77
+            /**
+             * @psalm-suppress UndefinedInterfaceMethod
+             */
             $e->getResponse()->setStatusCode(500);
 
             return $viewModel;

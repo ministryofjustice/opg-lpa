@@ -13,9 +13,8 @@ class Accordion extends AbstractHelper
 
     /**
      * Full list of all the routes that can be used as bars in the accordion - in order
-     *
-     * @var array
      */
+    /** @var array */
     private $bars = [
         'lpa/form-type',
         'lpa/donor',
@@ -36,9 +35,7 @@ class Accordion extends AbstractHelper
         'lpa/fee-reduction',
     ];
 
-    /**
-     * @var RouteMatch
-     */
+    /** @var RouteMatch */
     private $routeMatch;
 
     /**
@@ -129,9 +126,9 @@ class Accordion extends AbstractHelper
                 // Check we can access 'this' page...
                 if ($route == $flowChecker->getNearestAccessibleRoute($route)) {
                     // Then check there are more pages...
-                    if (isset($bars[$key + 1])) {
+                    if (isset($bars[intval($key) + 1])) {
                         // And that we can access at least one of them...
-                        foreach (array_slice($bars, $key + 1) as $futureRoute) {
+                        foreach (array_slice($bars, intval($key) + 1) as $futureRoute) {
                             // If we are able to access a future route, then this page is complete.
                             if ($futureRoute == $flowChecker->getNearestAccessibleRoute($futureRoute)) {
                                 // All conditions met, so add the bar.

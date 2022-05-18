@@ -1,12 +1,17 @@
 <?php
+
 namespace Application\View\Helper;
 
 use Laminas\Form\ElementInterface;
+use Laminas\Form\View\Helper\FormElementErrors;
 
-class FormElementErrorsV2 extends \Laminas\Form\View\Helper\FormElementErrors
+class FormElementErrorsV2 extends FormElementErrors
 {
-    public function __invoke(ElementInterface $element = null, array $attributes = array(), array $messageOverrideMap = [])
-    {
+    public function __invoke(
+        ElementInterface $element = null,
+        array $attributes = array(),
+        array $messageOverrideMap = []
+    ) {
         if (!$element) {
             return $this;
         }
@@ -16,7 +21,6 @@ class FormElementErrorsV2 extends \Laminas\Form\View\Helper\FormElementErrors
         $this->setMessageSeparatorString('<br>');
 
         if (count($element->getMessages()) > 0) {
-
             $messages = $element->getMessages();
 
             foreach ($messages as $key => &$message) {
@@ -30,8 +34,10 @@ class FormElementErrorsV2 extends \Laminas\Form\View\Helper\FormElementErrors
                 }
             }
             $element->setMessages($messages);
-            
-            echo $this->render($element, $attributes);
+
+            return $this->render($element, $attributes);
         }
+
+        return '';
     }
 }

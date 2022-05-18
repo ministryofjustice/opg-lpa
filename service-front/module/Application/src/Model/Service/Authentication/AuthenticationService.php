@@ -107,17 +107,20 @@ class AuthenticationService extends LaminasAuthenticationService
     /**
      * Get the seconds until the session expires
      *
-     * @return int|null null if the session is not active/timed out, otherwise returns the remaining seconds until expiry
+     * @return int|null null if the session is not active/timed out,
+     *     otherwise returns the remaining seconds until expiry
      */
-    public function getSessionExpiry() : ?int
+    public function getSessionExpiry(): ?int
     {
         $token = $this->getToken();
         if ($token === null) {
             return null;
         }
 
-        /** @noinspection PhpUndefinedMethodInspection */
         // the constructor makes sure we're using the LPA Authentication/AdapterInterface
+        // which does have a getSessionExpiry() method
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $result = $this->adapter->getSessionExpiry($token);
 
         if ($result == null || !isset($result['valid']) || !$result['valid']) {
@@ -131,17 +134,20 @@ class AuthenticationService extends LaminasAuthenticationService
      * Set the seconds until the session expires
      *
      * @param $expiresInSeconds int - number of seconds from now to set expiry at
-     * @return int|null null if the session is not active/timed out, otherwise returns the remaining seconds until expiry
+     * @return int|null null if the session is not active/timed out,
+     *     otherwise returns the remaining seconds until expiry
      */
-    public function setSessionExpiry(int $expiresInSeconds) : ?int
+    public function setSessionExpiry(int $expiresInSeconds): ?int
     {
         $token = $this->getToken();
         if ($token === null) {
             return null;
         }
 
-        /** @noinspection PhpUndefinedMethodInspection */
         // the constructor makes sure we're using the LPA Authentication/AdapterInterface
+        // which does have a setSessionExpiry() method
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $result = $this->adapter->setSessionExpiry($token, $expiresInSeconds);
 
         if ($result == null || !isset($result['valid']) || !$result['valid']) {

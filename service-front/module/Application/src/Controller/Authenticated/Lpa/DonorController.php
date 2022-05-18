@@ -12,18 +12,22 @@ class DonorController extends AbstractLpaActorController
     {
         $lpaId = $this->getLpa()->id;
 
-        //  Set the add route in the view model
+        // Set the add route in the view model
         $viewModel = new ViewModel();
         $viewModel->addUrl = $this->url()->fromRoute('lpa/donor/add', ['lpa-id' => $lpaId]);
 
         if ($this->getLpa()->document->donor instanceof Donor) {
-            //  Determine the next route
+            // Determine the next route
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
             $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
 
-            //  Set the donor data in the view model
+            // Set the donor data in the view model
             $viewModel->editUrl = $this->url()->fromRoute('lpa/donor/edit', ['lpa-id' => $lpaId]);
-            $viewModel->nextUrl =  $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
+            $viewModel->nextUrl =  $this->url()->fromRoute(
+                $nextRoute,
+                ['lpa-id' => $lpaId],
+                $this->getFlowChecker()->getRouteOptions($nextRoute)
+            );
         }
 
         return $viewModel;
@@ -39,7 +43,8 @@ class DonorController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
-        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        // Execute the parent check function to determine what reuse
+        // options might be available and what should happen
         $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
 
         if (!is_null($reuseRedirect)) {
@@ -49,27 +54,33 @@ class DonorController extends AbstractLpaActorController
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        //  If a donor has already been provided then redirect to the main donor screen
+        // If a donor has already been provided then redirect to the main donor screen
         if ($lpa->document->donor instanceof Donor) {
             $route = 'lpa/donor';
 
-            return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
+            return $this->redirect()->toRoute(
+                $route,
+                ['lpa-id' => $lpaId],
+                $this->getFlowChecker()->getRouteOptions($route)
+            );
         }
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/donor/add', ['lpa-id' => $lpaId]));
         $form->setActorData('donor', $this->getActorsList());
 
-        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
-            //  Set the post data
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost() && !$this->reuseActorDetails($form)) {
+            // Set the post data
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // persist data
                 $donor = new Donor($form->getModelDataFromValidatedForm());
 
                 if (!$this->getLpaApplicationService()->setDonor($lpa, $donor)) {
-                    throw new \RuntimeException('API client failed to save LPA donor for id: '.$lpaId);
+                    throw new \RuntimeException('API client failed to save LPA donor for id: ' . $lpaId);
                 }
 
                 return $this->moveToNextRoute();
@@ -80,7 +91,7 @@ class DonorController extends AbstractLpaActorController
 
         $viewModel->form = $form;
 
-        //  Add a cancel URL for this action
+        // Add a cancel URL for this action
         $this->addCancelUrlToView($viewModel, 'lpa/donor');
 
         return $viewModel;
@@ -100,11 +111,16 @@ class DonorController extends AbstractLpaActorController
         $lpaId = $lpa->id;
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\DonorForm');
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/donor/edit', ['lpa-id' => $lpaId]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/donor/edit', ['lpa-id' => $lpaId])
+        );
         $form->setActorData('donor', $this->getActorsList());
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $postData = $request->getPost();
             $postData['canSign'] = (bool) $postData['canSign'];
 
             $form->setData($postData);
@@ -114,10 +130,10 @@ class DonorController extends AbstractLpaActorController
                 $donor = new Donor($form->getModelDataFromValidatedForm());
 
                 if (!$this->getLpaApplicationService()->setDonor($lpa, $donor)) {
-                    throw new \RuntimeException('API client failed to update LPA donor for id: '.$lpaId);
+                    throw new \RuntimeException('API client failed to update LPA donor for id: ' . $lpaId);
                 }
 
-                //  Attempt to update the LPA correspondent too
+                // Attempt to update the LPA correspondent too
                 $this->updateCorrespondentData($donor);
 
                 return $this->moveToNextRoute();
@@ -137,7 +153,7 @@ class DonorController extends AbstractLpaActorController
 
         $viewModel->form = $form;
 
-        //  Add a cancel URL for this action
+        // Add a cancel URL for this action
         $this->addCancelUrlToView($viewModel, 'lpa/donor');
 
         return $viewModel;

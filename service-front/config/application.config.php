@@ -1,7 +1,9 @@
 <?php
+
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
+        'Laminas\Db',
         'Laminas\Log',
         'Laminas\Mail',
         'Laminas\Mvc\I18n',
@@ -19,7 +21,7 @@ return array(
         'Laminas\Cache\Storage\Adapter\Memory',
         'Application',
         //ZfcTwig MUST be the last module!
-        //note that at this time that ZfcTwig has not been given a new Laminas namespace 
+        //note that at this time that ZfcTwig has not been given a new Laminas namespace
         'ZfcTwig'
     ),
     // These are various options for the listeners attached to the ModuleManager

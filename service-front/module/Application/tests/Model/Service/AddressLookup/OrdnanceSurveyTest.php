@@ -1,4 +1,5 @@
 <?php
+
 namespace ApplicationTest\Model\Service\AddressLookup;
 
 use Mockery;
@@ -6,9 +7,8 @@ use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Http\Client\HttpClient as HttpClientInterface;
 use Psr\Http\Message\ResponseInterface;
-
+use Psr\Http\Message\StreamInterface;
 use GuzzleHttp\Psr7\Request;
-
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 
 class OrdnanceSurveyTest extends MockeryTestCase
@@ -33,7 +33,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
      */
     private $response;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->apiKey = 'test-key';
 
@@ -105,7 +105,10 @@ class OrdnanceSurveyTest extends MockeryTestCase
     public function testInvalidHttpLookupResponseBody()
     {
         $this->response->shouldReceive('getStatusCode')->andReturn(200);
-        $this->response->shouldReceive('getBody')->andReturn('');   // <- Invalid JSON response
+
+        $mockBody = Mockery::mock(StreamInterface::class);
+        $mockBody->shouldReceive('__toString')->once()->andReturn(''); // <- Invalid JSON response
+        $this->response->shouldReceive('getBody')->andReturn($mockBody);
 
         $this->httpClient->shouldReceive('sendRequest')
             ->once()
@@ -167,7 +170,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         foreach ($this->testData as $address) {
             $results[] = [
                 'DPA' =>
-                    ['ADDRESS' => "{$address['address']}, {$address['postcode']}", 'POSTCODE'=>$address['postcode']]
+                    ['ADDRESS' => "{$address['address']}, {$address['postcode']}", 'POSTCODE' => $address['postcode']]
             ];
         }
 
@@ -200,5 +203,4 @@ class OrdnanceSurveyTest extends MockeryTestCase
             }
         }
     }
-
 }

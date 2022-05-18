@@ -17,10 +17,10 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "guzzlehttp/guzzle": "^6.3",
         "aws/aws-sdk-php": "^3.204.5",
-        "ministryofjustice/opg-lpa-datamodels": "^13.8",
+        "ministryofjustice/opg-lpa-datamodels": "^14.0",
         "michelf/php-markdown": "^1.9.1",
         "php-http/guzzle6-adapter": "^2.0.2",
         "soundasleep/html2text": "^0.5.0",
@@ -43,7 +43,8 @@
         "laminas/laminas-log": "^2.13",
         "guzzlehttp/psr7": "^1.8.4",
         "alphagov/notifications-php-client": "^4.0.1",
-        "psr/http-client": "^1.0.1"
+        "psr/http-client": "^1.0.1",
+        "laminas/laminas-db": "^2.15"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
@@ -61,7 +62,8 @@
     "require-dev": {
         "phpunit/phpunit": "^9.5",
         "mockery/mockery": "^1.4.4",
-        "laminas/laminas-test": "^4.0"
+        "laminas/laminas-test": "^4.0",
+        "vimeo/psalm": "^4.23"
     },
     "autoload": {
         "psr-4": {

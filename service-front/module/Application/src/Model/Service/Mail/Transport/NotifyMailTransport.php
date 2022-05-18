@@ -22,9 +22,10 @@ class NotifyMailTransport implements MailTransportInterface
     /**
      * Map from internal template IDs to Notify template IDs
      *
-     * @var array Keys are local template IDs, as passed to send() via a MailParameters object;
+     * Keys are local template IDs, as passed to send() via a MailParameters object;
      * values are Notify template IDs
-     */
+     *
+    /** @var array */
     private $templateMap;
 
     // Default values for $templateMap; values are Notify template IDs;
@@ -43,11 +44,7 @@ class NotifyMailTransport implements MailTransportInterface
        AbstractEmailService::EMAIL_ACCOUNT_DUPLICATION_WARNING => '4c99eeff-6af9-4753-aae1-a5d46ea06815',
     ];
 
-    /**
-     * Notify client object
-     *
-     * @var NotifyClient
-     */
+    /** @var NotifyClient */
     private $client;
 
     /**
@@ -70,15 +67,15 @@ class NotifyMailTransport implements MailTransportInterface
     /**
      * Send a mail message.
      *
-     * If $mailParams contains multiple email addresses and sending
+     * If $mailParameters contains multiple email addresses and sending
      * to one throws an exception, subsequent emails will not be sent.
      *
-     * @param  MailParameters $mailParams
-     * @throws Laminas\Mail\Exception\ExceptionInterface
+     * @param  MailParameters $mailParameters
+     * @throws TransportInvalidArgumentException
      */
-    public function send(MailParameters $mailParams): void
+    public function send(MailParameters $mailParameters): void
     {
-        $templateRef = $mailParams->getTemplateRef();
+        $templateRef = $mailParameters->getTemplateRef();
         if (!array_key_exists($templateRef, $this->templateMap)) {
             throw new InvalidArgumentException(
                 'Could not find Notify template for template reference ' . $templateRef
@@ -86,12 +83,12 @@ class NotifyMailTransport implements MailTransportInterface
         }
 
         $notifyTemplateId = $this->templateMap[$templateRef];
-        $data = $mailParams->getData();
+        $data = $mailParameters->getData();
 
         // We could get clever and send these in parallel, but as we're only
         // likely to have a maximum of 2 email addresses to send to,
         // we just fire them off in serial
-        foreach ($mailParams->getToAddresses() as $toAddress) {
+        foreach ($mailParameters->getToAddresses() as $toAddress) {
             // sendEmail() may throw one of the following:
             // - Alphagov\Notifications\Exception\NotifyException
             // - Alphagov\Notifications\Exception\ApiException
@@ -104,7 +101,7 @@ class NotifyMailTransport implements MailTransportInterface
                     'Failed sending email via Notify: ' . $ex->getMessage() . '\n' . $ex->getTraceAsString()
                 );
 
-                throw new TransportInvalidArgumentException($ex);
+                throw new TransportInvalidArgumentException($ex->getMessage());
             }
         }
     }

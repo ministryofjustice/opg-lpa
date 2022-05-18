@@ -9,7 +9,7 @@ class EmailAddress extends LaminasEmailAddressValidator
     /**
      * Overridden function to translate error messages
      *
-     * @param string $value
+     * @param mixed $value
      * @return bool
      */
     public function isValid($value)

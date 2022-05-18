@@ -20,14 +20,16 @@ use Laminas\Session\Container;
  */
 class Communication extends AbstractEmailService
 {
-    /**
-     * @var Container
-     */
+    /** @var Container */
     private $userDetailsSession;
     private $emailTemplateRef;
     private $data;
     private $lpaTypeTitleCase;
 
+    /**
+     * Allow catch of ExceptionInterface exceptions
+     * @psalm-suppress InvalidCatch
+     */
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
         // Get the signed in user's email address.
@@ -77,7 +79,7 @@ class Communication extends AbstractEmailService
             $mailParameters = new MailParameters($to, $this->emailTemplateRef, $this->data);
             $this->getMailTransport()->send($mailParameters);
         } catch (ExceptionInterface $ex) {
-            $this->getLogger()->err($ex);
+            $this->getLogger()->err($ex->getMessage());
             return "failed-sending-email";
         }
 

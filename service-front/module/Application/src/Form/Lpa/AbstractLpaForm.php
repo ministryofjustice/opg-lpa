@@ -110,14 +110,21 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
     /**
      * Convert model validation response to Zend Form validation messages format.
      *
-     * @param ValidatorResponse $validationResponse: e.g.
+     * Return value depends on $validationResponse, e.g.
+     *
+     * $validationResponse =
      *     {storage: ['name.first'=>['value'=>'', 'messages'=>[0=>'cannot-be-blank'],],]}
-     * @return array: e.g. ['name-first'=>'cannot-be-blank',]
-     * or
-     * @param ValidatorResponse $validationResponse: e.g.
+     * return value = ['name-first'=>'cannot-be-blank',]
+     *
+     * OR
+     *
+     * $validationResponse =
      *     {storage: ['address.address2/postcode'=>['value'=>'', 'messages'=>[0=>'cannot-be-null'],],]}
-     * @return array: e.g.
+     * return value =
      *     ['address-address2'=>'linked-1-cannot-be-null','address-postcode'=>'linked-1-cannot-be-null',]
+     *
+     * @param ValidatorResponse $validationResponse
+     * @return array
      */
     protected function modelValidationMessageConverter(ValidatorResponse $validationResponse, $context = null)
     {
@@ -177,7 +184,7 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
      *
      * @param array $formData. e.g. ['name-title'=>'Mr','name-first'=>'John',]
      *
-     * @return array. e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
+     * @return array e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
      */
     protected function convertFormDataForModel($formData)
     {
@@ -210,15 +217,15 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
         return $modelData;
     }
 
-    public function bind($modelizedDataArray, $flags = FormInterface::VALUES_NORMALIZED)
+    public function bind($object, $flags = FormInterface::VALUES_NORMALIZED)
     {
-        return parent::bind(new \ArrayObject($modelizedDataArray));
+        return parent::bind(new \ArrayObject($object));
     }
 
     /**
      *  Get validated form data for creating model object
      *
-     * @return array
+     * @return array|null
      */
     public function getModelDataFromValidatedForm()
     {

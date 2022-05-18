@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\Service\Session;
 
 use Laminas\Session\Container;
@@ -7,9 +8,7 @@ use Laminas\Session\SessionManager as LaminasSessionManager;
 
 class SessionManager extends LaminasSessionManager
 {
-    /**
-     * @var Container $container
-     */
+    /** @var Container $container */
     private $container;
 
     /**
@@ -38,8 +37,8 @@ class SessionManager extends LaminasSessionManager
     {
         // If it's a new session, regenerate the id.
         if (!isset($this->container->init)) {
-            $this->regenerateId(TRUE);
-            $this->container->init = TRUE;
+            $this->regenerateId(true);
+            $this->container->init = true;
         }
     }
 }

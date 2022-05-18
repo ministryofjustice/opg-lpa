@@ -13,7 +13,7 @@ class ReuseDetailsFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->setUpForm(new ReuseDetailsForm());
     }
@@ -29,7 +29,7 @@ class ReuseDetailsFormTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Application\Form\Element\ReuseDetails', $this->form->get('reuse-details'));
+        $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('reuse-details'));
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('submit'));
     }
 

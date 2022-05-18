@@ -7,11 +7,11 @@ use Laminas\Form\FormInterface;
 
 abstract class AbstractActorForm extends AbstractLpaForm
 {
-
-    const PREFER_NOT_TO_SAY_TITLE = 'Prefer not to say';
+    public const PREFER_NOT_TO_SAY_TITLE = 'Prefer not to say';
 
     /**
-     * An actor model object is a Donor, Human, TrustCorporation, CertificateProvider, PeopleToNotify model object.
+     * An actor model object is a Donor, Human, TrustCorporation, CertificateProvider,
+     * PeopleToNotify model object.
      *
      * @var \Opg\Lpa\DataModel\AbstractData $actor
      */
@@ -22,9 +22,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
         //  If the form has a title field then add the select attributes to be used in a dropdown menu
         if (isset($this->formElements['name-title'])) {
             $this->formElements['name-title']['attributes'] = [
-                // added data-cy tags, but for some reason only 1 of data-cy or data-select-options actually takes. needs fixing somehow
-                //  'data-cy' => 'name-title',
-                  'data-select-options' => json_encode([
+                'data-select-options' => json_encode([
                     '',
                     'Mr',
                     'Mrs',
@@ -35,7 +33,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
                     'Other',
                 ]),
             ];
-    }
+        }
 
         parent::init();
     }
@@ -49,7 +47,9 @@ abstract class AbstractActorForm extends AbstractLpaForm
     {
         //  Check that the actor model has been set before proceeding
         if (!$this->actorModel instanceof AbstractData) {
-            throw new \RuntimeException('Actor model in the actor form must be set before the data can be validated by model');
+            throw new \RuntimeException(
+                'Actor model in the actor form must be set before the data can be validated by model'
+            );
         }
 
         // This merge ensured filtered data is returned without losing the metadata.
@@ -70,12 +70,19 @@ abstract class AbstractActorForm extends AbstractLpaForm
                 unset($validation['dob.date']);
             }
 
-            if (array_key_exists('phone', $dataForModel) && ($dataForModel['phone'] == null) && $validation->offsetExists('phone')) {
+            if (
+                array_key_exists('phone', $dataForModel) &&
+                ($dataForModel['phone'] == null) && $validation->offsetExists('phone')
+            ) {
                 $validation['phone-number'] = $validation['phone'];
                 unset($validation['phone']);
             }
 
-            if (array_key_exists('name', $dataForModel) && ($dataForModel['name'] == null) && $validation->offsetExists('name')) {
+            if (
+                array_key_exists('name', $dataForModel) &&
+                $dataForModel['name'] == null &&
+                $validation->offsetExists('name')
+            ) {
                 if (array_key_exists('name-first', $this->data)) {
                     $validation['name-title'] = $validation['name'];
                     $validation['name-first'] = $validation['name'];
@@ -98,7 +105,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
      *
      * @param array $formData. e.g. ['name-title'=>'Mr','name-first'=>'John',]
      *
-     * @return array. e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
+     * @return array e.g. ['name'=>['title'=>'Mr','first'=>'John',],]
      */
     protected function convertFormDataForModel($formData)
     {
@@ -125,12 +132,21 @@ abstract class AbstractActorForm extends AbstractLpaForm
             $dataForModel['phone'] = null;
         }
 
-        if (isset($dataForModel['name']) && is_array($dataForModel['name']) && ($dataForModel['name']['title'] == "") && ($dataForModel['name']['first'] == "") && ($dataForModel['name']['last'] == "")) {
+        if (
+            isset($dataForModel['name']) &&
+            is_array($dataForModel['name']) &&
+            $dataForModel['name']['title'] == "" &&
+            $dataForModel['name']['first'] == "" &&
+            $dataForModel['name']['last'] == ""
+        ) {
             $dataForModel['name'] = null;
         }
 
         // If they have opted not to enter a title, set it to null
-        if (isset($dataForModel['name']['title']) && ($dataForModel['name']['title'] == self::PREFER_NOT_TO_SAY_TITLE)) {
+        if (
+            isset($dataForModel['name']['title']) &&
+            $dataForModel['name']['title'] == self::PREFER_NOT_TO_SAY_TITLE
+        ) {
             $dataForModel['name']['title'] = null;
         }
 
@@ -138,17 +154,18 @@ abstract class AbstractActorForm extends AbstractLpaForm
     }
 
 
-    public function bind($modelizedDataArray, $flags = FormInterface::VALUES_NORMALIZED)
+    public function bind($object, $flags = FormInterface::VALUES_NORMALIZED)
     {
-        if (array_key_exists('name-title', $modelizedDataArray) && is_null($modelizedDataArray['name-title'])) {
-            $modelizedDataArray['name-title'] = self::PREFER_NOT_TO_SAY_TITLE;
+        if (array_key_exists('name-title', $object) && is_null($object['name-title'])) {
+            $object['name-title'] = self::PREFER_NOT_TO_SAY_TITLE;
         }
 
-        return parent::bind($modelizedDataArray);
+        return parent::bind($object);
     }
 
     /**
-     * Function to set the actor data (existing type and names for duplicate comparisons) for all actors associated with the current LPA as a data attribute
+     * Function to set the actor data (existing type and names for
+     * duplicate comparisons) for all actors associated with the current LPA as a data attribute
      *
      * @param $actorType
      * @param array $actorNames

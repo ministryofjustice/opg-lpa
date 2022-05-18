@@ -85,8 +85,7 @@ class WhoAreYouForm extends AbstractMainFlowForm
      * Convert form data to model-compatible input data format.
      *
      * @param array $formData. e.g. ['who'=>'other', 'digitalPartner'=>null, 'other'=>null]
-     *
-     * @return array. e.g. ['who'=>'prefessional', 'subquestion'=>'solicitor', 'qualifier'=>null]
+     * @return array e.g. ['who'=>'prefessional', 'subquestion'=>'solicitor', 'qualifier'=>null]
      */
     protected function convertFormDataForModel($formData)
     {
@@ -117,12 +116,14 @@ class WhoAreYouForm extends AbstractMainFlowForm
     /**
      * Convert model validation response to Zend Form validation messages format.
      */
-    protected function modelValidationMessageConverter(ValidatorResponse $validation, $context = null)
-    {
+    protected function modelValidationMessageConverter(
+        ValidatorResponse $validationResponse,
+        $context = null
+    ) {
         $messages = [];
 
         // loop through all form elements.
-        foreach ($validation as $validationErrorKey => $validationErrors) {
+        foreach ($validationResponse as $validationErrorKey => $validationErrors) {
             if ($validationErrorKey == 'subquestion') {
                 switch ($context['who']) {
                     case 'other':
