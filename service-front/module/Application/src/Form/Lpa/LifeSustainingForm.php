@@ -13,10 +13,10 @@ class LifeSustainingForm extends AbstractMainFlowForm
             'required'  => true,
             'options'   => [
                 'value_options' => [
-                    true => [
+                    'true' => [
                         'value' => '1',
                     ],
-                    false => [
+                    'false' => [
                         'value' => '0',
                     ],
                 ],

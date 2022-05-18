@@ -10,6 +10,9 @@ use Twig\Environment as TwigEnvironment;
 
 class LocalViewRenderer
 {
+    /** @var TwigEnvironment */
+    private $viewRenderer;
+
     /**
      * @param TwigEnvironment $viewRenderer
      */
@@ -23,7 +26,6 @@ class LocalViewRenderer
      */
     public function renderTemplate(string $templateName, array $data)
     {
-        $template = $this->viewRenderer->load($templateName)->unwrap();
-        return $template->render($data);
+        return $this->viewRenderer->render($templateName, $data);
     }
 }

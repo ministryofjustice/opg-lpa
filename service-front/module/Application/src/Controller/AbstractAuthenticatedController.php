@@ -19,34 +19,27 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
 {
     /**
      * Identity of the logged in user
-     *
-     * @var Identity
      */
+    /** @var Identity */
     private $identity;
 
     /**
      * User details of the logged in user
-     *
-     * @var User
      */
+    /** @var User */
     private $user;
 
     /**
      * Flag to indicate if complete user details are required when accessing this controller
      * Override in descendant if required
-     *
-     * @var bool
      */
+    /** @var bool */
     protected $requireCompleteUserDetails = true;
 
-    /**
-     * @var LpaApplicationService
-     */
+    /** @var LpaApplicationService */
     private $lpaApplicationService;
 
-    /**
-     * @var UserService
-     */
+    /** @var UserService */
     private $userService;
 
     /**
@@ -101,8 +94,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     public function onDispatch(MvcEvent $e)
     {
         // Before the user can access any actions that extend this controller...
-
-        //----------------------------------------------------------------------
         // Check we have a user set, thus ensuring an authenticated user.
         if (($authenticated = $this->checkAuthenticated()) !== true) {
             return $authenticated;
@@ -110,7 +101,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
 
         $this->getLogger()->info('Request to ' . get_class($this), $this->identity->toArray());
 
-        //----------------------------------------------------------------------
         // Check if they've signed in since the T&C's changed...
 
         /*
@@ -144,8 +134,8 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             $userDataArr = $this->user->toArray();
             $tempUser = new User($userDataArr);
         } catch (\Exception $ex) {
-            //  If seems there is a user associated with the session but it is not well formed
-            //  Therefore destroy the session and logout the user
+            // If seems there is a user associated with the session but it is not well formed
+            // Therefore destroy the session and logout the user
             $this->getAuthenticationService()->clearIdentity();
             $this->getSessionManager()->destroy([
                 'clear_storage' => true
@@ -156,7 +146,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             ]);
         }
 
-        //  Inject the user into the view parameters
+        // Inject the user into the view parameters
         $view = parent::onDispatch($e);
 
         if ($view instanceof ViewModel && !$view instanceof JsonModel) {
@@ -200,7 +190,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         if (!$this->identity instanceof Identity) {
             if ($allowRedirect) {
                 $preAuthRequest = new Container('PreAuthRequest');
-                $preAuthRequest->url = (string)$this->getRequest()->getUri();
+                $preAuthRequest->url = (string)$this->convertRequest()->getUri();
             }
 
             // If the user's identity was cleared because of a genuine timeout,
@@ -230,10 +220,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     protected function resetSessionCloneData($seedId)
     {
         $cloneContainer = new Container('clone');
-
-        if ($cloneContainer->offsetExists($seedId)) {
-            unset($cloneContainer->$seedId);
-        }
+        unset($cloneContainer->$seedId);
     }
 
     /**

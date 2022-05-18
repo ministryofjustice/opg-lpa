@@ -13,24 +13,33 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Laminas\View\Helper\ServerUrl;
 use Laminas\View\Model\ViewModel;
 use RuntimeException;
+
 use function number_format;
 use function floatval;
 
+/**
+ * Note: Alphagov\Pay\Response\Payment uses magic methods to
+ * convert the response from gov pay to an array object whose
+ * contents are accessible as properties. Psalm doesn't
+ * understand this (it can't tell what the gov pay response
+ * looks like), and raises UndefinedPropertyFetch errors.
+ * That's why they are suppressed throughout this class.
+ *
+ * @psalm-suppress UndefinedPropertyFetch
+ */
 class CheckoutController extends AbstractLpaController
 {
-    /**
-     * @var Communication
-     */
+    /** @var Communication */
     private $communicationService;
 
-    /**
-     * @var GovPayClient
-     */
+    /** @var GovPayClient */
     private $paymentClient;
 
     public function indexAction()
     {
-        if ($this->request->isPost() && !$this->isLPAComplete()) {
+        $request = $this->convertRequest();
+
+        if ($request->isPost() && !$this->isLPAComplete()) {
             return $this->redirectToMoreInfoRequired();
         }
 
@@ -45,7 +54,11 @@ class CheckoutController extends AbstractLpaController
             'lpa' => $lpa
         ]);
 
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/checkout/pay', ['lpa-id' => $lpa->id]))->setAttribute('class', 'js-single-use');
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+        );
+        $form->setAttribute('class', 'js-single-use');
         $form->get('submit')->setAttribute('value', 'Confirm and pay by card');
         $form->get('submit')->setAttribute('data-cy', 'confirm-and-pay-by-card');
 
@@ -61,7 +74,11 @@ class CheckoutController extends AbstractLpaController
     {
         $route = 'lpa/more-info-required';
 
-        $this->redirect()->toRoute($route, ['lpa-id' => $this->getLpa()->id], $this->getFlowChecker()->getRouteOptions($route));
+        $this->redirect()->toRoute(
+            $route,
+            ['lpa-id' => $this->getLpa()->id],
+            $this->getFlowChecker()->getRouteOptions($route)
+        );
 
         return $this->getResponse();
     }
@@ -80,10 +97,10 @@ class CheckoutController extends AbstractLpaController
         $this->verifyLpaPaymentAmount($lpa);
 
         if (!$this->getLpaApplicationService()->setPayment($lpa, $lpa->payment)) {
-            throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
+            throw new RuntimeException(
+                'API client failed to set payment details for id: ' . $lpa->id . ' in CheckoutController'
+            );
         }
-
-        //---
 
         return $this->finishCheckout();
     }
@@ -97,11 +114,9 @@ class CheckoutController extends AbstractLpaController
         $lpa = $this->getLpa();
 
         // Sanity check; making sure this method isn't called if there's something to pay.
-        if ($lpa->payment->amount != 0) {
+        if (intval($lpa->payment->amount) !== 0) {
             throw new RuntimeException('Invalid option');
         }
-
-        //---
 
         return $this->finishCheckout();
     }
@@ -110,25 +125,20 @@ class CheckoutController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        //---
-
-        // Lock the LPA form future changes.
+        // Lock the LPA form future changes
         $this->getLpaApplicationService()->lockLpa($lpa);
 
-        //---
-
-        // Send confirmation email.
+        // Send confirmation email
         $this->communicationService->sendRegistrationCompleteEmail($lpa);
 
         //  Don't use the next route function here - just go directly to the completed view
-        return $this->redirect()->toRoute('lpa/complete', [
-            'lpa-id' => $this->getLpa()->id
-        ]);
+        return $this->redirect()->toRoute(
+            'lpa/complete',
+            ['lpa-id' => $this->getLpa()->id]
+        );
     }
 
-    //------------------------------------------------------------------------------
     // GDS Pay
-
     private function isLPAComplete()
     {
         return ($this->getLpa()->isStateCreated() && $this->getFlowChecker()->backToForm() == "lpa/checkout");
@@ -147,13 +157,17 @@ class CheckoutController extends AbstractLpaController
         ]);
 
         // Confirm that pay by card form post was valid and redirect pack if not
-        if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if (!$form->isValid()) {
-                return $this->redirect()->toRoute('lpa/checkout', [
-                    'lpa-id' => $this->getLpa()->id
-                ], $this->getFlowChecker()->getRouteOptions('lpa/checkout'));
+                return $this->redirect()->toRoute(
+                    'lpa/checkout',
+                    ['lpa-id' => $this->getLpa()->id],
+                    $this->getFlowChecker()->getRouteOptions('lpa/checkout')
+                );
             }
         }
 
@@ -162,14 +176,12 @@ class CheckoutController extends AbstractLpaController
 
         $paymentClient = $this->paymentClient;
 
-        //----------------------------
         // Check for any existing payments in play
-
         if (!is_null($lpa->payment->gatewayReference)) {
             // Look the payment up on Pay
             $payment = $paymentClient->getPayment($lpa->payment->gatewayReference);
 
-            //  If the payment is null (possibly due to bad ref) then redirect to the failure view
+            // If the payment is null (possibly due to bad ref) then redirect to the failure view
             if (is_null($payment)) {
                 throw new RuntimeException('Invalid GovPay payment reference: ' . $lpa->payment->gatewayReference);
             }
@@ -181,28 +193,26 @@ class CheckoutController extends AbstractLpaController
 
             // If this payment id is still in play, direct the user back...
             if (!$payment->isFinished()) {
-                $this->redirect()->toUrl($payment->getPaymentPageUrl());
+                $this->redirect()->toUrl('' . $payment->getPaymentPageUrl());
                 return $this->getResponse();
             }
 
-            // else carry on to start a new payment.
+            // else carry on to start a new payment
         }
 
-        //----------------------------
         // Create a new payment
-
         $ref = LpaIdHelper::constructPaymentTransactionId($lpa->id);
 
-        $description =  ( $lpa->document->type == 'property-and-financial' ) ? 'Property and financial affairs' : 'Health and welfare';
-        $description .= " LPA for ".(string)$lpa->document->donor->name;
+        $description =  (
+            $lpa->document->type == 'property-and-financial' ? 'Property and financial affairs' : 'Health and welfare'
+        );
+        $description .= " LPA for " . (string)$lpa->document->donor->name;
 
         // General URL to return the user to.
         $callback = (new ServerUrl())->__invoke(false) . $this->url()->fromRoute(
             'lpa/checkout/pay/response',
             ['lpa-id' => $lpa->id]
         );
-
-        //---
 
         $payment = $paymentClient->createPayment(
             (int)($lpa->payment->amount * 100), // amount in pence,
@@ -211,23 +221,21 @@ class CheckoutController extends AbstractLpaController
             new \GuzzleHttp\Psr7\Uri($callback)
         );
 
-        //---
-
         // Store the gateway reference
-
         $lpa->payment->gatewayReference = $payment->payment_id;
 
         $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
-        //---
+        $this->redirect()->toUrl('' . $payment->getPaymentPageUrl());
 
-        $this->redirect()->toUrl($payment->getPaymentPageUrl());
         return $this->getResponse();
     }
 
     /**
-     * Simple function to confirm that the payment amount currently associated with the LPA is correct based on the fees right now.
-     * If the amount has changed them set the new value and null any gateway reference so a new transaction is issued.
+     * Simple function to confirm that the payment amount currently
+     * associated with the LPA is correct based on the fees right now.
+     * If the amount has changed them set the new value and null any
+     * gateway reference so a new transaction is issued.
      *
      * @param Lpa $lpa
      */
@@ -238,17 +246,19 @@ class CheckoutController extends AbstractLpaController
         if ($lpaPayment instanceof Payment) {
             $existingPaymentAmount = $lpaPayment->amount;
 
-            //  Run the LPA through the calculator to determine if the amount is still the same
+            // Run the LPA through the calculator to determine if the amount is still the same
             Calculator::calculate($lpa);
 
             // If the value has changed then save the new amount and null any existing transaction
             if ($existingPaymentAmount != $lpaPayment->amount) {
-                //  Blank any existing transaction
+                // Blank any existing transaction
                 $lpaPayment->gatewayReference = null;
 
-                //  Save the LPA to update the details
+                // Save the LPA to update the details
                 if (!$this->getLpaApplicationService()->setPayment($lpa, $lpaPayment)) {
-                    throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
+                    throw new RuntimeException(
+                        'API client failed to set payment details for id: ' . $lpa->id . ' in CheckoutController'
+                    );
                 }
             }
         }
@@ -259,18 +269,13 @@ class CheckoutController extends AbstractLpaController
         $lpa = $this->getLpa();
 
         // Lookup the payment ID in play...
-
         if (is_null($lpa->payment->gatewayReference)) {
             throw new RuntimeException('Payment id needed');
         }
 
-        //---
-
         $paymentClient = $this->paymentClient;
 
         $paymentResponse = $paymentClient->getPayment($lpa->payment->gatewayReference);
-
-        //---
 
         // If the payment was not successful...
         if (!$paymentResponse->isSuccess()) {
@@ -279,7 +284,11 @@ class CheckoutController extends AbstractLpaController
                 'lpa' => $lpa
             ]);
 
-            $form->setAttribute('action', $this->url()->fromRoute('lpa/checkout/pay', ['lpa-id' => $lpa->id]))->setAttribute('class', 'js-single-use');
+            $form->setAttribute(
+                'action',
+                $this->url()->fromRoute('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+            );
+            $form->setAttribute('class', 'js-single-use');
             $form->get('submit')->setAttribute('value', 'Retry online payment');
 
             $viewModel = new ViewModel([
@@ -297,19 +306,13 @@ class CheckoutController extends AbstractLpaController
             return $viewModel;
         }
 
-        //---
-
-        // Else the payment is all good.
-
-        // Add the details
+        // The payment is all good, so add the details
         $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
         $lpa->payment->reference = $paymentResponse->reference;
         $lpa->payment->date = new \DateTime();
-        $lpa->payment->email = new EmailAddress(['address'=>strtolower($paymentResponse->email)]);
+        $lpa->payment->email = new EmailAddress(['address' => strtolower($paymentResponse->email)]);
 
         $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
-
-        //---
 
         return $this->finishCheckout();
     }

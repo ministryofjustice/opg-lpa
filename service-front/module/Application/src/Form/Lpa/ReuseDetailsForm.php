@@ -6,7 +6,7 @@ class ReuseDetailsForm extends AbstractLpaForm
 {
     protected $formElements = [
         'reuse-details' => [
-            'type'          => 'Application\Form\Element\ReuseDetails',
+            'type'          => 'Laminas\Form\Element\Radio',
             'attributes' => [
                 'id' => 'reuse-details',
                 'div-attributes' => ['class' => 'multiple-choice'],
@@ -23,16 +23,16 @@ class ReuseDetailsForm extends AbstractLpaForm
     ];
 
     /**
-     * @param  null|int|string  $name    Optional name for the element
-     * @param  array            $options Optional options for the element
+     * @param null|int|string $name Optional name for the element
+     * @param array $options Optional options for the element
      */
     public function __construct($name = null, $options = [])
     {
-        //  Extract the value options data now
         if (array_key_exists('actorReuseDetails', $options)) {
-            $this->formElements['reuse-details']['options']['value_options'] = [
-                'actorReuseDetails' => $options['actorReuseDetails'],
-            ];
+            $this->formElements['reuse-details']['options']['value_options'] =
+                $this->createReuseDetailsOptions($options['actorReuseDetails']);
+
+            unset($options['actorReuseDetails']);
         }
 
         parent::__construct($name, $options);
@@ -59,5 +59,37 @@ class ReuseDetailsForm extends AbstractLpaForm
             'isValid'  => true,
             'messages' => [],
         ];
+    }
+
+    /**
+     * @param array $options
+     * @return array
+     */
+    private function createReuseDetailsOptions($options)
+    {
+        $reuseDetailsValueOptions = [];
+
+        foreach ($options as $idx => $actor) {
+            $reuseDetailsValueOptions[] = [
+                'label' => $actor['label'],
+                'value' => $idx,
+                'label_attributes' => [
+                    'class' => 'text block-label flush--left',
+                ],
+            ];
+        }
+
+        // If there is more than one value option, add a "none of the above" option
+        if (count($reuseDetailsValueOptions) > 1) {
+            $reuseDetailsValueOptions[] = [
+                'label' => 'None of the above - I want to add a new person',
+                'value' => '-1',
+                'label_attributes' => [
+                    'class' => 'text block-label flush--left',
+                ],
+            ];
+        }
+
+        return $reuseDetailsValueOptions;
     }
 }

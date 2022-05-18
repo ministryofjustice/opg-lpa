@@ -26,22 +26,35 @@ class AccountInfoFactory implements FactoryInterface
     {
         /** @var AuthenticationService $authenticationService */
         $authenticationService = $container->get('AuthenticationService');
-        /** @var $userSessionDetails Container */
+
+        /** @var Container $userSessionDetails */
         $userDetailsSession = $container->get('UserDetailsSession');
+
         /** @var ViewManager $viewManager */
         $viewManager = $container->get('ViewManager');
+
         /** @var Application $application */
         $application = $container->get('Application');
+
         /** @var LpaApplicationService $lpaApplicationService */
         $lpaApplicationService = $container->get('LpaApplicationService');
+
         /** @var Environment $viewRenderer */
         $viewRenderer = $container->get('TwigViewRenderer');
 
         /** @var ViewModel $viewModel */
         $viewModel = $viewManager->getViewModel();
+
         /** @var RouteMatch $routeMatch */
         $routeMatch = $application->getMvcEvent()->getRouteMatch();
 
-        return new AccountInfo($authenticationService, $userDetailsSession, $viewModel, $routeMatch, $lpaApplicationService, new LocalViewRenderer($viewRenderer));
+        return new AccountInfo(
+            $authenticationService,
+            $userDetailsSession,
+            $viewModel,
+            $routeMatch,
+            $lpaApplicationService,
+            new LocalViewRenderer($viewRenderer)
+        );
     }
 }

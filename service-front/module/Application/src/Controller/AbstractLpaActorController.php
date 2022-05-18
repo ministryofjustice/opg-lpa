@@ -24,12 +24,14 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     /**
      * Function to check if the reuse details options are available and if it is appropriate to redirect to them
      *
-     * @return \Laminas\Http\Response
+     * @return \Laminas\Http\Response|null
      */
     protected function checkReuseDetailsOptions(ViewModel $viewModel)
     {
+        $request = $this->convertRequest();
+
         // If we are posting then do not execute a redirect just go back to the calling function
-        if (!$this->request->isPost()) {
+        if (!$request->isPost()) {
             $actorReuseDetailsCount = count($this->getActorReuseDetails());
 
             // If there is only one actor details to reuse then it will be the session user
@@ -58,7 +60,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
                 // Generate the URL to redirect to reuse details
                 $reuseDetailsUrl = $this->getReuseDetailsUrl([
-                    'calling-url'    => $this->getRequest()->getUri()->getPath(),
+                    'calling-url'    => $request->getUri()->getPath(),
                     'include-trusts' => $includeTrusts,
                     'actor-name'     => $actorName,
                 ]);
@@ -100,7 +102,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             if ($routeMatch instanceof Router\Http\RouteMatch) {
                 // We can reuse the details from this point if a post value has been provided and there is exactly
                 // one reuse option available (i.e. the session user)
-                $reuseDetailsIndex = $this->request->getPost('reuse-details');
+                $reuseDetailsIndex = $this->convertRequest()->getPost('reuse-details');
 
                 if ($reuseDetailsIndex == '0' && count($actorReuseDetails) == 1) {
                     $actorDetailsToReuse = array_pop($actorReuseDetails);
@@ -147,7 +149,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
             // If this request is from a forwarded request then try to extract the back button URL from the route
             // params instead
-            if ($routeMatch instanceof Router\RouteMatch && !$routeMatch instanceof Router\Http\RouteMatch) {
+            if (!$routeMatch instanceof Router\Http\RouteMatch) {
                 $backButtonUrl = $routeMatch->getParam('callingUrl');
             }
 
@@ -445,7 +447,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      * @param $actorType
      * @return array
      */
-    private function getActorDetails(AbstractData $actorData, $actorType)
+    protected function getActorDetails(AbstractData $actorData, $actorType)
     {
         $actorDetails = [];
 

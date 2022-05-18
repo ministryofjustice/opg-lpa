@@ -19,15 +19,19 @@ class TypeController extends AbstractLpaController
 
         $isChangeAllowed = true;
 
-        if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 $lpaType = $form->getData()['type'];
 
                 if ($lpaType != $lpa->document->type) {
                     if (!$this->getLpaApplicationService()->setType($lpa, $lpaType)) {
-                        throw new RuntimeException('API client failed to set LPA type for id: ' . $lpa->id);
+                        throw new RuntimeException(
+                            'API client failed to set LPA type for id: ' . $lpa->id
+                        );
                     }
                 }
 
@@ -51,11 +55,17 @@ class TypeController extends AbstractLpaController
         }
 
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        $nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
+
+        $nextUrl = $this->url()->fromRoute(
+            $this->getFlowChecker()->nextRoute($currentRouteName),
+            ['lpa-id' => $lpa->id]
+        );
+
+        $cloneUrl = $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $lpa->id]);
 
         return new ViewModel([
             'form'                => $form,
-            'cloneUrl'            => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $lpa->id]),
+            'cloneUrl'            => $cloneUrl,
             'nextUrl'             => $nextUrl,
             'isChangeAllowed'     => $isChangeAllowed,
             'analyticsDimensions' => $analyticsDimensions,

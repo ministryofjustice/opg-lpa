@@ -12,34 +12,37 @@ class DateCheckController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        //  If the return route has been submitted in the post then just use it
+        // If the return route has been submitted in the post then just use it
         $returnRoute = $this->params()->fromPost('return-route', null);
 
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         if (is_null($returnRoute)) {
-            //  If we came from the "LPA complete" route then set the return target back there
+            // If we came from the "LPA complete" route then set the return target back there
             if ($currentRouteName == 'lpa/date-check/complete') {
                 $returnRoute = 'lpa/complete';
             }
         }
 
-        //  Create the date check form and set the action
+        // Create the date check form and set the action
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\DateCheckForm', [
             'lpa' => $lpa,
         ]);
+
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, [
             'lpa-id' => $lpa->id
         ]));
 
-        if ($this->request->isPost()) {
-            //  Set the post data in the form and validate it
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            // Set the post data in the form and validate it
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                //  Extract the attorney dates from the post data
+                // Extract the attorney dates from the post data
                 $attorneySignatureDates = [];
 
                 foreach ($data as $name => $date) {
@@ -48,7 +51,7 @@ class DateCheckController extends AbstractLpaController
                     }
                 }
 
-                //  Extract the applicant dates from the post data
+                // Extract the applicant dates from the post data
                 $applicantSignatureDates = [];
 
                 foreach ($data as $name => $date) {
@@ -57,12 +60,16 @@ class DateCheckController extends AbstractLpaController
                     }
                 }
 
+                $signDateDonorLifeSustaining = isset($data['sign-date-donor-life-sustaining']) ?
+                    $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null;
+
                 $result = DateCheck::checkDates([
-                    'sign-date-donor'                 => $this->dateArrayToTime($data['sign-date-donor']),
-                    'sign-date-donor-life-sustaining' => isset($data['sign-date-donor-life-sustaining']) ? $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null,
-                    'sign-date-certificate-provider'  => $this->dateArrayToTime($data['sign-date-certificate-provider']),
-                    'sign-date-attorneys'             => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
-                    'sign-date-applicants'            => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
+                    'sign-date-donor' => $this->dateArrayToTime($data['sign-date-donor']),
+                    'sign-date-donor-life-sustaining' => $signDateDonorLifeSustaining,
+                    'sign-date-certificate-provider' =>
+                        $this->dateArrayToTime($data['sign-date-certificate-provider']),
+                    'sign-date-attorneys' => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
+                    'sign-date-applicants' => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
                 ], empty($lpa->completedAt));
 
                 if ($result === true) {
@@ -72,11 +79,11 @@ class DateCheckController extends AbstractLpaController
                         $queryParams['return-route'] = $returnRoute;
                     }
 
-                    $validUrl = $this->url()->fromRoute('lpa/date-check/valid', [
-                        'lpa-id' => $lpa->id,
-                    ], [
-                        'query' => $queryParams
-                    ]);
+                    $validUrl = $this->url()->fromRoute(
+                        'lpa/date-check/valid',
+                        ['lpa-id' => $lpa->id,],
+                        ['query' => $queryParams],
+                    );
 
                     return $this->redirect()->toUrl($validUrl);
                 } else {
@@ -94,7 +101,7 @@ class DateCheckController extends AbstractLpaController
                     'isHuman' => true,
                 ];
             } elseif (is_array($lpa->document->whoIsRegistering)) {
-                //Applicant is one or more primary attorneys
+                // Applicant is one or more primary attorneys
                 foreach ($lpa->document->whoIsRegistering as $id) {
                     foreach ($lpa->document->primaryAttorneys as $primaryAttorney) {
                         if ($id == $primaryAttorney->id) {
@@ -119,8 +126,8 @@ class DateCheckController extends AbstractLpaController
 
     public function validAction()
     {
-        //  Generate the return target from the route
-        //  If there is no route then return to the dashboard
+        // Generate the return target from the route
+        // If there is no route then return to the dashboard
         $returnRoute = $this->params()->fromQuery('return-route', null);
 
         if (is_null($returnRoute)) {
