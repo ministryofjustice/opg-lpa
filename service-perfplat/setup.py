@@ -23,7 +23,6 @@ setup(
     extras_require={
         'dev': [
             'boto3',
-            'localstack-client',
             'pytest',
             'pytest-cases',
             'pytest-cov',
