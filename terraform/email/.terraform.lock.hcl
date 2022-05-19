@@ -2,20 +2,21 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.terraform.io/hashicorp/aws" {
-  version     = "3.24.1"
-  constraints = "~> 3.0"
+  version     = "4.14.0"
+  constraints = "~> 4.0"
   hashes = [
-    "h1:K+OiwCfRclSAHbb1b1E8CMRrZ+pN8zuqnwIg9YHkx7E=",
-    "h1:REyi17e2k8dLY8tyKb13Orwmc3s1S5bNTkleXrkfcPc=",
-    "zh:0afc5eb8c187dfb1f6bb1b023c81c79fa845ac07df4dd74e6d0be93aab3e4dfd",
-    "zh:1099b6f235dd0fea319e012518a56058edebc45e24f4bb1f46645309d4b0c346",
-    "zh:35ab316170abd51e778a89de738126e994181b10d475746344fdb5b4dce71ea0",
-    "zh:50aaa001a65ab244824a83d2b7f4efa0d8e9482d65ed34b6ea0908fb7e814582",
-    "zh:6392854df0d8f6169424db56b434e42c0e6cf1248f64b87127bc4fe5a2f098ff",
-    "zh:67bcc011f97805d2ed381deaa7a6f739e0df080deb559c6ee49140aee58fa2d2",
-    "zh:726a03a2160b0465b269cf2075ee6ca02829186fab85e8ed637cbfd55e3a7d9b",
-    "zh:ae13b97bd51fc3e81068cb672382b39bd81f33ecfb339fb5ca469af2024e2f0c",
-    "zh:e04a71bd670e55d178ed027a1adbcab63db83a99b467c1a9ae25cb6555c2032d",
-    "zh:fe1eeb632a638a3584e15d50c1b9761a6994915e265922d623cc03a8ed94918d",
+    "h1:RqBO9RnwTLRLqBtFdzeBq/2WxFqZMaHUfKcUbK5dpZ8=",
+    "zh:00d03c06e6a7f8ccf8a5a8e03d71842ebe75c9bf4a94112429cf457ae50e9ec4",
+    "zh:1dc73df493294451a8a5bf80575d083958b8e33051f5a37764dcfd6264e0fd37",
+    "zh:4427e14bf3e1e0879f44edcf81a7091c67f7dd3c0b4a842f70ab2c5108452108",
+    "zh:4c9d8e627881207354020bcc2c6fede891d85a1893ee1a60c96e96f26bb792a7",
+    "zh:69c1dd3e8d1cfe85529d201ac6390df5e28bc353cf340b1ec3c5981d696f6373",
+    "zh:76df2d46384d7bf3c10e799145ee16c829f5bbf9218896aab4a73ec57dae0e90",
+    "zh:863ce9721e6d1f8554d77541545b6081e2afb1f38cb0c73a0491e58235ed588e",
+    "zh:9a8184398f83781623b2257361a1c038fb0eeb8361bb4714d1897f2479398b49",
+    "zh:9b12af85486a96aedd8d7984b0ff811a4b42e3d88dad1a3fb4c0b580d04fa425",
+    "zh:bbf27af267e5a77780ccc83b2f79e75f47ce7b8ed4f864b34baad01cbf2f54fb",
+    "zh:f31cfa54f3951d4623a25712964724a57f491ab17b3944802d55072768b41043",
+    "zh:fe17dfac4954873faf340088949e2434058f6f6b2f228fe3e349527f1ecde92d",
   ]
 }
