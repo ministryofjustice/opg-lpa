@@ -29,3 +29,7 @@ output "feedbackdb_security_group_id" {
 output "cluster_name" {
   value = aws_ecs_cluster.online-lpa.name
 }
+
+output "aws_db_instance_arn" {
+  value = var.account.always_on ? aws_db_instance.api[0].arn : ""
+}
