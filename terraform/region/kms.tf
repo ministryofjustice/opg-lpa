@@ -33,3 +33,9 @@ resource "aws_kms_replica_key" "multi_region_db_snapshot_key_replica" {
   primary_key_arn         = aws_kms_key.multi_region_db_snapshot_key.arn
   provider                = aws.eu-west-2
 }
+
+resource "aws_kms_alias" "multi_region_db_snapshot_alias_replica" {
+  name          = "alias/mrk_db_snapshot_key-${terraform.workspace}"
+  target_key_id = aws_kms_replica_key.multi_region_db_snapshot_key_replica.key_id
+  provider      = aws.eu-west-2
+}
