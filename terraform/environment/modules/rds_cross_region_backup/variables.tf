@@ -1,14 +1,20 @@
 variable "source_db_instance_arn" {
-    type        = string
-    description = "The arn for the source database"
+  type        = string
+  description = "The arn for the source database"
 }
 
-variable "cross_region_rds_key_arn"{
-    type        = string
-    description = "the multi region key in use for the backup"
+variable "retention_period" {
+  type        = number
+  description = "retention period of DB in days"
 }
 
-variable  "retention_period" {
-    type        = number
-    description = "retention period of DB in days"
+variable "destination_region_name" {
+  type        = string
+  description = "destination key name"
+}
+
+
+variable "key_alias" {
+  type        = string
+  description = "key alias"
 }
