@@ -12,7 +12,7 @@ use Mockery;
 
 class EmailControllerTest extends AbstractAuthControllerTest
 {
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->service = Mockery::mock(Service::class);
 
@@ -42,11 +42,6 @@ class EmailControllerTest extends AbstractAuthControllerTest
             ->with($userId, $newEmail)
             ->andReturn($tokenReturnData)
             ->once();
-
-        $this->logger->shouldReceive('info')
-            ->with('User successfully requested update email token', [
-                'userId' => $userId,
-            ]);
 
         /** @var EmailController $controller */
         $controller = $this->getController(EmailController::class, [
@@ -261,11 +256,6 @@ class EmailControllerTest extends AbstractAuthControllerTest
             ->with($emailUpdateToken)
             ->andReturn($updateEmailUsingTokenResponse)
             ->once();
-
-        $this->logger->shouldReceive('info')
-            ->with('User successfully update email with token', [
-                'userId' => $userId,
-            ]);
 
         /** @var EmailController $controller */
         $controller = $this->getController(EmailController::class, [

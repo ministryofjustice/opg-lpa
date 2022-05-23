@@ -10,7 +10,7 @@ use Mockery;
 
 class PasswordControllerTest extends AbstractAuthControllerTest
 {
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->service = Mockery::mock(Service::class);
 
@@ -35,11 +35,6 @@ class PasswordControllerTest extends AbstractAuthControllerTest
             ->with($userId, $currentPassword, $newPassword)
             ->andReturn([])
             ->once();
-
-        $this->logger->shouldReceive('info')
-            ->with('User successfully change their password', [
-                'userId' => 'abcdef123456',
-            ]);
 
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [
@@ -187,11 +182,6 @@ class PasswordControllerTest extends AbstractAuthControllerTest
             ->with($passwordToken, $newPassword)
             ->andReturnNull()
             ->once();
-
-        $this->logger->shouldReceive('info')
-            ->with('User successfully change their password via a reset', [
-                'passwordToken' => $passwordToken
-            ]);
 
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [
@@ -349,12 +339,6 @@ class PasswordControllerTest extends AbstractAuthControllerTest
             ->andReturn($resetReturnData)
             ->once();
 
-        $this->logger->shouldReceive('info')
-            ->with('Password reset token requested', [
-                'token'    => $resetToken,
-                'username' => $username
-            ]);
-
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [
             'username' => $username,
@@ -380,12 +364,6 @@ class PasswordControllerTest extends AbstractAuthControllerTest
             ->with($username)
             ->andReturn($resetReturnData)
             ->once();
-
-        $this->logger->shouldReceive('info')
-            ->with('Password reset token requested', [
-                'token'    => $resetToken,
-                'username' => $username
-            ]);
 
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [
@@ -422,11 +400,6 @@ class PasswordControllerTest extends AbstractAuthControllerTest
             ->with($username)
             ->andReturn('user-not-found')
             ->once();
-
-        $this->logger->shouldReceive('notice')
-            ->with('Password reset request for unknown user', [
-                'username' => $username
-            ]);
 
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [

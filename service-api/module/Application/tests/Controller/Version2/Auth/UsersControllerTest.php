@@ -10,7 +10,7 @@ use Mockery;
 
 class UsersControllerTest extends AbstractAuthControllerTest
 {
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->service = Mockery::mock(Service::class);
 
@@ -25,11 +25,6 @@ class UsersControllerTest extends AbstractAuthControllerTest
             ->with($activationToken)
             ->andReturnTrue()
             ->once();
-
-        $this->logger->shouldReceive('info')
-            ->with('New user account activated', [
-                'activation_token' => $activationToken,
-            ]);
 
         /** @var UsersController $controller */
         $controller = $this->getController(UsersController::class);
@@ -81,9 +76,6 @@ class UsersControllerTest extends AbstractAuthControllerTest
             ->with($username, $password)
             ->andReturn($accountCreateReturnData)
             ->once();
-
-        $this->logger->shouldReceive('info')
-            ->with('New user account created', $accountCreateReturnData);
 
         /** @var UsersController $controller */
         $controller = $this->getController(UsersController::class);

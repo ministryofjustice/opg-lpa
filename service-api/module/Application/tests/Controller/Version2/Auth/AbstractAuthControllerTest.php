@@ -31,11 +31,6 @@ abstract class AbstractAuthControllerTest extends MockeryTestCase
     protected $service;
 
     /**
-     * @var MockInterface|Logger
-     */
-    protected $logger;
-
-    /**
      * @var MockInterface|PluginManager
      */
     protected $pluginManager;
@@ -56,13 +51,12 @@ abstract class AbstractAuthControllerTest extends MockeryTestCase
     protected $request;
 
     /**
-     * Set up the services in default configuration - these can be adapted in the subclasses before getting the controller to test
+     * Set up the services in default configuration - these can be adapted in
+     * the subclasses before getting the controller to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
-
-        $this->logger = Mockery::mock(Logger::class);
 
         //  Mock the params plugin
         $this->params = Mockery::mock(Params::class);
@@ -115,8 +109,6 @@ abstract class AbstractAuthControllerTest extends MockeryTestCase
 
         /** @var AbstractAuthController $controller */
         $controller = new $controllerName($this->authenticationService, $this->service);
-
-        $controller->setLogger($this->logger);
 
         $controller->setPluginManager($this->pluginManager);
         $controller->setEventManager($this->eventManager);

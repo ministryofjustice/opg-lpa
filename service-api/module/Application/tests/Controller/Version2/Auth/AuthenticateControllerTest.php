@@ -24,9 +24,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTest
             ->andReturn($tokenReturnData)
             ->once();
 
-        $this->logger->shouldReceive('info')
-            ->with('User successfully authenticated with a authToken', $tokenReturnData);
-
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
             'authToken' => 'abcde12345',
@@ -52,9 +49,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTest
             ->andReturn($tokenReturnData)
             ->once();
 
-        $this->logger->shouldReceive('info')
-            ->with('User successfully authenticated with a authToken', $tokenReturnData);
-
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
             'authToken' => 'abcde12345',
@@ -74,11 +68,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTest
             ->with('abcde12345', true)
             ->andReturn('Big big failure')
             ->once();
-
-        $this->logger->shouldReceive('notice')
-            ->with('Failed authentication attempt with a authToken', [
-                'authToken' => 'abcde12345',
-            ]);
 
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
@@ -109,9 +98,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTest
             ->andReturn($passwordReturnData)
             ->once();
 
-        $this->logger->shouldReceive('info')
-            ->with('User successfully authenticated with a password', $passwordReturnData);
-
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
             'username' => 'Username',
@@ -138,9 +124,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTest
             ->andReturn($passwordReturnData)
             ->once();
 
-        $this->logger->shouldReceive('info')
-            ->with('User successfully authenticated with a password', $passwordReturnData);
-
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
             'username' => 'Username',
@@ -161,11 +144,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTest
             ->with('Username', 'Wr0ngP@55word', true)
             ->andReturn('Big big failure')
             ->once();
-
-        $this->logger->shouldReceive('notice')
-            ->with('Failed authentication attempt with a password', [
-                'username' => 'Username',
-            ]);
 
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
