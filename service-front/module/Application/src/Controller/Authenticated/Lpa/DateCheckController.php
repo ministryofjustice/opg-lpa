@@ -63,6 +63,7 @@ class DateCheckController extends AbstractLpaController
                 $signDateDonorLifeSustaining = isset($data['sign-date-donor-life-sustaining']) ?
                     $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null;
 
+                // phpcs:disable
                 $result = DateCheck::checkDates([
                     'sign-date-donor' => $this->dateArrayToTime($data['sign-date-donor']),
                     'sign-date-donor-life-sustaining' => $signDateDonorLifeSustaining,
@@ -71,6 +72,7 @@ class DateCheckController extends AbstractLpaController
                     'sign-date-attorneys' => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
                     'sign-date-applicants' => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
                 ], empty($lpa->completedAt));
+                // phpcs:enable
 
                 if ($result === true) {
                     $queryParams = [];
@@ -89,6 +91,16 @@ class DateCheckController extends AbstractLpaController
                 } else {
                     $form->setMessages($result);
                 }
+            }
+        }
+
+        $entities = [];
+        $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
+
+        foreach ($attorneys as $attorney) {
+            if (is_a($attorney, 'Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation')) {
+                $entities['attorneys'] = ['isTrustCorporation' => true];
+                break;
             }
         }
 
@@ -116,10 +128,12 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
+
         return new ViewModel([
             'form'        => $form,
             'returnRoute' => $returnRoute,
             'applicants'  => $applicants,
+            'entities'    => $entities,
         ]);
     }
 
