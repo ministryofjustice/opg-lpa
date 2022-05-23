@@ -90,23 +90,23 @@ class AuthorizationMiddleware implements MiddlewareInterface
         $roles = ['guest'];
 
         if (is_string($token)) {
-            //  Attempt to get a user with the token value
+            // Attempt to get a user with the token value
             $result = $this->authenticationService->verify($token);
 
             $identity = $result->getIdentity();
 
             if ($identity instanceof Identity) {
-                //  Try to get the user details
+                // Try to get the user details
                 $user = $this->userService->fetch($identity->getUserId() ?? '');
 
-                //  There is something wrong with the user here so throw an exception
+                // There is something wrong with the user here so throw an exception
                 if (!$user instanceof User) {
                     throw new Exception('Can not find a user for ID ' . $identity->getUserId());
                 }
 
                 $roles[] = 'authenticated-user';
             } else {
-                //  Clear the bad token
+                // Clear the bad token
                 $this->clearTokenData();
             }
         }
@@ -123,7 +123,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
         //  Check each role to see if the user has access to the route
         foreach ($roles as $role) {
             if ($this->rbac->hasRole($role) && $this->rbac->isGranted($role, $matchedRoute->getName())) {
-                //  Catch any unauthorized exceptions and trigger a sign out if required
+                // Catch any unauthorized exceptions and trigger a sign out if required
                 try {
                     return $handler->handle($request->withAttribute('user', $user));
                 } catch (ApiException $ae) {
@@ -136,7 +136,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
             }
         }
 
-        //  If there is no user (not logged in) then redirect to the sign in screen
+        // If there is no user (not logged in) then redirect to the sign in screen
         if (is_null($user)) {
             return new RedirectResponse($this->urlHelper->generate('sign.in'));
         }
