@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Setup middleware pipeline:
+ */
+
 declare(strict_types=1);
 
 use App\Middleware;
@@ -17,10 +21,7 @@ use Mezzio\Router\Middleware\MethodNotAllowedMiddleware;
 use Mezzio\Router\Middleware\RouteMiddleware;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 
-/**
- * Setup middleware pipeline:
- */
-return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container) : void {
+return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
     // The error handler should be the first (most outer) middleware to catch
     // all Exceptions.
     $app->pipe(ErrorHandler::class);
@@ -60,7 +61,8 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
 
     //  Set up the custom middleware to handle sessions and authorization
     $app->pipe(Middleware\Session\SessionMiddleware::class);
-    $app->pipe(JwtAuthentication::class);
+    //$app->pipe(JwtAuthentication::class);
+    $app->pipe(Middleware\Session\JwtMiddleware::class);
     $app->pipe(Middleware\Authorization\AuthorizationMiddleware::class);
     $app->pipe(Middleware\Session\CsrfMiddleware::class);
     $app->pipe(Middleware\Flash\SlimFlashMiddleware::class);
