@@ -50,31 +50,6 @@ For Linux users, revert to the instructions for installing phpcs, phpstan and pr
 * <https://phpstan.org/user-guide/getting-started>
 * <https://pre-commit.com/index.html#install>
 
-### Running locally without 3rd party integrations
-
-**This is the recommended approach for developers outside the Ministry of Justice.**
-
-If you intend to run the application in tandem with 3rd party integrations, you currently require a Ministry of Justice AWS account. If you don't have one of these, you can still run the stack locally, minus these integrations, with:
-
-```
-make dc-up-out
-```
-
-The LPA Tool service will be available via <https://localhost:7002/home>
-
-The Admin service will be available via <https://localhost:7003>
-
-The API service will be available (direct) via <http://localhost:7001>
-
-Note that running in this mode (currently) breaks the following integrations:
-
-* When signing up, completing an LPA, changing email address etc., you won't receive any notification emails. This makes it impossible to sign up a new user as you won't get the confirmation link. Instead, you can use the test user to access the service: username: seeded_test_user@digital.justice.gov.uk / password: Pass1234
-* You won't be able to make any payments for LPA applications. To avoid this, you can select the £0 charge LPA in testing, which will turn off prompts for payment.
-* Postcode lookups for donor/attorney/certificate provider etc. will not work. You can work around this by selecting the manual address entry method.
-* The script designed to periodically clean up inactive users, `service-api/module/Application/src/Command/AccountCleanupCommand.php`, will run, but will not email the admin address with the command output.
-
-The long-term plan is for these integrations to be mocked out locally so that a more representative stack can be run in local development, without the need for AWS secrets (see below).
-
 ### Access to Amazon secrets
 
 To run the application with 3rd party integrations, set up the software needed to support a Ministry of Justice AWS account:
@@ -132,6 +107,12 @@ make dc-up
 ```
 
 In this mode, the `Makefile` will fetch secrets using `aws secretsmanager` and `docker-compose` commands, removing the need for local configuration files. Most of the sign up, email, postcode lookup and payment functionality should now work against dev variants of 3rd party systems.
+
+The LPA Tool service will be available via <https://localhost:7002/home>
+
+The Admin service will be available via <https://localhost:7003>
+
+The API service will be available (direct) via <http://localhost:7001>
 
 ### Tests
 
