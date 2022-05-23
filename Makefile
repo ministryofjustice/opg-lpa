@@ -59,7 +59,7 @@ dc-up: run-composers
 # target for users outside MoJ to run the stack without 3rd party integrations
 .PHONY: dc-up-out
 dc-up-out: run-composers
-	@${MAKE} dc-up GOVPAY=- NOTIFY=- ORDNANCESURVEY=-
+	@${MAKE} dc-up ORDNANCESURVEY=-
 
 .PHONY: dc-build
 dc-build:
