@@ -63,7 +63,7 @@ class EmailController extends AbstractAuthController
             return ($v instanceof \DateTime) ? $v->format('Y-m-d\TH:i:sO') : $v;
         }, $result);
 
-        $this->getLogger()->info("User successfully requested update email token", [
+        $this->getLogger()->info("User successfully requested update email token (changeAction)", [
             'userId' => $userId
         ]);
 
@@ -80,6 +80,7 @@ class EmailController extends AbstractAuthController
         $emailUpdateToken = $this->getBodyContent('emailUpdateToken');
 
         if (empty($emailUpdateToken)) {
+            $this->getLogger()->err('ERROR: Token must be passed (verifyAction)');
             return new ApiProblem(400, 'Token must be passed');
         }
 
@@ -87,19 +88,22 @@ class EmailController extends AbstractAuthController
 
         if ($result->error()) {
             if ($result->message() === 'invalid-token') {
+                $this->getLogger()->err('ERROR: invalid-token (verifyAction) : ' . $emailUpdateToken);
                 return new ApiProblem(404, 'Invalid token');
             }
 
             if ($result->message() === 'username-already-exists') {
+                $this->getLogger()->err('ERROR: username-already-exists (verifyAction) : ' . $emailUpdateToken);
                 return new ApiProblem(400, 'Email already exists for another user');
             }
 
+            $this->getLogger()->err('ERROR: unable to update email address (verifyAction) : ' . $emailUpdateToken);
             return new ApiProblem(500, 'Unable to update email address');
         }
 
 
-        $this->getLogger()->info("User successfully update email with token", [
-            'userId' => $result->getUser()->id()
+        $this->getLogger()->info("User successfully updated email with token (verifyAction)", [
+            'userId' => $result->getUser()->id(), 'token' => $emailUpdateToken,
         ]);
 
         // Return 204 - No Content

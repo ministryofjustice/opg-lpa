@@ -162,7 +162,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     {
         $logger = $this->getLogger();
 
-        $logger->info('Updating email using token');
+        $logger->info('Updating email using token ' . $emailUpdateToken);
 
         try {
             $this->apiClient->httpPost(sprintf('/v2/users/email'), [
@@ -171,6 +171,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
             return true;
         } catch (ApiException $ex) {
+            $logger->err('Exception thrown while updating email using token ' . $emailUpdateToken);
             $logger->err($ex->getMessage());
         }
 

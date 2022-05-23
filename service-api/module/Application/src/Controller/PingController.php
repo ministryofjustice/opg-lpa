@@ -163,6 +163,8 @@ class PingController extends AbstractRestfulController
 
             $response = $this->httpClient->sendRequest($signed_request);
 
+            $this->getLogger()->debug($response);
+
             // We're looking up a non-existing LPA, thus we expect a 404.
             if ($response->getStatusCode() === 404) {
                 $opgGateway = true;
