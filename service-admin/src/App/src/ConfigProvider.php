@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Logging\LoggingErrorListenerDelegatorFactory;
-use Tuupola\Middleware\JwtAuthentication;
+//use Tuupola\Middleware\JwtAuthentication;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 
 /**
@@ -64,8 +64,10 @@ class ConfigProvider
                 Handler\UserFindHandler::class => Handler\UserFindHandlerFactory::class,
 
                 //  Middleware
-                JwtAuthentication::class =>
-                    Middleware\Session\JwtAuthenticationFactory::class,
+                //JwtAuthentication::class =>
+                //    Middleware\Session\JwtAuthenticationFactory::class,
+                Middleware\Session\JwtMiddleware::class =>
+                    Middleware\Session\JwtMiddlewareFactory::class,
                 Middleware\Authorization\AuthorizationMiddleware::class =>
                     Middleware\Authorization\AuthorizationMiddlewareFactory::class,
                 Middleware\Session\SessionMiddleware::class =>
