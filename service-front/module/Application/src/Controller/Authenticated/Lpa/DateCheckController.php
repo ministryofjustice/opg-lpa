@@ -95,12 +95,14 @@ class DateCheckController extends AbstractLpaController
         }
 
         $entities = [];
-        $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
+        if ($lpa->document->type == 'property-and-financial') {
+            $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
 
-        foreach ($attorneys as $attorney) {
-            if (is_a($attorney, 'Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation')) {
-                $entities['attorneys'] = ['isTrustCorporation' => true];
-                break;
+            foreach ($attorneys as $attorney) {
+                if (is_a($attorney, 'Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation')) {
+                    $entities['attorneys'] = ['isTrustCorporation' => true];
+                    break;
+                }
             }
         }
 
