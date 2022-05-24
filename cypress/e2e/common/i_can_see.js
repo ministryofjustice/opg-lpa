@@ -26,15 +26,20 @@ Then('I can see fields for the PF donor, certificate provider, attorney, applica
 })
 
 Then('I can see fields for the HW donor, certificate provider, attorney, applicant', () => {
-    const expectedNames = ["Miss Rapunzel Tower (the donor)", "Mr Cee Pee (certificate provider)",
-                                                 "Mr A Att (attorney)", "Miss Rapunzel Tower (applicant)"]
-    cy.get("[data-cy=person-name]").then(($name) => {
+    const expectedNames = ['Miss Rapunzel Tower (the donor)', 'Mr Cee Pee (certificate provider)',
+                                                 'Mr A Att (attorney)', 'Miss Rapunzel Tower (applicant)']
+    cy.get('[data-cy=person-name]').then(($name) => {
         const names = $name.map(function() {return this.innerText}).toArray();
         expect(names).to.deep.eq(expectedNames);
     })
 })
 
+Then('I can see a reminder to sign continuation sheet 3', () => {
+    const text = 'This person must have signed continuation sheet 3 before the certificate provider has signed section 10.'
+    cy.get('[data-cy=continuation-sheet-info]').should('have.text', text);
+})
+
 Then('I can see a reminder to sign continuation sheet 4', () => {
-    const text = "They must have signed continuation sheet 4 after the ‘certificate provider’ has signed section 10 of the LPA form."
-    cy.get("[data-cy=continuation-sheet-info]").should("have.text", text);
+    const text = 'They must have signed continuation sheet 4 after the ‘certificate provider’ has signed section 10 of the LPA form.'
+    cy.get('[data-cy=continuation-sheet-info]').should('have.text', text);
 })

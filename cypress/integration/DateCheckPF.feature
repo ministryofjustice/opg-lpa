@@ -14,13 +14,19 @@ Feature: Check signature dates for a PF LPA
     And there are "four" ".date-check-person" elements on the page
     And I can see fields for the PF donor, certificate provider, attorney, applicant
 
-  Scenario: An LPA with trust corporation as attorney [sheet 4]
+  Scenario: Donor cannot sign or make mark displays sheet 3 message
+    Given I visit the dashboard
+    When I click "check-signing-dates" for LPA ID 33005588223
+    Then I am taken to "/lpa/33005588223/date-check"
+    And I can see a reminder to sign continuation sheet 3
+
+  Scenario: LPA with trust corporation as attorney displays sheet 4 message
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 33005588224
     Then I am taken to "/lpa/33005588224/date-check"
     And I can see a reminder to sign continuation sheet 4
 
-  Scenario: An LPA with trust corporations as primary and replacement attorney [sheet 4]
+  Scenario: LPA with trust corporations as attorneys displays sheet 4 message
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 33005588225
     Then I am taken to "/lpa/33005588225/date-check"
