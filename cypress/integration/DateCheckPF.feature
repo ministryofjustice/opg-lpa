@@ -13,12 +13,13 @@ Feature: Check signature dates for a PF LPA
     And I see "Check signature dates" in the title
     And there are "four" ".date-check-person" elements on the page
     And I can see fields for the PF donor, certificate provider, attorney, applicant
+    And I cannot see continuation sheet reminders
 
   Scenario: Donor cannot sign or make mark displays sheet 3 message
     Given I visit the dashboard
-    When I click "check-signing-dates" for LPA ID 33005588223
-    Then I am taken to "/lpa/33005588223/date-check"
-    And I can see a reminder to sign continuation sheet 3
+    When I click "check-signing-dates" for LPA ID 33005588443
+    Then I am taken to "/lpa/33005588443/date-check"
+    And I can see a reminder to sign continuation sheet 3 for PF
 
   Scenario: LPA with trust corporation as attorney displays sheet 4 message
     Given I visit the dashboard

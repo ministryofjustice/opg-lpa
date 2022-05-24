@@ -16,10 +16,14 @@ const seeReuseDetailsLink = (shouldExist) => {
     });
 }
 
+Then('I cannot see continuation sheet reminders', () => {
+    cy.get('[data-cy=continuation-sheet-info]').should('not.exist');
+});
+
 Then('I can see fields for the PF donor, certificate provider, attorney, applicant', () => {
-    const expectedNames = ["Mr Dead Pool (the donor)", "Mr Cee Pee (certificate provider)",
-                           "Mr A Att (attorney)", "Mr Dead Pool (applicant)"]
-	    cy.get("[data-cy=person-name]").then(($name) => {
+    const expectedNames = ['Mr Dead Pool (the donor)', 'Mr Cee Pee (certificate provider)',
+                           'Mr A Att (attorney)', 'Mr Dead Pool (applicant)']
+	    cy.get('[data-cy=person-name]').then(($name) => {
 		    const names = $name.map(function() {return this.innerText}).toArray();
 			expect(names).to.deep.eq(expectedNames);
 		})
@@ -34,8 +38,13 @@ Then('I can see fields for the HW donor, certificate provider, attorney, applica
     })
 })
 
-Then('I can see a reminder to sign continuation sheet 3', () => {
+Then('I can see a reminder to sign continuation sheet 3 for PF', () => {
     const text = 'This person must have signed continuation sheet 3 before the certificate provider has signed section 10.'
+    cy.get('[data-cy=continuation-sheet-info]').should('have.text', text);
+})
+
+Then('I can see a reminder to sign continuation sheet 3 for HW', () => {
+    const text = 'This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.'
     cy.get('[data-cy=continuation-sheet-info]').should('have.text', text);
 })
 
