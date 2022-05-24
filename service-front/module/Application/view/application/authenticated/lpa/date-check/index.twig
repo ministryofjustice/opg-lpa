@@ -283,9 +283,13 @@
         </div>
 
 
-            {% if not lpa.document.canSign %}
+            {% if not lpa.document.donor.canSign %}
                 <div class="panel panel-border-wide text">
+                {% if lpa.document.type == 'health-and-welfare' %}
+                    <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
+                {% else %}
                     <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
+                {% endif %}
                 </div>
             {% endif %}
 
