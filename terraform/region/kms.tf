@@ -16,6 +16,12 @@ resource "aws_kms_replica_key" "multi_region_secrets_encryption_key_replica" {
   provider                = aws.eu-west-2
 }
 
+resource "aws_kms_alias" "multi_region_secrets_encryption_alias_replica" {
+  name          = "alias/mrk_secrets_encryption_key-${terraform.workspace}"
+  target_key_id = aws_kms_replica_key.multi_region_secrets_encryption_key_replica.key_id
+  provider      = aws.eu-west-2
+}
+
 resource "aws_kms_key" "multi_region_db_snapshot_key" {
   enable_key_rotation = true
   provider            = aws.eu-west-1
