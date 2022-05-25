@@ -1,22 +1,22 @@
 <?php
+
 namespace Application\View\Helper;
 
+use Laminas\Form\Form;
 use Laminas\View\Helper\AbstractHelper;
 
 class FormErrorTextExchange extends AbstractHelper
 {
     /**
      * Catch-all transformations, ignorant of field name
-     *
-     * @var array - Common Generic Map
      */
+    /** @var array - Common Generic Map */
     private $commonMap = [];
 
     /**
      * Generic transformations for named fields
-     *
-     * $var array - Common Field Map
      */
+    /** $var array - Common Field Map */
     private $commonFieldMap = [];
 
     /**
@@ -47,7 +47,6 @@ class FormErrorTextExchange extends AbstractHelper
         }
 
         foreach ($elements as $element) {
-
             $name = $element->getName();
 
             if (array_key_exists($name, $overrideMap)) {

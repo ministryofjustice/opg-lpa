@@ -5,16 +5,19 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use Exception;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 
 class DownloadController extends AbstractLpaController
 {
-    /**
-     * @var GoogleAnalyticsService
-     */
+    /** @var GoogleAnalyticsService */
     private $analyticsService;
 
+    /**
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     * @return ViewModel|HttpResponse|false
+     */
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -26,9 +29,11 @@ class DownloadController extends AbstractLpaController
         ]);
 
         // check PDF availability. return a nice error if unavailable.
-        if (($pdfType == 'lpa120' && !$lpa->canGenerateLPA120())
+        if (
+            ($pdfType == 'lpa120' && !$lpa->canGenerateLPA120())
             || ($pdfType == 'lp3' && !$lpa->canGenerateLP3())
-            || ($pdfType == 'lp1' && !$lpa->canGenerateLP1())) {
+            || ($pdfType == 'lp1' && !$lpa->canGenerateLP1())
+        ) {
             $this->getLogger()->info('PDF not available', [
                 'lpaId' => $lpa->getId()
             ]);
@@ -73,7 +78,6 @@ class DownloadController extends AbstractLpaController
         $model->setTemplate('layout/downloading.twig');
 
         return $model;
-
     }
 
     public function downloadAction()
@@ -93,7 +97,9 @@ class DownloadController extends AbstractLpaController
         //  Get the file contents by requesting the PDF again but with the .pdf file extension
         $fileContents = $this->getLpaApplicationService()->getPdfContents($lpa->getId(), $pdfType);
 
+        /** @var HttpResponse */
         $response = $this->getResponse();
+
         $response->setContent($fileContents);
 
         $headers = $response->getHeaders();
@@ -104,11 +110,13 @@ class DownloadController extends AbstractLpaController
                 ->addHeaderLine('Pragma', 'public')
                 ->addHeaderLine('Expires', '0')
                 ->addHeaderLine('Cache-Control', 'must-revalidate')
-                ->addHeaderLine('Content-Length', strlen($fileContents));
+                ->addHeaderLine('Content-Length', '' . strlen($fileContents));
 
         $fileName = $this->getFilename($pdfType);
 
-        $userAgent = $this->getRequest()->getHeaders()->get('User-Agent')->getFieldValue();
+        $request = $this->convertRequest();
+
+        $userAgent = $request->getHeaders('User-Agent')->getFieldValue();
         if (stripos($userAgent, 'edge/') !== false) {
             //Microsoft edge. Send the file as an attachment
             $headers->addHeaderLine('Content-Disposition', 'attachment; filename="' . $fileName . '"');
@@ -118,11 +126,11 @@ class DownloadController extends AbstractLpaController
 
         // Send a page view to the analytics service for the document being provided
         try {
-            $uri = $this->getRequest()->getUri();
+            $uri = $request->getUri();
             $this->analyticsService->sendPageView($uri->getHost(), $uri->getPath(), $fileName);
         } catch (Exception $ex) {
             // Log the error but don't impact the user because of analytics failures
-            $this->getLogger()->err($ex);
+            $this->getLogger()->err($ex->getMessage());
         }
 
         return $this->response;
@@ -153,7 +161,7 @@ class DownloadController extends AbstractLpaController
      * @param string $pdfType
      * @return string
      */
-    private function getFilename(string $pdfType) : string
+    private function getFilename(string $pdfType): string
     {
         $lpa = $this->getLpa();
 
@@ -176,7 +184,7 @@ class DownloadController extends AbstractLpaController
     /**
      * Set the service to be used for sending analytics data
      *
-     * @param GoogleAnalyticsService
+     * @param GoogleAnalyticsService $analyticsService
      */
     public function setAnalyticsService($analyticsService)
     {

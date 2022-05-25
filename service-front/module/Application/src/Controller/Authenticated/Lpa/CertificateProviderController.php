@@ -18,8 +18,10 @@ class CertificateProviderController extends AbstractLpaActorController
             'lpa' => $lpa
         ]);
 
-        if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 $this->getMetadata()->setCertificateProviderSkipped($this->getLpa());
@@ -61,21 +63,32 @@ class CertificateProviderController extends AbstractLpaActorController
         if ($lpa->document->certificateProvider instanceof CertificateProvider) {
             $route = 'lpa/certificate-provider';
 
-            return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
+            return $this->redirect()->toRoute(
+                $route,
+                ['lpa-id' => $lpaId],
+                $this->getFlowChecker()->getRouteOptions($route)
+            );
         }
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\CertificateProviderForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]));
         $form->setActorData('certificate provider', $this->getActorsList());
 
-        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
+        $request = $this->convertRequest();
+
+        if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($this->request->getPost());
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // persist data
-                if (!$this->getLpaApplicationService()->setCertificateProvider($lpa, new CertificateProvider($form->getModelDataFromValidatedForm()))) {
-                    throw new \RuntimeException('API client failed to save certificate provider for id: '.$lpaId);
+                $setOk = $this->getLpaApplicationService()->setCertificateProvider(
+                    $lpa,
+                    new CertificateProvider($form->getModelDataFromValidatedForm())
+                );
+
+                if (!$setOk) {
+                    throw new \RuntimeException('API client failed to save certificate provider for id: ' . $lpaId);
                 }
 
                 //  Remove the skipped metadata tag if it was set
@@ -109,20 +122,25 @@ class CertificateProviderController extends AbstractLpaActorController
         $lpaId = $lpa->id;
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\CertificateProviderForm');
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId])
+        );
         $form->setActorData('certificate provider', $this->getActorsList());
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        $request = $this->convertRequest();
 
-            $form->setData($postData);
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // persist data
                 $certificateProvider = new CertificateProvider($form->getModelDataFromValidatedForm());
 
                 if (!$this->getLpaApplicationService()->setCertificateProvider($lpa, $certificateProvider)) {
-                    throw new \RuntimeException('API client failed to update certificate provider for id: '.$lpaId);
+                    throw new \RuntimeException(
+                        'API client failed to update certificate provider for id: ' . $lpaId
+                    );
                 }
 
                 //  Attempt to update the LPA correspondent too

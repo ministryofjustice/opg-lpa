@@ -127,7 +127,7 @@
             // Get an array of the LPA IDs to check for a status update
             var ids = $('li[data-refresh-id]').map(function () { return this.getAttribute('data-refresh-id'); }).get();
 
-            if(ids.length > 0) {
+            if (ids.length > 0) {
                 $.ajax({
                     url: "/user/dashboard/statuses/" + ids.join(),
                     dataType: "json",

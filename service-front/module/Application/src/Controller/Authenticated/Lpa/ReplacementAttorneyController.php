@@ -10,7 +10,6 @@ use Laminas\View\Model\ViewModel;
 
 class ReplacementAttorneyController extends AbstractLpaActorController
 {
-
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -20,8 +19,10 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             'lpa' => $lpa
         ]);
 
-        if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // set user has confirmed if there are replacement attorneys
@@ -38,11 +39,20 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         foreach ($lpa->document->replacementAttorneys as $idx => $attorney) {
             $params = [
                 'attorney' => [
-                    'address'   => $attorney->address
+                    'address' => $attorney->address
                 ],
-                'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpa->id, 'idx' => $idx]),
-                'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpa->id, 'idx' => $idx]),
-                'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpa->id, 'idx' => $idx]),
+                'editRoute' => $this->url()->fromRoute(
+                    $currentRouteName . '/edit',
+                    ['lpa-id' => $lpa->id, 'idx' => $idx]
+                ),
+                'confirmDeleteRoute' => $this->url()->fromRoute(
+                    $currentRouteName . '/confirm-delete',
+                    ['lpa-id' => $lpa->id, 'idx' => $idx]
+                ),
+                'deleteRoute' => $this->url()->fromRoute(
+                    $currentRouteName . '/delete',
+                    ['lpa-id' => $lpa->id, 'idx' => $idx]
+                ),
             ];
 
             $params['attorney']['name'] = $attorney->name;
@@ -68,7 +78,8 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
-        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        // Execute the parent check function to determine what reuse options might
+        // be available and what should happen
         $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
 
         if (!is_null($reuseRedirect)) {
@@ -78,19 +89,26 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $lpa = $this->getLpa();
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\AttorneyForm');
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpa->id]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpa->id])
+        );
         $form->setActorData('replacement attorney', $this->getActorsList());
 
-        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
+        $request = $this->convertRequest();
+
+        if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($this->request->getPost());
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // persist to the api
                 $attorney = new Human($form->getModelDataFromValidatedForm());
 
                 if (!$this->getLpaApplicationService()->addReplacementAttorney($lpa, $attorney)) {
-                    throw new \RuntimeException('API client failed to add a replacement attorney for id: ' . $lpa->id);
+                    throw new \RuntimeException(
+                        'API client failed to add a replacement attorney for id: ' . $lpa->id
+                    );
                 }
 
                 // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
@@ -150,10 +168,15 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             $viewModel->setTemplate('application/authenticated/lpa/replacement-attorney/trust-form.twig');
         }
 
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/replacement-attorney/edit', ['lpa-id' => $lpa->id, 'idx' => $attorneyIdx]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/replacement-attorney/edit', ['lpa-id' => $lpa->id, 'idx' => $attorneyIdx])
+        );
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $postData = $request->getPost();
             $form->setData($postData);
 
             if ($form->isValid()) {
@@ -162,7 +185,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
                 // persist to the api
                 if (!$this->getLpaApplicationService()->setReplacementAttorney($lpa, $attorney, $attorney->id)) {
-                    throw new \RuntimeException('API client failed to update replacement attorney ' . $attorney->id . ' for id: ' . $lpa->id);
+                    throw new \RuntimeException(
+                        'API client failed to update replacement attorney ' . $attorney->id . ' for id: ' . $lpa->id
+                    );
                 }
 
                 return $this->moveToNextRoute();
@@ -210,7 +235,10 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $isTrust = isset($attorney->number);
 
         $viewModel = new ViewModel([
-            'deleteRoute' => $this->url()->fromRoute('lpa/replacement-attorney/delete', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]),
+            'deleteRoute' => $this->url()->fromRoute(
+                'lpa/replacement-attorney/delete',
+                ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]
+            ),
             'attorneyName' => $attorney->name,
             'attorneyAddress' => $attorney->address,
             'isTrust' => $isTrust,
@@ -241,7 +269,9 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             }
 
             if (!$this->getLpaApplicationService()->deleteReplacementAttorney($lpa, $attorney->id)) {
-                throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
+                throw new \RuntimeException(
+                    'API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpa->id
+                );
             }
 
             $this->cleanUpReplacementAttorneyDecisions();
@@ -252,7 +282,11 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         $route = 'lpa/replacement-attorney';
 
-        return $this->redirect()->toRoute($route, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($route));
+        return $this->redirect()->toRoute(
+            $route,
+            ['lpa-id' => $lpa->id],
+            $this->getFlowChecker()->getRouteOptions($route)
+        );
     }
 
     public function addTrustAction()
@@ -271,22 +305,34 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         if (!$this->allowTrust()) {
             $route = 'lpa/replacement-attorney/add';
 
-            return $this->redirect()->toRoute($route, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($route));
+            return $this->redirect()->toRoute(
+                $route,
+                ['lpa-id' => $lpa->id],
+                $this->getFlowChecker()->getRouteOptions($route)
+            );
         }
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\TrustCorporationForm');
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/replacement-attorney/add-trust', ['lpa-id' => $lpa->id]));
 
-        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/replacement-attorney/add-trust', ['lpa-id' => $lpa->id])
+        );
+
+        $request = $this->convertRequest();
+
+        if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($this->request->getPost());
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // persist data to the api
                 $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
 
                 if (!$this->getLpaApplicationService()->addReplacementAttorney($lpa, $attorney)) {
-                    throw new \RuntimeException('API client failed to add trust corporation replacement attorney for id: '.$lpa->id);
+                    throw new \RuntimeException(
+                        'API client failed to add trust corporation replacement attorney for id: ' . $lpa->id
+                    );
                 }
 
                 // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata

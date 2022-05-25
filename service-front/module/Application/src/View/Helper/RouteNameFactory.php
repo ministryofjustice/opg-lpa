@@ -2,7 +2,8 @@
 
 namespace Application\View\Helper;
 
-use Interop\Container\ContainerInterface;
+use Application\Model\Service\Session\PersistentSessionDetails;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class RouteNameFactory implements FactoryInterface
@@ -15,8 +16,7 @@ class RouteNameFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-
-        /** @var ContainerInterface $sessionDetails */
+        /** @var PersistentSessionDetails $sessionDetails */
         $sessionDetails = $container->get('PersistentSessionDetails');
 
         $currentRoute = $sessionDetails->getCurrentRoute();

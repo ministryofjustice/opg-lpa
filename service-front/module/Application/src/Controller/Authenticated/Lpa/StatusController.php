@@ -68,7 +68,10 @@ class StatusController extends AbstractLpaController
         // The "should receive by" date is set to a number of working days after the
         // $processedDate, defined in config
         $shouldReceiveByDate = null;
-        if (!is_null($processedDate) && isset($this->config()['processing-status']['expected-working-days-before-receipt'])) {
+        if (
+            !is_null($processedDate) &&
+            isset($this->config()['processing-status']['expected-working-days-before-receipt'])
+        ) {
             $days = intval($this->config()['processing-status']['expected-working-days-before-receipt']);
             $shouldReceiveByDate = new DateTime($processedDate);
             $interval = new DateInterval('P1D');

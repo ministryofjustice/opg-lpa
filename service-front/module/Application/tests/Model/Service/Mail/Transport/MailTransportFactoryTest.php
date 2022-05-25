@@ -29,18 +29,15 @@ class MailTransportFactoryTest extends MockeryTestCase
 
         // value for the Notify API key has to be a valid UUID4;
         // or at least, what the Notify PHP client thinks is a valid UUID4, which
-        // is a string matching (not all valid UUID4s match this string):
-        // /[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}/
+        // is a string matching:
+        //     /[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}/
+        // (not all valid UUID4s match this string)
         $apiKey = '31201bcc-e36d-4845-abb9-ce72eb7d0a93';
 
         $container->shouldReceive('get')
             ->withArgs(['Config'])
             ->once()
             ->andReturn(['email' => ['transport' => 'notify', 'notify' => ['key' => $apiKey]]]);
-
-        $container->shouldReceive('get')
-            ->with('MessageFactory')
-            ->andReturn(Mockery::Mock(MessageFactory::class));
 
         $result = (new MailTransportFactory())($container, null, null);
 

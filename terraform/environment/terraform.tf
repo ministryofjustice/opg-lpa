@@ -10,7 +10,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.0"
+      version = "~> 4.0"
     }
     local = {
       source  = "hashicorp/local"
@@ -34,7 +34,16 @@ provider "aws" {
   }
 
 }
+provider "aws" {
+  region = "eu-west-1"
+  alias  = "eu_west_1"
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
+    session_name = "terraform-session"
 
+  }
+
+}
 provider "aws" {
   region = "eu-west-2"
   alias  = "eu_west_2"
