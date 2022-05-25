@@ -1,5 +1,5 @@
 import { Then } from "cypress-cucumber-preprocessor/steps";
- 
+
 Then(`I can find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]");
 })
@@ -23,11 +23,11 @@ Then(`I can find hidden {string}`, (object) => {
 })
 
 Then(`I can find {string} but it is not visible`, (object) => {
-  cy.get("[data-cy=" + object + "]").should('not.be.visible');
+  cy.get("[data-cy=" + object + "]").then(Cypress.dom.isHidden);
 })
 
 Then(`I can find {string} and it is visible`, (object) => {
-  cy.get("[data-cy=" + object + "]").should('be.visible');
+  cy.get("[data-cy=" + object + "]").then(Cypress.dom.isVisible);
 })
 
 Then(`I can find {string} wrapped with error highlighting`, (object) => {
@@ -42,7 +42,7 @@ Then(`I can find link pointing to {string}`, (linkAddr) => {
 })
 
 Then(`I can find draft download link`, () => {
-    cy.get('@lpaId').then((lpaId) => { 
+    cy.get('@lpaId').then((lpaId) => {
         let searchStr = 'a[href*="/lpa/' + lpaId + '/download/lp1/draft' + '"]'
         cy.get(searchStr)
     });
@@ -56,9 +56,8 @@ Then(`I can find {string} with {int} options`, (object, count) => {
 Then(`I can find {string} with options`, (object, dataTable) => {
   cy.get("[data-cy=" + object + "]").children().should($foundObject => {
     var rawTable = dataTable.rawTable;
-    rawTable.forEach(row => { 
+    rawTable.forEach(row => {
         expect($foundObject).to.contain(row[0]);
         });
     })
 })
-
