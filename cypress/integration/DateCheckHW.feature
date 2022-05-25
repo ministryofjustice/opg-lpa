@@ -13,8 +13,9 @@ Feature: Check signature dates for an HW LPA
     And I can see fields for the HW donor, certificate provider, attorney, applicant
     And I cannot see continuation sheet reminders
 
-  Scenario: Donor cannot sign or make mark displays sheet 3 message
+  Scenario: Displays relevant information on signing continuation sheets
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 33005588444
     Then I am taken to "/lpa/33005588444/date-check"
+  # Donor cannot sign or make mark
     And I can see a reminder to sign continuation sheet 3 for HW

@@ -1,7 +1,5 @@
 Feature: Check signature dates for a PF LPA
 
-  Continuation sheets are referred to as 'sheets'
-
   Background:
     Given I ignore application exceptions
     And I log in as seeded user
@@ -15,20 +13,11 @@ Feature: Check signature dates for a PF LPA
     And I can see fields for the PF donor, certificate provider, attorney, applicant
     And I cannot see continuation sheet reminders
 
-  Scenario: Donor cannot sign or make mark displays sheet 3 message
-    Given I visit the dashboard
-    When I click "check-signing-dates" for LPA ID 33005588443
-    Then I am taken to "/lpa/33005588443/date-check"
-    And I can see a reminder to sign continuation sheet 3 for PF
-
-  Scenario: LPA with trust corporation as attorney displays sheet 4 message
-    Given I visit the dashboard
-    When I click "check-signing-dates" for LPA ID 33005588224
-    Then I am taken to "/lpa/33005588224/date-check"
-    And I can see a reminder to sign continuation sheet 4
-
-  Scenario: LPA with trust corporations as attorneys displays sheet 4 message
+  Scenario: Displays relevant information on signing continuation sheets
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 33005588225
     Then I am taken to "/lpa/33005588225/date-check"
+  # Donor cannot sign or make mark
+    And I can see a reminder to sign continuation sheet 3 for PF
+  # primaryAttorney and replacementAttorney are trust corporations
     And I can see a reminder to sign continuation sheet 4
