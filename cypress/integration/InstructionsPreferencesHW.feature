@@ -14,12 +14,12 @@ Feature: Specify Instructions and Preferences for a Health and Welfare LPA
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
         Then I am taken to the instructions page
-        Then I can find "instruction" but it is not visible
-        And I can find "preferences" but it is not visible
+        #Then I can find "instruction" but it is not visible
+        #And I can find "preferences" but it is not visible
         When I click "add-extra-preferences"
         Then I can find "instruction" and it is visible
         And I can find "preferences" and it is visible
-        And I fill out  
+        And I fill out
             | instruction | Lorem Ipsum |
             | preferences | Neque porro quisquam |
         When I click "save"
