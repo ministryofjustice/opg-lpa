@@ -6,9 +6,7 @@ use Laminas\View\Helper\AbstractHelper;
 
 class RouteName extends AbstractHelper
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $routes;
 
     /**

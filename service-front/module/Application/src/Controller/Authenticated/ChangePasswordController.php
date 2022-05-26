@@ -22,8 +22,10 @@ class ChangePasswordController extends AbstractAuthenticatedController
 
         $form->setAuthenticationService($authentication);
 
-        if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 $data = $form->getData();
@@ -35,7 +37,14 @@ class ChangePasswordController extends AbstractAuthenticatedController
                 $result = $userService->updatePassword($currentPassword, $newPassword);
 
                 if ($result === true) {
-                    $this->flashMessenger()->addSuccessMessage('Your new password has been saved. Please remember to use this new password to sign in from now on.');
+                    /**
+                     * psalm doesn't understand Laminas MVC plugins
+                     * @psalm-suppress UndefinedMagicMethod
+                     */
+                    $this->flashMessenger()->addSuccessMessage(
+                        'Your new password has been saved. ' .
+                        'Please remember to use this new password to sign in from now on.'
+                    );
 
                     return $this->redirect()->toRoute('user/about-you');
                 } else {

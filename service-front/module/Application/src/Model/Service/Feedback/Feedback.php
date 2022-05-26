@@ -2,14 +2,15 @@
 
 namespace Application\Model\Service\Feedback;
 
+use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransport;
+use Laminas\Mail\Exception\InvalidArgumentException;
 use DateTime;
 use DateTimeZone;
-use Laminas\Mail\Exception\ExceptionInterface;
 
 class Feedback extends AbstractEmailService implements ApiClientAwareInterface
 {
@@ -20,7 +21,6 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
      *
      * @param array $data
      * @return bool|string
-     * @throws ExceptionInterface
      */
     public function add(array $data)
     {
@@ -60,8 +60,11 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
             $this->getMailTransport()->send($mailParameters);
 
             return true;
-        } catch (ExceptionInterface $ex) {
-            $this->getLogger()->err("Exception while adding feedback from Feedback service\n" .
+        } catch (ApiException $ex) {
+            $this->getLogger()->err("API exception while adding feedback from Feedback service\n" .
+                $ex->getMessage() . "\n" . $ex->getTraceAsString());
+        } catch (InvalidArgumentException $ex) {
+            $this->getLogger()->err("Mail exception while adding feedback from Feedback service\n" .
                 $ex->getMessage() . "\n" . $ex->getTraceAsString());
         }
 

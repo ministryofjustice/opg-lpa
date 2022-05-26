@@ -15,8 +15,10 @@ class MoneyFormat extends AbstractHelper
             return $amount;
         }
 
+        $amount = floatval($amount);
+
         if (floor($amount) != $amount) {
-            return number_format(floatval($amount), 2, '.', ',');
+            return number_format($amount, 2, '.', ',');
         }
 
         return number_format($amount, 0, '.', ',');

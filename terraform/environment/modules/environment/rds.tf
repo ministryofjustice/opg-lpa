@@ -3,7 +3,6 @@ data "aws_kms_key" "rds" {
   key_id = "alias/aws/rds"
 }
 
-
 data "aws_kms_key" "multi_region_db_snapshot_key" {
   key_id = "arn:aws:kms:${local.region_name}:${var.account.account_id}:alias/mrk_db_snapshot_key-${var.account_name}"
 }
@@ -25,7 +24,7 @@ data "aws_db_snapshot" "api_snapshot" {
 resource "aws_db_instance" "api" {
   count                               = var.account.always_on ? 1 : 0
   identifier                          = lower("api-${var.environment_name}")
-  name                                = "api2"
+  db_name                             = "api2"
   allocated_storage                   = 10
   max_allocated_storage               = 100
   storage_type                        = "gp2"

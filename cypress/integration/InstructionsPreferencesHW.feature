@@ -19,7 +19,7 @@ Feature: Specify Instructions and Preferences for a Health and Welfare LPA
         When I click "add-extra-preferences"
         Then I can find "instruction" and it is visible
         And I can find "preferences" and it is visible
-        And I fill out  
+        And I fill out
             | instruction | Lorem Ipsum |
             | preferences | Neque porro quisquam |
         When I click "save"
@@ -37,4 +37,3 @@ Feature: Specify Instructions and Preferences for a Health and Welfare LPA
         When I click "save"
         Then I am taken to the applicant page
         When I visit link containing "preview the LPA"
-

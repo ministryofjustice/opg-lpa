@@ -20,8 +20,10 @@ class LifeSustainingController extends AbstractLpaController
 
         $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $postData = $request->getPost();
 
             $form->setData($postData);
 
@@ -37,8 +39,15 @@ class LifeSustainingController extends AbstractLpaController
                     $primaryAttorneyDecisions->canSustainLife = $canSustainLife;
 
                     // persist data
-                    if (!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa, $primaryAttorneyDecisions)) {
-                        throw new RuntimeException('API client failed to set life sustaining for id: ' . $lpa->id);
+                    $setOk = $this->getLpaApplicationService()->setPrimaryAttorneyDecisions(
+                        $lpa,
+                        $primaryAttorneyDecisions
+                    );
+
+                    if (!$setOk) {
+                        throw new RuntimeException(
+                            'API client failed to set life sustaining for id: ' . $lpa->id
+                        );
                     }
                 }
 

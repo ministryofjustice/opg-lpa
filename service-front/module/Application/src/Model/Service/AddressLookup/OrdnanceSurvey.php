@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\Service\AddressLookup;
 
 use GuzzleHttp\Psr7\Uri;
@@ -11,8 +12,8 @@ use Http\Client\HttpClient as HttpClientInterface;
  * Class OrdnanceSurvey
  * @package Application\Model\Service\AddressLookup
  */
-class OrdnanceSurvey {
-
+class OrdnanceSurvey
+{
     /**
      * PSR-7 Compatible HTTP Client
      *
@@ -55,7 +56,7 @@ class OrdnanceSurvey {
 
         $addresses = [];
 
-        foreach($results as $addressData){
+        foreach ($results as $addressData) {
             $address = $this->getAddressLines($addressData['DPA']);
             $address['description'] = $this->getDescription($address);
 
@@ -73,25 +74,25 @@ class OrdnanceSurvey {
     private function getData($postcode)
     {
         $url = new Uri($this->endpoint);
-        $url = URI::withQueryValue($url, 'key', $this->apiKey );
-        $url = URI::withQueryValue($url, 'postcode', $postcode );
-        $url = URI::withQueryValue($url, 'lr', 'EN' );
+        $url = URI::withQueryValue($url, 'key', $this->apiKey);
+        $url = URI::withQueryValue($url, 'postcode', $postcode);
+        $url = URI::withQueryValue($url, 'lr', 'EN');
 
         $request = new Request('GET', $url);
 
-        $response = $this->httpClient->sendRequest( $request );
+        $response = $this->httpClient->sendRequest($request);
 
         if ($response->getStatusCode() != 200) {
             throw new \RuntimeException('Error retrieving address details: bad status code');
         }
 
-        $body = json_decode($response->getBody(), true);
+        $body = json_decode('' . $response->getBody(), true);
 
         if (isset($body['header']['totalresults']) && $body['header']['totalresults'] === 0) {
             return [];
         }
 
-        if (!isset($body['results']) || !is_array($body['results'])){
+        if (!isset($body['results']) || !is_array($body['results'])) {
             throw new \RuntimeException('Error retrieving address details: invalid JSON');
         }
 
@@ -126,7 +127,7 @@ class OrdnanceSurvey {
 
         // We expect the last element to be the postcode which we don't want
         // We'll confirm that it is the postcode and then remove it from the array
-        $postcodeFromComponents = strtolower(str_replace(' ', '', $components[count($components)-1]));
+        $postcodeFromComponents = strtolower(str_replace(' ', '', $components[count($components) - 1]));
         $postcodeFromAddress = strtolower(str_replace(' ', '', $address['POSTCODE']));
 
         if ($postcodeFromAddress == $postcodeFromComponents) {
@@ -204,5 +205,4 @@ class OrdnanceSurvey {
 
         return trim(implode(', ', $address));
     }
-
 }
