@@ -26,6 +26,9 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
         && docker-php-ext-install bcmath \
         && docker-php-ext-install opcache
 
+# Clean up build dependencies, but only after everything else we need has been installed
+RUN apk del .build-dependencies
+
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
@@ -42,12 +45,27 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
     echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
 fi
 
-# Clean up build dependencies, but only after everything else we need has been installed
-RUN apk del .build-dependencies
+# Core files for the application
+COPY --chown=appuser:appuser service-front/assets /app/assets
+COPY --chown=appuser:appuser service-front/config /app/config
+COPY --chown=appuser:appuser service-front/content /app/content
+COPY --chown=appuser:appuser service-front/data /app/data
+COPY --chown=appuser:appuser service-front/module /app/module
+COPY --chown=appuser:appuser service-front/public /app/public
 
-COPY --chown=appuser:appuser service-front /app
+# For tests in CI
+COPY --chown=appuser:appuser service-front/phpunit.xml /app/phpunit.xml
+
+# Keep the composer.lock as security scanners use it
+COPY --chown=appuser:appuser service-front/composer.lock /app/composer.lock
+
+# Shared logging library
 COPY --chown=appuser:appuser shared/logging /shared/logging
+
+# Composer-installed files from the base image
 COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
+
+# PHP config files
 COPY --chown=appuser:appuser service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=appuser:appuser service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 

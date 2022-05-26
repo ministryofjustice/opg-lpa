@@ -16,16 +16,14 @@ class MessageFactory
 {
     use LoggerTrait;
 
-    /**
-     * @var LocalViewRenderer
-     */
+    /** @var LocalViewRenderer */
     private $localViewRenderer;
 
-    /**
-     * @var array
-     */
-
+    /** @var array */
     private $emailTemplatesConfig;
+
+    /** @var array */
+    private $config;
 
     private $defaultMailTemplatesConfig = [
         AbstractEmailService::EMAIL_ACCOUNT_ACTIVATE => [
@@ -44,15 +42,23 @@ class MessageFactory
                 'opg-lpa-feedback',
             ],
         ],
-        AbstractEmailService::EMAIL_LPA_REGISTRATION => [
-            'template' => 'lpa-registration.twig',
+        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1 => [
+            'template' => 'lpa-registration-with-payment.twig',
             'categories' => [
                 'opg',
                 'opg-lpa',
                 'opg-lpa-complete-registration',
             ],
         ],
-        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT => [
+        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 => [
+            'template' => 'lpa-registration-with-payment.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-complete-registration',
+            ],
+        ],
+        AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3 => [
             'template' => 'lpa-registration-with-payment.twig',
             'categories' => [
                 'opg',
@@ -139,10 +145,10 @@ class MessageFactory
      * Map a template name to a template file name and categories.
      *
      * @param string $templateRef A key of $this->emailTemplatesConfig.
-     * @return ?array with template and categories; null if template ref
+     * @return array|null with template and categories; null if template ref
      * is not found
      */
-    private function getTemplate($templateRef): ?array
+    private function getTemplate($templateRef): array|null
     {
         if (
             !isset($this->emailTemplatesConfig[$templateRef])
@@ -152,7 +158,7 @@ class MessageFactory
             return null;
         }
 
-        return $this->emailTemplatesConfig[$templateRef];
+        return array($this->emailTemplatesConfig[$templateRef]);
     }
 
     /**

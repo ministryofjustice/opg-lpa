@@ -1,8 +1,5 @@
 ### Base image - contains dependencies required for build
-FROM public.ecr.aws/lambda/python:3.8 AS base
-
-# fixes security issues detected in build.
-RUN yum update -y rpm openssl nss nss-util nss-softokn nspr expat cyrus-sasl-lib
+FROM public.ecr.aws/lambda/python:3.9 AS base
 
 # Dependencies required to install psycopg2 (postgres driver)
 # used in SQLAlchemy
@@ -13,14 +10,14 @@ COPY /service-perfplat/docker/api-requirements.txt /service-perfplat/
 RUN pip install -r /service-perfplat/api-requirements.txt --target ${LAMBDA_TASK_ROOT}
 
 ### Final image - contains compiled dependencies
-FROM public.ecr.aws/lambda/python:3.8
-
-# fixes security issues detected in build.
-RUN yum update -y rpm openssl nss nss-util nss-softokn nspr
+FROM public.ecr.aws/lambda/python:3.9
 
 RUN yum install -y postgresql && \
     yum clean all && \
     rm -rf /var/cache/yum
+
+# Fixes security issues detected in build.
+RUN yum update -y rpm openssl nss nss-util nss-softokn nspr curl
 
 COPY --from=base ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}
 

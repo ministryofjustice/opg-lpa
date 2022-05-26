@@ -20,8 +20,10 @@ class WhenLpaStartsController extends AbstractLpaController
 
         $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $postData = $request->getPost();
 
             $form->setData($postData);
 
@@ -37,7 +39,12 @@ class WhenLpaStartsController extends AbstractLpaController
                     $primaryAttorneyDecisions->when = $whenToStart;
 
                     // persist data
-                    if (!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa, $primaryAttorneyDecisions)) {
+                    $setOk = $this->getLpaApplicationService()->setPrimaryAttorneyDecisions(
+                        $lpa,
+                        $primaryAttorneyDecisions
+                    );
+
+                    if (!$setOk) {
                         throw new RuntimeException('API client failed to set when LPA starts for id: ' . $lpa->id);
                     }
                 }

@@ -5,8 +5,11 @@ namespace Application\Controller;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManager;
 use MakeLogger\Logging\LoggerTrait;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\View\Model\ViewModel;
 
 abstract class AbstractBaseController extends AbstractActionController
 {
@@ -52,6 +55,41 @@ abstract class AbstractBaseController extends AbstractActionController
     }
 
     /**
+     * Convert the Laminas RequestInterface object provided
+     * by $this->request into a full-fledged HttpRequest.
+     * This is primarily so we don't have to add lots of
+     * type conversions inline in child controllers.
+     *
+     * @return HttpRequest
+     */
+    protected function convertRequest()
+    {
+        /** @var HttpRequest */
+        $request = $this->request;
+
+        return $request;
+    }
+
+    /**
+     * Define indexAction() return types here, as we typically
+     * return HttpResponse objects which the Laminas MVC
+     * AbstractActionController->indexAction() doesn't. This
+     * results in a lot of psalm lint errors. However, it's
+     * perfectly fine to return a HttpResponse from indexAction()
+     * and the Laminas framework handles it appropriately.
+     *
+     * Where a subclass doesn't declare return types on indexAction(),
+     * this declaration will be used instead, and avoid the lint errors.
+     *
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     * @return HttpResponse|ViewModel
+     */
+    public function indexAction()
+    {
+        return parent::indexAction();
+    }
+
+    /**
      * Ensures cookies are enabled.
      *
      * If we're passed the session cookies, we know they're enabled, so all is good.
@@ -66,29 +104,28 @@ abstract class AbstractBaseController extends AbstractActionController
      * Thus is the session cookies doesn't exist AND cookie=1, we can assume the client is not sending cookies.
      *
      * @param $routeName string The route name for the current page for if a redirect is needed.
-     * @return bool|\Laminas\Http\Response Iff bool true is returned, all is good. Otherwise the calling controller should return the response.
+     * @return bool|\Laminas\Http\Response Iff bool true is returned,
+     *     all is good. Otherwise the calling controller should return the response.
      */
     protected function checkCookie($routeName)
     {
+        $request = $this->convertRequest();
+
         // Only do a cookie check on GETs
-        if ($this->getRequest()->getMethod() !== 'GET') {
+        if ($request->getMethod() !== 'GET') {
             return true;
         }
-
-        //---
 
         // Get the cookie names used for the session
         $sessionCookieName = $this->config['session']['native_settings']['name'];
 
-        $cookies = $this->getRequest()->getCookie();
+        $cookies = $request->getCookie();
 
         // If there cookies...
         if ($cookies !== false) {
             // Check for the session cookie...
             $cookieExists = $cookies->offsetExists($sessionCookieName);
         }
-
-        //---
 
         if (!$cookies || !$cookieExists) {
             /*
@@ -100,10 +137,16 @@ abstract class AbstractBaseController extends AbstractActionController
             $cookieRedirect = (bool)$this->params()->fromQuery('cookie');
 
             if (!$cookieRedirect) {
-                // Cannot see a cookie, so redirect them back to this page (which will set one), ready to check again.
-                return $this->redirect()->toRoute($routeName, array(), ['query' => ['cookie' => '1']]);
+                // Cannot see a cookie, so redirect them back to this page
+                // (which will set one), ready to check again.
+                return $this->redirect()->toRoute(
+                    $routeName,
+                    array(),
+                    ['query' => ['cookie' => '1']]
+                );
             } else {
-                // Cookie is not set even after we've done a redirect, so assume the client doesn't support cookies.
+                // Cookie is not set even after we've done a redirect,
+                // so assume the client doesn't support cookies.
                 return $this->redirect()->toRoute('enable-cookie');
             }
         }

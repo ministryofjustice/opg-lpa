@@ -190,7 +190,7 @@
 
     {# If paid online #}
     {% if paymentMethod == 'card' %}
-        <p><strong class="bold-small">The application fee will be returned to you if OPG have not received your signed LPA by {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }}. You can still send the LPA to us after this date, but if you’ve been refunded, we’ll contact you to arrange payment.</strong></p>
+        <p><strong class="bold-small">Post the signed LPA to us as soon as you can. If we do not receive it by {{ lpa.completedAt|date_modify("+40 day")|date('d F Y') }} we’ll refund the application fee. You can still post the LPA to us after you’ve been refunded - we will contact you and ask you to pay again or you can send a cheque with the LPA.</strong></p>
     {% endif %}
 
 

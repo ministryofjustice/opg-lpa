@@ -30,4 +30,3 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         When I click "save"
         Then I am taken to the applicant page
         When I visit link containing "preview the LPA"
-

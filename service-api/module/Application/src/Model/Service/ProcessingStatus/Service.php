@@ -87,9 +87,10 @@ class Service extends AbstractService
             }
 
             $url = new Uri($this->processingStatusServiceUri . $prefixedId);
+
             $requests[$id] = new Request('GET', $url, $this->buildHeaders());
             $requests[$id] = $this->awsSignature->signRequest($requests[$id], $this->credentials);
-        } //end of request loop
+        }
 
         // build pool
         $results = [];
@@ -102,7 +103,6 @@ class Service extends AbstractService
             'fulfilled' => function ($response, $id) use (&$results) {
                 // Each successful response
                 $this->getLogger()->debug('We have a result for:' . $id);
-
                 $results[$id] = $response;
             },
             'rejected' => function ($reason, $id) {
@@ -112,14 +112,18 @@ class Service extends AbstractService
 
         // Initiate transfers and create a promise
         $promise = $pool->promise();
+
         // Force the pool of requests to complete
         $promise->wait();
+
         // Handle all request response now
         foreach ($results as $lpaId => $result) {
             $statusCode = $result->getStatusCode();
+
             switch ($statusCode) {
                 case 200:
-                    $response = $this->handleResponse($result);
+                    $responseBodyString = $result->getBody()->getContents();
+                    $response = $this->handleResponse($responseBodyString);
                     $siriusResponseArray[$lpaId] = [
                         'deleted'   => false,
                         'response'  => $response
@@ -144,17 +148,22 @@ class Service extends AbstractService
 
                 case 500:
                 case 503:
-                    $this->getLogger()
-                    ->err('Bad response from Sirius gateway: ' . (string)$result->getBody());
+                    $this->getLogger()->err(
+                        'Bad ' . $statusCode . ' response from Sirius gateway: ' .
+                        (string)$result->getBody()
+                    );
+
                     throw new ApiProblemException('Bad response from Sirius gateway: ' . $statusCode);
 
                 default:
                     $this->getLogger()->err(
-                        'Unexpected response from Sirius gateway: ' . $statusCode . (string)$result->getBody()
+                        'Unexpected response from Sirius gateway: ' . $statusCode .
+                        '; ' . (string)$result->getBody()
                     );
                     break;
-            } //end switch
-        } //end for
+            }
+        }
+
         return $siriusResponseArray;
     }
 
@@ -168,9 +177,9 @@ class Service extends AbstractService
         return ['Accept' => 'application/json'];
     }
 
-    private function handleResponse(ResponseInterface $result)
+    private function handleResponse(string $responseBodyString)
     {
-        $responseBody = json_decode($result->getBody()->getContents(), true);
+        $responseBody = json_decode($responseBodyString, true);
 
         if (is_null($responseBody)) {
             return null;
@@ -221,8 +230,14 @@ class Service extends AbstractService
             }
 
             // We set a returnUnpaid as this is required to differentiate from returned
-            if ($responseBody['status'] === 'Return - unpaid') { # Return - unpaid status
-                $return['dispatchDate'] = $responseBody['statusDate'];
+            if ($responseBody['status'] === 'Return - unpaid') {
+                // statusDate should always be set, but put a guard on it so we can
+                // always have a dispatchDate set to null for the worst case
+                $return['dispatchDate'] = null;
+                if (isset($responseBody['statusDate'])) {
+                    $return['dispatchDate'] = $responseBody['statusDate'];
+                }
+
                 $return['returnUnpaid'] = true;
             }
 

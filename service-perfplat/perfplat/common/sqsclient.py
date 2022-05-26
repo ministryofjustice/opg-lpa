@@ -5,28 +5,34 @@ from typing import Any, Optional, Union
 import boto3
 import botocore
 import logging
-import localstack_client.session as session
 
 
 class SqsClient:
     """
-    Thin wrapper round the localstack SQS client tied to a specific queue.
-
-    The localstack SQS client is API-equivalent to the boto3 SQS client
-    but with its endpoint bound to localstack by default
-    and no requirement to set AWS_ACCESS_KEY etc.
+    Thin wrapper round the boto3 SQS client tied to a specific queue.
     """
 
     # Set on all messages to the queue
     MESSAGE_GROUP_ID = 'perfplat'
 
-    def __init__(self, queue_name: str, client: boto3.session=session.client('sqs')) -> None:
+    def __init__(self, queue_name: str, client: boto3.session=None) -> None:
         """
         :param queue_name: str; name of the SQS queue
         :param client: boto3 SQS client; if not set, create one pointing
-            at localstack
+            at local localstack on default port (4566)
         """
+        if client is None:
+            client = boto3.client(
+                aws_access_key_id="accesskey",
+                aws_secret_access_key="secretkey",
+                region_name="eu-west-1",
+                verify=False,
+                service_name="sqs",
+                endpoint_url="http://localhost:4566",
+            )
+
         self.client = client
+
         self.queue_name = queue_name
         self.logger = logging.getLogger()
 

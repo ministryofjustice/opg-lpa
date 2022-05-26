@@ -23,7 +23,7 @@ class AbstractLpaControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('getUri')->andReturn('http://localhost/home');
         $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
+            ->withArgs(['login', ['state' => 'timeout']])->andReturn($response)->once();
 
         $result = $controller->onDispatch($event);
 
@@ -119,10 +119,9 @@ class AbstractLpaControllerTest extends AbstractControllerTest
             $this->userIdentity->toArray()
         ])->once();
         $this->userDetailsSession->user = $this->user;
-        $routeMatch->shouldReceive('getParam')->withArgs(['action', 'not-found'])->andReturn('index')->once();
-        $event->shouldReceive('setResult')/*->withArgs(function ($actionResponse) {
-            return $actionResponse instanceof ViewModel;
-        })*/->once();
+        $routeMatch->shouldReceive('getParam')
+            ->withArgs(['action', 'not-found'])->andReturn('index')->once();
+        $event->shouldReceive('setResult')->once();
 
         /** @var ViewModel $result */
         $result = $controller->onDispatch($event);
@@ -139,7 +138,9 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('RouteMatch must be an instance of Laminas\Router\Http\RouteMatch when using the moveToNextRoute function');
+        $this->expectExceptionMessage(
+            'RouteMatch must be an instance of Laminas\Router\Http\RouteMatch for moveToNextRoute()'
+        );
 
         $controller->testMoveToNextRoute();
     }

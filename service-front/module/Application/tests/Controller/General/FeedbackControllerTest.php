@@ -11,6 +11,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Laminas\Http\Header\Referer;
 use Laminas\Http\Response;
+use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
 
 class FeedbackControllerTest extends AbstractControllerTest
@@ -32,7 +33,7 @@ class FeedbackControllerTest extends AbstractControllerTest
      */
     private $feedbackService;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -104,10 +105,13 @@ class FeedbackControllerTest extends AbstractControllerTest
     {
         $controller = $this->getController(FeedbackController::class);
 
-        $referer = new Referer();
-        $referer->setUri('https://localhost/lpa/3503563157/when-lpa-starts');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->twice();
+
+        $uri = new Uri('https://localhost/lpa/3503563157/when-lpa-starts');
+        $referer = Mockery::mock(Referer::class);
+        $referer->shouldReceive('uri')->once()->andReturn($uri);
+
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->once()->andReturn($referer);
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();

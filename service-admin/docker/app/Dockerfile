@@ -34,12 +34,25 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
+
+COPY --chown=appuser:appuser service-admin/composer.lock /app/composer.lock
+
+COPY --chown=appuser:appuser service-admin/config /app/config
+COPY --chown=appuser:appuser service-admin/public /app/public
+COPY --chown=appuser:appuser service-admin/src /app/src
+
+# Need this to run unit tests in CI
+COPY --chown=appuser:appuser service-admin/phpunit.xml.dist /app/phpunit.xml.dist
+COPY --chown=appuser:appuser service-admin/test /app/test
+
 COPY --chown=appuser:appuser shared/logging /shared/logging
-COPY --chown=appuser:appuser service-admin /app
 COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
+
 COPY --chown=appuser:appuser service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=appuser:appuser service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+
 WORKDIR /app
+
 USER appuser
 
 CMD php-fpm

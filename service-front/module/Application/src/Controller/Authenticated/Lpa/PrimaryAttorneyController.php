@@ -39,10 +39,16 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 $attorneysParams[] = [
                     'attorney' => [
                         'address' => $attorney->address,
-                        'name'    => $attorney->name,
+                        'name' => $attorney->name,
                     ],
-                    'editUrl'          => $this->url()->fromRoute('lpa/primary-attorney/edit', $routeParams),
-                    'confirmDeleteUrl' => $this->url()->fromRoute('lpa/primary-attorney/confirm-delete', $routeParams),
+                    'editUrl' => $this->url()->fromRoute(
+                        'lpa/primary-attorney/edit',
+                        $routeParams
+                    ),
+                    'confirmDeleteUrl' => $this->url()->fromRoute(
+                        'lpa/primary-attorney/confirm-delete',
+                        $routeParams
+                    ),
                 ];
             }
 
@@ -51,7 +57,11 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
             $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
 
-            $viewModel->nextUrl = $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
+            $viewModel->nextUrl = $this->url()->fromRoute(
+                $nextRoute,
+                ['lpa-id' => $lpaId],
+                $this->getFlowChecker()->getRouteOptions($nextRoute)
+            );
         }
 
         return $viewModel;
@@ -67,7 +77,8 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
-        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        //  Execute the parent check function to determine what
+        // reuse options might be available and what should happen
         $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
 
         if (!is_null($reuseRedirect)) {
@@ -77,17 +88,29 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $lpa = $this->getLpa();
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\AttorneyForm');
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/primary-attorney/add', ['lpa-id' => $lpa->id]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/primary-attorney/add', ['lpa-id' => $lpa->id])
+        );
         $form->setActorData('attorney', $this->getActorsList());
 
-        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
+        $request = $this->convertRequest();
+
+        if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($this->request->getPost());
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // persist data
-                if (!$this->getLpaApplicationService()->addPrimaryAttorney($lpa, new Human($form->getModelDataFromValidatedForm()))) {
-                    throw new \RuntimeException('API client failed to add a primary attorney for id: '.$lpa->id);
+                $addOk = $this->getLpaApplicationService()->addPrimaryAttorney(
+                    $lpa,
+                    new Human($form->getModelDataFromValidatedForm())
+                );
+
+                if (!$addOk) {
+                    throw new \RuntimeException(
+                        'API client failed to add a primary attorney for id: ' . $lpa->id
+                    );
                 }
 
                 $this->cleanUpReplacementAttorneyDecisions();
@@ -144,17 +167,23 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $viewModel->setTemplate('application/authenticated/lpa/primary-attorney/trust-form.twig');
         }
 
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/primary-attorney/edit', ['lpa-id' => $lpa->id, 'idx' => $attorneyIdx]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/primary-attorney/edit', ['lpa-id' => $lpa->id, 'idx' => $attorneyIdx])
+        );
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $postData = $request->getPost();
             $form->setData($postData);
 
             if ($form->isValid()) {
-                //  Before going any further determine if the data for the attorney we are editing has also been saved in the correspondence data
+                // Before going any further determine if the data for the attorney we
+                // are editing has also been saved in the correspondence data
                 $isCorrespondent = $this->attorneyIsCorrespondent($attorney);
 
-                //  Update the attorney with new details and transfer across the ID value
+                // Update the attorney with new details and transfer across the ID value
                 $attorneyId = $attorney->id;
                 if ($attorney instanceof Human) {
                     $attorney = new Human($form->getModelDataFromValidatedForm());
@@ -165,7 +194,9 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
                 // persist to the api
                 if (!$this->getLpaApplicationService()->setPrimaryAttorney($lpa, $attorney, $attorney->id)) {
-                    throw new \RuntimeException('API client failed to update a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
+                    throw new \RuntimeException(
+                        'API client failed to update a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id
+                    );
                 }
 
                 //  Attempt to update the LPA correspondent too if appropriate
@@ -218,7 +249,10 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $isTrust = isset($attorney->number);
 
         $viewModel = new ViewModel([
-            'deleteRoute' => $this->url()->fromRoute('lpa/primary-attorney/delete', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]),
+            'deleteRoute' => $this->url()->fromRoute(
+                'lpa/primary-attorney/delete',
+                ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]
+            ),
             'attorneyName' => $attorney->name,
             'attorneyAddress' => $attorney->address,
             'isTrust' => $isTrust,
@@ -243,35 +277,42 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         if (array_key_exists($attorneyIdx, $lpa->document->primaryAttorneys)) {
             $attorney = $lpa->document->primaryAttorneys[$attorneyIdx];
 
-            //  If this attorney is set as the correspondent then delete those details too
+            // If this attorney is set as the correspondent then delete those details too
             if ($this->attorneyIsCorrespondent($attorney)) {
                 $this->updateCorrespondentData($attorney, true);
             }
 
-            //  If the deletion of the attorney means there are no longer multiple attorneys then reset the how decisions
+            // If the deletion of the attorney means there are no
+            // longer multiple attorneys then reset the how decisions
             if (count($lpa->document->primaryAttorneys) <= 2) {
                 $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
 
-                if ($primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions && $primaryAttorneyDecisions->how != null) {
+                if (
+                    $primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions &&
+                    $primaryAttorneyDecisions->how != null
+                ) {
                     $primaryAttorneyDecisions->how = null;
                     $primaryAttorneyDecisions->howDetails = null;
-
                     $this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa, $primaryAttorneyDecisions);
                 }
             }
 
-            //  If the attorney being removed was set as registering the LPA then remove from there too
-            //  IMPORTANT - This step is required BEFORE the attorney is removed to ensure that the datamodel validation on the API side does not fail
+            // If the attorney being removed was set as registering the LPA then remove from there too
+            // IMPORTANT - This step is required BEFORE the attorney is removed to ensure
+            // that the datamodel validation on the API side does not fail
             $this->applicantService->removeAttorney($lpa, $attorney->id);
 
             //  Delete the attorney
             if (!$this->getLpaApplicationService()->deletePrimaryAttorney($lpa, $attorney->id)) {
-                throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
+                throw new \RuntimeException(
+                    'API client failed to delete a primary attorney ' .
+                    $attorneyIdx . ' for id: ' . $lpa->id
+                );
             }
 
             $this->cleanUpReplacementAttorneyDecisions();
 
-            //  No need to do applicant clean up here as we already removed the attorney above
+        //  No need to do applicant clean up here as we already removed the attorney above
         } else {
             // if attorney idx does not exist in lpa, return 404.
             return $this->notFoundAction();
@@ -279,7 +320,11 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         $route = 'lpa/primary-attorney';
 
-        return $this->redirect()->toRoute($route, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($route));
+        return $this->redirect()->toRoute(
+            $route,
+            ['lpa-id' => $lpa->id],
+            $this->getFlowChecker()->getRouteOptions($route)
+        );
     }
 
     public function addTrustAction()
@@ -298,19 +343,35 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         if (!$this->allowTrust()) {
             $route = 'lpa/primary-attorney/add';
 
-            return $this->redirect()->toRoute($route, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($route));
+            return $this->redirect()->toRoute(
+                $route,
+                ['lpa-id' => $lpa->id],
+                $this->getFlowChecker()->getRouteOptions($route)
+            );
         }
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\TrustCorporationForm');
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/primary-attorney/add-trust', ['lpa-id' => $lpa->id]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/primary-attorney/add-trust', ['lpa-id' => $lpa->id])
+        );
 
-        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
+        $request = $this->convertRequest();
+
+        if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($this->request->getPost());
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                if (!$this->getLpaApplicationService()->addPrimaryAttorney($lpa, new TrustCorporation($form->getModelDataFromValidatedForm()))) {
-                    throw new \RuntimeException('API client failed to add a trust corporation attorney for id: ' . $lpa->id);
+                $addOk = $this->getLpaApplicationService()->addPrimaryAttorney(
+                    $lpa,
+                    new TrustCorporation($form->getModelDataFromValidatedForm())
+                );
+
+                if (!$addOk) {
+                    throw new \RuntimeException(
+                        'API client failed to add a trust corporation attorney for id: ' . $lpa->id
+                    );
                 }
 
                 $this->cleanUpReplacementAttorneyDecisions();

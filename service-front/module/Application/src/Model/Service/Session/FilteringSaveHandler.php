@@ -26,49 +26,31 @@ class FilteringSaveHandler implements SaveHandlerInterface
      * so that sessions should not be lost in the transition
      * between the stock handler and this one. NB phpredis
      * doesn't appear to define a constant for this.
-     * @var string
      */
+    /** @var string */
     public const SESSION_PREFIX = 'PHPREDIS_SESSION:';
 
-    /**
-     * @var Redis
-     */
+    /** @var Redis */
     private $redisClient;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $redisHost;
 
-    /**
-     * @var string
-     */
+    /** @var int */
     private $redisPort = 6379;
 
     /**
      * TTL for Redis keys, in milliseconds
-     * @var int
      */
+    /** @var int */
     private $ttl;
 
     /**
      * Array of closures, called in order to determine
      * whether to write a session or not.
-     * @var array
      */
+    /** @var array */
     private $filters = [];
-
-    /**
-     * Marker to identify how many times writes of session data have been
-     * attempted via the write() method. Note that this
-     * does not record successful writes, only the number of writes attempted.
-     *
-     * Value is 0 if a write hasn't been attempted yet in the lifetime
-     * of this instance.
-     *
-     * @var int
-     */
-    public $sessionWritesAttempted = 0;
 
     // generate a session ID key for Redis
     private function getKey($id)
@@ -141,7 +123,7 @@ class FilteringSaveHandler implements SaveHandlerInterface
                 $this->redisHost,
                 $this->redisPort
             ));
-            $this->getLogger()->err($e);
+            $this->getLogger()->err($e->getMessage());
             $result = false;
         }
 
@@ -160,18 +142,9 @@ class FilteringSaveHandler implements SaveHandlerInterface
 
         // Redis returns FALSE if a key doesn't exist, but
         // PHP expects an empty string to be returned in that situation
-        if ($data === false) {
+        if ($data === false || !is_string($data)) {
             $data = '';
         }
-
-        $this->getLogger()->debug(
-            sprintf(
-                'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Reading session data at %s; key = %s; session data = %s',
-                microtime(true),
-                $key,
-                $data
-            )
-        );
 
         return $data;
     }
@@ -195,23 +168,16 @@ class FilteringSaveHandler implements SaveHandlerInterface
         $key = $this->getKey($id);
 
         if ($doWrite) {
-            $this->getLogger()->debug(sprintf(
-                'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Writing data to session at %s; key = %s; session data = %s',
-                microtime(true),
-                $key,
-                $data
-            ));
 
-            $this->sessionWritesAttempted += 1;
+            // This appears to return a Redis instance, not a boolean; so we
+            // check that here so we always get a boolean.
+            $success = $this->redisClient->setEx($key, $this->ttl, $data);
+            if ($success !== false) {
+                $success = true;
+            }
 
-            return $this->redisClient->setEx($key, $this->ttl, $data);
+            return $success;
         } else {
-            $this->getLogger()->debug(sprintf(
-                'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ignoring session write at %s for key %s',
-                microtime(true),
-                $key
-            ));
-
             return true;
         }
     }
@@ -225,6 +191,6 @@ class FilteringSaveHandler implements SaveHandlerInterface
     // no-op, as we let Redis clean up expired keys and rely on TTL
     public function gc(int $max_lifetime): int|false
     {
-        return true;
+        return 1;
     }
 }

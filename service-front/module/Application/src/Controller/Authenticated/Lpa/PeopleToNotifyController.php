@@ -13,13 +13,15 @@ class PeopleToNotifyController extends AbstractLpaActorController
     {
         $lpa = $this->getLpa();
 
-        // set hidden form for saving empty array to peopleToNotify.
+        // set hidden form for saving empty array to peopleToNotify
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa
         ]);
 
-        if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // set user has confirmed if there are people to notify
@@ -36,19 +38,31 @@ class PeopleToNotifyController extends AbstractLpaActorController
         foreach ($this->getLpa()->document->peopleToNotify as $idx => $peopleToNotify) {
             $peopleToNotifyParams[] = [
                 'notifiedPerson' => [
-                    'name'      => $peopleToNotify->name,
-                    'address'   => $peopleToNotify->address
+                    'name' => $peopleToNotify->name,
+                    'address' => $peopleToNotify->address
                 ],
-                'editRoute'     => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpa->id, 'idx' => $idx]),
-                'confirmDeleteRoute'   => $this->url()->fromRoute($currentRouteName . '/confirm-delete', ['lpa-id' => $lpa->id, 'idx' => $idx]),
-                'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpa->id, 'idx' => $idx]),
+                'editRoute' => $this->url()->fromRoute(
+                    $currentRouteName . '/edit',
+                    ['lpa-id' => $lpa->id, 'idx' => $idx]
+                ),
+                'confirmDeleteRoute' => $this->url()->fromRoute(
+                    $currentRouteName . '/confirm-delete',
+                    ['lpa-id' => $lpa->id, 'idx' => $idx]
+                ),
+                'deleteRoute'   => $this->url()->fromRoute(
+                    $currentRouteName . '/delete',
+                    ['lpa-id' => $lpa->id, 'idx' => $idx]
+                ),
             ];
         }
 
         $view = new ViewModel(['form' => $form, 'peopleToNotify' => $peopleToNotifyParams]);
 
         if (count($this->getLpa()->document->peopleToNotify) < 5) {
-            $view->addRoute  = $this->url()->fromRoute($currentRouteName . '/add', ['lpa-id' => $lpa->id]);
+            $view->addRoute  = $this->url()->fromRoute(
+                $currentRouteName . '/add',
+                ['lpa-id' => $lpa->id]
+            );
         }
 
         return $view;
@@ -64,7 +78,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
-        //  Execute the parent check function to determine what reuse options might be available and what should happen
+        // Execute the parent check function to determine what reuse options
+        // might be available and what should happen
         $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
 
         if (!is_null($reuseRedirect)) {
@@ -77,28 +92,39 @@ class PeopleToNotifyController extends AbstractLpaActorController
         if (count($lpa->document->peopleToNotify) >= 5) {
             $route = 'lpa/people-to-notify';
 
-            return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
+            return $this->redirect()->toRoute(
+                $route,
+                ['lpa-id' => $lpaId],
+                $this->getFlowChecker()->getRouteOptions($route)
+            );
         }
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\PeopleToNotifyForm');
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/add', ['lpa-id' => $lpaId]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/people-to-notify/add', ['lpa-id' => $lpaId])
+        );
         $form->setActorData('person to notify', $this->getActorsList());
 
-        if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
+        $request = $this->convertRequest();
+
+        if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($this->request->getPost());
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // persist data
                 $np = new NotifiedPerson($form->getModelDataFromValidatedForm());
 
                 if (!$this->getLpaApplicationService()->addNotifiedPerson($lpa, $np)) {
-                    throw new \RuntimeException('API client failed to add a notified person for id: '.$lpaId);
+                    throw new \RuntimeException(
+                        'API client failed to add a notified person for id: ' . $lpaId
+                    );
                 }
 
                 // remove metadata flag value if exists
                 if (!array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->metadata)) {
-                        $this->getMetadata()->setPeopleToNotifyConfirmed($lpa);
+                    $this->getMetadata()->setPeopleToNotifyConfirmed($lpa);
                 }
 
                 return $this->moveToNextRoute();
@@ -140,20 +166,32 @@ class PeopleToNotifyController extends AbstractLpaActorController
         }
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\PeopleToNotifyForm');
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/edit', ['lpa-id' => $lpaId, 'idx' => $personIdx]));
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/people-to-notify/edit', ['lpa-id' => $lpaId, 'idx' => $personIdx])
+        );
         $form->setActorData('person to notify', $this->getActorsList($personIdx));
 
-        if ($this->request->isPost()) {
-            $postData = $this->request->getPost();
-            $form->setData($postData);
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 // update details
                 $notifiedPerson->populate($form->getModelDataFromValidatedForm());
 
                 // persist to the api
-                if (!$this->getLpaApplicationService()->setNotifiedPerson($lpa, $notifiedPerson, $notifiedPerson->id)) {
-                    throw new \RuntimeException('API client failed to update notified person ' . $personIdx . ' for id: ' . $lpaId);
+                $setOk = $this->getLpaApplicationService()->setNotifiedPerson(
+                    $lpa,
+                    $notifiedPerson,
+                    $notifiedPerson->id
+                );
+
+                if (!$setOk) {
+                    throw new \RuntimeException(
+                        'API client failed to update notified person ' . $personIdx . ' for id: ' . $lpaId
+                    );
                 }
 
                 return $this->moveToNextRoute();
@@ -187,7 +225,10 @@ class PeopleToNotifyController extends AbstractLpaActorController
         }
 
         $viewModel = new ViewModel([
-            'deleteRoute' => $this->url()->fromRoute('lpa/people-to-notify/delete', ['lpa-id' => $lpaId, 'idx' => $personIdx]),
+            'deleteRoute' => $this->url()->fromRoute(
+                'lpa/people-to-notify/delete',
+                ['lpa-id' => $lpaId, 'idx' => $personIdx]
+            ),
             'personName' => $notifiedPerson->name,
             'personAddress' => $notifiedPerson->address,
         ]);
@@ -214,7 +255,9 @@ class PeopleToNotifyController extends AbstractLpaActorController
             $personToNotifyId = $lpa->document->peopleToNotify[$personIdx]->id;
 
             if (!$this->getLpaApplicationService()->deleteNotifiedPerson($lpa, $personToNotifyId)) {
-                throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpa->id);
+                throw new \RuntimeException(
+                    'API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpa->id
+                );
             }
         } else {
             // if notified person idx does not exist in lpa, return 404.
@@ -223,6 +266,10 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
         $route = 'lpa/people-to-notify';
 
-        return $this->redirect()->toRoute($route, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($route));
+        return $this->redirect()->toRoute(
+            $route,
+            ['lpa-id' => $lpa->id],
+            $this->getFlowChecker()->getRouteOptions($route)
+        );
     }
 }

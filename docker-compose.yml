@@ -470,8 +470,8 @@ services:
     container_name: perfplatworker
     image: perfplatworker
     build:
-      context: ./service-perfplat
-      dockerfile: ./docker/Dockerfile-worker-dev
+      context: .
+      dockerfile: ./service-perfplat/docker/Dockerfile-worker
     depends_on:
       - postgres
     ports:

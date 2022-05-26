@@ -4,9 +4,7 @@ namespace Application\Model\Service\ApiClient;
 
 trait ApiClientTrait
 {
-    /**
-     * @var Client
-     */
+    /** @var Client */
     private $apiClient;
 
     /**

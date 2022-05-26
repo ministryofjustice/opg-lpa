@@ -13,6 +13,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class ClientTest extends MockeryTestCase
 {
@@ -56,8 +57,10 @@ class ClientTest extends MockeryTestCase
         $this->response = Mockery::mock(ResponseInterface::class);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
 
-        if ($returnBody != null) {
-            $this->response->shouldReceive('getBody')->once()->andReturn($returnBody);
+        if ($returnBody !== null) {
+            $mockBody = Mockery::mock(StreamInterface::class);
+            $mockBody->shouldReceive('__toString')->once()->andReturn($returnBody);
+            $this->response->shouldReceive('getBody')->once()->andReturn($mockBody);
         }
 
         if ($requestData == null) {
@@ -158,9 +161,8 @@ class ClientTest extends MockeryTestCase
      */
     public function testHttpGetNotFound(): void
     {
-        $this->setUpRequest(404, null);
+        $this->setUpRequest(404, '');
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(404);
-        $this->response->shouldReceive('getBody')->once()->andReturn(null);
 
         $expectedLoggerArgs = [
             'HTTP:404 - Unexpected API response',

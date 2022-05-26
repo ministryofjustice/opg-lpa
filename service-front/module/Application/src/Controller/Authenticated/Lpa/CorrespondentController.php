@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
+use Application\Form\Lpa\CorrespondentForm;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
@@ -13,21 +14,19 @@ use Laminas\View\Model\ViewModel;
 
 class CorrespondentController extends AbstractLpaActorController
 {
-    /*
-     * Page loads:
+    /* Page loads:
      *  If correspondent details are set, they are used;
      *  Else we should the details of the default correspondent (taken from applicant).
      *
      * Page saved:
      *  If correspondent details are set, the fields are merged.
      *  Else we pull in the details of the default correspondent, then merge in other fields.
-     *
      */
     public function indexAction()
     {
         $lpa = $this->getLpa();
 
-        //  Set hidden form for saving applicant as the default correspondent
+        // Set hidden form for saving applicant as the default correspondent
         $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\CorrespondenceForm', [
                          'lpa' => $lpa,
@@ -36,41 +35,51 @@ class CorrespondentController extends AbstractLpaActorController
             'lpa-id' => $lpa->id,
         ]));
 
-        //  Determine some details about the existing correspondent
+        // Determine some details about the existing correspondent
         $correspondent = $this->getLpaCorrespondent();
-        $correspondentEmailAddress = ($correspondent->email instanceof EmailAddress ? $correspondent->email : null);
-        $correspondentPhoneNumber = (isset($correspondent->phone) && $correspondent->phone instanceof PhoneNumber ? $correspondent->phone->number : null);
+        $correspondentEmailAddress = (
+            $correspondent->email instanceof EmailAddress ? $correspondent->email : null
+        );
+        $correspondentPhoneNumber = (
+            isset($correspondent->phone) && $correspondent->phone instanceof PhoneNumber
+                ? $correspondent->phone->number : null
+        );
 
-        if ($this->request->isPost()) {
-            $form->setData($this->request->getPost());
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                //  Set the initial correspondent data - if the correspondent isn't a correspondent object then set up for the first time
+                // Set the initial correspondent data - if the correspondent
+                // isn't a correspondent object then set up for the first time
                 $correspondentData = [];
 
-                //  If the correspondent data is a correspondence object then unset some data now
+                // If the correspondent data is a correspondence object then unset some data now
                 if ($correspondent instanceof Correspondence) {
                     $correspondentData = array_replace_recursive($correspondent->toArray(), $correspondentData);
 
-                    //  Remove the email address and telephone number - they will be added back in below if necessary
-                    if (isset($correspondentData['email'])) {
-                        unset($correspondentData['email']);
-                    }
-
-                    if (isset($correspondentData['phone'])) {
-                        unset($correspondentData['phone']);
-                    }
+                    // Remove the email address and telephone number - they will be added back in below if necessary;
+                    // note that if not set, unset() has no effect and doesn't throw an exception
+                    unset($correspondentData['email']);
+                    unset($correspondentData['phone']);
                 } else {
-                    $correspondentData['who']     = ($correspondent instanceof Donor ? Correspondence::WHO_DONOR : Correspondence::WHO_ATTORNEY);
-                    $correspondentData['name']    = (!$correspondent instanceof TrustCorporation ? $correspondent->name->toArray() : null);
-                    $correspondentData['company'] = ($correspondent instanceof TrustCorporation ? $correspondent->name : null);
+                    $correspondentData['who'] = (
+                        $correspondent instanceof Donor ? Correspondence::WHO_DONOR : Correspondence::WHO_ATTORNEY
+                    );
+                    $correspondentData['name'] = (
+                        $correspondent instanceof TrustCorporation ? null : $correspondent->name->toArray()
+                    );
+                    $correspondentData['company'] = (
+                        $correspondent instanceof TrustCorporation ? $correspondent->name : null
+                    );
                     $correspondentData['address'] = $correspondent->address->toArray();
                 }
 
-                //  Recreate the correspondent object with the data
+                // Recreate the correspondent object with the data
                 $correspondent = new Correspondence($correspondentData);
 
-                //  Populate the remaining data for the correspondent from the form data
+                // Populate the remaining data for the correspondent from the form data
                 $formData = $form->getData();
 
                 $correspondent->contactInWelsh = (bool)$formData['contactInWelsh'];
@@ -85,7 +94,7 @@ class CorrespondentController extends AbstractLpaActorController
                     ];
                 }
 
-                //  Populate the phone details
+                // Populate the phone details
                 if ($correspondenceFormData['contactByPhone']) {
                     $correspondent->phone = [
                         'number' => $correspondenceFormData['phone-number']
@@ -99,20 +108,24 @@ class CorrespondentController extends AbstractLpaActorController
                 return $this->moveToNextRoute();
             }
         } else {
-            //  Bind any required data to the correspondence form
+            // Bind any required data to the correspondence form
             $form->bind([
-                'contactInWelsh' => (isset($correspondent->contactInWelsh) ? $correspondent->contactInWelsh : false),
+                'contactInWelsh' => (
+                    isset($correspondent->contactInWelsh) ? $correspondent->contactInWelsh : false
+                ),
                 'correspondence' => [
                     'contactByEmail' => !is_null($correspondentEmailAddress),
-                    'email-address'  => $correspondentEmailAddress,
+                    'email-address' => $correspondentEmailAddress,
                     'contactByPhone' => !is_null($correspondentPhoneNumber),
-                    'phone-number'   => $correspondentPhoneNumber,
-                    'contactByPost'  => (isset($correspondent->contactByPost) ? $correspondent->contactByPost : false),
+                    'phone-number' => $correspondentPhoneNumber,
+                    'contactByPost' => (
+                        isset($correspondent->contactByPost) ? $correspondent->contactByPost : false
+                    ),
                 ]
             ]);
         }
 
-        //  Construct the correspondent's name to display - if there is a company then append those details also
+        // Construct the correspondent's name to display - if there is a company then append those details also
         $correspondentName = (string) $correspondent->name;
 
         if (isset($correspondent->company) && !empty($correspondent->company)) {
@@ -136,14 +149,15 @@ class CorrespondentController extends AbstractLpaActorController
     /**
      * Simple function to get the best correspondent actor for the LPA
      *
-     * @return \Opg\Lpa\DataModel\AbstractData
+     * @return \Opg\Lpa\DataModel\AbstractData|null
      */
     private function getLpaCorrespondent()
     {
-        //  If a correspondent has not already been set.....
-        //  1 - If the LPA is being registered by the donor then the correspondent will be the donor
-        //  2 - If the LPA is being registered by a single attorney then the correspondent will be that attorney
-        //  3 - If the LPA is being registered by multiple attorneys then the correspondent will be the first attorney in the attorney list
+        // If a correspondent has not already been set.....
+        // 1 - If the LPA is being registered by the donor then the correspondent will be the donor
+        // 2 - If the LPA is being registered by a single attorney then the correspondent will be that attorney
+        // 3 - If the LPA is being registered by multiple attorneys then the
+        //     correspondent will be the first attorney in the attorney list
         $lpaDocument = $this->getLpa()->document;
         $correspondent = $lpaDocument->correspondent;
 
@@ -176,15 +190,17 @@ class CorrespondentController extends AbstractLpaActorController
         $correspondent = $this->getLpaCorrespondent();
 
         if ($correspondent instanceof Correspondence) {
-            //  If the correspondent is of type "other" or is a trust then edit is allowed
-            if ($correspondent->who == Correspondence::WHO_OTHER
-                || ($correspondent->who == Correspondence::WHO_ATTORNEY && !is_null($correspondent->company))) {
-
+            // If the correspondent is of type "other" or is a trust then edit is allowed
+            if (
+                $correspondent->who == Correspondence::WHO_OTHER
+                || ($correspondent->who == Correspondence::WHO_ATTORNEY && !is_null($correspondent->company))
+            ) {
                 return true;
             }
         } elseif ($correspondent instanceof TrustCorporation) {
-            //  This scenario occurs when a trust is by default the correspondent even though it has not been actively selected
-            //  This happens when the trust was selected to be the applicant and is first in the list
+            // This scenario occurs when a trust is by default the correspondent even though it has not been
+            // actively selected
+            // This happens when the trust was selected to be the applicant and is first in the list
             return true;
         }
 
@@ -200,10 +216,11 @@ class CorrespondentController extends AbstractLpaActorController
             $viewModel->isPopup = true;
         }
 
-        //  Determine if we are directly editing the existing correspondent
+        // Determine if we are directly editing the existing correspondent
         $editingExistingCorrespondent = ($this->params()->fromQuery('reuse-details') == 'existing-correspondent');
 
-        //  If we are not directly editing the existing correspondent then execute the parent function to determine if we should redirect to the reuse details view
+        // If we are not directly editing the existing correspondent then execute the parent
+        // function to determine if we should redirect to the reuse details view
         if (!$editingExistingCorrespondent) {
             $reuseRedirect = $this->checkReuseDetailsOptions($viewModel);
 
@@ -212,28 +229,37 @@ class CorrespondentController extends AbstractLpaActorController
             }
         }
 
+        /** @var CorrespondentForm */
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\CorrespondentForm');
-        $form->setAttribute('action', $this->url()->fromRoute('lpa/correspondent/edit', ['lpa-id' => $this->getLpa()->id]));
 
-        if ($this->request->isPost()) {
-            //  If this is reusing actor details then check to see if we can just process the data without displaying it to the user
+        $form->setAttribute(
+            'action',
+            $this->url()->fromRoute('lpa/correspondent/edit', ['lpa-id' => $this->getLpa()->id])
+        );
+
+        $request = $this->convertRequest();
+
+        if ($request->isPost()) {
+            // If this is reusing actor details then check to see if we
+            // can just process the data without displaying it to the user
             if ($this->reuseActorDetails($form)) {
-                //  If the form is not editable then just validate and process it now
+                // If the form is not editable then just validate and process it now
                 if (!$form->isEditable()) {
-                    //  If it isn't then validate the form to set up the data, extract it and process the correspondent
+                    // If it isn't then validate the form to set up the data,
+                    // extract it and process the correspondent
                     $form->isValid();
 
-                    //  Extract the model data from the form and process it
+                    // Extract the model data from the form and process it
                     $correspondentData = $form->getModelDataFromValidatedForm();
 
                     return $this->processCorrespondentData($correspondentData);
                 }
             } else {
-                //  This is a regular post from the form so just validate and save the data
-                $form->setData($this->request->getPost());
+                // This is a regular post from the form so just validate and save the data
+                $form->setData($request->getPost());
 
                 if ($form->isValid()) {
-                    //  Extract the model data from the form and process it
+                    // Extract the model data from the form and process it
                     $correspondentData = $form->getModelDataFromValidatedForm();
                     $correspondentData['contactDetailsEnteredManually'] = true;
 
@@ -241,22 +267,26 @@ class CorrespondentController extends AbstractLpaActorController
                 }
             }
         } elseif ($editingExistingCorrespondent) {
-            //  Find the existing correspondent data and bind it to the form
+            // Find the existing correspondent data and bind it to the form
             $existingCorrespondent = $this->getLpaCorrespondent();
 
-            if ($existingCorrespondent instanceof Correspondence || $existingCorrespondent instanceof TrustCorporation) {
+            if (
+                $existingCorrespondent instanceof Correspondence ||
+                $existingCorrespondent instanceof TrustCorporation
+            ) {
                 $form->bind($existingCorrespondent->flatten());
             }
         }
 
-        //  If we're not editing the existing correspondent then execute the parent function to determine if the back button URL should be set in the view model
+        // If we're not editing the existing correspondent then execute the parent function
+        // to determine if the back button URL should be set in the view model
         if (!$editingExistingCorrespondent) {
             $this->addReuseDetailsBackButton($viewModel);
         }
 
         $viewModel->form = $form;
 
-        //  Add a cancel URL for this action
+        // Add a cancel URL for this action
         $this->addCancelUrlToView($viewModel, 'lpa/correspondent');
 
         return $viewModel;
@@ -274,7 +304,7 @@ class CorrespondentController extends AbstractLpaActorController
         $lpa = $this->getLpa();
         $lpaCorrespondent = $lpa->document->correspondent;
 
-        //  Set aside any data to retain that is not present in the form
+        // Set aside any data to retain that is not present in the form
         $existingDataToRetain = [];
 
         if ($lpaCorrespondent instanceof Correspondence) {
@@ -284,11 +314,11 @@ class CorrespondentController extends AbstractLpaActorController
             ];
         }
 
-        //  Create a new correspondence data model using the form data and any data to retain from a previous save
+        // Create a new correspondence data model using the form data and any data to retain from a previous save
         $lpaCorrespondent = new Correspondence(array_merge($correspondentData, $existingDataToRetain));
 
         if (!$this->getLpaApplicationService()->setCorrespondent($lpa, $lpaCorrespondent)) {
-            throw new \RuntimeException('API client failed to update correspondent for id: '.$lpa->id);
+            throw new \RuntimeException('API client failed to update correspondent for id: ' . $lpa->id);
         }
 
         if ($this->isPopup()) {
@@ -297,6 +327,10 @@ class CorrespondentController extends AbstractLpaActorController
 
         $nextRoute = $this->getFlowChecker()->nextRoute('lpa/correspondent/edit');
 
-        return $this->redirect()->toRoute($nextRoute, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($nextRoute));
+        return $this->redirect()->toRoute(
+            $nextRoute,
+            ['lpa-id' => $lpa->id],
+            $this->getFlowChecker()->getRouteOptions($nextRoute)
+        );
     }
 }

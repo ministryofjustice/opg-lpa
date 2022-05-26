@@ -35,7 +35,7 @@ Then('the LPA status is shown as {string}', (expectedStatus) => {
 })
 
 Then('the date by which the LPA should be received is shown as {string}', (expectedDate) => {
-    cy.get('[data-cy=lpa-should-receive-by-date]').then((elt) => {
+    cy.get('[data-cy=lpa-should-receive]').then((elt) => {
         expect(elt.text()).to.eql(expectedDate);
     })
 })

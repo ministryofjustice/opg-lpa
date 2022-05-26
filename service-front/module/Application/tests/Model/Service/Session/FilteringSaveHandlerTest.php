@@ -51,7 +51,6 @@ class FilteringSaveHandlerTest extends MockeryTestCase
         $actual = $saveHandler->write('foo', 'bar');
 
         $this->assertSame(true, $actual);
-        $this->assertSame(0, $saveHandler->sessionWritesAttempted);
     }
 
     public function testConstructorInstantiatesRedis(): void
@@ -119,7 +118,6 @@ class FilteringSaveHandlerTest extends MockeryTestCase
         $actual = $this->saveHandler->write('foo', 'bar');
 
         $this->assertSame($expected, $actual);
-        $this->assertSame(1, $this->saveHandler->sessionWritesAttempted);
     }
 
     public function testWriteSuccess(): void
@@ -132,7 +130,6 @@ class FilteringSaveHandlerTest extends MockeryTestCase
         $actual = $this->saveHandler->write('foo', 'bar');
 
         $this->assertSame(true, $actual);
-        $this->assertSame(1, $this->saveHandler->sessionWritesAttempted);
     }
 
     public function testWriteSuccessIgnored(): void
@@ -149,7 +146,6 @@ class FilteringSaveHandlerTest extends MockeryTestCase
         $actual = $this->saveHandler->write('foo', 'bar');
 
         $this->assertSame(true, $actual);
-        $this->assertSame(0, $this->saveHandler->sessionWritesAttempted);
     }
 
     public function testGetError(): void

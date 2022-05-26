@@ -6,6 +6,7 @@ Feature: Add donor to Property and Finance LPA
     Background:
         Given I ignore application exceptions
         And I create PF LPA test fixture
+        And Ordnance Survey postcode lookup responses are stubbed out for good postcode B1 1TF
 
     @focus @CleanupFixtures
     Scenario: Add Donor to LPA
@@ -19,7 +20,7 @@ Feature: Add donor to Property and Finance LPA
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         Then I can find use-my-details if lpa is new
         And I opt not to re-use details if lpa is a clone
-        Then I can find "form-donor" 
+        Then I can find "form-donor"
         And accessibility checks should pass for "donorPF page with popup open"
         # ensure we are on the donor form , in case re-use details form was previously shown
         When I type "B1 1TF" into "postcode-lookup" working around cypress bug
@@ -64,13 +65,13 @@ Feature: Add donor to Property and Finance LPA
             | address-postcode| PO38 1UL |
         And I check "can-sign"
         And I click "form-save"
-        Then I cannot find "form-donor" 
+        Then I cannot find "form-donor"
         Then I can find "save-and-continue"
         And I cannot find "add-donor"
         And I see "Mrs Nancy Garrison" in the page text
         # following line uses force click because view-change-donor button is partly obscured
         When I force click "view-change-donor"
-        Then I can find "form-donor" 
+        Then I can find "form-donor"
         And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
             | name-first | Nancy |
@@ -85,7 +86,7 @@ Feature: Add donor to Property and Finance LPA
             | address-postcode| PO38 1UL |
         When I click "form-cancel"
         # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
-        Then I cannot find "form-donor" 
+        Then I cannot find "form-donor"
         When I click "save-and-continue"
         And I am taken to the when lpa starts page
         When I click "save"
