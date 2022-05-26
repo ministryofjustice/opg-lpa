@@ -47,8 +47,8 @@ module.exports = (on, config) => {
     }
   });
 
-    // the following on('task') 10 lines are required for cypress.axe to use custom function to write to the log
-    // and could be removed if we remove dependency on cypress-axe in future
+  // the following on('task') 10 lines are required for cypress.axe to use custom function to write to the log
+  // and could be removed if we remove dependency on cypress-axe in future
   on('task', {
     log(message) {
       console.log(message);
