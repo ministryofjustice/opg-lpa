@@ -50,6 +50,22 @@ module "environment_dns" {
 
 }
 
+
+module "cross_region_backup" {
+  count  = local.account.always_on ? 1 : 0
+  source = "./modules/rds_cross_region_backup"
+  providers = {
+    aws             = aws.eu_west_1
+    aws.destination = aws.eu_west_2
+  }
+
+  retention_period        = local.account.backup_retention_period
+  source_db_instance_arn  = module.eu-west-1.aws_db_instance_arn
+  destination_region_name = "eu-west-2"
+  key_alias               = "mrk_db_snapshot_key-${local.account_name}"
+
+}
+
 output "admin-domain" {
   value = module.environment_dns.admin_domain
 }
