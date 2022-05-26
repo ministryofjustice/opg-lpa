@@ -31,5 +31,5 @@ output "cluster_name" {
 }
 
 output "aws_db_instance_arn" {
-  value = var.account.always_on ? aws_db_instance.api[0].arn : ""
+  value = var.account.always_on ? aws_db_instance.api[0].arn : null
 }
