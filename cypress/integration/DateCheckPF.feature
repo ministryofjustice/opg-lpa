@@ -15,8 +15,15 @@ Feature: Check signature dates for a PF LPA
 
   Scenario: Displays relevant information on signing continuation sheets
     Given I visit the dashboard
-    When I click "check-signing-dates" for LPA ID 33005588225
-    Then I am taken to "/lpa/33005588225/date-check"
+
+    # Check the completion page has the right continuation sheet notes
+    When I click 'view-or-continue-lpa-26997335999'
+    Then I can see the revelant PF continuation sheet notes
+
+    # Check the date check tool
+    When I visit the dashboard
+    And I click "check-signing-dates" for LPA ID 26997335999
+    Then I am taken to "/lpa/26997335999/date-check"
     # Additional attorneys - 5 primaryAttorneys
     And I can see a reminder to sign continuation sheet 1
     # Donor cannot sign or make mark

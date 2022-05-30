@@ -110,7 +110,7 @@
         <h3 class="heading-medium">Continuation sheets</h3>
 
         {% for cnote in continuationNoteKeys %}
-            <p>
+            <p data-cy="continuation-sheet-notes">
                 {% if cnote == 'ALL_PEOPLE_OVERFLOW' %}
                     An LPA form only has enough space to add 4 attorneys, 2 replacement attorneys and 4 people to notify. The extra attorneys, replacements and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
                 {% elseif cnote == 'ALL_ATTORNEY_OVERFLOW' %}
