@@ -4,6 +4,7 @@ namespace Application\Model\Service\ProcessingStatus;
 
 use Application\Library\ApiProblem\ApiProblemException;
 use GuzzleHttp\Client;
+use GuzzleHttp\Promise\RejectedPromise;
 use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
 use Http\Client\Exception;
@@ -11,8 +12,10 @@ use Http\Client\HttpClient;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 class ServiceTest extends MockeryTestCase
 {
@@ -64,7 +67,7 @@ class ServiceTest extends MockeryTestCase
         $this->response = Mockery::mock(ResponseInterface::class);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
 
-        if ($returnBody != null) {
+        if ($returnBody !== null) {
             $mockBody = Mockery::mock(StreamInterface::class);
             $mockBody->shouldReceive('getContents')->andReturn($returnBody);
             $this->response->shouldReceive('getBody')->andReturn($mockBody);
@@ -73,6 +76,12 @@ class ServiceTest extends MockeryTestCase
         $this->httpClient->shouldReceive('sendAsync')
             ->once()
             ->andReturn($this->response);
+    }
+
+    public function testSetConfigBadConfig()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->service->setConfig([]);
     }
 
     /**
@@ -268,6 +277,127 @@ class ServiceTest extends MockeryTestCase
             1000000000 => [
                 'deleted'   => false,
                 'response'  => ['status' => 'Processed', 'dispatchDate' => '2021-02-08', 'returnUnpaid' => true]
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $statusResult);
+    }
+
+    public function testGetStatusesReceivedRegisteredAndDispatched()
+    {
+        $this->setUpSigning();
+        $this->setUpRequest(200, '
+            {
+                "status": "Registered",
+                "onlineLpaId": "2200000000",
+                "receiptDate": "2021-05-01",
+                "rejectedDate": null,
+                "dispatchDate": "2021-05-03",
+                "registrationDate": "2021-05-02",
+                "cancellationDate": null,
+                "invalidDate": null,
+                "withdrawnDate": null,
+                "statusDate": "2021-05-03"
+            }
+        ');
+
+        $statusResult = $this->service->getStatuses(["2200000000"]);
+
+        $expectedResult = [
+            "2200000000" => [
+                "deleted" => false,
+                "response" => [
+                    "status" => "Processed",
+                    "receiptDate" => "2021-05-01",
+                    "dispatchDate" => "2021-05-03",
+                    "registrationDate" => "2021-05-02",
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedResult, $statusResult);
+    }
+
+    public function testGetStatusesReceivedRegisteredButNotDispatched()
+    {
+        $this->setUpSigning();
+        $this->setUpRequest(200, '
+            {
+                "status": "Registered",
+                "onlineLpaId": "2200000000",
+                "receiptDate": "2021-05-01",
+                "rejectedDate": null,
+                "dispatchDate": null,
+                "registrationDate": "2021-05-02",
+                "cancellationDate": null,
+                "invalidDate": null,
+                "withdrawnDate": null,
+                "statusDate": "2021-05-03"
+            }
+        ');
+
+        $statusResult = $this->service->getStatuses(["2200000000"]);
+
+        $expectedResult = [
+            "2200000000" => [
+                "deleted" => false,
+                "response" => [
+                    "status" => "Checking",
+                    "receiptDate" => "2021-05-01",
+                    "registrationDate" => "2021-05-02",
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedResult, $statusResult);
+    }
+
+    // e.g. response times out, so the rejected callback handler is called on the Pool object;
+    // httpClient->sendAsync() either returns a RejectedPromise (if an exception occurred
+    // during the request) or a FulfilledPromise (if the request was OK)
+    public function testGetStatusesRequestRejected()
+    {
+        $this->setUpSigning();
+
+        $this->httpClient->shouldReceive('sendAsync')
+            ->once()
+            ->andReturn(new RejectedPromise('connection failed'));
+
+        $statusResult = $this->service->getStatuses([2000000000]);
+
+        $expectedResult = [];
+
+        $this->assertEquals($expectedResult, $statusResult);
+    }
+
+    public function testGetStatusesBadResponseJSONUnparseable()
+    {
+        $this->setUpSigning();
+        $this->setUpRequest(200, '{fooaooaoaoao');
+
+        $statusResult = $this->service->getStatuses([2100000000]);
+
+        $expectedResult = [
+            2100000000 => [
+                'deleted' => false,
+                'response' => null,
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $statusResult);
+    }
+
+    public function testGetStatusesBadResponseJSONNotArray()
+    {
+        $this->setUpSigning();
+        $this->setUpRequest(200, '"fooo"');
+
+        $statusResult = $this->service->getStatuses([2200000000]);
+
+        $expectedResult = [
+            2200000000 => [
+                'deleted' => false,
+                'response' => null,
             ]
         ];
 
