@@ -1365,7 +1365,7 @@ orbs:
                   -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" \
                   --entrypoint "./cypress/start.sh" \
                   --name cypress_tests cypress:latest && exit 0 || \
-                  (docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1)
+                  (echo "Copying test artifacts"; docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1)
           - store_artifacts:
               path: screenshots
           - run:
