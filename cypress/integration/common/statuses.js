@@ -6,7 +6,7 @@ Then('the LPA with ID {string} should display with status {string}', (lpaId, exp
     // of the statuses for LPAs happening in client-side JS.
     expectedStatus = expectedStatus.toLowerCase();
     const selector = '.opg-lozenge-status--' + expectedStatus +
-        '[data-cy=lpa-status-lozenge-' + lpaId + ']';
+        '[data-cy=lpa-status-lozenge-' + lpaId + '][data-refreshed=true]';
 
     cy.get(selector).then((elt) => {
         expect(elt.text().toLowerCase()).to.eql(expectedStatus);
