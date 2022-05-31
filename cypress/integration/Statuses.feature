@@ -50,5 +50,12 @@ Feature: Status display for LPAs
         # *no* status date and Return - unpaid status on Sirius
         And the LPA with ID "13316443118" should display with status "Processed"
 
-        # Deleted from Sirius, status returns to waiting
-        And the LPA with ID "97998888883" should display with status "Waiting"
+        # first visit: 97998888883 has status date and Return - unpaid status on Sirius
+        And the LPA with ID "97998888883" should display with status "Processed"
+
+        # second visit to dashboard: 97998888883 has been deleted after remaining unpaid
+        # for too long (Sirius gave us a 410 code) and should have gone back to "Waiting"
+        When Sirius Gateway status responses are stubbed out, with 97998888883 deleted
+        And I click element marked "Your details"
+        And I click element marked "Your LPAs"
+        Then the LPA with ID "97998888883" should display with status "Waiting"
