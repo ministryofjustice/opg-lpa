@@ -8,20 +8,12 @@ Feature: Status display for LPAs
         And Sirius Gateway status responses are stubbed out
 
     @focus
-    Scenario: I can see accurate statuses for my LPA applications on the dashboard (LPAL-92)
-        Given I log in as appropriate test user
-
-        # The statuses tested here are seeded into the test database; their
-        # Sirius statuses are then mocked via the swagger-example.yaml and
-        # nginx.conf configuration files in the gateway mock
-
+    Scenario: I can see accurate statuses for my LPA applications on the dashboard (LPAL-92/LPAL-800)
+        Given I log in as seeded user
         When I am taken to the dashboard page
 
-        # no record in Sirius (404 from the gateway)
-        Then the LPA with ID "33718377316" should display with status "Waiting"
-
         # receipt date, Pending status on Sirius, no other date
-        And the LPA with ID "91155453023" should display with status "Received"
+        Then the LPA with ID "91155453023" should display with status "Received"
 
         # receipt date only, Perfect status on Sirius
         And the LPA with ID "54171193342" should display with status "Checking"
