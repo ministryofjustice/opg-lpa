@@ -17,10 +17,13 @@ class StatusController extends AbstractLpaController
     public function indexAction()
     {
         $lpa = $this->getLpa();
+        $lpaId = $lpa->getId();
         $lpaStatus = null;
         $returnUnpaid = false;
 
         if ($lpa->getCompletedAt() instanceof DateTime) {
+            // A 'completed' status is used for LPA applications received before the track-from date;
+            // if a better status can be determined below, we don't use 'completed'
             $lpaStatus = 'completed';
 
             $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
@@ -28,23 +31,25 @@ class StatusController extends AbstractLpaController
             if ($trackFromDate <= new DateTime('now') && $trackFromDate <= $lpa->getCompletedAt()) {
                 $lpaStatus = 'waiting';
 
-                $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpa->getId());
+                $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpaId);
 
-                $lpaId = $lpa->getId();
                 if (array_key_exists($lpaId, $lpaStatusDetails) && $lpaStatusDetails[$lpaId]['found'] == true) {
-                    $lpaStatus = strtolower($lpaStatusDetails[$lpa->getId()]['status']);
+                    $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
                     $returnUnpaid = isset($lpaStatusDetails[$lpaId]['returnUnpaid']);
                 }
             }
         }
 
-        //  Keep these statues in workflow order
+        // Keep these statuses in workflow order
         $statuses = ['completed', 'waiting', 'received', 'checking', 'processed'];
+
+        // Invalid status, redirect immediately
         if (!in_array($lpaStatus, $statuses)) {
             return $this->redirect()->toRoute('user/dashboard');
         }
 
-        //  Determine what statuses should trigger the current status to display as 'done'
+        // Find all the statuses (inc. the current one) which have been done
+        // for this LPA application
         $doneStatuses = array_slice($statuses, 0, array_search($lpaStatus, $statuses));
 
         // The metadata used here is stored in the db but is originally
