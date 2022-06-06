@@ -6,6 +6,7 @@ use Application\Controller\AbstractLpaController;
 use DateInterval;
 use Exception;
 use Laminas\View\Model\ViewModel;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use DateTime;
 
 /**
@@ -16,39 +17,92 @@ class StatusController extends AbstractLpaController
 {
     public function indexAction()
     {
+        $viewModel = null;
+
         $lpa = $this->getLpa();
-        $lpaId = $lpa->getId();
-        $lpaStatus = null;
-        $returnUnpaid = false;
 
         if ($lpa->getCompletedAt() instanceof DateTime) {
-            // A 'completed' status is used for LPA applications received before the track-from date;
-            // if a better status can be determined below, we don't use 'completed'
-            $lpaStatus = 'completed';
+            $trackFromDate = null;
+            if (isset($this->config()['processing-status']['track-from-date'])) {
+                $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
+            }
 
-            $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
+            $expectedWorkingDaysBeforeReceipt = null;
+            if (isset($this->config()['processing-status']['expected-working-days-before-receipt'])) {
+                $expectedWorkingDaysBeforeReceipt =
+                    intval($this->config()['processing-status']['expected-working-days-before-receipt']);
+            }
 
-            if ($trackFromDate <= new DateTime('now') && $trackFromDate <= $lpa->getCompletedAt()) {
-                $lpaStatus = 'waiting';
+            $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpa->getId());
 
-                $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpaId);
+            $viewModel = $this->buildViewModel(
+                $lpa,
+                $lpaStatusDetails,
+                $trackFromDate,
+                $expectedWorkingDaysBeforeReceipt,
+            );
+        }
 
-                if (array_key_exists($lpaId, $lpaStatusDetails) && $lpaStatusDetails[$lpaId]['found'] == true) {
-                    $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
-                    $returnUnpaid = isset($lpaStatusDetails[$lpaId]['returnUnpaid']);
-                }
+        if (is_null($viewModel)) {
+            return $this->redirect()->toRoute('user/dashboard');
+        }
+
+        return $viewModel;
+    }
+
+    /**
+     * @param Lpa $lpa LPA we are building the status detail view model for
+     * @param array $lpaStatusDetails Map from LPA IDs to Sirius responses about their current status in format
+     *     {
+     *         "<id>": {
+     *             "status": null|"Waiting"|"Received"|"Checking"|"Processed"
+     *             "returnUnpaid": true|false,
+     *             "found": true|false,
+     *             "rejectedDate": "<date string>"
+     *         }
+     *     }
+     * @param ?DateTime $trackFromDate Date from which tracking data for LPAs is available
+     * @param ?int $expectedWorkingDaysBeforeReceipt Number of working days after the processing
+     * date for an LPA when the client can expect to receive the returned LPA in the post
+     *
+     * @return ?ViewModel ViewModel if status is valid, or null if not
+     */
+    private function buildViewModel(
+        Lpa $lpa,
+        array $lpaStatusDetails,
+        ?DateTime $trackFromDate,
+        ?int $expectedWorkingDaysBeforeReceipt,
+    ): ?ViewModel {
+        $lpaId = $lpa->getId();
+        $returnUnpaid = false;
+
+        // A 'completed' status is used for LPA applications received before the track-from date;
+        // if a better status can be determined below, we won't use 'completed'
+        $lpaStatus = 'completed';
+
+        if (
+            !is_null($trackFromDate) &&
+            $trackFromDate <= new DateTime('now') &&
+            $trackFromDate <= $lpa->getCompletedAt()
+        ) {
+            // Assume waiting status unless we get contrary evidence from Sirius
+            $lpaStatus = 'waiting';
+
+            if (array_key_exists($lpaId, $lpaStatusDetails) && $lpaStatusDetails[$lpaId]['found'] == true) {
+                $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
+                $returnUnpaid = isset($lpaStatusDetails[$lpaId]['returnUnpaid']);
             }
         }
 
         // Keep these statuses in workflow order
         $statuses = ['completed', 'waiting', 'received', 'checking', 'processed'];
 
-        // Invalid status, redirect immediately
+        // Invalid status from Sirius, redirect immediately
         if (!in_array($lpaStatus, $statuses)) {
-            return $this->redirect()->toRoute('user/dashboard');
+            return null;
         }
 
-        // Find all the statuses (inc. the current one) which have been done
+        // Find all the steps (inc. the current one) which have been done
         // for this LPA application
         $doneStatuses = array_slice($statuses, 0, array_search($lpaStatus, $statuses));
 
@@ -73,16 +127,12 @@ class StatusController extends AbstractLpaController
         // The "should receive by" date is set to a number of working days after the
         // $processedDate, defined in config
         $shouldReceiveByDate = null;
-        if (
-            !is_null($processedDate) &&
-            isset($this->config()['processing-status']['expected-working-days-before-receipt'])
-        ) {
-            $days = intval($this->config()['processing-status']['expected-working-days-before-receipt']);
+        if (!is_null($processedDate) && !is_null($expectedWorkingDaysBeforeReceipt)) {
             $shouldReceiveByDate = new DateTime($processedDate);
             $interval = new DateInterval('P1D');
 
             $i = 1;
-            while ($i <= $days) {
+            while ($i <= $expectedWorkingDaysBeforeReceipt) {
                 $shouldReceiveByDate->add($interval);
 
                 // count this day if the new $shouldReceiveByDate is a week day
