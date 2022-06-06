@@ -1,6 +1,6 @@
 locals {
   dns_namespace_internal = (
-    var.account_name == "development" ?
+    var.account_name != "production" ?
     "${var.environment_name}.${var.account_name}.opg.lpa.api.ecs.internal" :
     "${var.environment_name}-internal"
   )
