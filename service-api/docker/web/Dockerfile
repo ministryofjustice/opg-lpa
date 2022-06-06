@@ -6,11 +6,15 @@ RUN chown -R nginx:nginx /var/cache/nginx && \
     touch /run/nginx.pid && \
     chown -R nginx:nginx /run/nginx.pid && \
     chmod o+rwx /etc/nginx/conf.d
+
 # Add Confd to configure nginx on start
 ENV CONFD_VERSION="0.16.0"
 RUN wget -q -O /usr/local/bin/confd "https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-linux-amd64" && \
     chown -R nginx:nginx /usr/local/bin/confd && \
     chmod +x /usr/local/bin/confd
+
+# Remove unused packages
+RUN apk del freetype nginx-module-image-filter
 
 USER nginx
 COPY --chown=nginx:nginx service-api/docker/web/etc /etc
