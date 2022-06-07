@@ -16,7 +16,7 @@ class StatusViewModelHelper
      * @param array $lpaStatusDetails Map from LPA IDs to Sirius responses about their current status in format
      *     {
      *         "<id>": {
-     *             "status": null|"Waiting"|"Received"|"Checking"|"Processed"
+     *             "status": null|"waiting"|"received"|"checking"|"processed"
      *             "returnUnpaid": true|false,
      *             "found": true|false
      *         }
