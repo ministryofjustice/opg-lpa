@@ -18,19 +18,19 @@
     {% if status != 'completed' %}
 
         <ol class="progress-bar">
-            <li class="progress-bar__steps {{ status == 'waiting' ? 'current-waiting" data-cy="lpa-progress-waiting' : '' }}">
+            <li class="progress-bar__steps-waiting progress-bar__steps{{ status == 'waiting' ? ' current-waiting" data-cy="lpa-progress-waiting' : '' }}">
                 <span class="{{ 'waiting' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
                 <span data-cy="lpa-progress-text" class="progress-bar__steps--text">Waiting</span>
             </li>
-            <li class="progress-bar__steps {{ status == 'received' ? 'current-received" data-cy="lpa-progress-received' : '' }}">
+            <li class="progress-bar__steps-received progress-bar__steps{{ status == 'received' ? ' current-received" data-cy="lpa-progress-received' : '' }}">
                 <span class="{{ 'received' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
                 <span data-cy="lpa-progress-text" class="progress-bar__steps--text">Received</span>
             </li>
-            <li class="progress-bar__steps {{ status == 'checking' ? 'current-checking" data-cy="lpa-progress-checking' : '' }}">
+            <li class="progress-bar__steps-checking progress-bar__steps{{ status == 'checking' ? ' current-checking" data-cy="lpa-progress-checking' : '' }}">
                 <span class="{{ 'checking' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
                 <span data-cy="lpa-progress-text" class="progress-bar__steps--text">Checking</span>
             </li>
-            <li class="progress-bar__steps {{ status == 'processed' ? 'current-processed" data-cy="lpa-progress-processed' : '' }}">
+            <li class="progress-bar__steps-processed progress-bar__steps{{ status == 'processed' ? ' current-processed" data-cy="lpa-progress-processed' : '' }}">
                 <span class="{{ 'processed' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
                 <span data-cy="lpa-progress-text" class="progress-bar__steps--text">Processed</span>
             </li>
