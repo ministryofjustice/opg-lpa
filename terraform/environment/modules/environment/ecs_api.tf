@@ -20,9 +20,20 @@ resource "aws_ecs_service" "api" {
   }
 
   service_registries {
-    registry_arn = aws_service_discovery_service.api.arn
+    registry_arn = local.registry_arn_selection
   }
+
   tags = merge(local.default_opg_tags, local.api_component_tag)
+}
+
+
+# this is needed until we move the new dns into production.
+locals{
+  registry_arn_selection  = (
+    var.account_name == "production" ?
+    aws_service_discovery_service.api.arn :
+    aws_service_discovery_service.api_canonical.arn
+  )
 }
 
 //-----------------------------------------------
@@ -47,9 +58,30 @@ resource "aws_service_discovery_service" "api" {
   }
 }
 
+
+resource "aws_service_discovery_service" "api_canonical" {
+  name = "api"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.internal_canonical.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+
+    routing_policy = "MULTIVALUE"
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
+
 //
 locals {
-  api_service_fqdn = "${aws_service_discovery_service.api.name}.${aws_service_discovery_private_dns_namespace.internal.name}"
+  api_service_fqdn = "${aws_service_discovery_service.api.name}.${aws_service_discovery_private_dns_namespace.internal_canonical.name}"
 }
 
 //----------------------------------
