@@ -56,9 +56,52 @@ class StatusViewModelHelperTest extends MockeryTestCase
         ]);
     }
 
-    // TODO this will be loaded from a JSON file eventually
     private $testCases = [
-        // deleted from Sirius
+        // LPA which has not been received yet displays as "Waiting"
+        [
+            'lpaId' => '33718377316',
+            'lpaMetadata' => [],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => null,
+                'status' => 'waiting',
+            ],
+            'lpaCanGenerateLPA120' => true,
+            'expected' => [
+                'status' => 'waiting',
+                'stepsDone' => [],
+                'textFragments' => [
+                    "We're waiting to receive the LPA",
+                    "we'll write to Ms Mecnodo Expodo",
+                    "we've heard back from Ms Mecnodo Expodo",
+                    "If we need more information about the application to pay a reduced or no fee"
+                ]
+            ],
+        ],
+
+        // LPA which has not been received yet and cannot generate LPA120
+        // displays as "Waiting" without the additional "more information" text
+        [
+            'lpaId' => '63452156316',
+            'lpaMetadata' => [],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => null,
+                'status' => 'waiting',
+            ],
+            'lpaCanGenerateLPA120' => false,
+            'expected' => [
+                'status' => 'waiting',
+                'stepsDone' => [],
+                'notTextFragments' => [
+                    "If we need more information about the application to pay a reduced or no fee"
+                ]
+            ],
+        ],
+
+        // deleted from Sirius shows as "Waiting"
         [
             'lpaId' => '97998888883',
             'lpaMetadata' => [
@@ -74,23 +117,96 @@ class StatusViewModelHelperTest extends MockeryTestCase
             'expected' => [
                 'status' => 'waiting',
                 'stepsDone' => [],
-                'receiptDate' => null,
                 'textFragments' => [
                     "We're waiting to receive the LPA",
                     "we'll write to Ms Mecnodo Expodo",
-                    "we've heard back from Ms Mecnodo Expodo"
+                    "we've heard back from Ms Mecnodo Expodo",
+                    "If we need more information about the application to pay a reduced or no fee"
                 ]
             ],
         ],
 
-        // registered and dispatched
+        // LPA with received status displays as "Received"
+        [
+            'lpaId' => '91155453023',
+            'lpaMetadata' => [
+                'application-receipt-date' => '2021-02-28',
+                'application-status-date' => '2021-02-28',
+            ],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => null,
+                'status' => 'received',
+            ],
+            'lpaCanGenerateLPA120' => true,
+            'expected' => [
+                'status' => 'received',
+                'stepsDone' => ['waiting'],
+                'textFragments' => [
+                    "received the LPA",
+                ]
+            ],
+        ],
+
+        // LPA with receipt date only and checking status displays as "Checking"
+        [
+            'lpaId' => '78582508789',
+            'lpaMetadata' => [
+                'application-receipt-date' => '2022-03-01',
+                'application-status-date' => '2022-03-04',
+            ],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => null,
+                'status' => 'checking',
+            ],
+            'lpaCanGenerateLPA120' => true,
+            'expected' => [
+                'status' => 'checking',
+                'stepsDone' => ['waiting', 'received'],
+                'textFragments' => [
+                    "If there is something that must be corrected before the LPA can be registered",
+                    "contact Ms Mecnodo Expodo",
+                ]
+            ],
+        ],
+
+        // registered LPA with no dispatch date displays as "Checking"
+        [
+            'lpaId' => '68582508781',
+            'lpaMetadata' => [
+                'application-receipt-date' => '2021-03-01',
+                'application-registration-date' => '2021-03-04',
+                'application-status-date' => '2021-03-04',
+            ],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => null,
+                'status' => 'checking',
+            ],
+            'lpaCanGenerateLPA120' => true,
+            'expected' => [
+                'status' => 'checking',
+                'stepsDone' => ['waiting', 'received'],
+                'textFragments' => [
+                    "If there is something that must be corrected before the LPA can be registered",
+                    "contact Ms Mecnodo Expodo",
+                ]
+            ],
+        ],
+
+        // registered and dispatched LPA displays as "Processed"
+        // with dispatch date + 15 working days as expected receipt date
         [
             'lpaId' => '32004638272',
             'lpaMetadata' => [
                 'application-receipt-date' => '2021-05-01',
-                'application-dispatch-date' => '2021-05-03',
                 'application-registration-date' => '2021-05-02',
                 'application-status-date' => '2021-05-03',
+                'application-dispatch-date' => '2021-05-03',
             ],
             'lpaStatusDetails' => [
                 'found' => true,
@@ -105,8 +221,127 @@ class StatusViewModelHelperTest extends MockeryTestCase
                 'receiptDate' => '24/05/21',
                 'textFragments' => [
                     "processed the LPA",
-                    "Ms Mecnodo Expodo will receive the LPA in the post",
-                ]
+
+                    // should get this text for all processed LPAs where returnUnpaid is not true
+                    "The donor and all attorneys on the LPA will get a letter telling them the outcome"
+                ],
+            ],
+        ],
+
+        // rejected LPA displays as "Processed"
+        // with rejection date + 15 working days as expected receipt date
+        [
+            'lpaId' => '88668805824',
+            'lpaMetadata' => [
+                'application-receipt-date' => '2021-02-11',
+                'application-rejected-date' => '2021-02-14',
+                'application-status-date' => '2021-02-14',
+            ],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => null,
+                'status' => 'processed',
+            ],
+            'lpaCanGenerateLPA120' => true,
+            'expected' => [
+                'status' => 'processed',
+                'stepsDone' => ['waiting', 'received', 'checking'],
+                'receiptDate' => '05/03/21',
+            ],
+        ],
+
+        // withdrawn LPA displays as "Processed"
+        // with withdrawn date + 15 working days as expected receipt date
+        [
+            'lpaId' => '43476377885',
+            'lpaMetadata' => [
+                'application-receipt-date' => '2020-05-01',
+                'application-withdrawn-date' => '2020-05-06',
+                'application-status-date' => '2020-05-06',
+            ],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => null,
+                'status' => 'processed',
+            ],
+            'lpaCanGenerateLPA120' => true,
+            'expected' => [
+                'status' => 'processed',
+                'stepsDone' => ['waiting', 'received', 'checking'],
+                'receiptDate' => '27/05/20',
+            ],
+        ],
+
+        // invalid LPA displays as "Processed"
+        // with invalid date + 15 working days as expected receipt date
+        [
+            'lpaId' => '93348314693',
+            'lpaMetadata' => [
+                'application-receipt-date' => '2021-01-02',
+                'application-invalid-date' => '2021-01-05',
+                'application-status-date' => '2021-01-05',
+            ],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => null,
+                'status' => 'processed',
+            ],
+            'lpaCanGenerateLPA120' => true,
+            'expected' => [
+                'status' => 'processed',
+                'stepsDone' => ['waiting', 'received', 'checking'],
+                'receiptDate' => '26/01/21',
+            ],
+        ],
+
+        // LPA marked as processed but without any useful dates should display
+        // the "15 working days" text
+        [
+            'lpaId' => '73348314699',
+            'lpaMetadata' => [
+                'application-receipt-date' => '2021-01-02',
+                'application-status-date' => '2021-01-05',
+            ],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => null,
+                'status' => 'processed',
+            ],
+            'lpaCanGenerateLPA120' => true,
+            'expected' => [
+                'status' => 'processed',
+                'stepsDone' => ['waiting', 'received', 'checking'],
+                'receiptDate' => '15 working days',
+            ],
+        ],
+
+        // LPA which was "Return - unpaid" status on Sirius should show as "Processed"
+        // but not show the text about donor and attorneys getting the LPA letter
+        [
+            'lpaId' => '15527329531',
+            'lpaMetadata' => [
+                'application-receipt-date' => '2020-02-27',
+                'application-dispatch-date' => '2020-02-27',
+                'application-status-date' => '2020-02-27',
+            ],
+            'lpaStatusDetails' => [
+                'found' => true,
+                'deleted' => false,
+                'returnUnpaid' => true,
+                'status' => 'processed',
+            ],
+            'lpaCanGenerateLPA120' => true,
+            'expected' => [
+                'status' => 'processed',
+                'stepsDone' => ['waiting', 'received', 'checking'],
+                'receiptDate' => '19/03/20',
+                'notTextFragments' => [
+                    "The donor and all attorneys on the LPA will get a letter telling them the outcome"
+                ],
             ],
         ],
     ];
@@ -146,8 +381,20 @@ class StatusViewModelHelperTest extends MockeryTestCase
         // steps completed (excluding the current step)
         $expectedStepsDone = $testCase['expected']['stepsDone'];
 
-        $expectedReceiptDate = $testCase['expected']['receiptDate'];
-        $expectedTextFragments = $testCase['expected']['textFragments'];
+        $expectedReceiptDate = null;
+        if (isset($testCase['expected']['receiptDate'])) {
+            $expectedReceiptDate = $testCase['expected']['receiptDate'];
+        }
+
+        $expectedTextFragments = [];
+        if (isset($testCase['expected']['textFragments'])) {
+            $expectedTextFragments = $testCase['expected']['textFragments'];
+        }
+
+        $notExpectedTextFragments = [];
+        if (isset($testCase['expected']['notTextFragments'])) {
+            $notExpectedTextFragments = $testCase['expected']['notTextFragments'];
+        }
 
         $lpa = Mockery::mock(Lpa::class);
 
@@ -169,20 +416,20 @@ class StatusViewModelHelperTest extends MockeryTestCase
         // render and check the HTML
         $html = $this->renderViewModel($viewModel);
 
-        echo $html;
-
         $dom = new DOMDocument();
         $dom->loadHTML($html);
         $xpath = new DOMXpath($dom);
 
         // check progress bar; for each "done" status, we expect to find a progress
-        // bar highlight on that step and no number; if not done, we expect a number
+        // bar highlight on that step and a tick; if not done, we expect a number
         foreach (self::PROGRESS_BAR_STEPS as $step) {
             $query = "//li[contains(@class, \"progress-bar__steps-$step\")]";
 
             if (in_array($step, $expectedStepsDone)) {
+                // ticked step
                 $query .= "/span[@class = \"progress-bar__steps--completed\"]";
             } else {
+                // numbered step
                 $query .= "/span[@class = \"progress-bar__steps--numbers\"]";
             }
 
@@ -190,27 +437,27 @@ class StatusViewModelHelperTest extends MockeryTestCase
             $this->assertEquals(
                 1,
                 $matches->length,
-                "Could not find progress step element matching '$query'"
+                "Could not find progress step element matching '$query' (test case $index / lpa ID $lpaId)"
             );
         }
 
-        // check that the current state is also highlighted in the progress bar;
-        // it is also numbered rather than just filled
+        // check that the current state is highlighted in the progress bar;
+        // it is numbered and has a class to give it a different-coloured background
         $query = "//li[contains(@class, \"current-$expectedStatus\")]";
         $matches = $xpath->query($query);
         $this->assertEquals(
             1,
             $matches->length,
-            "Could not find highlighted current step element with '$query'"
+            "Could not find highlighted current step element with '$query' (test case $index / lpa ID $lpaId)"
         );
 
-        // check div is present
+        // check div is present with current status marked on it
         $query = "//div[@class = \"opg-status--$expectedStatus\"]";
         $matches = $xpath->query($query);
         $this->assertEquals(
             1,
             $matches->length,
-            "Could not find div with expected status marker with '$query'"
+            "Could not find div with expected status marker with '$query' (test case $index / lpa ID $lpaId)"
         );
 
         // check receipt date
@@ -219,17 +466,27 @@ class StatusViewModelHelperTest extends MockeryTestCase
             $this->assertEquals(
                 1,
                 $matches->length,
-                "Unable to find \"$expectedReceiptDate\" (test case $index)"
+                "Unable to find \"$expectedReceiptDate\" (test case $index / lpa ID $lpaId)"
             );
         }
 
-        // check for text specific to this current status
+        // check for text specific to current status
         foreach ($expectedTextFragments as $textFragment) {
             $matches = $xpath->query("//*[contains(text(), \"$textFragment\")]");
             $this->assertGreaterThan(
                 0,
                 $matches->length,
-                "Unable to find \"$textFragment\" (test case $index)"
+                "Unable to find \"$textFragment\" (test case $index / lpa ID $lpaId)"
+            );
+        }
+
+        // check that text is not present for this specific context
+        foreach ($notExpectedTextFragments as $textFragment) {
+            $matches = $xpath->query("//*[contains(text(), \"$textFragment\")]");
+            $this->assertEquals(
+                0,
+                $matches->length,
+                "Found \"$textFragment\" but should not have (test case $index / lpa ID $lpaId)"
             );
         }
 
