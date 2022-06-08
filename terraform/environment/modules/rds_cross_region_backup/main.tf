@@ -9,7 +9,7 @@ resource "aws_db_instance_automated_backups_replication" "instance" {
 
 
 data "aws_kms_key" "destination_rds_snapshot_key" {
-    provider  = aws.destination
-    key_id = "arn:aws:kms:${var.destination_region_name}:${data.aws_caller_identity.current.account_id}:alias/${var.key_alias}"
+  provider = aws.destination
+  key_id   = "arn:aws:kms:${var.destination_region_name}:${data.aws_caller_identity.current.account_id}:alias/${var.key_alias}"
 }
 
