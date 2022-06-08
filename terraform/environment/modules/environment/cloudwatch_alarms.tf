@@ -66,7 +66,7 @@ resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "front_ddos_attack_external" {
-  alarm_name          = "ActorDDoSDetected"
+  alarm_name          = "${var.environment_name}-FrontDDoSDetected"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "3"
   metric_name         = "DDoSDetected"
@@ -84,7 +84,7 @@ resource "aws_cloudwatch_metric_alarm" "front_ddos_attack_external" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "admin_ddos_attack_external" {
-  alarm_name          = "ActorDDoSDetected"
+  alarm_name          = "${var.environment_name}-AdminDDoSDetected"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "3"
   metric_name         = "DDoSDetected"
