@@ -64,3 +64,39 @@ resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   threshold           = 6
   treat_missing_data  = "notBreaching"
 }
+
+resource "aws_cloudwatch_metric_alarm" "front_ddos_attack_external" {
+  alarm_name          = "${var.environment_name}-FrontDDoSDetected"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "3"
+  metric_name         = "DDoSDetected"
+  namespace           = "AWS/DDoSProtection"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "0"
+  alarm_description   = "Triggers when AWS Shield Advanced detects a DDoS attack"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+  tags                = merge(local.default_opg_tags, local.front_component_tag)
+  dimensions = {
+    ResourceArn = aws_lb.front.arn
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "admin_ddos_attack_external" {
+  alarm_name          = "${var.environment_name}-AdminDDoSDetected"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "3"
+  metric_name         = "DDoSDetected"
+  namespace           = "AWS/DDoSProtection"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "0"
+  alarm_description   = "Triggers when AWS Shield Advanced detects a DDoS attack"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+  tags                = merge(local.default_opg_tags, local.admin_component_tag)
+  dimensions = {
+    ResourceArn = aws_lb.admin.arn
+  }
+}
