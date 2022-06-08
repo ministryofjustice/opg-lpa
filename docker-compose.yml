@@ -442,8 +442,8 @@ services:
   # ---------------------------
   # performance platform
   perfplatworker:
-    container_name: perfplatworker
-    image: perfplatworker
+    container_name: lpa-perfplatworker
+    image: lpa-perfplatworker
     build:
       context: .
       dockerfile: ./service-perfplat/docker/Dockerfile-worker
@@ -475,8 +475,8 @@ services:
           - perfplatworker
 
   perfplatconfig:
-    container_name: perfplatconfig
-    image: perfplatconfig
+    container_name: lpa-perfplatconfig
+    image: lpa-perfplatconfig
     depends_on:
       - perfplatworker
       - local-config

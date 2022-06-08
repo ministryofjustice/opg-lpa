@@ -5,7 +5,7 @@ from setuptools import setup
 setup(
     name='perfplat',
     version='0.1.0',
-    description='Performance platform background worker and API',
+    description='Performance platform background worker',
     long_description='',
     long_description_content_type='text/plain',
     packages=[
@@ -15,10 +15,6 @@ setup(
     install_requires=[
         'SQLAlchemy',
         'psycopg2',
-        'Flask',
-        'flask-lambda',
-        'Werkzeug',
-        'connexion',
     ],
     extras_require={
         'dev': [
