@@ -27,14 +27,6 @@ resource "aws_ecs_service" "api" {
 }
 
 
-# this is needed until we move the new dns into production.
-locals{
-  registry_arn_selection  = (
-    var.account_name == "production" ?
-    aws_service_discovery_service.api.arn :
-    aws_service_discovery_service.api_canonical.arn
-  )
-}
 
 //-----------------------------------------------
 // Api service discovery
@@ -79,9 +71,20 @@ resource "aws_service_discovery_service" "api_canonical" {
 }
 
 
-//
+# this switching is needed until we move the new dns convention into production.
 locals {
-  api_service_fqdn = "${aws_service_discovery_service.api.name}.${aws_service_discovery_private_dns_namespace.internal_canonical.name}"
+
+  registry_arn_selection = (
+    var.account_name == "production" ?
+    aws_service_discovery_service.api.arn :
+    aws_service_discovery_service.api_canonical.arn
+  )
+
+  api_service_fqdn = (
+    var.account_name == "production" ?
+    "${aws_service_discovery_service.api.name}.${aws_service_discovery_private_dns_namespace.internal.name}" :
+    "${aws_service_discovery_service.api_canonical.name}.${aws_service_discovery_private_dns_namespace.internal_canonical.name}"
+  )
 }
 
 //----------------------------------

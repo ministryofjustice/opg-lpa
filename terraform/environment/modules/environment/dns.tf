@@ -1,6 +1,6 @@
 locals {
   dns_namespace_internal_original = (
-     "${var.environment_name}-internal"
+    "${var.environment_name}-internal"
   )
   dns_namespace_internal_canonical = (
     var.account_name == "development" ?
