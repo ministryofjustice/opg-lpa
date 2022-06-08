@@ -20,7 +20,7 @@ Feature: Check signature dates for a PF LPA
     When I click 'view-or-continue-lpa-26997335999'
     Then I can see the revelant PF continuation sheet notes
 
-    # Check the date check tool
+    # Go to the date check tool
     When I visit the dashboard
     And I click "check-signing-dates" for LPA ID 26997335999
     Then I am taken to "/lpa/26997335999/date-check"
