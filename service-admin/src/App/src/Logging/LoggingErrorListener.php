@@ -2,7 +2,7 @@
 
 namespace App\Logging;
 
-use MakeLogger\Logging\LoggerTrait;
+use App\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -24,7 +24,7 @@ class LoggingErrorListener
     public function __invoke(Throwable $error, ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->getLogger()->err(sprintf(
-            '%s in %s on line %s - %s' . $error->getTraceAsString(),
+            '%s in %s on line %s - %s',
             $error->getMessage(),
             $error->getFile(),
             $error->getLine(),
