@@ -37,8 +37,6 @@ resource "aws_security_group" "front_ecs_service" {
 
 }
 
-// 80 in from the ELB
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_ecs_service_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -46,9 +44,9 @@ resource "aws_security_group_rule" "front_ecs_service_ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.front_ecs_service.id
   source_security_group_id = aws_security_group.front_loadbalancer.id
+  description              = "Front ELB to Front ECS - HTTP"
 }
 
-// from front to Elasticache (new regional one)
 resource "aws_security_group_rule" "front_ecs_service_elasticache_region_ingress" {
   type                     = "ingress"
   description              = "allows service front access to elasticache"
@@ -57,10 +55,9 @@ resource "aws_security_group_rule" "front_ecs_service_elasticache_region_ingress
   protocol                 = "tcp"
   security_group_id        = data.aws_security_group.front_cache_region.id
   source_security_group_id = aws_security_group.front_ecs_service.id
+  description              = "Front ECS to regional Elasticache - Redis"
 }
 
-// Anything out
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_ecs_service_egress" {
   type      = "egress"
   from_port = 0
@@ -69,6 +66,7 @@ resource "aws_security_group_rule" "front_ecs_service_egress" {
   #tfsec:ignore:AWS007 - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_ecs_service.id
+  description       = "Front ECS to Anywhere - All traffic"
 }
 
 //--------------------------------------

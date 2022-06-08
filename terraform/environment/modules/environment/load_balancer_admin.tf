@@ -58,7 +58,6 @@ resource "aws_security_group" "admin_loadbalancer" {
   tags        = merge(local.default_opg_tags, local.admin_component_tag)
 }
 
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
   type              = "ingress"
   from_port         = 443
@@ -66,9 +65,9 @@ resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
   protocol          = "tcp"
   cidr_blocks       = module.allowed_ip_list.moj_sites
   security_group_id = aws_security_group.admin_loadbalancer.id
+  description       = "MoJ Sites to Admin ELB - HTTPS"
 }
 
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_loadbalancer_ingress_production" {
   count     = var.environment_name == "production" ? 1 : 0
   type      = "ingress"
@@ -78,9 +77,9 @@ resource "aws_security_group_rule" "admin_loadbalancer_ingress_production" {
   #tfsec:ignore:AWS006 - public facing inbound rule
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_loadbalancer.id
+  description       = "Anywhere to Production Admin ELB - HTTPS"
 }
 
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_loadbalancer_egress" {
   type      = "egress"
   from_port = 0
@@ -89,4 +88,5 @@ resource "aws_security_group_rule" "admin_loadbalancer_egress" {
   #tfsec:ignore:AWS007 - public facing load balancer
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_loadbalancer.id
+  description       = "Admin Loadbalancer to Anywhere - All Traffic"
 }
