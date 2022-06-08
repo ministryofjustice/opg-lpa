@@ -1,6 +1,7 @@
 {
   "cypress-cucumber-preprocessor": {
-    "nonGlobalStepDefinitions": true
+    "nonGlobalStepDefinitions": true,
+    "stepDefinitions": "cypress/e2e"
   },
   "devDependencies": {
     "axe-core": "^4.1.4",
