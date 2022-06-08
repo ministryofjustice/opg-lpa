@@ -38,6 +38,15 @@ Then('I can see fields for the HW donor, certificate provider, attorney, applica
     })
 })
 
+Then('I can see the revelant HW continuation sheet notes', () => {
+    const text = ["As the donor cannot sign the LPA, a trusted person will need to sign 'continuation sheet 3' on the donor's behalf. The continuation sheet is included at the end of the LPA form."]
+    cy.get('[data-cy=continuation-sheet-notes]').should('have.length', 1);
+    cy.get('[data-cy=continuation-sheet-notes]').then(($note) => {
+        const notes = $note.map(function() { return this.innerText }).toArray();
+        expect(notes).to.deep.eq(text);
+    })
+})
+
 Then('I can see the revelant PF continuation sheet notes', () => {
     const text = ["An LPA form only has enough space to add 4 attorneys. The extra attorneys are listed at the end of the LPA on 'continuation sheet 1'.",
                   "As the donor cannot sign the LPA, a trusted person will need to sign 'continuation sheet 3' on the donor's behalf. The continuation sheet is included at the end of the LPA form.",

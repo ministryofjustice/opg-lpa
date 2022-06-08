@@ -15,7 +15,14 @@ Feature: Check signature dates for an HW LPA
 
   Scenario: Displays relevant information on signing continuation sheets
     Given I visit the dashboard
-    When I click "check-signing-dates" for LPA ID 33005588444
+
+    # Check the completion page has the right continuation sheet notes
+    When I click 'view-or-continue-lpa-33005588444'
+    Then I can see the revelant HW continuation sheet notes
+
+    # Go to the date check tool
+    When I visit the dashboard
+    And I click "check-signing-dates" for LPA ID 33005588444
     Then I am taken to "/lpa/33005588444/date-check"
-  # Donor cannot sign or make mark
+    # Donor cannot sign or make mark
     And I can see a reminder to sign continuation sheet 3 for HW

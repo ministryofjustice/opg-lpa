@@ -283,6 +283,16 @@
         </div>
 
 
+            {% for cnote in continuationNoteKeys %}
+                {% if lpa.document.type == 'property-and-financial' %}
+                    {% if cnote == 'PRIMARY_ATTORNEY_OVERFLOW' or cnote == 'REPLACEMENT_ATTORNEY_OVERFLOW' or cnote ==  'NOTIFY_OVERFLOW' %}
+                        <div class="panel panel-border-wide text">
+                        <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
             {% if not lpa.document.donor.canSign %}
                 <div class="panel panel-border-wide text">
                 {% if lpa.document.type == 'health-and-welfare' %}
