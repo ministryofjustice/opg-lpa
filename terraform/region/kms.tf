@@ -42,7 +42,31 @@ resource "aws_kms_replica_key" "multi_region_pdf_sqs_encryption_key_replica" {
   provider                = aws.eu-west-2
 }
 
-resource "aws_kms_alias" "multi_region_pdf_sqs_encryption_alias_replica" {
+resource "aws_kms_alias" "multi_region_perfplat_sqs_encryption_alias_replica" {
+  name          = "alias/mrk_perfplat_sqs_encryption_key-${terraform.workspace}"
+  target_key_id = aws_kms_replica_key.multi_region_perfplat_sqs_encryption_key_replica.key_id
+  provider      = aws.eu-west-2
+}
+
+resource "aws_kms_key" "multi_region_perfplat_sqs_encryption_key" {
+  enable_key_rotation = true
+  multi_region        = true
+  provider            = aws.eu-west-1
+}
+
+resource "aws_kms_alias" "multi_region_perfplat_sqs_encryption_alias" {
+  name          = "alias/mrk_perfplat_sqs_encryption_key-${terraform.workspace}"
+  target_key_id = aws_kms_key.multi_region_perfplat_sqs_encryption_key.key_id
+}
+
+resource "aws_kms_replica_key" "multi_region_perfplat_sqs_encryption_key_replica" {
+  description             = "secrets encryption replica key"
+  deletion_window_in_days = 7
+  primary_key_arn         = aws_kms_key.multi_region_perfplat_sqs_encryption_key.arn
+  provider                = aws.eu-west-2
+}
+
+resource "aws_kms_alias" "multi_region_secrets_encryption_alias_replica" {
   name          = "alias/mrk_pdf_sqs_encryption_key-${terraform.workspace}"
   target_key_id = aws_kms_replica_key.multi_region_pdf_sqs_encryption_key_replica.key_id
   provider      = aws.eu-west-2
