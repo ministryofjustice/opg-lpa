@@ -66,7 +66,10 @@ class AuthResponse
     {
         $this->userId = isset($array['userId']) ? $array['userId'] : null;
         $this->token = isset($array['token']) ? $array['token'] : null;
-        $this->lastLogin = isset($array['last_login']) ? $array['last_login'] : null;
+
+        // If lastLogin is not set (user has never logged in before), set to "now"
+        $this->lastLogin = isset($array['last_login']) ? $array['last_login'] : 'now';
+
         $this->username = isset($array['username']) ? $array['username'] : null;
         $this->expiresIn = isset($array['expiresIn']) ? $array['expiresIn'] : null;
         $this->expiresAt = isset($array['expiresAt']) ? $array['expiresAt'] : null;
