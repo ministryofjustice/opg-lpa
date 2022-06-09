@@ -1,11 +1,11 @@
 #temporary fix due to https://github.com/PagerDuty/terraform-provider-pagerduty/issues/523
-locals{
-    db_alerts_service_id = (
-        var.account_name == "production" ?
-        "PXWUISC" :
-        "PB5FJ52"
-     )
-    ops_service_id  = "PP0UDI9"
+locals {
+  db_alerts_service_id = (
+    var.account_name == "production" ?
+    "PXWUISC" :
+    "PB5FJ52"
+  )
+  ops_service_id = "PP0UDI9"
 }
 
 
@@ -27,14 +27,14 @@ data "pagerduty_vendor" "custom_events" {
 }
 
 resource "pagerduty_service_integration" "cloudwatch_integration" {
-  name    = "${data.pagerduty_vendor.cloudwatch.name} ${local.region_name} Region Ops"
+  name = "${data.pagerduty_vendor.cloudwatch.name} ${local.region_name} Region Ops"
   #service = data.pagerduty_service.pagerduty_ops.id
   service = local.ops_service_id
   vendor  = data.pagerduty_vendor.cloudwatch.id
 }
 
 resource "pagerduty_service_integration" "db_alerts_integration" {
-  name    = "${local.account_name} ${local.region_name} Region DB Alerts"
+  name = "${local.account_name} ${local.region_name} Region DB Alerts"
   #service = data.pagerduty_service.pagerduty_db_alerts.id
   service = local.db_alerts_service_id
   vendor  = data.pagerduty_vendor.custom_events.id
