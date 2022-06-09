@@ -1,10 +1,18 @@
-data "pagerduty_service" "pagerduty" {
+locals {
+  db_alerts_service_id = (
+    local.account_name == "production" ?
+    "PXWUISC" :
+  "PB5FJ52")
+  ops_service_id = "PP0UDI9"
+}
+
+/*data "pagerduty_service" "pagerduty" {
   name = local.pager_duty_ops_service_name
 }
 
 data "pagerduty_service" "pagerduty_db_alerts" {
   name = local.pager_duty_db_service_name
-}
+}*/
 
 data "pagerduty_vendor" "cloudwatch" {
   name = "Cloudwatch"
@@ -15,14 +23,16 @@ data "pagerduty_vendor" "custom_events" {
 }
 
 resource "pagerduty_service_integration" "cloudwatch_integration" {
-  name    = "${data.pagerduty_vendor.cloudwatch.name} ${local.account_name} Account Ops"
-  service = data.pagerduty_service.pagerduty.id
+  name = "${data.pagerduty_vendor.cloudwatch.name} ${local.account_name} Account Ops"
+  #service = data.pagerduty_service.pagerduty.id
+  service = local.ops_service_id
   vendor  = data.pagerduty_vendor.cloudwatch.id
 }
 
 resource "pagerduty_service_integration" "db_alerts_integration" {
-  name    = "${local.account_name} Account DB Alerts"
-  service = data.pagerduty_service.pagerduty_db_alerts.id
+  name = "${local.account_name} Account DB Alerts"
+  #service = data.pagerduty_service.pagerduty_db_alerts.id
+  service = local.db_alerts_service_id
   vendor  = data.pagerduty_vendor.custom_events.id
 }
 
