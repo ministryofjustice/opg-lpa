@@ -7,7 +7,7 @@ COPY --chown=appuser:appuser service-pdf/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:8.0-cli-alpine3.15
+FROM php:8.1-cli-alpine3.15
 
 RUN adduser -D -g '' appuser
 
