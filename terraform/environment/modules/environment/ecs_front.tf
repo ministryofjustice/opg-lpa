@@ -49,7 +49,6 @@ resource "aws_security_group_rule" "front_ecs_service_ingress" {
 
 resource "aws_security_group_rule" "front_ecs_service_elasticache_region_ingress" {
   type                     = "ingress"
-  description              = "allows service front access to elasticache"
   from_port                = 0
   to_port                  = 6379
   protocol                 = "tcp"
