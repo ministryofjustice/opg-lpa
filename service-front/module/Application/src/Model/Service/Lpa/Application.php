@@ -1031,8 +1031,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
             array_push($continuationNoteKeys, $extraBlockPeople);
         }
 
-        if (!$lpa->document->donor->canSign) {
-            array_push($continuationNoteKeys, 'CANT_SIGN');
+        if (isset($lpa->document->donor)) {
+            if (!$lpa->document->donor->canSign) {
+                array_push($continuationNoteKeys, 'CANT_SIGN');
+            }
         }
 
         $someAttorneyIsTrustCorp = false;
