@@ -283,31 +283,27 @@
         </div>
 
 
-            {% for cnote in continuationNoteKeys %}
-                {% if lpa.document.type == 'property-and-financial' %}
-                    {% if cnote == 'PRIMARY_ATTORNEY_OVERFLOW' or cnote == 'REPLACEMENT_ATTORNEY_OVERFLOW' or cnote ==  'NOTIFY_OVERFLOW' %}
-                        <div class="panel panel-border-wide text">
-                        <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
-                        </div>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-
-            {% if not lpa.document.donor.canSign %}
-                <div class="panel panel-border-wide text">
-                {% if lpa.document.type == 'health-and-welfare' %}
-                    <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
-                {% else %}
-                    <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
-                {% endif %}
-                </div>
-            {% endif %}
-
-            {% if entities['attorneys']['isTrustCorporation'] %}
-                <div class="panel panel-border-wide text">
-                    <p data-cy="continuation-sheet-info">They must have signed continuation sheet 4 after the ‘certificate provider’ has signed section 10 of the LPA form.</p>
-                </div>
-            {% endif %}
+			{% if continuationNoteKeys is not empty %}
+			<div class="panel panel-border-wide text">
+				{% for cnote in continuationNoteKeys %}
+				<p data-cy="continuation-sheet-info">
+					{% if lpa.document.type == 'property-and-financial' %}
+						{% if cnote == 'PRIMARY_ATTORNEY_OVERFLOW' or cnote == 'REPLACEMENT_ATTORNEY_OVERFLOW' or cnote ==  'NOTIFY_OVERFLOW' %}
+							You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.
+						{% elseif cnote == 'HAS_TRUST_CORP' %}
+							They must have signed continuation sheet 4 after the ‘certificate provider’ has signed section 10 of the LPA form.
+						{% elseif cnote == 'CANT_SIGN' %}
+							This person must have signed continuation sheet 3 before the certificate provider has signed section 10.
+						{% endif %}
+					{% else %}
+						{% if cnote == 'CANT_SIGN' %}
+							This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.
+						{% endif %}
+					{% endif %}
+				</p>
+				{% endfor %}
+			</div>
+			{% endif %}
     </div>
 
 

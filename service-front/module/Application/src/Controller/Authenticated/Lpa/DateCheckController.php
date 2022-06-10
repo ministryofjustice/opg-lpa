@@ -96,18 +96,6 @@ class DateCheckController extends AbstractLpaController
 
         $continuationNoteKeys = $this->getLpaApplicationService()->getContinuationNoteKeys($lpa);
 
-        $entities = [];
-        if ($lpa->document->type == 'property-and-financial') {
-            $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
-
-            foreach ($attorneys as $attorney) {
-                if (is_a($attorney, 'Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation')) {
-                    $entities['attorneys'] = ['isTrustCorporation' => true];
-                    break;
-                }
-            }
-        }
-
         $applicants = [];
 
         if ($lpa->completedAt !== null) {
@@ -137,7 +125,6 @@ class DateCheckController extends AbstractLpaController
             'form'        => $form,
             'returnRoute' => $returnRoute,
             'applicants'  => $applicants,
-            'entities'    => $entities,
             'continuationNoteKeys' => $continuationNoteKeys,
         ]);
     }
