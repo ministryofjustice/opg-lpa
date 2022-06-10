@@ -215,7 +215,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 $strikeThroughArea = 'primaryAttorney-' . $i;
 
                 // Determine what page number this is
-                $strikeThroughPage = 2 + floor($i / 2);
+                $strikeThroughPage = intval(2 + floor($i / 2));
 
                 if ($strikeThroughPage == 2) {
                     // Add the required strike through area prefix
@@ -310,7 +310,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             } else {
                 // Add a strike through on the appropriate page
                 $strikeThroughArea = 'replacementAttorney-' . $i . '-' . $this->getAreaReferenceSuffix();
-                $strikeThroughPage = 5 + floor($i / 2);
+                $strikeThroughPage = intval(5 + floor($i / 2));
 
                 $this->addStrikeThrough($strikeThroughArea, $strikeThroughPage);
             }
@@ -448,7 +448,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         // For the first MAX_ATTORNEYS_PER_PAGE_SECTION_11 number of pages we should populate the main document
         $pdf = (
             $pageIteration >= self::MAX_ATTORNEYS_PER_PAGE_SECTION_11 ?
-                new $this(null, [], $this->pdftkFactory) : $this
+                new (get_class($this))(null, [], $this->pdftkFactory) : $this
         );
 
         // Immediately get an array of all attorneys excluding trusts so we can work with it below
@@ -511,7 +511,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageSeventeen(Document $lpaDocument, $pageIteration = 0)
     {
         // This page is repeatable so determine which PDF object to use
-        $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
+        $pdf = ($pageIteration > 0 ? new (get_class($this))(null, [], $this->pdftkFactory) : $this);
 
         $applicantType = 'donor';
         $strikeThroughIndex = 0;
@@ -682,7 +682,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     private function populatePageTwenty($whoIsRegistering, $pageIteration = 0)
     {
         // This page is repeatable so determine which PDF object to use
-        $pdf = ($pageIteration > 0 ? new $this(null, [], $this->pdftkFactory) : $this);
+        $pdf = ($pageIteration > 0 ? new (get_class($this))(null, [], $this->pdftkFactory) : $this);
 
         // There must always be at least one signature
         $blankIndex = 1;
@@ -830,7 +830,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         // If any continuation sheets have been added append another blank page
         if ($continuationSheetsAdded) {
-            $this->insertBlankPage(15);
+            $this->insertBlankPage('15');
         }
     }
 
@@ -920,8 +920,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 // Stamp the required page with the new barcode using the unshifted page number
                 $this->stampPageWith($barcodePngFile, 19, false);
 
-                // Cleanup - remove tmp barcode file
-                unlink($barcodePngFile);
+            // Cleanup - remove tmp barcode file
+                //unlink($barcodePngFile);
             } else {
                 // If the LPA is not completed then stamp with the draft watermark
                 $draftWatermarkPdf = $this->getTemplatePdfFilePath('RegistrationWatermark.pdf');

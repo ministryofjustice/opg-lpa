@@ -15,10 +15,6 @@ class Config implements Countable, ArrayAccess
     {
         if ($this->container === null) {
             $this->container = include('global.php');
-
-            if (stream_resolve_include_path('local.php') !== false) {
-                $this->container = static::merge($this->container, include('local.php'));
-            }
         }
     }
 
