@@ -912,7 +912,6 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 ob_end_clean();
 
                 $barcodePngFile = $this->getIntermediatePdfFilePath('barcode.png');
-                error_log($barcodePngFile);
                 $f = fopen($barcodePngFile, 'w');
                 fwrite($f, $imageData);
                 fclose($f);

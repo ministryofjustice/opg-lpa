@@ -214,7 +214,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
     /**
      * JsonSerializable implementation
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'class' => get_class($this),
