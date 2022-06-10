@@ -976,8 +976,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 // Stamp the required page with the new barcode using the unshifted page number
                 $this->stampPageWith($barcodePngFile, 19, false);
 
-                // Cleanup - remove tmp barcode file
-                unlink($barcodePngFile);
+            // Cleanup - remove tmp barcode file
+                //unlink($barcodePngFile);
             } else {
                 // If the LPA is not completed then stamp with the draft watermark
                 $draftWatermarkPdf = $this->getTemplatePdfFilePath('RegistrationWatermark.pdf');
