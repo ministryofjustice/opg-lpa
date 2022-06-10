@@ -36,8 +36,6 @@ resource "aws_security_group" "admin_ecs_service" {
   tags        = merge(local.default_opg_tags, local.admin_component_tag)
 }
 
-// 80 in from the ELB
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_ecs_service_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -45,10 +43,9 @@ resource "aws_security_group_rule" "admin_ecs_service_ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.admin_ecs_service.id
   source_security_group_id = aws_security_group.admin_loadbalancer.id
+  description              = "Admin Loadbalancer to Admin ECS - HTTP"
 }
 
-// Anything out
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "admin_ecs_service_egress" {
   type      = "egress"
   from_port = 0
@@ -57,6 +54,7 @@ resource "aws_security_group_rule" "admin_ecs_service_egress" {
   #tfsec:ignore:AWS007 - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_ecs_service.id
+  description       = "Admin ECS to Anywhere - All Traffic"
 }
 
 //--------------------------------------
