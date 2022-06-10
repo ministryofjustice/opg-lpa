@@ -943,14 +943,41 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         if (!is_null($this->formattedLpaRef)) {
             // If the LPA is completed then stamp it with a barcode
             if ($this->lpaIsComplete) {
-                // Write the barcode to a file as a PDF
-                $barcodeFile = $this->generateBarcodeAsImage();
+                // Generate the barcode
+                $renderer = Barcode::factory(
+                    'code39',
+                    'image',
+                    [
+                        'text' => str_replace(' ', '', $this->formattedLpaRef),
+                        'drawText' => false,
+                        'factor' => 2,
+                        'barHeight' => 25,
+                    ],
+                    [
+                        'topOffset' => 789,
+                        'leftOffset' => 40,
+                    ]
+                );
+
+                // Create a PNG with the barcode only
+                $barcodeOnlyPng = $renderer->draw();
+
+                ob_start();
+                imagepng($barcodeOnlyPng);
+                $imageData = ob_get_contents();
+                ob_end_clean();
+
+                $barcodePngFile = $this->getIntermediatePdfFilePath('barcode.png');
+                error_log($barcodePngFile);
+                $f = fopen($barcodePngFile, 'w');
+                fwrite($f, $imageData);
+                fclose($f);
 
                 // Stamp the required page with the new barcode using the unshifted page number
-                $this->stampPageWith($barcodeFile, 19, false);
+                $this->stampPageWith($barcodePngFile, 19, false);
 
                 // Cleanup - remove tmp barcode file
-                unlink($barcodeFile);
+                unlink($barcodePngFile);
             } else {
                 // If the LPA is not completed then stamp with the draft watermark
                 $draftWatermarkPdf = $this->getTemplatePdfFilePath('RegistrationWatermark.pdf');
