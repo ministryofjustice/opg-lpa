@@ -18,18 +18,18 @@ use JsonSerializable;
 abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
 {
     /**
-     * Constants
-     */
-    const MAX_ATTORNEYS_SECTION_2 = 4;
-    const MAX_REPLACEMENT_ATTORNEYS_SECTION_4 = 2;
-    const MAX_PEOPLE_TO_NOTIFY_SECTION_6 = 4;
-
-    /**
      * Logger utility
      *
      * @var Logger
      */
     use LoggerTrait;
+
+    /**
+     * Constants
+     */
+    public const MAX_ATTORNEYS_SECTION_2 = 4;
+    public const MAX_REPLACEMENT_ATTORNEYS_SECTION_4 = 2;
+    public const MAX_PEOPLE_TO_NOTIFY_SECTION_6 = 4;
 
     /**
      * Config utility
@@ -68,13 +68,17 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
      * If an LPA object is passed then the PDF object will execute the create function to populate the data
      *
      * @param Lpa|null $lpa
-     * @param null $templateFileName
+     * @param string|null $templateFileName
      * @param array $options
      * @param ?PdftkFactory $pdftkFactory
      * @throws Exception
      */
-    public function __construct(Lpa $lpa = null, $templateFileName = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
-    {
+    public function __construct(
+        Lpa $lpa = null,
+        $templateFileName = null,
+        array $options = [],
+        ?PdftkFactory $pdftkFactory = null
+    ) {
         if (is_null($pdftkFactory)) {
             $pdftkFactory = new PdftkFactory();
         }
@@ -98,7 +102,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
             $pageCountPdf = $this->pdftkFactory->create($templateFile);
 
             if (preg_match('/NumberOfPages: (\d+)/', $pageCountPdf->getData(), $m)) {
-                $this->numberOfPages = $m[1];
+                $this->numberOfPages = intval($m[1]);
             }
         }
 
@@ -153,11 +157,17 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
             $intermediatePdfFileName = str_replace(' ', '-', $this->formattedLpaRef) . '-' . $intermediatePdfFileName;
         }
 
-        return sprintf('%s/%s-%s', $this->config['service']['assets']['intermediate_file_path'], microtime(true), $intermediatePdfFileName);
+        return sprintf(
+            '%s/%s-%s',
+            $this->config['service']['assets']['intermediate_file_path'],
+            microtime(true),
+            $intermediatePdfFileName
+        );
     }
 
     /**
-     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
+     * Create the PDF in preparation for it to be generated
+     * - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
      */
