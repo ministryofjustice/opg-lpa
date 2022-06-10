@@ -17,8 +17,10 @@ RUN apk upgrade --available
 RUN apk upgrade
 
 RUN apk update \
-    && apk add --no-cache openjdk8-jre gcc make musl-dev pkgconfig bash\
-    && apk add --no-cache --update --virtual buildDeps autoconf
+    && apk add --no-cache openjdk8-jre gcc make musl-dev pkgconfig bash \
+    && apk add --no-cache --update --virtual buildDeps autoconf \
+    && apk add zlib-dev libpng-dev libpng \
+    && docker-php-ext-install gd
 
 # Enable debug if needed. Should only be used locally.
 ARG ENABLE_XDEBUG=0
@@ -34,12 +36,12 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 fi
 
 # Clean up build dependencies, but only after everything else we need has been installed
-RUN apk del buildDeps
+RUN apk del buildDeps zlib-dev libpng-dev musl-dev pkgconfig
 
 WORKDIR /usr/local/bin/
+
 # This is version 3.2.1 of this tool, we will need to check this regularly.
 # PDFTK does have a community based docker container, but the version is not up to date.
-
 RUN wget https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/build/libs/pdftk-all.jar
 
 COPY --chown=appuser:appuser service-pdf/bin/pdftk pdftk
