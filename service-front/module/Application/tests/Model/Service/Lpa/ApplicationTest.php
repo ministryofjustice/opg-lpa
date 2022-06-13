@@ -264,7 +264,24 @@ class ApplicationTest extends MockeryTestCase
             ]
         ]);
 
-        $this->assertEquals(['PRIMARY_ATTORNEY_OVERFLOW'], $this->service->getContinuationNoteKeys($mockLpa));
+        $this->assertEquals(
+            ['PRIMARY_ATTORNEY_OVERFLOW', 'ANY_PEOPLE_OVERFLOW'],
+            $this->service->getContinuationNoteKeys($mockLpa)
+        );
+    }
+
+    public function testAnyOverflowGetContinuationNoteKeys()
+    {
+        $mockLpa = new Lpa([
+            'document' => [
+                'peopleToNotify' => [[], [], [], [], []]
+            ]
+        ]);
+
+        $this->assertEquals(
+            ['NOTIFY_OVERFLOW', 'ANY_PEOPLE_OVERFLOW'],
+            $this->service->getContinuationNoteKeys($mockLpa)
+        );
     }
 
     public function testLongInstructionGetContinuationNoteKeys()
@@ -327,7 +344,7 @@ class ApplicationTest extends MockeryTestCase
             ]
         ]);
 
-        $expectedResult = ['LONG_INSTRUCTIONS_OR_PREFERENCES', 'REPLACEMENT_ATTORNEY_OVERFLOW'];
+        $expectedResult = ['LONG_INSTRUCTIONS_OR_PREFERENCES', 'REPLACEMENT_ATTORNEY_OVERFLOW', 'ANY_PEOPLE_OVERFLOW'];
         $this->assertEqualsCanonicalizing($expectedResult, $this->service->getContinuationNoteKeys($mockLpa));
     }
 }
