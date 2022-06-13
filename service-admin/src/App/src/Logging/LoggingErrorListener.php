@@ -2,7 +2,7 @@
 
 namespace App\Logging;
 
-use App\Logging\LoggerTrait;
+use MakeLogger\Logging\SimpleLoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -13,7 +13,7 @@ use Throwable;
  */
 class LoggingErrorListener
 {
-    use LoggerTrait;
+    use SimpleLoggerTrait;
 
     /**
      * @param Throwable $error
