@@ -1,6 +1,6 @@
 Feature: Check signature dates
 
-  # TO DO: tests missing for date check feature, current tests only cover messages displayed relating to continuation sheets
+  # TO DO: tests missing for date check feature, current tests only cover messages displayed relating to continuation sheets [LPAL-835]
 
   Background:
     Given I ignore application exceptions
