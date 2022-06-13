@@ -20,7 +20,7 @@ resource "aws_ecs_service" "api" {
   }
 
   service_registries {
-    registry_arn =     aws_service_discovery_service.api_canonical.arn
+    registry_arn = aws_service_discovery_service.api_canonical.arn
   }
   tags = merge(local.default_opg_tags, local.api_component_tag)
 }
@@ -65,8 +65,6 @@ resource "aws_service_discovery_service" "api_canonical" {
     failure_threshold = 1
   }
 }
-
-# this switching is needed until we move the new dns convention into production.
 locals {
 
   api_service_fqdn = (
