@@ -20,7 +20,7 @@ return [
                 'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                'credentials' => (getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY')) ? [
                     'key'    => getenv('AWS_ACCESS_KEY_ID'),
                     'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
                 ] : null,
@@ -30,9 +30,11 @@ return [
             ],
         ],
 
-        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : [],
+        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ?
+            explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : [],
 
-        'account_cleanup_notification_recipients' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS') ? explode(',', getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS')) : [],
+        'account_cleanup_notification_recipients' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS') ?
+            explode(',', getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS')) : [],
     ],
 
     'db' => [
@@ -88,7 +90,7 @@ return [
                     'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                     'version' => '2012-08-10',
                     'region' => 'eu-west-1',
-                    'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'credentials' => (getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY')) ? [
                         'key'    => getenv('AWS_ACCESS_KEY_ID'),
                         'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
                     ] : null,
@@ -110,7 +112,7 @@ return [
                 'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                'credentials' => (getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY')) ? [
                     'key'    => getenv('AWS_ACCESS_KEY_ID'),
                     'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
                 ] : null,
@@ -123,7 +125,9 @@ return [
                 'ttl_attribute' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ATTRIBUTE') ?: 'expires',
                 'batch_config' => [
                     // Sleep before each flush to rate limit the garbage collection.
-                    'before' => function(){ sleep(1); },
+                    'before' => function () {
+                        sleep(1);
+                    },
                 ]
             ],
         ],
@@ -131,6 +135,6 @@ return [
 
     'processing-status' => [
         'track-from-date' => getenv('OPG_LPA_API_TRACK_FROM_DATE') ?: '2019-04-01',
-        'endpoint' => getenv('OPG_LPA_PROCESSING_STATUS_ENDPOINT') ?: 'http://gateway:5000/lpa-online-tool/lpas/'
+        'endpoint' => getenv('OPG_LPA_PROCESSING_STATUS_ENDPOINT'),
     ]
 ];
