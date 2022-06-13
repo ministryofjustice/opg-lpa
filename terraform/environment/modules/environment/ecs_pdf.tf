@@ -109,7 +109,7 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
       "s3:DeleteObject",
       "s3:ListObject",
     ]
-
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for PutObject
     resources = [
       "${data.aws_s3_bucket.lpa_pdf_cache.arn}*",
     ]
