@@ -1,5 +1,5 @@
 /*
- * Response stubs
+ * Response stubs for Ordnance Survey
  */
 
 const {
