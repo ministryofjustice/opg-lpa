@@ -12,7 +12,7 @@
         {% if (type == 'all' or type == lpa.type) %}
             {% set status = lpa.progress|lower %}
 
-						<li class="list-item list-item--v3 status-container--{{ status }}" {% if lpa.refreshId %}data-refresh-id="{{ lpa.refreshId }}"{% endif %} data-cy=lpa-{{ lpa.id }}>
+            <li class="list-item list-item--v3 status-container--{{ status }}" {% if lpa.refreshId %}data-refresh-id="{{ lpa.refreshId }}"{% endif %} data-cy=lpa-{{ lpa.id }}>
                 <div class="info">
                     <div class="main-info">
                         <h3 class="list-item_title">

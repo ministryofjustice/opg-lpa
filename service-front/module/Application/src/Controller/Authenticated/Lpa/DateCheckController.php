@@ -63,7 +63,6 @@ class DateCheckController extends AbstractLpaController
                 $signDateDonorLifeSustaining = isset($data['sign-date-donor-life-sustaining']) ?
                     $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null;
 
-                // phpcs:disable
                 $result = DateCheck::checkDates([
                     'sign-date-donor' => $this->dateArrayToTime($data['sign-date-donor']),
                     'sign-date-donor-life-sustaining' => $signDateDonorLifeSustaining,
@@ -72,7 +71,6 @@ class DateCheckController extends AbstractLpaController
                     'sign-date-attorneys' => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
                     'sign-date-applicants' => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
                 ], empty($lpa->completedAt));
-                // phpcs:enable
 
                 if ($result === true) {
                     $queryParams = [];

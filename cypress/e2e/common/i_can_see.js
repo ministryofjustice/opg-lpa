@@ -21,12 +21,14 @@ Then('I cannot see continuation sheet reminders', () => {
 });
 
 Then('I can see fields for the donor, certificate provider, attorney, applicant', () => {
-    const expectedNames = ['Mr Dead Pool (the donor)', 'Mr Cee Pee (certificate provider)',
-                           'Mr A Att (attorney)', 'Mr Dead Pool (applicant)']
-	    cy.get('[data-cy=person-name]').then(($name) => {
-		    const names = $name.map(function() {return this.innerText}).toArray();
-			expect(names).to.deep.eq(expectedNames);
-		})
+    const expectedNames = ['Mr Dead Pool (the donor)',
+                           'Mr Cee Pee (certificate provider)',
+                           'Mr A Att (attorney)',
+                           'Mr Dead Pool (applicant)']
+    cy.get('[data-cy=person-name]').then(($name) => {
+        const names = $name.map(function() {return this.innerText}).toArray();
+        expect(names).to.deep.eq(expectedNames);
+    })
 })
 
 Then('I can see a reminder to sign continuation sheet 1 and 2', () => {

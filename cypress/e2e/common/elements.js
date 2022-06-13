@@ -8,7 +8,7 @@ const MapNumberTextToNumber = {
     'a single': 1,
     'one': 1,
     'two': 2,
-		'four': 4,
+    'four': 4,
     'ten': 10
 };
 
