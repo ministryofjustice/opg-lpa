@@ -1013,6 +1013,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         if ($paCount > 4 && $raCount > 2 && $pnCount > 4) {
             $extraBlockPeople = 'ALL_PEOPLE_OVERFLOW';
+        } elseif ($paCount > 4 || $raCount > 2 || $pnCount > 4) {
+            $extraBlockPeople = 'ANY_PEOPLE_OVERFLOW';
         } elseif ($paCount > 4 && $raCount > 2) {
             $extraBlockPeople =  'ALL_ATTORNEY_OVERFLOW';
         } elseif ($paCount > 4 && $pnCount > 4) {
