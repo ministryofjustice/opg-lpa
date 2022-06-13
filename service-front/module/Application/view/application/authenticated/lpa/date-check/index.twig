@@ -283,29 +283,29 @@
         </div>
 
 
-			{% if continuationNoteKeys is not empty %}
-			<div class="panel panel-border-wide text">
-                {% if 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys and 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys %}
-                    <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.</p>
-                {% elseif 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys %}
-                    <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
-                {% elseif 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys %}
-                    <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
-                {% endif %}
+        {% if continuationNoteKeys is not empty %}
+        <div class="panel panel-border-wide text">
+            {% if 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys and 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys %}
+                <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.</p>
+            {% elseif 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys %}
+                <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
+            {% elseif 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys %}
+                <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
+            {% endif %}
 
-                {% if 'CANT_SIGN' in continuationNoteKeys%}
-                    {% if lpa.document.type == 'property-and-financial' %}
-                        <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
-                    {% else %}
-                        <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
-                    {% endif %}
+            {% if 'CANT_SIGN' in continuationNoteKeys%}
+                {% if lpa.document.type == 'property-and-financial' %}
+                    <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
+                {% else %}
+                    <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
                 {% endif %}
+            {% endif %}
 
-                {% if 'HAS_TRUST_CORP' in continuationNoteKeys %}
-                    <p data-cy="continuation-sheet-info">They must have signed continuation sheet 4 after the ‘certificate provider’ has signed section 10 of the LPA form.</p>
-                {% endif %}
-			</div>
-			{% endif %}
+            {% if 'HAS_TRUST_CORP' in continuationNoteKeys %}
+                <p data-cy="continuation-sheet-info">They must have signed continuation sheet 4 after the ‘certificate provider’ has signed section 10 of the LPA form.</p>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 
 
