@@ -943,40 +943,17 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         if (!is_null($this->formattedLpaRef)) {
             // If the LPA is completed then stamp it with a barcode
             if ($this->lpaIsComplete) {
-                // Generate the barcode
-                $renderer = Barcode::factory(
-                    'code39',
-                    'image',
-                    [
-                        'text' => str_replace(' ', '', $this->formattedLpaRef),
-                        'drawText' => false,
-                        'factor' => 2,
-                        'barHeight' => 25,
-                    ],
-                    [
-                        'topOffset' => 789,
-                        'leftOffset' => 40,
-                    ]
-                );
+                // Write the barcode to a file as a PNG
+                // $barcodeFile = $this->writeBarcodeToImageFile();
 
-                // Create a PNG with the barcode only
-                $barcodeOnlyPng = $renderer->draw();
-
-                ob_start();
-                imagepng($barcodeOnlyPng);
-                $imageData = ob_get_contents();
-                ob_end_clean();
-
-                $barcodePngFile = $this->getIntermediatePdfFilePath('barcode.png');
-                $f = fopen($barcodePngFile, 'w');
-                fwrite($f, $imageData);
-                fclose($f);
+                // Write the barcode to a file as a PDF
+                $barcodeFile = $this->writeBarcodeToPDFFile();
 
                 // Stamp the required page with the new barcode using the unshifted page number
-                $this->stampPageWith($barcodePngFile, 19, false);
+                $this->stampPageWith($barcodeFile, 19, false);
 
-            // Cleanup - remove tmp barcode file
-                //unlink($barcodePngFile);
+                // Cleanup - remove tmp barcode file
+                unlink($barcodeFile);
             } else {
                 // If the LPA is not completed then stamp with the draft watermark
                 $draftWatermarkPdf = $this->getTemplatePdfFilePath('RegistrationWatermark.pdf');
