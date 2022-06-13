@@ -226,9 +226,9 @@ pr_build: &pr_build
 
     - infrastructure_and_deployment/run_cypress_test:
         name: run_cypress_test_remaining_tests
-        # remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run. Statuses is currently excluded until we can get Sirus mock
-        # to run in CI.  CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run
-        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CorrespondentReuse"
+        # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
+        # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
+        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
@@ -1365,7 +1365,7 @@ orbs:
                   -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" \
                   --entrypoint "./cypress/start.sh" \
                   --name cypress_tests cypress:latest && exit 0 || \
-                  (docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1)
+                  (echo "Copying test artifacts"; docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1)
           - store_artifacts:
               path: screenshots
           - run:
