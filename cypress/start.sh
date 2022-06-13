@@ -16,7 +16,7 @@ if [[ "$CYPRESS_CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     # It's CI (used in CircleCI) or headless local CLI runs
     # so run the signup test first, then stitched, followed by all others, except for Clone which doesn't need a signup as it uses seeded user
     if ! [[ $string =~ "StitchedClone" ]] ; then
-        ./node_modules/.bin/cypress-tags run -e TAGS="@SignUp"
+        ./node_modules/.bin/cypress-tags run -e TAGS="@SignUp" GLOB="cypress/e2e/**/*.feature"
     fi
 
     RETVAL=$?
@@ -35,7 +35,7 @@ if [[ "$CYPRESS_CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
         echo "Error:  CYPRESS_TAGS needs to be set to indicate which tests to run"
     else
         # CYPRESS_TAGS is set so we run those specific tests
-        ./node_modules/.bin/cypress-tags run -e TAGS="$CYPRESS_TAGS"
+        ./node_modules/.bin/cypress-tags run -e TAGS="$CYPRESS_TAGS" GLOB="cypress/e2e/**/*.feature"
     fi
 else
     echo "Running Cypress"

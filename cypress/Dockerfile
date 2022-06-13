@@ -1,4 +1,4 @@
-FROM cypress/included:9.7.0
+FROM cypress/included:10.0.3
 
 WORKDIR /app
 
@@ -14,6 +14,6 @@ RUN npm install .
 ENV CYPRESS_VIDEO=false
 ENV CYPRESS_RUN_A11Y_TESTS=true
 
-COPY cypress.json .
+COPY cypress.config.js .
 COPY cypress cypress
 COPY tests/python-api-client tests/python-api-client
