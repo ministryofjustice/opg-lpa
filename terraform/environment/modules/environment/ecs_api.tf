@@ -81,9 +81,6 @@ resource "aws_security_group" "api_ecs_service" {
   tags        = merge(local.default_opg_tags, local.api_component_tag)
 }
 
-//----------------------------------
-// 80 in from front ECS service
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -91,11 +88,9 @@ resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.api_ecs_service.id
   source_security_group_id = aws_security_group.front_ecs_service.id
+  description              = "Frontend ECS to API ECS - HTTP"
 }
 
-//----------------------------------
-// 80 in from Admin ECS service
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -103,11 +98,9 @@ resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.api_ecs_service.id
   source_security_group_id = aws_security_group.admin_ecs_service.id
+  description              = "Admin ECS to API ECS - HTTP"
 }
 
-//----------------------------------
-// Anything out
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_egress" {
   type      = "egress"
   from_port = 0
@@ -116,6 +109,7 @@ resource "aws_security_group_rule" "api_ecs_service_egress" {
   #tfsec:ignore:AWS007 - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.api_ecs_service.id
+  description       = "API ECS to Anywhere - All Traffic"
 }
 
 //--------------------------------------
