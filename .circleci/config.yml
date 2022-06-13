@@ -168,8 +168,7 @@ pr_build: &pr_build
             seeding_docker_build,
             feedbackdb_docker_build,
             flask_docker_build,
-            perfplat-lambda-docker-worker-build,
-            perfplat-lambda-docker-api-build
+            perfplat-lambda-docker-worker-build
           ]
 
     - ecr_scan_results:
@@ -185,7 +184,6 @@ pr_build: &pr_build
             feedbackdb_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
-            perfplat-lambda-docker-api-build,
             dev_environment_apply_terraform
           ]
 
@@ -366,7 +364,6 @@ path_to_live: &path_to_live
             seeding_docker_build,
             feedbackdb_docker_build,
             flask_docker_build,
-            perfplat-lambda-docker-api-build,
             perfplat-lambda-docker-worker-build,
           ]
 
@@ -380,7 +377,6 @@ path_to_live: &path_to_live
             api_docker_build,
             pdf_docker_build,
             flask_docker_build,
-            perfplat-lambda-docker-api-build,
             perfplat-lambda-docker-worker-build,
             preprod_environment_apply_terraform
           ]
