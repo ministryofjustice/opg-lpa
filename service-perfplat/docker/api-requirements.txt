@@ -1,4 +1,0 @@
-Flask==1.1.2
-flask-lambda-python36==0.1.0
-Werkzeug==1.0.1
-connexion==2.7.0

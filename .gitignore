@@ -25,8 +25,8 @@ cypress/activation_emails/*.activation
 cypress/activation_emails/*.passwordreset
 cypress/activation_emails/noaccountpasswordreset.*
 cypress/activation_emails/unrecognized.*
-cypress/integration/Stitched*
-cypress/integration/examples/
+cypress/e2e/Stitched*
+cypress/e2e/examples/
 cypress/logs/
 **/build
 /cypress/screenshots/

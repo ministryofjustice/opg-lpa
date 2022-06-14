@@ -138,15 +138,14 @@
                         // Loop through all the ids that were requested and update the text css style to the new status
                         ids.forEach(function (lpaId) {
                             var lpaResult = results[lpaId];
+                            var li = $('li[data-refresh-id=' + lpaId + ']');
+                            var statusIndicator = li.find(".opg-status");
 
                             if (lpaResult['found']) {
-                                var li = $('li[data-refresh-id=' + lpaId + ']');
-
                                 // Get the status from the returned data
                                 var newStatus = lpaResult['status'].toLowerCase();
 
                                 // Store current status then update style on the status indicator
-                                var statusIndicator = li.find(".opg-status");
                                 var currentStatus = statusIndicator.html().toLowerCase();
 
                                 statusIndicator.html(newStatus);
@@ -164,6 +163,9 @@
                                 link.attr('data-journey-click', 'page:link:View ' + newStatus + ' message');
                                 link.text('View ' + newStatus + ' message');
                             }
+
+                            // mark the status as "refreshed", whether the status update was successful or not
+                            statusIndicator.attr('data-refreshed', 'true');
                         });
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
