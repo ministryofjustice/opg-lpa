@@ -45,7 +45,7 @@ use InvalidArgumentException;
 use Exception;
 use Firebase\JWT\Key;
 use Firebase\JWT\JWT;
-use MakeLogger\Logging\LoggerTrait;
+use App\Logging\LoggerTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;

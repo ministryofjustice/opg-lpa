@@ -73,7 +73,7 @@ trait JwtTrait
      */
     private function verifyTokenDataExists(): void
     {
-        if (!array_key_exists('jwt-payload', $_SESSION)) {
+        if (!isset($_SESSION['jwt-payload'])) {
             throw new RuntimeException('JWT token not available');
         }
     }

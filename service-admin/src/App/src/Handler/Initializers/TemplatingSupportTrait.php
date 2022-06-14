@@ -23,9 +23,10 @@ trait TemplatingSupportTrait
     /**
      * @param TemplateRendererInterface $render
      */
-    public function setTemplateRenderer(TemplateRendererInterface $render)
+    public function setTemplateRenderer(TemplateRendererInterface $template)
     {
-        $this->render = $render;
+        $this->render = $template;
+        return $this;
     }
 
     /**
