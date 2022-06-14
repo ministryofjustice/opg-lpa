@@ -90,8 +90,8 @@ Follow these steps to set up an environment to run the perfplat code:
 1. `python3 -m venv ~/.perfplat-venv`
 2. `source ~/.perfplat-venv/bin/active`
 3. `cd service-perfplat`
-4. `python setup.py -e.[dev]` (note that if you're using zsh, you may need
-to do `python setup.py -e.\[dev\]`)
+4. `pip install -e.[dev]` (note that if you're using zsh, you may need
+to do `pip install -e.\[dev\]`)
 
 This should install all the dependencies into your virtualenv, making
 it possible to run the scripts in the project, including the **Manual testing**

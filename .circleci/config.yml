@@ -67,13 +67,6 @@ pr_build: &pr_build
         dockerfile_name: Dockerfile-worker
         filters: { branches: { ignore: [main] } }
 
-    - build_containers_and_push_to_ecr/docker_build_lambda_image:
-        name: perfplat-lambda-docker-api-build
-        lambda_name: perfplat-api
-        dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-api
-        filters: { branches: { ignore: [main] } }
-
     - infrastructure_and_deployment/lint_account_terraform:
         name: lint_account_terraform_pr_build
         filters: { branches: { ignore: [main] } }
@@ -175,8 +168,7 @@ pr_build: &pr_build
             seeding_docker_build,
             feedbackdb_docker_build,
             flask_docker_build,
-            perfplat-lambda-docker-worker-build,
-            perfplat-lambda-docker-api-build
+            perfplat-lambda-docker-worker-build
           ]
 
     - ecr_scan_results:
@@ -192,7 +184,6 @@ pr_build: &pr_build
             feedbackdb_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
-            perfplat-lambda-docker-api-build,
             dev_environment_apply_terraform
           ]
 
@@ -305,13 +296,6 @@ path_to_live: &path_to_live
         dockerfile_name: Dockerfile-worker
         filters: { branches: { only: [main] } }
 
-    - build_containers_and_push_to_ecr/docker_build_lambda_image:
-        name: perfplat-lambda-docker-api-build
-        lambda_name: perfplat-api
-        dockerfile_path: service-perfplat/docker
-        dockerfile_name: Dockerfile-api
-        filters: { branches: { only: [main] } }
-
     - infrastructure_and_deployment/plan_check_terraform:
         name: preprod_account_plan_check_terraform_pr_build
         workspace: preproduction
@@ -380,7 +364,6 @@ path_to_live: &path_to_live
             seeding_docker_build,
             feedbackdb_docker_build,
             flask_docker_build,
-            perfplat-lambda-docker-api-build,
             perfplat-lambda-docker-worker-build,
           ]
 
@@ -394,7 +377,6 @@ path_to_live: &path_to_live
             api_docker_build,
             pdf_docker_build,
             flask_docker_build,
-            perfplat-lambda-docker-api-build,
             perfplat-lambda-docker-worker-build,
             preprod_environment_apply_terraform
           ]
