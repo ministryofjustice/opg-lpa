@@ -115,16 +115,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.225.0",
+            "version": "3.225.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5a5f99a528d741820a77f0fc19c54ac7eca72d80"
+                "reference": "ee717ffeb6d7c6bd0278b51b9f070b3571ac4eb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5a5f99a528d741820a77f0fc19c54ac7eca72d80",
-                "reference": "5a5f99a528d741820a77f0fc19c54ac7eca72d80",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ee717ffeb6d7c6bd0278b51b9f070b3571ac4eb0",
+                "reference": "ee717ffeb6d7c6bd0278b51b9f070b3571ac4eb0",
                 "shasum": ""
             },
             "require": {
@@ -200,9 +200,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.225.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.225.3"
             },
-            "time": "2022-06-08T19:56:56+00:00"
+            "time": "2022-06-13T18:56:48+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -1942,21 +1942,21 @@
         },
         {
             "name": "laminas/laminas-inputfilter",
-            "version": "2.15.0",
+            "version": "2.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-inputfilter.git",
-                "reference": "14dca8785b9d78ddfef725942854d9c8e81405b9"
+                "reference": "a6e8bc751c321bae1b3f8e235eeb4871256a6009"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-inputfilter/zipball/14dca8785b9d78ddfef725942854d9c8e81405b9",
-                "reference": "14dca8785b9d78ddfef725942854d9c8e81405b9",
+                "url": "https://api.github.com/repos/laminas/laminas-inputfilter/zipball/a6e8bc751c321bae1b3f8e235eeb4871256a6009",
+                "reference": "a6e8bc751c321bae1b3f8e235eeb4871256a6009",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-filter": "^2.13",
-                "laminas/laminas-servicemanager": "^3.3.1",
+                "laminas/laminas-servicemanager": "^3.12.0",
                 "laminas/laminas-stdlib": "^3.0",
                 "laminas/laminas-validator": "^2.15",
                 "php": "^7.4 || ~8.0.0 || ~8.1.0"
@@ -2013,7 +2013,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-06-07T22:55:45+00:00"
+            "time": "2022-06-13T16:43:33+00:00"
         },
         {
             "name": "laminas/laminas-json",
@@ -2801,16 +2801,16 @@
         },
         {
             "name": "laminas/laminas-servicemanager",
-            "version": "3.11.2",
+            "version": "3.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-servicemanager.git",
-                "reference": "8a1f4d53ec93b2e18174f6f186922ef44d11a75a"
+                "reference": "05ac4b1fb1fe9333313eeafced9b6c7946589487"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-servicemanager/zipball/8a1f4d53ec93b2e18174f6f186922ef44d11a75a",
-                "reference": "8a1f4d53ec93b2e18174f6f186922ef44d11a75a",
+                "url": "https://api.github.com/repos/laminas/laminas-servicemanager/zipball/05ac4b1fb1fe9333313eeafced9b6c7946589487",
+                "reference": "05ac4b1fb1fe9333313eeafced9b6c7946589487",
                 "shasum": ""
             },
             "require": {
@@ -2888,7 +2888,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-04-07T17:21:25+00:00"
+            "time": "2022-06-13T16:20:56+00:00"
         },
         {
             "name": "laminas/laminas-session",
@@ -2974,16 +2974,16 @@
         },
         {
             "name": "laminas/laminas-stdlib",
-            "version": "3.9.1",
+            "version": "3.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-stdlib.git",
-                "reference": "1df1cc0b9c2b8c7d1e322da1669a576386b5da46"
+                "reference": "0d669074845fc80a99add0f64025192f143ef836"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/1df1cc0b9c2b8c7d1e322da1669a576386b5da46",
-                "reference": "1df1cc0b9c2b8c7d1e322da1669a576386b5da46",
+                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/0d669074845fc80a99add0f64025192f143ef836",
+                "reference": "0d669074845fc80a99add0f64025192f143ef836",
                 "shasum": ""
             },
             "require": {
@@ -3029,7 +3029,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-06-08T11:33:13+00:00"
+            "time": "2022-06-10T14:49:09+00:00"
         },
         {
             "name": "laminas/laminas-uri",
@@ -3091,21 +3091,21 @@
         },
         {
             "name": "laminas/laminas-validator",
-            "version": "2.17.0",
+            "version": "2.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-validator.git",
-                "reference": "bdd503adc83d814a5c94e598ea0eb9fc7ca56339"
+                "reference": "4875d4e58b6f728981bb767a60530540f82ee1df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-validator/zipball/bdd503adc83d814a5c94e598ea0eb9fc7ca56339",
-                "reference": "bdd503adc83d814a5c94e598ea0eb9fc7ca56339",
+                "url": "https://api.github.com/repos/laminas/laminas-validator/zipball/4875d4e58b6f728981bb767a60530540f82ee1df",
+                "reference": "4875d4e58b6f728981bb767a60530540f82ee1df",
                 "shasum": ""
             },
             "require": {
                 "container-interop/container-interop": "^1.1",
-                "laminas/laminas-stdlib": "^3.6",
+                "laminas/laminas-stdlib": "^3.10",
                 "php": "^7.3 || ~8.0.0 || ~8.1.0"
             },
             "conflict": {
@@ -3177,7 +3177,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-03-08T18:16:51+00:00"
+            "time": "2022-06-09T21:49:40+00:00"
         },
         {
             "name": "laminas/laminas-view",
@@ -3403,16 +3403,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "14.0.1",
+            "version": "14.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
-                "reference": "96974593f39f534ecf34415c2d5b92d35c2766fb"
+                "reference": "097bfbc0b2b7b771a7abbb57c0873985700aa4e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/96974593f39f534ecf34415c2d5b92d35c2766fb",
-                "reference": "96974593f39f534ecf34415c2d5b92d35c2766fb",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/097bfbc0b2b7b771a7abbb57c0873985700aa4e2",
+                "reference": "097bfbc0b2b7b771a7abbb57c0873985700aa4e2",
                 "shasum": ""
             },
             "require": {
@@ -3433,7 +3433,7 @@
                 "MIT"
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
-            "time": "2022-05-09T08:03:25+00:00"
+            "time": "2022-06-09T14:44:38+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -4192,16 +4192,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v6.1.0",
+            "version": "v6.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "c9646197ef43b0e2ff44af61e7f0571526fd4170"
+                "reference": "6187424023fbffcd757789aeb517c9161b1eabee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/c9646197ef43b0e2ff44af61e7f0571526fd4170",
-                "reference": "c9646197ef43b0e2ff44af61e7f0571526fd4170",
+                "url": "https://api.github.com/repos/symfony/console/zipball/6187424023fbffcd757789aeb517c9161b1eabee",
+                "reference": "6187424023fbffcd757789aeb517c9161b1eabee",
                 "shasum": ""
             },
             "require": {
@@ -4268,7 +4268,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v6.1.0"
+                "source": "https://github.com/symfony/console/tree/v6.1.1"
             },
             "funding": [
                 {
@@ -4284,7 +4284,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-27T06:34:22+00:00"
+            "time": "2022-06-08T14:02:09+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
