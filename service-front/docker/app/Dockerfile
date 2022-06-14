@@ -7,7 +7,7 @@ COPY --chown=appuser:appuser service-front/composer.lock /app/composer.lock
 
 RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:8.0-fpm-alpine3.15
+FROM php:8.1-fpm-alpine3.15
 
 RUN adduser -D -g '' appuser
 #docker image on hub hasn't been upgraded yet - fixes CVE-2021-36159

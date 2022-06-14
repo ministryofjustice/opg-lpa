@@ -19,7 +19,7 @@ class JwtAuthenticationFactory
      * @param ContainerInterface $container
      * @return JwtAuthentication
      */
-    public function __invoke(ContainerInterface $container)
+    /*public function __invoke(ContainerInterface $container)
     {
         $jwtConfig = $container->get('config')['jwt'];
 
@@ -45,5 +45,5 @@ class JwtAuthenticationFactory
         ];
 
         return new JwtAuthentication(array_merge($jwtConfig, $jwtHandlers));
-    }
+    }*/
 }
