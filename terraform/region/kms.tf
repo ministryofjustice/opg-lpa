@@ -19,7 +19,7 @@ resource "aws_kms_replica_key" "multi_region_pdf_sqs_encryption_key_replica" {
 
 resource "aws_kms_alias" "multi_region_pdf_sqs_encryption_alias_replica" {
   name          = "alias/mrk_pdf_sqs_encryption_key-${terraform.workspace}"
-  target_key_id = aws_kms_key.multi_region_pdf_sqs_encryption_key_replica.key_id
+  target_key_id = aws_kms_replica_key.multi_region_pdf_sqs_encryption_key_replica.key_id
   provider      = aws.eu-west-2
 }
 
