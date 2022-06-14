@@ -3,9 +3,11 @@
 namespace App\Service\Cache;
 
 use Laminas\Cache\Exception\UnsupportedMethodCallException;
+use Laminas\Cache\Storage\Adapter\AdapterOptions;
 use Laminas\Cache\Storage\StorageInterface;
 use Aws\DynamoDb\DynamoDbClient;
 use Exception;
+use Traversable;
 
 /**
  * Class Cache
@@ -149,8 +151,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::addItems()
      *
-     * @param array<string, mixed> $keyValuePairs
-     * @return array<string, mixed>
+     * @param array $keyValuePairs
+     * @return array
      */
     public function addItems(array $keyValuePairs)
     {
@@ -180,8 +182,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::decrementItems()
      *
-     * @param array<string, int> $keyValuePairs
-     * @return array<string, mixed> Associative array of new values
+     * @param array $keyValuePairs
+     * @return array Associative array of new values
      */
     public function decrementItems(array $keyValuePairs)
     {
@@ -199,8 +201,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::getItems()
      *
-     * @param array<string> $keys
-     * @return array<string, mixed> Associative array of keys and values
+     * @param array $keys
+     * @return array Associative array of keys and values
      */
     public function getItems(array $keys)
     {
@@ -221,8 +223,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::getMetadatas()
      *
-     * @param array<string> $keys
-     * @return array<string, mixed> Associative array of keys and metadataa
+     * @param array $keys
+     * @return array Associative array of keys and metadataa
      */
     public function getMetadatas(array $keys)
     {
@@ -253,8 +255,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::hasItems()
      *
-     * @param array<string> $keys
-     * @return array<string> Array of found keys
+     * @param array $keys
+     * @return array Array of found keys
      */
     public function hasItems(array $keys)
     {
@@ -276,8 +278,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::incrementItems()
      *
-     * @param array<string, int> $keyValuePairs
-     * @return array<string, mixed> Associative array of new values
+     * @param array $keyValuePairs
+     * @return array Associative array of new values
      */
     public function incrementItems(array $keyValuePairs)
     {
@@ -287,8 +289,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::removeItems()
      *
-     * @param array<string> $keys
-     * @return array<string> Array of not removed keys
+     * @param array $keys
+     * @return array Array of not removed keys
      */
     public function removeItems(array $keys)
     {
@@ -310,8 +312,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::replaceItems()
      *
-     * @param array<string, mixed> $keyValuePairs
-     * @return array<string> Array of not replaced keys
+     * @param array $keyValuePairs
+     * @return array Array of not replaced keys
      */
     public function replaceItems(array $keyValuePairs)
     {
@@ -321,8 +323,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::setItems()
      *
-     * @param array<string, mixed> $keyValuePairs
-     * @return array<string> Array of not set keys
+     * @param array $keyValuePairs
+     * @return array Array of not set keys
      */
     public function setItems(array $keyValuePairs)
     {
@@ -332,7 +334,7 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::setOptions()
      *
-     * @param array<string, mixed> $options
+     * @param AdapterOptions|Traversable|array $options
      * @return $this
      */
     public function setOptions($options)
@@ -354,8 +356,8 @@ class Cache implements StorageInterface
     /**
      * @see \Laminas\Cache\Storage\StorageInterface::touchItems()
      *
-     * @param array<int, string> $keys
-     * @return array<string> Array of not updated keys
+     * @param array $keys
+     * @return array Array of not updated keys
      */
     public function touchItems(array $keys)
     {
