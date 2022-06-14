@@ -19,5 +19,5 @@ data "aws_subnet_ids" "public" {
 }
 
 module "allowed_ip_list" {
-  source = "git@github.com:ministryofjustice/terraform-aws-moj-ip-whitelist.git"
+  source = "github.com/ministryofjustice/terraform-aws-moj-ip-whitelist.git"
 }
