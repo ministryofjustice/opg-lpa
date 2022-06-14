@@ -8,12 +8,12 @@ use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
-use Http\Client\Exception;
+use Http\Client\Exception as HttpException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client as HttpClient;
+use RuntimeException;
 
 class Service extends AbstractService
 {
@@ -71,7 +71,7 @@ class Service extends AbstractService
      * @param $ids
      * @return mixed
      * @throws ApiProblemException
-     * @throws Exception
+     * @throws HttpException
      */
     public function getStatuses($ids)
     {
@@ -106,7 +106,7 @@ class Service extends AbstractService
                 $results[$id] = $response;
             },
             'rejected' => function ($reason, $id) {
-                $this->getLogger()->debug('Failed to get result for :' . $id . $reason);
+                $this->getLogger()->debug('Failed to get status for LPA application ' . $id . ': ' . $reason);
             },
         ]);
 
@@ -181,13 +181,9 @@ class Service extends AbstractService
     {
         $responseBody = json_decode($responseBodyString, true);
 
-        if (is_null($responseBody)) {
+        // Bad JSON from the server, or JSON which doesn't result in an array
+        if (is_null($responseBody) || !is_array($responseBody)) {
             return null;
-        }
-
-        //  If the body isn't an array now then it wasn't JSON before
-        if (!is_array($responseBody)) {
-            throw new ApiProblemException($result, 'Malformed JSON response from server');
         }
 
         $return = [];

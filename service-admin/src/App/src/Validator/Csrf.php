@@ -45,8 +45,8 @@ class Csrf extends ZendCsrf
     }
 
     /**
-     * @param string $value
-     * @param null $context
+     * @param mixed $value
+     * @param mixed|null $context
      * @return bool
      */
     public function isValid($value, $context = null)

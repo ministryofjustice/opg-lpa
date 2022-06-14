@@ -11,7 +11,6 @@ Code to render the above diagram in [mermaidjs](https://mermaid-js.github.io/mer
 ```
 graph
   adminlb[admin load balancer/admin-ssl] --> adminweb[admin-web]
-  perfplatapi[perfplat-api] --> perfplatworker[perfplat-worker]
   perfplatworker --> SQS-1
   perfplatworker --> db[RDS/Postgres]
   adminweb --> adminapp[admin-app]
@@ -49,7 +48,6 @@ The purpose of each component in the diagram:
 * Redis: Stores PHP session data for front-app
 * RDS/postgres: Back-end storage for LPA and related data. Also stores user credentials. In AWS, this is an RDS instance; in local dev, it's a PostgreSQL container
 * Sirius gateway: API for accessing data about LPA applications from the Sirius case management system. Currently used to get the status of LPA applications, using the A-ref from the Make an LPA service as the reference. In dev, this is mocked out by gateway + mocksirius (see below).
-* perfplat-api: Receives API requests for performance data to be collated from various sources. Currently proof of concept only.
 * perfplat-worker: Python lambda function (running on localstack in dev and Lambda in AWS) which receives jobs triggered by placing events on the SQS-1 queue. Intended to fetch data and put it into a database. Currently proof of concept only.
 * SQS-1: Queue for managing asynchronous jobs for the performance platform components. Events added to this queue trigger the perfplat-worker lambda function. Currently proof of concept only.
 * SQS-2: Queue for managing PDF generation jobs. Jobs are added by api-app, then picked up and serviced by pdf-app.

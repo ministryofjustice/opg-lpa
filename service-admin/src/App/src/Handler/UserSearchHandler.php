@@ -53,11 +53,8 @@ class UserSearchHandler extends AbstractHandler
             $result = $this->userService->search($email);
 
             if ($result === false) {
-                // Traversable|array
+                /** @var array */
                 $formMessages = $form->getMessages();
-                if (!is_array($formMessages)) {
-                    $formMessages = iterator_to_array($formMessages);
-                }
 
                 // Set error message
                 $messages = array_merge($formMessages, [
