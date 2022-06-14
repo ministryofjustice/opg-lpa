@@ -201,7 +201,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $this->assertEquals($response, $result);
     }
 
-    public function testDeleteActionException()
+    public function testDeleteActionLPAAlreadyDeleted()
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -212,8 +212,11 @@ class DashboardControllerTest extends AbstractControllerTest
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('deleteApplication')->andReturn(false)->once();
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('API client failed to delete LPA for id: 1');
+        $this->flashMessenger->shouldReceive('addErrorMessage')
+            ->withArgs(['LPA could not be deleted'])->once();
+
+        $response = new Response();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard', []])->andReturn($response)->once();
 
         $controller->deleteLpaAction();
     }
