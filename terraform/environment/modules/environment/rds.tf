@@ -32,7 +32,7 @@ resource "aws_db_instance" "api" {
   skip_final_snapshot                 = var.account.skip_final_snapshot
   engine                              = "postgres"
   engine_version                      = var.account.psql_engine_version
-  instance_class                      = "db.m3.medium"
+  instance_class                      = var.account.rds_instance_type
   port                                = "5432"
   kms_key_id                          = local.is_primary_region ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
   username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
@@ -161,4 +161,3 @@ resource "aws_security_group_rule" "rds-api" {
   security_group_id        = aws_security_group.rds-api.id
   description              = "RDS client to RDS - Postgres"
 }
-
