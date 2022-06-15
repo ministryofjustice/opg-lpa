@@ -47,6 +47,7 @@ COPY --chown=appuser:appuser service-pdf/bin/pdftk pdftk
 COPY --chown=appuser:appuser shared/logging /shared/logging
 COPY --chown=appuser:appuser service-pdf /app
 COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
+COPY --chown=appuser:appuser service-pdf/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 
 RUN chmod u+x pdftk
 # user doesn't have access to tmp
