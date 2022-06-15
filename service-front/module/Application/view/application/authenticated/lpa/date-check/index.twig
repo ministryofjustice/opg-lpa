@@ -282,12 +282,11 @@
             </div>
         </div>
 
-
         {% if continuationNoteKeys is not empty %}
         <div class="panel panel-border-wide text">
             {% if 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys and 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys %}
                 <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.</p>
-            {% elseif 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys %}
+            {% elseif 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys or 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys %}
                 <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
             {% elseif 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys %}
                 <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
@@ -307,7 +306,6 @@
         </div>
         {% endif %}
     </div>
-
 
     <div class="date-check-person person person--full">
         <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
