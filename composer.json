@@ -1,8 +1,0 @@
-{
-    "require-dev": {
-        "laminas/laminas-test": "^3.3"
-    },
-    "require": {
-        "laminas/laminas-dependency-plugin": "^1.0"
-    }
-}
