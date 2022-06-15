@@ -11,7 +11,7 @@ resource "aws_kms_alias" "multi_region_pdf_sqs_encryption_alias" {
 }
 
 resource "aws_kms_replica_key" "multi_region_pdf_sqs_encryption_key_replica" {
-  description             = "secrets encryption replica key"
+  description             = "PDF SQS encryption replica key"
   deletion_window_in_days = 7
   primary_key_arn         = aws_kms_key.multi_region_pdf_sqs_encryption_key.arn
   provider                = aws.eu-west-2
@@ -36,7 +36,7 @@ resource "aws_kms_alias" "multi_region_perfplat_sqs_encryption_alias" {
 }
 
 resource "aws_kms_replica_key" "multi_region_perfplat_sqs_encryption_key_replica" {
-  description             = "secrets encryption replica key"
+  description             = "Performance Platform SQS encryption replica key"
   deletion_window_in_days = 7
   primary_key_arn         = aws_kms_key.multi_region_perfplat_sqs_encryption_key.arn
   provider                = aws.eu-west-2
