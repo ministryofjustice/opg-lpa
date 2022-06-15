@@ -340,11 +340,17 @@ class ApplicationTest extends MockeryTestCase
                     ['type' => 'human'],
                     ['type' => 'human'],
                     ['type' => 'human'],
+                ],
+                'primaryAttorneyDecisions' => [
+                    'howDetails' => 'Decisions must be made at midnight'
                 ]
             ]
         ]);
 
-        $expectedResult = ['LONG_INSTRUCTIONS_OR_PREFERENCES', 'REPLACEMENT_ATTORNEY_OVERFLOW', 'ANY_PEOPLE_OVERFLOW'];
+        $expectedResult = ['LONG_INSTRUCTIONS_OR_PREFERENCES',
+                           'REPLACEMENT_ATTORNEY_OVERFLOW',
+                           'ANY_PEOPLE_OVERFLOW',
+                           'HAS_ATTORNEY_DECISIONS'];
         $this->assertEqualsCanonicalizing($expectedResult, $this->service->getContinuationNoteKeys($mockLpa));
     }
 }

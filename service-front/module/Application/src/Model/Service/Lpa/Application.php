@@ -1035,6 +1035,13 @@ class Application extends AbstractService implements ApiClientAwareInterface
             array_push($continuationNoteKeys, 'ANY_PEOPLE_OVERFLOW');
         }
 
+        if (
+            isset($lpa->document->primaryAttorneyDecisions->howDetails) ||
+            isset($lpa->document->replacementAttorneyDecisions->howDetails)
+        ) {
+            array_push($continuationNoteKeys, 'HAS_ATTORNEY_DECISIONS');
+        }
+
         if (isset($lpa->document->donor)) {
             if (!$lpa->document->donor->canSign) {
                 array_push($continuationNoteKeys, 'CANT_SIGN');
