@@ -1035,9 +1035,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
             array_push($continuationNoteKeys, 'ANY_PEOPLE_OVERFLOW');
         }
 
+        // Additional info on how attorneys act are stored in different fields depending on attorney type
         if (
             isset($lpa->document->primaryAttorneyDecisions->howDetails) ||
-            isset($lpa->document->replacementAttorneyDecisions->howDetails)
+            isset($lpa->document->replacementAttorneyDecisions->whenDetails)
         ) {
             array_push($continuationNoteKeys, 'HAS_ATTORNEY_DECISIONS');
         }
