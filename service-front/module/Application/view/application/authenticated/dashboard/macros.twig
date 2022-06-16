@@ -6,7 +6,7 @@
 
     {{ macros.showTypeHeaderIfLpasExist(lpas, type) }}
 
-    <ul class="track-my-lpa">
+    <ul class="track-my-lpa" data-cy="lpa-list">
 
     {% for key,lpa in lpas %}
         {% if (type == 'all' or type == lpa.type) %}
