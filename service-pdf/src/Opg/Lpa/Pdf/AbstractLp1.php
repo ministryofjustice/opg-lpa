@@ -948,10 +948,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             // If the LPA is completed then stamp it with a barcode
             if ($this->lpaIsComplete) {
                 // Write the barcode to a file as a PNG
-                // $barcodeFile = $this->writeBarcodeToImageFile();
+                $barcodeFile = $this->writeBarcodeToImageFile();
 
                 // Write the barcode to a file as a PDF
-                $barcodeFile = $this->writeBarcodeToPDFFile();
+                // $barcodeFile = $this->writeBarcodeToPDFFile();
 
                 // Stamp the required page with the new barcode using the unshifted page number
                 $this->stampPageWith($barcodeFile, 19, false);
