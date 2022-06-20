@@ -17,7 +17,7 @@ steps:
    - Or: list out these locally using `aws-vault exec identity -- terraform workspace list` and ascertain one that matches your PR.
 
 8. Click on the workspace name link.
-9. For the Attribute name `ExpiresTTL` place the converted Epoch time from step 1 into the Value box.
+9. For the Attribute name `ExpiresTTL` place the converted Epoch time from step 2 into the Value box.
 10. Click `Save Changes`
 11. You now have extended the lifespan (Time To Live) for the workspace.
 
