@@ -61,8 +61,9 @@ class LockCommand extends Command
         $this->addOption(
             'endpoint',
             null,
-            InputOption::VALUE_REQUIRED,
-            'DynamoDB endpoint'
+            InputOption::VALUE_OPTIONAL,
+            'DynamoDB endpoint',
+            null
         );
 
         $this->addOption(
