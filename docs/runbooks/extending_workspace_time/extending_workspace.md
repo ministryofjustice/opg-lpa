@@ -14,7 +14,7 @@ steps:
    - Either: On your PR CI build, check the`post_environment_domains` job; the value is in the last step `print deployment values` next to `Terraform workspace:`
    - Or: list out these locally using `aws-vault exec identity -- terraform workspace list` and ascertain one that matches your PR.
 
-7. click on the workspace name link.
+7. Click on the workspace name link.
 8. For the Attribute name `ExpiresTTL` place the converted Epoch time from step 1 into the Value box.
 9. Click `Save Changes`
 10. You now have extended the period of time for the workspace.
@@ -26,7 +26,7 @@ it is important to understand this will *only* be in place until:
 - the TTL expires by itself.
 - Someone pushes a change to the PR, which will reset to the standard 24 hours.
 
-Meaning this environment will have until the next cleanup cycle before destruction takes place - i.e. 6am / 6pm UTC daily.
+The environment will have until the next cleanup cycle before destruction takes place - i.e. 6am / 6pm UTC daily.
 Following the above will put this back in place.
 
 ## If no record is present
