@@ -8,6 +8,11 @@ Then(`I click {string}`, (clickable) => {
     cy.OPGCheckA11y();
 })
 
+Then(`I double click {string}`, (clickable) => {
+    cy.get("[data-cy=" + clickable + "]").should('not.be.disabled').dblclick();
+    cy.OPGCheckA11y();
+})
+
 Then(`I click occurrence {int} of {string}`, (number, clickable) => {
     cy.get("[data-cy=" + clickable + "]").eq(number).click();
     cy.OPGCheckA11y();

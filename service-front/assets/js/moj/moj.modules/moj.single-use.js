@@ -6,44 +6,45 @@
 
     // Define the class
     var SingleUse = function (options) {
-        this.settings = $.extend({}, this.defaults, options);
+        this.settings = {
+            selector: '.js-single-use'
+        };
     };
 
     SingleUse.prototype = {
-        defaults: {
-            selector: '.js-single-use'
-        },
-
         init: function () {
-            // bind 'this' as this in following methods
-            _.bindAll(this, 'btnClick');
-            this.bindEvents();
+            var useHandler = this.useHandler.bind(this);
+            $('body').on('click', this.settings.selector, useHandler);
+            $('body').on('submit', this.settings.selector, useHandler);
         },
 
-        bindEvents: function () {
-            $('body')
-                // link click
-                .on('click.moj.Modules.SingleUse', this.settings.selector, this.btnClick)
-                // submit form
-                .on('submit.moj.Modules.SingleUse', this.settings.selector, this.submitForm);
+        noop: function (e) {
+            e.preventDefault();
+            return false;
         },
 
-        btnClick: function (e) {
-            if (e.target.tagName === 'A') {
-                var source = $(e.target);
+        useHandler: function (e) {
+            var target = $(e.target);
 
+            // When clicked, we prevent the event firing or percolating from now on
+            target.on('click', this.noop);
+            target.on('submit', this.noop);
+
+            // Disable the link or form submit button
+            var tagName = target.prop('tagName');
+
+            if (tagName === 'A') {
                 // Disable link
-                source.attr('disabled', 'disabled');
+                target.attr('disabled', 'disabled');
             }
-        },
-
-        submitForm: function (e) {
-            if (e.target.tagName === 'FORM') {
-                var $form = $(e.target);
-
-                // Disable submit button
-                $form.find('input[type="submit"]').attr('disabled', 'disabled');
+            else if (tagName === 'FORM') {
+                // Disable submit button(s)
+                target.find('input[type=submit]')
+                    .attr('disabled', 'disabled')
+                    .on('click', this.noop);
             }
+
+            return true;
         }
     };
 
