@@ -223,6 +223,12 @@ pr_build: &pr_build
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
+    - infrastructure_and_deployment/run_cypress_test:
+        name: run_cypress_test_dashboard_lpa_deletion
+        cypress_tags: "@DashboardDeleteLpa"
+        filters: { branches: { ignore: [main] } }
+        requires: [dev_seed_environment_databases, dev_feedbackdb]
+
     - infrastructure_and_deployment/run_functional_test:
         name: run_functional_test
         filters: { branches: { ignore: [main] } }
