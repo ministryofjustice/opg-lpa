@@ -1,6 +1,7 @@
 # Extending a PR workspace in development account
 
-this is a simple process, which is done by extending the `ExpiresTTL` for a given workspace name via the WorkspaceCleanup Dynamo DB table.
+This process is used to extend the lifespan of a workspace; typically, an instance of the Make application to be used for UAT. This is useful for extended testing of complex PRs.
+This is a simple process, which is done by extending the `ExpiresTTL` for a given workspace name via the WorkspaceCleanup Dynamo DB table.
 
 steps:
 
