@@ -18,19 +18,19 @@ steps:
 7. Click on the workspace name link.
 8. For the Attribute name `ExpiresTTL` place the converted Epoch time from step 1 into the Value box.
 9. Click `Save Changes`
-10. You now have extended the period of time for the workspace.
+10. You now have extended the lifespan (Time To Live) for the workspace.
 
 ## Limitations of approach
 
-it is important to understand this will *only* be in place until:
+it is important to understand the workspace will *only* available until:
 
 - the TTL expires by itself.
 - Someone pushes a change to the PR, which will reset to the standard 24 hours.
 
-The environment will have until the next cleanup cycle before destruction takes place - i.e. 6am / 6pm UTC daily.
-Following the above will put this back in place.
+The environment will have until the next cleanup cycle, at which point it will be destroyed - i.e. 6am / 6pm UTC daily.
+Following the instructions for editing the workspace Time To Live will put this back in place.
 
-## If no record is present
+## If no matching workspace record is present
 
 This will not work if there is no record in place.
 At this point it's recommended to create the PR environment through the normal CI Process of bumping the PR via a code change or merge.
