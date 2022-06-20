@@ -5,20 +5,21 @@ This is a simple process, which is done by extending the `ExpiresTTL` for a give
 
 steps:
 
-1. Convert your desired date and time for expiry into a unix Epoch. A tool to help with this is <https://www.epochconverter.com/>
-2. Open the Development Account console for AWS, assuming the operator role will be fine for this.
-3. Search for `DynamoDB` in the top search bar and hit `<enter>`.
-4. Look for `Tables` on the left hand side and click `Explore Items`. there will be a list of tables to select.
-5. in the `Find tables by name` search box type `WorkspaceCleanup` and click the radio button next to the table name.
-6. Look for the workspace name of your environment. to look for this:
+1. Decide when you would like to extend the workspace's lifespan to.
+2. Convert that date and time for expiry into a unix Epoch. A tool to help with this is <https://www.epochconverter.com/>
+3. Open the Development Account console for AWS, assuming the operator role will be fine for this.
+4. Search for `DynamoDB` in the top search bar and hit `<enter>`.
+5. Look for `Tables` on the left hand side and click `Explore Items`. there will be a list of tables to select.
+6. in the `Find tables by name` search box type `WorkspaceCleanup` and click the radio button next to the table name.
+7. Look for the workspace name of your environment. to look for this:
 
    - Either: On your PR CI build, check the`post_environment_domains` job; the value is in the last step `print deployment values` next to `Terraform workspace:`
    - Or: list out these locally using `aws-vault exec identity -- terraform workspace list` and ascertain one that matches your PR.
 
-7. Click on the workspace name link.
-8. For the Attribute name `ExpiresTTL` place the converted Epoch time from step 1 into the Value box.
-9. Click `Save Changes`
-10. You now have extended the lifespan (Time To Live) for the workspace.
+8. Click on the workspace name link.
+9. For the Attribute name `ExpiresTTL` place the converted Epoch time from step 1 into the Value box.
+10. Click `Save Changes`
+11. You now have extended the lifespan (Time To Live) for the workspace.
 
 ## Limitations of approach
 
