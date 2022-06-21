@@ -37,7 +37,7 @@ This will not work if there is no record in place.
 At this point it's recommended to create the PR environment through the normal CI Process of bumping the PR via a code change or merge.
 
 ## removing workspace
-
+When UAT is completed, it might be a good idea to remove the environment so that we're being more efficient with the cost.
  The simplest way is to:
 
 1. locate the record as per steps 3 to 7 for changing Time to Live
