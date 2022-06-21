@@ -299,10 +299,6 @@
                     <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
                 {% endif %}
             {% endif %}
-
-            {% if 'HAS_TRUST_CORP' in continuationNoteKeys %}
-                <p data-cy="continuation-sheet-info">They must have signed continuation sheet 4 after the ‘certificate provider’ has signed section 10 of the LPA form.</p>
-            {% endif %}
         </div>
         {% endif %}
     </div>
@@ -376,7 +372,7 @@
             id: elementYearId
         }) ? '' }}
 
-        <div class="date-check-person person person--full">
+        <div class="date-check-person person person--full" data-cy="primary-attorney">
             <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ attorney.name }} (attorney)</h3>
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
@@ -412,6 +408,10 @@
                     </fieldset>
                 </div>
             </div>
+
+            {% if attorney.dob is not defined %}
+                {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
+            {% endif %}
         </div>
 
     {% endfor %}
@@ -489,6 +489,10 @@
                     </fieldset>
                 </div>
             </div>
+
+            {% if attorney.dob is not defined %}
+                {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
+            {% endif %}
         </div>
 
     {% endfor %}
