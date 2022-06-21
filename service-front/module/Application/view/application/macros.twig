@@ -106,7 +106,8 @@
 
 {% macro continuationNotes(continuationNoteKeys) %}
 
-    {% if continuationNoteKeys|length > 0 %}
+    {# Ticket to be written up for displaying text below if the LPA 'HAS_ATTORNEY_DECISIONS' #}
+    {% if continuationNoteKeys|length > 0 and (continuationNoteKeys != ['HAS_ATTORNEY_DECISIONS']) %}
         <h3 class="heading-medium">Continuation sheets</h3>
 
         {% for cnote in continuationNoteKeys %}
