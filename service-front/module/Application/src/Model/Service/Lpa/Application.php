@@ -1037,7 +1037,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         if (
             isset($lpa->document->primaryAttorneyDecisions->howDetails) ||
-            isset($lpa->document->replacementAttorneyDecisions->howDetails)
+            isset($lpa->document->replacementAttorneyDecisions->howDetails) ||
+            isset($lpa->document->replacementAttorneyDecisions->when)
         ) {
             array_push($continuationNoteKeys, 'HAS_ATTORNEY_DECISIONS');
         }
