@@ -35,3 +35,20 @@ Following the instructions for editing the workspace Time To Live will put this 
 
 This will not work if there is no record in place.
 At this point it's recommended to create the PR environment through the normal CI Process of bumping the PR via a code change or merge.
+
+## removing workspace
+When manual testing is completed on UAT, it might be a good idea to remove the environment so that we're being more efficient with the cost.
+ The simplest way to remove an environment is to:
+
+1. locate the record as per steps 3 to 7 for changing Time to Live
+2. Select the workspace required for deletion
+3. click on `Actions` dropdown and select `Delete items`
+4. At the confirmation click `Delete`
+5. The cleanup job will destroy the environment up on the next clean up run.
+
+However, should you need to do an immediate destruction of the workspace, you can do this from your local shell:
+
+1. navigate to the `terraform/environment` folder of this repo
+2. run `aws-vault exec identity -- terraform workspace select <workspace to destroy>`
+3. run `aws-vault exec identity -- terraform destroy`
+4. if happy type `yes` and hit `<enter>`
