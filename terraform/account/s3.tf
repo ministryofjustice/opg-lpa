@@ -89,6 +89,11 @@ resource "aws_s3_bucket" "access_log" {
       }
     }
   }
+
+  depends_on = [
+    aws_kms_alias.multi_region_access_logs_lb_encryption_alias,
+    aws_kms_alias.multi_region_access_logs_lb_encryption_alias_replica,
+  ]
 }
 
 resource "aws_s3_bucket_public_access_block" "access_log" {
