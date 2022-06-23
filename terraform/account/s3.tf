@@ -47,6 +47,30 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
       identifiers = ["*"]
     }
   }
+
+  statement {
+    sid    = "AllowELBAccessLogEncryption"
+    effect = "Allow"
+
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt",
+      "kms:GenerateDataKey",
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      data.aws_kms_key.access_log_key.arn,
+    ]
+
+    principals {
+      identifiers = [data.aws_elb_service_account.main.id]
+
+      type = "AWS"
+    }
+
+  }
 }
 
 # We will keep this in for historical purposes. we need to think how far back we need this.
