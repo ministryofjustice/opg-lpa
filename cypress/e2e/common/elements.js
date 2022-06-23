@@ -4,6 +4,7 @@ import { Then } from "cypress-cucumber-preprocessor/steps";
 
 // map from natural language text to number
 const MapNumberTextToNumber = {
+    'zero': 0,
     'a single': 1,
     'one': 1,
     'two': 2,
@@ -13,7 +14,11 @@ const MapNumberTextToNumber = {
 // map from natural language text to HTML tag name
 const MapElementSpecifierToTag = {
     'level 1 heading': 'H1',
-    'level 2 heading': 'H2'
+    'level 2 heading': 'H2',
+    'list item': 'LI',
+
+    // LPA list item selector for dashboard
+    'LPA': 'ul[data-cy=lpa-list] > li.list-item',
 };
 
 /**
