@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "iam_loadbalancer_kms" {
     ]
 
     principals {
-      identifiers = "delivery.logs.amazonaws.com"
+      identifiers = ["delivery.logs.amazonaws.com"]
 
       type = "Service"
     }
