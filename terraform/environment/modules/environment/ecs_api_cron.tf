@@ -111,16 +111,16 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
     }
   }
 
-  input = <<DOC
-{
-  "containerOverrides": [
+  input = jsonencode(
     {
-      "name": "app",
-      "command": ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"]
-    }
-  ]
-}
-DOC
+      "containerOverrides" : [
+        {
+          "name" : "app",
+          "command" : ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"]
+        }
+      ]
+  })
+
 }
 
 //------------------------------------------------
@@ -148,14 +148,13 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
     }
   }
 
-  input = <<DOC
-{
-  "containerOverrides": [
+  input = jsonencode(
     {
-      "name": "app",
-      "command": ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"]
-    }
-  ]
-}
-DOC
+      "containerOverrides" : [
+        {
+          "name" : "app",
+          "command" : ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"]
+        }
+      ]
+  })
 }
