@@ -58,9 +58,9 @@ data "aws_iam_policy_document" "s3_loadbalancer_kms" {
     actions = [
       "kms:Encrypt",
       "kms:Decrypt",
-      "kms:ReEncrypt",
-      "kms:GenerateDataKey",
-      "kms:DescribeKey",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
     ]
 
     resources = [
@@ -83,6 +83,7 @@ resource "aws_s3_bucket" "access_log" {
   acl    = "private"
   tags   = local.default_tags
   policy = data.aws_iam_policy_document.s3_loadbalancer_kms.json
+
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
