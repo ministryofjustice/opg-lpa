@@ -68,9 +68,9 @@ data "aws_iam_policy_document" "iam_loadbalancer_kms" {
     ]
 
     principals {
-      identifiers = [data.aws_elb_service_account.main.id]
+      identifiers = "delivery.logs.amazonaws.com"
 
-      type = "AWS"
+      type = "Service"
     }
   }
 }
@@ -108,5 +108,5 @@ resource "aws_s3_bucket_policy" "access_log" {
 
 resource "aws_iam_policy" "access_log" {
   name   = "online-lpa-${terraform.workspace}-lb-access-log-kms"
-  policy = data.aws_iam_policy_document.loadbalancer_logging.json
+  policy = data.aws_iam_policy_document.iam_loadbalancer_kms.json
 }
