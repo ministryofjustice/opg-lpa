@@ -47,6 +47,9 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
       identifiers = ["*"]
     }
   }
+}
+
+data "aws_iam_policy_document" "iam_loadbalancer_kms" {
 
   statement {
     sid    = "AllowELBAccessLogEncryption"
@@ -101,5 +104,9 @@ resource "aws_s3_bucket_public_access_block" "access_log" {
 resource "aws_s3_bucket_policy" "access_log" {
   bucket = aws_s3_bucket.access_log.id
   policy = data.aws_iam_policy_document.loadbalancer_logging.json
+}
 
+resource "aws_iam_policy" "access_log" {
+  name   = "online-lpa-${terraform.workspace}-lb-access-log-kms"
+  policy = data.aws_iam_policy_document.loadbalancer_logging.json
 }
