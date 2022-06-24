@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
   }
 }
 
-data "aws_iam_policy_document" "iam_loadbalancer_kms" {
+data "aws_iam_policy_document" "s3_loadbalancer_kms" {
 
   statement {
     sid    = "AllowELBAccessLogEncryption"
@@ -82,7 +82,7 @@ resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${terraform.workspace}-lb-access-logs"
   acl    = "private"
   tags   = local.default_tags
-
+  policy = data.aws_iam_policy_document.s3_loadbalancer_kms.json
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
@@ -104,9 +104,4 @@ resource "aws_s3_bucket_public_access_block" "access_log" {
 resource "aws_s3_bucket_policy" "access_log" {
   bucket = aws_s3_bucket.access_log.id
   policy = data.aws_iam_policy_document.loadbalancer_logging.json
-}
-
-resource "aws_iam_policy" "access_log" {
-  name   = "online-lpa-${terraform.workspace}-lb-access-log-kms"
-  policy = data.aws_iam_policy_document.iam_loadbalancer_kms.json
 }
