@@ -85,7 +85,7 @@ locals {
       "environment" : [
         { "name" : "OPG_LPA_POSTGRES_NAME", "value" : "${local.db.name}" },
         { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : "${local.db.endpoint}" },
-        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : "${local.db.port}" },
+        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : "${tostring(local.db.port)}" },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : "${var.account_name}" }
       ]
   })
