@@ -1,3 +1,7 @@
+data "aws_kms_key" "access_log_key" {
+  key_id = "alias/mrk_access_logs_lb_encryption_key-${local.account_name}"
+}
+
 data "aws_elb_service_account" "main" {
   region = "eu-west-1"
 }
