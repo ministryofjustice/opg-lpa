@@ -8,11 +8,6 @@ resource "aws_ecs_cluster" "online-lpa" {
   }
 }
 
-data "aws_cloudwatch_log_group" "online-lpa" {
-  name = "online-lpa"
-  tags = merge(local.default_opg_tags, local.shared_component_tag)
-}
-
 resource "aws_iam_role" "execution_role" {
   name               = "${var.environment_name}-execution-role-ecs-cluster"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
