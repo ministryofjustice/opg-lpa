@@ -1,7 +1,3 @@
-data "aws_kms_key" "access_log_key" {
-  key_id = "alias/mrk_access_logs_lb_encryption_key-${local.account_name}"
-}
-
 data "aws_elb_service_account" "main" {
   region = "eu-west-1"
 }
@@ -49,32 +45,6 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
   }
 }
 
-data "aws_iam_policy_document" "s3_loadbalancer_kms" {
-
-  statement {
-    sid    = "AllowELBAccessLogEncryption"
-    effect = "Allow"
-
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey"
-    ]
-
-    resources = [
-      data.aws_kms_key.access_log_key.arn,
-    ]
-
-    principals {
-      identifiers = ["delivery.logs.amazonaws.com"]
-
-      type = "Service"
-    }
-  }
-}
-
 # We will keep this in for historical purposes. we need to think how far back we need this.
 #versioning not required for a logging bucket bucket logging not needed
 #tfsec:ignore:AWS002  #tfsec:ignore:AWS077
@@ -82,7 +52,6 @@ resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${terraform.workspace}-lb-access-logs"
   acl    = "private"
   tags   = local.default_tags
-  policy = data.aws_iam_policy_document.s3_loadbalancer_kms.json
 
   server_side_encryption_configuration {
     rule {

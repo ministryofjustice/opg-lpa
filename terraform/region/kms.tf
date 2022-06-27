@@ -1,7 +1,38 @@
+data "aws_kms_key" "access_log_key" {
+  key_id = "alias/mrk_access_logs_lb_encryption_key-${terraform.workspace}"
+}
+
+data "aws_iam_policy_document" "s3_loadbalancer_kms" {
+
+  statement {
+    sid    = "Allow ELB to use Key for Encryption"
+    effect = "Allow"
+
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
+    ]
+
+    resources = [
+      data.aws_kms_key.access_log_key.arn,
+    ]
+
+    principals {
+      identifiers = ["delivery.logs.amazonaws.com"]
+
+      type = "Service"
+    }
+  }
+}
+
 resource "aws_kms_key" "multi_region_access_logs_lb_encryption_key" {
   enable_key_rotation = true
   multi_region        = true
   provider            = aws.eu-west-1
+  policy              = data.aws_iam_policy_document.s3_loadbalancer_kms.json
 }
 
 resource "aws_kms_alias" "multi_region_access_logs_lb_encryption_alias" {
@@ -15,6 +46,7 @@ resource "aws_kms_replica_key" "multi_region_access_logs_lb_encryption_key_repli
   deletion_window_in_days = 7
   primary_key_arn         = aws_kms_key.multi_region_access_logs_lb_encryption_key.arn
   provider                = aws.eu-west-2
+  policy                  = data.aws_iam_policy_document.s3_loadbalancer_kms.json
 }
 
 resource "aws_kms_alias" "multi_region_access_logs_lb_encryption_alias_replica" {
