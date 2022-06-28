@@ -107,7 +107,7 @@ class MakeAnLpaUser(HttpUser):
         self.client.verify = False
 
         # create the user on the back-end system
-        logging.info(f"creating and activating user: {self.username} / {self.password}")
+        logging.info(f"creating and activating user: {self.username}")
         response = createAndActivateUser(self.username, self.password)
         if not response["success"]:
             raise Exception("unable to create user")
