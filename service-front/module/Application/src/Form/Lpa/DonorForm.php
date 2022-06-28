@@ -37,11 +37,11 @@ class DonorForm extends AbstractActorForm
         'address-postcode' => [
             'type' => 'Text',
         ],
-        'canSign' => [
+        'cannotSign' => [
             'type' => 'Checkbox',
             'options' => [
-                'checked_value'   => '0',
-                'unchecked_value' => '1',
+                'checked_value'   => '1',
+                'unchecked_value' => '0',
             ],
         ],
         'submit' => [
@@ -58,5 +58,77 @@ class DonorForm extends AbstractActorForm
         $this->actorModel = new Donor();
 
         parent::init();
+    }
+
+    public function populateValues(iterable $data, bool $onlyBase = false): void
+    {
+        // canSign is stored in the db, but our cannotSign checkbox is ticked if the
+        // donor *cannot* sign; so this is where we do the inversion from
+        // the canSign property (in the model/db) to cannotSign checkbox (in the UI)
+        $data['cannotSign'] = '1';
+        if (array_key_exists('canSign', $data) && $data['canSign']) {
+            $data['cannotSign'] = '0';
+        }
+
+        parent::populateValues($data, $onlyBase);
+    }
+
+    /**
+     * Convert form data to model-compatible input data format.
+     * This is where we map the cannotSign checkbox to the canSign property
+     * on the donor: if cannotSign is true, canSign is false (and vice versa).
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function convertFormDataForModel($formData)
+    {
+        $modelData = parent::convertFormDataForModel($formData);
+
+        // Set canSign (on the model) as the inverse of cannotSign (from the UI checkbox)
+        if ($formData['cannotSign'] == '1') {
+            $modelData['canSign'] = false;
+        } elseif ($formData['cannotSign'] == '0') {
+            $modelData['canSign'] = true;
+        } else {
+            $modelData['canSign'] = $formData['cannotSign'];
+        }
+
+        return $modelData;
+    }
+
+    /**
+     * Validate form input data through model validators
+     *
+     * @return array
+     */
+    protected function validateByModel()
+    {
+        // Validate the actor
+        $actorValidation = parent::validateByModel();
+        $actorIsValid = $actorValidation['isValid'];
+        $actorMessages = $actorValidation['messages'];
+
+        // Validate the donor
+        $donor = new Donor($this->convertFormDataForModel($this->data));
+        $donorValidation = $donor->validate();
+
+        $donorMessages = [];
+        if ($donorValidation->hasErrors()) {
+            $donorMessages = $this->modelValidationMessageConverter($donorValidation, $this->data);
+
+            // We only want the validation message for the fields not already validated
+            // by the actor validation; see AbstractActorForm->validateByModel()
+            // i.e. not dob, dob.date, phone or name
+            unset($donorMessages['dob']);
+            unset($donorMessages['dob.date']);
+            unset($donorMessages['phone']);
+            unset($donorMessages['name']);
+        }
+
+        return [
+            'isValid'  => (!$donorValidation->hasErrors()) && $actorIsValid,
+            'messages' => array_merge($actorMessages, $donorMessages),
+        ];
     }
 }

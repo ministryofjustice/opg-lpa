@@ -63,7 +63,7 @@ Feature: Add donor to Property and Finance LPA
             | address-address2| Undercliff Drive |
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
-        And I check "can-sign"
+        And I check "cannot-sign"
         And I click "form-save"
         Then I cannot find "form-donor"
         Then I can find "save-and-continue"
