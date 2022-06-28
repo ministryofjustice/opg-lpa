@@ -18,6 +18,6 @@ class Database:
         return self.session.commit()
 
     def delete(self, modelClass, id):
-        obj = self.session.query(modelClass).filter(modelClass.id==id).first()
+        obj = self.session.query(modelClass).filter(modelClass.id == id).first()
         self.session.delete(obj)
         return self.session.commit()
