@@ -28,3 +28,7 @@ repos:
       files: \.(php)$
       args: [--memory-limit=1024M]
     - id: php-cs-fixer
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+    -   id: black

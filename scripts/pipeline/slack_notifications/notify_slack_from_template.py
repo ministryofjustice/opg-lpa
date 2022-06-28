@@ -1,4 +1,3 @@
-
 import os
 import argparse
 import json
@@ -8,8 +7,7 @@ from slack_sdk import WebClient
 
 
 class TemplateRenderer:
-    """Template renderer class
-    """
+    """Template renderer class"""
 
     def __init__(self, template_file, template_folder, vars):
         """constructor
@@ -22,7 +20,8 @@ class TemplateRenderer:
         self.template_file = template_file
 
         self.template_environment = jinja2.Environment(
-            loader=FileSystemLoader(template_folder))
+            loader=FileSystemLoader(template_folder)
+        )
 
         # pull in  variables to use, and merge.
         self.template_vars = {**{k: self.sanitize(v) for k, v in vars.items()}}
@@ -50,8 +49,7 @@ class TemplateRenderer:
 
 
 class SlackNotifier:
-    """notifies slack based on the rendered output, slack token and channel
-    """
+    """notifies slack based on the rendered output, slack token and channel"""
 
     def __init__(self, slack_token, slack_channel):
         """constructor
@@ -71,38 +69,46 @@ class SlackNotifier:
         """
         client = WebClient(token=self.slack_token)
         message = json.loads(message_json)
-        client.chat_postMessage(channel=self.slack_channel,
-                                attachments=message['attachments'],
-                                blocks=message['blocks'])
+        client.chat_postMessage(
+            channel=self.slack_channel,
+            attachments=message["attachments"],
+            blocks=message["blocks"],
+        )
 
 
 # https://www.geeksforgeeks.org/python-key-value-pair-using-argparse/
 class keyvalue(argparse.Action):
     # Constructor calling
-    def __call__(self, parser, namespace,
-                 values, option_string=None):
+    def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, dict())
         for value in values:
             # split it into key and value
-            key, value = value.split(':=')
+            key, value = value.split(":=")
             # assign into dictionary
             getattr(namespace, self.dest)[key] = value
 
 
 def main():
     parser = argparse.ArgumentParser(description="runs a slack notification")
+    parser.add_argument("--template_file", help="defines a template name to look up")
     parser.add_argument(
-        "--template_file", help="defines a template name to look up")
-    parser.add_argument("--template_folder", nargs="?",
-                        default="templates", help="folder for the templates")
+        "--template_folder",
+        nargs="?",
+        default="templates",
+        help="folder for the templates",
+    )
     parser.add_argument("--slack_token", help="slack api token to use")
     parser.add_argument("--slack_channel", help="slack channel to post to")
-    parser.add_argument("--vars", help="replacement variables to pass in",
-                        nargs="*", action=keyvalue, default=dict())
+    parser.add_argument(
+        "--vars",
+        help="replacement variables to pass in",
+        nargs="*",
+        action=keyvalue,
+        default=dict(),
+    )
     args = parser.parse_args()
 
-    renderer = TemplateRenderer(
-        args.template_file, args.template_folder, args.vars)
+    renderer = TemplateRenderer(args.template_file, args.template_folder, args.vars)
     notifier = SlackNotifier(args.slack_token, args.slack_channel)
     notifier.notify(renderer.render())
 

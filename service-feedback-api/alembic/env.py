@@ -60,13 +60,14 @@ def run_migrations_online():
 
     """
     # OPG specific - get sqlalchemy url from environment vars
-    postgresUrl = 'postgresql+psycopg2://{}:{}@{}/{}'.format(
-        os.getenv('OPG_LPA_POSTGRES_USERNAME') , 
-        os.getenv('OPG_LPA_POSTGRES_PASSWORD') , 
-        os.getenv('OPG_LPA_POSTGRES_HOSTNAME') , 
-        os.getenv('OPG_LPA_POSTGRES_NAME'))
-      
-    config.set_main_option('sqlalchemy.url',postgresUrl)
+    postgresUrl = "postgresql+psycopg2://{}:{}@{}/{}".format(
+        os.getenv("OPG_LPA_POSTGRES_USERNAME"),
+        os.getenv("OPG_LPA_POSTGRES_PASSWORD"),
+        os.getenv("OPG_LPA_POSTGRES_HOSTNAME"),
+        os.getenv("OPG_LPA_POSTGRES_NAME"),
+    )
+
+    config.set_main_option("sqlalchemy.url", postgresUrl)
     # end of OPG specific code
 
     connectable = engine_from_config(
@@ -76,9 +77,7 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

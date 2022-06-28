@@ -6,17 +6,21 @@ from werkzeug.exceptions import NotFound
 
 from app import app
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/completed-feedback")
 def feedback():
     return render_template("feedback.html")
 
+
 @app.route("/flask-accessibility")
 def accessibility():
     return render_template("accessibility.html")
+
 
 @app.errorhandler(404)
 def not_found(error):

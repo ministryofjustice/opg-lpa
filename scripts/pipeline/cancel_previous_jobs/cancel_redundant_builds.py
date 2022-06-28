@@ -36,21 +36,24 @@ class CancelPreviousWorkflows:
         if response.status_code == 200:
             running_jobs_json = json.loads(response.text)
             for job in running_jobs_json:
-                if job['status'] == "queued" or job['status'] == "running":
-                    if job['workflows']['workflow_id'] != self.current_workflow_id:
-                        running_jobs.append(job['workflows'])
+                if job["status"] == "queued" or job["status"] == "running":
+                    if job["workflows"]["workflow_id"] != self.current_workflow_id:
+                        running_jobs.append(job["workflows"])
                         print(
-                            f"Other Job: \"{job['workflows']['job_name']}\", Status: \"{job['status']}\"")
+                            f"Other Job: \"{job['workflows']['job_name']}\", Status: \"{job['status']}\""
+                        )
             return running_jobs
         else:
-            print(
-                f"API call to circle failed with status code: {response.status_code}")
+            print(f"API call to circle failed with status code: {response.status_code}")
             return running_jobs
 
     def tf_job_running(self, running_jobs):
         if len(running_jobs) > 0:
             for job in running_jobs:
-                if any(term_to_ignore in job['job_name'] for term_to_ignore in self.terms_to_waitfor):
+                if any(
+                    term_to_ignore in job["job_name"]
+                    for term_to_ignore in self.terms_to_waitfor
+                ):
                     print(f"Found terraform job \"{job['job_name']}\"")
                     return True
             print(f"Found non terraform job \"{job['job_name']}\"")
@@ -64,7 +67,7 @@ class CancelPreviousWorkflows:
         running_jobs = self.get_running_jobs()
         for job in running_jobs:
             print(f"Will attempt to cancel workflow: {job['workflow_id']}")
-            workflow_ids.append(str(job['workflow_id']))
+            workflow_ids.append(str(job["workflow_id"]))
 
         unique_workflow_ids = list(set(workflow_ids))
 
@@ -74,7 +77,7 @@ class CancelPreviousWorkflows:
             url = f"https://circleci.com/api/v2/workflow/{workflow_id}/cancel?circle-token={self.circle_builds_token}"
 
             response = requests.post(url, None, headers=headers)
-            if response.text == "{\"message\":\"Accepted.\"}":
+            if response.text == '{"message":"Accepted."}':
                 print(f"Successfully cancelled workflow: {workflow_id}")
             else:
                 print(f"Failed to cancel workflow: {workflow_id}")
@@ -91,7 +94,8 @@ class CancelPreviousWorkflows:
             tf_running_jobs = self.get_running_jobs()
             tf_running = self.tf_job_running(tf_running_jobs)
             print(
-                f"Waiting for terraform job \"{tf_running_jobs[0]['job_name']}\" to finish. Waiting {count * self.delay} seconds")
+                f"Waiting for terraform job \"{tf_running_jobs[0]['job_name']}\" to finish. Waiting {count * self.delay} seconds"
+            )
 
         if tf_job_exists:
             running_jobs = self.get_running_jobs()
@@ -99,15 +103,18 @@ class CancelPreviousWorkflows:
             while len(running_jobs) < 1 and count < 12:
                 count = count + 1
                 print(
-                    f"Terraform job finished. Waiting for next job to start so we can cancel it. Waiting {count * self.delay} seconds")
+                    f"Terraform job finished. Waiting for next job to start so we can cancel it. Waiting {count * self.delay} seconds"
+                )
                 sleep(self.delay)
                 success, running_jobs = self.get_running_jobs()
             if len(running_jobs) < 1:
                 print(
-                    "No further jobs running or left to run (or they are taking too long to start")
+                    "No further jobs running or left to run (or they are taking too long to start"
+                )
             else:
                 print(
-                    "Terraform job finished, new job started. Checking if it's another terraform job")
+                    "Terraform job finished, new job started. Checking if it's another terraform job"
+                )
                 if self.tf_job_running(self.get_running_jobs()):
                     self.wait_for_terraform_jobs()
                 else:
@@ -123,7 +130,8 @@ class CancelPreviousWorkflows:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Cancel all previous workflows with ignore list.")
+        description="Cancel all previous workflows with ignore list."
+    )
 
     parser.add_argument(
         "--circle_project_username",
