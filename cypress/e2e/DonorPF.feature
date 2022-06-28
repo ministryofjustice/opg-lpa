@@ -84,6 +84,7 @@ Feature: Add donor to Property and Finance LPA
             | address-address2| Undercliff Drive |
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
+        And "cannot-sign" is checked
         When I click "form-cancel"
         # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
         Then I cannot find "form-donor"
