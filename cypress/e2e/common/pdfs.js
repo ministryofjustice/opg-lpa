@@ -9,8 +9,6 @@ const requestUntilRefreshUrl = (href, tries) => {
     return cy.request(href).then((response) => {
         tries += 1;
 
-        console.log(response.body);
-
         const content = /meta http-equiv="refresh" content="([^"]+)"/.exec(response.body)[1];
 
         if (content.includes('url')) {
@@ -38,7 +36,10 @@ Then(`I can get pdf from link containing {string}`, (linkText) => {
         requestUntilRefreshUrl(href).then((refreshUrl) => {
             cy.request(refreshUrl).then((response) => {
                 expect(response.headers['content-type']).to.contain('application/pdf');
-                expect(response.body).to.have.length.gt(500);
+
+                cy.checkPdf(response.body).then((result) => {
+                    expect(result).to.equal(true);
+                });
             });
         });
     });

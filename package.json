@@ -11,6 +11,7 @@
     "cypress-failed-log": "^2.9.2",
     "cypress-intellij-reporter": "^0.0.6",
     "cypress-plugin-tab": "^1.0.5",
+    "pdf-lib": "^1.17.1",
     "snyk": "^1.931.0",
     "strip-ansi": "^6.0.0"
   },
