@@ -26,8 +26,6 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
         && docker-php-ext-install bcmath \
         && docker-php-ext-install opcache
 
-# Clean up build dependencies, but only after everything else we need has been installed
-RUN apk del .build-dependencies
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
@@ -44,6 +42,9 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
     echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
 fi
+
+# Clean up build dependencies, but only after everything else we need has been installed
+RUN apk del .build-dependencies
 
 # Core files for the application
 COPY --chown=appuser:appuser service-front/assets /app/assets
@@ -71,6 +72,6 @@ COPY --chown=appuser:appuser service-front/docker/app/php-fpm-logging.conf /usr/
 
 WORKDIR /app
 
-USER appuser
+#USER appuser
 
 CMD php-fpm
