@@ -223,8 +223,9 @@ pr_build: &pr_build
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
-    - infrastructure_and_deployment/run_functional_test:
-        name: run_functional_test
+    - infrastructure_and_deployment/run_cypress_test:
+        name: run_cypress_test_dashboard_lpa_deletion
+        cypress_tags: "@DashboardDeleteLpa"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
@@ -414,19 +415,12 @@ path_to_live: &path_to_live
         filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases, preprod_feedbackdb]
 
-    - infrastructure_and_deployment/run_functional_test:
-        name: preprod_test_functional
-        workspace: preproduction
-        filters: { branches: { only: [main] } }
-        requires: [preprod_seed_environment_databases, preprod_feedbackdb]
-
     - infrastructure_and_deployment/apply_account_terraform:
         name: prod_account_apply_terraform
         workspace: production
         filters: { branches: { only: [main] } }
         requires:
           [
-            preprod_test_functional,
             preprod_test_cypress_stitchedpf,
             preprod_test_cypress_stitchedhw,
             preprod_test_cypress_remaining_tests,
@@ -924,7 +918,7 @@ orbs:
       apply_email_terraform:
         #
         # Apply the email terraform configuration. This:
-        #   - Creates a mailbox used for functional testing;
+        #   - Creates a mailbox used for cypress testing;
         #
         executor: terraform
         parameters:
@@ -1217,68 +1211,6 @@ orbs:
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
-                fi
-              when: always
-
-      run_functional_test:
-        #
-        # Runs user journey tests using casper JS
-        #
-        executor: python
-        parameters:
-          workspace:
-            description: Terraform workspace name
-            type: string
-            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        steps:
-          - checkout
-          - setup_remote_docker:
-              version: 20.10.6
-              docker_layer_caching: false
-          - attach_workspace:
-              at: /tmp
-          - dockerhub_login
-          - run:
-              name: Build casper JS container
-              command: |
-                docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
-                echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
-                echo $DOCKER_REMOTE_IP
-          - run:
-              name: Install python dependencies
-              command: |
-                pip install -r scripts/pipeline/requirements.txt --user
-          - install_terraform
-          - run:
-              name: Get URLs
-              command: |
-                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-                echo $TF_WORKSPACE
-                scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
-          - run:
-              name: Add CircleCI ingress to environment
-              command: |
-                if [ <<parameters.workspace>> != "production" ]; then
-                  cd ~/project/terraform/account_ingress
-                  terraform init
-                  export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-                  echo $TF_WORKSPACE
-                  terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
-                fi
-          - run:
-              name: Run casper tests
-              command: |
-                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$PUBLIC_FACING_DOMAIN" --name casperjs casperjs:latest
-                docker exec casperjs ./start.sh 'tests/'
-          - run:
-              name: Remove CircleCI ingress to environment
-              command: |
-                if [ <<parameters.workspace>> != "production" ]; then
-                  cd ~/project/terraform/account_ingress
-                  terraform init
-                  export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
-                  echo $TF_WORKSPACE
-                  terraform destroy -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
                 fi
               when: always
 
