@@ -49,3 +49,20 @@ Then('I click the "Reuse LPA details" link for the test fixture lpa', () => {
         cy.get(selector).click();
     });
 });
+
+// Simulate a click on a link by performing a background request, and check
+// that the response redirects to the expected URL.
+// linkIdentifier: the data-cy attribute value of the link to simulate a click on
+// redirectUrl: URL we expect to get back as the Location header in the response
+Then('a simulated click on the {string} link causes a 302 redirect to {string}', (linkIdentifier, redirectUrl) => {
+    // Get the href from the link matching the selector
+    cy.get("[data-cy=" + linkIdentifier + "]").invoke("attr", "href").then((href) => {
+        // Request the URL
+        cy.request(href).then((response) => {
+            // Check the response is a 302 to the expected location
+            const redirects = response.redirects;
+            expect(redirects.length).to.equal(1);
+            expect(redirects[0]).to.equal("302: " + redirectUrl);
+        });
+    });
+})
