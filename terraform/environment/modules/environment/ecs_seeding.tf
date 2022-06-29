@@ -55,39 +55,38 @@ data "aws_ecr_repository" "lpa_seeding_app" {
 // seeding ECS Service Task Container level config
 
 locals {
-  seeding_app = <<EOF
-  {
-    "cpu": 1,
-    "essential": true,
-    "image": "${data.aws_ecr_repository.lpa_seeding_app.repository_url}:${var.container_version}",
-    "mountPoints": [],
-    "name": "app",
-    "portMappings": [
+  seeding_app = jsonencode(
+    {
+      "cpu" : 1,
+      "essential" : true,
+      "image" : "${data.aws_ecr_repository.lpa_seeding_app.repository_url}:${var.container_version}",
+      "mountPoints" : [],
+      "name" : "app",
+      "portMappings" : [
         {
-            "containerPort": 9000,
-            "hostPort": 9000,
-            "protocol": "tcp"
+          "containerPort" : 9000,
+          "hostPort" : 9000,
+          "protocol" : "tcp"
         }
-    ],
-    "volumesFrom": [],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "${aws_cloudwatch_log_group.application_logs.name}",
-            "awslogs-region": "${var.region_name}",
-            "awslogs-stream-prefix": "${var.environment_name}.seeding.online-lpa"
+      ],
+      "volumesFrom" : [],
+      "logConfiguration" : {
+        "logDriver" : "awslogs",
+        "options" : {
+          "awslogs-group" : "${aws_cloudwatch_log_group.application_logs.name}",
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment_name}.seeding.online-lpa"
         }
-    },
-    "secrets": [
-      { "name": "OPG_LPA_POSTGRES_USERNAME", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
-      { "name": "OPG_LPA_POSTGRES_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" }
-    ],
-    "environment": [
-      { "name": "OPG_LPA_POSTGRES_NAME", "value": "${local.db.name}"},
-      { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${local.db.endpoint}"},
-      { "name": "OPG_LPA_POSTGRES_PORT", "value": "${local.db.port}"},
-      { "name": "OPG_LPA_STACK_ENVIRONMENT", "value" : "${var.account_name}"}
+      },
+      "secrets" : [
+        { "name" : "OPG_LPA_POSTGRES_USERNAME", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
+        { "name" : "OPG_LPA_POSTGRES_PASSWORD", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" }
+      ],
+      "environment" : [
+        { "name" : "OPG_LPA_POSTGRES_NAME", "value" : "${local.db.name}" },
+        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : "${local.db.endpoint}" },
+        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : "${tostring(local.db.port)}" },
+        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : "${var.account_name}" }
       ]
-    }
-  EOF
+  })
 }
