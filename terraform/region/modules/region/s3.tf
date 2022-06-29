@@ -1,3 +1,7 @@
+data "aws_kms_key" "access_log_key" {
+  key_id = "alias/mrk_access_logs_lb_encryption_key-${terraform.workspace}"
+}
+
 data "aws_elb_service_account" "main" {
   region = local.region_name
 }
@@ -55,7 +59,8 @@ resource "aws_s3_bucket" "access_log" {
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
-        sse_algorithm = "aws:kms"
+        sse_algorithm     = "aws:kms"
+        kms_master_key_id = aws_kms_key.access_log_key.arn
       }
     }
   }
