@@ -1,9 +1,9 @@
 from lpaapi import *
 
 lpaId = makeNewLpa()
-setLpaType(lpaId, 'property-and-financial')
+setLpaType(lpaId, "property-and-financial")
 setDonor(lpaId)
-setPrimaryAttorneyDecisions(lpaId, 'property-and-financial')
+setPrimaryAttorneyDecisions(lpaId, "property-and-financial")
 addPrimaryAttorney(lpaId)
 addSecondPrimaryAttorney(lpaId)
 addReplacementAttorney(lpaId)
