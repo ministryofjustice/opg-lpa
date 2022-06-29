@@ -8,11 +8,6 @@ data "aws_route53_zone" "live_lastingpowerofattorney_gov_uk" {
   name     = "lastingpowerofattorney.service.gov.uk"
 }
 
-data "aws_route53_zone" "lastingpowerofattorney_service_gov_uk" {
-  provider = aws.legacy-lpa
-  name     = "lastingpowerofattorney.service.gov.uk"
-}
-
 //------------------------
 // Front Certificates
 
