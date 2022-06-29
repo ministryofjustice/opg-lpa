@@ -31,9 +31,6 @@ resource "aws_security_group" "pdf_ecs_service" {
   tags        = merge(local.default_opg_tags, local.pdf_component_tag)
 }
 
-//----------------------------------
-// Anything out
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "pdf_ecs_service_egress" {
   type      = "egress"
   from_port = 0
@@ -42,6 +39,7 @@ resource "aws_security_group_rule" "pdf_ecs_service_egress" {
   #tfsec:ignore:AWS007 - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.pdf_ecs_service.id
+  description       = "PDF ECS to Anywhere - All Traffic"
 }
 
 //--------------------------------------
@@ -111,7 +109,7 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
       "s3:DeleteObject",
       "s3:ListObject",
     ]
-
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for PutObject
     resources = [
       "${data.aws_s3_bucket.lpa_pdf_cache.arn}*",
     ]

@@ -174,11 +174,6 @@ dc-unit-tests:
 	@docker-compose run api-app /app/vendor/bin/phpunit
 	@docker-compose run pdf-app /app/vendor/bin/phpunit
 
-.PHONY: functional-local
-functional-local:
-	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
-
 .PHONY: integration-api-local
 integration-api-local:
 	docker build -f ./service-api/docker/app/Dockerfile -t integration-api-tests .;\

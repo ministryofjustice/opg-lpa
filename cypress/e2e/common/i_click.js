@@ -1,0 +1,68 @@
+import { Then } from "cypress-cucumber-preprocessor/steps";
+
+// should('not.be.disabled') is here because it looks like cypress may choke trying to click a button that has
+// been temporarily disabled while the page is loading. This may need ultimately to be done for more or even all steps here
+
+Then(`I click {string}`, (clickable) => {
+    cy.get("[data-cy=" + clickable + "]").should('not.be.disabled').click();
+    cy.OPGCheckA11y();
+})
+
+Then(`I double click {string}`, (clickable) => {
+    cy.get("[data-cy=" + clickable + "]").should('not.be.disabled').dblclick();
+    cy.OPGCheckA11y();
+})
+
+Then(`I click occurrence {int} of {string}`, (number, clickable) => {
+    cy.get("[data-cy=" + clickable + "]").eq(number).click();
+    cy.OPGCheckA11y();
+})
+
+Then(`I click the last occurrence of {string}`, (clickable) => {
+    cy.get("[data-cy=" + clickable + "]").eq(-1).click();
+    cy.OPGCheckA11y();
+})
+
+Then(`I force click {string}`, (clickable) => {
+    cy.get("[data-cy=" + clickable + "]").click({ force: true });
+    cy.OPGCheckA11y();
+})
+
+Then(`I click element marked {string}`, (text) => {
+    cy.contains(text).click();
+    cy.OPGCheckA11y();
+})
+
+// this step exists because newly signed-up user goes straight to type page whereas existing user may get taken to dashboard
+Then(`If I am on dashboard I click to create lpa`, () => {
+    cy.url().then(urlStr => {
+        if (urlStr.includes('dashboard')) {
+            cy.get("[data-cy=createnewlpa]").click();
+            cy.OPGCheckA11y();
+        }
+    });
+})
+
+Then('I click the "Reuse LPA details" link for the test fixture lpa', () => {
+    cy.get('@lpaId').then((lpaId) => {
+        const selector = 'a[href*="/user/dashboard/create/' + lpaId + '"]';
+        cy.get(selector).click();
+    });
+});
+
+// Simulate a click on a link by performing a background request, and check
+// that the response redirects to the expected URL.
+// linkIdentifier: the data-cy attribute value of the link to simulate a click on
+// redirectUrl: URL we expect to get back as the Location header in the response
+Then('a simulated click on the {string} link causes a 302 redirect to {string}', (linkIdentifier, redirectUrl) => {
+    // Get the href from the link matching the selector
+    cy.get("[data-cy=" + linkIdentifier + "]").invoke("attr", "href").then((href) => {
+        // Request the URL
+        cy.request(href).then((response) => {
+            // Check the response is a 302 to the expected location
+            const redirects = response.redirects;
+            expect(redirects.length).to.equal(1);
+            expect(redirects[0]).to.equal("302: " + redirectUrl);
+        });
+    });
+})

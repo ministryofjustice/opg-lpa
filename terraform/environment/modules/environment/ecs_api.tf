@@ -20,7 +20,7 @@ resource "aws_ecs_service" "api" {
   }
 
   service_registries {
-    registry_arn = local.registry_arn_selection
+    registry_arn = aws_service_discovery_service.api_canonical.arn
   }
   tags = merge(local.default_opg_tags, local.api_component_tag)
 }
@@ -65,19 +65,9 @@ resource "aws_service_discovery_service" "api_canonical" {
     failure_threshold = 1
   }
 }
-
-# this switching is needed until we move the new dns convention into production.
 locals {
 
-  registry_arn_selection = (
-    var.account_name == "production" ?
-    aws_service_discovery_service.api.arn :
-    aws_service_discovery_service.api_canonical.arn
-  )
-
   api_service_fqdn = (
-    var.account_name == "production" ?
-    "${aws_service_discovery_service.api.name}.${aws_service_discovery_private_dns_namespace.internal.name}" :
     "${aws_service_discovery_service.api_canonical.name}.${aws_service_discovery_private_dns_namespace.internal_canonical.name}"
   )
 }
@@ -91,9 +81,6 @@ resource "aws_security_group" "api_ecs_service" {
   tags        = merge(local.default_opg_tags, local.api_component_tag)
 }
 
-//----------------------------------
-// 80 in from front ECS service
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -101,11 +88,9 @@ resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.api_ecs_service.id
   source_security_group_id = aws_security_group.front_ecs_service.id
+  description              = "Frontend ECS to API ECS - HTTP"
 }
 
-//----------------------------------
-// 80 in from Admin ECS service
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
   type                     = "ingress"
   from_port                = 80
@@ -113,11 +98,9 @@ resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.api_ecs_service.id
   source_security_group_id = aws_security_group.admin_ecs_service.id
+  description              = "Admin ECS to API ECS - HTTP"
 }
 
-//----------------------------------
-// Anything out
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "api_ecs_service_egress" {
   type      = "egress"
   from_port = 0
@@ -126,6 +109,7 @@ resource "aws_security_group_rule" "api_ecs_service_egress" {
   #tfsec:ignore:AWS007 - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.api_ecs_service.id
+  description       = "API ECS to Anywhere - All Traffic"
 }
 
 //--------------------------------------
@@ -211,7 +195,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
       "s3:DeleteObject",
       "s3:ListObject",
     ]
-
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for PutObject
     resources = [
       "${data.aws_s3_bucket.lpa_pdf_cache.arn}*",
     ]
