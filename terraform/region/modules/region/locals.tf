@@ -7,6 +7,9 @@ locals {
   account_name_short          = local.account.account_name_short
   is_primary_region           = var.account.regions[data.aws_region.current.name].is_primary
   pagerduty_account_prefix    = local.account_name == "production" ? "Production" : "Non-Production"
+  cert_prefix_internal        = local.account_name == "production" ? "" : "*."
+  cert_prefix_public_facing   = local.account_name == "production" ? "www." : "*."
+  cert_prefix_development     = local.account_name == "development" ? "development." : ""
 
   mandatory_moj_tags = {
     business-unit = "OPG"

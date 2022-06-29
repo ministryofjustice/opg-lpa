@@ -98,10 +98,8 @@ class UserFindHandler extends AbstractHandler
             }
 
             if ($numResults === 0) {
+                /** @var array */
                 $formMessages = $form->getMessages();
-                if (!is_array($formMessages)) {
-                    $formMessages = iterator_to_array($formMessages);
-                }
 
                 // Set error message
                 $messages = array_merge($formMessages, [

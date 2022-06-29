@@ -4,13 +4,15 @@ import uuid
 
 from datetime import datetime
 
-DEFAULT_LOAD_TEST_CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'load-test-config.json')
+DEFAULT_LOAD_TEST_CONFIG_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "load-test-config.json"
+)
 
 
 def get_env() -> str:
-    env = os.environ.get('LOAD_TEST_ENV', 'local')
-    if env == '':
-        env = 'local'
+    env = os.environ.get("LOAD_TEST_ENV", "local")
+    if env == "":
+        env = "local"
     return env
 
 
@@ -29,9 +31,11 @@ def load_config(config_file_path=None, env=get_env()) -> dict:
     :return: dict
     """
     if config_file_path is None:
-        config_file_path = os.environ.get('LOAD_TEST_CONFIG_FILE_PATH', DEFAULT_LOAD_TEST_CONFIG_FILE_PATH)
-    if config_file_path == '':
+        config_file_path = os.environ.get(
+            "LOAD_TEST_CONFIG_FILE_PATH", DEFAULT_LOAD_TEST_CONFIG_FILE_PATH
+        )
+    if config_file_path == "":
         config_file_path = DEFAULT_LOAD_TEST_CONFIG_FILE_PATH
 
-    with open(config_file_path, 'r') as config_file:
+    with open(config_file_path, "r") as config_file:
         return json.loads(config_file.read())[env]

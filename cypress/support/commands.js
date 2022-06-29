@@ -25,6 +25,7 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 //
 
+const { PDFDocument } = require("pdf-lib");
 const axeWrapper = require('./axe_wrapper');
 
 Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
@@ -100,4 +101,20 @@ Cypress.Commands.add("OPGCheckA11yWithUrl", (url) => {
         cy.OPGCheckA11y();
         Cypress.env("a11yCheckedPages").add(url);
     }
+});
+
+Cypress.Commands.add("checkPdf", (candidateString) => {
+    let arrBuf = new TextEncoder().encode(candidateString);
+
+    return PDFDocument.load(arrBuf, {ignoreEncryption: true}).then(
+        // resolved
+        (doc) => {
+            return doc.getPages().length > 0;
+        },
+
+        // rejected
+        () => {
+            return false;
+        }
+    );
 });

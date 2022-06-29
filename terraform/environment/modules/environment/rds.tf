@@ -152,7 +152,6 @@ resource "aws_security_group" "rds-api" {
   }
 }
 
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "rds-api" {
   type                     = "ingress"
   from_port                = 5432
@@ -160,5 +159,6 @@ resource "aws_security_group_rule" "rds-api" {
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.rds-client.id
   security_group_id        = aws_security_group.rds-api.id
+  description              = "RDS client to RDS - Postgres"
 }
 

@@ -239,7 +239,6 @@ services:
       - localstack
       - local-config
       - postgres
-      - gateway
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -258,7 +257,7 @@ services:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
 
-      OPG_LPA_PROCESSING_STATUS_ENDPOINT: "http://gateway:5000/lpa-online-tool/lpas/"
+      OPG_LPA_PROCESSING_STATUS_ENDPOINT: ""
 
       # lifetime (in seconds) of authentication tokens
       OPG_LPA_AUTH_TOKEN_TTL: 4500
@@ -443,32 +442,10 @@ services:
       OPG_LPA_POSTGRES_FEEDBACK_PASSWORD: "feedbackpass"
 
   # ---------------------------
-  # Sirius gateway mock
-  gateway:
-    container_name: gateway
-    image: gateway
-    build:
-      context: ./service-gateway-mock
-      dockerfile: ./Dockerfile-gateway
-    depends_on:
-      - mocksirius
-    ports:
-      - 7010:5000
-
-  mocksirius:
-    container_name: mocksirius
-    image: mocksirius
-    build:
-      context: ./service-gateway-mock
-      dockerfile: ./Dockerfile-mocksirius
-    ports:
-      - 7011:5000
-
-  # ---------------------------
   # performance platform
   perfplatworker:
-    container_name: perfplatworker
-    image: perfplatworker
+    container_name: lpa-perfplatworker
+    image: lpa-perfplatworker
     build:
       context: .
       dockerfile: ./service-perfplat/docker/Dockerfile-worker
@@ -500,8 +477,8 @@ services:
           - perfplatworker
 
   perfplatconfig:
-    container_name: perfplatconfig
-    image: perfplatconfig
+    container_name: lpa-perfplatconfig
+    image: lpa-perfplatconfig
     depends_on:
       - perfplatworker
       - local-config

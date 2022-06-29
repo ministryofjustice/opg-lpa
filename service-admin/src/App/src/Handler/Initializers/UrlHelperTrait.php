@@ -21,9 +21,10 @@ trait UrlHelperTrait
     /**
      * @param UrlHelper $helper
      */
-    public function setUrlHelper(UrlHelper $helper)
+    public function setUrlHelper(UrlHelper $template)
     {
-        $this->helper = $helper;
+        $this->helper = $template;
+        return $this;
     }
 
     /**

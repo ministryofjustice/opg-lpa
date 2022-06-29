@@ -13,9 +13,9 @@ class SqsClient:
     """
 
     # Set on all messages to the queue
-    MESSAGE_GROUP_ID = 'perfplat'
+    MESSAGE_GROUP_ID = "perfplat"
 
-    def __init__(self, queue_name: str, client: boto3.session=None) -> None:
+    def __init__(self, queue_name: str, client: boto3.session = None) -> None:
         """
         :param queue_name: str; name of the SQS queue
         :param client: boto3 SQS client; if not set, create one pointing
@@ -51,7 +51,7 @@ class SqsClient:
         :return: None if error occurred while getting URL, otherwise queue's URL
         """
         try:
-            return self.client.get_queue_url(QueueName=self.queue_name)['QueueUrl']
+            return self.client.get_queue_url(QueueName=self.queue_name)["QueueUrl"]
         except botocore.exceptions.ClientError as e:
             self.logger.error(e)
             return None

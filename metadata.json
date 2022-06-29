@@ -6,6 +6,7 @@
         "https://github.com/ministryofjustice/opg-sirius",
         "https://github.com/ministryofjustice/performance-data",
         "https://github.com/ministryofjustice/opg-data",
-        "https://github.com/ministryofjustice/opg-pact-broker"
+        "https://github.com/ministryofjustice/opg-pact-broker",
+        "https://github.com/ministryofjustice/opg-feedback"
     ]
-} 
+}
