@@ -1,7 +1,7 @@
 resource "aws_iam_role" "rds_enhanced_monitoring" {
   name               = "rds-enhanced-monitoring"
   assume_role_policy = data.aws_iam_policy_document.rds_enhanced_monitoring.json
-  tags               = merge(local.default_tags, local.db_component_tag)
+  tags               = local.db_component_tag
 }
 
 resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "rds_enhanced_monitoring" {
 resource "aws_iam_role" "vpc_flow_logs" {
   name               = "vpc_flow_logs"
   assume_role_policy = data.aws_iam_policy_document.vpc_flow_logs_role_assume_role_policy.json
-  tags               = merge(local.default_tags, local.shared_component_tag)
+  tags               = local.shared_component_tag
 }
 
 data "aws_iam_policy_document" "vpc_flow_logs_role_assume_role_policy" {
