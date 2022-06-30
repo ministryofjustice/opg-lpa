@@ -51,7 +51,6 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
 resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${terraform.workspace}-lb-access-logs"
   acl    = "private"
-  tags   = local.default_tags
 
   server_side_encryption_configuration {
     rule {
