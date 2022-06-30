@@ -2,6 +2,7 @@
 
 namespace App\Service\Cache;
 
+use App\Logging\LoggerTrait;
 use Laminas\Cache\Exception\UnsupportedMethodCallException;
 use Laminas\Cache\Storage\Adapter\AdapterOptions;
 use Laminas\Cache\Storage\StorageInterface;
@@ -15,6 +16,8 @@ use Traversable;
  */
 class Cache implements StorageInterface
 {
+    use LoggerTrait;
+
     /**
      * The AWS client
      *
@@ -87,8 +90,8 @@ class Cache implements StorageInterface
         $this->client->putItem([
             'TableName' => $this->tableName,
             'Item' => [
-                'id'      => $key,
-                'value'   => $value,
+                'id' => $key,
+                'value' => $value,
             ]
         ]);
 
@@ -107,7 +110,7 @@ class Cache implements StorageInterface
         $this->client->deleteItem([
             'TableName' => $this->tableName,
             'Key' => [
-                'id'      => $key,
+                'id' => $key,
             ],
         ]);
 
@@ -128,15 +131,18 @@ class Cache implements StorageInterface
                     ],
                 ],
             ]);
-
-            $success = true;
-
-            return $result['Item']['value']['B'];
-        } catch (Exception $ignore) {
+        } catch (Exception $ex) {
+            $this->getLogger()->err("Unable to getItem $key from dynamodb cache");
+            $this->getLogger()->err($ex);
+            return null;
         }
 
-        $success = false;
+        if (isset($result['Item']['value']['B'])) {
+            return $result['Item']['value']['B'];
+        }
 
+        $this->getLogger()->err("getItem for $key didn't return value; assuming no system message");
+        $this->getLogger()->err(print_r($result, true));
         return null;
     }
 
