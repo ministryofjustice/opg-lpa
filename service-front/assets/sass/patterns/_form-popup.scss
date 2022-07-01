@@ -108,10 +108,10 @@
     }
 
     .form-date {
-        margin-bottom: 15px;
+        overflow: visible;
 
-        .form-group { 
-            margin-bottom: 0; 
+        .form-group {
+            margin-bottom: 18px;
         }
 
         .form-hint {
@@ -156,7 +156,7 @@
 
     .form-group-error {
         border-left: 0;
-        
+
         @include media(tablet) {
             position: relative;
             margin-right: 0;
@@ -246,4 +246,3 @@
         }
     }
 }
-
