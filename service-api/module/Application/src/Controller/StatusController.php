@@ -142,7 +142,7 @@ class StatusController extends AbstractRestfulController
      *
      * Returns an array of results, one for each application. Will return {"found": false} for an application if it is
      * not found, does not have a processing status, or does not belong to this user. Otherwise returns
-     * {"found": true, "status": "<processing status>"}
+     * {"found": true, "status": "<processing status>", "deleted": true|false, "rejectedDate": "<date string>"}
      *
      * @param mixed $id Comma-separated list of IDs to retrieve (named $id because AbstractRestfulController
      *     expects that parameter name)
