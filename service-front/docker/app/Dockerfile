@@ -72,6 +72,6 @@ COPY --chown=appuser:appuser service-front/docker/app/php-fpm-logging.conf /usr/
 
 WORKDIR /app
 
-#USER appuser
+USER appuser
 
 CMD php-fpm
