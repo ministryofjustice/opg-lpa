@@ -17,8 +17,10 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet1 as ContinuationSheet1Aggregator;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet2 as ContinuationSheet2Aggregator;
+use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdftkFactory;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
+use ArrayAccess;
 use Exception;
 use mikehaertl\pdftk\Pdf as Pdftk;
 use Laminas\Barcode\Barcode;
@@ -64,10 +66,15 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      * @param Lpa|null $lpa
      * @param array $options
      * @param ?PdftkFactory $pdftkFactory
+     * @param ?Config $config
      * @throws Exception
      */
-    public function __construct(Lpa $lpa = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
-    {
+    public function __construct(
+        Lpa $lpa = null,
+        array $options = [],
+        ?PdftkFactory $pdftkFactory = null,
+        ?Config $config = null
+    ) {
         // Check that the coversheet variables have been set
         if (is_null($this->coversheetFileName)) {
             throw new Exception('PDF coversheet file name must be defined to create an LP1');
@@ -78,7 +85,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             $this->lpaIsComplete = $lpa->isStateCompleted() && $lpa->getCompletedAt() instanceof DateTime;
         }
 
-        parent::__construct($lpa, $options, $pdftkFactory);
+        parent::__construct($lpa, $options, $pdftkFactory, $config);
     }
 
     /**

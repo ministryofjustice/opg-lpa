@@ -127,7 +127,6 @@ class PdfRenderer
      * the constructor. Also note that the config passed to the constructor
      * is in turn passed to each PDF to set its destination path and the password
      * used to protect it (if required).
-
      *
      * @param string $docId Unique ID representing this job/document.
      * @param string $type The type of PDF to generate.

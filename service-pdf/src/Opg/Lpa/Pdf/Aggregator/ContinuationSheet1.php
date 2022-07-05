@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Aggregator;
 
 use Opg\Lpa\Pdf\ContinuationSheet1 as ContinuationSheet1Pdf;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdftkFactory;
 
 /**
@@ -22,6 +23,8 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
      * @param array $primaryAttorneys
      * @param array $replacementAttorneys
      * @param array $peopleToNotify
+     * @param ?PdftkFactory $pdftkFactory
+     * @param ?Config $config
      */
     public function __construct(
         Lpa $lpa = null,
@@ -37,7 +40,7 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
             'peopleToNotify'      => $peopleToNotify,
         ];
 
-        parent::__construct($lpa, null, [], $pdftkFactory);
+        parent::__construct($lpa, null, [], $pdftkFactory, $config);
     }
 
     /**
