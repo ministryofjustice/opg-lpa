@@ -1,0 +1,38 @@
+name: "[Analysis] TFSec PR feedback"
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "**.tf"
+
+permissions:
+  actions: read
+  checks: read
+  contents: none
+  deployments: none
+  issues: none
+  packages: none
+  pull-requests: write
+  repository-projects: none
+  security-events: none
+  statuses: none
+
+jobs:
+  tfsec:
+    name: TFSec Static analysis
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        terraform_path: ['terraform/account', 'terraform/region' ,'terraform/environment']
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: tfsec with pr comments
+        uses: tfsec/tfsec-pr-commenter-action@v1.2.0
+        with:
+          working_directory: ${{ matrix.terraform_path }}
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          soft_fail_commenter: true

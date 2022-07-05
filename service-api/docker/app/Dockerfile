@@ -43,7 +43,6 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 RUN apk del .build-dependencies
 
 # Core files for the application
-COPY --chown=appuser:appuser service-api/bin /app/bin
 COPY --chown=appuser:appuser service-api/db/migrations /app/db/migrations
 COPY --chown=appuser:appuser service-api/config /app/config
 COPY --chown=appuser:appuser service-api/module /app/module
