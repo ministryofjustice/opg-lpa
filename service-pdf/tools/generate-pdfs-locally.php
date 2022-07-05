@@ -8,18 +8,30 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // file has been generated inside it; otherwise, this script
 // can't find the MakeLogger package. To run it outside the docker
 // container, you'll need to regenerate the autoload.php file
-// manually, e.g.
-// composer dump-autoload
+// manually first, e.g. with
+//
+// $ composer dump-autoload
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdfRenderer;
 
 $id = (string)time();
 
-$pdfRenderer = new PdfRenderer([
-    'source_template_path' => __DIR__ . '/../assets/v2/',
-    'template_path_on_ram_disk' => '/tmp/pdf_cache/assets/v2/',
+$config = Config::getInstance([
+    'service' => [
+        'assets' => [
+            'source_template_path' => __DIR__ . '/../assets/v2/',
+            'template_path_on_ram_disk' => __DIR__ . '/../build/pdf-templates',
+            'intermediate_file_path' => __DIR__ . '/../build'
+        ],
+    ],
+    'pdf' => [
+        'password' => 'default-password'
+    ],
 ]);
+
+$pdfRenderer = new PdfRenderer($config);
 
 $filepath = __DIR__ . '/../tests/fixtures/lpa-pf.json';
 
@@ -29,22 +41,28 @@ $fileName = $pathInfo['filename'];
 $data = file_get_contents($filepath);
 $lpa = new Lpa($data);
 
-/*
-* Tests we can generate each PDF, for each expected supported type.
-*/
+$generatedFiles = [];
+
 if ($lpa->canGenerateLP1()) {
     $type = 'LP1';
-    $pdfRenderer->render($type . '-' . $fileName, $type, $data);
+    $filepath = $pdfRenderer->render($type . '-' . $fileName, $type, $data);
+    $generatedFiles[$type] = $filepath;
 }
 
 if ($lpa->canGenerateLP3()) {
     $type = 'LP3';
-    $pdfRenderer->render($type . '-' . $fileName, $type, $data);
+    $filepath = $pdfRenderer->render($type . '-' . $fileName, $type, $data);
+    $generatedFiles[$type] = $filepath;
 }
 
 if ($lpa->canGenerateLPA120()) {
     $type = 'LPA120';
-    $pdfRenderer->render($type . '-' . $fileName, $type, $data);
+    $filepath = $pdfRenderer->render($type . '-' . $fileName, $type, $data);
+    $generatedFiles[$type] = $filepath;
 }
 
-echo PHP_EOL;
+echo "***************************\n";
+echo "GENERATED PDFs:\n";
+foreach ($generatedFiles as $type => $filepath) {
+    echo "    $type: $filepath\n";
+}

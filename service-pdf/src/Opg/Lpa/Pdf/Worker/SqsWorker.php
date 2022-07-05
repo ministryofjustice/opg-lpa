@@ -20,7 +20,7 @@ class SqsWorker
      */
     public function __construct()
     {
-        $this->pdfRenderer = new PdfRenderer(Config::getInstance()['service']['assets']);
+        $this->pdfRenderer = new PdfRenderer(Config::getInstance());
     }
 
     /**

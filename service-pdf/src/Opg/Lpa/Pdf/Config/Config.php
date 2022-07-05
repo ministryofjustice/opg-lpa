@@ -11,17 +11,21 @@ class Config implements Countable, ArrayAccess
 
     private $container = null;
 
-    private function __construct()
+    private function __construct(array $config = null)
     {
-        if ($this->container === null) {
-            $this->container = include('global.php');
+        $allConfig = include('global.php');
+
+        if (!is_null($config)) {
+            $allConfig = self::merge($allConfig, $config);
         }
+
+        $this->container = $allConfig;
     }
 
-    public static function getInstance()
+    public static function getInstance(array $config = null)
     {
         if (self::$instance === null) {
-            self::$instance = new self();
+            self::$instance = new self($config);
         }
 
         return self::$instance;

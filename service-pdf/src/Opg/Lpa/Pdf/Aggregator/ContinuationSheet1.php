@@ -4,6 +4,7 @@ namespace Opg\Lpa\Pdf\Aggregator;
 
 use Opg\Lpa\Pdf\ContinuationSheet1 as ContinuationSheet1Pdf;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdftkFactory;
 
 /**
@@ -22,9 +23,17 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
      * @param array $primaryAttorneys
      * @param array $replacementAttorneys
      * @param array $peopleToNotify
+     * @param ?PdftkFactory $pdftkFactory
+     * @param ?Config $config
      */
-    public function __construct(Lpa $lpa = null, array $primaryAttorneys, array $replacementAttorneys, array $peopleToNotify, ?PdftkFactory $pdftkFactory = null)
-    {
+    public function __construct(
+        Lpa $lpa = null,
+        array $primaryAttorneys,
+        array $replacementAttorneys,
+        array $peopleToNotify,
+        ?PdftkFactory $pdftkFactory = null,
+        ?Config $config = null
+    ) {
         //  Set up all the additional actors for processing
         $this->actorGroups = [
             'primaryAttorney'     => $primaryAttorneys,
@@ -32,11 +41,12 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
             'peopleToNotify'      => $peopleToNotify,
         ];
 
-        parent::__construct($lpa, null, [], $pdftkFactory);
+        parent::__construct($lpa, null, [], $pdftkFactory, $config);
     }
 
     /**
-     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
+     * Create the PDF in preparation for it to be generated -
+     * this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
      */

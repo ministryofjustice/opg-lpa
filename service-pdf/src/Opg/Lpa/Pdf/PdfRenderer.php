@@ -3,12 +3,15 @@
 namespace Opg\Lpa\Pdf;
 
 use MakeLogger\Logging\SimpleLoggerTrait;
+use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Lp1f;
 use Opg\Lpa\Pdf\Lp1h;
 use Opg\Lpa\Pdf\Lpa120;
 use Opg\Lpa\Pdf\Aggregator\Lp3;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\PdftkFactory;
+use ArrayAccess;
 use Exception;
 use UnexpectedValueException;
 use copy;
@@ -24,14 +27,45 @@ class PdfRenderer
     /** @var bool */
     private bool $inited = false;
 
+    /** @var Config */
+    private Config $config;
+
+    /** @var PdftkFactory */
+    private PdftkFactory $pdftkFactory;
+
     /**
      * Constructor
      *
-     * @param array $assetsConfig See init() for description
+     * @param Config $config Must have this structure:
+     *
+     * [
+     *     'service' => [
+     *         'assets' => [
+     *             'source_template_path' => 'source dir for PDF templates',
+     *             'template_path_on_ram_disk' => 'destination dir for PDF templates',
+     *             'intermediate_file_path' => 'destination dir for generated PDFs'
+     *         ],
+     *     ],
+     *     'pdf' => [
+     *         'password' => 'default-password'
+     *     ],
+     * ]
+     *
+     * Note that source_template_path and template_path_on_ram_disk
+     * are used to set up the templates for PDF generation, while the other
+     * variables are used by PDF class generate() methods.
+     *
+     * @param ?PdftkFactory $pdftkFactory
      */
-    public function __construct(array $assetsConfig)
+    public function __construct(Config $config, ?PdftkFactory $pdftkFactory = null)
     {
-        $this->init($assetsConfig);
+        $this->config = $config;
+        $this->init($config['service']['assets']);
+
+        if (is_null($pdftkFactory)) {
+            $pdftkFactory = new PdftkFactory();
+        }
+        $this->pdftkFactory = $pdftkFactory;
     }
 
     /**
@@ -93,11 +127,10 @@ class PdfRenderer
     /**
      * Generate a PDF from an LPA type and data.
      *
-     * Note that the template file for the LPA is set up as part of
-     * the AbstractWorker constructor. If you are using this class directly
-     * to generate PDFs, you will need to copy the required PDF templates
-     * to the correct locations (as specified for the PDF classes you're using)
-     * before you start.
+     * Note that the template files for each LPA are set up as part of
+     * the constructor. Also note that the config passed to the constructor
+     * is in turn passed to each PDF to set its destination path and the password
+     * used to protect it (if required).
      *
      * @param string $docId Unique ID representing this job/document.
      * @param string $type The type of PDF to generate.
@@ -142,13 +175,13 @@ class PdfRenderer
 
             // Generate the required PDF
             if ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_PF) {
-                $pdf = new Lp1f($lpa);
+                $pdf = new Lp1f($lpa, [], $this->pdftkFactory, $this->config);
             } elseif ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_HW) {
-                $pdf = new Lp1h($lpa);
+                $pdf = new Lp1h($lpa, [], $this->pdftkFactory, $this->config);
             } elseif ($type == 'LP3') {
-                $pdf = new Lp3($lpa);
+                $pdf = new Lp3($lpa, null, [], $this->pdftkFactory, $this->config);
             } elseif ($type == 'LPA120') {
-                $pdf = new Lpa120($lpa);
+                $pdf = new Lpa120($lpa, [], $this->pdftkFactory, $this->config);
             } else {
                 throw new UnexpectedValueException('Invalid form type: ' . $type);
             }
