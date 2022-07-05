@@ -87,12 +87,12 @@ Feature: Reusable correspondent from cloned LPA
     # Correspondent: check correspondent from cloned LPA is visible, select them and save, check they are selected
     When I click "change-correspondent"
     Then I can find "form-reuse-details"
-    And I can see "Vartigon Flax (was the correspondent)" as a label in the reuse popup
+    And I can see "Nancy Garrison (was the correspondent)" as a label in the reuse popup
 
-    When I click the option labelled with "Vartigon Flax (was the correspondent)" in the reuse popup
+    When I click the option labelled with "Nancy Garrison (was the correspondent)" in the reuse popup
 
     # For some reason, this popup doesn't follow the same pattern as any of the others:
     # clicking "Continue" saves the selection, rather than showing the details inside an edit popup
     And I click "continue"
     Then I cannot find "form-reuse-details"
-    And I see "Mrs Vartigon Flax" in the page text
+    And I see "Mrs Nancy Garrison" in the page text

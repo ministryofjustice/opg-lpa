@@ -225,8 +225,9 @@ services:
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
 # to speed running, volumes are restricted to source code that may change while container is running
-      - ./service-api/module:/app/module
+      - ./service-api/bin:/app/bin
       - ./service-api/config:/app/config
+      - ./service-api/module:/app/module
       - ./service-api/vendor:/app/vendor
     depends_on:
       - dynamodb

@@ -34,7 +34,7 @@
         "laminas/laminas-db": "^2.13.4",
         "league/csv": "^9.7.3",
         "laminas/laminas-cli": "^1.4",
-        "nategood/commando": "^0.4.0"
+        "symfony/console": "^6.1"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
