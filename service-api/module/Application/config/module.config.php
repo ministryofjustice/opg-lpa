@@ -444,10 +444,11 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController'
         ],
         'factories' => [
-            'Application\Controller\Ping'                   => Application\ControllerFactory\PingControllerFactory::class,
-            'Application\Controller\Stats'                  => Application\ControllerFactory\StatsControllerFactory::class,
-            'Application\Controller\Feedback'               => Application\ControllerFactory\FeedbackControllerFactory::class,
-            Application\Controller\StatusController::class  => Application\ControllerFactory\StatusControllerFactory::class
+            'Application\Controller\Ping' => Application\ControllerFactory\PingControllerFactory::class,
+            'Application\Controller\Stats' => Application\ControllerFactory\StatsControllerFactory::class,
+            'Application\Controller\Feedback' => Application\ControllerFactory\FeedbackControllerFactory::class,
+            Application\Controller\StatusController::class =>
+                Application\ControllerFactory\StatusControllerFactory::class
         ],
         'abstract_factories' => [
             'Application\ControllerFactory\AuthControllerAbstractFactory',
@@ -466,6 +467,7 @@ return [
         'factories' => [
             'Application\Command\GenerateStatsCommand' => 'Application\Command\GenerateStatsCommand',
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
+            'Application\Command\LockCommand' => 'Application\Command\LockCommand',
         ],
     ], // service_manager
 
@@ -504,6 +506,7 @@ return [
         'commands' => [
             'service-api:generate-stats' => Application\Command\GenerateStatsCommand::class,
             'service-api:account-cleanup' => Application\Command\AccountCleanupCommand::class,
+            'service-api:lock' => Application\Command\LockCommand::class,
         ],
     ],
 

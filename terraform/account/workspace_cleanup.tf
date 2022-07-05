@@ -15,7 +15,7 @@ resource "aws_dynamodb_table" "workspace_cleanup_table" {
     enabled        = true
   }
 
-  tags = merge(local.default_tags, local.shared_component_tag)
+  tags = local.shared_component_tag
 
   lifecycle {
     prevent_destroy = true
