@@ -224,6 +224,16 @@ data "aws_iam_policy_document" "api_permissions_role" {
       data.aws_kms_key.lpa_pdf_cache.arn,
     ]
   }
+  statement {
+    sid    = "lpaQueueDecrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+    ]
+    resources = [
+      data.aws_kms_key.lpa_pdf_sqs.arn,
+    ]
+  }
 }
 
 data "aws_ecr_repository" "lpa_api_web" {
