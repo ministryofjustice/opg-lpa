@@ -31,17 +31,20 @@ class SqsWorker
      */
     private function run($docId, $type, $lpaData)
     {
-        $pdfFilePath = $this->pdfRenderer->render($docId, $type, $lpaData);
+        $pdf = $this->pdfRenderer->render($docId, $type, $lpaData);
+        $pdfFilePath = $pdf['filepath'];
 
         if (is_null($pdfFilePath)) {
             $this->getLogger()->err('null path returned for generated PDF');
             return null;
         }
 
-        $response = new Response\S3Response($docId);
-        $response->save($pdfFilePath);
-
-        unlink($pdfFilePath);
+        try {
+            $response = new Response\S3Response($docId);
+            $response->save($pdf['content']);
+        } finally {
+            unlink($pdfFilePath);
+        }
 
         return null;
     }

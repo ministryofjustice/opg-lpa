@@ -37,15 +37,11 @@ class S3Response
     /**
      * Store the file on the passed path for retrieval by the API service.
      *
-     * @param string $filepath
+     * @param string $filecontents
      * @throws InvalidArgumentException|S3Exception
      */
-    public function save(string $filepath)
+    public function save(string $fileContents)
     {
-        $this->getLogger()->info('Response received: ' . $filepath);
-
-        $fileContents = file_get_contents($filepath);
-
         // Create the S3 client
         $workerConfig = $this->config['worker']['s3Response'];
         $workerSettingsConfig = $workerConfig['settings'];

@@ -45,24 +45,30 @@ $generatedFiles = [];
 
 if ($lpa->canGenerateLP1()) {
     $type = 'LP1';
-    $filepath = $pdfRenderer->render($type . '-' . $fileName, $type, $data);
-    $generatedFiles[$type] = $filepath;
+    $pdf = $pdfRenderer->render($type . '-' . $fileName, $type, $data);
+    $generatedFiles[$type] = $pdf;
 }
 
 if ($lpa->canGenerateLP3()) {
     $type = 'LP3';
-    $filepath = $pdfRenderer->render($type . '-' . $fileName, $type, $data);
-    $generatedFiles[$type] = $filepath;
+    $pdf = $pdfRenderer->render($type . '-' . $fileName, $type, $data);
+    $generatedFiles[$type] = $pdf;
 }
 
 if ($lpa->canGenerateLPA120()) {
     $type = 'LPA120';
-    $filepath = $pdfRenderer->render($type . '-' . $fileName, $type, $data);
-    $generatedFiles[$type] = $filepath;
+    $pdf = $pdfRenderer->render($type . '-' . $fileName, $type, $data);
+    $generatedFiles[$type] = $pdf;
 }
 
 echo "***************************\n";
 echo "GENERATED PDFs:\n";
-foreach ($generatedFiles as $type => $filepath) {
+foreach ($generatedFiles as $type => $pdf) {
+    $filepath = $pdf['filepath'];
+
+    $file = fopen($filepath, "w");
+    fwrite($file, $pdf['content']);
+    fclose($file);
+
     echo "    $type: $filepath\n";
 }

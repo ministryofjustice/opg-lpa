@@ -187,6 +187,7 @@ class PdfRenderer
             }
 
             $pdfFilePath = $pdf->generate(true);
+            $pdfContent = file_get_contents($pdfFilePath);
 
             // Define the data that will be used in the logging messages
             $loggingParams = array_merge($loggingParams, [
@@ -203,6 +204,7 @@ class PdfRenderer
             );
         } catch (Exception $e) {
             $pdfFilePath = null;
+            $pdfContent = null;
             $isError = true;
             $message = 'PDF generation failed with exception: ' . $e->getMessage();
         }
@@ -216,6 +218,9 @@ class PdfRenderer
             $this->getLogger()->info($message, $loggingParams);
         }
 
-        return $pdfFilePath;
+        return [
+            'filepath' => $pdfFilePath,
+            'content' => $pdfContent,
+        ];
     }
 }
