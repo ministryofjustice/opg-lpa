@@ -229,6 +229,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
     effect = "Allow"
     actions = [
       "kms:Decrypt",
+      "kms:GenerateDataKey",
     ]
     resources = [
       data.aws_kms_key.lpa_pdf_sqs.arn,
