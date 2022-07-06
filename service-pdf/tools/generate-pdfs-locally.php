@@ -18,18 +18,7 @@ use Opg\Lpa\Pdf\PdfRenderer;
 
 $id = (string)time();
 
-$config = Config::getInstance([
-    'service' => [
-        'assets' => [
-            'source_template_path' => __DIR__ . '/../assets/v2/',
-            'template_path_on_ram_disk' => __DIR__ . '/../build/pdf-templates',
-            'intermediate_file_path' => __DIR__ . '/../build'
-        ],
-    ],
-    'pdf' => [
-        'password' => 'default-password'
-    ],
-]);
+$config = Config::getInstance();
 
 $pdfRenderer = new PdfRenderer($config);
 
@@ -64,7 +53,7 @@ if ($lpa->canGenerateLPA120()) {
 echo "***************************\n";
 echo "GENERATED PDFs:\n";
 foreach ($generatedFiles as $type => $pdf) {
-    $filepath = $pdf['filepath'];
+    $filepath = __DIR__ . "/../build/$type.pdf";
 
     $file = fopen($filepath, "w");
     fwrite($file, $pdf['content']);
