@@ -11,7 +11,6 @@ use Opg\Lpa\Pdf\Lp1h;
 use Opg\Lpa\Pdf\Lpa120;
 use Opg\Lpa\Pdf\Aggregator\Lp3;
 use Opg\Lpa\Pdf\PdftkFactory;
-use ArrayAccess;
 use Exception;
 use UnexpectedValueException;
 use copy;
@@ -45,10 +44,7 @@ class PdfRenderer
      *             'template_path_on_ram_disk' => 'destination dir for PDF templates',
      *             'intermediate_file_path' => 'destination dir for generated PDFs'
      *         ],
-     *     ],
-     *     'pdf' => [
-     *         'password' => 'default-password'
-     *     ],
+     *     ]
      * ]
      *
      * Note that source_template_path and template_path_on_ram_disk
@@ -175,13 +171,13 @@ class PdfRenderer
 
             // Generate the required PDF
             if ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_PF) {
-                $pdf = new Lp1f($lpa, [], $this->pdftkFactory, $this->config);
+                $pdf = new Lp1f($lpa, [], $this->pdftkFactory);
             } elseif ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_HW) {
-                $pdf = new Lp1h($lpa, [], $this->pdftkFactory, $this->config);
+                $pdf = new Lp1h($lpa, [], $this->pdftkFactory);
             } elseif ($type == 'LP3') {
-                $pdf = new Lp3($lpa, null, [], $this->pdftkFactory, $this->config);
+                $pdf = new Lp3($lpa, null, [], $this->pdftkFactory);
             } elseif ($type == 'LPA120') {
-                $pdf = new Lpa120($lpa, [], $this->pdftkFactory, $this->config);
+                $pdf = new Lpa120($lpa, [], $this->pdftkFactory);
             } else {
                 throw new UnexpectedValueException('Invalid form type: ' . $type);
             }
