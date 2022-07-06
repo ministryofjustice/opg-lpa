@@ -59,7 +59,6 @@ resource "aws_cloudwatch_event_rule" "tasks_stopped" {
     }
   })
   tags = merge(
-    local.default_tags,
     local.shared_component_tag,
     {
       "Name" = "online-lpa"

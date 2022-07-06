@@ -27,7 +27,7 @@
 
         // element references
         var summary = $(details.find('summary'));
-        var content = $(details.find('div'));
+        var content = $(details.children('div'));
         var content_id = content.attr('id');
         var focusables = $(details.find('a,:input'));
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -47,7 +48,7 @@ return [
             'UserService'                   => 'Application\Model\Service\User\Details',
         ],
         'factories' => [
-            'MakeLogger\Logging\ErrorEventListener'  => 'MakeLogger\Logging\ErrorEventListener',
+            'MakeLogger\Logging\ErrorEventListener' => 'MakeLogger\Logging\ErrorEventListener',
         ],
     ],
 
@@ -104,7 +105,8 @@ return [
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
             'formCheckbox'          => 'Application\Form\View\Helper\FormMultiCheckbox',
             'finalCheckAccessible'  => 'Application\View\Helper\FinalCheckAccessible',
-            // below helper has been raised with laminas-form for an upstream change https://github.com/laminas/laminas-form/issues/78
+            // below helper has been raised with laminas-form for an upstream change
+            // https://github.com/laminas/laminas-form/issues/78
             'formtext'              => 'Application\Form\View\Helper\FormText',
         ],
         'factories' => [

@@ -1,34 +1,38 @@
 import { Then } from "cypress-cucumber-preprocessor/steps";
 
-var dashboard = Cypress.config().baseUrl + '/user/dashboard';
-var lpaType = Cypress.config().baseUrl + '/lpa/type';
 var lpaid;
 
 Then(`I am taken to {string}`, (url) => {
-    cy.url().should('eq',Cypress.config().baseUrl + url);
-})
+    cy.url().should('eq', Cypress.config().baseUrl + url);
+    cy.OPGCheckA11y();
+});
 
 Then(`I am taken to the login page`, () => {
-    cy.url().should('eq',Cypress.config().baseUrl + '/login');
-})
+    cy.url().should('eq', Cypress.config().baseUrl + '/login');
+    cy.OPGCheckA11y();
+});
 
 Then(`I am taken to the dashboard page`, () => {
-    cy.url().should('eq',dashboard);
-})
+    cy.url().should('eq', Cypress.config().baseUrl + '/user/dashboard');
+    cy.OPGCheckA11y();
+});
 
 Then(`I am taken to the your details page for a new user`, () => {
-    cy.url().should('eq',Cypress.config().baseUrl + '/user/about-you/new');
-})
+    cy.url().should('eq', Cypress.config().baseUrl + '/user/about-you/new');
+    cy.OPGCheckA11y();
+});
 
 Then(`I am taken to the lpa type page`, () => {
-    cy.url().should('eq',lpaType);
+    cy.url().should('eq', Cypress.config().baseUrl + '/lpa/type');
+    cy.OPGCheckA11y();
     checkAccordionHeaderContains("What type of LPA do you want to make?");
-})
+});
 
 Then(`I am taken to the type page for cloned lpa`, () => {
-    cy.url().should('contain','type');
+    cy.url().should('contain', 'type');
+    cy.OPGCheckA11y();
     checkAccordionHeaderContains("What type of LPA do you want to make?");
-})
+});
 
 Then(`I am taken to the when lpa starts page`, () => {
     checkOnPageWithPath('when-lpa-starts');
@@ -122,35 +126,40 @@ Then(`I am taken to the complete page`, () => {
 
 Then(`I am taken to the certificate provider page for the test fixture lpa`, () => {
     checkOnPageWithPath('certificate-provider');
-})
+});
 
 Then(`I am taken to the donor page`, () => {
-    // We arrive at the donor page when we've just created an lpa through the web, so we store the lpaId for future use at this point
+    // We arrive at the donor page when we've just created an lpa through the web,
+    // so we store the lpaId for future use at this point
     cy.url().should('contain','donor').then((donorPageUrl) => {
         var lpaId = donorPageUrl.match(/\/(\d+)\//)[1];
         cy.wrap(lpaId).as('lpaId');
     });
     checkAccordionHeaderContains('Who is the donor for this LPA?');
-})
+    cy.OPGCheckA11y();
+});
 
 Then(`I am taken to the completed feedback page`, () => {
-    cy.url().should('contain','completed-feedback');
+    cy.url().should('contain', 'completed-feedback');
     cy.contains('Send us feedback');
+    cy.OPGCheckA11y();
 });
 
 Then(`I am taken to the post logout url`, () => {
-    cy.log('I should be on ' + Cypress.config().postLogoutUrl );
-    cy.url().should('eq',Cypress.config().postLogoutUrl );
-})
+    cy.log('I should be on ' + Cypress.config().postLogoutUrl);
+    cy.url().should('eq', Cypress.config().postLogoutUrl);
+    cy.OPGCheckA11y();
+});
 
 function checkOnPageWithPath(urlPart) {
-    comparePageToPath(urlPart,'eq');
+    comparePageToPath(urlPart, 'eq');
+    cy.OPGCheckA11y();
 }
 
 // this second function is almost the same as checkOnPageWithPath, but handles non-exact matches
 // e:g where there's a query string
 function checkOnPageContainingPath(urlPart) {
-    comparePageToPath(urlPart,'contains');
+    comparePageToPath(urlPart, 'contains');
 }
 
 function comparePageToPath(urlPart, comparator) {

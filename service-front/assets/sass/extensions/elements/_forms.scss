@@ -17,7 +17,7 @@
 
 .form-date {
     margin-bottom: 30px;
-    overflow: hidden;
+    overflow: visible;
 
     // Hide a new placement of error messages only for within popup
     .error-group-popup {
@@ -60,4 +60,3 @@
         }
     }
 }
-
