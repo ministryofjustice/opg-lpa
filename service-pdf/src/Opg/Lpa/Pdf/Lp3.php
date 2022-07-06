@@ -8,7 +8,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdftkFactory;
 
 /**
@@ -38,17 +37,15 @@ class Lp3 extends AbstractIndividualPdf
      * @param Lpa|null $lpa
      * @param NotifiedPerson|null $personToNotify
      * @param ?PdftkFactory $pdftkFactory
-     * @param ?Config $config
      */
     public function __construct(
         Lpa $lpa = null,
         NotifiedPerson $personToNotify = null,
-        ?PdftkFactory $pdftkFactory = null,
-        ?Config $config = null
+        ?PdftkFactory $pdftkFactory = null
     ) {
         $this->personToNotify = $personToNotify;
 
-        parent::__construct($lpa, [], $pdftkFactory, $config);
+        parent::__construct($lpa, [], $pdftkFactory);
     }
 
     /**
