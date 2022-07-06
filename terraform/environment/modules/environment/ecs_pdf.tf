@@ -139,6 +139,17 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
       data.aws_kms_key.lpa_pdf_cache.arn,
     ]
   }
+  statement {
+    sid    = "lpaQueueDecrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    resources = [
+      data.aws_kms_key.lpa_pdf_sqs.arn,
+    ]
+  }
 }
 
 data "aws_ecr_repository" "lpa_pdf_app" {
