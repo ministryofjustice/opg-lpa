@@ -1,11 +1,10 @@
 #tfsec:ignore:AWS082 this is currently std practice. will look to change later if needed
 resource "aws_default_vpc" "default" {
   tags = merge(
-    local.default_tags,
     local.shared_component_tag,
-    tomap({
+    {
       "Name" = "default"
-    })
+    },
   )
 }
 
@@ -14,11 +13,10 @@ resource "aws_eip" "nat" {
   count = 3
 
   tags = merge(
-    local.default_tags,
     local.shared_component_tag,
-    tomap({
+    {
       "Name" = "nat"
-    })
+    },
   )
 }
 
@@ -41,11 +39,10 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = element(aws_default_subnet.public.*.id, count.index)
 
   tags = merge(
-    local.default_tags,
     local.shared_component_tag,
-    tomap({
+    {
       "Name" = "nat"
-    })
+    },
   )
 }
 
@@ -53,11 +50,10 @@ resource "aws_default_route_table" "default" {
   default_route_table_id = aws_default_vpc.default.default_route_table_id
 
   tags = merge(
-    local.default_tags,
     local.shared_component_tag,
-    tomap({
+    {
       "Name" = "default"
-    })
+    },
   )
 }
 
@@ -66,11 +62,10 @@ resource "aws_route_table" "private" {
   vpc_id = aws_default_vpc.default.id
 
   tags = merge(
-    local.default_tags,
     local.shared_component_tag,
-    tomap({
+    {
       "Name" = "private"
-    })
+    },
   )
 }
 

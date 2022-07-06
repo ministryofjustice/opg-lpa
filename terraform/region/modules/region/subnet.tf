@@ -14,11 +14,10 @@ resource "aws_default_subnet" "public" {
   availability_zone       = element(data.aws_availability_zones.default.names, count.index)
   map_public_ip_on_launch = false
   tags = merge(
-    local.default_tags,
     local.shared_component_tag,
-    tomap({
+    {
       "Name" = "public"
-    })
+    },
   )
 }
 
@@ -30,11 +29,10 @@ resource "aws_subnet" "private" {
   availability_zone = element(data.aws_availability_zones.default.names, count.index)
 
   tags = merge(
-    local.default_tags,
     local.shared_component_tag,
-    tomap({
+    {
       "Name" = "private"
-    })
+    },
   )
 }
 
