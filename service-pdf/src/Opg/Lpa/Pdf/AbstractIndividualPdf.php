@@ -3,10 +3,8 @@
 namespace Opg\Lpa\Pdf;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdftkFactory;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
-use ArrayAccess;
 use Exception;
 use setasign\Fpdi\Tcpdf\Fpdi;
 
@@ -59,24 +57,14 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * @param Lpa|null $lpa
      * @param array $options
      * @param ?PdftkFactory $pdftkFactory
-     * @param ?Config $config
      * @throws Exception
      */
-    public function __construct(
-        Lpa $lpa = null,
-        array $options = [],
-        ?PdftkFactory $pdftkFactory = null,
-        ?Config $config = null
-    ) {
+    public function __construct(Lpa $lpa = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
+    {
         //  Ensure that a template file was defined
         if (is_null($this->templateFileName)) {
             throw new Exception('PDF template file name must be defined to create ' . get_class($this));
         }
-
-        // required keys in config:
-        // ['footer']
-        // ['service']['disable_strike_through_lines']
-        // ['service']['disable_blanks']
 
         //  If an LPA was provided confirm that the LPA provided can be used to generate this type of PDF
         if ($lpa instanceof Lpa) {
@@ -90,7 +78,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
             }
         }
 
-        parent::__construct($lpa, $this->templateFileName, $options, $pdftkFactory, $config);
+        parent::__construct($lpa, $this->templateFileName, $options, $pdftkFactory);
     }
 
     /**

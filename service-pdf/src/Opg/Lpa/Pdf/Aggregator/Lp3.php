@@ -12,8 +12,8 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class Lp3 extends AbstractAggregator
 {
     /**
-     * Create the PDF in preparation for it to be generated -
-     * this function alone will not save a copy to the file system
+     * Create the PDF in preparation for it to be generated
+     * - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
      */
@@ -21,7 +21,7 @@ class Lp3 extends AbstractAggregator
     {
         //  Loop through the people to notify and set up the individual PDFs
         foreach ($lpa->document->peopleToNotify as $personToNotify) {
-            $this->addPdf(new Lp3Pdf($lpa, $personToNotify, $this->pdftkFactory, $this->config));
+            $this->addPdf(new Lp3Pdf($lpa, $personToNotify, $this->pdftkFactory));
         }
     }
 }
