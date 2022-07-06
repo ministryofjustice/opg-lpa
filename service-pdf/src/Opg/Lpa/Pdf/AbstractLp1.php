@@ -924,6 +924,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         // 'F': send output to a file
         $pdf->Output($barcodePdfFile, 'F');
 
+        $this->getLogger()->debug('BARCODE FROM PDF');
+
         return $barcodePdfFile;
     }
 
@@ -947,7 +949,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 $barcodeFile = $this->writeBarcodeToImageFile();
 
                 // Write the barcode to a file as a PDF
-                // $barcodeFile = $this->writeBarcodeToPDFFile();
+                //$barcodeFile = $this->writeBarcodeToPDFFile();
 
                 // Stamp the required page with the new barcode using the unshifted page number
                 $this->stampPageWith($barcodeFile, 19, false);
