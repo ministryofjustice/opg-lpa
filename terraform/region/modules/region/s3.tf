@@ -62,7 +62,7 @@ resource "aws_s3_bucket" "access_log" {
 
   # this is because when using DR, any attempt to remove a bucket fails if it has data in it
   # if this is flagged as existing during creation, perform an import into state and rerun the apply.
-  lifecycle_rule {
+  lifecycle {
     prevent_destroy = true
   }
 }
