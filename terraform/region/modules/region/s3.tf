@@ -54,7 +54,6 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
 resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${local.account_name}-${local.region_name}-lb-access-logs"
   acl    = "private"
-  tags   = local.default_tags
 
   server_side_encryption_configuration {
     rule {
@@ -102,7 +101,6 @@ resource "aws_s3_bucket" "lpa_pdf_cache" {
     }
   }
 
-  tags = local.default_tags
 }
 
 resource "aws_s3_bucket_policy" "lpa_pdf_cache" {
