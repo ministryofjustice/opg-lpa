@@ -32,7 +32,7 @@ resource "aws_db_instance" "api" {
   skip_final_snapshot                 = var.account.skip_final_snapshot
   engine                              = "postgres"
   engine_version                      = var.account.psql_engine_version
-  instance_class                      = "db.m3.medium"
+  instance_class                      = local.available_rds_instance_class
   port                                = "5432"
   kms_key_id                          = local.is_primary_region ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
   username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
@@ -78,7 +78,7 @@ module "aws_rds_api_alarms" {
   cpu_utilization_too_high_threshold        = "95"
   anomaly_band_width                        = "10"
   evaluation_period                         = "10"
-  db_instance_class                         = "db.m3.medium"
+  db_instance_class                         = local.available_rds_instance_class
   prefix                                    = "${var.environment_name}-"
   tags                                      = merge(local.default_opg_tags, local.db_component_tag)
 }
@@ -99,7 +99,7 @@ module "api_aurora" {
   master_username               = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   master_password               = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
   instance_count                = var.account.aurora_instance_count
-  instance_class                = "db.t3.medium"
+  instance_class                = "db.t5.medium"
   kms_key_id                    = data.aws_kms_key.rds.arn
   replication_source_identifier = var.account.always_on ? aws_db_instance.api[0].arn : ""
   skip_final_snapshot           = !var.account.deletion_protection
@@ -161,4 +161,3 @@ resource "aws_security_group_rule" "rds-api" {
   security_group_id        = aws_security_group.rds-api.id
   description              = "RDS client to RDS - Postgres"
 }
-
