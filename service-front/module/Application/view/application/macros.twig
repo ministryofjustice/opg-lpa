@@ -106,8 +106,7 @@
 
 {% macro continuationNotes(continuationNoteKeys) %}
 
-    {# Ticket to be written up for displaying text below if the LPA 'HAS_ATTORNEY_DECISIONS' #}
-    {% if continuationNoteKeys|length > 0 and (continuationNoteKeys != ['HAS_ATTORNEY_DECISIONS']) %}
+    {% if continuationNoteKeys|length > 0 %}
         <h3 class="heading-medium">Continuation sheets</h3>
 
         {% for cnote in continuationNoteKeys %}
@@ -130,11 +129,15 @@
                     As the donor cannot sign the LPA, a trusted person will need to sign 'continuation sheet 3' on the donor's behalf. The continuation sheet is included at the end of the LPA form.
                 {% elseif cnote == 'HAS_TRUST_CORP' %}
                     As the donor appointed a Trust Corporation as an attorney, an authorised person from the corporation will need to sign 'continuation sheet 4'. The continuation sheet is included at the end of the LPA form.
-                {% elseif cnote == 'LONG_INSTRUCTIONS_OR_PREFERENCES' %}
-                    An LPA form only has a small amount of space for the donor's preferences and instructions. Preferences and instructions that would not fit on the form are included at the end of the LPA on 'continuation sheet 2'.
                 {% endif %}
             </p>
         {% endfor %}
+
+        {% if 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys or 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys %}
+            <p data-cy="continuation-sheet-notes">
+                As there are extra instructions for the attorneys on the LPA, the donor will need to sign 'continuation sheet 2'. The continuation sheet is included at the end of the LPA form.
+            </p>
+        {% endif %}
     {% endif %}
 
 {% endmacro %}
