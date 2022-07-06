@@ -61,7 +61,7 @@ resource "aws_ecs_task_definition" "pdf" {
 // Permissions
 
 resource "aws_iam_role" "pdf_task_role" {
-  name               = "${var.environment_name}-pdf-task-role"
+  name               = "${var-region-name}-${var.environment_name}-pdf-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = merge(local.default_opg_tags, local.pdf_component_tag)
 }

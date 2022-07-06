@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "cloudwatch_events_assume_policy" {
 }
 
 resource "aws_iam_role" "cloudwatch_events_ecs_role" {
-  name               = "${var.environment_name}-cloudwatch_events_ecs_cron"
+  name               = "${var.region_name}-${var.environment_name}-cloudwatch_events_ecs_cron"
   assume_role_policy = data.aws_iam_policy_document.cloudwatch_events_assume_policy.json
   tags               = merge(local.default_opg_tags, local.api_component_tag)
 }

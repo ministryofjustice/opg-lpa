@@ -132,7 +132,7 @@ resource "aws_ecs_task_definition" "api" {
 // Permissions
 
 resource "aws_iam_role" "api_task_role" {
-  name               = "${var.environment_name}-api-task-role"
+  name               = "${var.region_name}-${var.environment_name}-api-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = merge(local.default_opg_tags, local.api_component_tag)
 }

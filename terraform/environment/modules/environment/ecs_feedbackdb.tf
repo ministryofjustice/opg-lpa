@@ -38,7 +38,7 @@ resource "aws_ecs_task_definition" "feedbackdb" {
 // Permissions
 
 resource "aws_iam_role" "feedbackdb_task_role" {
-  name               = "${var.environment_name}-feedbackdb-task-role"
+  name               = "${var.region_name}-${var.environment_name}-feedbackdb-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = merge(local.default_opg_tags, local.feedbackdb_component_tag)
 }

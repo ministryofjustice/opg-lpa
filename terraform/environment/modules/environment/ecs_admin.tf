@@ -76,7 +76,7 @@ resource "aws_ecs_task_definition" "admin" {
 // Permissions
 
 resource "aws_iam_role" "admin_task_role" {
-  name               = "${var.environment_name}-admin-task-role"
+  name               = "${var.region_name}-${var.environment_name}-admin-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = merge(local.default_opg_tags, local.admin_component_tag)
 }

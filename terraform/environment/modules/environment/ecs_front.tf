@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "front" {
 // Permissions
 
 resource "aws_iam_role" "front_task_role" {
-  name               = "${var.environment_name}-front-task-role"
+  name               = "${var.region_name}-${var.environment_name}-front-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = merge(local.default_opg_tags, local.front_component_tag)
 

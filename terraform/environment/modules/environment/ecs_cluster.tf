@@ -9,7 +9,7 @@ resource "aws_ecs_cluster" "online-lpa" {
 }
 
 resource "aws_iam_role" "execution_role" {
-  name               = "${var.environment_name}-execution-role-ecs-cluster"
+  name               = "${var.region_name}-${var.environment_name}-execution-role-ecs-cluster"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = merge(local.default_opg_tags, local.shared_component_tag)
 }

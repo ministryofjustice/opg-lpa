@@ -41,7 +41,7 @@ resource "aws_ecs_task_definition" "seeding" {
 
 resource "aws_iam_role" "seeding_task_role" {
   count              = var.environment_name == "production" ? 0 : 1
-  name               = "${var.environment_name}-seeding-task-role"
+  name               = "${var.region_name}-${var.environment_name}-seeding-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = merge(local.default_opg_tags, local.seeding_component_tag)
 }
