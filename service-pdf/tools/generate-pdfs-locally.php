@@ -1,5 +1,9 @@
 <?php
 
+// Get path to JSON LPA fixture file to load from command line;
+// files in tests/fixtures can be used
+$filepath = $argv[1];
+
 date_default_timezone_set('UTC');
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -21,8 +25,6 @@ $id = (string)time();
 $config = Config::getInstance();
 
 $pdfRenderer = new PdfRenderer($config);
-
-$filepath = __DIR__ . '/../tests/fixtures/lpa-pf.json';
 
 $pathInfo = pathinfo($filepath);
 $fileName = $pathInfo['filename'];
@@ -53,7 +55,8 @@ if ($lpa->canGenerateLPA120()) {
 echo "***************************\n";
 echo "GENERATED PDFs:\n";
 foreach ($generatedFiles as $type => $pdf) {
-    $filepath = __DIR__ . "/../build/$type.pdf";
+    $lpaId = $pdf['lpaId'];
+    $filepath = __DIR__ . "/../build/$lpaId-$type.pdf";
 
     $file = fopen($filepath, "w");
     fwrite($file, $pdf['content']);

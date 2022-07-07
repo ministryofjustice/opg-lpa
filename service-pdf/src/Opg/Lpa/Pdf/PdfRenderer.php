@@ -131,7 +131,13 @@ class PdfRenderer
      * @param string $docId Unique ID representing this job/document.
      * @param string $type The type of PDF to generate.
      * @param string $lpaData JSON document representing the LPA document.
-     * @return string Path to the generated PDF file, or null on error
+     * @return array with format
+     * [
+     *     'lpaId' => <ID of the LPA>,
+     *     'docId' => <document ID passed into this function>,
+     *     'filepath' => <path to PDF file>,
+     *     'content' => <content of PDF>,
+     * ]
      * @throws Exception
      */
     public function render($docId, $type, $lpaData)
@@ -215,6 +221,8 @@ class PdfRenderer
         }
 
         return [
+            'lpaId' => $lpaId,
+            'docId' => $docId,
             'filepath' => $pdfFilePath,
             'content' => $pdfContent,
         ];
