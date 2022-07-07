@@ -880,12 +880,19 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             [
                 'text' => str_replace(' ', '', $this->formattedLpaRef),
                 'drawText' => false,
-                'factor' => 2,
-                'barHeight' => 25,
+
+                // Default pixels per inch of image is 96, vs. default
+                // points per inch of PDF of 72
+                'factor' => (96 / 72),
+                'barHeight' => 25
             ],
             [
-                'topOffset' => 789,
-                'leftOffset' => 40,
+                'leftOffset' => intval(40 * (96 / 72)),
+                'topOffset' => intval(789 * (96 / 72)),
+
+                // A4 paper size in pixels at 96 pixels per inch
+                'width' => 794,
+                'height' => 1122,
             ]
         );
 
@@ -913,8 +920,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 'barHeight' => 25,
             ],
             [
-                'topOffset' => 789,
                 'leftOffset' => 40,
+                'topOffset' => 789,
             ]
         );
 
