@@ -946,18 +946,16 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             // If the LPA is completed then stamp it with a barcode
             if ($this->lpaIsComplete) {
                 // Write the barcode to a file as a PNG
-                $barcodeFile = $this->writeBarcodeToImageFile();
+                $barcodeFile = $this->generateBarcodeAsImage();
 
                 // Write the barcode to a file as a PDF
-                //$barcodeFile = $this->writeBarcodeToPDFFile();
-
-                $this->getLogger()->debug("Barcode written to file $barcodeFile");
+                //$barcodeFile = $this->generateBarcodeAsPdf();
 
                 // Stamp the required page with the new barcode using the unshifted page number
                 $this->stampPageWith($barcodeFile, 19, false);
 
-            // Cleanup - remove tmp barcode file
-                //unlink($barcodeFile);
+                // Cleanup - remove tmp barcode file
+                unlink($barcodeFile);
             } else {
                 // If the LPA is not completed then stamp with the draft watermark
                 $draftWatermarkPdf = $this->getTemplatePdfFilePath('RegistrationWatermark.pdf');
@@ -993,10 +991,6 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $stampedPdfAllPages->stamp($stampFile)
                            ->flatten()
                            ->saveAs($tmpStampedPdfName);
-
-        $this->getLogger()->debug(
-            "Did I get a stamped PDF up in here? " . (file_exists($tmpStampedPdfName) ? 'yes' : 'no')
-        );
 
         $newPdf = $this->pdftkFactory->create([
             'A' => $this->pdfFile,
@@ -1038,8 +1032,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         // Remove the temp PDF with all the pages stamped
         if (file_exists($tmpStampedPdfName)) {
-            //unlink($tmpStampedPdfName);
-            $this->getLogger()->debug("Full stamped PDF is at $tmpStampedPdfName");
+            unlink($tmpStampedPdfName);
         }
     }
 }
