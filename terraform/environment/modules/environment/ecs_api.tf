@@ -22,7 +22,7 @@ resource "aws_ecs_service" "api" {
   service_registries {
     registry_arn = aws_service_discovery_service.api_canonical.arn
   }
-  tags = merge(local.default_opg_tags, local.api_component_tag)
+  tags = local.api_component_tag
 }
 
 //-----------------------------------------------
@@ -78,7 +78,7 @@ locals {
 resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_opg_tags, local.api_component_tag)
+  tags        = local.api_component_tag
 }
 
 resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
@@ -124,7 +124,7 @@ resource "aws_ecs_task_definition" "api" {
   container_definitions    = "[${local.api_web}, ${local.api_app}]"
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_opg_tags, local.api_component_tag)
+  tags                     = local.api_component_tag
 }
 
 
@@ -134,7 +134,7 @@ resource "aws_ecs_task_definition" "api" {
 resource "aws_iam_role" "api_task_role" {
   name               = "${var.environment_name}-api-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = merge(local.default_opg_tags, local.api_component_tag)
+  tags               = local.api_component_tag
 }
 
 resource "aws_iam_role_policy" "api_permissions_role" {
