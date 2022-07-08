@@ -13,7 +13,7 @@ class DonorFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->setUpForm(new DonorForm());
     }
@@ -40,7 +40,7 @@ class DonorFormTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-address2'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-address3'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-postcode'));
-        $this->assertInstanceOf('Laminas\Form\Element\Checkbox', $this->form->get('canSign'));
+        $this->assertInstanceOf('Laminas\Form\Element\Checkbox', $this->form->get('cannotSign'));
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('submit'));
     }
 
@@ -58,7 +58,7 @@ class DonorFormTest extends MockeryTestCase
                 'month' => '05',
                 'day'   => '20'
             ],
-            'canSign'          => false
+            'cannotSign'          => '0'
         ], $this->getCsrfData()));
 
         $this->assertTrue($this->form->isValid());
@@ -78,7 +78,9 @@ class DonorFormTest extends MockeryTestCase
                 'month' => '05',
                 'day'   => '20'
             ],
-            'canSign'          => 123
+
+            // Note we set cannotSign, the checkbox in the donor pop-up
+            'cannotSign'          => 123
         ], $this->getCsrfData()));
 
         $this->assertFalse($this->form->isValid());
@@ -99,6 +101,10 @@ class DonorFormTest extends MockeryTestCase
             'address-postcode' => [
                 0 => 'linked-1-cannot-be-null'
             ],
+            // The cannotSign checkbox value is used to set the
+            // canSign value on the model; if it is not '0' or '1'
+            // the original value of cannotSign is used (in this case,
+            // a non-boolean value, hence the validation error here)
             'canSign' => [
                 0 => 'expected-type:bool'
             ],

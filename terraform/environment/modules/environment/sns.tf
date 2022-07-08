@@ -1,13 +1,13 @@
 #tfsec:ignore:aws-sns-enable-topic-encryption CMK to be added
 resource "aws_sns_topic" "cloudwatch_to_pagerduty" {
   name = "CloudWatch-to-PagerDuty-${var.environment_name}"
-  tags = merge(local.default_opg_tags, local.shared_component_tag)
+  tags = local.shared_component_tag
 
 }
 #tfsec:ignore:aws-sns-enable-topic-encryption  CMK to be added
 resource "aws_sns_topic" "cloudwatch_to_pagerduty_ops" {
   name = "CloudWatch-to-PagerDuty-${var.environment_name}-Ops"
-  tags = merge(local.default_opg_tags, local.shared_component_tag)
+  tags = local.shared_component_tag
 }
 
 resource "aws_sns_topic_subscription" "cloudwatch_sns_subscription" {
