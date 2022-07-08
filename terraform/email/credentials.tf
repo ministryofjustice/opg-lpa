@@ -15,7 +15,7 @@ variable "default_role" {
 
 provider "aws" {
   region = "eu-west-1"
-  default_tags = {
+  default_tags {
     tags = local.default_tags
   }
   assume_role {
@@ -27,7 +27,7 @@ provider "aws" {
 provider "aws" {
   region = "eu-west-1"
   alias  = "management"
-  default_tags = {
+  default_tags {
     tags = local.default_tags
   }
   assume_role {
