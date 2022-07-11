@@ -20,7 +20,8 @@ module "performance_platform_worker" {
 
   ecr_arn                     = data.aws_ecr_repository.performance_platform_worker.arn
   lambda_role_policy_document = data.aws_iam_policy_document.performance_platform_worker_lambda_function_policy[0].json
-  tags                        = merge(local.default_opg_tags, local.performance_platform_component_tag)
+  log_retention_in_days       = var.account.log_retention_in_days
+  tags                        = local.performance_platform_component_tag
 }
 
 data "aws_iam_policy_document" "performance_platform_worker_lambda_function_policy" {

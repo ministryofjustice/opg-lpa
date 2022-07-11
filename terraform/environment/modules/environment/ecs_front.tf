@@ -23,7 +23,7 @@ resource "aws_ecs_service" "front" {
   }
 
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
-  tags       = merge(local.default_opg_tags, local.front_component_tag)
+  tags       = local.front_component_tag
 }
 
 //----------------------------------
@@ -33,7 +33,7 @@ resource "aws_ecs_service" "front" {
 resource "aws_security_group" "front_ecs_service" {
   name_prefix = "${var.environment_name}-front-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_opg_tags, local.front_component_tag)
+  tags        = local.front_component_tag
 
 }
 
@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "front" {
   container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_opg_tags, local.front_component_tag)
+  tags                     = local.front_component_tag
 
 }
 
@@ -90,7 +90,7 @@ resource "aws_ecs_task_definition" "front" {
 resource "aws_iam_role" "front_task_role" {
   name               = "${var.region_name}-${var.environment_name}-front-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = merge(local.default_opg_tags, local.front_component_tag)
+  tags               = local.front_component_tag
 
 }
 

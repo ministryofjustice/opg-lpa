@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "cloudwatch_events_assume_policy" {
 resource "aws_iam_role" "cloudwatch_events_ecs_role" {
   name               = "${var.region_name}-${var.environment_name}-cloudwatch_events_ecs_cron"
   assume_role_policy = data.aws_iam_policy_document.cloudwatch_events_assume_policy.json
-  tags               = merge(local.default_opg_tags, local.api_component_tag)
+  tags               = local.api_component_tag
 }
 
 //---
@@ -59,13 +59,13 @@ resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
 resource "aws_cloudwatch_event_rule" "middle_of_the_night" {
   name                = "${var.environment_name}-middle-of-the-night-cron"
   schedule_expression = "cron(0 3 * * ? *)" // 3am UTC, every day.
-  tags                = merge(local.default_opg_tags, local.api_component_tag)
+  tags                = local.api_component_tag
 }
 
 resource "aws_cloudwatch_event_rule" "mid_morning" {
   name                = "${var.environment_name}-mid-morning-cron"
   schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
-  tags                = merge(local.default_opg_tags, local.api_component_tag)
+  tags                = local.api_component_tag
 }
 
 //------------------------------------------------
@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "api_crons" {
   container_definitions    = "[${local.api_app}]"
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_opg_tags, local.api_component_tag)
+  tags                     = local.api_component_tag
 }
 
 //------------------------------------------------

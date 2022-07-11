@@ -44,7 +44,7 @@ resource "aws_db_instance" "api" {
   multi_az                            = true
   backup_retention_period             = var.account.backup_retention_period
   deletion_protection                 = var.account.deletion_protection
-  tags                                = merge(local.default_opg_tags, local.db_component_tag)
+  tags                                = local.db_component_tag
   allow_major_version_upgrade         = true
   monitoring_interval                 = 30
   monitoring_role_arn                 = data.aws_iam_role.rds_enhanced_monitoring.arn
@@ -80,7 +80,7 @@ module "aws_rds_api_alarms" {
   evaluation_period                         = "10"
   db_instance_class                         = local.available_rds_instance_class
   prefix                                    = "${var.environment_name}-"
-  tags                                      = merge(local.default_opg_tags, local.db_component_tag)
+  tags                                      = local.db_component_tag
 }
 
 module "api_aurora" {
@@ -104,7 +104,7 @@ module "api_aurora" {
   replication_source_identifier = var.account.always_on ? aws_db_instance.api[0].arn : ""
   skip_final_snapshot           = !var.account.deletion_protection
   vpc_security_group_ids        = [aws_security_group.rds-api.id]
-  tags                          = merge(local.default_opg_tags, local.db_component_tag)
+  tags                          = local.db_component_tag
   copy_tags_to_snapshot         = true
 }
 
@@ -137,7 +137,7 @@ resource "aws_security_group" "rds-client" {
   description            = "rds access for ${var.environment_name}"
   vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
-  tags                   = merge(local.default_opg_tags, local.db_component_tag)
+  tags                   = local.db_component_tag
 }
 
 resource "aws_security_group" "rds-api" {
@@ -145,7 +145,7 @@ resource "aws_security_group" "rds-api" {
   description            = "api rds access"
   vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
-  tags                   = merge(local.default_opg_tags, local.db_component_tag)
+  tags                   = local.db_component_tag
 
   lifecycle {
     create_before_destroy = true
