@@ -23,7 +23,7 @@ class StatusViewModelHelper
      *     }
      * @param ?DateTime $trackFromDate Date from which tracking data for LPAs is available
      * @param ?int $expectedWorkingDaysBeforeReceipt Number of working days after the processing
-     * date for an LPA when the client can expect to receive the returned LPA in the post
+     *     date for an LPA when the client can expect to receive the returned LPA in the post
      *
      * @return ?ViewModel ViewModel if status is valid, or null if not
      */
@@ -34,6 +34,11 @@ class StatusViewModelHelper
         ?int $expectedWorkingDaysBeforeReceipt,
     ): ?ViewModel {
         $lpaId = $lpa->getId();
+
+        // The metadata used here is stored in the db but is originally
+        // populated from Sirius.
+        $metadata = $lpa->getMetadata();
+
         $returnUnpaid = false;
 
         // A 'completed' status is used for LPA applications received before the track-from date;
@@ -51,6 +56,15 @@ class StatusViewModelHelper
             if (array_key_exists($lpaId, $lpaStatusDetails) && $lpaStatusDetails[$lpaId]['found'] == true) {
                 $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
                 $returnUnpaid = isset($lpaStatusDetails[$lpaId]['returnUnpaid']);
+            } else {
+                // Fall back to the cached metadata from the db (which was delivered to
+                // us via service-api before being saved to db) if we couldn't get a status
+                if (isset($metadata[Lpa::SIRIUS_PROCESSING_STATUS])) {
+                    $lpaStatus = strtolower($metadata[Lpa::SIRIUS_PROCESSING_STATUS]);
+                }
+                if (isset($metadata['application-return-unpaid'])) {
+                    $returnUnpaid = $metadata['application-return-unpaid'];
+                }
             }
         }
 
@@ -65,10 +79,6 @@ class StatusViewModelHelper
         // Find all the steps (inc. the current one) which have been done
         // for this LPA application
         $doneStatuses = array_slice($statuses, 0, array_search($lpaStatus, $statuses));
-
-        // The metadata used here is stored in the db but is originally
-        // populated from Sirius.
-        $metadata = $lpa->getMetadata();
 
         // Return the rejected, invalid, withdrawn or dispatch date
         // (whichever is latest). NB dates are strings at this point.
