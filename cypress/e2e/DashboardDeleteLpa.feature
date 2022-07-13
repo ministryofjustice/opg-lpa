@@ -6,7 +6,7 @@ Feature: DashboardDeleteLpa
     Background:
         Given I ignore application exceptions
 
-    @focus
+    @SignupIncluded
     Scenario: Sign up with new user, create LPA, delete LPA (LPAL-840)
         Given I sign up "DashboardDeleteLpaUser" test user with password "Pass1234"
         When I use activation email for "DashboardDeleteLpaUser" to visit the link
