@@ -219,13 +219,13 @@ pr_build: &pr_build
         name: run_cypress_test_remaining_tests
         # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
         # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
-        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse"
+        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @DashboardDeleteLpa and not @ReusedDonorKeepsAllDetails"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_dashboard_lpa_deletion
-        cypress_tags: "@DashboardDeleteLpa"
+        name: run_cypress_test_remaining_tests_2
+        cypress_tags: "@DashboardDeleteLpa or @ReusedDonorKeepsAllDetails"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
@@ -410,7 +410,14 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_test_cypress_remaining_tests
-        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CorrespondentReuse"
+        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CorrespondentReuse and not @DashboardDeleteLpa and not @ReusedDonorKeepsAllDetails"
+        workspace: preproduction
+        filters: { branches: { only: [main] } }
+        requires: [preprod_seed_environment_databases, preprod_feedbackdb]
+
+    - infrastructure_and_deployment/run_cypress_test:
+        name: run_cypress_test_remaining_tests_2
+        cypress_tags: "@DashboardDeleteLpa or @ReusedDonorKeepsAllDetails"
         workspace: preproduction
         filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases, preprod_feedbackdb]
