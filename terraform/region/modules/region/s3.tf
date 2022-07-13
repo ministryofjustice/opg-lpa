@@ -49,8 +49,9 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
   }
 }
 
-#versioning not required for a logging bucket bucket logging not needed
-#tfsec:ignore:AWS002  #tfsec:ignore:AWS077
+#versioning not required for a logging bucket bucket logging not needed. 
+#encryption of ALB access logs not supported with CMK
+#tfsec:ignore:AWS002  #tfsec:ignore:AWS077 #tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${local.account_name}-${local.region_name}-lb-access-logs"
   acl    = "private"
