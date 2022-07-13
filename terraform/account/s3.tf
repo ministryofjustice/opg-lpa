@@ -47,7 +47,8 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
 
 # We will keep this in for historical purposes. we need to think how far back we need this.
 #versioning not required for a logging bucket bucket logging not needed
-#tfsec:ignore:AWS002  #tfsec:ignore:AWS077
+#encryption of ALB access logs not supported with CMK
+#tfsec:ignore:AWS002  #tfsec:ignore:AWS077 #tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${terraform.workspace}-lb-access-logs"
   acl    = "private"
