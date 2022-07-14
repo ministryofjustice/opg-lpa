@@ -1,4 +1,4 @@
-@ReusedDonorKeepsAllDetails
+@ReusedDonorKeepsAllDetails @IgnoreSignup
 Feature: ReusedDonorKeepsAllDetails
 
     When reusing a donor, all of their details are retained, including whether they can sign the LPA themselves (LPAL-908)
@@ -6,7 +6,6 @@ Feature: ReusedDonorKeepsAllDetails
     Background:
         Given I ignore application exceptions
 
-    @SignupIncluded
     Scenario: Create LPA with donor who can't sign; on reuse, donor "can't sign" checkbox is ticked
         # Sign up with automatically generated test username and password
         Given I sign up "ReusedDonorKeepsAllDetailsUser" test user with password "Pass1234"
