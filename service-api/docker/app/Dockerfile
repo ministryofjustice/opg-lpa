@@ -1,5 +1,7 @@
 FROM php:8.1-fpm-alpine3.15
 
+ENV OPG_LPA_COMMON_APP_VERSION=${OPG_LPA_COMMON_APP_VERSION}
+
 RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade apk-tools
