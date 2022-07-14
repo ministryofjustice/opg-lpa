@@ -7,7 +7,7 @@ resource "aws_sqs_queue" "pdf_fifo_queue" {
   kms_master_key_id                 = "alias/mrk_pdf_sqs_encryption_key-${var.account_name}"
   kms_data_key_reuse_period_seconds = "300"
   max_message_size                  = "262144"
-  tags                              = merge(local.default_opg_tags, local.pdf_component_tag)
+  tags                              = local.pdf_component_tag
 
   depends_on = [aws_ecs_service.api, aws_iam_role.api_task_role, aws_iam_role.pdf_task_role]
 }
@@ -58,7 +58,7 @@ resource "aws_sqs_queue" "performance_platform_worker" {
   max_message_size                  = 16384 #adjust as needed
   message_retention_seconds         = 86400
   receive_wait_time_seconds         = 10
-  tags                              = merge(local.default_opg_tags, local.performance_platform_component_tag)
+  tags                              = local.performance_platform_component_tag
   kms_master_key_id                 = "alias/mrk_perfplat_sqs_encryption_key-${var.account_name}"
   kms_data_key_reuse_period_seconds = "300"
 
