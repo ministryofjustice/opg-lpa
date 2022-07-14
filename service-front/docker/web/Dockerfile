@@ -16,6 +16,9 @@ RUN wget -q -O /usr/local/bin/confd "https://github.com/kelseyhightower/confd/re
 # Remove unused packages
 RUN apk del freetype nginx-module-image-filter curl
 
+# Upgrade vulnerable packages
+RUN apk upgrade
+
 USER nginx
 COPY --chown=nginx:nginx service-front/public /web
 COPY --chown=nginx:nginx service-front/docker/web/etc /etc
