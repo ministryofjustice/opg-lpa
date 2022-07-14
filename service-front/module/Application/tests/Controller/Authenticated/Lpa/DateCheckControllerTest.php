@@ -26,7 +26,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         'sign-date-certificate-provider'  => ['day' => 1, 'month' => 2, 'year' => 2016]
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -41,6 +41,9 @@ class DateCheckControllerTest extends AbstractControllerTest
         $controller = $this->getController(DateCheckController::class);
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
+        $this->lpaApplicationService->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
+            ->andReturn([])
+            ->once();
         $currentRouteName = 'lpa/date-check/complete';
         $this->setMatchedRouteName($controller, $currentRouteName);
         $this->setFormAction($this->form, $this->lpa, $currentRouteName);
@@ -61,6 +64,9 @@ class DateCheckControllerTest extends AbstractControllerTest
         $controller = $this->getController(DateCheckController::class);
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
+        $this->lpaApplicationService->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
+            ->andReturn([])
+            ->once();
         $currentRouteName = 'lpa/date-check/complete';
         $this->setMatchedRouteName($controller, $currentRouteName);
         $this->setFormAction($this->form, $this->lpa, $currentRouteName);
@@ -85,6 +91,9 @@ class DateCheckControllerTest extends AbstractControllerTest
         $postData['sign-date-donor']['year'] = 2017;
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
+        $this->lpaApplicationService->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
+            ->andReturn([])
+            ->once();
         $currentRouteName = 'lpa/date-check/complete';
         $this->setMatchedRouteName($controller, $currentRouteName);
         $this->setFormAction($this->form, $this->lpa, $currentRouteName);
