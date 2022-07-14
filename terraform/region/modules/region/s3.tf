@@ -1,3 +1,7 @@
+data "aws_kms_key" "access_log_key" {
+  key_id = "alias/mrk_access_logs_lb_encryption_key-${terraform.workspace}"
+}
+
 data "aws_elb_service_account" "main" {
   region = local.region_name
 }
@@ -45,8 +49,9 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
   }
 }
 
-#versioning not required for a logging bucket bucket logging not needed
-#tfsec:ignore:AWS002  #tfsec:ignore:AWS077
+#versioning not required for a logging bucket bucket logging not needed. 
+#encryption of ALB access logs not supported with CMK
+#tfsec:ignore:AWS002  #tfsec:ignore:AWS077 #tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${local.account_name}-${local.region_name}-lb-access-logs"
   acl    = "private"

@@ -1,6 +1,6 @@
 resource "aws_resourcegroups_group" "environment" {
   name = var.environment_name
-  tags = merge(local.default_opg_tags, local.shared_component_tag)
+  tags = local.shared_component_tag
   resource_query {
     query = local.environment_resource_group_query
   }

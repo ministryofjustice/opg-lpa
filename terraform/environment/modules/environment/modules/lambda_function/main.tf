@@ -22,7 +22,7 @@ resource "aws_lambda_function" "lambda_function" {
 
 #tfsec:ignore:AWS089 encryption of logs too expensive
 resource "aws_cloudwatch_log_group" "lambda_function" {
-  name = "/aws/lambda/${var.lambda_name}"
-  tags = var.tags
-
+  name              = "/aws/lambda/${var.lambda_name}"
+  tags              = var.tags
+  retention_in_days = var.log_retention_in_days
 }
