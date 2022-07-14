@@ -86,3 +86,7 @@ output "admin-domain" {
 output "front-domain" {
   value = module.environment_dns.front_domain
 }
+
+output "active-region-name" {
+  value = local.active_region_name
+}
