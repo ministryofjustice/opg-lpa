@@ -190,6 +190,7 @@ locals {
       "environment" : [
 
         { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
+        { "name" : "OPG_LPA_REGION_NAME", "value" : var.region_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
         { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
