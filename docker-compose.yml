@@ -282,19 +282,6 @@ services:
     ports:
       - 9004:8005
 
-  api-composer:
-    image: composer:latest
-    volumes:
-      - ./service-api:/app
-      - ./shared/logging:/shared/logging
-    command:
-      - install
-      - --prefer-dist
-      - --no-interaction
-      - --no-scripts
-      - --optimize-autoloader
-      - --ignore-platform-reqs
-
   # ---------------------------
   # Admin
 
