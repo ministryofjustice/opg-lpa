@@ -518,7 +518,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
         foreach ($actorData as $actorDataKey => $actorDataValue) {
             if (
                 !in_array($actorDataKey, ['name', 'number', 'otherNames', 'address', 'dob', 'email', 'case', 'phone',
-                'who', 'company', 'type'])
+                'who', 'company', 'type', 'canSign'])
             ) {
                 unset($actorData[$actorDataKey]);
             }

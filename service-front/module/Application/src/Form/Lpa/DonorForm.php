@@ -65,9 +65,9 @@ class DonorForm extends AbstractActorForm
         // canSign is stored in the db, but our cannotSign checkbox is ticked if the
         // donor *cannot* sign; so this is where we do the inversion from
         // the canSign property (in the model/db) to cannotSign checkbox (in the UI)
-        $data['cannotSign'] = '1';
-        if (array_key_exists('canSign', $data) && $data['canSign']) {
-            $data['cannotSign'] = '0';
+        $data['cannotSign'] = '0';
+        if (array_key_exists('canSign', $data) && !$data['canSign']) {
+            $data['cannotSign'] = '1';
         }
 
         parent::populateValues($data, $onlyBase);
