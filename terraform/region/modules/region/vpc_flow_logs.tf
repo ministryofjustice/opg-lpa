@@ -3,19 +3,18 @@ resource "aws_flow_log" "vpc_flow_logs" {
   log_destination = aws_cloudwatch_log_group.vpc_flow_logs_region.arn
   traffic_type    = "ALL"
   vpc_id          = aws_default_vpc.default.id
-  tags            = local.default_tags
 }
 
 #tfsec:ignore:AWS089 cost to encrypt is expensive. this is legacy so keep for now.
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name = "vpc_flow_logs"
-  tags = merge(local.default_tags, local.shared_component_tag)
+  tags = local.shared_component_tag
 }
 
 #tfsec:ignore:AWS089 cost to encrypt is expensive. region support needed
 resource "aws_cloudwatch_log_group" "vpc_flow_logs_region" {
   name = "vpc_flow_logs_${local.account_name}_${local.region_name}"
-  tags = merge(local.default_tags, local.shared_component_tag)
+  tags = local.shared_component_tag
 }
 
 

@@ -4,7 +4,6 @@ resource "aws_cloudwatch_log_group" "online-lpa" {
   retention_in_days = local.account.retention_in_days
 
   tags = merge(
-    local.default_tags,
     local.shared_component_tag,
     {
       "Name" = "online-lpa"
@@ -44,7 +43,7 @@ resource "aws_cloudwatch_metric_alarm" "account_breakglass_login_alarm" {
   evaluation_periods  = 1
   datapoints_to_alarm = 1
   statistic           = "Sum"
-  tags                = merge(local.default_tags, local.shared_component_tag)
+  tags                = local.shared_component_tag
   threshold           = 1
   treat_missing_data  = "notBreaching"
 }

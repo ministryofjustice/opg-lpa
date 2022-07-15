@@ -55,7 +55,7 @@
 {% set address2 = form.get('address-address2') %}
 {% set address3 = form.get('address-address3') %}
 {% set postcode = form.get('address-postcode') %}
-{% set canSign = form.get('canSign') %}
+{% set cannotSign = form.get('cannotSign') %}
 {% set dob = form.get('dob-date') %}
 {% set dobDay = dob.get('day') %}
 {% set dobMonth = dob.get('month') %}
@@ -150,9 +150,9 @@
     'data-cy': 'address-postcode'
 }) ? ''}}
 
-{{ canSign.setAttributes({
-    id: 'can-sign',
-    'data-cy': 'can-sign'
+{{ cannotSign.setAttributes({
+    id: 'cannot-sign',
+    'data-cy': 'cannot-sign'
 }) ? '' }}
 
 {# form fields labels #}
@@ -169,7 +169,7 @@
 {{ address2.setOptions({label:'Address line 2'}) ? '' }}
 {{ address3.setOptions({label:'Address line 3'}) ? '' }}
 {{ postcode.setOptions({label:'Postcode'}) ? '' }}
-{{ canSign.setOptions({label:'The donor is unable to sign or make a mark on the LPA'}) ? '' }}
+{{ cannotSign.setOptions({label:'The donor is unable to sign or make a mark on the LPA'}) ? '' }}
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
@@ -239,15 +239,15 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
-            <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+            <div class="form-group form-group-day {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
                 <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
                 {{ formElement(dobDay) }}
             </div>
-            <div class="form-group form-group-month {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+            <div class="form-group form-group-month {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
                 <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
                 {{ formElement(dobMonth) }}
             </div>
-            <div class="form-group form-group-year {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+            <div class="form-group form-group-year {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
                 <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>
@@ -271,14 +271,14 @@
         </div>
     </fieldset>
 
-    <div class="single-checkbox-group form-group {{ canSign.getMessages|length >0 ? 'form-group-error'}}">
+    <div class="single-checkbox-group form-group {{ cannotSign.getMessages|length > 0 ? 'form-group-error'}}">
         <fieldset>
             <legend class="visually-hidden"></legend>
             <div class="multiple-choice">
-                {{ formElementErrorsV2(canSign) }}
-                {{ formElement(canSign) }}
-                <label for="{{ canSign.getAttribute('id') }}">
-                    {{ canSign.getOption('label') }}
+                {{ formElementErrorsV2(cannotSign) }}
+                {{ formElement(cannotSign) }}
+                <label for="{{ cannotSign.getAttribute('id') }}">
+                    {{ cannotSign.getOption('label') }}
                     <span class="form-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on the donor's behalf</span>
                 </label>
             </div>
