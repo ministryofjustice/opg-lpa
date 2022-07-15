@@ -252,8 +252,6 @@ class Service extends AbstractService
             $docIdSuffix = $this->pdfConfig['docIdSuffix'];
         }
 
-        $this->getLogger()->info('Using docIdSuffix (OPG_LPA_COMMON_APP_VERSION) = ' . $docIdSuffix);
-
         $hash = hash(
             'md5',
             $lpa->toJson() . $docIdSuffix
