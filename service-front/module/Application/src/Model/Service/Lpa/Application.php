@@ -292,6 +292,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 sprintf('/v2/user/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfType)
             );
         } catch (ApiException $ex) {
+            $this->getLogger()->err('Error connecting to API while fetching PDF: ' . $ex->getMessage());
+            return false;
         }
 
         return false;
