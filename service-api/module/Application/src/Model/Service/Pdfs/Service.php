@@ -19,10 +19,17 @@ class Service extends AbstractService
     /**
      * PDF status constants
      */
-    public const STATUS_NOT_AVAILABLE   = 'not-available';  // PDF cannot be generated as we do not have all teh data.
-    public const STATUS_NOT_QUEUED      = 'not-in-queue';   // The LPA is not in the PDF queue.
-    public const STATUS_IN_QUEUE        = 'in-queue';       // The LPA is in the PDF queue.
-    public const STATUS_READY           = 'ready';          // THe PDF is available for immediate download.
+    // PDF cannot be generated as we do not have all the data
+    public const STATUS_NOT_AVAILABLE = 'not-available';
+
+    // The LPA is not in the PDF queue
+    public const STATUS_NOT_QUEUED = 'not-in-queue';
+
+    // The LPA is in the PDF queue
+    public const STATUS_IN_QUEUE = 'in-queue';
+
+    // THe PDF is available for immediate download
+    public const STATUS_READY = 'ready';
 
     /**
      * @var array
