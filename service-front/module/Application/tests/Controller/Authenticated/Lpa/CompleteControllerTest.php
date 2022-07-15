@@ -15,9 +15,6 @@ class CompleteControllerTest extends AbstractControllerTest
         $controller = $this->getController(CompleteController::class);
 
         $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->once();
-        $this->lpaApplicationService->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
-            ->andReturn([])
-            ->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/download', ['lpa-id' => $this->lpa->id, 'pdf-type' => 'lp1']])
             ->andReturn("lpa/{$this->lpa->id}/download/pdf/lp1")->once();
@@ -59,9 +56,6 @@ class CompleteControllerTest extends AbstractControllerTest
         ];
 
         $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->once();
-        $this->lpaApplicationService->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
-            ->andReturn([])
-            ->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/download', ['lpa-id' => $this->lpa->id, 'pdf-type' => 'lp1']])
             ->andReturn("lpa/{$this->lpa->id}/download/pdf/lp1")->once();
