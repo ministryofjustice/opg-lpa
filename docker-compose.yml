@@ -420,9 +420,7 @@ services:
   feedbackdb:
     container_name: feedbackdb
     image: feedbackdb
-    build:
-      context: ./
-      dockerfile: service-feedbackdb/docker/app/Dockerfile
+    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/feedbackdb
     depends_on:
       - localstack
       - local-config
