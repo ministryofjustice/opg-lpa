@@ -279,6 +279,16 @@ services:
   feedback-api:
     container_name: lpa-feedback-api
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/rest-api
+    depends_on:
+      - postgres
+      - feedbackdb
+    environment:
+      AWS_XRAY_SDK_ENABLED: "false"
+      POSTGRES_HOSTNAME: "postgres"
+      POSTGRES_PORT: "5432"
+      POSTGRES_NAME: "lpadb"
+      POSTGRES_USERNAME: "lpauser"
+      POSTGRES_PASSWORD: "lpapass"
     ports:
       - 9004:8005
 
