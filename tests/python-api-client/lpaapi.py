@@ -401,15 +401,15 @@ def addPersonToNotify(lpaId):
 def addCorrespondent(lpaId):
     correspondent = {
         "who": "donor",
-        "name": {"title": "Mrs", "first": "Vartigon", "last": "Flax"},
+        "name": {"title": "Mrs", "first": "Nancy", "last": "Garrison"},
         "company": None,
         "address": {
-            "address1": "Void Farm House",
-            "address2": "Vortex Drive",
+            "address1": "Bank End Farm House",
+            "address2": "Undercliff Drive",
             "address3": "Ventnor, Isle of Wight",
             "postcode": "PO38 1UL",
         },
-        "email": {"address": "opglpademo+vartigon@gmail.com"},
+        "email": {"address": "opglpademo+NancyGarrison@gmail.com"},
         "phone": None,
         "contactByPost": False,
         "contactInWelsh": False,

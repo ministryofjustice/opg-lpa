@@ -8,7 +8,7 @@ name: Dependabot updates
 
 on:
 # In case we need to change, uncomment out and change name to branch you are fixing on.
-# Commits will make action trigger. 
+# Commits will make action trigger.
 # Remember to comment out after work done.
 # push:
 #     branches:
@@ -40,9 +40,7 @@ jobs:
       - name: Update outdated dependencies - composer
         run: |
           echo "running composer updates..."
-          cd tests
-          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
-          cd ../service-front
+          cd service-front
           composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
           cd ../service-api
           composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs

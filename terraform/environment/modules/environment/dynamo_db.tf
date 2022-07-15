@@ -9,7 +9,7 @@ resource "aws_dynamodb_table" "lpa-locks" {
     type = "S"
   }
 
-  tags = merge(local.default_opg_tags, local.dynamodb_component_tag)
+  tags = local.dynamodb_component_tag
 }
 
 #tfsec:ignore:AWS086 #tfsec:ignore:AWS092 #tfsec:ignore:aws-dynamodb-enable-at-rest-encryption short lived dynamo table doesn't hold customer data
@@ -23,7 +23,7 @@ resource "aws_dynamodb_table" "lpa-properties" {
     type = "S"
   }
 
-  tags = merge(local.default_opg_tags, local.dynamodb_component_tag)
+  tags = local.dynamodb_component_tag
 }
 
 #tfsec:ignore:AWS086 #tfsec:ignore:AWS092 #tfsec:ignore:aws-dynamodb-enable-at-rest-encryption To be removed soon as session table deprecated
@@ -42,5 +42,5 @@ resource "aws_dynamodb_table" "lpa-sessions" {
     enabled        = true
   }
 
-  tags = merge(local.default_opg_tags, local.dynamodb_component_tag)
+  tags = local.dynamodb_component_tag
 }

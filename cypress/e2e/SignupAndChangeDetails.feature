@@ -1,4 +1,4 @@
-@SignUp
+@SignUpAndChangeDetails
 Feature: SignupAndChangeDetails
 
     I want to be able to sign up and immediately change my password and email address

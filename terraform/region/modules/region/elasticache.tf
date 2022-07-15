@@ -2,7 +2,7 @@
 resource "aws_security_group" "front_cache" {
   name   = "${local.account_name_short}-${local.region_name}-front-cache"
   vpc_id = aws_default_vpc.default.id
-  tags   = merge(local.default_tags, local.front_component_tag)
+  tags   = local.front_component_tag
 }
 
 resource "aws_elasticache_subnet_group" "private_subnets" {
@@ -28,7 +28,7 @@ resource "aws_elasticache_replication_group" "front_cache" {
   subnet_group_name             = aws_elasticache_subnet_group.private_subnets.name
   security_group_ids            = [aws_security_group.front_cache.id]
 
-  tags = merge(local.default_tags, local.front_component_tag)
+  tags = local.front_component_tag
 }
 
 

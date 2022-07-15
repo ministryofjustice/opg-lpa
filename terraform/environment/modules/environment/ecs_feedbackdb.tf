@@ -4,7 +4,7 @@
 resource "aws_security_group" "feedbackdb_ecs_service" {
   name_prefix = "${terraform.workspace}-feedbackdb-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = merge(local.default_opg_tags, local.feedbackdb_component_tag)
+  tags        = local.feedbackdb_component_tag
 }
 
 resource "aws_security_group_rule" "feedbackdb_ecs_service_egress" {
@@ -30,7 +30,7 @@ resource "aws_ecs_task_definition" "feedbackdb" {
   container_definitions    = "[${local.feedbackdb_app}]"
   task_role_arn            = aws_iam_role.feedbackdb_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = merge(local.default_opg_tags, local.feedbackdb_component_tag)
+  tags                     = local.feedbackdb_component_tag
 }
 
 
@@ -40,7 +40,7 @@ resource "aws_ecs_task_definition" "feedbackdb" {
 resource "aws_iam_role" "feedbackdb_task_role" {
   name               = "${var.environment_name}-feedbackdb-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = merge(local.default_opg_tags, local.feedbackdb_component_tag)
+  tags               = local.feedbackdb_component_tag
 }
 
 data "aws_ecr_repository" "lpa_feedbackdb_app" {
