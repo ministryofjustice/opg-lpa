@@ -1,4 +1,4 @@
-@DashboardDeleteLpa
+@DashboardDeleteLpa @IgnoreSignup
 Feature: DashboardDeleteLpa
 
     I want to be able to delete an LPA on the dashboard
@@ -6,7 +6,6 @@ Feature: DashboardDeleteLpa
     Background:
         Given I ignore application exceptions
 
-    @focus
     Scenario: Sign up with new user, create LPA, delete LPA (LPAL-840)
         Given I sign up "DashboardDeleteLpaUser" test user with password "Pass1234"
         When I use activation email for "DashboardDeleteLpaUser" to visit the link
