@@ -1,7 +1,5 @@
 FROM php:8.1-fpm-alpine3.15
 
-ENV OPG_LPA_COMMON_APP_VERSION=${OPG_LPA_COMMON_APP_VERSION}
-
 RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade apk-tools
@@ -38,6 +36,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
     && chown -R appuser:appuser /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer
+
+ARG OPG_LPA_COMMON_APP_VERSION
+ENV OPG_LPA_COMMON_APP_VERSION=${OPG_LPA_COMMON_APP_VERSION}
 
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
