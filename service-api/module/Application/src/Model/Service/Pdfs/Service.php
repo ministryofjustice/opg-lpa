@@ -240,9 +240,16 @@ class Service extends AbstractService
      */
     private function getPdfIdent(Lpa $lpa, $type)
     {
+        $docIdSuffix = '';
+        if (isset($this->pdfConfig['docIdSuffix'])) {
+            $docIdSuffix = $this->pdfConfig['docIdSuffix'];
+        }
+
+        $this->getLogger()->info('Using docIdSuffix (OPG_LPA_COMMON_APP_VERSION) = ' . $docIdSuffix);
+
         $hash = hash(
             'md5',
-            $lpa->toJson() . $this->pdfConfig['docIdSuffix']
+            $lpa->toJson() . $docIdSuffix
         );
 
         return strtolower("{$type}-{$hash}");
