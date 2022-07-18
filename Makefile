@@ -173,8 +173,7 @@ dc-unit-tests:
 	@${MAKE} dc-front-unit-tests
 	@docker-compose run admin-app /app/vendor/bin/phpunit
 	@docker-compose run api-app /app/vendor/bin/phpunit
-	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	docker-compose run pdf-app /app/vendor/bin/phpunit
+	@docker-compose run pdf-app /app/vendor/bin/phpunit
 
 .PHONY: integration-api-local
 integration-api-local:
