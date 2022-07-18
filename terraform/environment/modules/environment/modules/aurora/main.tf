@@ -68,6 +68,7 @@ resource "aws_rds_cluster" "cluster_serverless" {
   db_subnet_group_name         = var.db_subnet_group_name
   deletion_protection          = var.deletion_protection
   engine                       = var.engine
+  engine_version               = var.engine_version
   engine_mode                  = "serverless"
   engine_version               = var.engine_version
   final_snapshot_identifier    = "${var.database_name}-${var.environment}-final-snapshot"
