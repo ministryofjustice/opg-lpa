@@ -54,6 +54,7 @@ dc-up: run-composers
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
+	aws-vault exec management -- aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
 	docker-compose up
 
 # target for users outside MoJ to run the stack without 3rd party integrations
@@ -169,7 +170,7 @@ dc-front-unit-tests:
 
 .PHONY: dc-unit-tests
 dc-unit-tests:
-	@${MAKE} dc-front-unit-tests 
+	@${MAKE} dc-front-unit-tests
 	@docker-compose run admin-app /app/vendor/bin/phpunit
 	@docker-compose run api-app /app/vendor/bin/phpunit
 	@docker-compose run pdf-app /app/vendor/bin/phpunit
