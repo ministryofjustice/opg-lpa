@@ -199,10 +199,6 @@ cypress-local-shell:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
 	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" --entrypoint bash --network="host" -v `pwd`/cypress:/app/cypress --name cypress_tests cypress:latest
 
-.PHONY: restitch
-restitch:
-	cypress/stitch.sh
-
 # Start S3 Monitor and call "cypress open";
 # this requires a globally-installed cypress
 .PHONY: cypress-open
