@@ -1,4 +1,4 @@
-@SignUpWithFixtures
+@SignupWithFixtures
 Feature: SignUpWithFixtures
 
     I want to be able to sign up after fixtures have been put in place for testing

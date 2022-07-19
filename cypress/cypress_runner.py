@@ -1,3 +1,4 @@
+import os
 import sys
 from argparse import ArgumentParser
 from datetime import datetime
@@ -16,15 +17,17 @@ def build_cypress_command(command, env={}):
     :param command: path to script to run cypress
     :param env: dict in format:
         {
-            "CYPRESS_userNumber": <CYPRESS_userNumber>,
-            "CYPRESS_baseUrl": <CYPRESS_baseUrl>,
+            "CYPRESS_userNumber": <user number for sign up>,
+            "CYPRESS_baseUrl": <front end URL>,
+            "CYPRESS_adminUrl": <admin URL>,
             "GLOB": <GLOB for feature files>
-            "TAGS": <CYPRESS_TAGS setting>
+            "TAGS": <TAGS to use for filtering features>
         }
     """
     command = f"{command} run --headless --config video=false"
 
     if len(env) > 0:
+        # variables which can be passed to cypress directly via the -e flag
         e_vars = " ".join(
             [
                 f'{key}="{value}"'
@@ -35,11 +38,12 @@ def build_cypress_command(command, env={}):
         if len(e_vars) > 0:
             command = f"{command} -e {e_vars}"
 
+        # variables which should be set in the environment
         env_vars = " ".join(
             [
                 f'{key}="{value}"'
                 for key, value in env.items()
-                if key in ["CYPRESS_baseUrl", "CYPRESS_userNumber"]
+                if key in ["CYPRESS_baseUrl", "CYPRESS_userNumber", "CYPRESS_adminUrl"]
             ]
         )
         if len(env_vars) > 0:
@@ -48,50 +52,98 @@ def build_cypress_command(command, env={}):
     return command
 
 
-def get_settings():
+# if value is False, but the environment variable is set to a truthy
+# value, it overrides the default; this is because all of our boolean
+# argparse arguments default to False
+def env_override_bool(value, env_var_name):
+    if value is False:
+        value = os.environ.get(env_var_name) in ["True", "true", "1"]
+    return value
+
+
+def env_override_string(value, env_var_name, default=None):
+    if value is None:
+        value = os.environ.get(env_var_name)
+    if value is None:
+        value = default
+    return value
+
+
+# if using this function to fall back, the value in the environment
+# variable denoted by env_var_name should have a format like:
+# "@SignUp,@StitchedPF|@SignUp,@StitchedHW"; the string is split on
+# the "|" to produce a list of values
+def env_override_list(value, env_var_name, default=None):
+    if value is None:
+        value = os.environ.get(env_var_name)
+        if value is None:
+            value = default
+        else:
+            value = value.split("|")
+    return value
+
+
+def get_settings(args_in):
     _parent_dir = Path(__file__).parent
 
     parser = ArgumentParser(description="Run cypress features")
-    parser.add_argument("runs", nargs="+")
     parser.add_argument(
         "-d",
         "--disable-s3-monitor",
         action="store_true",
-        help="set to disable the S3 monitor",
+        help="set to disable the S3 monitor; or set with $CYPRESS_RUNNER_DISABLE_S3_MONITOR=true",
     )
     parser.add_argument(
         "-n",
         "--no-stitch",
         action="store_true",
-        help="set to disable stitching feature files together",
+        help="set to disable stitching feature files together; or set with $CYPRESS_RUNNER_NO_STITCH=true",
     )
     parser.add_argument(
         "-c",
         "--in-ci",
         action="store_true",
-        help="set if running S3 monitor in the CI environment",
+        help="set if running S3 monitor in the CI environment; or set with $CYPRESS_RUNNER_IN_CI=true",
     )
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
-        help="set to make S3 monitor provide verbose output",
+        help="set to make S3 monitor provide verbose output; or set with $CYPRESS_RUNNER_VERBOSE=true",
     )
     parser.add_argument(
         "-u",
         "--base-url",
-        default="https://localhost:7002",
-        help="base URL of the front end (path is ignored)",
+        help='base URL of the front end (path is ignored); or set with $CYPRESS_RUNNER_BASE_URL="url"',
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "-a",
+        "--admin-url",
+        help='base URL of the admin app (path is ignored); or set with $CYPRESS_RUNNER_ADMIN_URL="url"',
+    )
+    parser.add_argument(
+        "-t",
+        "--tags",
+        nargs="*",
+        help='tag groups for cypress to run; or set with $CYPRESS_RUNNER_TAGS="@tag1,@tag2|@tag3,@tag4 or @tag5 etc."',
+    )
+    args = parser.parse_args(args_in)
 
-    disable_s3_monitor = args.disable_s3_monitor
-    in_ci = args.in_ci
-    verbose = args.verbose
-    should_stitch = not args.no_stitch
+    # get config from command line, falling back to environment variables (if set there)
+    disable_s3_monitor = env_override_bool(
+        args.disable_s3_monitor, "CYPRESS_RUNNER_DISABLE_S3_MONITOR"
+    )
+    should_stitch = not env_override_bool(args.no_stitch, "CYPRESS_RUNNER_NO_STITCH")
+    in_ci = env_override_bool(args.in_ci, "CYPRESS_RUNNER_IN_CI")
+    verbose = env_override_bool(args.verbose, "CYPRESS_RUNNER_VERBOSE")
 
-    parsed_url = urlparse(args.base_url)
-    cypress_base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+    base_url = env_override_string(
+        args.base_url, "CYPRESS_RUNNER_BASE_URL", "https://localhost:7002"
+    )
+    admin_url = env_override_string(
+        args.admin_url, "CYPRESS_RUNNER_ADMIN_URL", "https://localhost:7003"
+    )
+    tags = env_override_list(args.tags, "CYPRESS_RUNNER_TAGS")
 
     # these are hard-coded for now but could be added as CLI args if required
     cypress_script = (
@@ -100,21 +152,30 @@ def get_settings():
 
     cypress_glob = (_parent_dir / Path("e2e/**/*.feature")).resolve()
 
-    user_number = (
-        f"{int(datetime.timestamp(datetime.now()))}{randint(100000000, 999999999)}"
-    )
+    # clean up URLs in case they have paths, trailing slashes etc.
+    parsed_url = urlparse(base_url)
+    cypress_base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+
+    parsed_url = urlparse(admin_url)
+    cypress_admin_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
 
     # a run is a set of steps in order; a step consists of a set of tags
     # and a user number; each run has a single user number which is
     # used in each step
     runs = []
-    for tag_group in args.runs:
+    for tag_group in tags:
+        user_number = (
+            f"{int(datetime.timestamp(datetime.now()))}{randint(100000000, 999999999)}"
+        )
+
         run = {
             "user_number": user_number,
             "steps": [],
         }
+
         for tags in tag_group.split(","):
             run["steps"].append(tags)
+
         runs.append(run)
 
     return {
@@ -129,6 +190,7 @@ def get_settings():
         "cypress": {
             "features_dir": _parent_dir / "e2e",
             "base_url": cypress_base_url,
+            "admin_url": cypress_admin_url,
             "glob": cypress_glob,
         },
         "runs": runs,
@@ -136,7 +198,10 @@ def get_settings():
 
 
 if __name__ == "__main__":
-    settings = get_settings()
+    settings = get_settings(sys.argv[1:])
+
+    print("Using settings:")
+    print(settings)
 
     # If not already there, make the cypress screenshots directory.
     # This is because Circle needs to try to copy across screenshots dir after
@@ -181,6 +246,11 @@ if __name__ == "__main__":
     in parallel if desired.
     """
     num_runs = len(settings["runs"])
+
+    if num_runs == 0:
+        print("No runs specified; set some run specs with --run")
+        sys.exit(1)
+
     for run_number, run in enumerate(settings["runs"]):
         run_number += 1
         print(f"Starting run {run_number} (of {num_runs})")
@@ -195,8 +265,9 @@ if __name__ == "__main__":
 
             options = {
                 "CYPRESS_baseUrl": settings["cypress"]["base_url"],
-                "GLOB": settings["cypress"]["glob"],
+                "CYPRESS_adminUrl": settings["cypress"]["admin_url"],
                 "CYPRESS_userNumber": run["user_number"],
+                "GLOB": settings["cypress"]["glob"],
                 "TAGS": tags,
             }
 
