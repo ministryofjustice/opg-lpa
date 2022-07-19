@@ -219,7 +219,7 @@ pr_build: &pr_build
         name: dev_cypress_tests_with_shared_signup
         # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
         # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
-        cypress_tags: "@Signup,not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
+        cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
@@ -410,7 +410,7 @@ path_to_live: &path_to_live
 
     - infrastructure_and_deployment/run_cypress_test:
         name: preprod_cypress_tests_with_shared_signup
-        cypress_tags: "@Signup,not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
+        cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
         workspace: preproduction
         filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases, preprod_feedbackdb]
