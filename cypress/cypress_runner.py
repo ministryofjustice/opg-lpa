@@ -20,9 +20,15 @@ def build_cypress_command(command, env={}):
             "CYPRESS_userNumber": <user number for sign up>,
             "CYPRESS_baseUrl": <front end URL>,
             "CYPRESS_adminUrl": <admin URL>,
+            "CYPRESS_CI": <true if we are in CI>,
             "GLOB": <GLOB for feature files>
             "TAGS": <TAGS to use for filtering features>
         }
+
+    If CYPRESS_CI is true, fixtures are disabled. This is important,
+    as if this flag is not set in CI, the tests will fail as the build
+    tries to remove fixtures, which it can't do due to networking
+    restrictions.
     """
     command = f"{command} run --headless --config video=false"
 
@@ -43,7 +49,13 @@ def build_cypress_command(command, env={}):
             [
                 f'{key}="{value}"'
                 for key, value in env.items()
-                if key in ["CYPRESS_baseUrl", "CYPRESS_userNumber", "CYPRESS_adminUrl"]
+                if key
+                in [
+                    "CYPRESS_baseUrl",
+                    "CYPRESS_userNumber",
+                    "CYPRESS_adminUrl",
+                    "CYPRESS_CI",
+                ]
             ]
         )
         if len(env_vars) > 0:
@@ -183,8 +195,8 @@ def get_settings(args_in):
         "should_stitch": should_stitch,
         "screenshots_path": _parent_dir / "screenshots",
         "disable_s3_monitor": disable_s3_monitor,
+        "in_ci": in_ci,
         "s3_monitor": {
-            "in_ci": in_ci,
             "verbose": verbose,
         },
         "cypress": {
@@ -212,7 +224,7 @@ if __name__ == "__main__":
     if not settings["disable_s3_monitor"]:
         monitor = S3Monitor(
             {
-                "c": settings["s3_monitor"]["in_ci"],
+                "c": settings["in_ci"],
                 "v": settings["s3_monitor"]["verbose"],
             }
         )
@@ -266,6 +278,7 @@ if __name__ == "__main__":
             options = {
                 "CYPRESS_baseUrl": settings["cypress"]["base_url"],
                 "CYPRESS_adminUrl": settings["cypress"]["admin_url"],
+                "CYPRESS_CI": settings["in_ci"],
                 "CYPRESS_userNumber": run["user_number"],
                 "GLOB": settings["cypress"]["glob"],
                 "TAGS": tags,

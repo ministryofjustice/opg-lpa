@@ -1,10 +1,12 @@
-import boto3
+import argparse
 import json
 import quopri
-import time
 import re
-import argparse
+import time
+
 from pathlib import Path
+
+import boto3
 
 
 class S3Monitor:
