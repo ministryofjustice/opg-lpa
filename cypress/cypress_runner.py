@@ -8,11 +8,6 @@ from threading import Thread
 from S3Monitor import S3Monitor
 
 
-# environment variables to set when calling cypress:
-# CYPRESS_baseUrl={cypress_base_url}
-# CYPRESS_userNumber={cypress_user_number}
-# CYPRESS_TAGS={cypress_tags}
-# GLOB={cypress_glob}
 def build_cypress_command(command, env={}):
     """
     :param command: path to script to run cypress
@@ -56,8 +51,7 @@ def get_settings():
     in_ci = False
     verbose = False
 
-    # enable this to be set multiple times so that tests can run in parallel?
-    cypress_tags = "@SignUp"
+    cypress_tags = "@SignUp,@StitchedPF"
 
     _parent_dir = Path(__file__).parent
 
@@ -69,10 +63,16 @@ def get_settings():
 
     cypress_base_url = "https://localhost:7002"
 
-    # one user per value of cypress_tags?
     user_number = (
         f"{int(datetime.timestamp(datetime.now()))}{randint(100000000, 999999999)}"
     )
+
+    # a run is a set of cypress tags combined with a user number;
+    # this enables tests to be run in sequence where required, e.g.
+    # run signup before stitched tests
+    runs = []
+    for tags in cypress_tags.split(","):
+        runs.append({"user_number": user_number, "tags": tags})
 
     return {
         "script": cypress_script,
@@ -82,12 +82,11 @@ def get_settings():
             "in_ci": in_ci,
             "verbose": verbose,
         },
-        "env": {
-            "CYPRESS_userNumber": user_number,
-            "CYPRESS_baseUrl": cypress_base_url,
-            "GLOB": cypress_glob,
-            "TAGS": cypress_tags,
+        "cypress": {
+            "base_url": cypress_base_url,
+            "glob": cypress_glob,
         },
+        "runs": runs,
     }
 
 
@@ -114,15 +113,26 @@ if __name__ == "__main__":
     # TODO stitch scripts together
 
     # build cypress command
-    cypress_command = build_cypress_command(settings["script"], settings["env"])
-    print(f"Will run cypress command:\n{cypress_command}")
+    for run_number, run in enumerate(settings["runs"]):
+        run_number += 1
 
-    p = Popen(cypress_command, shell=True)
-    p.wait()
+        options = {
+            "CYPRESS_baseUrl": settings["cypress"]["base_url"],
+            "GLOB": settings["cypress"]["glob"],
+            "CYPRESS_userNumber": run["user_number"],
+            "TAGS": run["tags"],
+        }
 
-    if p.returncode == 0:
-        print("OK")
-    else:
-        print("FAIL")
+        cypress_command = build_cypress_command(settings["script"], options)
+        print(f"Will run cypress command:\n{cypress_command}")
 
-    sys.exit(p.returncode)
+        p = Popen(cypress_command, shell=True)
+        p.wait()
+
+        if p.returncode != 0:
+            print(f"run {run_number}: FAIL")
+            sys.exit(p.returncode)
+
+        print(f"run {run_number}: OK")
+
+    sys.exit(0)
