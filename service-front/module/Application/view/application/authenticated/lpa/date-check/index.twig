@@ -218,7 +218,14 @@
     <input type="hidden" name="return-route" value="{{ returnRoute }}">
 
     <div class="date-check-person person person--full">
-        <h3 class="person-name heading-small flush--ends">{{ lpa.document.donor.name }} (the donor)</h3>
+        <h3 class="person-name heading-small flush--ends">
+        {% if lpa.document.donor.canSign %}
+            {{ lpa.document.donor.name }} (donor)
+        {% else %}
+            A person signing on behalf of {{ lpa.document.donor.name }} (donor)
+        {% endif %}
+        </h3>
+
         {% if donorLifeSustainingElement is defined %}
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
@@ -227,7 +234,11 @@
                     {{ formElementErrorsV2(donorLifeSustainingElementYear) }}
                     {{ formElementErrorsV2(donorLifeSustainingElement) }}
 
-                    <p>This person signed section 5 of the LPA on</p>
+                    {% if lpa.document.donor.canSign %}
+                        <p>This person signed section 5 of the LPA on</p>
+                    {% else %}
+                        <p>This person signed section 5 of the LPA on behalf of the donor on</p>
+                    {% endif %}
 
                     <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates">
                         <legend class="visually-hidden">Check signature dates for donor who signed section 5 of the LPA</legend>
@@ -259,7 +270,12 @@
                 {{ formElementErrorsV2(donorElementYear) }}
                 {{ formElementErrorsV2(donorElement) }}
 
-                <p>This person signed section 9 of the LPA on</p>
+                {% if lpa.document.donor.canSign %}
+                    <p>This person signed continuation sheet 3 of the LPA on</p>
+                {% else %}
+                    <p>This person signed continuation sheet 3 on behalf of the donor on</p>
+                {% endif %}
+
 
                 <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
                     <legend class="visually-hidden">Check signature dates for donor who signed section 9 of the LPA</legend>
