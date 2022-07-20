@@ -7,7 +7,12 @@ locals {
     username = var.account.aurora_enabled ? module.api_aurora[0].master_username : aws_db_instance.api[0].username
   }
 
+
   account_name_short = var.account.account_name_short
+
+  # needed because as of this check in, you can no longer select the legacy m3 medium instance type from new,
+  # and is deprecating april 2023. Please rework this when doing upgrades to either aurora or the instance type.
+  available_rds_instance_class = local.is_primary_region ? "db.m3.medium" : "db.m5.large"
 
   cert_prefix_public_facing   = var.environment_name == "production" ? "www." : "*."
   cert_prefix_internal        = var.account_name == "production" ? "" : "*."

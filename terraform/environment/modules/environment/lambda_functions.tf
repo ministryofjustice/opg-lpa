@@ -1,7 +1,3 @@
-data "aws_ecr_repository" "performance_platform_worker" {
-  provider = aws.management
-  name     = "perfplat-worker"
-}
 
 module "performance_platform_worker" {
   source            = "./modules/lambda_function"
@@ -16,9 +12,9 @@ module "performance_platform_worker" {
     "OPG_LPA_POSTGRES_PORT" : local.db.port,
     "OPG_LPA_POSTGRES_NAME" : local.db.name
   }
-  image_uri = "${data.aws_ecr_repository.performance_platform_worker.repository_url}:${var.lambda_container_version}"
+  image_uri = "${var.lambda_repository_url}:${var.lambda_container_version}"
 
-  ecr_arn                     = data.aws_ecr_repository.performance_platform_worker.arn
+  ecr_arn                     = var.lambda_ecr_arn
   lambda_role_policy_document = data.aws_iam_policy_document.performance_platform_worker_lambda_function_policy[0].json
   log_retention_in_days       = var.account.log_retention_in_days
   tags                        = local.performance_platform_component_tag
