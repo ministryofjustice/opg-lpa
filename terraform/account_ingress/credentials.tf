@@ -1,6 +1,5 @@
 provider "aws" {
-  # change this to eu-west-2 when you want to check DR in PRe or DEV
-  region = local.account.dr_enabled ? "eu-west-2" : "eu-west-1"
+  region = "eu-west-1"
   assume_role {
     role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
