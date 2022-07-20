@@ -86,7 +86,9 @@ Use the following as replacement values, depending on the scenario:
 5. Perform an initialisation of the workspace  `aws-exec vault identity — terraform init`.
 6. In the `terraform.tfvars.json’ under the “accounts" -> “<account_name>", change “dr_enabled” value to true and save.
 7. Run a plan on region: `aws-vault exec identity — terraform plan`.
-8. Check contents of the plan.
+8. Check contents of the plan. things to look out for include: 
+     - no destruction of resources in eu-west-1
+     - approx 83 created resources
 9. Run an apply: `aws-vault exec identity — terraform apply` and enter `yes`.
 10. In the #opg-lpa-live-db-alerts slack channel A db events subscription alert in  with `custom event transform` in the title will appear.
 11. Click through the title before the teraform apply times out within 1 minute
@@ -117,10 +119,10 @@ The region level set up is complete at this point.
 2. List the workspaces to find the environment you are interested in by running `aws-vault exec identity -- terraform workspace list`.
 3. Select your workspace from the list and switch to it:  `aws-vault exec identity --  terraform workspace select <my-workspace>`.
 4. perform an initialisation of the workspace:  `aws-exec vault identity — terraform init`.
-5. In the `terraform.tfvars.json’ under the “accounts" -> “development", change “dr_enabled” value to true and save the file.
+5. In the `terraform.tfvars.json’ under the “accounts" -> “<account_name>", change “dr_enabled” value to true and save the file.
 6. Run a plan on region: `aws-vault exec identity — terraform plan`.
 7. Check contents of plan.
-8. Run apply on region, `aws-vault exec identity — terraform plan`.
+8. Run apply on region, `aws-vault exec identity — terraform apply`.
 9. Type yes if satisfied with the plan.
 10. Run an apply: `aws-vault exec identity — terraform apply` and enter `yes`.
 11. Login to the service and perform some sanity checks. you can ask for assistance from the product owner on this.
