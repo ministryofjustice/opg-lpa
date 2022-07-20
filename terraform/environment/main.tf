@@ -1,3 +1,14 @@
+data "aws_ecr_repository" "performance_platform_worker" {
+  provider = aws.management
+  name     = "perfplat-worker"
+
+}
+data "aws_ecr_repository" "performance_platform_worker_dr" {
+  provider = aws.management-dr
+  name     = "perfplat-worker"
+
+}
+
 module "eu-west-1" {
   source                   = "./modules/environment"
   account                  = local.account
@@ -9,7 +20,8 @@ module "eu-west-1" {
   pagerduty_token          = var.pagerduty_token
   management_role          = var.management_role
   default_role             = var.default_role
-
+  lambda_repository_url    = data.aws_ecr_repository.performance_platform_worker.repository_url
+  lambda_ecr_arn           = data.aws_ecr_repository.performance_platform_worker.arn
   providers = {
     aws            = aws.eu_west_1
     aws.management = aws.management
@@ -17,7 +29,7 @@ module "eu-west-1" {
 }
 
 module "eu-west-2" {
-  count                    = local.dr_enabled ? 1 : 0
+  count                    = local.account.dr_enabled && local.account_name == "development" ? 1 : 0
   source                   = "./modules/environment"
   account                  = local.account
   account_name             = local.account_name
@@ -28,7 +40,8 @@ module "eu-west-2" {
   pagerduty_token          = var.pagerduty_token
   management_role          = var.management_role
   default_role             = var.default_role
-
+  lambda_repository_url    = data.aws_ecr_repository.performance_platform_worker_dr.repository_url
+  lambda_ecr_arn           = data.aws_ecr_repository.performance_platform_worker_dr.arn
   providers = {
     aws            = aws.eu_west_2
     aws.management = aws.management
@@ -72,4 +85,8 @@ output "admin-domain" {
 
 output "front-domain" {
   value = module.environment_dns.front_domain
+}
+
+output "active-region-name" {
+  value = local.active_region_name
 }
