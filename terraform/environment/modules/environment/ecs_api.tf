@@ -132,7 +132,7 @@ resource "aws_ecs_task_definition" "api" {
 // Permissions
 
 resource "aws_iam_role" "api_task_role" {
-  name               = "${var.region_name}-${var.environment_name}-api-task-role"
+  name               = "${var.environment_name}-api-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = local.api_component_tag
 }
@@ -323,7 +323,6 @@ locals {
         { "name" : "OPG_LPA_SEED_DATA", "value" : "true" },
         { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
-        { "name" : "OPG_LPA_REGION_NAME", "value" : var.region_name },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
         { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
         { "name" : "OPG_LPA_AUTH_TOKEN_TTL", "value" : tostring(var.account.auth_token_ttl_secs) },

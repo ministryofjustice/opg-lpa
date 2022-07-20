@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "front" {
 // Permissions
 
 resource "aws_iam_role" "front_task_role" {
-  name               = "${var.region_name}-${var.environment_name}-front-task-role"
+  name               = "${var.environment_name}-front-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = local.front_component_tag
 
@@ -247,7 +247,6 @@ locals {
         { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
-        { "name" : "OPG_LPA_REGION_NAME", "value" : var.region_name },
         { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
         { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
         { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },

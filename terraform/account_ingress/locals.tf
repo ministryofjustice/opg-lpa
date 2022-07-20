@@ -8,7 +8,6 @@ variable "accounts" {
     object({
       account_id                 = string
       allow_ingress_modification = bool
-      dr_enabled                 = bool
     })
   )
 }

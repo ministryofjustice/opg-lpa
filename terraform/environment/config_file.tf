@@ -7,7 +7,6 @@ locals {
 
   environment_pipeline_tasks_config = {
     account_id                   = local.account.account_id
-    active_region_name           = local.active_region_name
     environment                  = local.environment_name
     front_fqdn                   = module.environment_dns.front_fqdn
     admin_fqdn                   = module.environment_dns.admin_fqdn

@@ -14,14 +14,6 @@ variable "lambda_container_version" {
   default = "latest"
 }
 
-variable "lambda_repository_url" {
-  type = string
-}
-
-variable "lambda_ecr_arn" {
-  type = string
-}
-
 variable "account" {
   type = object({
     dr_enabled                             = bool

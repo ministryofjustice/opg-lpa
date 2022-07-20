@@ -7,11 +7,11 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.74.1
+    rev: v1.72.1
     hooks:
       - id: terraform_fmt
   - repo: https://github.com/zricethezav/gitleaks
-    rev: v8.8.12
+    rev: v8.8.7
     hooks:
     - id: gitleaks
   - repo: https://github.com/digitalpulp/pre-commit-php.git
@@ -29,6 +29,6 @@ repos:
       args: [--memory-limit=1024M]
     - id: php-cs-fixer
   - repo: https://github.com/psf/black
-    rev: 22.6.0
+    rev: 22.3.0
     hooks:
     -   id: black
