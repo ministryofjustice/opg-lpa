@@ -35,10 +35,10 @@ you need to have familiarity with:
 
 3. **This process is an initial version**. As such will be subject to change based on potential optimisations, and upgrades to the DB infrastructure e.g. Aurora Serverless.
 
-4. **The Production and Preproduction DB instance type is deprecated**. the db.m3.medium instance type is being removed from use in april 2023, and is no longer available in selection of DB’s for eu-west-2. the DR region has been coded to upgrade to db.m5.large as this is the minimum available fro general purpose use.
+4. **The Production and Preproduction DB instance type is deprecated**. the db.m3.medium instance type is being removed from use in april 2023, and is no longer available in selection of DB’s for eu-west-2. the DR region has been coded to upgrade to db.m5.large as this is the minimum available for general purpose use.
 
 5. **The management account Elastic Container Registry (ECR) is not currently replicated fully**. It currently only replicates lambdas, since ECR containers are cross region accessible. If the ECR goes down in the primary we will need to:
-   1. Set up org infra to push containers to the alternative region.
+   1. Set up orginfra to push containers to the alternative region.
    2. Tweak the build scripts to push containers to the alternative region ECR in management account.
    3. This will be improved once decisions are made about replicating Container images to a secondary region.
 
@@ -56,18 +56,10 @@ During initial testing the process took approvimately 45 minutes to 1 hour. This
 
 requires 4 major tasks:
 
-- [Failover to eu-west-2](#failover-to-eu-west-2)
-  - [Context](#context)
-  - [Prerequisites](#prerequisites)
-  - [Caveats and improvements](#caveats-and-improvements)
-  - [Runbook](#runbook)
-    - [Approximate time to restore service](#approximate-time-to-restore-service)
-    - [High level approach](#high-level-approach)
-    - [Notes on replacement values](#notes-on-replacement-values)
-    - [1. Provision region level resources](#1-provision-region-level-resources)
-    - [2. Pagerduty Setup for DB alerts](#2-pagerduty-setup-for-db-alerts)
-  - [3. Provision environment level resources](#3-provision-environment-level-resources)
-  - [4. Set up CI ingress and commit changes](#4-set-up-ci-ingress-and-commit-changes)
+[1. Provision region level resources](#1-provision-region-level-resources)
+[2. Pagerduty Setup for DB alerts](#2-pagerduty-setup-for-db-alerts)
+  [3. Provision environment level resources](#3-provision-environment-level-resources)
+  [4. Set up CI ingress and commit changes](#4-set-up-ci-ingress-and-commit-changes)
 
 ### Notes on replacement values
 
@@ -86,9 +78,9 @@ Use the following as replacement values, depending on the scenario:
 5. Perform an initialisation of the workspace  `aws-exec vault identity — terraform init`.
 6. In the `terraform.tfvars.json’ under the “accounts" -> “<account_name>", change “dr_enabled” value to true and save.
 7. Run a plan on region: `aws-vault exec identity — terraform plan`.
-8. Check contents of the plan. things to look out for include: 
+8. Check contents of the plan. Things to look out for include:
      - no destruction of resources in eu-west-1
-     - approx 83 created resources
+     - approx 80+ created resources in eu-west-2.
 9. Run an apply: `aws-vault exec identity — terraform apply` and enter `yes`.
 10. In the #opg-lpa-live-db-alerts slack channel A db events subscription alert in  with `custom event transform` in the title will appear.
 11. Click through the title before the teraform apply times out within 1 minute
@@ -121,8 +113,10 @@ The region level set up is complete at this point.
 4. perform an initialisation of the workspace:  `aws-exec vault identity — terraform init`.
 5. In the `terraform.tfvars.json’ under the “accounts" -> “<account_name>", change “dr_enabled” value to true and save the file.
 6. Run a plan on region: `aws-vault exec identity — terraform plan`.
-7. Check contents of plan.
-8. Run apply on region, `aws-vault exec identity — terraform apply`.
+7. Check contents of plan. Things to look out for include:
+     - no destruction of resources in eu-west-1
+     - approx 140+ created resources in eu-west-2.
+8. Run apply on environment, `aws-vault exec identity — terraform apply`.
 9. Type yes if satisfied with the plan.
 10. Run an apply: `aws-vault exec identity — terraform apply` and enter `yes`.
 11. Login to the service and perform some sanity checks. you can ask for assistance from the product owner on this.
@@ -135,7 +129,7 @@ The region level set up is complete at this point.
     6. check address lookups
     7. Download a PDF
 
-1Set up is complete of the environment, but you may also want to check in these changes and push to a CI build.
+Set up is complete of the environment, but you may also want to check in these changes and push to a CI build, which the next section should help with.
 
 ## 4. Set up CI ingress and commit changes
 
