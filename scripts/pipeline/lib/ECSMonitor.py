@@ -13,7 +13,6 @@ class ECSMonitor:
     aws_logs_client = ""
     aws_private_subnets = []
     db_client_security_group = ""
-    active_region_name = ""
     security_group = ""
     environment = ""
     task_definition = ""
@@ -29,7 +28,7 @@ class ECSMonitor:
 
         self.aws_ecs_client = boto3.client(
             "ecs",
-            region_name=self.active_region_name,
+            region_name="eu-west-1",
             aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
             aws_secret_access_key=self.aws_iam_session["Credentials"][
                 "SecretAccessKey"
@@ -38,7 +37,7 @@ class ECSMonitor:
         )
         self.aws_ec2_client = boto3.client(
             "ec2",
-            region_name=self.active_region_name,
+            region_name="eu-west-1",
             aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
             aws_secret_access_key=self.aws_iam_session["Credentials"][
                 "SecretAccessKey"
@@ -47,7 +46,7 @@ class ECSMonitor:
         )
         self.aws_logs_client = boto3.client(
             "logs",
-            region_name=self.active_region_name,
+            region_name="eu-west-1",
             aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
             aws_secret_access_key=self.aws_iam_session["Credentials"][
                 "SecretAccessKey"
@@ -66,7 +65,6 @@ class ECSMonitor:
             self.environment = parameters["environment"]
             self.db_client_security_group = parameters["db_client_security_group_id"]
             self.security_group = parameters[f"{self.taskName}_security_group_id"]
-            self.active_region_name = parameters["active_region_name"]
 
     def get_task_definition(self):
         # get the latest task definition
@@ -87,7 +85,7 @@ class ECSMonitor:
 
         sts = boto3.client(
             "sts",
-            region_name=self.active_region_name,
+            region_name="eu-west-1",
         )
         session = sts.assume_role(
             RoleArn=role_arn,
