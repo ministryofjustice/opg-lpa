@@ -84,7 +84,7 @@ Use the following as replacement values, depending on the scenario:
 3. Select workspace at region level e.g.:`export TF_workspace=<account_name>`.
 4. Set `breakglass` role; this is only for non development accounts: `export TF_VAR_default_role=breakglass`.
 5. Perform an initialisation of the workspace  `aws-exec vault identity — terraform init`.
-6. In the `terraform.tfvars.json’ under the “accounts" -> “development", change “dr_enabled” value to true and save.
+6. In the `terraform.tfvars.json’ under the “accounts" -> “<account_name>", change “dr_enabled” value to true and save.
 7. Run a plan on region: `aws-vault exec identity — terraform plan`.
 8. Check contents of the plan.
 9. Run an apply: `aws-vault exec identity — terraform apply` and enter `yes`.
