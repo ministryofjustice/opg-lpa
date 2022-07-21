@@ -25,23 +25,23 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run -v `pwd`/service-front/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-front/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
-	@docker run -v `pwd`/service-pdf/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-pdf/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-api-composer
 run-api-composer:
-	@docker run -v `pwd`/service-api/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-api/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run -v `pwd`/service-admin/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-admin/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-composers
 run-composers:
-	@docker pull composer:latest; \
+	@docker pull composer:2.3; \
 	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
 
 # This will make a docker network called "malpadev", used to communicate from
