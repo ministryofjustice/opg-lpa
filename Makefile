@@ -41,7 +41,8 @@ run-admin-composer:
 
 .PHONY: run-composers
 run-composers:
-	@${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
+	@docker pull composer:latest; \
+	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
 
 # This will make a docker network called "malpadev", used to communicate from
 # the perfplatworkerproxy lambda (running in localstack) to the perfplatworker
