@@ -14,6 +14,7 @@ locals {
   front_dns                   = "front.lpa"
   admin_dns                   = "admin.lpa"
   pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
+  active_region_name          = local.dr_enabled ? "eu-west-2" : "eu-west-1"
 
   # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
   dr_enabled = local.account_name == "development" && local.account.dr_enabled
