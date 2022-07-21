@@ -25,23 +25,24 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run -v `pwd`/service-front/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-front/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
-	@docker run -v `pwd`/service-pdf/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-pdf/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-api-composer
 run-api-composer:
-	@docker run -v `pwd`/service-api/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-api/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run -v `pwd`/service-admin/:/app/ composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-admin/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-composers
 run-composers:
-	@${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
+	@docker pull composer:2.3; \
+	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
 
 # This will make a docker network called "malpadev", used to communicate from
 # the perfplatworkerproxy lambda (running in localstack) to the perfplatworker
@@ -54,6 +55,7 @@ dc-up: run-composers
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
+	aws-vault exec moj-lpa-dev -- aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
 	docker-compose up
 
 # target for users outside MoJ to run the stack without 3rd party integrations
@@ -170,24 +172,9 @@ dc-front-unit-tests:
 .PHONY: dc-unit-tests
 dc-unit-tests:
 	@${MAKE} dc-front-unit-tests
-
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run admin-app /app/vendor/bin/phpunit
-
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run api-app /app/vendor/bin/phpunit
-
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run pdf-app /app/vendor/bin/phpunit
+	@docker-compose run admin-app /app/vendor/bin/phpunit
+	@docker-compose run api-app /app/vendor/bin/phpunit
+	@docker-compose run pdf-app /app/vendor/bin/phpunit
 
 .PHONY: integration-api-local
 integration-api-local:
