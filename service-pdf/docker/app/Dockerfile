@@ -14,8 +14,7 @@ RUN adduser -D -g '' appuser
 RUN apk add --upgrade apk-tools
 RUN apk upgrade --available
 
-# security fix for expat
-RUN apk upgrade expat
+RUN apk upgrade
 
 RUN apk update \
     && apk add --no-cache openjdk8-jre gcc make musl-dev pkgconfig bash\
