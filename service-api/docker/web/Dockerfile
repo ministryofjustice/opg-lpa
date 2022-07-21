@@ -14,7 +14,10 @@ RUN wget -q -O /usr/local/bin/confd "https://github.com/kelseyhightower/confd/re
     chmod +x /usr/local/bin/confd
 
 # Remove unused packages
-RUN apk del freetype nginx-module-image-filter
+RUN apk del freetype nginx-module-image-filter curl
+
+# Upgrade vulnerable packages
+RUN apk upgrade
 
 USER nginx
 COPY --chown=nginx:nginx service-api/docker/web/etc /etc
