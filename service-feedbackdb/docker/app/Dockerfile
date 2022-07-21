@@ -1,7 +1,6 @@
 FROM python:3.8-alpine
 
-# security fix for expat
-RUN apk upgrade expat
+RUN apk upgrade
 
 RUN pip install awscli psycopg2-binary sqlalchemy alembic
 

@@ -1,9 +1,8 @@
 FROM python:3.9-alpine
 
-# security fix for expat
-RUN apk upgrade expat
+RUN apk add build-base curl && \
+    apk upgrade
 
-RUN apk add build-base curl
 WORKDIR /makelpa
 
 COPY service-front-v2 .

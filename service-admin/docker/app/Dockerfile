@@ -12,12 +12,13 @@ FROM php:8.1-fpm-alpine3.15
 RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade apk-tools
-RUN apk upgrade --available
 RUN apk add --update --no-cache icu
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
         && docker-php-ext-install intl \
         && docker-php-ext-install bcmath
+
+RUN apk upgrade
 
 # Enable debug if needed. Should only be used locally
 ARG ENABLE_XDEBUG=0
