@@ -260,7 +260,7 @@ if __name__ == "__main__":
     num_runs = len(settings["runs"])
 
     if num_runs == 0:
-        print("No runs specified; set some run specs with --run")
+        print("No runs specified; set some tags with --tags")
         sys.exit(1)
 
     for run_number, run in enumerate(settings["runs"]):
