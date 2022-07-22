@@ -92,6 +92,8 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
+        $continuationNoteKeys = $this->getLpaApplicationService()->getContinuationNoteKeys($lpa);
+
         $applicants = [];
 
         if ($lpa->completedAt !== null) {
@@ -116,10 +118,12 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
+
         return new ViewModel([
             'form'        => $form,
             'returnRoute' => $returnRoute,
             'applicants'  => $applicants,
+            'continuationNoteKeys' => $continuationNoteKeys,
         ]);
     }
 

@@ -15,3 +15,33 @@ const seeReuseDetailsLink = (shouldExist) => {
         cy.get(selector).should(condition);
     });
 }
+
+Then('I cannot see continuation sheet reminders', () => {
+    cy.get('[data-cy=continuation-sheet-info]').should('not.exist');
+});
+
+Then('I can see fields for the donor, certificate provider, attorney, applicant', () => {
+    const expectedNames = ['Mr Dead Pool (the donor)',
+                           'Mr Cee Pee (certificate provider)',
+                           'Mr A Att (attorney)',
+                           'Mr Dead Pool (applicant)']
+    cy.get('[data-cy=person-name]').then(($name) => {
+        const names = $name.map(function() {return this.innerText}).toArray();
+        expect(names).to.deep.eq(expectedNames);
+    })
+})
+
+Then('I can see a reminder to sign continuation sheet 1 and 2', () => {
+    const text = 'You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.'
+    cy.get('[data-cy=continuation-sheet-info]').should('contain.text', text);
+})
+
+Then('I can see a reminder to sign continuation sheet 3', () => {
+    const text = 'This person must have signed continuation sheet 3 before the certificate provider has signed section 10.'
+    cy.get('[data-cy=continuation-sheet-info]').should('contain.text', text);
+})
+
+Then('I can see a reminder to sign continuation sheet 4', () => {
+    const text = 'They must have signed continuation sheet 4 after the ‘certificate provider’ has signed section 10 of the LPA form.'
+    cy.get('[data-cy=primary-attorney]').find('[data-cy=continuation-sheet-info]').should('contain.text', text);
+})

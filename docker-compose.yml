@@ -413,6 +413,8 @@ services:
       - local-config
       - api-app
       - postgres
+    volumes:
+      - ./scripts/non_live_seeding:/app
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
