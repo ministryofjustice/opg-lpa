@@ -58,16 +58,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.228.3",
+            "version": "3.231.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "4dad57c95c7ff1dfcea29a7877ce64720b3318c3"
+                "reference": "25f7cf72a1d7cf3075436cfbfdc4caed201df3ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4dad57c95c7ff1dfcea29a7877ce64720b3318c3",
-                "reference": "4dad57c95c7ff1dfcea29a7877ce64720b3318c3",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/25f7cf72a1d7cf3075436cfbfdc4caed201df3ec",
+                "reference": "25f7cf72a1d7cf3075436cfbfdc4caed201df3ec",
                 "shasum": ""
             },
             "require": {
@@ -85,6 +85,7 @@
                 "andrewsville/php-token-reflection": "^1.4",
                 "aws/aws-php-sns-message-validator": "~1.0",
                 "behat/behat": "~3.0",
+                "composer/composer": "^1.10.22",
                 "doctrine/cache": "~1.4",
                 "ext-dom": "*",
                 "ext-openssl": "*",
@@ -143,9 +144,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.228.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.231.7"
             },
-            "time": "2022-06-24T20:24:09+00:00"
+            "time": "2022-07-15T18:16:42+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -965,16 +966,16 @@
         },
         {
             "name": "laminas/laminas-servicemanager",
-            "version": "3.12.0",
+            "version": "3.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-servicemanager.git",
-                "reference": "05ac4b1fb1fe9333313eeafced9b6c7946589487"
+                "reference": "918de970b2c3d42acebff3d431d76db52b6a32a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-servicemanager/zipball/05ac4b1fb1fe9333313eeafced9b6c7946589487",
-                "reference": "05ac4b1fb1fe9333313eeafced9b6c7946589487",
+                "url": "https://api.github.com/repos/laminas/laminas-servicemanager/zipball/918de970b2c3d42acebff3d431d76db52b6a32a2",
+                "reference": "918de970b2c3d42acebff3d431d76db52b6a32a2",
                 "shasum": ""
             },
             "require": {
@@ -1004,7 +1005,7 @@
                 "phpbench/phpbench": "^1.1",
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "^9.5.5",
-                "psalm/plugin-phpunit": "^0.16.1",
+                "psalm/plugin-phpunit": "^0.17.0",
                 "vimeo/psalm": "^4.8"
             },
             "suggest": {
@@ -1052,7 +1053,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-06-13T16:20:56+00:00"
+            "time": "2022-07-07T16:13:26+00:00"
         },
         {
             "name": "laminas/laminas-stdlib",
@@ -1208,16 +1209,16 @@
         },
         {
             "name": "laminas/laminas-zendframework-bridge",
-            "version": "1.5.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-zendframework-bridge.git",
-                "reference": "7f049390b756d34ba5940a8fb47634fbb51f79ab"
+                "reference": "d74d2da21beae5aceff1e8c07b901066b0e1b719"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-zendframework-bridge/zipball/7f049390b756d34ba5940a8fb47634fbb51f79ab",
-                "reference": "7f049390b756d34ba5940a8fb47634fbb51f79ab",
+                "url": "https://api.github.com/repos/laminas/laminas-zendframework-bridge/zipball/d74d2da21beae5aceff1e8c07b901066b0e1b719",
+                "reference": "d74d2da21beae5aceff1e8c07b901066b0e1b719",
                 "shasum": ""
             },
             "require": {
@@ -1266,7 +1267,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-02-22T22:17:01+00:00"
+            "time": "2022-07-14T16:30:30+00:00"
         },
         {
             "name": "mikehaertl/php-pdftk",
@@ -1917,7 +1918,7 @@
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v3.1.0",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
@@ -1964,7 +1965,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.1.0"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.1.1"
             },
             "funding": [
                 {
@@ -2232,16 +2233,16 @@
         },
         {
             "name": "symfony/translation-contracts",
-            "version": "v2.5.1",
+            "version": "v2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation-contracts.git",
-                "reference": "1211df0afa701e45a04253110e959d4af4ef0f07"
+                "reference": "136b19dd05cdf0709db6537d058bcab6dd6e2dbe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/1211df0afa701e45a04253110e959d4af4ef0f07",
-                "reference": "1211df0afa701e45a04253110e959d4af4ef0f07",
+                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/136b19dd05cdf0709db6537d058bcab6dd6e2dbe",
+                "reference": "136b19dd05cdf0709db6537d058bcab6dd6e2dbe",
                 "shasum": ""
             },
             "require": {
@@ -2290,7 +2291,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/translation-contracts/tree/v2.5.1"
+                "source": "https://github.com/symfony/translation-contracts/tree/v2.5.2"
             },
             "funding": [
                 {
@@ -2306,7 +2307,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-02T09:53:40+00:00"
+            "time": "2022-06-27T16:58:25+00:00"
         },
         {
             "name": "symfony/validator",
