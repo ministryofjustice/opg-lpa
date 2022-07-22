@@ -450,6 +450,12 @@ services:
           condition: service_started
       postgres:
           condition: service_healthy
+      localstack:
+          condition: service_healthy
+      api-app:
+          condition: service_healthy
+    volumes:
+      - ./scripts/non_live_seeding:/app
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"

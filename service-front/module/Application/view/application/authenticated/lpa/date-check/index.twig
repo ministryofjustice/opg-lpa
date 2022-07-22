@@ -218,7 +218,7 @@
     <input type="hidden" name="return-route" value="{{ returnRoute }}">
 
     <div class="date-check-person person person--full">
-        <h3 class="person-name heading-small flush--ends">{{ lpa.document.donor.name }} (the donor)</h3>
+        <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ lpa.document.donor.name }} (the donor)</h3>
         {% if donorLifeSustainingElement is defined %}
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
@@ -280,16 +280,31 @@
                 </fieldset>
 
             </div>
-
-            <div class="panel panel-border-wide text">
-                <p>Remember, if continuation sheets 1 or 2 were used, the donor must have signed them before, or on the same day as, they signed section 9. </p>
-            </div>
         </div>
+
+        {% if continuationNoteKeys is not empty %}
+        <div class="panel panel-border-wide text">
+            {% if 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys and ('LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys or 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys) %}
+                <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.</p>
+            {% elseif 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys or 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys %}
+                <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
+            {% elseif 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys %}
+                <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
+            {% endif %}
+
+            {% if 'CANT_SIGN' in continuationNoteKeys%}
+                {% if lpa.document.type == 'property-and-financial' %}
+                    <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
+                {% else %}
+                    <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 
-
     <div class="date-check-person person person--full">
-        <h3 class="person-name heading-small flush--ends">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
+        <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
         <div class="person-address flush--ends">
             <div class="dob-element form-date {{ certificateProviderElement.getMessages|length >0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(certificateProviderElementDay) }}
@@ -357,8 +372,8 @@
             id: elementYearId
         }) ? '' }}
 
-        <div class="date-check-person person person--full">
-            <h3 class="person-name heading-small flush--ends">{{ attorney.name }} (attorney)</h3>
+        <div class="date-check-person person person--full" data-cy="primary-attorney">
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ attorney.name }} (attorney)</h3>
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}
@@ -393,6 +408,10 @@
                     </fieldset>
                 </div>
             </div>
+
+            {% if attorney.dob is not defined %}
+                {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
+            {% endif %}
         </div>
 
     {% endfor %}
@@ -435,7 +454,7 @@
         }) ? '' }}
 
         <div class="date-check-person person person--full">
-            <h3 class="person-name heading-small flush--ends">{{ attorney.name }} (replacement attorney)</h3>
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ attorney.name }} (replacement attorney)</h3>
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}
@@ -470,6 +489,10 @@
                     </fieldset>
                 </div>
             </div>
+
+            {% if attorney.dob is not defined %}
+                {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
+            {% endif %}
         </div>
 
     {% endfor %}
@@ -512,7 +535,7 @@
         }) ? '' }}
 
         <div class="date-check-person person person--full">
-            <h3 class="person-name heading-small flush--ends">{{ applicant['name'] }} (applicant)</h3>
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ applicant['name'] }} (applicant)</h3>
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}
