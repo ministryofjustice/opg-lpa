@@ -38,6 +38,7 @@ return [
             'AnalyticsService'              => 'Application\Model\Service\Analytics\GoogleAnalyticsService',
             'ApplicantService'              => 'Application\Model\Service\Lpa\Applicant',
             'Communication'                 => 'Application\Model\Service\Lpa\Communication',
+            'ContinuationSheets'            => 'Application\Model\Service\Lpa\ContinuationSheets',
             'Feedback'                      => 'Application\Model\Service\Feedback\Feedback',
             'Guidance'                      => 'Application\Model\Service\Guidance\Guidance',
             'LpaApplicationService'         => 'Application\Model\Service\Lpa\Application',

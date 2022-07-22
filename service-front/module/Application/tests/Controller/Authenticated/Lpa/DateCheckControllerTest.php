@@ -4,9 +4,9 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Form\Lpa\DateCheckForm;
+use Application\Model\Service\Lpa\ContinuationSheets;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
-use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
@@ -16,6 +16,12 @@ class DateCheckControllerTest extends AbstractControllerTest
      * @var MockInterface|DateCheckForm
      */
     private $form;
+
+    /**
+     * @var MockInterface|ContinuationSheets
+     */
+    private $continuationSheets;
+
     private $postData = [
         'sign-date-donor'                 => ['day' => 1, 'month' => 2, 'year' => 2016],
         'sign-date-donor-life-sustaining' => ['day' => 1, 'month' => 2, 'year' => 2016],
@@ -30,9 +36,21 @@ class DateCheckControllerTest extends AbstractControllerTest
     {
         parent::setUp();
 
+        $this->continuationSheets = Mockery::mock(ContinuationSheets::class);
         $this->form = Mockery::mock(DateCheckForm::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\DateCheckForm', ['lpa' => $this->lpa]])->andReturn($this->form);
+    }
+
+    protected function getController(string $controllerName)
+    {
+        /** @var DateCheckController $controller */
+        $controller = parent::getController($controllerName);
+
+        $this->continuationSheets = Mockery::mock(ContinuationSheets::class);
+        $controller->setContinuationSheets($this->continuationSheets);
+
+        return $controller;
     }
 
     public function testIndexActionGet()
@@ -41,7 +59,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $controller = $this->getController(DateCheckController::class);
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
-        $this->lpaApplicationService->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
+        $this->continuationSheets->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
             ->andReturn([])
             ->once();
         $currentRouteName = 'lpa/date-check/complete';
@@ -64,7 +82,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $controller = $this->getController(DateCheckController::class);
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
-        $this->lpaApplicationService->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
+        $this->continuationSheets->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
             ->andReturn([])
             ->once();
         $currentRouteName = 'lpa/date-check/complete';
@@ -91,7 +109,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $postData['sign-date-donor']['year'] = 2017;
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
-        $this->lpaApplicationService->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
+        $this->continuationSheets->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
             ->andReturn([])
             ->once();
         $currentRouteName = 'lpa/date-check/complete';
