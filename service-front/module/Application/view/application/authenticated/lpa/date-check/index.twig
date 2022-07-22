@@ -178,28 +178,6 @@
 
     {% endif %}
 
-    {% if dateError is defined %}
-
-        <div class="alert panel" role="alert">
-            <i class="icon icon-cross" role="presentation"></i>
-            <div class="alert-message">
-                <p>There is a problem</p>
-            </div>
-        </div>
-
-        <div class="text error">
-            <p class="error-message">{{ dateError }}</p>
-        </div>
-
-        <div class="text divorced">
-            <p>Please see the <a href="/guide#topic-signing-the-lpa" class="js-guidance" data-journey-click="page:link:help: Please see the -guidance- on signing">guidance</a> on signing and, if necessary,
-                <a href="{{ url( 'lpa/view-docs', {'lpa-id': lpa.id}) }}">reprint</a> and re-sign your LPA.</p>
-        </div>
-
-        <hr>
-
-    {% endif %}
-
     <div class="accordion-info">
         <div class="text">
 
