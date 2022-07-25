@@ -193,16 +193,12 @@ test-pdf-local:
 cypress-local:
 	docker rm -f cypress_tests || true
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" -e "CYPRESS_TAGS=not @IgnoreSignup and (@StitchedPF or @StitchedHW)" --entrypoint ./cypress/start.sh -v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests cypress:latest
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_TAGS="@SignUp,@StitchedPF or @StitchedHW" -v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests --entrypoint ./cypress/cypress_start.sh cypress:latest
 
 .PHONY: cypress-local-shell
 cypress-local-shell:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
 	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" --entrypoint bash --network="host" -v `pwd`/cypress:/app/cypress --name cypress_tests cypress:latest
-
-.PHONY: restitch
-restitch:
-	cypress/stitch.sh
 
 # Start S3 Monitor and call "cypress open";
 # this requires a globally-installed cypress
