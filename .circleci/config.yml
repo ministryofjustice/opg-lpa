@@ -198,34 +198,34 @@ pr_build: &pr_build
         requires: [dev_environment_apply_terraform]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_stitchedpf
-        cypress_tags: "@StitchedPF and not @IgnoreSignup"
+        name: dev_cypress_test_stitchedpf
+        cypress_tags: "@Signup,@StitchedPF"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_stitchedpfclone
-        cypress_tags: "@StitchedClone and not @IgnoreSignup"
+        name: dev_cypress_test_stitchedhw
+        cypress_tags: "@Signup,@StitchedHW"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_stitchedhw
-        cypress_tags: "@StitchedHW and not @IgnoreSignup"
+        name: dev_cypress_test_stitchedpfclone
+        cypress_tags: "@Signup,@StitchedClone"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_remaining_tests
+        name: dev_cypress_tests_with_shared_signup
         # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
         # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
-        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @IgnoreSignup"
+        cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_ignore_signup
-        cypress_tags: "@IgnoreSignup"
+        name: dev_cypress_tests_with_signup_included
+        cypress_tags: "@SignupIncluded"
         filters: { branches: { ignore: [main] } }
         requires: [dev_seed_environment_databases, dev_feedbackdb]
 
@@ -395,29 +395,29 @@ path_to_live: &path_to_live
         requires: [preprod_environment_apply_terraform]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: preprod_test_cypress_stitchedpf
-        cypress_tags: "@StitchedPF and not @IgnoreSignup"
+        name: preprod_cypress_test_stitchedpf
+        cypress_tags: "@Signup,@StitchedPF"
         workspace: preproduction
         filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases, preprod_feedbackdb]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: preprod_test_cypress_stitchedhw
-        cypress_tags: "@StitchedHW and not @IgnoreSignup"
+        name: preprod_cypress_test_stitchedhw
+        cypress_tags: "@Signup,@StitchedHW"
         workspace: preproduction
         filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases, preprod_feedbackdb]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: preprod_test_cypress_remaining_tests
-        cypress_tags: "not @SignUp and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @Statuses and not @CorrespondentReuse and not @IgnoreSignup"
+        name: preprod_cypress_tests_with_shared_signup
+        cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
         workspace: preproduction
         filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases, preprod_feedbackdb]
 
     - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test_ignore_signup
-        cypress_tags: "@IgnoreSignup"
+        name: preprod_cypress_tests_with_signup_included
+        cypress_tags: "@SignupIncluded"
         workspace: preproduction
         filters: { branches: { only: [main] } }
         requires: [preprod_seed_environment_databases, preprod_feedbackdb]
@@ -428,9 +428,10 @@ path_to_live: &path_to_live
         filters: { branches: { only: [main] } }
         requires:
           [
-            preprod_test_cypress_stitchedpf,
-            preprod_test_cypress_stitchedhw,
-            preprod_test_cypress_remaining_tests,
+            preprod_cypress_test_stitchedpf,
+            preprod_cypress_test_stitchedhw,
+            preprod_cypress_tests_with_shared_signup,
+            preprod_cypress_tests_with_signup_included,
           ]
 
     - infrastructure_and_deployment/apply_region_terraform:
@@ -1278,13 +1279,13 @@ orbs:
                   -e AWS_ACCESS_KEY_ID \
                   -e AWS_SECRET_ACCESS_KEY \
                   -e AWS_SESSION_TOKEN \
-                  -e CYPRESS_CI=true \
                   -e CYPRESS_NO_COMMAND_LOG=1 \
-                  -e "CYPRESS_numTestsKeptInMemory=1" \
-                  -e CYPRESS_TAGS="<<parameters.cypress_tags>>" \
-                  -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" \
-                  -e "CYPRESS_adminUrl=https://$ADMIN_DOMAIN" \
-                  --entrypoint "./cypress/start.sh" \
+                  -e CYPRESS_numTestsKeptInMemory=1 \
+                  -e CYPRESS_RUNNER_IN_CI=true \
+                  -e CYPRESS_RUNNER_TAGS="<<parameters.cypress_tags>>" \
+                  -e CYPRESS_RUNNER_BASE_URL="https://$PUBLIC_FACING_DOMAIN" \
+                  -e CYPRESS_RUNNER_ADMIN_URL="https://$ADMIN_DOMAIN" \
+                  --entrypoint "./cypress/cypress_start.sh" \
                   --name cypress_tests cypress:latest && exit 0 || \
                   (echo "Copying test artifacts"; docker start cypress_tests ; docker cp cypress_tests:/app/cypress/screenshots screenshots ; docker stop cypress_tests ; exit 1)
           - store_artifacts:
