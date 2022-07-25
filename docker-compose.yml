@@ -20,8 +20,8 @@ services:
   # Local Services
 
   node-build-assets:
-    container_name: node-build-assets
-    image: node-build-assets
+    container_name: lpa-node-build-assets
+    image: lpa-node-build-assets
     volumes:
       - ./service-front:/service-front:rw,delegated
     build:
@@ -29,6 +29,7 @@ services:
       dockerfile: node-build-assets/docker/Dockerfile
 
   postgres:
+    container_name: lpa-postgres
     image: postgres:10.13
     ports:
       - 5432:5432
@@ -39,16 +40,19 @@ services:
       POSTGRES_PASSWORD: lpapass
 
   redis:
+    container_name: lpa-redis
     image: library/redis:alpine
     ports:
       - 6379:6379
 
   dynamodb:
+    container_name: lpa-dynamodb
     image: amazon/dynamodb-local
     ports:
       - 8000:8000
 
   localstack:
+    container_name: lpa-localstack
     image: localstack/localstack:0.12.18
     privileged: true
     ports:
@@ -71,6 +75,7 @@ services:
 
   local-config:
     container_name: lpa-local-config
+    image: lpa-local-config
     build:
       context: ./local-config/
       dockerfile: ./Dockerfile
@@ -103,7 +108,7 @@ services:
     image: lpa-front-web
     depends_on:
       - front-app
-      - flask-app
+      - front-v2-app
     volumes:
       - ./service-front/public:/web
     build:
@@ -113,12 +118,12 @@ services:
       APP_HOST: front-app
       APP_PORT: 9000
       NGINX_LOG_LEVEL: warn
-      APP_V2_HOST: flask-app
+      APP_V2_HOST: front-v2-app
       APP_V2_PORT: 8005
 
-  flask-app:
-    container_name: lpa-flask-app
-    image: lpa-flask-app
+  front-v2-app:
+    container_name: lpa-front-v2-app
+    image: lpa-front-v2-app
     build:
       context: ./
       dockerfile: service-front-v2/docker/app/Dockerfile
@@ -129,6 +134,7 @@ services:
 
   feedback-app:
     container_name: lpa-feedback-app
+    image: lpa-feedback-app
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/front-app
     ports:
       - 9005:8005
@@ -186,6 +192,7 @@ services:
 
   front-ssl:
     container_name: lpa-front-ssl
+    image: lpa-front-ssl
     depends_on:
       - front-web
     build:
@@ -352,6 +359,7 @@ services:
 
   admin-ssl:
     container_name: lpa-admin-ssl
+    image: lpa-admin-ssl
     depends_on:
       - admin-web
     build:
@@ -396,8 +404,8 @@ services:
   # ---------------------------
   # Seeding
   seeding:
-    container_name: seeding
-    image: seeding
+    container_name: lpa-seeding
+    image: lpa-seeding
     build:
       context: ./
       dockerfile: service-seeding/docker/app/Dockerfile
@@ -418,7 +426,7 @@ services:
   # ---------------------------
   # Create feedback table and db user for PerfPlat
   feedbackdb:
-    container_name: feedbackdb
+    container_name: lpa-feedbackdb
     image: feedbackdb
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/feedbackdb
     depends_on:
