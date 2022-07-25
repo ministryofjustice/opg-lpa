@@ -204,5 +204,5 @@ cypress-local-shell:
 # this requires a globally-installed cypress
 .PHONY: cypress-open
 cypress-open:
-	aws-vault exec moj-lpa-dev -- python3 cypress/S3Monitor.py &
-	CYPRESS_userNumber=`node cypress/userNumber.js` ./node_modules/.bin/cypress open --project ./
+	aws-vault exec moj-lpa-dev -- python3 cypress/s3_monitor.py &
+	CYPRESS_userNumber=`python3 cypress/user_number.py` ./node_modules/.bin/cypress open --project ./
