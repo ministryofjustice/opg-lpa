@@ -1,4 +1,4 @@
-@DashboardDeleteLpa @IgnoreSignup
+@DashboardDeleteLpa @SignupIncluded
 Feature: DashboardDeleteLpa
 
     I want to be able to delete an LPA on the dashboard

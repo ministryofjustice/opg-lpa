@@ -1,4 +1,4 @@
-@SignUp
+@Signup
 Feature: Signup
 
     I want to be able to sign up
@@ -11,12 +11,10 @@ Feature: Signup
     Background:
         Given I ignore application exceptions
 
-    @focus
     Scenario: Go to the create account page
         Given I visit "/signup"
         Then I should not find links in the page which open in new tabs without notifying me
 
-    @focus
     Scenario: Sign up with automatically generated test username and password
         Given I sign up standard test user
         Then I see "Please check your email" in the title
@@ -26,13 +24,11 @@ Feature: Signup
         And I visit link containing "sign in"
         Then I am taken to the login page
 
-    @focus
     Scenario: Cancel button is not shown on "Your details" the first time the user logs in (LPAL-210)
         Given I log in as standard test user
         When I am taken to the your details page for a new user
         Then I do not see "Cancel" in the page text
 
-    @focus
     Scenario: About Me Details have Blank title, month and wrong postcode in address + long names, followed by DOB in future
         Given I log in as standard test user
         Then I see "Make a lasting power of attorney" in the page text
@@ -60,7 +56,6 @@ Feature: Signup
         Then I see "There is a problem" in the page text
         And I see "Error" in the title
 
-    @focus
     Scenario: Valid About Me details
         Given I log in as standard test user
         Then I see "Make a lasting power of attorney" in the page text
@@ -78,7 +73,6 @@ Feature: Signup
         Then I am taken to the lpa type page
         And I see "What type of LPA do you want to make?" in the page text
 
-    @focus
     # this scenario must run after the user has saved their details for the first time
     Scenario: Cancel buttons are present on "your details" pages after user has saved their details (LPAL-210)
         Given I log in as standard test user

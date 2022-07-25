@@ -1,3 +1,4 @@
+@Polyfills
 Feature: Polyfills
 
   I want to be able to visit the site in an old browser

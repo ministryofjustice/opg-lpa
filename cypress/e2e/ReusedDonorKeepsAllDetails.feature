@@ -1,4 +1,4 @@
-@ReusedDonorKeepsAllDetails @IgnoreSignup
+@ReusedDonorKeepsAllDetails @SignupIncluded
 Feature: ReusedDonorKeepsAllDetails
 
     When reusing a donor, all of their details are retained, including whether they can sign the LPA themselves (LPAL-908)
