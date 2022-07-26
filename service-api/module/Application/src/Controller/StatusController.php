@@ -106,6 +106,7 @@ class StatusController extends AbstractRestfulController
         $newMeta[LPA::APPLICATION_WITHDRAWN_DATE] = $data['withdrawnDate'];
 
         // TODO edit third party library
+        $newMeta['application-return-unpaid'] = $data['returnUnpaid'];
         $newMeta['application-dispatch-date'] = $data['dispatchDate'];
 
         if ($this->hasDifference($newMeta, $metaData)) {
@@ -245,7 +246,6 @@ class StatusController extends AbstractRestfulController
                     $data['invalidDate'] = $this->getValue($lpaDetail['response'], 'invalidDate');
                     $data['withdrawnDate'] = $this->getValue($lpaDetail['response'], 'withdrawnDate');
                     $data['dispatchDate'] = $this->getValue($lpaDetail['response'], 'dispatchDate');
-
                     $data['returnUnpaid'] = $this->getValue($lpaDetail['response'], 'returnUnpaid');
 
                     // If we found a record in the db, try to update it
