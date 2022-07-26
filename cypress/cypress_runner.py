@@ -1,15 +1,14 @@
 import os
 import sys
 from argparse import ArgumentParser
-from datetime import datetime
 from pathlib import Path
-from random import randint
 from subprocess import Popen
 from threading import Thread
 from urllib.parse import urlparse
 
 from s3_monitor import S3Monitor
 from stitch import stitch_feature_files
+from user_number import generate_user_number
 
 
 def build_cypress_command(command, env={}):
@@ -176,9 +175,7 @@ def get_settings(args_in):
     # used in each step
     runs = []
     for tag_group in tags:
-        user_number = (
-            f"{int(datetime.timestamp(datetime.now()))}{randint(100000000, 999999999)}"
-        )
+        user_number = generate_user_number()
 
         run = {
             "user_number": user_number,
