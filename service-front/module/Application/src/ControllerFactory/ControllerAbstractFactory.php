@@ -56,9 +56,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         CompleteController::class => [
             'setContinuationSheets' => 'ContinuationSheets'
         ],
-        DateCheckController::class => [
-            'setContinuationSheets' => 'ContinuationSheets'
-        ],
         DownloadController::class => [
             'setAnalyticsService' => 'AnalyticsService'
         ],
