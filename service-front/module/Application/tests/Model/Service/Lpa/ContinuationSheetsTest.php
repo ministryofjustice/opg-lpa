@@ -2,19 +2,14 @@
 
 namespace ApplicationTest\Model\Service\Lpa;
 
-use Mockery;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use PHPUnit\Framework\TestCase;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 
-class ContinuationSheetTest extends AbstractServiceTest
+class ContinuationSheetTest extends AbstractHttpControllerTestCase
 {
-    /**
-     * @var $applicationService Application|MockInterface
-     */
-    private $applicationService;
-
     /**
      * @var $service Applicant
      */
@@ -24,10 +19,7 @@ class ContinuationSheetTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->ContinuationSheets = Mockery::mock(ContinuationSheets::class);
-        /* $this->authenticationService = Mockery::mock(AuthenticationService::class); */
-
-        $this->service = new ContinuationSheets($this->authenticationService, []);
+        $this->service = new ContinuationSheets();
     }
 
     public function testAttorneyOverflowGetContinuationNoteKeys()
