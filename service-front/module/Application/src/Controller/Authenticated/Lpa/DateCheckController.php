@@ -3,15 +3,12 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Model\Service\Signatures\DateCheck;
+use Application\View\ContinuationSheetsViewModelHelper;
 use Laminas\View\Model\ViewModel;
 
 class DateCheckController extends AbstractLpaController
 {
-    /** @var ContinuationSheets */
-    private $continuationSheets;
-
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -96,8 +93,6 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
-        $continuationNoteKeys = $this->continuationSheets->getContinuationNoteKeys($lpa);
-
         $applicants = [];
 
         if ($lpa->completedAt !== null) {
@@ -122,13 +117,16 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
-
-        return new ViewModel([
+        $dateCheckView = new ViewModel([
             'form'        => $form,
             'returnRoute' => $returnRoute,
-            'applicants'  => $applicants,
-            'continuationNoteKeys' => $continuationNoteKeys,
+            'applicants'  => $applicants
         ]);
+
+        $continuationNoteKeys = ContinuationSheetsViewModelHelper::build($lpa);
+        $dateCheckView->setVariables(['continuationNoteKeys' => $continuationNoteKeys]);
+
+        return $dateCheckView;
     }
 
 
@@ -145,12 +143,6 @@ class DateCheckController extends AbstractLpaController
         return new ViewModel([
             'returnRoute' => $returnRoute,
         ]);
-    }
-
-
-    public function setContinuationSheets(ContinuationSheets $continuationSheets)
-    {
-        $this->continuationSheets = $continuationSheets;
     }
 
 

@@ -6,7 +6,7 @@ use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\Lpa\Formatter as LpaFormatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class ContinuationSheets extends AbstractService
+class ContinuationSheets
 {
     /**
      * Gathers an array on conditions where continuation sheet(s) would be generated in the PDF.
@@ -14,7 +14,7 @@ class ContinuationSheets extends AbstractService
      * @param Lpa $lpa
      * @return array
      */
-    public function getContinuationNoteKeys(Lpa $lpa)
+    public function getContinuationNoteKeys(Lpa $lpa): array
     {
         //Array of keys to know which extra notes to show in template for continuation sheets
         $continuationNoteKeys = array();
