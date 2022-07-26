@@ -6,8 +6,7 @@ Feature: Session
     Background:
         Given I ignore application exceptions
 
-    @focus
-    Scenario: Session timeout pop-up displays after inactivity and keeps focus (LPAL-245)
+    Scenario: Session timeout warning pop-up displays after inactivity and keeps focus (LPAL-245)
         Given I log in as appropriate test user
         Then I see "Make a lasting power of attorney" in the page text
         Then I should not see "Session timeout" in the page text
@@ -38,3 +37,15 @@ Feature: Session
         Then my focus is within "session-timeout-form"
         When I press shift+tab
         Then my focus is within "session-timeout-form"
+
+    Scenario: Session timeout displays after inactivity with revised message (LPAL-905)
+        Given I log in as appropriate test user
+        Then I see "Make a lasting power of attorney" in the page text
+        Then I should not see "Session timeout" in the page text
+
+        When I hack the session to have 0 seconds remaining
+        And I wait for 3 seconds
+        And I visit "/user/about-you"
+
+        Then I see "We’ve signed you out" in the page text
+        And I see "To continue, sign in again" in the page text
