@@ -1,0 +1,36 @@
+version: "3.7"
+
+# Copy these pieces into docker-compose.yml in the main opg-lpa
+# project to set up a mock Sirius; note that the api-app section
+# contains a single env var which must be modified; the gateway
+# and mocksirius sections should be copied into the services block as-is
+
+services:
+
+  # ---------------------------
+  # Sirius gateway mock
+  siriusgateway:
+    container_name: lpa-siriusgateway
+    image: lpa-siriusgateway
+    build:
+      context: ./tests/sirius-gateway-mock
+      dockerfile: ./Dockerfile-siriusgateway
+    depends_on:
+      - siriusmock
+    ports:
+      - 7010:5000
+
+  siriusmock:
+    container_name: lpa-siriusmock
+    image: lpa-siriusmock
+    build:
+      context: ./tests/sirius-gateway-mock
+      dockerfile: ./Dockerfile-siriusmock
+    ports:
+      - 7011:5000
+
+  api-app:
+    # ...
+    environment:
+      # ...
+      OPG_LPA_PROCESSING_STATUS_ENDPOINT: "http://siriusgateway:5000/lpa-online-tool/lpas/"

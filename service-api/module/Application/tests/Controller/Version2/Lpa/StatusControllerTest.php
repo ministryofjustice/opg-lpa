@@ -89,6 +89,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -144,6 +145,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -186,6 +188,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -254,6 +257,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -309,6 +313,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -368,6 +373,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -552,6 +558,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -726,6 +733,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ], '98765', '12345'])->once();
 
@@ -740,6 +748,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ], '98766', '12345'])->once();
 
@@ -891,6 +900,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
+                        'application-return-unpaid' => null,
                     ]
                 ],
                 '98765',
