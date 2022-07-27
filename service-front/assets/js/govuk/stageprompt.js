@@ -20,6 +20,11 @@
 //   Sending events on click:
 //
 //     <a class="help-button" href="#" data-journey-click="stage:help:info">See more info...</a>
+//
+// NOTE: stageprompt is no longer maintained, and has not been updated since c. 2015
+// (see https://github.com/alphagov/stageprompt). However, as the code is relatively
+// trivial, we are maintaining it ourselves in this codebase rather than rewriting it.
+// This should protect us in the event of the repo disappearing.
 
 var GOVUK = GOVUK || {};
 
