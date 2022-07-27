@@ -117,15 +117,16 @@ resource "aws_lb_listener_rule" "front_maintenance" {
   listener_arn = aws_lb_listener.front_loadbalancer.arn
   priority     = 101 # Specifically set so that maintenance mode scripts can locate the correct rule to modify
   action {
-    type = "fixed-response"
+    type = "redirect"
 
-    fixed_response {
-      content_type = "text/html"
-      message_body = file("${path.module}/maintenance/maintenance.html")
-      status_code  = "503"
+    redirect {
+      host        = "maintenance.opg.service.justice.gov.uk"
+      path        = "/en-gb/make-a-lasting-power-of-attorney"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_302"
     }
   }
-
   condition {
     path_pattern {
       values = ["/maintenance"]
