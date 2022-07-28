@@ -182,14 +182,13 @@ data "aws_secretsmanager_secret" "opg_flask_api_token" {
 }
 
 data "aws_iam_policy_document" "opg_feedback_secrets" {
-
   count = local.account.is_production ? 0 : 1
   statement {
     sid    = "AllowFeedbackCIReadFlaskSecret"
     effect = "Allow"
 
     resources = [
-      data.aws_secretsmanager_secret.opg_flask_api_token.arn,
+      data.aws_secretsmanager_secret.opg_flask_api_token[0].arn,
     ]
 
     actions = [
@@ -206,6 +205,6 @@ data "aws_iam_policy_document" "opg_feedback_secrets" {
 
 resource "aws_secretsmanager_secret_policy" "secret_policy" {
   count      = local.account.is_production ? 0 : 1
-  secret_arn = data.aws_secretsmanager_secret.opg_flask_api_token.arn
-  policy     = data.aws_iam_policy_document.opg_feedback_secrets.json
+  secret_arn = data.aws_secretsmanager_secret.opg_flask_api_token[0].arn
+  policy     = data.aws_iam_policy_document.opg_feedback_secrets[0].json
 }
