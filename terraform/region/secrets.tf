@@ -174,3 +174,37 @@ resource "aws_secretsmanager_secret" "performance_platform_db_password" {
     kms_key_id = aws_kms_key.multi_region_secrets_encryption_key.key_id
   }
 }
+
+# IAM to allow Feedback CI to read Flask Secret key
+data "aws_secretsmanager_secret" "opg_flask_api_token" {
+  name = "opg-flask-api-token"
+}
+
+data "aws_iam_policy_document" "opg_feedback_secrets" {
+
+  statement {
+    sid    = "AllowFeedbackCIReadFlaskSecret"
+    effect = "Allow"
+
+    resources = [data.aws_secretsmanager_secret.opg_flask_api_token.arn]
+
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+
+    principals {
+      identifiers = [
+        "arn:aws:iam::631181914621:feedback-actions-ci"
+      ]
+
+      type = "AWS"
+    }
+
+  }
+}
+
+resource "aws_secretsmanager_secret_policy" "secret_policy" {
+  count      = local.account.is_production ? 0 : 1
+  secret_arn = data.aws_secretsmanager_secret.opg_flask_api_token.arn
+  policy     = data.aws_iam_policy_document.opg_feedback_secrets.json
+}
