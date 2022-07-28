@@ -1,11 +1,10 @@
 .opg-status {
   display: inline-block;
   text-transform: uppercase;
-  border-radius: 4px;
   font-size: 16px;
   text-align: center;
   position: relative;
-  padding: 5px 8px 2px 8px;
+  padding: 4px 5px 0 5px;
   margin: 10px 0px 12px 0px;
 }
 
@@ -50,37 +49,44 @@
 // Lozenge styles for information about LPA statuses
 .opg-lozenge-status--created,
 .opg-lozenge-status--started {
-  background-color: $status-default-colour;
-  color: $dark-grey;
+  background-color: $transparent;
+  color: $status-default-colour;
+  border: 2px solid $status-default-colour;
+  font-weight: bold;
 }
 
 .opg-lozenge-status--completed {
-  background-color: $status-default-colour;
-  color: $dark-grey;
+  background-color: $transparent;
+  color: $status-default-colour;
+  border: 2px solid $status-default-colour;
   font-weight: bold;
 }
 
 .opg-lozenge-status--waiting {
-  background-color: $status-waiting-colour;
-  color: $white;
+  background-color: $transparent;
+  color: $status-waiting-colour;
+  border: 2px solid $status-waiting-colour;
   font-weight: bold;
 }
 
 .opg-lozenge-status--received {
-  background-color: $status-received-colour;
-  color: $white;
+  background-color: $transparent;
+  color: $status-received-colour;
+  border: 2px solid $status-received-colour;
   font-weight: bold;
 }
 
 .opg-lozenge-status--checking {
-  background-color: $status-checking-colour;
-  color: $white;
+  background-color: $transparent;
+  color: $status-checking-colour;
+  border: 2px solid $status-checking-colour;
   font-weight: bold;
 }
 
 .opg-lozenge-status--processed {
-  background-color: $status-processed-colour;
-  color: $white;
+  background-color: $transparent;
+  color: $status-processed-colour;
+  border: 2px solid $status-processed-colour;
   font-weight: bold;
 }
 
