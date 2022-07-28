@@ -188,7 +188,7 @@ data "aws_iam_policy_document" "opg_feedback_secrets" {
 
     resources = [
       data.aws_secretsmanager_secret.opg_flask_api_token.arn,
-      ]
+    ]
 
     actions = [
       "secretsmanager:GetSecretValue"
@@ -196,7 +196,7 @@ data "aws_iam_policy_document" "opg_feedback_secrets" {
 
     principals {
       identifiers = ["arn:aws:iam::631181914621:user/feedback-actions-ci"]
-      type = "AWS"
+      type        = "AWS"
     }
 
   }
