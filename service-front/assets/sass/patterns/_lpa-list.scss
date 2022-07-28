@@ -48,6 +48,7 @@
 
     .list-item_cta{
         clear:left;
+        padding-top: 10px;
     }
 
     .list-item_secondary_actions {
@@ -96,8 +97,7 @@
     .list-item_status{
         float:right;
         min-width: 210px;
-        margin-left: 15px;
-        margin-top: -7px;
+        margin: -7px 5px 0 15px;
         text-align: right;
         z-index: 1;
         position: relative;
