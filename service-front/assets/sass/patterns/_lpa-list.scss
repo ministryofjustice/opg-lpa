@@ -21,12 +21,12 @@
 
     }
 
-    .extra-info{
+    .extra-info {
 
         float:left !important;
         clear:left;
         margin-left: 0 !important;
-        width:6.25em !important;
+        width: 6.25em !important;
 
         @media (min-width: 720px) {
             float:right !important;
@@ -34,10 +34,14 @@
             margin: 5px 0 0 1.5em !important;
         }
 
-        p:first-of-type{
+        p:first-of-type {
             color: #0b0c0c !important;
         }
 
+    }
+
+    .lpa-type {
+        width: 10em !important;
     }
 
     .list-item_title {

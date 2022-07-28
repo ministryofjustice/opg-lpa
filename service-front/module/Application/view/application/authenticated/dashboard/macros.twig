@@ -33,10 +33,10 @@
                         {{ macros.showStatusDescriptionLinksIfEnabled(trackingEnabled, status, lpa.id) }}
                     </div>
 
-                    <div class="extra-info">
+                    <div class="extra-info lpa-type">
                         <p>LPA type:</p>
                         <p class="main-text">
-                            {{- lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') -}}
+                            {{- lpa.type == 'property-and-financial' ? 'Property and financial' : ((lpa.type == 'health-and-welfare') ? 'Health and welfare' : 'Not selected') -}}
                         </p>
                     </div>
 
