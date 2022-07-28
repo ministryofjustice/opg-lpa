@@ -186,17 +186,16 @@ data "aws_iam_policy_document" "opg_feedback_secrets" {
     sid    = "AllowFeedbackCIReadFlaskSecret"
     effect = "Allow"
 
-    resources = [data.aws_secretsmanager_secret.opg_flask_api_token.arn]
+    resources = [
+      data.aws_secretsmanager_secret.opg_flask_api_token.arn,
+      ]
 
     actions = [
       "secretsmanager:GetSecretValue"
     ]
 
     principals {
-      identifiers = [
-        "arn:aws:iam::631181914621:feedback-actions-ci"
-      ]
-
+      identifiers = ["arn:aws:iam::631181914621:user/feedback-actions-ci"]
       type = "AWS"
     }
 
