@@ -67,10 +67,6 @@ return [
             // The cookie name used in the session
             'name' => 'lpa2',
 
-            // Hash settings
-            'hash_function' => 'sha512',
-            'hash_bits_per_character' => 5,
-
             // Only allow the cookie to be sent over https, if we're using HTTPS.
             'cookie_secure' => true,
 
