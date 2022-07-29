@@ -73,8 +73,8 @@ return [
             // Prevent cookie from being accessed from JavaScript
             'cookie_httponly' => true,
 
-            // Don't accept uninitialized session IDs
-            'use_strict_mode' => true,
+            // Cookies can only be used by the site which issued them, not sub-domains
+            'cookie_samesite' => 'Strict',
 
             // The probability of GC running is gc_probability/gc_divisor
             'gc_probability' => 0,
