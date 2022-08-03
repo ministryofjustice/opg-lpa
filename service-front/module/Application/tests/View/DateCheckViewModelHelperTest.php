@@ -2,9 +2,11 @@
 
 namespace ApplicationTest\View;
 
-use Laminas\ServiceManager\AbstractPluginManager;
 use Application\Form\Lpa\DateCheckForm;
 use Application\View\DateCheckViewModelHelper;
+use DOMDocument;
+use DOMXpath;
+use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -36,15 +38,18 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
 
         $renderer = new Environment($loader);
         $renderer->addFunction(new TwigFunction('formErrorTextExchange', FormErrorTextExchange::class));
+        $renderer->addFunction(new TwigFunction('form', Form::class));
+        $renderer->addFunction(new TwigFunction('formElement', Form::class));
+        $renderer->addFunction(new TwigFunction('formElementErrorsV2', Form::class));
 
         $template = $renderer->load('authenticated/lpa/date-check/index.twig');
 
         $vars = (array) $viewModel->getVariables();
-        return $template->renderBlock('content', $vars);
+        return $template->renderBlock('continuation', $vars);
     }
 
 
-    public function testContinuationSheetsViewModelHelperBuild(): void
+    public function testDateCheckViewModelHelperBuild(): void
     {
         $this->form = Mockery::mock(DateCheckForm::class);
         $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
@@ -60,18 +65,17 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 ]
             ]
         ]);
+
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\DateCheckForm', ['lpa' => $lpa]])->andReturn($this->form);
-
 
         $viewModel = new ViewModel([
             'form'        => $this->form,
             'returnRoute' => 'lpa/complete',
-            'applicants'  => []
         ]);
 
-        $continuationNoteKeys = ContinuationSheetsViewModelHelper::build($lpa);
-        $viewModel->setVariables(['continuationNoteKeys' => $continuationNoteKeys]);
+        $continuationNoteKeys = DateCheckViewModelHelper::build($lpa);
+        $viewModel->setVariables(['continuationNoteKeys' => $continuationNoteKeys, 'applicants' => []]);
 
         // render and check the HTML
         $html = $this->renderViewModel($viewModel);
