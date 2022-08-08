@@ -24,16 +24,127 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
 
     private $form;
 
+    private $testCases = [
+        // Continuation sheet 1
+        // LPA has more than 4 primary attorneys (generates CS1)
+        [
+            'lpa' => [
+                'document' => [
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                        ['type' => 'human']
+                    ]
+                ]
+            ],
+            'expectedText' => 'You must have signed and dated continuation sheet/s 1 before you signed section 9
+                               of the LPA, or on the same day.'
+        ],
+        // LPA has more than 4 replacement attorneys (generates CS1)
+        [
+            'lpa' => [
+                'document' => [
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                        ['type' => 'human']
+                    ]
+                ]
+            ],
+            'expectedText' => 'You must have signed and dated continuation sheet/s 1 before you signed section 9
+                               of the LPA, or on the same day.'
+        ],
+        // LPA has more than 4 people to notify (generates CS1)
+        [
+            'lpa' => [
+                'document' => [
+                    'peopleToNotify' => [[], [], [], [], []]
+                ]
+            ],
+            'expectedText' => 'You must have signed and dated continuation sheet/s 1 before you signed section 9
+                               of the LPA, or on the same day.'
+        ],
+
+        // Continuation sheet 2
+        // LPA has additional information on how attorneys should act? (section 3) (generates CS2)
+        [
+            'lpa' => [
+                'document' => [
+                    'primaryAttorneyDecisions' => [
+                        'howDetails' => 'Attorneys should only step in when I am say so.'
+                    ]
+                ]
+            ],
+            'expectedText' => 'You must have signed and dated continuation sheet/s 2 before you signed section 9
+                               of the LPA, or on the same day.'
+        ],
+        // LPA has additional information on how replacement attorneys should act? (section 4) (generates CS2)
+        [
+            'lpa' => [
+                'document' => [
+                    'replacementAttorneyDecisions' => [
+                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                    ]
+                ]
+            ],
+            'expectedText' => 'You must have signed and dated continuation sheet/s 2 before you signed section 9
+                               of the LPA, or on the same day.'
+        ],
+        // LPA has additional information on when replacement attorneys should act? (generates CS2)
+        [
+            'lpa' => [
+                'document' => [
+                    'replacementAttorneyDecisions' => [
+                        'when' => 'When the primary attorney cannot be contacted'
+                    ]
+                ]
+            ],
+            'expectedText' => 'You must have signed and dated continuation sheet/s 2 before you signed section 9
+                               of the LPA, or on the same day.'
+        ],
+        // LPA has additional information in preferences and instructions (section 7) (generates CS2)
+        [
+            'lpa' => [
+                'document' => [
+                    'instruction' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                      incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                      exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                                      irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                                      nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+                                      qui officia deserunt mollit anim id est laborum.'
+                ]
+            ],
+            'expectedText' => 'You must have signed and dated continuation sheet/s 2 before you signed section 9
+                               of the LPA, or on the same day.'
+        ]
+    ];
+
     /* For the purposes of the test, we extract the variables from the view
-     * model and render just the 'content' block of the detailed status page view.
+     * model and render just the 'continuation' block of the date check tool page view.
      * We do this from the Twig template directly, bypassing the ZfcTwig machinery.
      * This replicates what happens in ZfcTwig
      * (see vendor/kokspflanze/zfc-twig/src/View/TwigRenderer.php),
      * but ignores the view itself, layout, most filters and functions, view helpers
      * etc. as far as possible.
      */
-    private function renderViewModel(?ViewModel $viewModel): string
+    private function renderViewModel(Lpa $lpa): string
     {
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\DateCheckForm', ['lpa' => $lpa]])->andReturn($this->form);
+
+        $viewModel = new ViewModel([
+            'form'        => $this->form,
+            'returnRoute' => 'lpa/complete',
+        ]);
+
+        $helperResult = DateCheckViewModelHelper::build($lpa);
+        $viewModel->setVariables(['continuationNoteKeys' => $helperResult['continuationNoteKeys'],
+                                  'applicants' => []]);
+
         $loader = new FilesystemLoader('module/Application/view/application');
 
         $renderer = new Environment($loader);
@@ -54,34 +165,21 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         $this->form = Mockery::mock(DateCheckForm::class);
         $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
 
-        $lpa = new Lpa([
-            'document' => [
-                'primaryAttorneys' => [
-                    ['type' => 'human'],
-                    ['type' => 'human'],
-                    ['type' => 'human'],
-                    ['type' => 'human'],
-                    ['type' => 'human']
-                ]
-            ]
-        ]);
+        foreach ($this->testCases as $index => $testCase) {
+            $lpa = new Lpa($testCase['lpa']);
+            // render and check the HTML
+            $html = $this->renderViewModel($lpa);
 
-        $this->formElementManager->shouldReceive('get')
-            ->withArgs(['Application\Form\Lpa\DateCheckForm', ['lpa' => $lpa]])->andReturn($this->form);
+            $dom = new DOMDocument();
+            $dom->loadHTML($html);
+            $xpath = new DOMXpath($dom);
+            $matches = $xpath->query("//p[@data-cy='continuation-sheet-info']");
 
-        $viewModel = new ViewModel([
-            'form'        => $this->form,
-            'returnRoute' => 'lpa/complete',
-        ]);
-
-        $continuationNoteKeys = DateCheckViewModelHelper::build($lpa);
-        $viewModel->setVariables(['continuationNoteKeys' => $continuationNoteKeys, 'applicants' => []]);
-
-        // render and check the HTML
-        $html = $this->renderViewModel($viewModel);
-
-        $dom = new DOMDocument();
-        $dom->loadHTML($html);
-        $xpath = new DOMXpath($dom);
+            echo "\nRunning tests for DateCheckViewModelHelper test case $index\n";
+            $this->assertEquals(
+                $matches[0]->nodeValue,
+                str_replace(array("\n", '  '), '', $testCase['expectedText'])
+            );
+        }
     }
 }
