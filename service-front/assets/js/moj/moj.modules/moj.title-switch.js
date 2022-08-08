@@ -58,6 +58,7 @@
 
       //  Replace the text input with the new select input
       $titleInput.replaceWith($select);
+      $select.attr('data-inited', 'true');
     },
 
     selectChanged: function (e) {
