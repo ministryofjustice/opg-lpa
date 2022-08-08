@@ -3,6 +3,8 @@
 namespace ApplicationTest\View;
 
 use Application\Form\Lpa\DateCheckForm;
+use Application\View\Helper\FormElementErrorsV2;
+use Application\View\Helper\FormErrorTextExchange;
 use Application\View\DateCheckViewModelHelper;
 use DOMDocument;
 use DOMXpath;
@@ -148,21 +150,25 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         $loader = new FilesystemLoader('module/Application/view/application');
 
         $renderer = new Environment($loader);
+        $renderer->addFunction(new TwigFunction('form', FormErrorTextExchange::class));
         $renderer->addFunction(new TwigFunction('formErrorTextExchange', FormErrorTextExchange::class));
-        $renderer->addFunction(new TwigFunction('form', Form::class));
-        $renderer->addFunction(new TwigFunction('formElement', Form::class));
-        $renderer->addFunction(new TwigFunction('formElementErrorsV2', Form::class));
+        $renderer->addFunction(new TwigFunction('formElement', FormErrorTextExchange::class));
+        $renderer->addFunction(new TwigFunction('formElementErrorsV2', FormElementErrorsV2::class));
 
         $template = $renderer->load('authenticated/lpa/date-check/index.twig');
 
         $vars = (array) $viewModel->getVariables();
-        return $template->renderBlock('continuation', $vars);
+        return $template->renderBlock('content', $vars);
     }
 
 
     public function testDateCheckViewModelHelperBuild(): void
     {
         $this->form = Mockery::mock(DateCheckForm::class);
+        $this->form->shouldReceive('get');
+        $this->form->shouldReceive('has');
+        $this->form->shouldReceive('prepare');
+
         $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
 
         foreach ($this->testCases as $index => $testCase) {
