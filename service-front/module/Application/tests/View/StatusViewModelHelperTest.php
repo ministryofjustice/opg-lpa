@@ -72,9 +72,9 @@ class StatusViewModelHelperTest extends MockeryTestCase
                 'status' => 'waiting',
                 'stepsDone' => [],
                 'textFragments' => [
-                    "We're waiting to receive the LPA",
+                    "We're waiting to confirm receipt of this LPA",
                     "we'll write to Ms Mecnodo Expodo",
-                    "we've heard back from Ms Mecnodo Expodo",
+                    "we've heard back from them",
                     "If we need more information about the application to pay a reduced or no fee"
                 ]
             ],
@@ -118,9 +118,9 @@ class StatusViewModelHelperTest extends MockeryTestCase
                 'status' => 'waiting',
                 'stepsDone' => [],
                 'textFragments' => [
-                    "We're waiting to receive the LPA",
+                    "We're waiting to confirm receipt of this LPA",
                     "we'll write to Ms Mecnodo Expodo",
-                    "we've heard back from Ms Mecnodo Expodo",
+                    "we've heard back from them",
                     "If we need more information about the application to pay a reduced or no fee"
                 ]
             ],
