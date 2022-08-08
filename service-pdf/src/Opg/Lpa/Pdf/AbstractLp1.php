@@ -22,6 +22,7 @@ use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
 use mikehaertl\pdftk\Pdf as Pdftk;
 use Laminas\Barcode\Barcode;
+use TCPDF;
 
 /**
  * Class AbstractLp1
@@ -871,7 +872,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         return null;
     }
 
-    private function writeBarcodeToImageFile()
+    private function generateBarcodeAsImage()
     {
         // Generate the barcode
         $renderer = Barcode::factory(
@@ -880,20 +881,9 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             [
                 'text' => str_replace(' ', '', $this->formattedLpaRef),
                 'drawText' => false,
-
-                // Default pixels per inch of image is 96, vs. default
-                // points per inch of PDF of 72
-                'factor' => (96 / 72),
+                'factor' => 1,
                 'barHeight' => 25
             ],
-            [
-                'leftOffset' => intval(40 * (96 / 72)),
-                'topOffset' => intval(789 * (96 / 72)),
-
-                // A4 paper size in pixels at 96 pixels per inch
-                'width' => 794,
-                'height' => 1122,
-            ]
         );
 
         // Create a PNG with the barcode only
@@ -902,35 +892,34 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $barcodePngFile = $this->getIntermediatePdfFilePath('barcode.png');
         imagepng($barcodeOnlyPng, $barcodePngFile);
 
-        $this->getLogger()->debug('BARCODE FROM PNG');
+        // Create a PDF from the PNG; we need this as Pdftk can't stamp
+        // a PDF with anything other than another PDF
+        $pdf = new TCPDF('P', 'pt');
 
-        return $barcodePngFile;
-    }
+        // set empty margins
+        $pdf->SetMargins(0, 0, 0);
+        $pdf->SetHeaderMargin(0);
+        $pdf->SetFooterMargin(0);
 
-    private function writeBarcodeToPDFFile()
-    {
-        // Generate the barcode
-        $renderer = Barcode::factory(
-            'code39',
-            'pdf',
-            [
-                'text' => str_replace(' ', '', $this->formattedLpaRef),
-                'drawText' => false,
-                'factor' => 2,
-                'barHeight' => 25,
-            ],
-            [
-                'leftOffset' => 40,
-                'topOffset' => 789,
-            ]
-        );
+        // remove header and footer borders
+        $pdf->SetPrintHeader(false);
+        $pdf->SetPrintFooter(false);
 
-        // Create a PNG with the barcode only
-        $barcodeOnlyPdf = $renderer->draw();
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(false, 0);
+
+        // set image scale factor
+        $pdf->setImageScale(1);
+
+        $pdf->AddPage();
+
+        // filename, x position, y position, width, height, type, link, align, resize, dpi
+        $pdf->Image($barcodePngFile, 40, 789);
+
         $barcodePdfFile = $this->getIntermediatePdfFilePath('barcode.pdf');
-        $barcodeOnlyPdf->save($barcodePdfFile);
 
-        $this->getLogger()->debug('BARCODE FROM PDF');
+        // 'F': send output to a file
+        $pdf->Output($barcodePdfFile, 'F');
 
         return $barcodePdfFile;
     }
@@ -951,19 +940,14 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         if (!is_null($this->formattedLpaRef)) {
             // If the LPA is completed then stamp it with a barcode
             if ($this->lpaIsComplete) {
-                // Write the barcode to a file as a PNG
-                $barcodeFile = $this->writeBarcodeToImageFile();
-
                 // Write the barcode to a file as a PDF
-                //$barcodeFile = $this->writeBarcodeToPDFFile();
-
-                $this->getLogger()->debug("Barcode written to file $barcodeFile");
+                $barcodeFile = $this->generateBarcodeAsImage();
 
                 // Stamp the required page with the new barcode using the unshifted page number
                 $this->stampPageWith($barcodeFile, 19, false);
 
-            // Cleanup - remove tmp barcode file
-                //unlink($barcodeFile);
+                // Cleanup - remove tmp barcode file
+                unlink($barcodeFile);
             } else {
                 // If the LPA is not completed then stamp with the draft watermark
                 $draftWatermarkPdf = $this->getTemplatePdfFilePath('RegistrationWatermark.pdf');
@@ -994,16 +978,11 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     {
         // Create a copy of the LPA PDF with the contents of the provided PDF stamped on the specified page
         $tmpStampedPdfName = $this->getIntermediatePdfFilePath('stamp.pdf');
-        $this->getLogger()->debug("Gonna make a stamped PDF at $tmpStampedPdfName");
 
         $stampedPdfAllPages = $this->pdftkFactory->create($this->pdfFile);
         $stampedPdfAllPages->stamp($stampFile)
                            ->flatten()
                            ->saveAs($tmpStampedPdfName);
-
-        $this->getLogger()->debug(
-            "Did I get a stamped PDF up in here? " . (file_exists($tmpStampedPdfName) ? 'yes' : 'no')
-        );
 
         $newPdf = $this->pdftkFactory->create([
             'A' => $this->pdfFile,
@@ -1045,8 +1024,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         // Remove the temp PDF with all the pages stamped
         if (file_exists($tmpStampedPdfName)) {
-            //unlink($tmpStampedPdfName);
-            $this->getLogger()->debug("Full stamped PDF is at $tmpStampedPdfName");
+            unlink($tmpStampedPdfName);
         }
     }
 }
