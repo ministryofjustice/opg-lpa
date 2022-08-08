@@ -196,7 +196,7 @@ data "aws_iam_policy_document" "opg_feedback_secrets" {
     ]
 
     principals {
-      identifiers = ["arn:aws:iam::631181914621:user/feedback-actions-ci"]
+      identifiers = ["arn:aws:iam::631181914621:user/opg-lpa-ci"]
       type        = "AWS"
     }
 
