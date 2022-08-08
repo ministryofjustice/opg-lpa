@@ -59,7 +59,6 @@ Then('I can navigate through {string} elements using the tab key', (tag) => {
         // element instead
         cy.wrap(details)
         .find('summary')
-        .focus()
         .click()
         .then(() => {
             // get child focusable elements of the detail element
