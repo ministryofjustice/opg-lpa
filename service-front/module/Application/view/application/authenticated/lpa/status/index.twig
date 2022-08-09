@@ -54,17 +54,17 @@
         {% elseif status == 'waiting' %}
 
             <div>
-                <h2 class="heading-xlarge">We're waiting to receive the LPA</h2>
+                <h2 class="heading-xlarge">We're waiting to confirm receipt of this LPA</h2>
             </div>
             <div>
-                <p>We’re currently asking customers to allow 30 working days for us to receive the LPA, enter it on to our system and update this message.</p>
+                <p>It will take up to 30 working days for us to add this LPA to our records and confirm we've received it. It will then take up to 20 weeks to process the LPA if there are no mistakes in the application.</p>
+
+                <p>If you sent the LPA by recorded delivery, Royal Mail’s website will confirm we have received it before we can confirm it here.</p>
 
                 {% if canGenerateLPA120 == 'true' %}
-                    <p>If we need more information about the application to pay a reduced or no fee, we'll write to {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}. We will not start processing the LPA or update this message until we've heard back from {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}.</p>
+                    <p>If we need more information about the application to pay a reduced or no fee, we'll write to {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}. We will not start processing the LPA or update this message until we've heard back from them.</p>
                 {% endif %}
 
-                <p>If you think we should have received your LPA by now, please call 0300 456 0300.</p>
-                <p>Opening times: Monday, Tuesday, Thursday, Friday 9.30am to 5pm. Wednesday 10am to 5pm.</p>
                 <p>If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
             </div>
 
