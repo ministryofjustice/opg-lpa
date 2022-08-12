@@ -7,8 +7,6 @@ use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
 use Application\Controller\Authenticated\AboutYouController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
-use Application\Controller\Authenticated\Lpa\CompleteController;
-use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Controller\Authenticated\Lpa\DownloadController;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
 use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
@@ -52,9 +50,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         CheckoutController::class => [
             'setCommunicationService' => 'Communication',
             'setPaymentClient'        => 'GovPayClient'
-        ],
-        CompleteController::class => [
-            'setContinuationSheets' => 'ContinuationSheets'
         ],
         DownloadController::class => [
             'setAnalyticsService' => 'AnalyticsService'

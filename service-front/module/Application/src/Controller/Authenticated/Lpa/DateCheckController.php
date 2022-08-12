@@ -64,7 +64,6 @@ class DateCheckController extends AbstractLpaController
                 $signDateDonorLifeSustaining = isset($data['sign-date-donor-life-sustaining']) ?
                     $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null;
 
-
                 $result = DateCheck::checkDates([
                     'sign-date-donor' => $this->dateArrayToTime($data['sign-date-donor']),
                     'sign-date-donor-life-sustaining' => $signDateDonorLifeSustaining,
