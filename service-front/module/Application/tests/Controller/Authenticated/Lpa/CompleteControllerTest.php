@@ -3,22 +3,12 @@
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CompleteController;
-use Application\Model\Service\Lpa\ContinuationSheets;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Laminas\View\Model\ViewModel;
-use Mockery;
 
 class CompleteControllerTest extends AbstractControllerTest
 {
-    protected function getController(string $controllerName)
-    {
-        /** @var CompleteController $controller */
-        $controller = parent::getController($controllerName);
-
-        return $controller;
-    }
-
     public function testIndexActionGetNotLocked()
     {
         /** @var CompleteController $controller */
