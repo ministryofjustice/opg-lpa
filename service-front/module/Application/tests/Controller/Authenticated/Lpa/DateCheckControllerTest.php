@@ -35,14 +35,6 @@ class DateCheckControllerTest extends AbstractControllerTest
             ->withArgs(['Application\Form\Lpa\DateCheckForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    protected function getController(string $controllerName)
-    {
-        /** @var DateCheckController $controller */
-        $controller = parent::getController($controllerName);
-
-        return $controller;
-    }
-
     public function testIndexActionGet()
     {
         /** @var DateCheckController $controller */
