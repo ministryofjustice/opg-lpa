@@ -10,9 +10,6 @@ use Laminas\View\Model\ViewModel;
 
 class CompleteController extends AbstractLpaController
 {
-    /** @var ContinuationSheets */
-    private $continuationSheets;
-
     public function indexAction()
     {
         $this->ensureLpaIsLocked();
@@ -69,19 +66,20 @@ class CompleteController extends AbstractLpaController
             || ($payment->reducedFeeReceivesBenefits === true && $payment->reducedFeeAwardedDamages === true)
             || $payment->method == Payment::PAYMENT_TYPE_CHEQUE);
 
-        $continuationNoteKeys = $this->continuationSheets->getContinuationNoteKeys($lpa);
+        $continuationSheets = new ContinuationSheets();
+        $continuationNoteKeys = $continuationSheets->getContinuationNoteKeys($lpa);
 
         $viewParams = [
             'lp1Url' => $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1']),
             'cloneUrl' => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $lpa->id]),
             'dateCheckUrl' => $this->url()->fromRoute('lpa/date-check/complete', ['lpa-id' => $lpa->id]),
+            'continuationNoteKeys' => $continuationNoteKeys,
             'correspondentName' => ($lpa->document->correspondent->name instanceof LongName ?
                 $lpa->document->correspondent->name : $lpa->document->correspondent->company),
             'paymentAmount' => $lpa->payment->amount,
             'paymentReferenceNo' => $lpa->payment->reference,
             'hasRemission' => $lpa->isEligibleForFeeReduction(),
             'isPaymentSkipped' => $isPaymentSkipped,
-            'continuationNoteKeys' => $continuationNoteKeys,
         ];
 
         if (count($lpa->document->peopleToNotify) > 0) {
@@ -100,11 +98,5 @@ class CompleteController extends AbstractLpaController
         }
 
         return $viewParams;
-    }
-
-
-    public function setContinuationSheets(ContinuationSheets $continuationSheets)
-    {
-        $this->continuationSheets = $continuationSheets;
     }
 }
