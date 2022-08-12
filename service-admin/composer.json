@@ -62,6 +62,7 @@
     },
     "require-dev": {
         "filp/whoops": "^2.14.4",
+        "insolita/unused-scanner": "^2.4",
         "laminas/laminas-development-mode": "^3.5.0",
         "mezzio/mezzio-tooling": "^2.2.0",
         "phpspec/prophecy-phpunit": "^2.0.1",

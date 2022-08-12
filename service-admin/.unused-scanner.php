@@ -4,10 +4,10 @@ $projectPath = __DIR__ ;
 
 // Declare directories which contains php code
 $scanDirectories = [
-   $projectPath . '/module/Application/src/',
-   $projectPath . '/module/Application/config/',
-   $projectPath . '/module/Application/tests/',
-   $projectPath . '/phinx.php',
+   $projectPath . '/src/App/src/',
+   $projectPath . '/config',
+   $projectPath . '/bin',
+   $projectPath . '/test',
 ];
 
 // Optionally declare standalone files

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb225fbc576811c7341b2531850d213e",
+    "content-hash": "8c784e9b44fe518ea7666753a279047f",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -58,16 +58,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.232.3",
+            "version": "3.233.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "96fae7f4b2ab11a3eb3fceacef7cb4b12e46b27c"
+                "reference": "2aabbc276b61515ae1897f037fc34ad56028d744"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/96fae7f4b2ab11a3eb3fceacef7cb4b12e46b27c",
-                "reference": "96fae7f4b2ab11a3eb3fceacef7cb4b12e46b27c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2aabbc276b61515ae1897f037fc34ad56028d744",
+                "reference": "2aabbc276b61515ae1897f037fc34ad56028d744",
                 "shasum": ""
             },
             "require": {
@@ -144,9 +144,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.232.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.233.0"
             },
-            "time": "2022-08-08T18:19:49+00:00"
+            "time": "2022-08-11T18:15:54+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -830,26 +830,27 @@
         },
         {
             "name": "laminas/laminas-cache",
-            "version": "3.1.3",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-cache.git",
-                "reference": "dfd5a66f6ea4b1979231560eb75b615c7aafe0e6"
+                "reference": "f3745657cf54e162cb39f8348967ff25bf10eb77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/dfd5a66f6ea4b1979231560eb75b615c7aafe0e6",
-                "reference": "dfd5a66f6ea4b1979231560eb75b615c7aafe0e6",
+                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/f3745657cf54e162cb39f8348967ff25bf10eb77",
+                "reference": "f3745657cf54e162cb39f8348967ff25bf10eb77",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-cache-storage-implementation": "1.0",
                 "laminas/laminas-eventmanager": "^3.4",
-                "laminas/laminas-servicemanager": "^3.7",
+                "laminas/laminas-servicemanager": "^3.11",
                 "laminas/laminas-stdlib": "^3.6",
-                "php": "^7.3 || ~8.0.0 || ~8.1.0",
+                "php": "~7.4.0 || ~8.0.0 || ~8.1.0",
                 "psr/cache": "^1.0",
                 "psr/simple-cache": "^1.0",
+                "stella-maris/clock": "^0.1.5",
                 "webmozart/assert": "^1.9"
             },
             "conflict": {
@@ -864,7 +865,7 @@
                 "laminas/laminas-cache-storage-adapter-blackhole": "^2.0",
                 "laminas/laminas-cache-storage-adapter-filesystem": "^2.0",
                 "laminas/laminas-cache-storage-adapter-memory": "^2.0",
-                "laminas/laminas-cache-storage-adapter-test": "^2.0",
+                "laminas/laminas-cache-storage-adapter-test": "^2.3",
                 "laminas/laminas-cli": "^1.0",
                 "laminas/laminas-coding-standard": "~2.2.0",
                 "laminas/laminas-config-aggregator": "^1.5",
@@ -872,8 +873,8 @@
                 "laminas/laminas-serializer": "^2.6",
                 "phpbench/phpbench": "^1.0",
                 "phpunit/phpunit": "^9.5",
-                "psalm/plugin-phpunit": "^0.16.1",
-                "vimeo/psalm": "^4.9"
+                "psalm/plugin-phpunit": "^0.17.0",
+                "vimeo/psalm": "^4.24"
             },
             "suggest": {
                 "laminas/laminas-cache-storage-adapter-apcu": "APCu implementation",
@@ -925,7 +926,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-03-24T09:32:54+00:00"
+            "time": "2022-08-11T21:03:06+00:00"
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-memory",
@@ -4428,6 +4429,49 @@
             "time": "2017-10-22T10:35:05+00:00"
         },
         {
+            "name": "stella-maris/clock",
+            "version": "0.1.5",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.com:stella-maris/clock.git",
+                "reference": "447879c53ca0b2a762cdbfba5e76ccf4deca9158"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/stella-maris%2Fclock/repository/archive.zip?sha=447879c53ca0b2a762cdbfba5e76ccf4deca9158",
+                "reference": "447879c53ca0b2a762cdbfba5e76ccf4deca9158",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "StellaMaris\\Clock\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Heigl",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "A pre-release of the proposed PSR-20 Clock-Interface",
+            "homepage": "https://gitlab.com/stella-maris/clock",
+            "keywords": [
+                "clock",
+                "datetime",
+                "point in time",
+                "psr20"
+            ],
+            "time": "2022-08-05T07:21:25+00:00"
+        },
+        {
             "name": "symfony/polyfill-ctype",
             "version": "v1.26.0",
             "source": {
@@ -6091,6 +6135,64 @@
             "time": "2022-01-07T12:00:00+00:00"
         },
         {
+            "name": "insolita/unused-scanner",
+            "version": "2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Insolita/unused-scanner.git",
+                "reference": "ffefb5877fe9b3b3ceabdcd49d27ae85b9058597"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Insolita/unused-scanner/zipball/ffefb5877fe9b3b3ceabdcd49d27ae85b9058597",
+                "reference": "ffefb5877fe9b3b3ceabdcd49d27ae85b9058597",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=7.1",
+                "symfony/finder": "^3.4|^4.0|^5.0|^6.0"
+            },
+            "require-dev": {
+                "php-mock/php-mock-phpunit": "^2.6",
+                "phpunit/phpunit": "^7.0|^8.0|^9.0",
+                "symfony/thanks": "^1.2"
+            },
+            "bin": [
+                "unused_scanner"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-legacy": "1.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "tests\\": "tests",
+                    "insolita\\Scanner\\Lib\\": "Lib",
+                    "insolita\\Scanner\\Exceptions\\": "Exceptions"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "mit"
+            ],
+            "authors": [
+                {
+                    "name": "insolita",
+                    "email": "webmaster100500@ya.ru"
+                }
+            ],
+            "description": "Detect unused composer dependencies",
+            "support": {
+                "issues": "https://github.com/Insolita/unused-scanner/issues",
+                "source": "https://github.com/Insolita/unused-scanner/tree/2.4.0"
+            },
+            "time": "2022-01-05T22:07:21+00:00"
+        },
+        {
             "name": "laminas/laminas-cli",
             "version": "1.5.0",
             "source": {
@@ -6287,23 +6389,22 @@
         },
         {
             "name": "mezzio/mezzio-tooling",
-            "version": "2.5.0",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mezzio/mezzio-tooling.git",
-                "reference": "a7147701150711b67b78d7d49bac569e2b2d0366"
+                "reference": "2c2c1cfe58fb7c71891cf252edae3afbd1783b8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mezzio/mezzio-tooling/zipball/a7147701150711b67b78d7d49bac569e2b2d0366",
-                "reference": "a7147701150711b67b78d7d49bac569e2b2d0366",
+                "url": "https://api.github.com/repos/mezzio/mezzio-tooling/zipball/2c2c1cfe58fb7c71891cf252edae3afbd1783b8e",
+                "reference": "2c2c1cfe58fb7c71891cf252edae3afbd1783b8e",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "laminas/laminas-cli": "^1.2",
                 "laminas/laminas-code": "^4.5",
-                "laminas/laminas-component-installer": "^2.0",
                 "laminas/laminas-stdlib": "^3.1",
                 "laminas/laminas-stratigility": "^3.0",
                 "mezzio/mezzio": "^3.0",
@@ -6365,7 +6466,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-01-20T18:21:59+00:00"
+            "time": "2022-08-10T08:16:52+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -9249,6 +9350,70 @@
                 }
             ],
             "time": "2022-02-25T11:15:52+00:00"
+        },
+        {
+            "name": "symfony/finder",
+            "version": "v6.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/finder.git",
+                "reference": "39696bff2c2970b3779a5cac7bf9f0b88fc2b709"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/39696bff2c2970b3779a5cac7bf9f0b88fc2b709",
+                "reference": "39696bff2c2970b3779a5cac7bf9f0b88fc2b709",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "symfony/filesystem": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Finder\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Finds files and directories via an intuitive fluent interface",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/finder/tree/v6.1.3"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-07-29T07:42:06+00:00"
         },
         {
             "name": "symfony/polyfill-intl-grapheme",
