@@ -275,7 +275,7 @@
             </div>
         </div>
 
-        {% block continuation %}
+        {% block donorGuidance %}
             {% if continuationNoteKeys is not empty %}
             <div class="panel panel-border-wide text">
                 {% if 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys and ('LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys or 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys) %}
@@ -289,7 +289,7 @@
                 {% if 'CANT_SIGN' in continuationNoteKeys%}
                     {% if lpa.document.type == 'property-and-financial' %}
                         <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
-                    {% else %}
+                    {% elseif lpa.document.type == 'health-and-welfare' %}
                         <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
                     {% endif %}
                 {% endif %}
@@ -404,9 +404,7 @@
                 </div>
             </div>
 
-            {% if attorney.dob is not defined %}
-                {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
-            {% endif %}
+            {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
         </div>
 
     {% endfor %}
@@ -485,9 +483,7 @@
                 </div>
             </div>
 
-            {% if attorney.dob is not defined %}
-                {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
-            {% endif %}
+            {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
         </div>
 
     {% endfor %}
