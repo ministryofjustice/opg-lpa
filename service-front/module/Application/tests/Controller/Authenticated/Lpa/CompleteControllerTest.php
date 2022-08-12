@@ -11,18 +11,10 @@ use Mockery;
 
 class CompleteControllerTest extends AbstractControllerTest
 {
-    /** @var MockInterface|ContinuationSheets */
-    private $continuationSheets;
-
     protected function getController(string $controllerName)
     {
         /** @var CompleteController $controller */
         $controller = parent::getController($controllerName);
-
-        $this->pluginManager->shouldReceive('get')
-             ->withArgs(['ContinuationSheets', null])->andReturn($this->continuationSheets);
-        $this->continuationSheets = Mockery::mock(ContinuationSheets::class);
-        $controller->setContinuationSheets($this->continuationSheets);
 
         return $controller;
     }
@@ -33,9 +25,6 @@ class CompleteControllerTest extends AbstractControllerTest
         $controller = $this->getController(CompleteController::class);
 
         $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->once();
-        $this->continuationSheets->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
-            ->andReturn([])
-            ->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/download', ['lpa-id' => $this->lpa->id, 'pdf-type' => 'lp1']])
             ->andReturn("lpa/{$this->lpa->id}/download/pdf/lp1")->once();
@@ -77,9 +66,6 @@ class CompleteControllerTest extends AbstractControllerTest
         ];
 
         $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->once();
-        $this->continuationSheets->shouldReceive('getContinuationNoteKeys')->withArgs([$this->lpa])
-            ->andReturn([])
-            ->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/download', ['lpa-id' => $this->lpa->id, 'pdf-type' => 'lp1']])
             ->andReturn("lpa/{$this->lpa->id}/download/pdf/lp1")->once();
