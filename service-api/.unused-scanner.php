@@ -7,6 +7,7 @@ $scanDirectories = [
    $projectPath . '/module/Application/src/',
    $projectPath . '/module/Application/config/',
    $projectPath . '/module/Application/tests/',
+   $projectPath . '/phinx.php',
 ];
 
 // Optionally declare standalone files
