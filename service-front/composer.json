@@ -23,8 +23,6 @@
         "ministryofjustice/opg-lpa-datamodels": "^14.0",
         "michelf/php-markdown": "^1.9.1",
         "php-http/guzzle6-adapter": "^2.0.2",
-        "soundasleep/html2text": "^0.5.0",
-        "laminas/laminas-component-installer": "^2.5.1",
         "laminas/laminas-mvc": "^3.2",
         "laminas/laminas-authentication": "^2.8",
         "laminas/laminas-cache": "3.1.2",
@@ -32,19 +30,13 @@
         "laminas/laminas-form": "^3.0.2",
         "laminas/laminas-session": "^2.12.0",
         "laminas/laminas-math": "^3.4",
-        "laminas/laminas-crypt": "^3.6.0",
         "kokspflanze/zfc-twig": "^4.0.1",
         "laminas/laminas-mvc-i18n": "^2.0",
         "laminas/laminas-mail": "^2.15.1",
-        "laminas/laminas-json": "^3.3.0",
-        "laminas/laminas-cli": "^1.2",
         "theiconic/php-ga-measurement-protocol": "^2.9",
-        "laminas/laminas-zendframework-bridge": "^1.1.1",
         "laminas/laminas-log": "^2.13",
         "guzzlehttp/psr7": "^1.8.4",
-        "alphagov/notifications-php-client": "^4.0.1",
-        "psr/http-client": "^1.0.1",
-        "laminas/laminas-db": "^2.15"
+        "alphagov/notifications-php-client": "^4.0.1"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
@@ -63,7 +55,8 @@
         "phpunit/phpunit": "^9.5",
         "mockery/mockery": "^1.4.4",
         "laminas/laminas-test": "^4.0",
-        "vimeo/psalm": "^4.23"
+        "vimeo/psalm": "^4.23",
+        "insolita/unused-scanner": "^2.4"
     },
     "autoload": {
         "psr-4": {
