@@ -19,12 +19,18 @@ use Twig\TwigFunction;
 
 class DateCheckViewModelHelperTest extends MockeryTestCase
 {
-    protected $formElementManager;
-    /**
-     * @var StorageInterface|ArrayStorage
-     */
-
-    private $form;
+    /** @var array */
+    /* The keys correspond to the tests that check specific twig blocks in the given template */
+    private $templates = [
+        'donor' => [
+            'block' => 'donorGuidance',
+            'path' => 'authenticated/lpa/date-check/index.twig'
+        ],
+        'attorney' => [
+            'block' => 'attorneyGuidance',
+            'path' => 'authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig'
+        ]
+    ];
 
     private $testCases = [
         // Continuation sheet 1
@@ -41,9 +47,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => 'You must have signed and dated continuation sheet/s 1 before you signed section 9
-                                   of the LPA, or on the same day.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 1 before you signed ' .
+                                    'section 9 of the LPA, or on the same day.'],
+            'expectedAttorneyText' => []
         ],
         // LPA has more than 4 replacement attorneys (generates CS1)
         [
@@ -51,16 +57,16 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 'document' => [
                     'replacementAttorneys' => [
                         ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
-                        ['type' => 'human'],
-                        ['type' => 'human'],
-                        ['type' => 'human'],
-                        ['type' => 'human']
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
                     ]
                 ]
             ],
-            'expectedDonorText' => 'You must have signed and dated continuation sheet/s 1 before you signed section 9
-                                   of the LPA, or on the same day.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 1 before you signed ' .
+                                    'section 9 of the LPA, or on the same day.'],
+            'expectedAttorneyText' => []
         ],
         // LPA has more than 4 people to notify (generates CS1)
         [
@@ -69,9 +75,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     'peopleToNotify' => [[], [], [], [], []]
                 ]
             ],
-            'expectedDonorText' => 'You must have signed and dated continuation sheet/s 1 before you signed section 9
-                                   of the LPA, or on the same day.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 1 before you signed ' .
+                                    'section 9 of the LPA, or on the same day.'],
+            'expectedAttorneyText' => []
         ],
 
         // Continuation sheet 2
@@ -84,9 +90,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => 'You must have signed and dated continuation sheet/s 2 before you signed section 9
-                                   of the LPA, or on the same day.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 2 before you signed ' .
+                                    'section 9 of the LPA, or on the same day.'],
+            'expectedAttorneyText' => []
         ],
         // LPA has additional information on how replacement attorneys should act (section 4) (generates CS2)
         [
@@ -97,9 +103,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => 'You must have signed and dated continuation sheet/s 2 before you signed section 9
-                                   of the LPA, or on the same day.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 2 before you signed ' .
+                                    'section 9 of the LPA, or on the same day.'],
+            'expectedAttorneyText' => []
         ],
         // LPA has additional information on when replacement attorneys should act (generates CS2)
         [
@@ -110,9 +116,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => 'You must have signed and dated continuation sheet/s 2 before you signed section 9
-                                   of the LPA, or on the same day.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 2 before you signed ' .
+                                    'section 9 of the LPA, or on the same day.'],
+            'expectedAttorneyText' => []
         ],
         // LPA has additional information in preferences and instructions (section 7) (generates CS2)
         [
@@ -126,9 +132,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                       qui officia deserunt mollit anim id est laborum.'
                 ]
             ],
-            'expectedDonorText' => 'You must have signed and dated continuation sheet/s 2 before you signed section 9
-                                   of the LPA, or on the same day.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 2 before you signed ' .
+                                    'section 9 of the LPA, or on the same day.'],
+            'expectedAttorneyText' => []
         ],
         // Combined CS1 and CS2
         // 1. LPA has more than 4 people to notify (generates CS1)
@@ -142,9 +148,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => 'You must have signed and dated continuation sheets 1 and 2 before you signed
-                                   section 9 of the LPA, or on the same day.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['You must have signed and dated continuation sheets 1 and 2 before you signed ' .
+                                    'section 9 of the LPA, or on the same day.'],
+            'expectedAttorneyText' => []
         ],
         // Continuation sheet 3
         // Health & welfare LPA - donor cannot sign or make a mark
@@ -157,9 +163,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => 'This person must have signed continuation sheet 3 on the same day as they sign
-                                   section 5 and before the certificate provider signs section 10.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['This person must have signed continuation sheet 3 on the same day as they sign ' .
+                                    'section 5 and before the certificate provider signs section 10.'],
+            'expectedAttorneyText' => []
         ],
         // Property & finance LPA - donor cannot sign or make a mark
         [
@@ -171,9 +177,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => 'This person must have signed continuation sheet 3 before the certificate provider
-                                   has signed section 10.',
-            'expectedAttorneyText' => null
+            'expectedDonorText' => ['This person must have signed continuation sheet 3 before the certificate ' .
+                                    'provider has signed section 10.'],
+            'expectedAttorneyText' => []
         ],
         // Continuation sheet 4
         // Property & finance LPA - primary attorney is a trust corporation
@@ -186,53 +192,62 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => null,
-            'expectedAttorneyText' => 'They must have signed continuation sheet 4 after the \'certificate provider\' has
-                                       signed section 10 of the LPA form.'
+            'expectedDonorText' => [],
+            'expectedAttorneyText' => ['They must have signed continuation sheet 4 after the ' .
+                                       '\'certificate provider\' has signed section 10 of the LPA form.']
         ],
     ];
 
+    /* This returns an arbitrary string to imitate a class constant needed when adding twig functions to the */
+    /* renderer before it tries to render a template. Although none of the twig blocks rendered for the tests */
+    /* contain the twig functions and it seems that we won't need them, the renderer encounters them anyway */
+    /* but is happy to fail silently. */
+    private function noop(): string
+    {
+        return "NoopClass";
+    }
+
     /* For the purposes of the test, we extract the variables from the view
-     * model and render just the 'continuation' block of the date check tool page view.
+     * model and render just the specified template block of the date check tool page view.
      * We do this from the Twig template directly, bypassing the ZfcTwig machinery.
      * This replicates what happens in ZfcTwig
      * (see vendor/kokspflanze/zfc-twig/src/View/TwigRenderer.php),
      * but ignores the view itself, layout, most filters and functions, view helpers
      * etc. as far as possible.
      */
-    private function setupViewModel(Lpa $lpa, string $templatePath): array
+    private function renderViewModel(Lpa $lpa, string $templateName, array $attorneys = []): string
     {
-        $this->formElementManager->shouldReceive('get')
-            ->withArgs(['Application\Form\Lpa\DateCheckForm', ['lpa' => $lpa]])->andReturn($this->form);
-
-        $attorneys = $lpa->document->primaryAttorneys;
-        if (empty($lpa->document->primaryAttorneys)) {
-            $attorneys = $lpa->document->replacementAttorneys;
-        }
-
         $viewModel = new ViewModel([
             'returnRoute' => 'lpa/complete',
             'lpa' => $lpa,
             'attorney' => reset($attorneys)
+            // using reset() to get 0th element as indexing does not work. Note that the template is
+            // only rendered and tested once for the first attorney in each test
         ]);
-        // using reset() as indexing does not work
 
+        // call helper under test
         $helperResult = DateCheckViewModelHelper::build($lpa);
+        // set vars on ViewModel as it is done in controller
         $viewModel->setVariables(['continuationNoteKeys' => $helperResult['continuationNoteKeys'],
                                   'applicants' => []]);
 
         $loader = new FilesystemLoader('module/Application/view/application');
 
+        // Although none of the twig blocks rendered for the tests contain the twig functions below and it
+        // seems that we won't need them, the renderer encounters them anyway but is happy to fail silently.
+        // The noop function therefore returns an arbitrary string to imitate the class constant
+        $noop = $this->noop();
         $renderer = new Environment($loader);
-        $renderer->addFunction(new TwigFunction('formElementErrorsV2', Something::class));
-        $renderer->addFunction(new TwigFunction('form', Something::class));
-        $renderer->addFunction(new TwigFunction('formErrorTextExchange', Something::class));
-        $renderer->addFunction(new TwigFunction('formElement', Something::class));
+        $renderer->addFunction(new TwigFunction('formElementErrorsV2', $noop));
+        $renderer->addFunction(new TwigFunction('form', $noop));
+        $renderer->addFunction(new TwigFunction('formErrorTextExchange', $noop));
+        $renderer->addFunction(new TwigFunction('formElement', $noop));
 
-        $template = $renderer->load($templatePath);
+        $template = $renderer->load($this->templates[$templateName]['path']);
 
         $vars = (array) $viewModel->getVariables();
-        return array($template, $vars);
+        $html = $template->renderBlock($this->templates[$templateName]['block'], $vars);
+        return $html;
     }
 
     private function findHtmlMatches(string $html): array
@@ -257,54 +272,52 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
 
     public function testDateCheckViewModelHelperDonorGuidance(): void
     {
-        $this->form = Mockery::mock(DateCheckForm::class);
-
-        $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
-
         foreach ($this->testCases as $index => $testCase) {
             $lpa = new Lpa($testCase['lpa']);
-            // render and check the HTML
 
-            [$template, $vars] = $this->setupViewModel($lpa, 'authenticated/lpa/date-check/index.twig');
-            $donorGuidanceHtml = $template->renderBlock('donorGuidance', $vars);
-            $donorGuidanceMatchesArray = $this->findHtmlMatches($donorGuidanceHtml);
+            // render and check HTML for matches
+            $html = $this->renderViewModel($lpa, 'donor');
+            $matchesArray = $this->findHtmlMatches($html);
 
             $expectedText = $testCase['expectedDonorText'];
 
-            echo "\nRunning tests for DateCheckViewModelHelper test case $index\n";
+            if ($index == 0) {
+                echo "\n";
+            }
+            echo "Running tests for donor DateCheckViewModelHelper test case $index\n";
+
             $this->assertEquals(
-                $donorGuidanceMatchesArray,
-                str_replace(array("\n", '  '), '', $expectedText ? array($expectedText) : array())
+                $matchesArray,
+                $expectedText
             );
         }
     }
 
     public function testDateCheckViewModelHelperAttorneyGuidance(): void
     {
-        $this->form = Mockery::mock(DateCheckForm::class);
-
-        $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
-
         foreach ($this->testCases as $index => $testCase) {
             $lpa = new Lpa($testCase['lpa']);
 
-            $x = $this->setupViewModel(
-                $lpa,
-                'authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig'
-            );
-            $template = $x[0];
-            $vars = $x[1];
-            $attorneyGuidanceHtml = $template->renderBlock('attorneyGuidance', $vars);
+            // If testcase lpa doesn't have primary attorneys, render the repl attorney instead
+            $attorneys = $lpa->document->primaryAttorneys;
+            if (empty($lpa->document->primaryAttorneys)) {
+                $attorneys = $lpa->document->replacementAttorneys;
+            }
 
-            $attorneyGuidanceMatchesArray = $this->findHtmlMatches($attorneyGuidanceHtml);
+            // render and check HTML for matches
+            $html = $this->renderViewModel($lpa, 'attorney', $attorneys);
+            $matchesArray = $this->findHtmlMatches($html);
 
-            echo "\nRunning tests for DateCheckViewModelHelper test case $index\n";
+            $expectedText = $testCase['expectedAttorneyText'];
 
-            $expectedAttText = $testCase['expectedAttorneyText'];
+            if ($index == 0) {
+                echo "\n";
+            }
+            echo "Running tests for attorney DateCheckViewModelHelper test case $index\n";
 
             $this->assertEquals(
-                $attorneyGuidanceMatchesArray,
-                str_replace(array("\n", '  '), '', $expectedAttText ? array($expectedAttText) : array())
+                $matchesArray,
+                $expectedText
             );
         }
     }
