@@ -23,24 +23,32 @@ class ContinuationSheets
         $raCount = count($lpa->document->replacementAttorneys);
         $pnCount = count($lpa->document->peopleToNotify);
 
-        if ($paCount > 4 && $raCount > 2 && $pnCount > 4) {
-            $extraBlockPeople = 'ALL_PEOPLE_OVERFLOW';
-        } elseif ($paCount > 4 && $raCount > 2) {
-            $extraBlockPeople =  'ALL_ATTORNEY_OVERFLOW';
-        } elseif ($paCount > 4 && $pnCount > 4) {
-            $extraBlockPeople =  'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW';
-        } elseif ($raCount > 2 &&  $pnCount > 4) {
-            $extraBlockPeople =  'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW';
-        } elseif ($paCount > 4) {
-            $extraBlockPeople =  'PRIMARY_ATTORNEY_OVERFLOW';
-        } elseif ($raCount > 2) {
-            $extraBlockPeople =  'REPLACEMENT_ATTORNEY_OVERFLOW';
-        } elseif ($pnCount > 4) {
-            $extraBlockPeople =  'NOTIFY_OVERFLOW';
+        switch (true) {
+            case $paCount > 4 && $raCount > 2 && $pnCount > 4:
+                $extraBlockPeople = 'ALL_PEOPLE_OVERFLOW';
+                break;
+            case $paCount > 4 && $raCount > 2:
+                $extraBlockPeople = 'ALL_ATTORNEY_OVERFLOW';
+                break;
+            case $paCount > 4 && $pnCount > 4:
+                $extraBlockPeople = 'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW';
+                break;
+            case $raCount > 2 && $pnCount > 4:
+                $extraBlockPeople = 'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW';
+                break;
+            case $paCount > 4:
+                $extraBlockPeople = 'PRIMARY_ATTORNEY_OVERFLOW';
+                break;
+            case $raCount > 2:
+                $extraBlockPeople = 'REPLACEMENT_ATTORNEY_OVERFLOW';
+                break;
+            case $pnCount > 4:
+                $extraBlockPeople = 'NOTIFY_OVERFLOW';
+                break;
         }
 
         if ($extraBlockPeople != null) {
-            array_push($continuationNoteKeys, $extraBlockPeople);
+            $continuationNoteKeys[] = $extraBlockPeople;
         }
 
         if ($paCount > 4 || $raCount > 2 || $pnCount > 4) {
@@ -55,33 +63,21 @@ class ContinuationSheets
             array_push($continuationNoteKeys, 'HAS_ATTORNEY_DECISIONS');
         }
 
-        if (isset($lpa->document->donor)) {
-            if (!$lpa->document->donor->canSign) {
-                array_push($continuationNoteKeys, 'CANT_SIGN');
-            }
+        if (isset($lpa->document->donor) && !$lpa->document->donor->canSign) {
+            array_push($continuationNoteKeys, 'CANT_SIGN');
         }
 
-        $someAttorneyIsTrustCorp = false;
-
-        foreach ($lpa->document->primaryAttorneys as $attorney) {
+        $allAttorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
+        foreach ($allAttorneys as $attorney) {
             if (isset($attorney->number)) {
-                $someAttorneyIsTrustCorp = true;
+                $continuationNoteKeys[] = 'HAS_TRUST_CORP';
+                break;
             }
-        }
-
-        foreach ($lpa->document->replacementAttorneys as $attorney) {
-            if (isset($attorney->number)) {
-                $someAttorneyIsTrustCorp = true;
-            }
-        }
-
-        if ($someAttorneyIsTrustCorp) {
-            array_push($continuationNoteKeys, 'HAS_TRUST_CORP');
         }
 
         // The following line is taken from the PDF service.
         $allowedChars = (LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_WIDTH + 2) *
-          LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_COUNT;
+            LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_COUNT;
         $lpaDocument = $lpa->getDocument();
         if (
             strlen(LpaFormatter::flattenInstructionsOrPreferences($lpaDocument->getPreference())) > $allowedChars ||
