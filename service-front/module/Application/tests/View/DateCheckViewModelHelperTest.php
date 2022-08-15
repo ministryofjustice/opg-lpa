@@ -47,8 +47,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 1 before you signed ' .
-                                    'section 9 of the LPA, or on the same day.'],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 1 before you signed ' .
+                'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
         // LPA has more than 4 replacement attorneys (generates CS1)
@@ -64,19 +65,22 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 1 before you signed ' .
-                                    'section 9 of the LPA, or on the same day.'],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 1 before you signed ' .
+                'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
         // LPA has more than 4 people to notify (generates CS1)
         [
             'lpa' => [
                 'document' => [
+                    // Empty arrays represent each person, details are missing as they are are unimportant
                     'peopleToNotify' => [[], [], [], [], []]
                 ]
             ],
-            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 1 before you signed ' .
-                                    'section 9 of the LPA, or on the same day.'],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 1 before you signed ' .
+                'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
 
@@ -90,8 +94,10 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 2 before you signed ' .
-                                    'section 9 of the LPA, or on the same day.'],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 2 before you signed ' .
+                'section 9 of the LPA, or on the same day.'
+            ],
             'expectedAttorneyText' => []
         ],
         // LPA has additional information on how replacement attorneys should act (section 4) (generates CS2)
@@ -103,8 +109,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 2 before you signed ' .
-                                    'section 9 of the LPA, or on the same day.'],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 2 before you signed ' .
+                'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
         // LPA has additional information on when replacement attorneys should act (generates CS2)
@@ -116,8 +123,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 2 before you signed ' .
-                                    'section 9 of the LPA, or on the same day.'],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 2 before you signed ' .
+                'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
         // LPA has additional information in preferences and instructions (section 7) (generates CS2)
@@ -125,15 +133,17 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             'lpa' => [
                 'document' => [
                     'instruction' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                      incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                                      exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                                      irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                                      nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
-                                      qui officia deserunt mollit anim id est laborum.'
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                        irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+                        qui officia deserunt mollit anim id est laborum.'
                 ]
             ],
-            'expectedDonorText' => ['You must have signed and dated continuation sheet/s 2 before you signed ' .
-                                    'section 9 of the LPA, or on the same day.'],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 2 before you signed ' .
+                'section 9 of the LPA, or on the same day.'
+            ],
             'expectedAttorneyText' => []
         ],
         // Combined CS1 and CS2
@@ -148,8 +158,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => ['You must have signed and dated continuation sheets 1 and 2 before you signed ' .
-                                    'section 9 of the LPA, or on the same day.'],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheets 1 and 2 before you signed ' .
+                'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
         // Continuation sheet 3
@@ -163,8 +174,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => ['This person must have signed continuation sheet 3 on the same day as they sign ' .
-                                    'section 5 and before the certificate provider signs section 10.'],
+            'expectedDonorText' => [
+                'This person must have signed continuation sheet 3 on the same day as they sign ' .
+                'section 5 and before the certificate provider signs section 10.'],
             'expectedAttorneyText' => []
         ],
         // Property & finance LPA - donor cannot sign or make a mark
@@ -198,10 +210,11 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         ],
     ];
 
-    /* This returns an arbitrary string to imitate a class constant needed when adding twig functions to the */
-    /* renderer before it tries to render a template. Although none of the twig blocks rendered for the tests */
-    /* contain the twig functions and it seems that we won't need them, the renderer encounters them anyway */
-    /* but is happy to fail silently. */
+    /* This returns an arbitrary string to imitate a class constant needed when adding twig functions to the
+     * renderer before it tries to render a template. Although none of the twig blocks rendered for the tests
+     * contain the twig functions and it seems that we won't need them, the renderer encounters them anyway
+     * but is happy to fail silently.
+     */
     private function noop(): string
     {
         return "NoopClass";
@@ -228,8 +241,10 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         // call helper under test
         $helperResult = DateCheckViewModelHelper::build($lpa);
         // set vars on ViewModel as it is done in controller
-        $viewModel->setVariables(['continuationNoteKeys' => $helperResult['continuationNoteKeys'],
-                                  'applicants' => []]);
+        $viewModel->setVariables([
+            'continuationNoteKeys' => $helperResult['continuationNoteKeys'],
+            'applicants' => []
+        ]);
 
         $loader = new FilesystemLoader('module/Application/view/application');
 
