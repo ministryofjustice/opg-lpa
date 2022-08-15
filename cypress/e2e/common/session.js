@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then('I hack the session to have {int} seconds remaining', (seconds) => {
     let requestOptions = {

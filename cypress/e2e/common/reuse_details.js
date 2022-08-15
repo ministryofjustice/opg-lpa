@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 // should('be.checked')  or not checked exists here to ensure that cypress doesn't race off
 // and carry out the next operation without making sure first that the check or uncheck has taken effect

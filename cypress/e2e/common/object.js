@@ -1,4 +1,4 @@
-import { And } from "cypress-cucumber-preprocessor/steps";
+import { And } from "@badeball/cypress-cucumber-preprocessor";
 
 /**
  * Set up expectations that an object stored in the testStore

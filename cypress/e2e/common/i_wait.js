@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 // wait for a number of seconds
 Then('I wait for {int} seconds', (seconds) => {

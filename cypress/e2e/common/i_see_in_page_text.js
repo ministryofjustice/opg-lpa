@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then(`I see {string} in the page text`, (text) => {
   cy.contains(text).and('be.visible');
@@ -12,7 +12,7 @@ Then(`I do not see {string} in the page text`, (text) => {
   cy.contains(text).should('not.exist');
 })
 
-When("I see in the page text", (dataTable) => {
+Then("I see in the page text", (dataTable) => {
     var rawTable = dataTable.rawTable;
     rawTable.forEach(row => {
         cy.contains(row[0]);

@@ -4,7 +4,7 @@
 
 const {
   Then,
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 
 let statusesResponse = {
     "91155453023": {
