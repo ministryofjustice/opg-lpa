@@ -42,6 +42,6 @@ Then('I can see a reminder to sign continuation sheet 3', () => {
 })
 
 Then('I can see a reminder to sign continuation sheet 4', () => {
-    const text = 'They must have signed continuation sheet 4 after the ‘certificate provider’ has signed section 10 of the LPA form.'
+    const text = 'They must have signed continuation sheet 4 after the \'certificate provider\' has signed section 10 of the LPA form.'
     cy.get('[data-cy=primary-attorney]').find('[data-cy=continuation-sheet-info]').should('contain.text', text);
 })
