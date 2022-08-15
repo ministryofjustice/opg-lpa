@@ -61,11 +61,11 @@ class ContinuationSheetTest extends AbstractHttpControllerTestCase
         $mockLpa = new Lpa([
             'document' => [
                 'instruction' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-                                  dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                                  mollit anim id est laborum.'
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+                    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                    mollit anim id est laborum.'
             ]
         ]);
 
@@ -103,11 +103,11 @@ class ContinuationSheetTest extends AbstractHttpControllerTestCase
         $mockLpa = new Lpa([
             'document' => [
                 'preference' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-                                dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                                mollit anim id est laborum.',
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+                    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                    mollit anim id est laborum.',
                 'replacementAttorneys' => [
                     ['type' => 'human'],
                     ['type' => 'human'],
@@ -119,10 +119,12 @@ class ContinuationSheetTest extends AbstractHttpControllerTestCase
             ]
         ]);
 
-        $expectedResult = ['LONG_INSTRUCTIONS_OR_PREFERENCES',
-                           'REPLACEMENT_ATTORNEY_OVERFLOW',
-                           'ANY_PEOPLE_OVERFLOW',
-                           'HAS_ATTORNEY_DECISIONS'];
+        $expectedResult = [
+            'LONG_INSTRUCTIONS_OR_PREFERENCES',
+            'REPLACEMENT_ATTORNEY_OVERFLOW',
+            'ANY_PEOPLE_OVERFLOW',
+            'HAS_ATTORNEY_DECISIONS'
+        ];
         $this->assertEqualsCanonicalizing($expectedResult, $this->service->getContinuationNoteKeys($mockLpa));
     }
 }
