@@ -16,34 +16,57 @@ def build_cypress_command(command, env={}):
     :param command: path to script to run cypress
     :param env: dict in format:
         {
-            "userNumber": <user number for sign up>,
             "baseUrl": <front end URL>,
             "adminUrl": <admin URL>,
             "CI": <true if we are in CI>,
+
+            # These set -e Cypress-scoped "environment" vars (see below)
+            "userNumber": <user number for sign up>,
             "GLOB": <GLOB for feature files>
             "TAGS": <TAGS to use for filtering features>,
             "stepDefinitions": <location of cypress *.js step definition files>,
             "filterSpecs": <true to filter specs according to TAGS>
         }
-        These set -e Cypress-scoped "environment" vars (see below)
+
 
     If CYPRESS_CI is true, fixtures are disabled. This is important,
     as if this flag is not set in CI, the tests will fail as the build
     tries to remove fixtures, which it can't do due to networking
     restrictions.
 
-    We are configuring cypress-cucumber-preprocessor through
+    We mostly configure cypress-cucumber-preprocessor through
     the -e cypress flag, which sets Cypress-scoped variables; see
     https://github.com/badeball/cypress-cucumber-preprocessor/blob/master/docs/configuration.md
+
+    baseUrl and adminUrl are used to set CYPRESS_* variables, as setting
+    these with -e doesn't seem to have the desired effect (i.e. CYPRESS_baseUrl=...
+    and -e baseUrl=... don't appear to be equivalent)
     """
     command = f"{command} run --headless --config video=false"
 
     if len(env) > 0:
         # variables which can be passed to cypress directly via the -e flag
-        e_vars = ",".join([f'{key}="{value}"' for key, value in env.items()])
+        e_vars = ",".join(
+            [
+                f'{key}="{value}"'
+                for key, value in env.items()
+                if key not in ["baseUrl", "adminUrl"]
+            ]
+        )
 
         if len(e_vars) > 0:
             command = f"{command} -e {e_vars}"
+
+        env_vars = " ".join(
+            [
+                f'CYPRESS_{key}="{value}"'
+                for key, value in env.items()
+                if key in ["baseUrl", "adminUrl"]
+            ]
+        )
+
+        if len(env_vars) > 0:
+            command = f"{env_vars} {command}"
 
     return command
 

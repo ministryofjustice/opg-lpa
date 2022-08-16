@@ -193,16 +193,11 @@ test-pdf-local:
 cypress-local:
 	docker rm -f cypress_tests || true
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" -v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests --entrypoint ./cypress/cypress_start.sh cypress:latest
-
-.PHONY: cypress-local-shell
-cypress-local-shell:
-	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" --entrypoint bash --network="host" -v `pwd`/cypress:/app/cypress --name cypress_tests cypress:latest
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_BASE_URL="https://localhost:7002" -e CYPRESS_RUNNER_ADMIN_URL="https://localhost:7003" -e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" -v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests --entrypoint ./cypress/cypress_start.sh cypress:latest
 
 # Start S3 Monitor and call "cypress open";
 # this requires a globally-installed cypress
 .PHONY: cypress-open
 cypress-open:
 	aws-vault exec moj-lpa-dev -- python3 cypress/s3_monitor.py &
-	CYPRESS_userNumber=`python3 cypress/user_number.py` ./node_modules/.bin/cypress open --project ./ -e stepDefinitions="cypress/e2e/common/*.js"
+	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" CYPRESS_adminURL="https://localhost:7003" ./node_modules/.bin/cypress open --project ./ -e stepDefinitions="cypress/e2e/common/*.js"
