@@ -52,7 +52,6 @@ module.exports = defineConfig({
   requestTimeout: 12000,
   trashAssetsBeforeRuns: false,
   e2e: {
-    baseUrl: "https://localhost:7002",
     specPattern: "cypress/e2e/**/*.feature",
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents,
