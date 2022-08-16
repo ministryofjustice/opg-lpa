@@ -5,18 +5,19 @@ import "./commands";
 
 import "cypress-plugin-tab";
 
-// note that userNumber is set in start.sh, to ensure that it applies to all feature files run during this session of Cypress
+// userNumber applies to all feature files run during this session
+// which don't perform their own sign-in
 var userNumber = Cypress.env("userNumber");
-// line below, email currently needs to start with caspertests, to get written to the S3 bucket. That is configured in email.tf, and could be changed once casper tests are switched off
-Cypress.env("email","caspertests+" + userNumber + "@lpa.opg.service.justice.gov.uk");
+
 Cypress.env("password", "Cypress" + userNumber);
+
+// Email currently needs to start with caspertests (legacy test approach),
+// to get written to the S3 bucket.
+// Configuration for this is in email.tf.
+Cypress.env("email","caspertests+" + userNumber + "@lpa.opg.service.justice.gov.uk");
+
 Cypress.env("seeded_email", "seeded_test_user@digital.justice.gov.uk");
 Cypress.env("second_seeded_email", "seeded_test_user2@digital.justice.gov.uk");
 Cypress.env("seeded_password", "Pass1234");
-// see if we've inherited an adminUrl, if not default to localhost
-var adminUrl = Cypress.env("adminUrl");
-if (adminUrl === undefined) {
-    Cypress.env("adminUrl", "https://localhost:7003");
-}
 Cypress.env("a11yCheckedPages", new Set());
 Cypress.env("clonedLpa", false);
