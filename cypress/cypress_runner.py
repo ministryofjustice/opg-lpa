@@ -16,49 +16,34 @@ def build_cypress_command(command, env={}):
     :param command: path to script to run cypress
     :param env: dict in format:
         {
-            "CYPRESS_userNumber": <user number for sign up>,
-            "CYPRESS_baseUrl": <front end URL>,
-            "CYPRESS_adminUrl": <admin URL>,
-            "CYPRESS_CI": <true if we are in CI>,
+            "userNumber": <user number for sign up>,
+            "baseUrl": <front end URL>,
+            "adminUrl": <admin URL>,
+            "CI": <true if we are in CI>,
             "GLOB": <GLOB for feature files>
-            "TAGS": <TAGS to use for filtering features>
+            "TAGS": <TAGS to use for filtering features>,
+            "stepDefinitions": <location of cypress *.js step definition files>,
+            "filterSpecs": <true to filter specs according to TAGS>
         }
+        These set -e Cypress-scoped "environment" vars (see below)
 
     If CYPRESS_CI is true, fixtures are disabled. This is important,
     as if this flag is not set in CI, the tests will fail as the build
     tries to remove fixtures, which it can't do due to networking
     restrictions.
+
+    We are configuring cypress-cucumber-preprocessor through
+    the -e cypress flag, which sets Cypress-scoped variables; see
+    https://github.com/badeball/cypress-cucumber-preprocessor/blob/master/docs/configuration.md
     """
     command = f"{command} run --headless --config video=false"
 
     if len(env) > 0:
         # variables which can be passed to cypress directly via the -e flag
-        e_vars = " ".join(
-            [
-                f'{key}="{value}"'
-                for key, value in env.items()
-                if key in ["GLOB", "TAGS"]
-            ]
-        )
+        e_vars = ",".join([f'{key}="{value}"' for key, value in env.items()])
+
         if len(e_vars) > 0:
             command = f"{command} -e {e_vars}"
-
-        # variables which should be set in the environment
-        env_vars = " ".join(
-            [
-                f'{key}="{value}"'
-                for key, value in env.items()
-                if key
-                in [
-                    "CYPRESS_baseUrl",
-                    "CYPRESS_userNumber",
-                    "CYPRESS_adminUrl",
-                    "CYPRESS_CI",
-                ]
-            ]
-        )
-        if len(env_vars) > 0:
-            command = f"{env_vars} {command}"
 
     return command
 
@@ -157,11 +142,11 @@ def get_settings(args_in):
     tags = env_override_list(args.tags, "CYPRESS_RUNNER_TAGS")
 
     # these are hard-coded for now but could be added as CLI args if required
-    cypress_script = (
-        _parent_dir.parent / Path("node_modules/.bin/cypress-tags")
-    ).resolve()
+    cypress_script = (_parent_dir.parent / Path("node_modules/.bin/cypress")).resolve()
 
-    cypress_glob = (_parent_dir / Path("e2e/**/*.feature")).resolve()
+    cypress_glob = "cypress/e2e/**/*.feature"
+    cypress_step_definitions = "cypress/e2e/common/**/*.js"
+    cypress_filter_specs = "true"
 
     # clean up URLs in case they have paths, trailing slashes etc.
     parsed_url = urlparse(base_url)
@@ -201,6 +186,8 @@ def get_settings(args_in):
             "base_url": cypress_base_url,
             "admin_url": cypress_admin_url,
             "glob": cypress_glob,
+            "filterSpecs": cypress_filter_specs,
+            "stepDefinitions": cypress_step_definitions,
         },
         "runs": runs,
     }
@@ -272,14 +259,15 @@ if __name__ == "__main__":
                 f"Starting step {step_number} (of {num_steps}) (run = {run_number}, tags = {tags})"
             )
 
-            options = {
-                "CYPRESS_baseUrl": settings["cypress"]["base_url"],
-                "CYPRESS_adminUrl": settings["cypress"]["admin_url"],
-                "CYPRESS_CI": settings["in_ci"],
-                "CYPRESS_userNumber": run["user_number"],
-                "GLOB": settings["cypress"]["glob"],
-                "TAGS": tags,
-            }
+            options = settings["cypress"]
+
+            options.update(
+                {
+                    "userNumber": run["user_number"],
+                    "CI": settings["in_ci"],
+                    "TAGS": tags,
+                }
+            )
 
             cypress_command = build_cypress_command(settings["script"], options)
             print(f"cypress command for step:\n{cypress_command}")
