@@ -8,8 +8,8 @@ const browserify = require("@badeball/cypress-cucumber-preprocessor/browserify")
 // properties.
 const testStore = {}
 
-function setupNodeEvents(on, config) {
-  preprocessor.addCucumberPreprocessorPlugin(on, config);
+async function setupNodeEvents(on, config) {
+  await preprocessor.addCucumberPreprocessorPlugin(on, config);
   on("file:preprocessor", browserify.default(config));
 
   on("task", {
@@ -57,4 +57,4 @@ module.exports = defineConfig({
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents,
   },
-})
+});
