@@ -205,4 +205,4 @@ cypress-local-shell:
 .PHONY: cypress-open
 cypress-open:
 	aws-vault exec moj-lpa-dev -- python3 cypress/s3_monitor.py &
-	CYPRESS_userNumber=`python3 cypress/user_number.py` ./node_modules/.bin/cypress open --project ./
+	CYPRESS_userNumber=`python3 cypress/user_number.py` ./node_modules/.bin/cypress open --project ./ -e stepDefinitions="cypress/e2e/common/*.js"
