@@ -178,14 +178,16 @@ def get_settings(args_in):
         "screenshots_path": _parent_dir / "screenshots",
         "disable_s3_monitor": disable_s3_monitor,
         "in_ci": in_ci,
+        "features_dir": _parent_dir / "e2e",
         "s3_monitor": {
             "verbose": verbose,
         },
+        # used to set -e flag passed to cypress, so keys
+        # must match those recognised by cypress
         "cypress": {
-            "features_dir": _parent_dir / "e2e",
-            "base_url": cypress_base_url,
-            "admin_url": cypress_admin_url,
-            "glob": cypress_glob,
+            "baseUrl": cypress_base_url,
+            "adminUrl": cypress_admin_url,
+            "GLOB": cypress_glob,
             "filterSpecs": cypress_filter_specs,
             "stepDefinitions": cypress_step_definitions,
         },
@@ -218,7 +220,7 @@ if __name__ == "__main__":
 
     # stitch scripts together
     if settings["should_stitch"]:
-        stitch_feature_files(settings["cypress"]["features_dir"])
+        stitch_feature_files(settings["features_dir"])
 
     """
     The runs setting looks like this:
