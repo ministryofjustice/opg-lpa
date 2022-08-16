@@ -55,7 +55,8 @@ dc-up: run-composers
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
-	aws-vault exec moj-lpa-dev -- aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
+	aws-vault exec moj-lpa-dev -- aws ecr get-login-password --region eu-west-1 | docker login \
+		--username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
 	docker-compose up
 
 # target for users outside MoJ to run the stack without 3rd party integrations
@@ -117,7 +118,8 @@ hard-reset-front:
 	docker-compose build --no-cache front-app
 
 .PHONY: soft-reset-front
-# soft reset only the front app container without no-cache option.  quickest rebuild but runs risk of some staleness if not every change is picked up
+# soft reset only the front app container without no-cache option.
+# quickest rebuild but runs risk of some staleness if not every change is picked up
 soft-reset-front:
 	@${MAKE} dc-down
 	docker-compose build front-app
@@ -142,16 +144,6 @@ reset-flask:
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker rmi lpa-flask-app || true; \
 	docker-compose build --no-cache flask-app
-
-.PHONY: reset-mock-sirius
-reset-mock-sirius:
-	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker rmi mocksirius || true; \
-	docker-compose build --no-cache mocksirius
 
 # hard reset only the api app container
 .PHONY: reset-api
@@ -193,11 +185,18 @@ test-pdf-local:
 cypress-local:
 	docker rm -f cypress_tests || true
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_BASE_URL="https://localhost:7002" -e CYPRESS_RUNNER_ADMIN_URL="https://localhost:7003" -e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" -v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests --entrypoint ./cypress/cypress_start.sh cypress:latest
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
+		-e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_BASE_URL="https://localhost:7002" \
+		-e CYPRESS_RUNNER_ADMIN_URL="https://localhost:7003" \
+		-e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" \
+		-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests \
+		--entrypoint ./cypress/cypress_start.sh cypress:latest
 
 # Start S3 Monitor and call "cypress open";
 # this requires a globally-installed cypress
 .PHONY: cypress-open
 cypress-open:
 	aws-vault exec moj-lpa-dev -- python3 cypress/s3_monitor.py &
-	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" CYPRESS_adminURL="https://localhost:7003" ./node_modules/.bin/cypress open --project ./ -e stepDefinitions="cypress/e2e/common/*.js"
+	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
+		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
+		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
