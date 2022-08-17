@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
+use Application\Model\Service\Lpa\ContinuationSheets;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Common\LongName;
 use Laminas\View\Model\ViewModel;
@@ -65,19 +66,20 @@ class CompleteController extends AbstractLpaController
             || ($payment->reducedFeeReceivesBenefits === true && $payment->reducedFeeAwardedDamages === true)
             || $payment->method == Payment::PAYMENT_TYPE_CHEQUE);
 
-        $continuationNoteKeys = $this->getLpaApplicationService()->getContinuationNoteKeys($lpa);
+        $continuationSheets = new ContinuationSheets();
+        $continuationNoteKeys = $continuationSheets->getContinuationNoteKeys($lpa);
 
         $viewParams = [
             'lp1Url' => $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1']),
             'cloneUrl' => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $lpa->id]),
             'dateCheckUrl' => $this->url()->fromRoute('lpa/date-check/complete', ['lpa-id' => $lpa->id]),
-            'correspondentName' => ($lpa->document->correspondent->name instanceof LongName
-                ? $lpa->document->correspondent->name : $lpa->document->correspondent->company),
+            'continuationNoteKeys' => $continuationNoteKeys,
+            'correspondentName' => ($lpa->document->correspondent->name instanceof LongName ?
+                $lpa->document->correspondent->name : $lpa->document->correspondent->company),
             'paymentAmount' => $lpa->payment->amount,
             'paymentReferenceNo' => $lpa->payment->reference,
             'hasRemission' => $lpa->isEligibleForFeeReduction(),
             'isPaymentSkipped' => $isPaymentSkipped,
-            'continuationNoteKeys' => $continuationNoteKeys,
         ];
 
         if (count($lpa->document->peopleToNotify) > 0) {

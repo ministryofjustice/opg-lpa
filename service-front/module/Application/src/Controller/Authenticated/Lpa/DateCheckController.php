@@ -4,6 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Signatures\DateCheck;
+use Application\View\DateCheckViewModelHelper;
 use Laminas\View\Model\ViewModel;
 
 class DateCheckController extends AbstractLpaController
@@ -92,39 +93,19 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
-        $continuationNoteKeys = $this->getLpaApplicationService()->getContinuationNoteKeys($lpa);
+        $helperResult = DateCheckViewModelHelper::build($lpa);
 
-        $applicants = [];
-
-        if ($lpa->completedAt !== null) {
-            if ($lpa->document->whoIsRegistering === 'donor') {
-                $applicants[0] = [
-                    'name' => $lpa->document->donor->name,
-                    'isHuman' => true,
-                ];
-            } elseif (is_array($lpa->document->whoIsRegistering)) {
-                // Applicant is one or more primary attorneys
-                foreach ($lpa->document->whoIsRegistering as $id) {
-                    foreach ($lpa->document->primaryAttorneys as $primaryAttorney) {
-                        if ($id == $primaryAttorney->id) {
-                            $applicants[] = [
-                                'name' => $primaryAttorney->name,
-                                'isHuman' => isset($primaryAttorney->dob),
-                            ];
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-
-        return new ViewModel([
+        $viewModel = new ViewModel([
             'form'        => $form,
             'returnRoute' => $returnRoute,
-            'applicants'  => $applicants,
-            'continuationNoteKeys' => $continuationNoteKeys,
         ]);
+
+        $viewModel->setVariables([
+            'continuationNoteKeys' => $helperResult['continuationNoteKeys'],
+            'applicants' => $helperResult['applicants']
+        ]);
+
+        return $viewModel;
     }
 
 
@@ -142,6 +123,7 @@ class DateCheckController extends AbstractLpaController
             'returnRoute' => $returnRoute,
         ]);
     }
+
 
     private function dateArrayToTime(array $dateArray)
     {
