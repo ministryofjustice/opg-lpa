@@ -21,7 +21,7 @@ Then('I cannot see continuation sheet reminders', () => {
 });
 
 Then('I can see fields for the donor, certificate provider, attorney, applicant', () => {
-    const expectedNames = ['Mr Dead Pool (the donor)',
+    const expectedNames = ['Mr Dead Pool (donor)',
                            'Mr Cee Pee (certificate provider)',
                            'Mr A Att (attorney)',
                            'Mr Dead Pool (applicant)']
