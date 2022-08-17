@@ -19,7 +19,7 @@ resource "aws_lb_target_group" "front" {
 
 resource "aws_lb" "front" {
   name = "${var.environment_name}-front"
-  #tfsec:ignore:AWS005 - public facing load balancer
+  #tfsec:ignore:aws-elb-alb-not-public - public facing load balancer
   internal                   = false
   load_balancer_type         = "application"
   subnets                    = data.aws_subnet_ids.public.ids
@@ -51,7 +51,7 @@ resource "aws_lb_listener" "front_loadbalancer" {
   }
 }
 
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
+#tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "front_loadbalancer" {
   name        = "${var.environment_name}-front-loadbalancer"
   description = "Allow inbound traffic"
@@ -70,14 +70,14 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress" {
   description       = "MoJ sites to Front ELB - HTTPS"
 }
 
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
+#tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
   count     = var.environment_name == "production" ? 1 : 0
   type      = "ingress"
   from_port = 443
   to_port   = 443
   protocol  = "tcp"
-  #tfsec:ignore:AWS006 - public facing inbound rule
+  #tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
   description       = "Anywhere to Production Front ELB - HTTPS"
@@ -88,7 +88,7 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
   from_port = 80
   to_port   = 80
   protocol  = "tcp"
-  #tfsec:ignore:AWS006 - public facing inbound rule
+  #tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
   description       = "Anywhere to Front ELB - HTTP (redirects to HTTPS)"
@@ -99,7 +99,7 @@ resource "aws_security_group_rule" "front_loadbalancer_egress" {
   from_port = 0
   to_port   = 0
   protocol  = "-1"
-  #tfsec:ignore:AWS007 - public facing load balancer
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr - public facing load balancer
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
   description       = "Front ELB to Anywhere - All Traffic"

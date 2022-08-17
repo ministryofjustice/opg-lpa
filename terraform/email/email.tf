@@ -34,7 +34,7 @@ resource "aws_route53_record" "casper_amazonses_mx" {
 
 # Create S3 bucket for SES mail storage
 # this is ony used for emil testing, which will change anyway
-#tfsec:ignore:AWS017 #tfsec:ignore:AWS002 #tfsec:ignore:AWS077 #tfsec:ignore:aws-s3-encryption-customer-key
+#tfsec:ignore:aws-s3-enable-bucket-encryption #tfsec:ignore:aws-s3-enable-bucket-logging #tfsec:ignore:aws-s3-enable-versioning #tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "mailbox" {
   bucket = "opg-lpa-casper-mailbox"
   acl    = "private"

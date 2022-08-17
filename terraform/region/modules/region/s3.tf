@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
 
 #versioning not required for a logging bucket bucket logging not needed. 
 #encryption of ALB access logs not supported with CMK
-#tfsec:ignore:AWS002  #tfsec:ignore:AWS077 #tfsec:ignore:aws-s3-encryption-customer-key
+#tfsec:ignore:aws-s3-enable-bucket-logging  #tfsec:ignore:aws-s3-enable-versioning #tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${local.account_name}-${local.region_name}-lb-access-logs"
   acl    = "private"
@@ -78,7 +78,7 @@ resource "aws_s3_bucket_policy" "access_log" {
   policy = data.aws_iam_policy_document.loadbalancer_logging.json
 }
 
-#tfsec:ignore:AWS002 #tfsec:ignore:AWS077 - no logging or versioning required as a temp cache
+#tfsec:ignore:aws-s3-enable-bucket-logging #tfsec:ignore:aws-s3-enable-versioning - no logging or versioning required as a temp cache
 resource "aws_s3_bucket" "lpa_pdf_cache" {
   bucket        = lower("online-lpa-pdf-cache-${local.account_name}-${local.region_name}")
   acl           = "private"
