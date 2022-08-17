@@ -21,12 +21,12 @@
 
     }
 
-    .extra-info{
+    .extra-info {
 
         float:left !important;
         clear:left;
         margin-left: 0 !important;
-        width:6.25em !important;
+        width: 6.25em !important;
 
         @media (min-width: 720px) {
             float:right !important;
@@ -34,10 +34,14 @@
             margin: 5px 0 0 1.5em !important;
         }
 
-        p:first-of-type{
+        p:first-of-type {
             color: #0b0c0c !important;
         }
 
+    }
+
+    .lpa-type {
+        width: 10em !important;
     }
 
     .list-item_title {
@@ -48,6 +52,7 @@
 
     .list-item_cta{
         clear:left;
+        padding-top: 10px;
     }
 
     .list-item_secondary_actions {
@@ -56,7 +61,7 @@
         margin: 10px 0 0 0;
 
         @media (min-width: 640px) {
-            margin-left: 15px;
+            margin-left: 20px;
         }
 
         li{
@@ -66,7 +71,6 @@
             @media (min-width: 400px) {
 
                 display: inline-block;
-                border-right: 2px solid rgba($black,0.3);
                 margin-right: 10px;
                 padding-right: 10px;
 
@@ -78,7 +82,7 @@
             }
 
             @media (min-width: 740px) {
-                margin-right: 6px;
+                margin-right: 10px;
                 padding-right: 10px;
             }
         }
@@ -96,8 +100,8 @@
 
     .list-item_status{
         float:right;
-        min-width: 95px;
-        margin-left: 30px;
+        min-width: 210px;
+        margin: -7px 5px 0 15px;
         text-align: right;
         z-index: 1;
         position: relative;
@@ -159,4 +163,3 @@
     font-size: 16px;
     color: #6F777B;
 }
-
