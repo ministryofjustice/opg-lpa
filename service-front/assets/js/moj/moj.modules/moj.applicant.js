@@ -1,49 +1,64 @@
-// Dependencies: moj, jQuery
+// Applicant form (Who's applying to register the LPA?)
+;(function () {
+  'use strict'
 
-(function () {
-    'use strict';
+  const moj = window.moj || {}
 
-    moj.Modules.Applicant = {
+  const renderRegisteredByInputs = function () {
+    // Render the radio buttons and checkboxes as required
+    document.querySelectorAll('input[name=whoIsRegistering]').forEach(function (radio) {
+      radio.parentNode.classList.remove('selected')
+      if (radio.checked) {
+        radio.parentNode.classList.add('selected')
+      }
+    })
 
-        init: function () {
-            this.selectionBehaviour();
-        },
+    document.querySelectorAll('.js-attorney-list input[type=checkbox]').forEach(function (checkbox) {
+      checkbox.parentNode.classList.remove('selected')
+      if (checkbox.checked) {
+        checkbox.parentNode.classList.add('selected')
+      }
+    })
+  }
 
-        selectionBehaviour: function() {
-            // Only do the following if .js-attorney-list exists
-            if ($('.js-attorney-list')[0]) {
+  moj.Modules.Applicant = {
+    init: function () {
+      // Only do the following if .js-attorney-list exists,
+      // i.e. there is more than one primary attorney
+      const attorneyList = document.querySelector('.js-attorney-list')
 
-                // Toggle all checkboxes under Attorneys
-                $('[name="whoIsRegistering"]').change(function() {
-                    if ($(this).val() === 'donor') {
-                        //  Uncheck the attorney checkboxes and re-render the input styles
-                        $('.js-attorney-list input:checkbox').prop('checked', false);
+      if (attorneyList !== null) {
+        // If donor radio is selected, untick all attorney checkboxes
+        document.querySelectorAll('input[name=whoIsRegistering][value=donor]').forEach(function (radio) {
+          radio.addEventListener('change', function () {
+            attorneyList.querySelectorAll('input[type=checkbox]').forEach(function (checkbox) {
+              checkbox.checked = false
+              renderRegisteredByInputs()
+            })
+          })
+        })
 
-                        moj.Modules.Applicant.renderRegisteredByInputs();
-                    }
-                });
+        // Convert nodelist of attorney checkboxes to an array so it can be manipulated more easily
+        const checkboxes = Array.prototype.slice.call(
+          attorneyList.querySelectorAll('input[type=checkbox]')
+        )
 
-                //  If an attorney checkbox is checked then ensure that the correct radio button is selected
-                $('.js-attorney-list input').change(function() {
-                    //  If an attorney is selected directly then trigger the radio button select
-                    if ($('.js-attorney-list input').is(':checked')) {
-                        $('input[name="whoIsRegistering"][value!="donor"]').prop('checked', true);
-                    }
+        // If an attorney checkbox is checked, select the attorneys radio button
+        checkboxes.forEach(function (checkbox) {
+          checkbox.addEventListener('change', function () {
+            // Are any checkboxes checked?
+            const checked = checkboxes.filter(function (checkbox) {
+              return checkbox.checked
+            }).length > 0
 
-                    moj.Modules.Applicant.renderRegisteredByInputs();
-                });
-
+            if (checked) {
+              document.querySelector('input[name=whoIsRegistering]:not([value=donor]').checked = true
             }
-        },
 
-        renderRegisteredByInputs: function () {
-            //  Render the radio buttons and checkboxes as required
-            $('[name="whoIsRegistering"]').parent().removeClass('selected');
-            $('[name="whoIsRegistering"]:checked').parent().addClass('selected');
-
-            $('.js-attorney-list input').parent().removeClass('selected');
-            $('.js-attorney-list input:checked').parent().addClass('selected');
-        }
-
-    };
-})();
+            renderRegisteredByInputs()
+          })
+        })
+      }
+    }
+  }
+})()
