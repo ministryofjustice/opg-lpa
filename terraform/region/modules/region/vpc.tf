@@ -1,4 +1,4 @@
-#tfsec:ignore:AWS082 this is currently std practice. will look to change later if needed
+#tfsec:ignore:aws-ec2-no-default-vpc this is currently std practice. will look to change later if needed
 resource "aws_default_vpc" "default" {
   tags = merge(
     local.shared_component_tag,

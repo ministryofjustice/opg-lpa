@@ -21,7 +21,7 @@ resource "aws_lambda_function" "lambda_function" {
   tags = var.tags
 }
 
-#tfsec:ignore:AWS089 encryption of logs too expensive
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key encryption of logs too expensive
 resource "aws_cloudwatch_log_group" "lambda_function" {
   name              = "/aws/lambda/${var.lambda_name}"
   tags              = var.tags

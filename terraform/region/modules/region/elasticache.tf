@@ -1,4 +1,4 @@
-#tfsec:ignore:AWS018 - adding a description is a destructive change.
+#tfsec:ignore:aws-ec2-add-description-to-security-group - adding a description is a destructive change.
 resource "aws_security_group" "front_cache" {
   name   = "${local.account_name_short}-${local.region_name}-front-cache"
   vpc_id = aws_default_vpc.default.id
