@@ -5,13 +5,15 @@ $path: '/assets/v2/images/icons/';
 // then replicated for consistency
 $turquoise-with-contrast: #218278;
 $white: #ffffff;
+$transparent: rgba(0, 0, 0, 0);
 $dark-grey: #0b0c0c;
 
-$status-default-colour: #dee0e2;
-$status-waiting-colour: #2e358b;
-$status-received-colour: #005ea5;
-$status-checking-colour: #2b8cc4;
-$status-processed-colour: #28a197;
+// These are colours for the border and text; the background is transparent
+$status-default-colour: #0b0c0c;
+$status-waiting-colour: #1d70b8;
+$status-received-colour: #4c2c92;
+$status-checking-colour: #912b88;
+$status-processed-colour: #00703c;
 
 $progress-bar-background: #dadada;
 $progress-bar-font-default: #555555;
