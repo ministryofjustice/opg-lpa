@@ -1,6 +1,6 @@
 //----------------------------------
 // The Api service's Security Groups
-#tfsec:ignore:AWS018 - Adding description is destructive change needing downtime. to be revisited
+#tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "feedbackdb_ecs_service" {
   name_prefix = "${terraform.workspace}-feedbackdb-ecs-service"
   vpc_id      = data.aws_vpc.default.id
@@ -12,7 +12,7 @@ resource "aws_security_group_rule" "feedbackdb_ecs_service_egress" {
   from_port = 0
   to_port   = 0
   protocol  = "-1"
-  #tfsec:ignore:AWS007 - anything out
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.feedbackdb_ecs_service.id
   description       = "Non-production FeedbackDB ECS to anything - All traffic"
