@@ -1,8 +1,24 @@
 // Postcode lookup module for LPA
 // Dependencies: moj, _, jQuery
 
-(function () {
+;(function () {
   'use strict';
+
+  // check if form elements are all empty
+  const hasCleanFields = function () {
+    let clean = true
+    const selector = 'input:not([type="submit"]), select:not([name*="country"]), textarea'
+
+    document.querySelectorAll(selector).forEach(function (element) {
+      const val = element.getAttribute('value')
+
+      if (val !== '' && val !== null) {
+        clean = false
+      }
+    })
+
+    return clean
+  }
 
   // Define the class
   var PostcodeLookup = function (el) {
@@ -50,7 +66,7 @@
         this.$postalFields.before(this.searchTpl() + this.toggleTpl() + this.changeTpl()).addClass('hidden');
 
         // if all fields are empty and there are no validation messages, hide them
-        if (moj.Helpers.hasCleanFields(this.$postalFields) && !$('.error-summary').length) {
+        if (hasCleanFields(this.$postalFields) && !$('.error-summary').length) {
             this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
         } else {
             this.hideSearchForm();
@@ -67,7 +83,7 @@
     changeClicked: function(e) {
         this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden');
         this.$wrap.find('.js-PostcodeLookup__search').removeClass('hidden');
-        if (moj.Helpers.hasCleanFields(this.$postalFields) && !$('.error-summary').length) {
+        if (hasCleanFields(this.$postalFields) && !$('.error-summary').length) {
             this.$wrap.find('.js-PostcodeLookup__toggle-address').closest('div').removeClass('hidden');
         }
         this.$wrap.find('.js-PostcodeLookup__query').focus();

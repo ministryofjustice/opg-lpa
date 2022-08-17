@@ -1,8 +1,46 @@
 // Form Popup module for LPA
 // Dependencies: moj, jQuery
 
-(function () {
+;(function () {
   'use strict';
+
+  // cribbed from jQuery; see
+  // https://github.com/jquery/jquery/blob/d0ce00cdfa680f1f0c38460bc51ea14079ae8b07/src/offset.js#L65
+  // simplified to use window rather than document.ownerDocument.defaultView
+  // as we don't have iframes
+  const getOffset = function (element) {
+    try {
+      const rect = element.getBoundingClientRect()
+
+      return {
+        top: rect.top + window.pageYOffset,
+        left: rect.left + window.pageXOffset
+      }
+    } catch (e) {
+      // for browsers which don't support getBoundingClientRect()
+      return { top: 0, left: 0 }
+    }
+  }
+
+  // helper to scroll popup into view
+  const scrollIntoView = function () {
+    const targetElt = document.querySelector('#popup-content')
+    const scrollElt = document.querySelector('#mask')
+    const popupElt = document.querySelector('#popup')
+
+    const topPos = getOffset(targetElt).top - getOffset(popupElt).top
+
+    scrollElt.scrollTop = topPos
+
+    // put focus into the first user input inside the target element
+    const inputs = targetElt.querySelectorAll(
+      'input:not([type=hidden]), checkbox, radio, select'
+    )
+
+    if (inputs.length > 0) {
+      inputs[0].focus()
+    }
+  }
 
   // Define the class
   var FormPopup = function (options) {
@@ -84,7 +122,8 @@
     checkReusedDetails: function () {
       // Align to top after loading in the content to avoid having the form starting half
       // way down (a scenario that happens when you've scrolled far down on Reuse details page)
-      moj.Helpers.scrollTo('#popup-content');
+      scrollIntoView();
+
       // If the user is reusing details then trigger some actions manually to give warning messages a chance to display
       $('#dob-date-day').trigger('change');
       $('input[name="name-first"]').trigger('change');
