@@ -37,6 +37,7 @@ resource "aws_iam_role_policy" "execution_role" {
   role   = aws_iam_role.execution_role.id
 }
 
+#tfsec:ignore:aws-iam-no-policy-wildcards Necessary wildcards
 data "aws_iam_policy_document" "execution_role" {
   statement {
     effect    = "Allow"
