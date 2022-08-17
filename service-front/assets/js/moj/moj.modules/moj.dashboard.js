@@ -11,6 +11,10 @@
       // This obscures the prompt text "Search for an LPA or donor".
       const searchBox = document.querySelector('.js-search-focus')
 
+      if (searchBox === null) {
+        return
+      }
+
       // Add .focus class if there's text already there (on load)
       if (searchBox.value !== '') {
         searchBox.classList.add('focus')
