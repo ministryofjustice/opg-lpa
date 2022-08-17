@@ -177,16 +177,16 @@
 
     <script>
         // config for the GOVUK analytics module
-        var gaConfig = { universalId: 'UA-33184303-1', govId: 'UA-145652997-1' }
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', gaConfig.universalId]);
-        _gaq.push(['_trackPageview']);
+        window.gaConfig = { universalId: 'UA-33184303-1', govId: 'UA-145652997-1' }
+        window._gaq = window._gaq || [];
+        window._gaq.push(['_setAccount', window.gaConfig.universalId]);
+        window._gaq.push(['_trackPageview']);
     </script>
 
     <script src="/assets/v2/js/libs/jquery.min.js"></script>
     <script src="{{ StaticAssetPath( '/assets/v2/js/application.js', { 'minify':true } ) }}"></script>
     <script>
-        GOVUK.performance.stageprompt.setupForGoogleAnalytics();
+        window.GOVUK.performance.stageprompt.setupForGoogleAnalytics();
     </script>
 
     {% include 'layout/partials/timeout.twig' %}
