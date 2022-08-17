@@ -219,7 +219,7 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.form-error-tracker.js',
           'assets/js/moj/moj.modules/moj.cookie-consent.js',
 
-          // Init Script
+          // Init Script; must be last in this list
           'assets/js/main.js',
         ],
         dest: 'public/assets/v2/js/application.js',
