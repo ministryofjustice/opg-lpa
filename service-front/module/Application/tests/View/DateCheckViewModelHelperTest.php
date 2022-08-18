@@ -261,6 +261,80 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'same day as they signed continuation sheet 3.'],
             'expectedAttorneyText' => []
         ],
+        // CS3 & CS1 HW LPA - donor cannot sign or make a mark, >4 people to notify
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'health-and-welfare',
+                    'peopleToNotify' => [[], [], [], [], []],
+                    'donor' => [
+                        'canSign' => false
+                    ]
+                ]
+            ],
+            'expectedDonorText' => ['Continuation sheet 1 must have been signed and dated before or on the ' .
+                                    'same day as they signed section 5.',
+                                    'Section 5 must have been signed and ' .
+                                    'dated before or on the same day as they signed continuation sheet 3.'],
+            'expectedAttorneyText' => []
+        ],
+        // CS3 & CS2 HW LPA - donor cannot sign or make a mark, additional info on how attorneys make decisions
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'health-and-welfare',
+                    'replacementAttorneyDecisions' => [
+                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                    ],
+                    'donor' => [
+                        'canSign' => false
+                    ]
+                ]
+            ],
+            'expectedDonorText' => ['Continuation sheet 2 must have been signed and dated before or on the ' .
+                                    'same day as they signed section 5.',
+                                    'Section 5 must have been signed and ' .
+                                    'dated before or on the same day as they signed continuation sheet 3.'],
+            'expectedAttorneyText' => []
+        ],
+        // CS3 & CS2 HW LPA - donor cannot sign or make a mark, >4 people to notify
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'health-and-welfare',
+                    'peopleToNotify' => [[], [], [], [], []],
+                    'donor' => [
+                        'canSign' => false
+                    ]
+                ]
+            ],
+            'expectedDonorText' => ['Continuation sheet 1 must have been signed and dated before or on the ' .
+                                    'same day as they signed section 5.',
+                                    'Section 5 must have been signed and ' .
+                                    'dated before or on the same day as they signed continuation sheet 3.'],
+            'expectedAttorneyText' => []
+        ],
+        // CS3 & CS2 & CS1 HW LPA - donor cannot sign or make a mark,
+        // additional info on how attorneys make decisions, >4 people to notify
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'health-and-welfare',
+                    'peopleToNotify' => [[], [], [], [], []],
+                    'replacementAttorneyDecisions' => [
+                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                    ],
+                    'donor' => [
+                        'canSign' => false
+                    ]
+                ]
+            ],
+            'expectedDonorText' => ['Continuation sheets 1 and 2 must have been signed and dated before or on the ' .
+                                    'same day as they signed section 5.',
+                                    'Section 5 must have been signed and ' .
+                                    'dated before or on the same day as they signed continuation sheet 3.'],
+            'expectedAttorneyText' => []
+        ],
     ];
 
     /* This returns an arbitrary string to imitate a class constant needed when adding twig functions to the
@@ -296,7 +370,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         // set vars on ViewModel as it is done in controller
         $viewModel->setVariables([
             'continuationNoteKeys' => $helperResult['continuationNoteKeys'],
-            'continuationSheet' => $helperResult['continuationSheet'],
+            'continuationSheets' => $helperResult['continuationSheets'],
             'applicants' => []
         ]);
 
