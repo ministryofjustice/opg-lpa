@@ -62,33 +62,45 @@
         wrap.querySelector('[data-role="postcodelookup-search-input"]').classList.remove('hidden')
       }
       wrap.querySelector('.js-PostcodeLookup__query').focus()
+
       return false
     }
 
     const searchClicked = function (e) {
       e.preventDefault()
 
-      const $el = $(e.target)
-      const $searchContainer = $wrap.find('.js-PostcodeLookup__search')
-      const $postcodeLabel = $('label[for="postcode-lookup"]')
+      const el = e.target
+      const searchContainer = wrap.querySelector('.js-PostcodeLookup__search')
+      const postcodeLabel = wrap.querySelector('label[for=postcode-lookup]')
 
       // store the current query
-      query = $wrap.find('.js-PostcodeLookup__query').val()
+      query = wrap.querySelector('.js-PostcodeLookup__query').value
 
-      if (!$el.hasClass('disabled')) {
-        if (query !== '') {
-          $el.spinner()
-          that.findPostcode(query)
-          $searchContainer.removeClass('error')
-          $postcodeLabel.children('.error-message').remove()
-        } else {
-          $searchContainer.addClass('error')
-          $postcodeLabel.children('.error-message').remove()
-          $postcodeLabel.append(
-            errorMessageTpl({ errorMessage: 'Enter a postcode' })
+      if (!el.classList.contains('disabled')) {
+        // remove any error message elements
+        postcodeLabel.querySelectorAll('.error-message').forEach(function (child) {
+          child.parentNode.removeChild(child)
+        })
+
+        if (query === '') {
+          searchContainer.classList.add('error')
+
+          postcodeLabel.appendChild(
+            moj.Helpers.strToHtml(
+              errorMessageTpl({ errorMessage: 'Enter a postcode' })
+            )
           )
+
+          return false
         }
+
+        // TODO reimplement spinner
+        $(el).spinner()
+
+        that.findPostcode(query)
+        searchContainer.classList.remove('error')
       }
+
       return false
     }
 
@@ -100,14 +112,12 @@
 
     // when a postcode result (address) is selected, update address fields
     const resultsChanged = function (e) {
-      const $el = $(e.target)
+      const selectedOption = e.target.options[e.target.selectedIndex]
 
-      const $selectedOption = $el.find(':selected')
-
-      $('[name*="' + settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'))
-      $('[name*="' + settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'))
-      $('[name*="' + settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'))
-      $('[name*="' + settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change()
+      wrap.querySelector('[name*="' + settings.fieldMappings.line1 + '"]').value = selectedOption.getAttribute('data-line1')
+      wrap.querySelector('[name*="' + settings.fieldMappings.line2 + '"]').value = selectedOption.getAttribute('data-line2')
+      wrap.querySelector('[name*="' + settings.fieldMappings.line3 + '"]').value = selectedOption.getAttribute('data-line3')
+      wrap.querySelector('[name*="' + settings.fieldMappings.postcode + '"]').value = selectedOption.getAttribute('data-postcode')
 
       that.toggleAddress()
     }
@@ -126,10 +136,13 @@
       }
     }
 
+    // ++++++++++++++++++ GOT TO HERE
+
     // request handling
     const postcodeRequestError = function (jqXHR, textStatus, errorThrown) {
       let errorText = 'There is a problem: '
 
+      // TODO reimplement spinner
       $wrap.find('.js-PostcodeLookup__search-btn').spinner('off')
 
       if (textStatus === 'timeout') {
@@ -144,14 +157,18 @@
     const postcodeRequestSuccess = function (response) {
       // not successful
       if (!response.success || response.addresses === null) {
-        const $searchContainer = $wrap.find('.js-PostcodeLookup__search')
-        const $postcodeLabel = $('label[for="postcode-lookup"]')
+        const searchContainer = wrap.querySelector('.js-PostcodeLookup__search')
+        const postcodeLabel = wrap.querySelector('label[for=postcode-lookup]')
 
         if (response.isPostcodeValid) {
-          $searchContainer.addClass('error')
-          $postcodeLabel.children('.error-message').remove()
-          $postcodeLabel.append(
-            $(errorMessageTpl({
+          searchContainer.classList.add('error')
+
+          postcodeLabel.querySelectorAll('.error-message').forEach(function (child) {
+            child.parentNode.removeChild(child)
+          })
+
+          postcodeLabel.appendChild(
+            moj.Helpers.strToHtml(errorMessageTpl({
               errorMessage: 'Enter a real postcode. If you live overseas, ' +
                   'enter your address manually instead of using the postcode lookup'
             }))
@@ -162,17 +179,26 @@
         }
       } else {
         // successful
-        const resultsNode = $(resultTpl({ results: response.addresses }))
-        resultsNode.on('change', resultsChanged)
+        const resultsNode = moj.Helpers.strToHtml(resultTpl({ results: response.addresses }))
+        resultsNode.addEventListener('change', resultsChanged)
 
-        if ($wrap.find('.js-PostcodeLookup__search-results').length > 0) {
-          $wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(resultsNode)
-        } else {
-          $wrap.find('.js-PostcodeLookup__search').after(resultsNode)
-        }
-        $wrap.find('.js-PostcodeLookup__search-results').focus()
+        // remove the old results node
+        wrap.querySelectorAll('[data-role=postcodelookup-search-result]').forEach(function (element) {
+          element.parentNode.removeChild(element)
+        })
+
+        // add the new results after the search box; there's no insertAfter, so
+        // we get the next sibling node of the search box and insert before it, so
+        // it ends up between the search box and its next sibling node
+        const searchBox = wrap.querySelector('.js-PostcodeLookup__search')
+        searchBox.parentNode.insertBefore(resultsNode, searchBox.nextSibling)
+
+        // focus on the drop-down with found addresses
+        wrap.querySelector('.js-PostcodeLookup__search-results').focus()
       }
-      $wrap.find('.js-PostcodeLookup__search-btn').spinner('off')
+
+      // TODO reimplement spinner
+      $(wrap.querySelector('.js-PostcodeLookup__search-btn')).spinner('off')
     }
 
     // public API

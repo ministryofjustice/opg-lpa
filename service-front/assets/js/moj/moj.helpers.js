@@ -21,4 +21,13 @@
       return true
     }
   }
+
+  // Convert a string of HTML (with a single parent node)
+  // to a Node object; if html contains multiple parent nodes,
+  // you'll only get the first one back
+  moj.Helpers.strToHtml = function (html) {
+    let div = document.createElement('div')
+    div.innerHTML = html
+    return div.firstChild
+  }
 })()
