@@ -164,7 +164,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             'expectedAttorneyText' => []
         ],
         // Continuation sheet 3
-        // Health & welfare LPA - donor cannot sign or make a mark
+        // Health & welfare (HW) LPA - donor cannot sign or make a mark
         [
             'lpa' => [
                 'document' => [
@@ -176,10 +176,11 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             ],
             'expectedDonorText' => [
                 'This person must have signed continuation sheet 3 on the same day as they sign ' .
-                'section 5 and before the certificate provider signs section 10.'],
+                'section 5 and before the certificate provider signs section 10.'
+            ],
             'expectedAttorneyText' => []
         ],
-        // Property & finance LPA - donor cannot sign or make a mark
+        // Property & finance (PF) LPA - donor cannot sign or make a mark
         [
             'lpa' => [
                 'document' => [
@@ -207,6 +208,58 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             'expectedDonorText' => [],
             'expectedAttorneyText' => ['They must have signed continuation sheet 4 after the ' .
                                        '\'certificate provider\' has signed section 10 of the LPA form.']
+        ],
+        // Combined continuation sheet scenarios
+        // CS3 & CS1 PF LPA - donor cannot sign or make a mark, >4 people to notify
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'property-and-financial',
+                    'peopleToNotify' => [[], [], [], [], []],
+                    'donor' => [
+                        'canSign' => false
+                    ]
+                ]
+            ],
+            'expectedDonorText' => ['Continuation sheet 1 must have been signed and dated before or on the ' .
+                                    'same day as they signed continuation sheet 3.'],
+            'expectedAttorneyText' => []
+        ],
+        // CS3 & CS2 PF LPA - donor cannot sign or make a mark, additional info on how attorneys make decisions
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'property-and-financial',
+                    'replacementAttorneyDecisions' => [
+                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                    ],
+                    'donor' => [
+                        'canSign' => false
+                    ]
+                ]
+            ],
+            'expectedDonorText' => ['Continuation sheet 2 must have been signed and dated before or on the ' .
+                                    'same day as they signed continuation sheet 3.'],
+            'expectedAttorneyText' => []
+        ],
+        // CS3 & CS2 & CS1 PF LPA - donor cannot sign or make a mark,
+        // additional info on how attorneys make decisions, >4 people to notify
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'property-and-financial',
+                    'peopleToNotify' => [[], [], [], [], []],
+                    'replacementAttorneyDecisions' => [
+                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                    ],
+                    'donor' => [
+                        'canSign' => false
+                    ]
+                ]
+            ],
+            'expectedDonorText' => ['Continuation sheets 1 and 2 must have been signed and dated before or on the ' .
+                                    'same day as they signed continuation sheet 3.'],
+            'expectedAttorneyText' => []
         ],
     ];
 
@@ -243,6 +296,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         // set vars on ViewModel as it is done in controller
         $viewModel->setVariables([
             'continuationNoteKeys' => $helperResult['continuationNoteKeys'],
+            'continuationSheet' => $helperResult['continuationSheet'],
             'applicants' => []
         ]);
 
@@ -302,8 +356,8 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             echo "Running tests for donor DateCheckViewModelHelper test case $index\n";
 
             $this->assertEquals(
-                $matchesArray,
-                $expectedText
+                $expectedText,
+                $matchesArray
             );
         }
     }
@@ -331,8 +385,8 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             echo "Running tests for attorney DateCheckViewModelHelper test case $index\n";
 
             $this->assertEquals(
-                $matchesArray,
-                $expectedText
+                $expectedText,
+                $matchesArray
             );
         }
     }

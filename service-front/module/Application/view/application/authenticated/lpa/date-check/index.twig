@@ -278,15 +278,26 @@
         {% block donorGuidance %}
             {% if continuationNoteKeys is not empty %}
             <div class="panel panel-border-wide text">
-                {% if 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys and ('LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys or 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys) %}
+                {# cs1 cs2 cs3#}
+                {% if 1 in continuationSheet and 2 in continuationSheet and 3 in continuationSheet %}
+                    <p data-cy="continuation-sheet-info">Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                {# cs1 cs2 #}
+                {% elseif 1 in continuationSheet and 2 in continuationSheet %}
                     <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.</p>
-                {% elseif 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys or 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys %}
-                    <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
-                {% elseif 'ANY_PEOPLE_OVERFLOW' in continuationNoteKeys %}
+                {# cs1 cs3 #}
+                {% elseif 1 in continuationSheet and 3 in continuationSheet %}
+                    <p data-cy="continuation-sheet-info">Continuation sheet 1 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                {# cs2 cs3 #}
+                {% elseif 2 in continuationSheet and 3 in continuationSheet %}
+                    <p data-cy="continuation-sheet-info">Continuation sheet 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                {# cs1 #}
+                {% elseif 1 in continuationSheet %}
                     <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
-                {% endif %}
-
-                {% if 'CANT_SIGN' in continuationNoteKeys%}
+                {# cs2 #}
+                {% elseif 2 in continuationSheet %}
+                    <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
+                {# cs3 #}
+                {% elseif 3 in continuationSheet %}
                     {% if lpa.document.type == 'property-and-financial' %}
                         <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
                     {% elseif lpa.document.type == 'health-and-welfare' %}
