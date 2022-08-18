@@ -1,6 +1,4 @@
 // Postcode lookup module for LPA
-// Dependencies: moj, _, jQuery
-
 ;(function () {
   'use strict'
 
@@ -132,7 +130,7 @@
     }
 
     // request handling
-    const postcodeRequestError = function (jqXHR, textStatus, errorThrown) {
+    const postcodeRequestError = function (textStatus, errorThrown) {
       let errorText = 'There is a problem: '
 
       // TODO reimplement spinner
@@ -218,13 +216,11 @@
     }
 
     that.findPostcode = function (query) {
-      // TODO remove jQuery
-      $.ajax({
+      moj.Helpers.ajax({
         url: settings.postcodeSearchUrl,
-        data: { postcode: query },
-        dataType: 'json',
+        query: {postcode: query},
+        isJSON: true,
         timeout: 10000,
-        cache: true,
         error: postcodeRequestError,
         success: postcodeRequestSuccess
       })
