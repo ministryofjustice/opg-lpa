@@ -32,12 +32,7 @@ Then('I can see fields for the donor, certificate provider, attorney, applicant'
 })
 
 Then('I can see a reminder to sign continuation sheet 1 and 2', () => {
-    const text = 'You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.'
-    cy.get('[data-cy=continuation-sheet-info]').should('contain.text', text);
-})
-
-Then('I can see a reminder to sign continuation sheet 3', () => {
-    const text = 'This person must have signed continuation sheet 3 before the certificate provider has signed section 10.'
+    const text = 'Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.'
     cy.get('[data-cy=continuation-sheet-info]').should('contain.text', text);
 })
 
