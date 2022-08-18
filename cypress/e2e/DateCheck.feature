@@ -20,9 +20,8 @@ Feature: Check signature dates
     When I visit the dashboard
     And I click "check-signing-dates" for LPA ID 26997335999
     Then I am taken to "/lpa/26997335999/date-check"
+    # Donor cannot sign or make mark
     # Additional attorneys and additional preferences
     And I can see a reminder to sign continuation sheet 1 and 2
-    # Donor cannot sign or make mark
-    And I can see a reminder to sign continuation sheet 3
     # primaryAttorney is a trust corporation
     And I can see a reminder to sign continuation sheet 4
