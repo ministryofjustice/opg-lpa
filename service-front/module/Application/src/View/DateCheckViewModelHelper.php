@@ -37,9 +37,32 @@ class DateCheckViewModelHelper
         $continuationSheets = new ContinuationSheets();
         $continuationNoteKeys = $continuationSheets->getContinuationNoteKeys($lpa);
 
+        $continuationSheet = [];
+        $cs1 = in_array('ANY_PEOPLE_OVERFLOW', $continuationNoteKeys);
+        $cs2 = (
+            in_array('LONG_INSTRUCTIONS_OR_PREFERENCES', $continuationNoteKeys) or
+            in_array('HAS_ATTORNEY_DECISIONS', $continuationNoteKeys)
+        );
+        $cs3 = in_array('CANT_SIGN', $continuationNoteKeys);
+        $cs4 = in_array('HAS_TRUST_CORP', $continuationNoteKeys);
+
+        if ($cs1) {
+            $continuationSheet[] = 1;
+        }
+        if ($cs2) {
+            $continuationSheet[] = 2;
+        }
+        if ($cs3) {
+            $continuationSheet[] = 3;
+        }
+        if ($cs4) {
+            $continuationSheet[] = 4;
+        }
+
         return [
             'applicants' => $applicants,
-            'continuationNoteKeys' => $continuationNoteKeys
+            'continuationNoteKeys' => $continuationNoteKeys,
+            'continuationSheet' => $continuationSheet
         ];
     }
 }
