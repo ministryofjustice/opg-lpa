@@ -23,11 +23,6 @@
     }
 
     const postalForm = wrap.querySelector('.js-PostcodeLookup__postal-add')
-
-    // TODO remove jQuery
-    const $wrap = $(wrap)
-    const $postalFields = $wrap.find('.js-PostcodeLookup__postal-add')
-
     const searchTpl = lpa.templates['postcodeLookup.search-field']
     const toggleTpl = lpa.templates['postcodeLookup.address-toggle']
     const resultTpl = lpa.templates['postcodeLookup.search-result']
@@ -136,14 +131,12 @@
       }
     }
 
-    // ++++++++++++++++++ GOT TO HERE
-
     // request handling
     const postcodeRequestError = function (jqXHR, textStatus, errorThrown) {
       let errorText = 'There is a problem: '
 
       // TODO reimplement spinner
-      $wrap.find('.js-PostcodeLookup__search-btn').spinner('off')
+      $(wrap.querySelector('.js-PostcodeLookup__search-btn')).spinner('off')
 
       if (textStatus === 'timeout') {
         errorText += 'the service did not respond in the allotted time'
@@ -203,8 +196,17 @@
 
     // public API
     that.init = function () {
-      // prepend template to postal fields
-      $postalFields.before(searchTpl() + toggleTpl() + changeTpl()).addClass('hidden')
+      // prepend search box etc. templates to form containing address fields
+      postalForm.classList.add('hidden')
+
+      const changeNode = moj.Helpers.strToHtml(changeTpl())
+      const toggleNode = moj.Helpers.strToHtml(toggleTpl())
+      const searchNode = moj.Helpers.strToHtml(searchTpl())
+
+      const parent = postalForm.parentNode
+      parent.insertBefore(changeNode, postalForm)
+      parent.insertBefore(toggleNode, changeNode)
+      parent.insertBefore(searchNode, toggleNode)
 
       // if all fields are empty and there are no validation messages, hide the fields
       if (hasCleanFields() && document.querySelector('.error-summary') === null) {
@@ -216,6 +218,7 @@
     }
 
     that.findPostcode = function (query) {
+      // TODO remove jQuery
       $.ajax({
         url: settings.postcodeSearchUrl,
         data: { postcode: query },
@@ -229,24 +232,29 @@
 
     that.hideSearchForm = function () {
       wrap.querySelector('.js-PostcodeLookup__search').classList.add('hidden')
-      $wrap.find('.js-PostcodeLookup__toggle-address').closest('div').addClass('hidden')
-      $wrap.find('.js-PostcodeLookup__change').closest('div').removeClass('hidden')
+      wrap.querySelector('[data-role=postcodelookup-manual]').classList.add('hidden')
+      wrap.querySelector('[data-role=postcodelookup-search]').classList.remove('hidden')
     }
 
     that.toggleAddress = function () {
-      const $search = $wrap.find('.js-PostcodeLookup__query')
-      const $pcode = $wrap.find('[name*="' + settings.fieldMappings.postcode + '"]')
+      const search = wrap.querySelector('.js-PostcodeLookup__query')
+      const pcode = wrap.querySelector('[name*="' + settings.fieldMappings.postcode + '"]')
 
       // populate postcode field
-      if ($search.val() !== '' && $pcode.val() === '') {
-        $pcode.val($search.val()).change()
+      if (search.value !== '' && pcode.value === '') {
+        pcode.value = search.value
+
+        // trigger change event
+        const event = document.createEvent('HTMLEvents')
+        event.initEvent('change', true, true)
+        pcode.dispatchEvent(event)
       }
 
-      $postalFields.removeClass('hidden')
+      postalForm.classList.remove('hidden')
 
-      // focus on first address field
-      if ($('.js-PostcodeLookup__postal-add').parent().find('#address-search-result').length === 1) {
-        $postalFields.find('[name*="addr1"]').focus()
+      // focus on first address field if the drop-down is populated
+      if (wrap.querySelectorAll('#address-search-result').length === 1) {
+        postalForm.querySelector('[name*="address1"]').focus()
       }
     }
 
