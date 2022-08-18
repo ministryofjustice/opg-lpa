@@ -8,6 +8,10 @@
   const makePostcodeLookup = function (wrap) {
     const that = {}
 
+    // assigned when the templates are first loaded and the search button
+    // is added to the page
+    that.spinner = null
+
     const settings = {
       postcodeSearchUrl: '/address-lookup',
       // used to populate fields
@@ -21,6 +25,7 @@
     }
 
     const postalForm = wrap.querySelector('.js-PostcodeLookup__postal-add')
+
     const searchTpl = lpa.templates['postcodeLookup.search-field']
     const toggleTpl = lpa.templates['postcodeLookup.address-toggle']
     const resultTpl = lpa.templates['postcodeLookup.search-result']
@@ -87,8 +92,7 @@
           return false
         }
 
-        // TODO reimplement spinner
-        $(el).spinner()
+        that.spinner.on()
 
         that.findPostcode(query)
         searchContainer.classList.remove('error')
@@ -133,8 +137,7 @@
     const postcodeRequestError = function (textStatus, errorThrown) {
       let errorText = 'There is a problem: '
 
-      // TODO reimplement spinner
-      $(wrap.querySelector('.js-PostcodeLookup__search-btn')).spinner('off')
+      that.spinner.off()
 
       if (textStatus === 'timeout') {
         errorText += 'the service did not respond in the allotted time'
@@ -188,8 +191,7 @@
         wrap.querySelector('.js-PostcodeLookup__search-results').focus()
       }
 
-      // TODO reimplement spinner
-      $(wrap.querySelector('.js-PostcodeLookup__search-btn')).spinner('off')
+      that.spinner.off()
     }
 
     // public API
@@ -205,6 +207,8 @@
       parent.insertBefore(changeNode, postalForm)
       parent.insertBefore(toggleNode, changeNode)
       parent.insertBefore(searchNode, toggleNode)
+
+      that.spinner = moj.Helpers.spinner(wrap.querySelector('.js-PostcodeLookup__search-btn'))
 
       // if all fields are empty and there are no validation messages, hide the fields
       if (hasCleanFields() && document.querySelector('.error-summary') === null) {

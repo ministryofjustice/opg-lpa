@@ -111,4 +111,87 @@
 
     r.send(opts.body)
   }
+
+  // JavaScript spinner element, converted from old jQuery plugin
+  moj.Helpers.spinner = function (element, options) {
+    const that = {}
+
+    options = options || {}
+
+    const disabledClass = options.disabledClass || 'disabled'
+    const placement = options.placement || 'after'
+
+    let disabled = false
+    let spinnerElt = null
+
+    // "private" functions
+    const isFormControl = function () {
+      return element.tagName === 'SELECT' || element.tagName === 'BUTTON' || element.tagName === 'INPUT'
+    }
+
+    const isLink = function () {
+      return element.tagName === 'A'
+    }
+
+    // public API
+    that.on = function () {
+      if (disabled) {
+        return
+      }
+
+      spinnerElt = moj.Helpers.strToHtml(
+        '<img src="/assets/v2/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'
+      )
+
+      if (placement === 'after') {
+        element.parentNode.insertBefore(spinnerElt, element.nextSibling)
+      } else if (placement === 'before') {
+        element.parentNode.insertBefore(spinnerElt, element)
+      }
+
+      that.disable()
+    }
+
+    that.off = function () {
+      that.enable()
+
+      if (spinnerElt !== null) {
+        // element and spinner are siblings, so have the same parent
+        element.parentNode.removeChild(spinnerElt)
+      }
+    }
+
+    that.disable = function () {
+      // Apply disabled class to trigger element
+      element.classList.add(disabledClass)
+
+      // If it's a form control disable it
+      if (isFormControl()) {
+        element.setAttribute('disabled', 'disabled')
+      }
+
+      if (isLink()) {
+        element.setAttribute('data-href', element.getAttribute('href'))
+        element.removeAttribute('href')
+      }
+
+      disabled = true
+    }
+
+    that.enable = function () {
+      element.classList.remove(disabledClass)
+
+      if (isFormControl()) {
+        element.removeAttribute('disabled')
+      }
+
+      if (isLink()) {
+        element.setAttribute('href', element.getAttribute('data-href'))
+      }
+
+      disabled = false
+    }
+
+    return that
+  }
 })()
