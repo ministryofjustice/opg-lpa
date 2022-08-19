@@ -2,7 +2,10 @@
 // Dependencies: moj, jQuery
 
 ;(function () {
-  'use strict';
+  'use strict'
+
+  window.moj = window.moj || {}
+  const moj = window.moj
 
   // spinner shown next to the link which opens the popup
   let linkSpinner = null
@@ -49,9 +52,9 @@
   }
 
   // Define the class
-  var FormPopup = function (options) {
-    this.settings = $.extend({}, this.defaults, options);
-  };
+  const FormPopup = function (options) {
+    this.settings = $.extend({}, this.defaults, options)
+  }
 
   FormPopup.prototype = {
     defaults: {
@@ -62,16 +65,16 @@
 
     init: function () {
       // bind 'this' as this in following methods
-      _.bindAll(this, 'btnClick', 'submitForm');
-      this.cacheEls();
-      this.bindEvents();
-      $(this.settings.selector).attr('data-inited', true);
+      _.bindAll(this, 'btnClick', 'submitForm')
+      this.cacheEls()
+      this.bindEvents()
+      $(this.settings.selector).attr('data-inited', true)
     },
 
     cacheEls: function () {
-      this.formContent = [];
-      this.originalSource = false;
-      this.source = false;
+      this.formContent = []
+      this.originalSource = false
+      this.source = false
     },
 
     bindEvents: function () {
@@ -79,22 +82,22 @@
         // form open
         .on('click.moj.Modules.FormPopup', this.settings.selector, this.btnClick)
         // submit form
-        .on('submit.moj.Modules.FormPopup', '#popup.form-popup form', this.submitForm);
-        moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails);
+        .on('submit.moj.Modules.FormPopup', '#popup.form-popup form', this.submitForm)
+      moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails)
     },
 
     btnClick: function (e) {
       // if our clicked element is not a link traverse up the dom to find the parent that is one.
-      var source = $(e.target).closest('a'),
-          href = source.attr('href');
+      const source = $(e.target).closest('a')
+      const href = source.attr('href')
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
       if ($('#popup').length === 0) {
-        this.originalSource = source;
+        this.originalSource = source
       }
       // always set this source to be the clicked link
-      this.source = source;
+      this.source = source
 
       // If this link is disabled then stop here
       if (!source.hasClass('disabled')) {
@@ -103,130 +106,130 @@
         linkSpinner.on()
 
         // show form
-        this.loadContent(href);
+        this.loadContent(href)
       }
 
-      return false;
+      return false
     },
 
     loadContent: function (url) {
-      var self = this;
+      const self = this
 
       $.get(url, function (html) {
         if (html.toLowerCase().indexOf('sign in') !== -1) {
           // if no longer signed in, redirect
-          window.location.reload();
+          window.location.reload()
         } else {
           // render form and check the reused details content
-          self.renderForm(html);
+          self.renderForm(html)
 
           if (url.indexOf('reuse-details') !== -1) {
-            self.checkReusedDetails();
+            self.checkReusedDetails()
           }
         }
-      });
+      })
     },
 
     checkReusedDetails: function () {
       // Align to top after loading in the content to avoid having the form starting half
       // way down (a scenario that happens when you've scrolled far down on Reuse details page)
-      scrollIntoView();
+      scrollIntoView()
 
       // If the user is reusing details then trigger some actions manually to give warning messages a chance to display
-      $('#dob-date-day').trigger('change');
-      $('input[name="name-first"]').trigger('change');
+      $('#dob-date-day').trigger('change')
+      $('input[name="name-first"]').trigger('change')
     },
 
     renderForm: function (html) {
-      linkSpinner.off();
+      linkSpinner.off()
 
       moj.Modules.Popup.open(html, {
         ident: this.settings.overlayIdent,
         source: this.originalSource,
         beforeOpen: function () {
           // trigger title replacement event
-          moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
+          moj.Events.trigger('TitleSwitch.render', { wrap: '#popup' })
           // trigger postcode lookup event
-          moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
+          moj.Events.trigger('PostcodeLookup.render', { wrap: '#popup' })
           // trigger person form events
-          moj.Events.trigger('PersonForm.render', {wrap: '#popup'});
+          moj.Events.trigger('PersonForm.render', { wrap: '#popup' })
           // trigger polyfill form events
-          moj.Events.trigger('Polyfill.fill', {wrap: '#popup'});
+          moj.Events.trigger('Polyfill.fill', { wrap: '#popup' })
         }
-      });
+      })
     },
 
     submitForm: function (e) {
-      var $form = $(e.target),
-        url = $form.attr('action'),
-        method = 'post';
+      const $form = $(e.target)
+      const url = $form.attr('action')
+      let method = 'post'
 
-      formSpinner = moj.Helpers.spinner($form.find('input[type="submit"]').get(0));
+      formSpinner = moj.Helpers.spinner($form.find('input[type="submit"]').get(0))
       formSpinner.on()
 
       //  If a method is set on the form use that value instead of the default post
       if ($form.attr('method') !== undefined) {
-          method = $form.attr('method');
+        method = $form.attr('method')
       }
 
       $.ajax({
-        url: url,
+        url,
         type: method,
         data: $form.serialize(),
         context: $form,
         success: this.ajaxSuccess,
         error: this.ajaxError
-      });
+      })
 
-      return false;
+      return false
     },
 
     ajaxSuccess: function (response, textStatus, jqXHR) {
-      var $form = $(this),
-        data;
+      const $form = $(this)
+      let data
 
       if (response.success !== undefined && response.success) {
         // successful, so redirect
-        window.location.reload();
+        window.location.reload()
       } else if (response.toLowerCase().indexOf('sign in') !== -1) {
         // if no longer signed in, redirect
-        window.location.reload();
+        window.location.reload()
       } else if (jqXHR.status !== 200) {
         // if not a succesful request, reload page
-        window.location.reload();
+        window.location.reload()
       } else {
         // if field errors, display them
         if (response.errors !== undefined) {
-          data = {errors: []};
+          data = { errors: [] }
           $.each(response.errors, function (name, errors) {
-            data.errors.push({label_id: name + '_label', label: $('#' + name + '_label').text(), error: errors[0]});
-            moj.Events.trigger('Validation.renderFieldSummary', {form: $form, name: name, errors: errors});
-          });
-          moj.Events.trigger('Validation.renderSummary', {form: $form, data: data});
+            data.errors.push({ label_id: name + '_label', label: $('#' + name + '_label').text(), error: errors[0] })
+            moj.Events.trigger('Validation.renderFieldSummary', { form: $form, name, errors })
+          })
+          moj.Events.trigger('Validation.renderSummary', { form: $form, data })
           // Track form errors
-          moj.Events.trigger('formErrorTracker.checkErrors', {wrap: '#popup'});
+          moj.Events.trigger('formErrorTracker.checkErrors', { wrap: '#popup' })
           // show error summary
         } else if (response.success === undefined) {
           // repopulate popup
-          $('#popup-content').html(response);
+          $('#popup-content').html(response)
           // trigger title replacement event
-          moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
+          moj.Events.trigger('TitleSwitch.render', { wrap: '#popup' })
           // trigger postcode lookup event
-          moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
+          moj.Events.trigger('PostcodeLookup.render', { wrap: '#popup' })
           // trigger validation accessibility method
-          moj.Events.trigger('Validation.render', {wrap: '#popup'});
+          moj.Events.trigger('Validation.render', { wrap: '#popup' })
           //  If the form submitted a reuse details parameter then execute the check details
           if ($form.serialize().indexOf('reuse-details') !== -1) {
-            moj.Events.trigger('FormPopup.checkReusedDetails');
+            moj.Events.trigger('FormPopup.checkReusedDetails')
           }
           // Track form errors
-          moj.Events.trigger('formErrorTracker.checkErrors', {wrap: '#popup'});
+          moj.Events.trigger('formErrorTracker.checkErrors', { wrap: '#popup' })
         } else {
-          window.location.reload();
+          window.location.reload()
         }
 
         // Get the containing popup to redo the tab limiting as the DOM has changed
-        moj.Modules.Popup.redoLoopedTabKeys();
+        moj.Modules.Popup.redoLoopedTabKeys()
 
         // stop spinner
         formSpinner.off()
@@ -235,10 +238,10 @@
 
     ajaxError: function () {
       // an error occured, reload the page
-      window.location.reload();
+      window.location.reload()
     }
-  };
+  }
 
   // Add module to MOJ namespace
-  moj.Modules.FormPopup = new FormPopup();
-}());
+  moj.Modules.FormPopup = new FormPopup()
+}())
