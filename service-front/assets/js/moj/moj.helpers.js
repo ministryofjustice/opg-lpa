@@ -4,6 +4,29 @@
   window.moj = window.moj || {}
   const moj = window.moj
 
+  // convert response headers on the XmlHttpRequest r
+  // into a key=value map;
+  // code from https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/getAllResponseHeaders
+  const extractHeaders = function (r) {
+    // is the response JSON?
+    const headers = r.getAllResponseHeaders()
+
+    // Convert the header string into an array
+    // of individual headers
+    const arr = headers.trim().split(/[\r\n]+/)
+
+    // Create a map of header names to values
+    const headerMap = {};
+    arr.forEach(function (line) {
+      const parts = line.split(': ');
+      const header = parts.shift().toLowerCase();
+      const value = parts.join(': ');
+      headerMap[header] = value;
+    })
+
+    return headerMap
+  }
+
   // test for html5 storage
   moj.Helpers.hasHtml5Storage = function () {
     try {
@@ -91,7 +114,10 @@
       if (r.readyState === 4 && r.status < 400) {
         let resp = r.responseText
 
-        if (opts.isJSON) {
+        const isJSON = opts.isJSON ||
+          extractHeaders(r)['content-type'].search(/application\/json/) !== -1
+
+        if (isJSON) {
           resp = JSON.parse(resp)
         }
 
@@ -105,6 +131,11 @@
     r.open(opts.method || 'GET', opts.url, true)
 
     opts.headers = opts.headers || {}
+
+    // this is essential for our code, which inspects this header and
+    // changes the content returned depending on its value
+    opts.headers['X-Requested-With'] = 'XMLHttpRequest'
+
     for (const property in opts.headers) {
       r.setRequestHeader(property, opts.headers[property])
     }

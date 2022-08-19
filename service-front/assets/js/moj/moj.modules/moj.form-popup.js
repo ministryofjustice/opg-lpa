@@ -151,10 +151,13 @@
         beforeOpen: function () {
           // trigger title replacement event
           moj.Events.trigger('TitleSwitch.render', { wrap: '#popup' })
+
           // trigger postcode lookup event
           moj.Events.trigger('PostcodeLookup.render', { wrap: '#popup' })
+
           // trigger person form events
           moj.Events.trigger('PersonForm.render', { wrap: '#popup' })
+
           // trigger polyfill form events
           moj.Events.trigger('Polyfill.fill', { wrap: '#popup' })
         }
@@ -173,12 +176,13 @@
       const successCb = this.ajaxSuccess
       const failureCb = this.ajaxError
 
-      $.ajax({
-        url,
-        type: 'POST',
-        data: $form.serialize(),
-        success: function (response, textStatus, jqXHR) {
-          successCb($form, response, textStatus, jqXHR)
+      moj.Helpers.ajax({
+        url: url,
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+        body: $form.serialize(),
+        success: function (response) {
+          successCb($form, response, null, null)
         },
         error: failureCb
       })
@@ -195,7 +199,7 @@
       } else if (response.toLowerCase().indexOf('sign in') !== -1) {
         // if no longer signed in, redirect
         window.location.reload()
-      } else if (jqXHR.status !== 200) {
+      } else if (jqXHR !== null && jqXHR.status !== 200) {
         // if not a succesful request, reload page
         window.location.reload()
       } else {
