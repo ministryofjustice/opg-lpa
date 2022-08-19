@@ -16,6 +16,7 @@ class DateCheckViewModelHelper
             if ($lpa->document->whoIsRegistering === 'donor') {
                 $applicants[0] = [
                     'name' => $lpa->document->donor->name,
+                    'isDonor' => true,
                     'isHuman' => true,
                 ];
             } elseif (is_array($lpa->document->whoIsRegistering)) {
