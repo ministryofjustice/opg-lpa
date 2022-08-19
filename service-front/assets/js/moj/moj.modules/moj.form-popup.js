@@ -1,6 +1,4 @@
 // Form Popup module for LPA
-// Dependencies: moj, jQuery
-
 ;(function () {
   'use strict'
 
@@ -52,52 +50,49 @@
   }
 
   // Define the class
-  const FormPopup = function (options) {
-    this.settings = $.extend({}, this.defaults, options)
-  }
+  const FormPopup = function () {}
 
   FormPopup.prototype = {
-    defaults: {
-      selector: '.js-form-popup',
-      overlayIdent: 'form-popup',
-      overlaySource: '#content'
-    },
+    selector: '.js-form-popup',
+    overlayIdent: 'form-popup',
 
     init: function () {
-      // bind 'this' as this in following methods
-      _.bindAll(this, 'btnClick', 'submitForm')
-      this.cacheEls()
-      this.bindEvents()
-      $(this.settings.selector).attr('data-inited', true)
-    },
-
-    cacheEls: function () {
       this.formContent = []
       this.originalSource = false
       this.source = false
-    },
 
-    bindEvents: function () {
-      $('body')
-        // form open
-        .on('click.moj.Modules.FormPopup', this.settings.selector, this.btnClick)
-        // submit form
-        .on('submit.moj.Modules.FormPopup', '#popup.form-popup form', this.submitForm)
+      const openFormHandler = this.openForm.bind(this)
+      document.querySelectorAll(this.selector).forEach(function (element) {
+        element.addEventListener('click', openFormHandler)
+      })
+
+      const submitFormHandler = this.submitForm.bind(this)
+      document.addEventListener('submit', function (e) {
+        // capture submit events on forms inside the popup (delegated event handler)
+        if (moj.Helpers.matchesSelector(e.target, '#popup.form-popup form')) {
+          return submitFormHandler(e)
+        }
+        return true
+      }, true)
+
       moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails)
+
+      $(this.selector).attr('data-inited', true)
     },
 
-    btnClick: function (e) {
+    openForm: function (e) {
       e.preventDefault()
 
       // if our clicked element is not a link traverse up the dom to find the parent that is one.
-      const source = $(e.target).closest('a')
-      const href = source.attr('href')
+      const source = $(e.target)
+      const href = source.closest('a').attr('href')
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
-      if ($('#popup').length === 0) {
+      if (document.querySelectorAll('#popup').length === 0) {
         this.originalSource = source
       }
+
       // always set this source to be the clicked link
       this.source = source
 
@@ -114,11 +109,37 @@
       return false
     },
 
+    submitForm: function (e) {
+      e.preventDefault()
+
+      const $form = $(e.target)
+      const url = $form.attr('action')
+
+      formSpinner = moj.Helpers.spinner($form.find('input[type="submit"]').get(0))
+      formSpinner.on()
+
+      const successCb = this.ajaxSuccess
+      const failureCb = this.ajaxError
+
+      moj.Helpers.ajax({
+        url,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: $form.serialize(),
+        success: function (response) {
+          successCb($form, response, null, null)
+        },
+        error: failureCb
+      })
+
+      return false
+    },
+
     loadContent: function (url) {
       const self = this
 
       moj.Helpers.ajax({
-        url: url,
+        url,
         method: 'GET',
 
         success: function (html) {
@@ -151,7 +172,7 @@
       linkSpinner.off()
 
       moj.Modules.Popup.open(html, {
-        ident: this.settings.overlayIdent,
+        ident: this.overlayIdent,
         source: this.originalSource,
         beforeOpen: function () {
           // trigger title replacement event
@@ -167,32 +188,6 @@
           moj.Events.trigger('Polyfill.fill', { wrap: '#popup' })
         }
       })
-    },
-
-    submitForm: function (e) {
-      e.preventDefault()
-
-      const $form = $(e.target)
-      const url = $form.attr('action')
-
-      formSpinner = moj.Helpers.spinner($form.find('input[type="submit"]').get(0))
-      formSpinner.on()
-
-      const successCb = this.ajaxSuccess
-      const failureCb = this.ajaxError
-
-      moj.Helpers.ajax({
-        url: url,
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-        body: $form.serialize(),
-        success: function (response) {
-          successCb($form, response, null, null)
-        },
-        error: failureCb
-      })
-
-      return false
     },
 
     ajaxSuccess: function (form, response, textStatus, jqXHR) {
@@ -214,10 +209,10 @@
 
           $.each(response.errors, function (name, errors) {
             data.errors.push({ label_id: name + '_label', label: $('#' + name + '_label').text(), error: errors[0] })
-            moj.Events.trigger('Validation.renderFieldSummary', { form: form, name, errors })
+            moj.Events.trigger('Validation.renderFieldSummary', { form, name, errors })
           })
 
-          moj.Events.trigger('Validation.renderSummary', { form: form, data })
+          moj.Events.trigger('Validation.renderSummary', { form, data })
 
           // Track form errors
           moj.Events.trigger('formErrorTracker.checkErrors', { wrap: '#popup' })

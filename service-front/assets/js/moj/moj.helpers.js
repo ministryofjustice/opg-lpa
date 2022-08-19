@@ -16,12 +16,12 @@
     const arr = headers.trim().split(/[\r\n]+/)
 
     // Create a map of header names to values
-    const headerMap = {};
+    const headerMap = {}
     arr.forEach(function (line) {
-      const parts = line.split(': ');
-      const header = parts.shift().toLowerCase();
-      const value = parts.join(': ');
-      headerMap[header] = value;
+      const parts = line.split(': ')
+      const header = parts.shift().toLowerCase()
+      const value = parts.join(': ')
+      headerMap[header] = value
     })
 
     return headerMap
@@ -43,6 +43,17 @@
     } else {
       return true
     }
+  }
+
+  // Check whether DOM node element would be matched by selector;
+  // either uses matches() or its prefixed equivalent for older browsers
+  moj.Helpers.matchesSelector = function (element, selector) {
+    const docEl = document.documentElement
+
+    const matches = docEl.matches || docEl.webkitMatchesSelector ||
+      docEl.mozMatchesSelector || docEl.msMatchesSelector || docEl.oMatchesSelector
+
+    return matches.call(element, selector)
   }
 
   // Convert a string of HTML (with a single parent node)
