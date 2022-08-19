@@ -92,6 +92,16 @@
    *
    * partly based on http://microajax.googlecode.com/svn/trunk/microajax.js
    * (New BSD licence)
+   *
+   * Example 1: Sending a form in a POST request, where form is a <form> node:
+   *
+   * moj.Helpers.ajax({
+   *   url: url,
+   *   method: 'POST',
+   *   body: new FormData(form),
+   *    success: successCb,
+   *    error: errorCb
+   * })
    */
   moj.Helpers.ajax = function (opts, r) {
     opts = opts || {}

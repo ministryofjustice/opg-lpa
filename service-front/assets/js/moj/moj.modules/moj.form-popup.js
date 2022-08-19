@@ -105,24 +105,21 @@
     submitForm: function (e) {
       e.preventDefault()
 
-      const $form = $(e.target)
-      const url = $form.attr('action')
+      const form = e.target
 
-      formSpinner = moj.Helpers.spinner($form.find('input[type="submit"]').get(0))
+      formSpinner = moj.Helpers.spinner(form.querySelector('input[type="submit"]'))
       formSpinner.on()
 
-      const successCb = this.ajaxSuccess
-      const failureCb = this.ajaxError
+      const successCb = this.ajaxSuccess.bind(this)
 
       moj.Helpers.ajax({
-        url: url,
+        url: form.getAttribute('action'),
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-        body: $form.serialize(),
+        body: new FormData(form),
         success: function (response) {
-          successCb($form, response, null, null)
+          successCb(form, response)
         },
-        error: failureCb
+        error: this.ajaxError
       })
 
       return false
@@ -134,7 +131,6 @@
       moj.Helpers.ajax({
         url,
         method: 'GET',
-
         success: function (html) {
           if (html.toLowerCase().indexOf('sign in') !== -1) {
             // if no longer signed in, redirect
@@ -183,7 +179,9 @@
       })
     },
 
-    ajaxSuccess: function (form, response, textStatus, jqXHR) {
+    ajaxSuccess: function (form, response) {
+      form = $(form)
+
       let data
 
       if (response.success !== undefined && response.success) {
@@ -191,9 +189,6 @@
         window.location.reload()
       } else if (response.toLowerCase().indexOf('sign in') !== -1) {
         // if no longer signed in, redirect
-        window.location.reload()
-      } else if (jqXHR !== null && jqXHR.status !== 200) {
-        // if not a succesful request, reload page
         window.location.reload()
       } else {
         // if field errors, display them
