@@ -194,7 +194,7 @@
 
     <input type="hidden" name="return-route" value="{{ returnRoute }}">
 
-    <div class="date-check-person person person--full">
+    <div class="date-check-person person person--full" data-cy="date-check-donor">
         <h3 class="person-name heading-small flush--ends" data-cy="person-name">
         {% if lpa.document.donor.canSign %}
             {{ lpa.document.donor.name }} (donor)
@@ -211,11 +211,13 @@
                     {{ formElementErrorsV2(donorLifeSustainingElementYear) }}
                     {{ formElementErrorsV2(donorLifeSustainingElement) }}
 
+                    <p>
                     {% if lpa.document.donor.canSign %}
-                        <p>This person signed section 5 of the LPA on</p>
+                        This person signed section 5 of the LPA on
                     {% else %}
-                        <p>This person signed section 5 of the LPA on behalf of the donor on</p>
+                        This person signed section 5 of the LPA on behalf of the donor on
                     {% endif %}
+                    </p>
 
                     <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates">
                         <legend class="visually-hidden">Check signature dates for donor who signed section 5 of the LPA</legend>
@@ -247,12 +249,13 @@
                 {{ formElementErrorsV2(donorElementYear) }}
                 {{ formElementErrorsV2(donorElement) }}
 
+                <p>
                 {% if lpa.document.donor.canSign %}
-                    <p>This person signed continuation sheet 3 of the LPA on</p>
+                    This person signed section 9 of the LPA on
                 {% else %}
-                    <p>This person signed continuation sheet 3 on behalf of the donor on</p>
+                    This person signed continuation sheet 3 on behalf of the donor on
                 {% endif %}
-
+                </p>
 
                 <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
                     <legend class="visually-hidden">Check signature dates for donor who signed section 9 of the LPA</legend>
@@ -556,8 +559,14 @@
             id: elementYearId
         }) ? '' }}
 
-        <div class="date-check-person person person--full">
-            <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ applicant['name'] }} (applicant)</h3>
+        <div class="date-check-person person person--full" data-cy="date-check-applicant">
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">
+            {% if applicant['isDonor'] and not lpa.document.donor.canSign %}
+                A person signing on behalf of {{ applicant['name'] }} (applicant)
+            {% else %}
+                {{ applicant['name'] }} (applicant)
+            {% endif %}
+            </h3>
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}
@@ -566,11 +575,13 @@
                     {{ formElementErrorsV2(element) }}
 
                     <p>
-                        {% if applicant['isHuman'] %}
-                            This person signed section 15 of the LPA on
-                        {% else %}
-                            This corporation signed section 15 of the LPA on
-                        {% endif %}
+                    {% if applicant['isHuman'] and applicant['isDonor'] and not lpa.document.donor.canSign %}
+                        This person signed section 15 of the LPA on behalf of the donor on
+                    {% elseif applicant['isHuman'] %}
+                        This person signed section 15 of the LPA on
+                    {% else %}
+                        This corporation signed section 15 of the LPA on
+                    {% endif %}
                     </p>
 
                     <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
