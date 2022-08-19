@@ -73,7 +73,17 @@
         var $element = $(errorID)
         var elementID = $element.prop('id')
 
-        var nodeName = document.getElementById(elementID).nodeName.toLowerCase()
+        var nodeName
+        try {
+          nodeName = document.getElementById(elementID).nodeName.toLowerCase()
+        } catch (e) {
+          console.error(e)
+
+          // if we can't get the question text, we can't track the error on GA
+          console.error('moj.form-error-tracker.js: unable to track error during form save; culprit was: error ID = ' + errorID, error)
+          return ''
+        }
+
         var legendText
 
         // If the error is on an input or textarea
