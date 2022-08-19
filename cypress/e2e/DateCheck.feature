@@ -14,14 +14,15 @@ Feature: Check signature dates
     And there are "four" ".date-check-person" elements on the page
     And I can see fields for the donor, certificate provider, attorney, applicant
     And I cannot see continuation sheet reminders
+    And I cannot see that the donor cannot sign
 
   Scenario: Displays relevant information on signing continuation sheets
     Given I visit the dashboard
     When I visit the dashboard
     And I click "check-signing-dates" for LPA ID 26997335999
     Then I am taken to "/lpa/26997335999/date-check"
-    # Donor cannot sign or make mark
-    # Additional attorneys and additional preferences
-    And I can see a reminder to sign continuation sheet 1 and 2
-    # primaryAttorney is a trust corporation
+    # Additional attorneys (cs1), additional preferences (2), donor cannot sign or make mark (3)
+    And I can see a reminder to sign continuation sheet 1, 2 and 3
+    # primaryAttorney is a trust corporation (4)
     And I can see a reminder to sign continuation sheet 4
+    And I can see that the donor cannot sign
