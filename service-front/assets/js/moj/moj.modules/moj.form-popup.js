@@ -4,6 +4,12 @@
 ;(function () {
   'use strict';
 
+  // spinner shown next to the link which opens the popup
+  let linkSpinner = null
+
+  // spinner shown next to submit button on the popup
+  let formSpinner = null
+
   // cribbed from jQuery; see
   // https://github.com/jquery/jquery/blob/d0ce00cdfa680f1f0c38460bc51ea14079ae8b07/src/offset.js#L65
   // simplified to use window rather than document.ownerDocument.defaultView
@@ -92,8 +98,10 @@
 
       // If this link is disabled then stop here
       if (!source.hasClass('disabled')) {
-        // set loading spinner
-        source.spinner();
+        // set loading spinner on link
+        linkSpinner = moj.Helpers.spinner(source.get(0))
+        linkSpinner.on()
+
         // show form
         this.loadContent(href);
       }
@@ -130,7 +138,7 @@
     },
 
     renderForm: function (html) {
-      this.source.spinner('off');
+      linkSpinner.off();
 
       moj.Modules.Popup.open(html, {
         ident: this.settings.overlayIdent,
@@ -146,7 +154,6 @@
           moj.Events.trigger('Polyfill.fill', {wrap: '#popup'});
         }
       });
-
     },
 
     submitForm: function (e) {
@@ -154,7 +161,8 @@
         url = $form.attr('action'),
         method = 'post';
 
-      $form.find('input[type="submit"]').spinner();
+      formSpinner = moj.Helpers.spinner($form.find('input[type="submit"]').get(0));
+      formSpinner.on()
 
       //  If a method is set on the form use that value instead of the default post
       if ($form.attr('method') !== undefined) {
@@ -221,7 +229,7 @@
         moj.Modules.Popup.redoLoopedTabKeys();
 
         // stop spinner
-        $form.find('input[type="submit"]').spinner('off');
+        formSpinner.off()
       }
     },
 
