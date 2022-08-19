@@ -87,6 +87,8 @@
     },
 
     btnClick: function (e) {
+      e.preventDefault()
+
       // if our clicked element is not a link traverse up the dom to find the parent that is one.
       const source = $(e.target).closest('a')
       const href = source.attr('href')
@@ -160,6 +162,8 @@
     },
 
     submitForm: function (e) {
+      e.preventDefault()
+
       const $form = $(e.target)
       const url = $form.attr('action')
 
