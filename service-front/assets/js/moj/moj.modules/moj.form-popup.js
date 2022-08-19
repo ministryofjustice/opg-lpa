@@ -117,16 +117,21 @@
     loadContent: function (url) {
       const self = this
 
-      $.get(url, function (html) {
-        if (html.toLowerCase().indexOf('sign in') !== -1) {
-          // if no longer signed in, redirect
-          window.location.reload()
-        } else {
-          // render form and check the reused details content
-          self.renderForm(html)
+      moj.Helpers.ajax({
+        url: url,
+        method: 'GET',
 
-          if (url.indexOf('reuse-details') !== -1) {
-            self.checkReusedDetails()
+        success: function (html) {
+          if (html.toLowerCase().indexOf('sign in') !== -1) {
+            // if no longer signed in, redirect
+            window.location.reload()
+          } else {
+            // render form and check the reused details content
+            self.renderForm(html)
+
+            if (url.indexOf('reuse-details') !== -1) {
+              self.checkReusedDetails()
+            }
           }
         }
       })
