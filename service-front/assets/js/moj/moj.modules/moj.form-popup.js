@@ -77,7 +77,7 @@
 
       moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails)
 
-      $(this.selector).attr('data-inited', true)
+      document.querySelector(this.selector).setAttribute('data-inited', true)
     },
 
     openForm: function (e) {
@@ -122,7 +122,7 @@
       const failureCb = this.ajaxError
 
       moj.Helpers.ajax({
-        url,
+        url: url,
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
         body: $form.serialize(),
