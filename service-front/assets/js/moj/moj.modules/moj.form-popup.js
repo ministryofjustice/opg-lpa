@@ -61,11 +61,6 @@
       this.originalSource = false
       this.source = false
 
-      const openFormHandler = this.openForm.bind(this)
-      document.querySelectorAll(this.selector).forEach(function (element) {
-        element.addEventListener('click', openFormHandler)
-      })
-
       const submitFormHandler = this.submitForm.bind(this)
       document.addEventListener('submit', function (e) {
         // capture submit events on forms inside the popup (delegated event handler)
@@ -77,7 +72,14 @@
 
       moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails)
 
-      document.querySelector(this.selector).setAttribute('data-inited', true)
+      // note a popup is instantiated for every page, but not every page has
+      // a button to open it; therefore we attach event handlers etc.
+      // using querySelectorAll(), so it doesn't fail if the page lacks the button
+      const openFormHandler = this.openForm.bind(this)
+      document.querySelectorAll(this.selector).forEach(function (element) {
+        element.addEventListener('click', openFormHandler)
+        element.setAttribute('data-inited', 'true')
+      })
     },
 
     openForm: function (e) {
