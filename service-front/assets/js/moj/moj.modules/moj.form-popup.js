@@ -180,35 +180,41 @@
     },
 
     ajaxSuccess: function (form, response) {
-      form = $(form)
-
-      let data
-
-      if (response.success !== undefined && response.success) {
-        // successful, so redirect
-        window.location.reload()
-      } else if (response.toLowerCase().indexOf('sign in') !== -1) {
-        // if no longer signed in, redirect
+      // good response or no longer signed in, redirect
+      if (
+        (response.success !== undefined && response.success) ||
+        response.toLowerCase().indexOf('sign in') !== -1
+      ) {
         window.location.reload()
       } else {
-        // if field errors, display them
+        // field errors, display them
         if (response.errors !== undefined) {
-          data = { errors: [] }
+          const data = { errors: [] }
 
-          $.each(response.errors, function (name, errors) {
-            data.errors.push({ label_id: name + '_label', label: $('#' + name + '_label').text(), error: errors[0] })
-            moj.Events.trigger('Validation.renderFieldSummary', { form, name, errors })
-          })
+          for (const errorName in response.errors) {
+            let label = ''
+            const labelElt = document.querySelector('#' + errorName + '_label')
+            if (labelElt !== null) {
+              label = labelElt.textContent
+            }
+
+            const errors = response.errors[errorName]
+            data.errors.push({
+              label_id: errorName + '_label',
+              label,
+              error: errors[0]
+            })
+
+            moj.Events.trigger('Validation.renderFieldSummary', { form, name: errorName, errors })
+          }
 
           moj.Events.trigger('Validation.renderSummary', { form, data })
 
           // Track form errors
           moj.Events.trigger('formErrorTracker.checkErrors', { wrap: '#popup' })
-
-          // show error summary
         } else if (response.success === undefined) {
           // repopulate popup
-          $('#popup-content').html(response)
+          document.querySelector('#popup-content').innerHTML = response
 
           // trigger title replacement event
           moj.Events.trigger('TitleSwitch.render', { wrap: '#popup' })
@@ -219,9 +225,12 @@
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', { wrap: '#popup' })
 
-          //  If the form submitted a reuse details parameter then execute the check details
-          if (form.serialize().indexOf('reuse-details') !== -1) {
-            moj.Events.trigger('FormPopup.checkReusedDetails')
+          // If the form submitted a reuse details parameter then check reused details
+          for (let i = 0; i < form.elements.length; i++) {
+            if (form.elements[i].name === 'reuse-details') {
+              moj.Events.trigger('FormPopup.checkReusedDetails')
+              break
+            }
           }
 
           // Track form errors
