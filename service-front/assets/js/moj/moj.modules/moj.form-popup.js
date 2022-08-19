@@ -87,7 +87,7 @@
 
       // if our clicked element is not a link traverse up the dom to find the parent that is one.
       const source = e.target
-      const href = $(source).closest('a').attr('href')
+      const href = e.target.getAttribute('href')
 
       // If this link is disabled then stop here
       if (!source.classList.contains('disabled')) {
@@ -153,8 +153,8 @@
       scrollIntoView()
 
       // If the user is reusing details then trigger some actions manually to give warning messages a chance to display
-      $('#dob-date-day').trigger('change')
-      $('input[name="name-first"]').trigger('change')
+      moj.Helpers.trigger('change', document.querySelector('#dob-date-day'))
+      moj.Helpers.trigger('input[name="name-first"]', document.querySelector('#dob-date-day'))
     },
 
     renderForm: function (html) {

@@ -56,6 +56,20 @@
     return matches.call(element, selector)
   }
 
+  // synthesise an event on an event; only works for simple events for now
+  // eventType: string like 'click' or 'submit'
+  // element: DOM node; if null, nothing happens
+  moj.Helpers.trigger = function (eventType, element) {
+    if (element === null) {
+      return false
+    }
+
+    const event = document.createEvent('HTMLEvents')
+    event.initEvent(eventType, true, true)
+    element.dispatchEvent(event)
+    return true
+  }
+
   // Convert a string of HTML (with a single parent node)
   // to a Node object; if html contains multiple parent nodes,
   // you'll only get the first one back

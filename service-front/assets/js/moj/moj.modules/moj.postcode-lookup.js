@@ -127,9 +127,7 @@
         e.preventDefault()
 
         // synthesise a click event on the search button
-        const event = document.createEvent('HTMLEvents')
-        event.initEvent('click', true, true)
-        wrap.querySelector('.js-PostcodeLookup__search-btn').dispatchEvent(event)
+        moj.Helpers.trigger('click', document.querySelector('.js-PostcodeLookup__search-btn'))
       }
     }
 
