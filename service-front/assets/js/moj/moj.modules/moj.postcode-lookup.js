@@ -196,6 +196,10 @@
 
     // public API
     that.init = function () {
+      if (postalForm === null) {
+        return
+      }
+
       // prepend search box etc. templates to form containing address fields
       postalForm.classList.add('hidden')
 
@@ -217,6 +221,12 @@
         that.hideSearchForm()
         that.toggleAddress()
       }
+
+      // attach event handlers
+      wrap.querySelector('.js-PostcodeLookup__search-btn').addEventListener('click', searchClicked)
+      wrap.querySelector('.js-PostcodeLookup__toggle-address').addEventListener('click', toggleClicked)
+      wrap.querySelector('.js-PostcodeLookup__change').addEventListener('click', changeClicked)
+      wrap.querySelector('.js-PostcodeLookup__query').addEventListener('keydown', queryEnter)
     }
 
     that.findPostcode = function (query) {
@@ -259,12 +269,6 @@
     }
 
     that.init()
-
-    // attach event handlers
-    wrap.querySelector('.js-PostcodeLookup__search-btn').addEventListener('click', searchClicked)
-    wrap.querySelector('.js-PostcodeLookup__toggle-address').addEventListener('click', toggleClicked)
-    wrap.querySelector('.js-PostcodeLookup__change').addEventListener('click', changeClicked)
-    wrap.querySelector('.js-PostcodeLookup__query').addEventListener('keydown', queryEnter)
 
     return that
   }
