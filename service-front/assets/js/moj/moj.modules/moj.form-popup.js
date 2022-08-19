@@ -86,22 +86,13 @@
       e.preventDefault()
 
       // if our clicked element is not a link traverse up the dom to find the parent that is one.
-      const source = $(e.target)
-      const href = source.closest('a').attr('href')
-
-      // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
-      // fixes when links inside a popup load another form. User should be focused back to original content button when closing
-      if (document.querySelectorAll('#popup').length === 0) {
-        this.originalSource = source
-      }
-
-      // always set this source to be the clicked link
-      this.source = source
+      const source = e.target
+      const href = $(source).closest('a').attr('href')
 
       // If this link is disabled then stop here
-      if (!source.hasClass('disabled')) {
+      if (!source.classList.contains('disabled')) {
         // set loading spinner on link
-        linkSpinner = moj.Helpers.spinner(source.get(0))
+        linkSpinner = moj.Helpers.spinner(source)
         linkSpinner.on()
 
         // show form
