@@ -162,30 +162,27 @@
     submitForm: function (e) {
       const $form = $(e.target)
       const url = $form.attr('action')
-      let method = 'post'
 
       formSpinner = moj.Helpers.spinner($form.find('input[type="submit"]').get(0))
       formSpinner.on()
 
-      //  If a method is set on the form use that value instead of the default post
-      if ($form.attr('method') !== undefined) {
-        method = $form.attr('method')
-      }
+      const successCb = this.ajaxSuccess
+      const failureCb = this.ajaxError
 
       $.ajax({
         url,
-        type: method,
+        type: 'POST',
         data: $form.serialize(),
-        context: $form,
-        success: this.ajaxSuccess,
-        error: this.ajaxError
+        success: function (response, textStatus, jqXHR) {
+          successCb($form, response, textStatus, jqXHR)
+        },
+        error: failureCb
       })
 
       return false
     },
 
-    ajaxSuccess: function (response, textStatus, jqXHR) {
-      const $form = $(this)
+    ajaxSuccess: function (form, response, textStatus, jqXHR) {
       let data
 
       if (response.success !== undefined && response.success) {
@@ -201,27 +198,36 @@
         // if field errors, display them
         if (response.errors !== undefined) {
           data = { errors: [] }
+
           $.each(response.errors, function (name, errors) {
             data.errors.push({ label_id: name + '_label', label: $('#' + name + '_label').text(), error: errors[0] })
-            moj.Events.trigger('Validation.renderFieldSummary', { form: $form, name, errors })
+            moj.Events.trigger('Validation.renderFieldSummary', { form: form, name, errors })
           })
-          moj.Events.trigger('Validation.renderSummary', { form: $form, data })
+
+          moj.Events.trigger('Validation.renderSummary', { form: form, data })
+
           // Track form errors
           moj.Events.trigger('formErrorTracker.checkErrors', { wrap: '#popup' })
+
           // show error summary
         } else if (response.success === undefined) {
           // repopulate popup
           $('#popup-content').html(response)
+
           // trigger title replacement event
           moj.Events.trigger('TitleSwitch.render', { wrap: '#popup' })
+
           // trigger postcode lookup event
           moj.Events.trigger('PostcodeLookup.render', { wrap: '#popup' })
+
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', { wrap: '#popup' })
+
           //  If the form submitted a reuse details parameter then execute the check details
-          if ($form.serialize().indexOf('reuse-details') !== -1) {
+          if (form.serialize().indexOf('reuse-details') !== -1) {
             moj.Events.trigger('FormPopup.checkReusedDetails')
           }
+
           // Track form errors
           moj.Events.trigger('formErrorTracker.checkErrors', { wrap: '#popup' })
         } else {
