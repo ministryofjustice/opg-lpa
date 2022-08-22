@@ -4,14 +4,16 @@
 
 {%- set pageTitle = 'Check signature dates' -%}
 
+{% set personSigningForDonor = lpa.document.donor.canSign ? 'donor' : 'person signing on behalf of the donor' %}
+
 {% set errorMappings = {
     'sign-date-donor-life-sustaining': {
-        'Enter all the date fields': 'Enter the donor\'s signature date',
-        'The input does not appear to be a valid date': 'The donor\'s signature date does not appear to be a valid date'
+        'Enter all the date fields': 'Enter the ' ~ (personSigningForDonor) ~ '\'s signature date',
+        'The input does not appear to be a valid date': 'The ' ~ (personSigningForDonor) ~ '\'s signature date does not appear to be a valid date'
     },
     'sign-date-donor': {
-        'Enter all the date fields': 'Enter the donor\'s signature date',
-        'The input does not appear to be a valid date': 'The donor\'s signature date does not appear to be a valid date'
+        'Enter all the date fields': 'Enter the ' ~ (personSigningForDonor) ~ '\'s signature date',
+        'The input does not appear to be a valid date': 'The ' ~ (personSigningForDonor) ~ '\'s signature date does not appear to be a valid date'
     },
     'sign-date-certificate-provider': {
         'Enter all the date fields': 'Enter the certificate provider\'s signature date',
@@ -45,10 +47,16 @@
 {% for idx, applicant in applicants %}
     {% set messageKey = 'sign-date-applicant-' ~ idx %}
 
+    {% if applicant['isHuman'] and applicant['isDonor'] and not lpa.document.donor.canSign %}
+        {% set personSigningForApplicant = 'person signing on behalf of the donor' %}
+    {% else %}
+        {% set personSigningForApplicant = 'applicant' %}
+    {% endif %}
+
     {% set errorMappings = errorMappings|merge({
         (messageKey) : {
-            'Enter all the date fields': 'Enter the applicant\'s signature date',
-            'The input does not appear to be a valid date': 'The applicant\'s signature date does not appear to be a valid date'
+            'Enter all the date fields': 'Enter the ' ~ (personSigningForApplicant) ~ '\'s signature date',
+            'The input does not appear to be a valid date': 'The ' ~ (personSigningForApplicant) ~ '\'s signature date does not appear to be a valid date'
         }
     }) %}
 {% endfor %}

@@ -26,3 +26,15 @@ Feature: Check signature dates
     # primaryAttorney is a trust corporation (4)
     And I can see a reminder to sign continuation sheet 4
     And I can see that the donor cannot sign
+
+  Scenario: Displays the correct references to donor in errors when they cannot sign
+    Given I visit the dashboard
+    When I click "check-signing-dates" for LPA ID 26997335999
+    And I click element marked "Check dates"
+    Then I can see validation errors do not refer to the donor
+
+  Scenario: Displays the correct references to donor in errors when they can sign
+    Given I visit the dashboard
+    When I click "check-signing-dates" for LPA ID 91155453023
+    And I click element marked "Check dates"
+    Then I can see validation errors refer to the donor
