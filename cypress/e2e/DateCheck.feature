@@ -33,8 +33,8 @@ Feature: Check signature dates
     And I click element marked "Check dates"
     Then I can see validation errors do not refer to the donor
 
-  Scenario: Displays the correct references to donor in errors when they can sign
+  Scenario: Displays the correct references to applicant in errors when they can sign
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 91155453023
     And I click element marked "Check dates"
-    Then I can see validation errors refer to the donor
+    Then I can see validation errors refer to the donor and applicant
