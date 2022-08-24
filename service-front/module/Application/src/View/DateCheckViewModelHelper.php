@@ -35,8 +35,8 @@ class DateCheckViewModelHelper
             }
         }
 
-        $continuationSheets = new ContinuationSheets();
-        $continuationNoteKeys = $continuationSheets->getContinuationNoteKeys($lpa);
+        $continuationSheetService = new ContinuationSheets();
+        $continuationNoteKeys = $continuationSheetService->getContinuationNoteKeys($lpa);
 
         $continuationSheets = [];
         $cs1 = in_array('ANY_PEOPLE_OVERFLOW', $continuationNoteKeys);
@@ -60,10 +60,13 @@ class DateCheckViewModelHelper
             $continuationSheets[] = 4;
         }
 
+        $csPluraliser = $continuationSheetService->getCsPluraliser($lpa);
+
         return [
             'applicants' => $applicants,
             'continuationNoteKeys' => $continuationNoteKeys,
-            'continuationSheets' => $continuationSheets
+            'continuationSheets' => $continuationSheets,
+            'csPluraliser' => $csPluraliser
         ];
     }
 }

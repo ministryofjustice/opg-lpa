@@ -101,9 +101,10 @@ class DateCheckController extends AbstractLpaController
         ]);
 
         $viewModel->setVariables([
+            'applicants' => $helperResult['applicants'],
             'continuationNoteKeys' => $helperResult['continuationNoteKeys'],
             'continuationSheets' => $helperResult['continuationSheets'],
-            'applicants' => $helperResult['applicants']
+            'csPluraliser' => $helperResult['csPluraliser']
         ]);
 
         return $viewModel;

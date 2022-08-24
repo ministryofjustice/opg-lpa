@@ -9,7 +9,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class ContinuationSheets
 {
     /**
-     * Gathers an array on conditions where continuation sheet(s) would be generated in the PDF.
+     * Gathers an array on conditions where continuation sheet(s) would be generated in the LPA PDF.
      *
      * @param Lpa $lpa
      * @return array
@@ -87,5 +87,41 @@ class ContinuationSheets
         }
 
         return $continuationNoteKeys;
+    }
+
+    /**
+     * Works out if references to continuation sheets 1 and 2 need to be pluralised, ie. if
+     * >1 of either will be generated in the LPA PDF, and returns an 's' to the view if so.
+     *
+     * @param Lpa $lpa
+     * @return array
+     */
+    public function getCsPluraliser($lpa): array
+    {
+        $result = array();
+
+        $paCount = count($lpa->document->primaryAttorneys);
+        $raCount = count($lpa->document->replacementAttorneys);
+        $pnCount = count($lpa->document->peopleToNotify);
+
+        $overflowCount = 0;
+        switch (true) {
+            case $paCount > 4:
+                $overflowCount += ($paCount - 4);
+                // no break because we need the cumulative overflow count
+            case $raCount > 2:
+                $overflowCount += ($raCount - 2);
+                // no break because we need the cumulative overflow count
+            case $pnCount > 4:
+                $overflowCount += ($pnCount - 4);
+        }
+
+        $cs1Pluraliser = '';
+        if ($overflowCount > 2) {
+            $cs1Pluraliser = 's';
+        }
+
+        $result['cs1'] = $cs1Pluraliser;
+        return $result;
     }
 }

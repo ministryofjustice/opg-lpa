@@ -48,7 +48,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 ]
             ],
             'expectedDonorText' => [
-                'You must have signed and dated continuation sheet/s 1 before you signed ' .
+                'You must have signed and dated continuation sheet 1 before you signed ' .
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
@@ -66,7 +66,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 ]
             ],
             'expectedDonorText' => [
-                'You must have signed and dated continuation sheet/s 1 before you signed ' .
+                'You must have signed and dated continuation sheet 1 before you signed ' .
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
@@ -79,7 +79,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 ]
             ],
             'expectedDonorText' => [
-                'You must have signed and dated continuation sheet/s 1 before you signed ' .
+                'You must have signed and dated continuation sheet 1 before you signed ' .
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
@@ -335,6 +335,32 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'dated before or on the same day as they signed continuation sheet 3.'],
             'expectedAttorneyText' => []
         ],
+        // Testing pluralisation of cs1
+        // Two cs1s are generated - >4 primaryAttorneys, >4 replacementAttorneys, >4 peopleToNotify
+        [
+            'lpa' => [
+                'document' => [
+                    'primaryAttorneys' => [
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                        ['type' => 'human', 'dob' => ['date' => '1975-05-10T00:00:00.000000+0000']],
+                    ],
+                    // Empty arrays represent each person, details are missing as they are are unimportant
+                    'peopleToNotify' => [[], [], [], [], []]
+                ]
+            ],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheets 1 before you signed ' .
+                'section 9 of the LPA, or on the same day.'],
+            'expectedAttorneyText' => []
+        ],
     ];
 
     /* This returns an arbitrary string to imitate a class constant needed when adding twig functions to the
@@ -369,9 +395,10 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         $helperResult = DateCheckViewModelHelper::build($lpa);
         // set vars on ViewModel as it is done in controller
         $viewModel->setVariables([
+            'applicants' => [],
             'continuationNoteKeys' => $helperResult['continuationNoteKeys'],
             'continuationSheets' => $helperResult['continuationSheets'],
-            'applicants' => []
+            'csPluraliser' => $helperResult['csPluraliser']
         ]);
 
         $loader = new FilesystemLoader('module/Application/view/application');
