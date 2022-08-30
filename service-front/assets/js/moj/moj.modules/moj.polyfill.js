@@ -6,232 +6,253 @@
 
 // http://www.sitepoint.com/fixing-the-details-element/
 
-//A fork of https://github.com/alphagov/govuk_elements/commits/master/assets/javascripts/govuk/details.polyfill.js
+// A fork of https://github.com/alphagov/govuk_elements/commits/master/assets/javascripts/govuk/details.polyfill.js
 
 ;(function () {
-    'use strict'
+  'use strict'
 
-    // Wrap a single jQuery element with the necessary event handlers
-    // and add required aria attributes; usually, this will be a <details>
-    // element, but other custom elements can be used (e.g. for testing)
-    //
-    // details: jQuery element to polyfill
-    // identifier: unique number for creation of ID on the wrapped element
-    //     (used for ARIA controls)
-    // hasNativeImplementation: set to true if the element has native
-    //     details support (i.e. a boolean open attribute)
-    function wrapDetails(details, identifier, hasNativeImplementation) {
-        var noop = function () {};
+  window.moj = window.moj || {}
+  const moj = window.moj
 
-        // --------- private variables
+  // Wrap a single jQuery element with the necessary event handlers
+  // and add required aria attributes; usually, this will be a <details>
+  // element, but other custom elements can be used (e.g. for testing)
+  //
+  // details: DOM element to polyfill
+  // identifier: unique number for creation of ID on the wrapped element
+  //     (used for ARIA controls)
+  // hasNativeImplementation: set to true if the element has native
+  //     details support (i.e. a boolean open attribute)
+  const _wrapDetails = function (details, identifier, hasNativeImplementation) {
+    const noop = function () {}
 
-        // element references
-        var summary = $(details.find('summary'));
-        var content = $(details.children('div'));
-        var content_id = content.attr('id');
-        var focusables = $(details.find('a,:input'));
+    // --------- public API
+    const wrapped = {}
 
-        // icon shown when details are not native to the browser
-        var arrow = null;
+    // --------- private variables
 
-        var inited = false;
+    // element references
+    const summary = details.querySelector('summary')
+    const content = details.querySelector('div')
 
-        // set to true while we are in the middle of opening/closing the element
-        var transitioning = false;
-
-        // --------- public API
-        var wrapped = {};
-
-        var open_non_native = hasNativeImplementation ? noop : function () {
-            // non-native details emulation
-            content.css('display', '');
-            arrow.removeClass('arrow-closed');
-            arrow.addClass('arrow-open');
-            arrow.text('\u25bc');
-        };
-
-        wrapped.open = function () {
-            if (transitioning) {
-                return false;
-            }
-            transitioning = true;
-
-            summary.attr('aria-expanded', 'true');
-            content.attr('aria-hidden', 'false');
-            focusables.attr('tabindex', '0');
-
-            open_non_native();
-
-            transitioning = false;
-            return true;
-        };
-
-        var close_non_native = hasNativeImplementation ? noop : function () {
-            // non-native details emulation
-            content.css('display', 'none');
-            arrow.removeClass('arrow-open');
-            arrow.addClass('arrow-closed');
-            arrow.text('\u25ba');
-        };
-
-        wrapped.close = function () {
-            if (transitioning) {
-                return false;
-            }
-            transitioning = true;
-
-            summary.attr('aria-expanded', 'false');
-            content.attr('aria-hidden', 'true');
-            focusables.attr('tabindex', '-1');
-
-            close_non_native();
-
-            transitioning = false;
-            return true;
-        };
-
-        var handleStateChange = function () {
-            (details.attr('open') === 'open' ? wrapped.open() : wrapped.close());
-        };
-
-        var polyfillToggle = function () {
-            // Toggle the open attribute on details element
-            (details.attr('open') === 'open' ?
-                details.removeAttr('open') : details.attr('open', 'open'));
-
-            // Fire a toggle event on the details element; as we've set the
-            // open attr, the existing handler for native details will trigger
-            // the correct response
-            details.trigger('toggle');
-        };
-
-        // Additional initialisation required where details is non-native
-        // (this is the crux of the details polyfill)
-        var non_native_init = hasNativeImplementation ? noop : function () {
-            // Set tabIndex so the summary is keyboard accessible
-            // http://www.saliences.com/browserBugs/tabIndex.html
-            summary.attr('tabIndex', '0');
-
-            // Create an arrow as the first child inside the summary
-            arrow = $('<i>').insertBefore(summary.children().first());
-            arrow.attr('aria-hidden', 'true');
-            arrow.addClass('arrow');
-
-            // A click on the summary toggles the open state of the details
-            // element and fires a "toggle" event from it
-            summary.click(polyfillToggle);
-            summary.on('keypress', function (e) {
-                // Enter/Return or Space key
-                if (e.keyCode === 13 || e.keyCode === 32) {
-                    polyfillToggle();
-
-                    // This prevents space from scrolling the page
-                    // and enter from submitting a form
-                    e.preventDefault();
-                    return false;
-                }
-                return true;
-            });
-
-            // mark the element as polyfilled
-            details.attr('data-polyfilled-details', 'true')
-
-            return true;
-        };
-
-        // Initialises necessary state on the <details> and its children;
-        // where <details> is native, this is mostly adding aria attributes
-        wrapped.init = function () {
-            // Don't call init more than once
-            if (inited) {
-                return inited;
-            }
-
-            // Create an id for the content div if not present
-            if (content_id === undefined) {
-                content_id = 'details-content-' + identifier;
-                content.attr('id', content_id);
-            }
-
-            // Add ARIA attributes to details
-            details.attr('role', 'group');
-
-            // Add ARIA attributes to summary
-            summary.attr('role', 'button');
-            summary.attr('aria-controls', content_id);
-
-            // Put a tabindex on summary so it is focusable (mostly for tests)
-            summary.attr('tabindex', '0');
-
-            // When we get a "toggle" event on the details element,
-            // set attribute on the details element and change display;
-            // note that native events are fired after the open/close completes;
-            // for non-native, we synthesise this event
-            details.on('toggle', handleStateChange);
-
-            // additional work required where <details> is not native
-            non_native_init();
-
-            // Call open or close based on current state
-            (details.attr('open') === 'open') ? wrapped.open() : wrapped.close();
-
-            inited = true
-            return inited;
-        };
-
-        wrapped.init();
-
-        return wrapped;
+    // If expected elements are not present, we don't do anything
+    if (summary === null || content === null) {
+      return wrapped
     }
 
-    // Initialisation function
-    // This expects <details> elements with this structure:
-    // <details>
-    //   <summary>
-    //   <div>
-    // </details>
-    // Anything matching the selector "a,:input" within details gets special
-    // treatment, being added to the tab order as appropriate
-    function addDetailsPolyfill(tag) {
-        // Do we have a native implementation which supports an "open" attribute?
-        // Note that we "polyfill" all matching elements, as we want
-        // to incorporate ARIA attributes. We also do additional work when we
-        // must provide a polyfill for <details> in browsers which don't have it.
-        var hasNativeImplementation = typeof document.createElement(tag).open === 'boolean'
+    const focusables = details.querySelectorAll('a, input, textarea, select, button')
 
-        // Get the collection of details elements; if it's empty
-        // we don't need to bother initialising anything on this page
-        var list = $(document).find(tag);
-        if (list.length === 0) {
-            return true;
-        }
+    let contentId = content.getAttribute('id')
 
-        // Else iterate through them to apply their initial state
-        for (var i = 0; i < list.length; i++) {
-            var details = $(list[i]);
+    // icon shown when details are not native to the browser
+    let arrow = null
 
-            // Ensure each details element is only processed once
-            if (details.data('filled')) {
-                continue;
-            }
-            details.data('filled', true);
+    let inited = false
 
-            wrapDetails(details, i, hasNativeImplementation);
-        }
+    // set to true while we are in the middle of opening/closing the element
+    let transitioning = false
 
-        return true;
+    const openNonNative = hasNativeImplementation
+      ? noop
+      : function () {
+        // non-native details emulation
+        content.style.display = ''
+
+        arrow.classList.remove('arrow-closed')
+        arrow.classList.add('arrow-open')
+        arrow.innerHTML = '\u25bc'
+      }
+
+    wrapped.open = function () {
+      if (transitioning) {
+        return false
+      }
+      transitioning = true
+
+      summary.setAttribute('aria-expanded', 'true')
+      content.setAttribute('aria-hidden', 'false')
+
+      focusables.forEach(function (elt) {
+        elt.setAttribute('tabindex', '0')
+      })
+
+      openNonNative()
+
+      transitioning = false
+      return true
     }
 
-    moj.Modules.DetailsPolyfill = {
-        init: function () {
-            moj.Events.on('Polyfill.fill', this.fill);
-            this.fill();
-        },
+    const closeNonNative = hasNativeImplementation
+      ? noop
+      : function () {
+        // non-native details emulation
+        content.style.display = 'none'
 
-        fill: function () {
-            addDetailsPolyfill('details');
-        },
+        arrow.classList.remove('arrow-open')
+        arrow.classList.add('arrow-closed')
+        arrow.innerHTML = '\u25ba'
+      }
 
-        wrap: wrapDetails,
-    };
+    wrapped.close = function () {
+      if (transitioning) {
+        return false
+      }
+      transitioning = true
+
+      summary.setAttribute('aria-expanded', 'false')
+      content.setAttribute('aria-hidden', 'true')
+
+      focusables.forEach(function (elt) {
+        elt.setAttribute('tabindex', '-1')
+      })
+
+      closeNonNative()
+
+      transitioning = false
+      return true
+    }
+
+    const handleStateChange = function () {
+      (details.getAttribute('open') === 'open' ? wrapped.open() : wrapped.close())
+    }
+
+    const polyfillToggle = function () {
+      // Toggle the open attribute on details element
+      (details.getAttribute('open') === 'open'
+        ? details.removeAttribute('open')
+        : details.setAttribute('open', 'open'))
+
+      // Fire a toggle event on the details element; as we've set the
+      // open attr, the existing handler for native details will trigger
+      // the correct response
+      moj.Helpers.trigger('toggle', details)
+    }
+
+    // Additional initialisation required where details is non-native
+    // (this is the crux of the details polyfill)
+    const nonNativeInit = hasNativeImplementation
+      ? noop
+      : function () {
+        // Set tabIndex so the summary is keyboard accessible
+        // http://www.saliences.com/browserBugs/tabIndex.html
+        summary.setAttribute('tabIndex', '0')
+
+        // Create an arrow as the first child inside the summary
+        arrow = moj.Helpers.strToHtml('<i>')
+        arrow.setAttribute('aria-hidden', 'true')
+        arrow.classList.add('arrow')
+        summary.insertBefore(arrow, summary.children[0])
+
+        // A click on the summary toggles the open state of the details
+        // element and fires a "toggle" event from it
+        summary.addEventListener('click', polyfillToggle)
+        summary.addEventListener('keypress', function (e) {
+          // Enter/Return or Space key
+          if (e.keyCode === 13 || e.keyCode === 32) {
+            polyfillToggle()
+
+            // This prevents space from scrolling the page
+            // and enter from submitting a form
+            e.preventDefault()
+            return false
+          }
+          return true
+        })
+
+        return true
+      }
+
+    // Initialises necessary state on the <details> and its children;
+    // where <details> is native, this is mostly adding aria attributes
+    wrapped.init = function () {
+      // Don't call init more than once
+      if (inited) {
+        return inited
+      }
+
+      // Create an id for the content div if not present
+      if (contentId === undefined) {
+        contentId = 'details-content-' + identifier
+        content.setAttribute('id', contentId)
+      }
+
+      // Add ARIA attributes to details
+      details.setAttribute('role', 'group')
+
+      // Add ARIA attributes to summary
+      summary.setAttribute('role', 'button')
+      summary.setAttribute('aria-controls', contentId)
+
+      // Put a tabindex on summary so it is focusable (mostly for tests)
+      summary.setAttribute('tabindex', '0')
+
+      // When we get a "toggle" event on the details element,
+      // set attribute on the details element and change display;
+      // note that native events are fired after the open/close completes;
+      // for non-native, we synthesise this event
+      details.addEventListener('toggle', handleStateChange)
+
+      // additional work required where <details> is not native
+      nonNativeInit();
+
+      // Call open or close based on current state
+      (details.getAttribute('open') === 'open') ? wrapped.open() : wrapped.close()
+
+      inited = true
+      return inited
+    }
+
+    wrapped.init()
+
+    return wrapped
+  }
+
+  // Initialisation function
+  // This expects <details> elements with this structure:
+  // <details>
+  //   <summary>
+  //   <div>
+  // </details>
+  // Anything matching the selector "a,:input" within details gets special
+  // treatment, being added to the tab order as appropriate
+  const _addDetailsPolyfill = function (tag) {
+    if (tag === undefined) {
+      tag = 'details'
+    }
+
+    // Do we have a native implementation which supports an "open" attribute?
+    // Note that we "polyfill" all matching elements, as we want
+    // to incorporate ARIA attributes. We also do additional work when we
+    // must provide a polyfill for <details> in browsers which don't have it.
+    const hasNativeImplementation = typeof document.createElement(tag).open === 'boolean'
+
+    // Get the collection of details elements; if it's empty
+    // we don't need to bother initialising anything on this page
+    const list = document.querySelectorAll(tag)
+    if (list.length === 0) {
+      return true
+    }
+
+    // Else iterate through them to apply their initial state
+    list.forEach(function (details, i) {
+      // Ensure each details element is only processed once
+      if (details.getAttribute('data-filled') !== 'true') {
+        details.setAttribute('data-filled', 'true')
+        _wrapDetails(details, i, hasNativeImplementation)
+      }
+    })
+
+    return true
+  }
+
+  moj.Modules.DetailsPolyfill = {
+    init: function () {
+      moj.Events.on('Polyfill.fill', this.fill)
+      this.fill()
+    },
+
+    fill: _addDetailsPolyfill,
+
+    wrap: _wrapDetails
+  }
 })()

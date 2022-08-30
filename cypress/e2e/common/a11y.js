@@ -95,9 +95,9 @@ Then('my browser doesn\'t support details elements', () => {
         cy.get('details').each((details) => {
             // replace with a new <polyfilleddetails> element with the same
             // internal content
-            let newElement = Cypress.$('<polyfilleddetails>' +
+            let newElement = Cypress.$('<polyfilleddetails style="display:block;">' +
                                        details[0].innerHTML +
-                                       '</polyfilleddetails>');
+                                       '</polyfilleddetails>')[0];
 
             // wrap the new element manually
             window.moj.Modules.DetailsPolyfill.wrap(newElement);
