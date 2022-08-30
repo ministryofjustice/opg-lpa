@@ -9,18 +9,20 @@
 
   // Define the class
   const Popup = function (options) {
-    this.settings = $.extend({}, this.defaults, options)
     this._cacheEls()
   }
 
   Popup.prototype = {
+    // top level event handlers
     keydownListener: null,
     clickListener: null,
 
-    defaults: {
+    // tabbable elements
+    first: null,
+    last: null,
+
+    settings: {
       source: document.querySelector('#content'),
-      placement: 'body',
-      popupId: 'popup',
       ident: null,
       maskTemplate: lpa.templates['popup.mask'](),
       containerTemplate: lpa.templates['popup.container'](),
@@ -34,13 +36,14 @@
     init: function () {},
 
     _cacheEls: function () {
-      this.$mask = $(this.settings.maskTemplate)
+      this.mask = moj.Helpers.strToHtml(this.settings.maskTemplate)
+      this.$mask = $(this.mask)
 
       this.popup = moj.Helpers.strToHtml(this.settings.containerTemplate)
       this.$popup = $(this.popup)
 
-      this.$content = $(this.settings.contentTemplate)
-      this.$close = $(this.settings.closeTemplate)
+      this.content = moj.Helpers.strToHtml(this.settings.contentTemplate)
+      this.closeButton = moj.Helpers.strToHtml(this.settings.closeTemplate)
     },
 
     _bindEvents: function () {
@@ -73,49 +76,57 @@
       const self = this
 
       // combine opts with settings for local settings
-      opts = $.extend({}, this.settings, opts)
+      this.settings = moj.Helpers.extend(this.settings, opts)
 
       // disable body scroll
       document.querySelector('html').classList.add('noscroll')
 
       // hide main contents from print layout
-      $('body > *').addClass('print-hidden')
+      document.body.querySelectorAll('*').forEach(function (elt) {
+        elt.classList.add('print-hidden')
+      })
 
       // Join it all together
-      this.$popup.data('settings', opts)
-        .removeClass()
-        .addClass('popup ' + opts.ident)
-        .append(this.$close)
-        .append(this.$content.html(html))
-        .appendTo(this.$mask)
+      this.content.innerHTML = html
+
+      this.popup.classList.add('popup')
+      this.popup.classList.add(this.settings.ident)
+      this.popup.appendChild(this.closeButton)
+      this.popup.appendChild(this.content)
+
+      this.mask.appendChild(this.popup)
 
       // bind event handlers
       this._bindEvents()
 
-      // Place the mask in the DOM
-      // If a placement has been provided, the popup is appended to that element,
-      // otherwise the popup is appended to the body element.
-      $(opts.placement)[opts.placement === 'body' ? 'append' : 'after'](this.$mask)
+      document.body.appendChild(this.mask)
 
       // callback func
-      if (opts.beforeOpen && typeof (opts.beforeOpen) === 'function') {
-        opts.beforeOpen()
+      if (typeof this.settings.beforeOpen === 'function') {
+        this.settings.beforeOpen()
       }
 
       // prevent tab navigation outside the lightbox
-      self.loopTabKeys(self.$popup)
+      this.loopTabKeys(this.popup)
 
       // Fade in the mask
       this.$mask.fadeTo(200, 1)
 
       // Center and phase in the popup
       this.$popup.delay(100).fadeIn(200, function () {
-        self.$popup.find('h2').attr('tabindex', -1)
-        self.$popup.find('.close a').focus()
+        const heading = self.popup.querySelector('h2')
+        if (heading !== null) {
+          heading.setAttribute('tabindex', -1)
+        }
+
+        const closeLink = self.closeButton.querySelector('a')
+        if (closeLink !== null) {
+          closeLink.focus()
+        }
 
         // callback func
-        if (opts.onOpen && typeof (opts.onOpen) === 'function') {
-          opts.onOpen()
+        if (typeof self.settings.onOpen === 'function') {
+          self.settings.onOpen()
         }
       })
     },
@@ -124,14 +135,13 @@
       // make sure there is a popup to close
       if (this.isOpen()) {
         const self = this
-        const opts = $('#popup').data('settings')
         const scrollPosition = $(window).scrollTop()
 
         self.$popup.fadeOut(400, function () {
           self.$mask.fadeOut(200, function () {
             // focus on previous element
-            if (typeof opts.source !== 'undefined' && opts.source) {
-              opts.source.focus()
+            if (typeof self.settings.source !== 'undefined' && self.settings.source !== false) {
+              self.settings.source.focus()
             }
 
             // clear out any hash locations
@@ -141,22 +151,24 @@
             }
 
             // callback func
-            if (opts.onClose && typeof (opts.onClose) === 'function') {
-              opts.onClose()
+            if (typeof self.settings.onClose === 'function') {
+              self.settings.onClose()
             }
 
             // Remove the popup from the DOM
-            $(this).remove()
+            self.$mask.remove()
 
             // re-enable body scroll
             $(window).scrollTop(scrollPosition)
             document.querySelector('html').classList.remove('noscroll')
 
             // unhide main contents from print layout
-            $('body > *').removeClass('print-hidden')
+            document.body.querySelectorAll('*').forEach(function (elt) {
+              elt.classList.remove('print-hidden')
+            })
 
             // unbind event handlers
-            self._unbindEvents()
+            self._unbindEvents.bind(self)()
           })
         })
       }
@@ -164,43 +176,47 @@
 
     tabFocusesOn: function (e) {
       // on tab set focus
-      if (e.key === 'Tab' && !e.shiftKey) {
+      if (e.key === 'Tab' && !e.shiftKey && this.first !== null) {
         e.preventDefault()
-        e.data.element.focus()
+        this.first.focus()
       }
     },
 
     reverseTabFocusesOn: function (e) {
       // on tab with shift held set focus
-      if (e.key === 'Tab' && e.shiftKey) {
+      if (e.key === 'Tab' && e.shiftKey && this.last !== null) {
         e.preventDefault()
-        e.data.element.focus()
+        this.last.focus()
       }
     },
 
     loopTabKeys: function (wrap) {
       const tabbable = 'a, area, button, input, object, select, textarea, [tabindex]'
-      this.$first = wrap.find(tabbable).filter(':first')
-      this.$last = wrap.find(tabbable).filter(':last')
 
-      this.$first.keydown({ element: this.$last }, this.reverseTabFocusesOn)
-      this.$last.keydown({ element: this.$first }, this.tabFocusesOn)
+      const tabbableElts = wrap.querySelectorAll(tabbable)
+      if (tabbableElts.length > 0) {
+        this.first = tabbableElts[0]
+        this.first.addEventListener('keydown', this.reverseTabFocusesOn.bind(this))
+
+        this.last = tabbableElts[tabbableElts.length - 1]
+        this.last.addEventListener('keydown', this.tabFocusesOn.bind(this))
+      }
     },
 
     redoLoopedTabKeys: function () {
-      if (typeof this.$first !== 'undefined') {
-        this.$first.off('keydown', this.reverseTabFocusesOn)
+      if (this.first !== null) {
+        this.first.removeEventListener('keydown', this.reverseTabFocusesOn.bind(this))
       }
 
-      if (typeof this.$last !== 'undefined') {
-        this.$last.off('keydown', this.tabFocusesOn)
+      if (this.last !== null) {
+        this.last.removeEventListener('keydown', this.tabFocusesOn.bind(this))
       }
 
-      this.loopTabKeys(this.$popup)
+      this.loopTabKeys(this.popup)
     },
 
     isOpen: function () {
-      return document.querySelectorAll('#' + this.settings.popupId).length > 0
+      return document.querySelectorAll('#popup').length > 0
     }
   }
 

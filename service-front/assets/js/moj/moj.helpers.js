@@ -59,14 +59,16 @@
   // synthesise an event on an element; only works for simple events for now
   // eventType: string like 'click' or 'submit'
   // element: DOM node; if null, nothing happens
-  moj.Helpers.trigger = function (eventType, element) {
+  moj.Helpers.trigger = function (eventType, element, data) {
     if (element === null) {
       return false
     }
 
     const event = document.createEvent('HTMLEvents')
+    event.data = data || {}
     event.initEvent(eventType, true, true)
     element.dispatchEvent(event)
+
     return true
   }
 
@@ -277,5 +279,25 @@
       // for browsers which don't support getBoundingClientRect()
       return { top: 0, left: 0 }
     }
+  }
+
+  // merge objects together; right-most object in argument list
+  // sets the key if multiple passed objects share keys; example:
+  //   moj.Helpers.extend({a:1}, {b:2}, {c:3}) => {a:1, b:2, c:3}
+  // any functions in the object bind the new object as "this"
+  moj.Helpers.extend = function () {
+    let newObj = {}
+
+    Array.prototype.slice.call(arguments).forEach(function (obj) {
+      for (let key in obj) {
+        let value = obj[key]
+        if (typeof value === 'function') {
+          value = value.bind(newObj)
+        }
+        newObj[key] = value
+      }
+    })
+
+    return newObj
   }
 })()
