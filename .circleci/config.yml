@@ -711,7 +711,7 @@ orbs:
               name: Install dependencies to service-front/node_modules directory
               command: |
                 cd service-front/
-                npm install
+                npm ci
           - run:
               name: Build assets
               command: |
