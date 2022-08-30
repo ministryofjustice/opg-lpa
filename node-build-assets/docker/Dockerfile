@@ -1,8 +1,6 @@
 FROM alpine:latest
 
-
-RUN apk add ruby
-RUN apk add npm
+RUN apk add ruby npm
 
 WORKDIR /app
 
