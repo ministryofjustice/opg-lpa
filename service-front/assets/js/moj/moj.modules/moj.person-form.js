@@ -128,7 +128,7 @@
 
             // Display alert if duplicate
             if (duplicateName !== null) {
-              //  Construct the correct starting phrase for the warning
+              // Construct the correct starting phrase for the warning
               let alertStart = 'The ' + duplicateName.type + '\'s name is also '
 
               if (duplicateName.type === 'replacement attorney' || duplicateName.type === 'person to notify') {
@@ -137,10 +137,10 @@
                 alertStart = 'There is also an ' + duplicateName.type + ' called '
               }
 
-              //  Construct the middle part of the message
+              // Construct the middle part of the message
               let alertMiddle = 'The ' + duplicateName.type + ' cannot be '
 
-              //  If the user is attempting to create an attorney or replacement attorney twice show a specific line
+              // If the user is attempting to create an attorney or replacement attorney twice show a specific line
               if (actorType === duplicateName.type && actorType === 'attorney') {
                 alertMiddle = 'A person cannot be named as an attorney twice on the same LPA'
               } else if (actorType === duplicateName.type && actorType === 'replacement attorney') {
@@ -148,7 +148,7 @@
               } else if (actorType === duplicateName.type && actorType === 'person to notify') {
                 alertMiddle = 'A person should not be named as a person to notify twice on the same LPA'
               } else {
-                //  Check the rest of the logic
+                // Check the rest of the logic
                 if (duplicateName.type === 'replacement attorney' || duplicateName.type === 'person to notify') {
                   alertMiddle = 'A ' + duplicateName.type + ' cannot be '
                 } else if (duplicateName.type === 'attorney') {
@@ -187,7 +187,7 @@
               // Display alerts if under 18 or over 100 years old
               // Under 18 and earlier than today. A server side validation check is in place for dob greater than today.
               if (dob > minAge && dob < new Date()) {
-                //  Build up the under 18 warning message
+                // Build up the under 18 warning message
                 let ageWarningAlertStart = 'The ' + actorType + ' is under 18.'
                 let ageWarningAlertMiddle = 'the donor'
 
