@@ -45,7 +45,7 @@ resource "aws_iam_role" "feedbackdb_task_role" {
 
 data "aws_ecr_repository" "lpa_feedbackdb_app" {
   provider = aws.management
-  name     = "online-lpa/feedbackdb_app"
+  name     = "opg-feedback/feedbackdb"
 }
 
 //-----------------------------------------------
@@ -56,7 +56,7 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      "image" : "${data.aws_ecr_repository.lpa_feedbackdb_app.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_feedbackdb_app.repository_url}:latest",
       "mountPoints" : [],
       "name" : "app",
       "portMappings" : [
