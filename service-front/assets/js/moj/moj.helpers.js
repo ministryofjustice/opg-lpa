@@ -260,4 +260,22 @@
 
     return that
   }
+
+  // cribbed from jQuery; see
+  // https://github.com/jquery/jquery/blob/d0ce00cdfa680f1f0c38460bc51ea14079ae8b07/src/offset.js#L65
+  // simplified to use window rather than document.ownerDocument.defaultView
+  // as we don't have iframes
+  moj.Helpers.getOffset = function (element) {
+    try {
+      const rect = element.getBoundingClientRect()
+
+      return {
+        top: rect.top + window.pageYOffset,
+        left: rect.left + window.pageXOffset
+      }
+    } catch (e) {
+      // for browsers which don't support getBoundingClientRect()
+      return { top: 0, left: 0 }
+    }
+  }
 })()

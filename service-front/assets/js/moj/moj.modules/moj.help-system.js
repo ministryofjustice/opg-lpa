@@ -1,202 +1,251 @@
 // Help System module for LPA
-// Dependencies: popup, moj, jQuery
+;(function () {
+  'use strict'
 
-(function (global) {
-  'use strict';
+  window.moj = window.moj || {}
+  const moj = window.moj
+
+  const lpa = window.lpa
 
   // Define the class
-  var HelpSystem = function (options) {
-    this.settings = $.extend({}, this.defaults, options);
-  };
+  const makeHelpSystem = function () {
+    const that = {}
 
-  HelpSystem.prototype = {
-    defaults: {
+    const _settings = {
       guidancePath: 'guide',
       selector: 'a.js-guidance',
       overlayIdent: 'help-system',
       overlaySource: '#content',
       loadingTemplate: lpa.templates['shared.loading-popup'](),
+
       popupOnClose: function () {
-        moj.Modules.HelpSystem.topic = undefined;
+        that.topic = undefined
       }
-    },
+    }
 
-    init: function () {
-      // only load if not on the static page
-      if ($('#help-system').length === 0) {
-        this._cacheEls();
-        this._bindEvents();
+    // helper to scroll popup into view
+    const _scrollIntoView = function () {
+      const scrollElt = document.querySelector('#mask')
+      const targetElt = document.querySelector('#popup-content')
+      const popupElt = document.querySelector('#popup')
 
-        // open popup if hash is present in url
-        var hash = window.location.hash,
-          topic;
-        if (this._isGuidanceHash(hash)) {
-          // on page load parse hash
-          topic = hash.substring(hash.lastIndexOf('/') + 1);
-          // set topic
-          this._selectHelpTopic(topic);
-        }
-      }
-    },
+      scrollElt.scrollTop = moj.Helpers.getOffset(targetElt).top - moj.Helpers.getOffset(popupElt).top
+    }
 
-    _cacheEls: function () {
-      this.html = undefined;
-      this.topic = false;
-      this.source = false;
-    },
-
-    _bindEvents: function () {
-      var self = this;
-
+    const _bindEvents = function () {
       // nav click event
-      $('body').on('click', this.settings.selector, function () {
+      document.body.addEventListener('click', function (e) {
+        // delegated event handler, so check the click target is the
+        // Help link and allow event to be handled normally if not
+        if (!moj.Helpers.matchesSelector(e.target, _settings.selector)) {
+          return true
+        }
+
         // Be a normal link for mobile and go to the non-js guidance page
         if (moj.Helpers.isMobileWidth()) {
-          return true;
+          return true
         }
-        var href = $(this).attr('href'),
-          topic = href.substring(href.lastIndexOf('#') + 1);
+
+        e.preventDefault()
+
+        const href = e.target.getAttribute('href')
+        const topic = href.substring(href.lastIndexOf('#') + 1)
+
         // report the click to ga
-        if (typeof global.ga === 'function') {
-          global.ga('send', 'pageview', href);
+        if (typeof window.ga === 'function') {
+          window.ga('send', 'pageview', href)
         }
 
         // set the current click as the source
-        self.source = $(this);
+        that.source = e.target
+
         // select topic
-        self._selectHelpTopic(topic);
-        return false;
-      });
+        _selectHelpTopic(topic)
+
+        return false
+      })
 
       // listen to hash changes in url
-      $(window).on('hashchange.moj.Modules.HelpSystem', function () {
-        var hash = window.location.hash,
-          topic;
+      window.addEventListener('hashchange', function () {
+        const hash = window.location.hash
 
         // if a change has been made, select the topic
-        if (self._isGuidanceHash(hash)) {
-          topic = hash.substring(hash.lastIndexOf('/') + 1);
-          self._selectHelpTopic(topic);
+        if (_isGuidanceHash(hash)) {
+          const topic = hash.substring(hash.lastIndexOf('/') + 1)
+          _selectHelpTopic(topic)
+        } else if (hash === '') {
+          // if the new hash is empty, clear out the popup
+          moj.Modules.Popup.close()
         }
-        // if the new hash is empty, clear out the popup
-        else if (hash === '') {
-          moj.Modules.Popup.close();
-        }
-      });
-    },
 
-    _isGuidanceHash: function (hash) {
-      return hash !== '' && hash !== '#/' && hash.indexOf(this.settings.guidancePath) !== -1;
-    },
+        return true
+      })
+    }
 
-    _selectHelpTopic: function (topic) {
-      var self = this;
+    const _isGuidanceHash = function (hash) {
+      return hash !== '' && hash !== '#/' && hash.indexOf(_settings.guidancePath) !== -1
+    }
 
+    const _selectHelpTopic = function (topic) {
       // make sure no duplicate calls are fired
-      if (topic !== this.topic) {
+      if (topic !== that.topic) {
         // if the overlay is present, set topic immediately
-        if ($('#popup.help-system').length > 0) {
-          self._setTopic(topic);
+        if (document.querySelectorAll('#popup.help-system').length > 0) {
+          _setTopic(topic)
+
           // On small screens, jump to topic
           if (moj.Helpers.isMobileWidth()) {
-            $('#' + topic)[0].scrollIntoView(true);
+            topic = document.querySelector('#' + topic)
+            if (topic !== null) {
+              topic.scrollIntoView(true)
+            }
           }
         } else {
           // otherwise, load in the overlay first and set in callback
-          this._loadOverlay(topic);
+          _loadOverlay(topic)
         }
       }
-    },
+    }
 
-    _setTopic: function (slug) {
+    const _setTopic = function (slug) {
       // set topic to global obj
-      this.topic = slug;
+      that.topic = slug
 
       // make sure we're not resetting the hash and adding to the history if we don't need to
-      if ('#/' + this.settings.guidancePath + '/' + slug !== window.location.hash) {
-        window.location.hash = '#/' + this.settings.guidancePath + '/' + slug;
+      if ('#/' + _settings.guidancePath + '/' + slug !== window.location.hash) {
+        window.location.hash = '#/' + _settings.guidancePath + '/' + slug
       }
 
-      // Set nav item as active
-      $('.help-navigation a[href$="#' + slug + '"]').parent() // use 'ends with' selector so don't have to define url slug
-        .addClass('active')
-        .siblings('li')
-        .removeClass('active');
+      // Set nav item as active;
+      // use 'ends with' selector so don't have to define url slug
+      const activeLink = document.querySelector('.help-navigation a[href$="#' + slug + '"]')
+
+      if (activeLink !== null) {
+        // get all list elements in the help popup and make them inactive
+        document.querySelectorAll('.help-navigation li[data-role=help-system-link]').forEach(function (elt) {
+          elt.classList.remove('active')
+        })
+
+        activeLink.parentNode.classList.add('active')
+      }
 
       // Show associated content
-      $('#' + slug)
-        .removeClass('hidden')
-        .siblings('article')
-        .addClass('hidden');
+      const helpTextElt = document.querySelector('#' + slug)
+      if (helpTextElt !== null) {
+        // hide other help topics
+        document.querySelectorAll('#help-sections article').forEach(function (elt) {
+          elt.classList.add('hidden')
+        })
+
+        helpTextElt.classList.remove('hidden')
+      }
 
       // Associated back link visibility
-      $('.link-back')
-        .addClass('hidden');
+      const activeLinkBack = document.querySelector('#' + slug + ' + .link-back')
+      if (activeLinkBack !== null) {
+        document.querySelectorAll('.link-back').forEach(function (elt) {
+          elt.classList.add('hidden')
+        })
 
-      $('#' + slug + ' + .link-back')
-        .removeClass('hidden');
+        activeLinkBack.classList.remove('hidden')
+      }
 
       // Scroll back to top of help
-      $('#mask').scrollTop(0);
+      _scrollIntoView()
 
-      // shift focus to the help content
-      $('#help-sections').focus();
-    },
+      // Shift focus to the help content
+      const helpContentElt = document.querySelector('#help-sections')
+      if (helpContentElt !== null) {
+        helpContentElt.focus()
+      }
+    }
 
-    _getCachedContent: function () {
-      var html = undefined;
+    const _getCachedContent = function () {
+      let html
 
       // try from this class
-      if (typeof this.html !== 'undefined') {
-        html = this.html;
+      if (typeof that.html !== 'undefined') {
+        html = that.html
       }
 
       return {
-        html: html,
-      };
-    },
+        html
+      }
+    }
 
-    _loadOverlay: function (topic) {
-      var self = this;
-      var cached = this._getCachedContent();
-      var html = cached.html;
+    const _loadOverlay = function (topic) {
+      const cached = _getCachedContent()
+      const html = cached.html
 
       // if content has been cached on this object, load it straight in
       if (html !== undefined) {
         moj.Modules.Popup.open(html, {
-          ident: this.settings.overlayIdent,
-          source: this.source,
+          ident: _settings.overlayIdent,
+          source: that.source,
           beforeOpen: function () {
             // set topic
-            self._setTopic(topic);
+            _setTopic(topic)
           },
-          onClose: this.settings.popupOnClose
-        });
-      }
-      // otherwise, AJAX it in and then switch the content in the popup
-      else {
-        // load overlay
-        moj.Modules.Popup.open(this.settings.loadingTemplate, {
-          ident: self.settings.overlayIdent,
-          source: this.source,
+          onClose: _settings.popupOnClose
+        })
+      } else {
+        // otherwise, AJAX it in and then switch the content in the popup
+        moj.Modules.Popup.open(_settings.loadingTemplate, {
+          ident: _settings.overlayIdent,
+          source: that.source,
           beforeOpen: function () {
-            var url = window.cacheBusting.url('/' + self.settings.guidancePath);
+            const url = window.cacheBusting.url('/' + _settings.guidancePath)
 
-            $('#popup-content').load(url, function (html) {
-              self.html = html;
+            moj.Helpers.ajax({
+              url,
 
-              // set the topic now that all content has loaded
-              self._setTopic(topic);
+              success: function (html) {
+                const elt = document.querySelector('#popup-content')
 
-              moj.Modules.Popup.redoLoopedTabKeys();
-            });
+                if (elt !== null) {
+                  elt.innerHTML = html
+                }
+
+                that.html = html
+
+                // set the topic now that all content has loaded
+                _setTopic(topic)
+
+                moj.Modules.Popup.redoLoopedTabKeys()
+              }
+            })
           },
-          onClose: this.settings.popupOnClose
-        });
+          onClose: _settings.popupOnClose
+        })
       }
     }
-  };
+
+    that.init = function () {
+      // only load if not on the static page
+      if (document.querySelectorAll('#help-system').length === 0) {
+        // cache elements
+        that.html = undefined
+        that.topic = false
+        that.source = false
+
+        _bindEvents()
+
+        // open popup if hash is present in url
+        const hash = window.location.hash
+
+        if (_isGuidanceHash(hash)) {
+          // on page load parse hash
+          const topic = hash.substring(hash.lastIndexOf('/') + 1)
+
+          // set topic
+          _selectHelpTopic(topic)
+        }
+      }
+    }
+
+    return that
+  }
 
   // Add module to MOJ namespace
-  moj.Modules.HelpSystem = new HelpSystem();
-}(window));
+  moj.Modules.HelpSystem = makeHelpSystem()
+}())

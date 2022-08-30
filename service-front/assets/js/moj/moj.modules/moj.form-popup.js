@@ -11,33 +11,13 @@
   // spinner shown next to submit button on the popup
   let formSpinner = null
 
-  // cribbed from jQuery; see
-  // https://github.com/jquery/jquery/blob/d0ce00cdfa680f1f0c38460bc51ea14079ae8b07/src/offset.js#L65
-  // simplified to use window rather than document.ownerDocument.defaultView
-  // as we don't have iframes
-  const getOffset = function (element) {
-    try {
-      const rect = element.getBoundingClientRect()
-
-      return {
-        top: rect.top + window.pageYOffset,
-        left: rect.left + window.pageXOffset
-      }
-    } catch (e) {
-      // for browsers which don't support getBoundingClientRect()
-      return { top: 0, left: 0 }
-    }
-  }
-
   // helper to scroll popup into view
   const scrollIntoView = function () {
-    const targetElt = document.querySelector('#popup-content')
     const scrollElt = document.querySelector('#mask')
+    const targetElt = document.querySelector('#popup-content')
     const popupElt = document.querySelector('#popup')
 
-    const topPos = getOffset(targetElt).top - getOffset(popupElt).top
-
-    scrollElt.scrollTop = topPos
+    scrollElt.scrollTop = moj.Helpers.getOffset(targetElt).top - moj.Helpers.getOffset(popupElt).top
 
     // put focus into the first user input inside the target element
     const inputs = targetElt.querySelectorAll(
