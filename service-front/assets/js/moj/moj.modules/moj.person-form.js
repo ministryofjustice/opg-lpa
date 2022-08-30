@@ -85,43 +85,53 @@
         const currentDate = new Date()
         const minAge = new Date(currentDate.getUTCFullYear() - 18, currentDate.getUTCMonth(), currentDate.getUTCDate())
         const maxAge = new Date(currentDate.getUTCFullYear() - 100, currentDate.getUTCMonth(), currentDate.getUTCDate())
-        const $firstName = $('input[name="name-first"]', $form)
-        const $lastName = $('input[name="name-last"]', $form)
+
+        const firstName = form.querySelector('input[name="name-first"]')
+        const firstNameValue = (firstName === null ? null : firstName.value.toLocaleLowerCase().trim())
+
+        const lastName = form.querySelector('input[name="name-last"]')
+        const lastNameValue = (lastName === null ? null : lastName.value.toLocaleLowerCase().trim())
 
         let duplicateName = null
 
-        if (!$target.hasClass('confirmation-validation')) {
+        if (!e.target.classList.contains('confirmation-validation')) {
           // If the input changed is not a confirmation tick box, then do the form checks...
-          const actorType = $form.data('actor-type')
+          const actorType = form.getAttribute('data-actor-type')
 
           // Are we editing the name fields?
-          if (($target.attr('name') === 'name-first') || ($target.attr('name') === 'name-last')) {
+          if (
+            e.target.getAttribute('name') === 'name-first' ||
+            e.target.getAttribute('name') === 'name-last'
+          ) {
             // Check for duplicate names
-            const actorNames = $form.data('actor-names')
+            const actorNames = JSON.parse(form.getAttribute('data-actor-names'))
 
             let item
-            if ((typeof actorNames !== 'undefined') && actorNames.length) {
+            if (actorNames !== null && actorNames.length > 0) {
               for (let loop = 0; loop < actorNames.length; loop++) {
                 item = actorNames[loop]
 
-                if ($firstName.val().toLocaleLowerCase().trim() === item.firstname.toLocaleLowerCase()) {
-                  if ($lastName.val().toLocaleLowerCase().trim() === item.lastname.toLocaleLowerCase()) {
-                    duplicateName = item
-                    break
-                  }
+                if (
+                  firstNameValue === item.firstname.toLocaleLowerCase() &&
+                  lastNameValue === item.lastname.toLocaleLowerCase()
+                ) {
+                  duplicateName = item
+                  break
                 }
               }
             }
 
             // Cleanup
-            $('.js-duplication-alert').remove()
+            form.querySelectorAll('.js-duplication-alert').forEach(function (elt) {
+              elt.parentNode.removeChild(elt)
+            })
 
             // Display alert if duplicate
             if (duplicateName !== null) {
               //  Construct the correct starting phrase for the warning
               let alertStart = 'The ' + duplicateName.type + '\'s name is also '
 
-              if ($.inArray(duplicateName.type, ['replacement attorney', 'person to notify']) > -1) {
+              if (duplicateName.type === 'replacement attorney' || duplicateName.type === 'person to notify') {
                 alertStart = 'There is also a ' + duplicateName.type + ' called '
               } else if (duplicateName.type === 'attorney') {
                 alertStart = 'There is also an ' + duplicateName.type + ' called '
@@ -139,13 +149,13 @@
                 alertMiddle = 'A person should not be named as a person to notify twice on the same LPA'
               } else {
                 //  Check the rest of the logic
-                if ($.inArray(duplicateName.type, ['replacement attorney', 'person to notify']) > -1) {
+                if (duplicateName.type === 'replacement attorney' || duplicateName.type === 'person to notify') {
                   alertMiddle = 'A ' + duplicateName.type + ' cannot be '
                 } else if (duplicateName.type === 'attorney') {
                   alertMiddle = 'An ' + duplicateName.type + ' cannot be '
                 }
 
-                if ($.inArray(actorType, ['replacement attorney', 'person to notify']) > -1) {
+                if (actorType === 'replacement attorney' || actorType === 'person to notify') {
                   alertMiddle += 'a ' + actorType
                 } else if (actorType === 'attorney') {
                   alertMiddle += 'an ' + actorType
