@@ -52,14 +52,6 @@ pr_build: &pr_build
         unit_test: false
         filters: { branches: { ignore: [main] } }
 
-    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-        name: feedbackdb_docker_build
-        ecr_repository_name_prefix: online-lpa/feedbackdb
-        service_path: service-feedbackdb
-        build_web: false
-        unit_test: false
-        filters: { branches: { ignore: [main] } }
-
     - build_containers_and_push_to_ecr/docker_build_lambda_image:
         name: perfplat-lambda-docker-worker-build
         lambda_name: perfplat-worker
@@ -166,7 +158,6 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
-            feedbackdb_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build
           ]
@@ -181,7 +172,6 @@ pr_build: &pr_build
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
-            feedbackdb_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
             dev_environment_apply_terraform
@@ -275,14 +265,6 @@ path_to_live: &path_to_live
         filters: { branches: { only: [main] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-        name: feedbackdb_docker_build
-        ecr_repository_name_prefix: online-lpa/feedbackdb
-        service_path: service-feedbackdb
-        build_web: false
-        unit_test: false
-        filters: { branches: { only: [main] } }
-
-    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: flask_docker_build
         ecr_repository_name_prefix: online-lpa/front_v2
         service_path: service-front-v2
@@ -363,7 +345,6 @@ path_to_live: &path_to_live
             api_docker_build,
             pdf_docker_build,
             seeding_docker_build,
-            feedbackdb_docker_build,
             flask_docker_build,
             perfplat-lambda-docker-worker-build,
           ]
