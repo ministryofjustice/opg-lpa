@@ -1,52 +1,64 @@
-// Fees module for LPA
-// Dependencies: moj, jQuery
+// Password module for LPA
+;(function () {
+  window.moj = window.moj || {}
+  const moj = window.moj
 
-(function() {
-    // Applies to /login /signup and /user/change-password
-    // on change password page there are two show / hide links
-    moj.Modules.PasswordHide = {
+  // Applies to /login /signup and /user/change-password
+  // on change password page there are two show / hide links
+  moj.Modules.PasswordHide = {
+    init: function () {
+      const links = document.querySelectorAll('.js-showHidePassword')
+      const skipConfirmPasswords = document.querySelectorAll('#js-skipConfirmPassword')
+      const pwdConfirms = document.querySelectorAll('#password_confirm')
 
-        init: function () {
-            this.hookupShowPasswordToggles();
-        },
+      // By default ensure that the confirm password hidden validation
+      // skip value is set to false and show the link
+      skipConfirmPasswords.forEach(function (skipConfirmPassword) {
+        skipConfirmPassword.value = '0'
+      })
 
-        hookupShowPasswordToggles: function() {
-            var link = $('.js-showHidePassword');
-            var skipConfirmPassword = $('#js-skipConfirmPassword');
-            var pwdConfirmParent = $('#password_confirm').parent();
+      links.forEach(function (link) {
+        // The show/hide password links are themselves hidden
+        // by default so they're not available for non-JS - show them now
+        link.classList.remove('hidden')
 
-            //  The show/hide password links are themselves hidden by default so they're not available for non-JS - show them now
-            link.removeClass('hidden');
+        link.addEventListener('click', function (e) {
+          e.preventDefault()
 
-            //  By default ensure that the confirm password hidden validation skip value is set to false and show the link
-            skipConfirmPassword.val(0);
+          const pwd = document.querySelector('#' + link.getAttribute('data-for'))
 
-            link.click(function() {
-                var pwd = $('#' + $(this).attr('data-for'));
-                var alsoHideConfirm = $(this).attr('data-alsoHideConfirm');
+          // Determine if we are showing or hiding the password confirm input
+          const isShowing = (pwd !== null && pwd.getAttribute('type') === 'password')
 
-                //  Determine if we are showing or hiding the password confirm input
-                var isShowing = (pwd.attr('type') === "password");
+          const alsoHideConfirm = link.getAttribute('data-alsoHideConfirm')
 
-                if (isShowing) {
-                    if (alsoHideConfirm) {
-                        pwdConfirmParent.addClass('hidden');
-                        skipConfirmPassword.val(1);
-                    }
-                } else {
-                    if (alsoHideConfirm) {
-                        pwdConfirmParent.removeClass('hidden');
-                        skipConfirmPassword.val(0);
-                    }
-                }
+          if (alsoHideConfirm) {
+            if (isShowing) {
+              pwdConfirms.forEach(function (pwdConfirm) {
+                pwdConfirm.parentNode.classList.add('hidden')
+              })
 
-                //  Change the input values as required
-                pwd.attr('type', (isShowing ? 'text' : 'password'));
-                $(this).html(isShowing ? 'Hide password' : 'Show password');
+              skipConfirmPasswords.forEach(function (skipConfirmPassword) {
+                skipConfirmPassword.value = '1'
+              })
+            } else {
+              pwdConfirms.forEach(function (pwdConfirm) {
+                pwdConfirm.parentNode.classList.remove('hidden')
+              })
 
-                return false;
-            });
-        }
-    };
+              skipConfirmPasswords.forEach(function (skipConfirmPassword) {
+                skipConfirmPassword.value = '0'
+              })
+            }
+          }
 
-})();
+          // Change the input values as required
+          pwd.setAttribute('type', (isShowing ? 'text' : 'password'))
+          link.innerHTML = (isShowing ? 'Hide password' : 'Show password')
+
+          return false
+        })
+      })
+    }
+  }
+})()
