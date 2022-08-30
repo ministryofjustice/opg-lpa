@@ -56,7 +56,7 @@
     return matches.call(element, selector)
   }
 
-  // synthesise an event on an event; only works for simple events for now
+  // synthesise an event on an element; only works for simple events for now
   // eventType: string like 'click' or 'submit'
   // element: DOM node; if null, nothing happens
   moj.Helpers.trigger = function (eventType, element) {
