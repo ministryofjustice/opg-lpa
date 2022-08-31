@@ -14,7 +14,7 @@ NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-va
 # This user is in the test data seeded into the system.
 ADMIN_USERS := "seeded_test_user@digital.justice.gov.uk"
 
-COMPOSER_VERSION := "latest"
+COMPOSER_VERSION := "2.4.1"
 
 .PHONY: all
 all:
