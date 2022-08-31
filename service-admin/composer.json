@@ -12,7 +12,10 @@
         }
     ],
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "laminas/laminas-component-installer": true
+        }
     },
     "require": {
         "php": "^8.1",
