@@ -65,9 +65,26 @@
     openForm: function (e) {
       e.preventDefault()
 
-      // if our clicked element is not a link traverse up the dom to find the parent that is one.
-      const source = e.target
-      const href = e.target.getAttribute('href')
+      let source = e.target
+      let foundLink = false
+
+      // traverse up the DOM to find the parent link if the target isn't a link
+      // (this happens if a link contains a span element, for example)
+      while (!foundLink) {
+        if (source.tagName === 'A') {
+          foundLink = true
+          break
+        }
+
+        source = source.parentNode
+
+        // we've gone too far...
+        if (source === document.body) {
+          return false
+        }
+      }
+
+      const href = source.getAttribute('href')
 
       // If this link is disabled then stop here
       if (!source.classList.contains('disabled')) {
