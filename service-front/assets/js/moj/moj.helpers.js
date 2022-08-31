@@ -122,6 +122,8 @@
   moj.Helpers.ajax = function (opts, r) {
     opts = opts || {}
 
+    opts.error = opts.error || console.error
+
     r = r || new XMLHttpRequest()
 
     if (opts.timeout) {
