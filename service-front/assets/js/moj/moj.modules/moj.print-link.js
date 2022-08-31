@@ -1,23 +1,21 @@
 // Print link module for LPA
-// Dependencies: moj, jQuery
+;(function () {
+  'use strict'
 
-(function() {
-    'use strict';
+  window.moj = window.moj || {}
+  const moj = window.moj
 
-    moj.Modules.PrintLink = {
-
-        init: function () {
-            this.hookupPrintLinks();
-        },
-
-        hookupPrintLinks: function() {
-            $('.js-print').on('click', function(){
-                $('body').addClass('summary-print');
-                window.print();
-                $('body').removeClass('summary-print');
-                return false;
-            });
-        }
-    };
-
-})();
+  moj.Modules.PrintLink = {
+    init: function () {
+      document.querySelectorAll('.js-print').forEach(function (elt) {
+        elt.addEventListener('click', function (e) {
+          e.preventDefault()
+          document.body.classList.add('summary-print')
+          window.print()
+          document.body.classList.remove('summary-print')
+          return false
+        })
+      })
+    }
+  }
+})()
