@@ -1,53 +1,56 @@
 // Disable link after use module for LPA
-// Dependencies: moj, jQuery
+;(function () {
+  'use strict'
 
-(function () {
-    'use strict';
+  window.moj = window.moj || {}
+  const moj = window.moj
 
-    // Define the class
-    var SingleUse = function (options) {
-        this.settings = {
-            selector: '.js-single-use'
-        };
-    };
+  // Define the class
+  const SingleUse = function () {
+    this.settings = {
+      selector: '.js-single-use'
+    }
+  }
 
-    SingleUse.prototype = {
-        init: function () {
-            var useHandler = this.useHandler.bind(this);
-            $('body').on('click', this.settings.selector, useHandler);
-            $('body').on('submit', this.settings.selector, useHandler);
-        },
+  SingleUse.prototype = {
+    init: function () {
+      const useHandler = this.useHandler.bind(this)
+      document.body.addEventListener('click', useHandler)
+      document.body.addEventListener('submit', useHandler)
+    },
 
-        noop: function (e) {
-            e.preventDefault();
-            return false;
-        },
+    noop: function (e) {
+      e.preventDefault()
+      return false
+    },
 
-        useHandler: function (e) {
-            var target = $(e.target);
+    useHandler: function (e) {
+      const target = e.target
 
-            // When clicked, we prevent the event firing or percolating from now on
-            target.on('click', this.noop);
-            target.on('submit', this.noop);
+      if (!moj.Helpers.matchesSelector(target, this.settings.selector)) {
+        return false
+      }
 
-            // Disable the link or form submit button
-            var tagName = target.prop('tagName');
+      // When clicked, we prevent the event firing or percolating from now on
+      target.addEventListener('click', this.noop)
+      target.addEventListener('submit', this.noop)
 
-            if (tagName === 'A') {
-                // Disable link
-                target.attr('disabled', 'disabled');
-            }
-            else if (tagName === 'FORM') {
-                // Disable submit button(s)
-                target.find('input[type=submit]')
-                    .attr('disabled', 'disabled')
-                    .on('click', this.noop);
-            }
+      // Disable the link or form submit button
+      if (target.tagName === 'A') {
+        // Disable link
+        target.setAttribute('disabled', 'disabled')
+      } else if (target.tagName === 'FORM') {
+        // Disable submit buttons
+        target.querySelectorAll('input[type=submit]').forEach(function (elt) {
+          elt.setAttribute('disabled', 'disabled')
+          elt.addEventListener('click', this.noop)
+        })
+      }
 
-            return true;
-        }
-    };
+      return true
+    }
+  }
 
-    // Add module to MOJ namespace
-    moj.Modules.SingleUse = new SingleUse();
-}());
+  // Add module to MOJ namespace
+  moj.Modules.SingleUse = new SingleUse()
+}())
