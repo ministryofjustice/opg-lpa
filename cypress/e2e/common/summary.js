@@ -1,4 +1,4 @@
-import { When } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then("I see the following summary information", (dataTable) => {
     var rawTable = dataTable.rawTable;

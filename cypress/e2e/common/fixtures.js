@@ -1,6 +1,6 @@
 const {
   Then, After, Before,
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 
 // For tagged Scenarios, clean up lpa test fixture used by the scenario
 // but only if we're not running under CI. In CI we leave it intact for

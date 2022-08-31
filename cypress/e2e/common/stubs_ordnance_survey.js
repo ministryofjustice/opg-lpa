@@ -4,7 +4,7 @@
 
 const {
   Then,
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 
 // Ordance Survey lookup with real postcodes
 Then(`Ordnance Survey postcode lookup responses are stubbed out for good postcode B1 1TF`, () => {

@@ -1,5 +1,5 @@
-import { Given } from "cypress-cucumber-preprocessor/steps";
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
 
-And(`I set cloned to true`, () => {
+Given(`I set cloned to true`, () => {
     Cypress.env("clonedLpa", true);
 })

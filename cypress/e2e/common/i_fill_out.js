@@ -1,4 +1,4 @@
-import { When } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 When(`I type {string} into {string}`, (value, id) => {
         cy.get("[data-cy=" + id + "]").type(value);

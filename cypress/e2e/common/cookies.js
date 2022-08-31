@@ -1,4 +1,4 @@
-const { Then } = require("cypress-cucumber-preprocessor/steps");
+const { Then } = require("@badeball/cypress-cucumber-preprocessor");
 
 Then('analytics cookies are set', () => {
   cy.getCookie('_ga').should('not.be.null');

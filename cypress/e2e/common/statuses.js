@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then('the LPA with ID {string} should display with status {string}', (lpaId, expectedStatus) => {
     // Define a selector which only gets the element once the JS has finished

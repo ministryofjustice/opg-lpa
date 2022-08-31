@@ -1,4 +1,4 @@
-import { Given, Then } from "cypress-cucumber-preprocessor/steps";
+import { Given, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Given(`I visit {string}`, (url) => {
     // note that cy.visitWithChecks will follow redirects, and require the status code to be 2xx after that

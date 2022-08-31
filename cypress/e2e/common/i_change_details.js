@@ -1,4 +1,4 @@
-import { When } from "cypress-cucumber-preprocessor/steps";
+import { When } from "@badeball/cypress-cucumber-preprocessor";
 
 When("I try to change email address with a mismatch", () => {
         cy.get("[data-cy=password_current]").clear().type(Cypress.env('seeded_password'));

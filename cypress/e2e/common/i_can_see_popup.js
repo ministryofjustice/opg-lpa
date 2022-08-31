@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then(`I can see popup`, () => {
     // in ideal world we should look for data-cy=popup but this is not simple to implement

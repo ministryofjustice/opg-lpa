@@ -1,6 +1,6 @@
 const {
   After,
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 
 // after loading a page, check that any links with target="_blank" also
 // have rel="noreferrer noopener"; this is to prevent reverse tabnapping and
