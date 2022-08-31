@@ -1,4 +1,4 @@
-import { When } from "cypress-cucumber-preprocessor/steps";
+import { When } from "@badeball/cypress-cucumber-preprocessor";
 
 When(`I log in as {string} test user`, (name) => {
     let user = Cypress.env(name + "-user");
@@ -19,8 +19,11 @@ When(`I log in as second seeded user`, () => {
 })
 
 When(`I log in to admin`, () => {
-    logIn(Cypress.env('seeded_email'), Cypress.env('seeded_password'),
-        Cypress.env('adminUrl') + '/sign-in');
+    logIn(
+        Cypress.env('seeded_email'),
+        Cypress.env('seeded_password'),
+        Cypress.env('adminUrl') + '/sign-in'
+    );
 })
 
 When(`I log in as standard test user`, () => {

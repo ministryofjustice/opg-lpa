@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then('I disable stylesheets', () => {
     // remove all stylesheets from a page to enable it to be tested
