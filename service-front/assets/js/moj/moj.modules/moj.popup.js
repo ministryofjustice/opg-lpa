@@ -8,19 +8,9 @@
   const lpa = window.lpa
 
   // Define the class
-  const Popup = function (options) {
-    this._cacheEls()
-  }
+  const Popup = function (options) {}
 
   Popup.prototype = {
-    // top level event handlers
-    keydownListener: null,
-    clickListener: null,
-
-    // tabbable elements
-    first: null,
-    last: null,
-
     settings: {
       source: document.querySelector('#content'),
       ident: null,
@@ -33,7 +23,42 @@
       onClose: null
     },
 
-    init: function () {},
+    // tabbable elements
+    _first: null,
+    _last: null,
+
+    // top level event handlers
+    _keydownCloseHandler: function (e) {
+      if (e.which === 27) {
+        this.close()
+      }
+    },
+
+    _clickCloseHandler: function (e) {
+      if (!moj.Helpers.matchesSelector(e.target, '.js-popup-close, .js-cancel')) {
+        return true
+      }
+
+      e.preventDefault()
+      this.close()
+
+      return false
+    },
+
+    _shiftTabHandler: function (e) {
+      if (e.key === 'Tab' && e.shiftKey && this.last !== null) {
+        e.preventDefault()
+        this._last.focus()
+      }
+    },
+
+    _tabHandler: function (e) {
+      // on tab set focus
+      if (e.key === 'Tab' && !e.shiftKey && this.first !== null) {
+        e.preventDefault()
+        this._first.focus()
+      }
+    },
 
     _cacheEls: function () {
       this.mask = moj.Helpers.strToHtml(this.settings.maskTemplate)
@@ -47,29 +72,39 @@
     },
 
     _bindEvents: function () {
-      const self = this
-
-      this.keydownListener = document.body.addEventListener('keydown', function (e) {
-        if (e.which === 27) {
-          self.close()
-        }
-      })
-
-      this.clickListener = this.popup.addEventListener('click', function (e) {
-        if (!moj.Helpers.matchesSelector(e.target, '.js-popup-close, .js-cancel')) {
-          return true
-        }
-
-        e.preventDefault()
-        self.close()
-
-        return false
-      })
+      document.body.addEventListener('keydown', this._keydownCloseHandler)
+      this.popup.addEventListener('click', this._clickCloseHandler)
     },
 
     _unbindEvents: function () {
-      document.body.removeEventListener('keydown', this.keydownListener)
-      this.popup.removeEventListener('click', this.clickListener)
+      document.body.removeEventListener('keydown', this._keydownCloseHandler)
+      this.popup.removeEventListener('click', this._clickCloseHandler)
+    },
+
+    // ensure that tab presses are contained within the popup
+    _loopTabKeys: function (wrap) {
+      const tabbable = 'a, area, button, input, object, select, textarea, [tabindex]'
+
+      const tabbableElts = wrap.querySelectorAll(tabbable)
+      if (tabbableElts.length > 0) {
+        this._first = tabbableElts[0]
+        this._first.addEventListener('keydown', this._shiftTabHandler)
+
+        this._last = tabbableElts[tabbableElts.length - 1]
+        this._last.addEventListener('keydown', this._tabHandler)
+      }
+    },
+
+    // Public API
+    init: function () {
+      const self = this
+
+      this._clickCloseHandler = this._clickCloseHandler.bind(self)
+      this._keydownCloseHandler = this._keydownCloseHandler.bind(self)
+      this._shiftTabHandler = this._shiftTabHandler.bind(self)
+      this._tabHandler = this._tabHandler.bind(self)
+
+      this._cacheEls()
     },
 
     open: function (html, opts) {
@@ -86,7 +121,7 @@
         elt.classList.add('print-hidden')
       })
 
-      // Join it all together
+      // append DOM elements to mask
       this.content.innerHTML = html
 
       this.popup.classList.add('popup')
@@ -99,6 +134,7 @@
       // bind event handlers
       this._bindEvents()
 
+      // append mask to body
       document.body.appendChild(this.mask)
 
       // callback func
@@ -106,13 +142,13 @@
         this.settings.beforeOpen()
       }
 
-      // prevent tab navigation outside the lightbox
-      this.loopTabKeys(this.popup)
+      // prevent tab navigation outside the popup
+      this.redoLoopedTabKeys(this.popup)
 
       // Fade in the mask
       this.$mask.fadeTo(200, 1)
 
-      // Center and phase in the popup
+      // Fade in the popup (starts while mask is still fading in)
       this.$popup.delay(100).fadeIn(200, function () {
         const heading = self.popup.querySelector('h2')
         if (heading !== null) {
@@ -133,9 +169,8 @@
 
     close: function () {
       // make sure there is a popup to close
-      if (this.isOpen()) {
+      if (document.querySelectorAll('#popup').length > 0) {
         const self = this
-        const scrollPosition = $(window).scrollTop()
 
         self.$popup.fadeOut(400, function () {
           self.$mask.fadeOut(200, function () {
@@ -156,10 +191,9 @@
             }
 
             // Remove the popup from the DOM
-            self.$mask.remove()
+            self.mask = self.mask.parentNode.removeChild(self.mask)
 
             // re-enable body scroll
-            $(window).scrollTop(scrollPosition)
             document.querySelector('html').classList.remove('noscroll')
 
             // unhide main contents from print layout
@@ -168,55 +202,22 @@
             })
 
             // unbind event handlers
-            self._unbindEvents.bind(self)()
+            self._unbindEvents()
           })
         })
       }
     },
 
-    tabFocusesOn: function (e) {
-      // on tab set focus
-      if (e.key === 'Tab' && !e.shiftKey && this.first !== null) {
-        e.preventDefault()
-        this.first.focus()
-      }
-    },
-
-    reverseTabFocusesOn: function (e) {
-      // on tab with shift held set focus
-      if (e.key === 'Tab' && e.shiftKey && this.last !== null) {
-        e.preventDefault()
-        this.last.focus()
-      }
-    },
-
-    loopTabKeys: function (wrap) {
-      const tabbable = 'a, area, button, input, object, select, textarea, [tabindex]'
-
-      const tabbableElts = wrap.querySelectorAll(tabbable)
-      if (tabbableElts.length > 0) {
-        this.first = tabbableElts[0]
-        this.first.addEventListener('keydown', this.reverseTabFocusesOn.bind(this))
-
-        this.last = tabbableElts[tabbableElts.length - 1]
-        this.last.addEventListener('keydown', this.tabFocusesOn.bind(this))
-      }
-    },
-
     redoLoopedTabKeys: function () {
-      if (this.first !== null) {
-        this.first.removeEventListener('keydown', this.reverseTabFocusesOn.bind(this))
+      if (this._first !== null) {
+        this._first.removeEventListener('keydown', this._shiftTabHandler)
       }
 
-      if (this.last !== null) {
-        this.last.removeEventListener('keydown', this.tabFocusesOn.bind(this))
+      if (this._last !== null) {
+        this._last.removeEventListener('keydown', this._tabHandler)
       }
 
-      this.loopTabKeys(this.popup)
-    },
-
-    isOpen: function () {
-      return document.querySelectorAll('#popup').length > 0
+      this._loopTabKeys(this.popup)
     }
   }
 
