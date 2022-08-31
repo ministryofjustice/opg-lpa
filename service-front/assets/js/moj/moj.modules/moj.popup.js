@@ -8,10 +8,10 @@
   const lpa = window.lpa
 
   // Define the class
-  const Popup = function (options) {}
+  const makePopup = function () {
+    const that = {}
 
-  Popup.prototype = {
-    settings: {
+    let _settings = {
       source: document.querySelector('#content'),
       ident: null,
       maskTemplate: lpa.templates['popup.mask'](),
@@ -21,91 +21,82 @@
       beforeOpen: null,
       onOpen: null,
       onClose: null
-    },
+    }
 
-    // tabbable elements
-    _first: null,
-    _last: null,
+    let _first = null
+    let _last = null
 
-    // top level event handlers
-    _keydownCloseHandler: function (e) {
+    const _keydownCloseHandler = function (e) {
+      e.preventDefault()
+
       if (e.which === 27) {
-        this.close()
+        that.close()
       }
-    },
 
-    _clickCloseHandler: function (e) {
+      return false
+    }
+
+    const _clickCloseHandler = function (e) {
       if (!moj.Helpers.matchesSelector(e.target, '.js-popup-close, .js-cancel')) {
         return true
       }
 
       e.preventDefault()
-      this.close()
-
+      that.close()
       return false
-    },
+    }
 
-    _shiftTabHandler: function (e) {
-      if (e.key === 'Tab' && e.shiftKey && this.last !== null) {
+    const _shiftTabHandler = function (e) {
+      if (e.key === 'Tab' && e.shiftKey && _last !== null) {
         e.preventDefault()
-        this._last.focus()
+        _last.focus()
       }
-    },
+    }
 
-    _tabHandler: function (e) {
+    const _tabHandler = function (e) {
       // on tab set focus
-      if (e.key === 'Tab' && !e.shiftKey && this.first !== null) {
+      if (e.key === 'Tab' && !e.shiftKey && _first !== null) {
         e.preventDefault()
-        this._first.focus()
+        _first.focus()
       }
-    },
+    }
 
-    _bindEvents: function () {
-      document.body.addEventListener('keydown', this._keydownCloseHandler)
-      this.popup.addEventListener('click', this._clickCloseHandler)
-    },
+    const _bindEvents = function () {
+      document.body.addEventListener('keydown', _keydownCloseHandler)
+      that.popup.addEventListener('click', _clickCloseHandler)
+    }
 
-    _unbindEvents: function () {
-      document.body.removeEventListener('keydown', this._keydownCloseHandler)
-      this.popup.removeEventListener('click', this._clickCloseHandler)
-    },
+    const _unbindEvents = function () {
+      document.body.removeEventListener('keydown', _keydownCloseHandler)
+      that.popup.removeEventListener('click', _clickCloseHandler)
+    }
 
     // ensure that tab presses are contained within the popup
-    _loopTabKeys: function (wrap) {
+    const _loopTabKeys = function (wrap) {
       const tabbable = 'a, area, button, input, object, select, textarea, [tabindex]'
 
       const tabbableElts = wrap.querySelectorAll(tabbable)
       if (tabbableElts.length > 0) {
-        this._first = tabbableElts[0]
-        this._first.addEventListener('keydown', this._shiftTabHandler)
+        _first = tabbableElts[0]
+        _first.addEventListener('keydown', _shiftTabHandler)
 
-        this._last = tabbableElts[tabbableElts.length - 1]
-        this._last.addEventListener('keydown', this._tabHandler)
+        _last = tabbableElts[tabbableElts.length - 1]
+        _last.addEventListener('keydown', _tabHandler)
       }
-    },
+    }
 
     // Public API
-    init: function () {
-      const self = this
-
-      // event handlers
-      this._clickCloseHandler = this._clickCloseHandler.bind(self)
-      this._keydownCloseHandler = this._keydownCloseHandler.bind(self)
-      this._shiftTabHandler = this._shiftTabHandler.bind(self)
-      this._tabHandler = this._tabHandler.bind(self)
-
+    that.init = function () {
       // cache elements
-      this.mask = moj.Helpers.strToHtml(this.settings.maskTemplate)
-      this.popup = moj.Helpers.strToHtml(this.settings.containerTemplate)
-      this.content = moj.Helpers.strToHtml(this.settings.contentTemplate)
-      this.closeButton = moj.Helpers.strToHtml(this.settings.closeTemplate)
-    },
+      that.mask = moj.Helpers.strToHtml(_settings.maskTemplate)
+      that.popup = moj.Helpers.strToHtml(_settings.containerTemplate)
+      that.content = moj.Helpers.strToHtml(_settings.contentTemplate)
+      that.closeButton = moj.Helpers.strToHtml(_settings.closeTemplate)
+    }
 
-    open: function (html, opts) {
-      const self = this
-
-      // combine opts with settings for local settings
-      this.settings = moj.Helpers.extend(this.settings, opts)
+    that.open = function (html, opts) {
+      // combine opts with _settings for local _settings
+      _settings = moj.Helpers.extend(_settings, opts)
 
       // disable body scroll
       document.querySelector('html').classList.add('noscroll')
@@ -116,66 +107,64 @@
       })
 
       // append DOM elements to mask
-      this.content.innerHTML = html
+      that.content.innerHTML = html
 
-      this.popup.classList.add('popup')
-      this.popup.classList.add(this.settings.ident)
-      this.popup.appendChild(this.closeButton)
-      this.popup.appendChild(this.content)
+      that.popup.classList.add('popup')
+      that.popup.classList.add(_settings.ident)
+      that.popup.appendChild(that.closeButton)
+      that.popup.appendChild(that.content)
 
-      this.mask.appendChild(this.popup)
+      that.mask.appendChild(that.popup)
 
       // bind event handlers
-      this._bindEvents()
+      _bindEvents()
 
       // append mask to body
-      document.body.appendChild(this.mask)
+      document.body.appendChild(that.mask)
 
       // callback func
-      if (typeof this.settings.beforeOpen === 'function') {
-        this.settings.beforeOpen()
+      if (typeof _settings.beforeOpen === 'function') {
+        _settings.beforeOpen()
       }
 
       // prevent tab navigation outside the popup
-      this.redoLoopedTabKeys(this.popup)
+      that.redoLoopedTabKeys(that.popup)
 
       // Fade in the mask
-      moj.Helpers.fade(this.mask, 1, 200)
+      moj.Helpers.fade(that.mask, 1, 200)
 
       // Fade in the popup (starts while mask is still fading in)
       setTimeout(
         function () {
-          moj.Helpers.fade(this.popup, 1, 200, function () {
-            const heading = self.popup.querySelector('h2')
+          moj.Helpers.fade(that.popup, 1, 200, function () {
+            const heading = that.popup.querySelector('h2')
             if (heading !== null) {
               heading.setAttribute('tabindex', -1)
             }
 
-            const closeLink = self.closeButton.querySelector('a')
+            const closeLink = that.closeButton.querySelector('a')
             if (closeLink !== null) {
               closeLink.focus()
             }
 
             // callback func
-            if (typeof self.settings.onOpen === 'function') {
-              self.settings.onOpen()
+            if (typeof _settings.onOpen === 'function') {
+              _settings.onOpen()
             }
           })
         },
         100
       )
-    },
+    }
 
-    close: function () {
+    that.close = function () {
       // make sure there is a popup to close
       if (document.querySelectorAll('#popup').length > 0) {
-        const self = this
-
-        moj.Helpers.fade(this.popup, 0, 150, function () {
-          moj.Helpers.fade(self.mask, 0, 150, function () {
+        moj.Helpers.fade(that.popup, 0, 150, function () {
+          moj.Helpers.fade(that.mask, 0, 150, function () {
             // focus on previous element
-            if (typeof self.settings.source !== 'undefined' && self.settings.source !== false) {
-              self.settings.source.focus()
+            if (typeof _settings.source !== 'undefined' && _settings.source !== false) {
+              _settings.source.focus()
             }
 
             // clear out any hash locations
@@ -185,12 +174,12 @@
             }
 
             // callback func
-            if (typeof self.settings.onClose === 'function') {
-              self.settings.onClose()
+            if (typeof _settings.onClose === 'function') {
+              _settings.onClose()
             }
 
             // Remove the popup from the DOM
-            self.mask = self.mask.parentNode.removeChild(self.mask)
+            that.mask = that.mask.parentNode.removeChild(that.mask)
 
             // re-enable body scroll
             document.querySelector('html').classList.remove('noscroll')
@@ -201,25 +190,27 @@
             })
 
             // unbind event handlers
-            self._unbindEvents()
+            _unbindEvents()
           })
         })
       }
-    },
-
-    redoLoopedTabKeys: function () {
-      if (this._first !== null) {
-        this._first.removeEventListener('keydown', this._shiftTabHandler)
-      }
-
-      if (this._last !== null) {
-        this._last.removeEventListener('keydown', this._tabHandler)
-      }
-
-      this._loopTabKeys(this.popup)
     }
+
+    that.redoLoopedTabKeys = function () {
+      if (_first !== null) {
+        _first.removeEventListener('keydown', _shiftTabHandler)
+      }
+
+      if (_last !== null) {
+        _last.removeEventListener('keydown', _tabHandler)
+      }
+
+      _loopTabKeys(that.popup)
+    }
+
+    return that
   }
 
   // Add module to MOJ namespace
-  moj.Modules.Popup = new Popup()
+  moj.Modules.Popup = makePopup()
 }())
