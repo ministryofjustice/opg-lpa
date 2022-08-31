@@ -113,7 +113,7 @@
     }
 
     const handleStateChange = function () {
-      (details.getAttribute('open') === 'open' ? wrapped.open() : wrapped.close())
+      (details.open ? wrapped.open() : wrapped.close())
     }
 
     const polyfillToggle = function () {
