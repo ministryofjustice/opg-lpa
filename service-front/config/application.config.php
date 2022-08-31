@@ -3,7 +3,6 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
-        'Laminas\Db',
         'Laminas\Log',
         'Laminas\Mail',
         'Laminas\Mvc\I18n',
@@ -17,7 +16,6 @@ return array(
         'Laminas\Session',
         'Laminas\Router',
         'Laminas\Validator',
-        'Laminas\ZendFrameworkBridge',
         'Laminas\Cache\Storage\Adapter\Memory',
         'Application',
         //ZfcTwig MUST be the last module!

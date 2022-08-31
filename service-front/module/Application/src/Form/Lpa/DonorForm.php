@@ -62,6 +62,8 @@ class DonorForm extends AbstractActorForm
 
     public function populateValues(iterable $data, bool $onlyBase = false): void
     {
+        $data = (array) $data;
+
         // canSign is stored in the db, but our cannotSign checkbox is ticked if the
         // donor *cannot* sign; so this is where we do the inversion from
         // the canSign property (in the model/db) to cannotSign checkbox (in the UI)

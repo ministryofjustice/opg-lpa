@@ -1,7 +1,8 @@
 {
     "name": "ministryofjustice/opg-lpa-api",
     "description": "API service for creating Lasting Power of Attorney PDF documents",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "license": "MIT",
     "repositories": [
         {
@@ -17,24 +18,21 @@
         "laminas/laminas-authentication": "^2.8",
         "laminas/laminas-cache": "^3.1.2",
         "laminas/laminas-cache-storage-adapter-memory": "2.0",
-        "laminas/laminas-component-installer": "^2.5.1",
         "laminas/laminas-crypt": "^3.4",
         "laminas/laminas-filter": "^2.12.0",
+        "laminas/laminas-log": "^2.13",
         "laminas/laminas-math": "^3.4",
         "laminas/laminas-mvc": "^3.2",
-        "laminas/laminas-mvc-i18n": "^1.2.0",
+        "laminas/laminas-mvc-i18n": "^2.0",
         "laminas/laminas-paginator": "^2.8",
-        "laminas/laminas-zendframework-bridge": "^1.1.1",
-        "laminas/laminas-log": "^2.13",
         "lm-commons/lmc-rbac-mvc":"^3.0.2",
         "laminas-api-tools/api-tools-api-problem": "^1.4",
         "php-http/guzzle6-adapter": "^2.0.2",
         "alphagov/notifications-php-client": "^4.0.1",
         "robmorgan/phinx": "^0.12.9",
         "laminas/laminas-db": "^2.13.4",
-        "league/csv": "^9.7.3",
-        "laminas/laminas-cli": "^1.4",
-        "symfony/console": "^6.1"
+        "symfony/console": "^6.1",
+        "laminas/laminas-cli": "^1.5"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",

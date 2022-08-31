@@ -18,7 +18,7 @@ class EmailAddress extends LaminasEmailAddressValidator
 
         if ($valid === false && count($this->getMessages()) > 0) {
             $this->abstractOptions['messages'] = [
-                'Enter a valid email address'
+                'invalidEmailAddress' => 'Enter a valid email address'
             ];
         }
 

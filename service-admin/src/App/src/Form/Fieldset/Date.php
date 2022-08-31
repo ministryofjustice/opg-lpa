@@ -2,7 +2,7 @@
 
 namespace App\Form\Fieldset;
 
-use App\Filter\StandardInput as StandardInputFilter;
+use App\Filter\StandardInputFilterChain;
 use App\Validator;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
@@ -35,7 +35,7 @@ class Date extends Fieldset
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(new StandardInputFilter());
+            ->attach(StandardInputFilterChain::create());
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(Validator\NotEmpty::INTEGER + Validator\NotEmpty::ZERO), true)
@@ -53,7 +53,7 @@ class Date extends Fieldset
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(new StandardInputFilter());
+            ->attach(StandardInputFilterChain::create());
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(Validator\NotEmpty::INTEGER + Validator\NotEmpty::ZERO), true)
@@ -71,7 +71,7 @@ class Date extends Fieldset
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(new StandardInputFilter());
+            ->attach(StandardInputFilterChain::create());
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(Validator\NotEmpty::INTEGER + Validator\NotEmpty::ZERO), true)
