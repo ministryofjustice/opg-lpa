@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Validator;
-use App\Filter\StandardInput as StandardInputFilter;
+use App\Filter\StandardInputFilterChain;
 use Laminas\Filter;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Password;
@@ -33,7 +33,7 @@ class SignIn extends AbstractForm
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(new StandardInputFilter())
+            ->attach(StandardInputFilterChain::create())
             ->attach(new Filter\StringToLower());
 
         $input->getValidatorChain()

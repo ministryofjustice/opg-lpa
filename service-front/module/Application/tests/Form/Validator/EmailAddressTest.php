@@ -30,19 +30,20 @@ class EmailAddressTest extends MockeryTestCase
             [
                 'data' => 'c@d..uk',
                 'errors' => [
-                    0 => 'Enter a valid email address',
+                    'invalidEmailAddress' => 'Enter a valid email address',
                 ],
             ],
             [
-                'data' => 'somethingverylongsomethingverylongsomethingverylongsomethingverylongsomethingverylong@somethingverylong.com',
+                'data' => 'somethingverylongsomethingverylongsomethingvery' .
+                    'longsomethingverylongsomethingverylong@somethingverylong.com',
                 'errors' => [
-                    0 => 'Enter a valid email address',
+                    'invalidEmailAddress' => 'Enter a valid email address',
                 ],
             ],
             [
                 'data' => 'invalid',
                 'errors' => [
-                    0 => 'Enter a valid email address',
+                    'invalidEmailAddress' => 'Enter a valid email address',
                 ],
             ],
         ];

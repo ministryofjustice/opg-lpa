@@ -13,7 +13,7 @@ class FeedbackFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->setUpForm(new FeedbackForm());
     }
@@ -48,9 +48,14 @@ class FeedbackFormTest extends MockeryTestCase
 
     public function testValidateByModelInvalid()
     {
+        $message = '';
+        for ($i = 0; $i < 100; $i++) {
+            $message .= 'Feedback message too long. ';
+        }
+
         $this->form->setData(array_merge([
             'rating' => 'indifferent',
-            'details' => 'Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long. Feedback message too long.',
+            'details' => $message,
             'email' => 'notanemail',
             'phone' => 'jisofjisd',
         ], $this->getCsrfData()));
@@ -59,7 +64,7 @@ class FeedbackFormTest extends MockeryTestCase
 
         $this->assertEquals([
             'email' => [
-                0 => 'Enter a valid email address'
+                'invalidEmailAddress' => 'Enter a valid email address'
             ],
             'details' => [
                 'stringLengthTooLong' => 'max-2000-chars'
