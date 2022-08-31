@@ -286,10 +286,10 @@
   //   moj.Helpers.extend({a:1}, {b:2}, {c:3}) => {a:1, b:2, c:3}
   // any functions in the object bind the new object as "this"
   moj.Helpers.extend = function () {
-    let newObj = {}
+    const newObj = {}
 
     Array.prototype.slice.call(arguments).forEach(function (obj) {
-      for (let key in obj) {
+      for (const key in obj) {
         let value = obj[key]
         if (typeof value === 'function') {
           value = value.bind(newObj)
@@ -299,5 +299,96 @@
     })
 
     return newObj
+  }
+
+  // Fade an element to the opacity set with toOpacity
+  //
+  // elt: element to fade in or out
+  // toOpacity: float with value 0 [fully transparent] to 1 [fully opaque]
+  // timeMs: time of the fade animation in ms
+  // callback (optional): function to call after animation completes
+  moj.Helpers.fade = function (elt, toOpacity, timeMs, callback) {
+    if (callback === undefined) {
+      callback = function () {}
+    }
+
+    const opacity = parseFloat(elt.style.opacity) || 0
+
+    // without this, our popups display as inline blocks
+    if (elt.style.display === '') {
+      elt.style.display = 'block'
+    }
+
+    // nothing to do, early return
+    if (opacity === toOpacity) {
+      callback()
+      return true
+    }
+
+    // total change in opacity required
+    const opacityDelta = toOpacity - opacity
+
+    // we ignore animation frames which happen before this length of
+    // time has elapsed; in effect this gives us a 60fps animation
+    // even if the browser refresh rate is higher than that
+    const frameLengthMs = 1000 / 60
+
+    let done = false
+    let elapsed = 0
+    let lastTime = null
+    let interval
+    let newOpacity
+
+    // function invoked for each step of the animation;
+    // timestamp is when the step is invoked, so we can use
+    // that to frame limit the animation and measure total elapsed time
+    const step = function (timestamp) {
+      interval = timestamp - lastTime
+
+      // if interval since last step is very short, don't do anything
+      if (interval < frameLengthMs) {
+        window.requestAnimationFrame(step)
+        return
+      }
+
+      // work out elapsed time so we can measure how far through
+      // the animation we are
+      if (lastTime !== null) {
+        elapsed += timestamp - lastTime
+      }
+
+      lastTime = timestamp
+
+      // opacity change for this step is a function of elapsed animation time
+      // compared with the desired overall length of the animation (timeMs);
+      // we are taking a fraction of the overall opacity delta we want to
+      // apply based on the percentage of the animation we have executed so far
+      newOpacity = opacity + (opacityDelta * (elapsed / timeMs))
+
+      // if we've reached the desired opacity, we can stop; note that we
+      // won't reach this until at least timeMs is reached, as we're using
+      // that to calculate a percentage of the total opacity delta to apply to the element
+      if (
+        (opacityDelta > 0 && newOpacity >= toOpacity) ||
+        (opacityDelta < 0 && newOpacity <= toOpacity)
+      ) {
+        done = true
+        newOpacity = toOpacity
+      }
+
+      elt.style.opacity = newOpacity
+
+      if (done) {
+        callback()
+      } else {
+        // queue up the next step of the animation
+        window.requestAnimationFrame(step)
+      }
+    }
+
+    // start animating
+    window.requestAnimationFrame(step)
+
+    return true
   }
 })()

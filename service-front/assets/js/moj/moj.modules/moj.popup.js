@@ -60,17 +60,6 @@
       }
     },
 
-    _cacheEls: function () {
-      this.mask = moj.Helpers.strToHtml(this.settings.maskTemplate)
-      this.$mask = $(this.mask)
-
-      this.popup = moj.Helpers.strToHtml(this.settings.containerTemplate)
-      this.$popup = $(this.popup)
-
-      this.content = moj.Helpers.strToHtml(this.settings.contentTemplate)
-      this.closeButton = moj.Helpers.strToHtml(this.settings.closeTemplate)
-    },
-
     _bindEvents: function () {
       document.body.addEventListener('keydown', this._keydownCloseHandler)
       this.popup.addEventListener('click', this._clickCloseHandler)
@@ -99,12 +88,17 @@
     init: function () {
       const self = this
 
+      // event handlers
       this._clickCloseHandler = this._clickCloseHandler.bind(self)
       this._keydownCloseHandler = this._keydownCloseHandler.bind(self)
       this._shiftTabHandler = this._shiftTabHandler.bind(self)
       this._tabHandler = this._tabHandler.bind(self)
 
-      this._cacheEls()
+      // cache elements
+      this.mask = moj.Helpers.strToHtml(this.settings.maskTemplate)
+      this.popup = moj.Helpers.strToHtml(this.settings.containerTemplate)
+      this.content = moj.Helpers.strToHtml(this.settings.contentTemplate)
+      this.closeButton = moj.Helpers.strToHtml(this.settings.closeTemplate)
     },
 
     open: function (html, opts) {
@@ -146,25 +140,30 @@
       this.redoLoopedTabKeys(this.popup)
 
       // Fade in the mask
-      this.$mask.fadeTo(200, 1)
+      moj.Helpers.fade(this.mask, 1, 200)
 
       // Fade in the popup (starts while mask is still fading in)
-      this.$popup.delay(100).fadeIn(200, function () {
-        const heading = self.popup.querySelector('h2')
-        if (heading !== null) {
-          heading.setAttribute('tabindex', -1)
-        }
+      setTimeout(
+        function () {
+          moj.Helpers.fade(this.popup, 1, 200, function () {
+            const heading = self.popup.querySelector('h2')
+            if (heading !== null) {
+              heading.setAttribute('tabindex', -1)
+            }
 
-        const closeLink = self.closeButton.querySelector('a')
-        if (closeLink !== null) {
-          closeLink.focus()
-        }
+            const closeLink = self.closeButton.querySelector('a')
+            if (closeLink !== null) {
+              closeLink.focus()
+            }
 
-        // callback func
-        if (typeof self.settings.onOpen === 'function') {
-          self.settings.onOpen()
-        }
-      })
+            // callback func
+            if (typeof self.settings.onOpen === 'function') {
+              self.settings.onOpen()
+            }
+          })
+        },
+        100
+      )
     },
 
     close: function () {
@@ -172,8 +171,8 @@
       if (document.querySelectorAll('#popup').length > 0) {
         const self = this
 
-        self.$popup.fadeOut(400, function () {
-          self.$mask.fadeOut(200, function () {
+        moj.Helpers.fade(this.popup, 0, 150, function () {
+          moj.Helpers.fade(self.mask, 0, 150, function () {
             // focus on previous element
             if (typeof self.settings.source !== 'undefined' && self.settings.source !== false) {
               self.settings.source.focus()
