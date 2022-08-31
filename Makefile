@@ -181,6 +181,13 @@ test-pdf-local:
 	docker stop pdf-test-run;
 	docker rm pdf-test-run;
 
+# CYPRESS_RUNNER_* environment variables are used to consolidate setting environment
+# variables detected by cypress (like CYPRESS_baseUrl) and variables which are
+# only present in the cypress "environment" (i.e. passed to cypress using the -e flag).
+# The runner knows which variables should be set using which mechanism. By passing
+# all variables as CYPRESS_RUNNER_* env vars, picked up by the cypress_runner.py script,
+# we can apply any logic about how to set vars for cypress, as well as provide
+# reasonable defaults (e.g. for CYPRESS_baseUrl), in one location.
 .PHONY: cypress-local
 cypress-local:
 	docker rm -f cypress_tests || true
