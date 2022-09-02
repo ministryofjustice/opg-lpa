@@ -230,8 +230,6 @@ jobs:
     needs:
       - terraform_outputs
     with:
-      front_sg_name: ${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-securitygroup.value }}
-      admin_sg_name: ${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-securitygroup.value }}
       admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
       front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
       account_id: "050256574573"

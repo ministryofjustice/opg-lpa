@@ -11,14 +11,6 @@ on:
         description: "AWS account ID containing the role to assume for boto commands"
         required: true
         type: string
-      front_sg_name:
-        description: "Name of the security group used by the front load balancer"
-        required: true
-        type: string
-      admin_sg_name:
-        description: "Name of the security group used by the admin load balancer"
-        required: true
-        type: string
       admin_url:
         description: "URL of the admin frontend"
         required: true
@@ -51,19 +43,25 @@ jobs:
           role-duration-seconds: 3600
           role-session-name: OPGLPABuildPipeline
 
-      - name: Get runner address
-        id: get_runner_address
-        run: echo "::set-output name=runner_address::$(curl
-          https://checkip.amazonaws.com/ --silent)"
+      - name: Setup Python
+        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/pipeline/ci_ingress/requirements.txt
+
+      - name: Download Terraform Task definition
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
+        with:
+          name: terraform-artifact
+          path: /tmp/
 
       - name: Add GitHub Actions runner Ingress Rule
-        env:
-          front_sg_name: ${{ inputs.front_sg_name }}
-          admin_sg_name: ${{ inputs.admin_sg_name }}
-          runner_address: ${{ steps.get_runner_address.outputs.runner_address }}
         run: |
-          aws ec2 authorize-security-group-ingress --group-name ${front_sg_name} --protocol tcp --port 443 --cidr ${runner_address}/32
-          aws ec2 authorize-security-group-ingress --group-name ${admin_sg_name} --protocol tcp --port 443 --cidr ${runner_address}/32
+          python scripts/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
 
       - name: Create screenshots directory
         run: |
@@ -238,11 +236,5 @@ jobs:
 
       - name: Remove GitHub Actions runner Ingress Rule
         if: always()
-        env:
-          front_sg_name: ${{ inputs.front_sg_name }}
-          admin_sg_name: ${{ inputs.admin_sg_name }}
-          runner_address: ${{ steps.get_runner_address.outputs.runner_address }}
         run: |
-          set +e
-          aws ec2 revoke-security-group-ingress --group-name ${front_sg_name} --protocol tcp --port 443 --cidr ${runner_address}/32
-          aws ec2 revoke-security-group-ingress --group-name ${admin_sg_name} --protocol tcp --port 443 --cidr ${runner_address}/32
+          python scripts/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json

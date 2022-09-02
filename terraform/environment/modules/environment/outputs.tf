@@ -6,8 +6,8 @@ output "front_dns_name" {
   value = aws_lb.front.dns_name
 }
 
-output "front_sg_name" {
-  value = aws_security_group.front_loadbalancer.name
+output "front_sg_id" {
+  value = aws_security_group.front_loadbalancer.id
 }
 
 output "admin_zone_id" {
@@ -18,8 +18,8 @@ output "admin_dns_name" {
   value = aws_lb.admin.dns_name
 }
 
-output "admin_sg_name" {
-  value = aws_security_group.admin_loadbalancer.name
+output "admin_sg_id" {
+  value = aws_security_group.admin_loadbalancer.id
 }
 
 
