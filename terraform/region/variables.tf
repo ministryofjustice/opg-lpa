@@ -5,6 +5,7 @@ variable "default_role" {
 
 variable "pagerduty_token" {
   description = "pagerduty token"
+  sensitive   = true
 }
 
 # variables for terraform.tfvars.json

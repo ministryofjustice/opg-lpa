@@ -1,0 +1,248 @@
+name: "[Workflow] Cypress Tests"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+    inputs:
+      account_id:
+        description: "AWS account ID containing the role to assume for boto commands"
+        required: true
+        type: string
+      front_sg_name:
+        description: "Name of the security group used by the front load balancer"
+        required: true
+        type: string
+      admin_sg_name:
+        description: "Name of the security group used by the admin load balancer"
+        required: true
+        type: string
+      admin_url:
+        description: "URL of the admin frontend"
+        required: true
+        type: string
+      front_url:
+        description: "URL of the frontend"
+        required: true
+        type: string
+
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS:
+        required: true
+      AWS_SECRET_ACCESS_KEY_ACTIONS:
+        required: true
+
+jobs:
+  cypress_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::${{ inputs.account_id }}:role/opg-lpa-ci
+          role-duration-seconds: 900
+          role-session-name: OPGLPABuildPipeline
+
+      - name: Get runner address
+        id: get_runner_address
+        run: echo "::set-output name=runner_address::$(curl
+          https://checkip.amazonaws.com/ --silent)"
+
+      - name: Add GitHub Actions runner Ingress Rule
+        env:
+          front_sg_name: ${{ inputs.front_sg_name }}
+          admin_sg_name: ${{ inputs.admin_sg_name }}
+          runner_address: ${{ steps.get_runner_address.outputs.runner_address }}
+        run: |
+          aws ec2 authorize-security-group-ingress --group-name ${front_sg_name} --protocol tcp --port 443 --cidr ${runner_address}/32
+          aws ec2 authorize-security-group-ingress --group-name ${admin_sg_name} --protocol tcp --port 443 --cidr ${runner_address}/32
+
+      - name: Create screenshots directory
+        run: |
+          mkdir -p /tmp/screenshots
+
+      - name: ECR Login
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
+        with:
+          registries: 311462405659
+
+      - name: Pull Cypress Container Image
+        env:
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: online-lpa
+          IMAGE_TAG: latest
+          IMAGE_NAME: cypress
+        run: |
+          docker pull $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG
+          docker tag $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$IMAGE_TAG
+
+      - name: Run Cypress Tests - @Signup,@StitchedPF
+        env:
+          CYPRESS_adminUrl: ${{ inputs.admin_url }}
+          CYPRESS_baseUrl: ${{ inputs.front_url }}
+          CYPRESS_NO_COMMAND_LOG: 1
+          CYPRESS_numTestsKeptInMemory: 1
+          CYPRESS_RUNNER_IN_CI: true
+          CYPRESS_RUNNER_TAGS: "@Signup,@StitchedPF"
+          CYPRESS_RUNNER_BASE_URL: ${{ inputs.front_url }}
+          CYPRESS_RUNNER_ADMIN_URL: ${{ inputs.admin_url }}
+
+        run: |
+          docker run --pull never \
+                  -e AWS_ACCESS_KEY_ID \
+                  -e AWS_SECRET_ACCESS_KEY \
+                  -e AWS_SESSION_TOKEN \
+                  -e CYPRESS_NO_COMMAND_LOG \
+                  -e CYPRESS_numTestsKeptInMemory \
+                  -e CYPRESS_RUNNER_IN_CI \
+                  -e CYPRESS_RUNNER_TAGS \
+                  -e CYPRESS_RUNNER_BASE_URL \
+                  -e CYPRESS_RUNNER_ADMIN_URL \
+                  -e CYPRESS_baseUrl \
+                  -e CYPRESS_adminUrl \
+                  --mount type=bind,source="/tmp/screenshots",target="/app/cypress/screenshots" \
+                  --entrypoint ./cypress/cypress_start.sh \
+                  cypress:latest
+
+      - name: Run Cypress Tests - @Signup,@StitchedHW
+        env:
+          CYPRESS_adminUrl: ${{ inputs.admin_url }}
+          CYPRESS_baseUrl: ${{ inputs.front_url }}
+          CYPRESS_NO_COMMAND_LOG: 1
+          CYPRESS_numTestsKeptInMemory: 1
+          CYPRESS_RUNNER_IN_CI: true
+          CYPRESS_RUNNER_TAGS: "@Signup,@StitchedHW"
+          CYPRESS_RUNNER_BASE_URL: ${{ inputs.front_url }}
+          CYPRESS_RUNNER_ADMIN_URL: ${{ inputs.admin_url }}
+
+        run: |
+          docker run --pull never \
+                  -e AWS_ACCESS_KEY_ID \
+                  -e AWS_SECRET_ACCESS_KEY \
+                  -e AWS_SESSION_TOKEN \
+                  -e CYPRESS_NO_COMMAND_LOG \
+                  -e CYPRESS_numTestsKeptInMemory \
+                  -e CYPRESS_RUNNER_IN_CI \
+                  -e CYPRESS_RUNNER_TAGS \
+                  -e CYPRESS_RUNNER_BASE_URL \
+                  -e CYPRESS_RUNNER_ADMIN_URL \
+                  -e CYPRESS_baseUrl \
+                  -e CYPRESS_adminUrl \
+                  --mount type=bind,source="/tmp/screenshots",target="/app/cypress/screenshots" \
+                  --entrypoint ./cypress/cypress_start.sh \
+                  cypress:latest
+
+      - name: Run Cypress Tests - @Signup,@StitchedClone
+        env:
+          CYPRESS_adminUrl: ${{ inputs.admin_url }}
+          CYPRESS_baseUrl: ${{ inputs.front_url }}
+          CYPRESS_NO_COMMAND_LOG: 1
+          CYPRESS_numTestsKeptInMemory: 1
+          CYPRESS_RUNNER_IN_CI: true
+          CYPRESS_RUNNER_TAGS: "@Signup,@StitchedClone"
+          CYPRESS_RUNNER_BASE_URL: ${{ inputs.front_url }}
+          CYPRESS_RUNNER_ADMIN_URL: ${{ inputs.admin_url }}
+
+        run: |
+          docker run --pull never \
+                  -e AWS_ACCESS_KEY_ID \
+                  -e AWS_SECRET_ACCESS_KEY \
+                  -e AWS_SESSION_TOKEN \
+                  -e CYPRESS_NO_COMMAND_LOG \
+                  -e CYPRESS_numTestsKeptInMemory \
+                  -e CYPRESS_RUNNER_IN_CI \
+                  -e CYPRESS_RUNNER_TAGS \
+                  -e CYPRESS_RUNNER_BASE_URL \
+                  -e CYPRESS_RUNNER_ADMIN_URL \
+                  -e CYPRESS_baseUrl \
+                  -e CYPRESS_adminUrl \
+                  --mount type=bind,source="/tmp/screenshots",target="/app/cypress/screenshots" \
+                  --entrypoint ./cypress/cypress_start.sh \
+                  cypress:latest
+
+      # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
+      # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
+      - name: Run Cypress Tests - Remaining Tests
+        env:
+          CYPRESS_adminUrl: ${{ inputs.admin_url }}
+          CYPRESS_baseUrl: ${{ inputs.front_url }}
+          CYPRESS_NO_COMMAND_LOG: 1
+          CYPRESS_numTestsKeptInMemory: 1
+          CYPRESS_RUNNER_IN_CI: true
+          CYPRESS_RUNNER_TAGS: "@Signup,not @Signup and not @PartOfStitchedRun and not
+            @StitchedHW and not @StitchedPF and not @StitchedClone and not
+            @CorrespondentReuse and not @SignupIncluded"
+          CYPRESS_RUNNER_BASE_URL: ${{ inputs.front_url }}
+          CYPRESS_RUNNER_ADMIN_URL: ${{ inputs.admin_url }}
+
+        run: |
+          docker run --pull never \
+                  -e AWS_ACCESS_KEY_ID \
+                  -e AWS_SECRET_ACCESS_KEY \
+                  -e AWS_SESSION_TOKEN \
+                  -e CYPRESS_NO_COMMAND_LOG \
+                  -e CYPRESS_numTestsKeptInMemory \
+                  -e CYPRESS_RUNNER_IN_CI \
+                  -e CYPRESS_RUNNER_TAGS \
+                  -e CYPRESS_RUNNER_BASE_URL \
+                  -e CYPRESS_RUNNER_ADMIN_URL \
+                  -e CYPRESS_baseUrl \
+                  -e CYPRESS_adminUrl \
+                  --mount type=bind,source="/tmp/screenshots",target="/app/cypress/screenshots" \
+                  --entrypoint ./cypress/cypress_start.sh \
+                  cypress:latest
+
+      - name: Run Cypress Tests - @SignupIncluded
+        env:
+          CYPRESS_adminUrl: ${{ inputs.admin_url }}
+          CYPRESS_baseUrl: ${{ inputs.front_url }}
+          CYPRESS_NO_COMMAND_LOG: 1
+          CYPRESS_numTestsKeptInMemory: 1
+          CYPRESS_RUNNER_IN_CI: true
+          CYPRESS_RUNNER_TAGS: "@SignupIncluded"
+          CYPRESS_RUNNER_BASE_URL: ${{ inputs.front_url }}
+          CYPRESS_RUNNER_ADMIN_URL: ${{ inputs.admin_url }}
+
+        run: |
+          docker run --pull never \
+                  -e AWS_ACCESS_KEY_ID \
+                  -e AWS_SECRET_ACCESS_KEY \
+                  -e AWS_SESSION_TOKEN \
+                  -e CYPRESS_NO_COMMAND_LOG \
+                  -e CYPRESS_numTestsKeptInMemory \
+                  -e CYPRESS_RUNNER_IN_CI \
+                  -e CYPRESS_RUNNER_TAGS \
+                  -e CYPRESS_RUNNER_BASE_URL \
+                  -e CYPRESS_RUNNER_ADMIN_URL \
+                  -e CYPRESS_baseUrl \
+                  -e CYPRESS_adminUrl \
+                  --mount type=bind,source="/tmp/screenshots",target="/app/cypress/screenshots" \
+                  --entrypoint ./cypress/cypress_start.sh \
+                  cypress:latest
+
+      - name: Upload Screenshot Artifact
+        if: failure()
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
+        with:
+          name: cypress-screenshots
+          path: /tmp/screenshots/
+
+      - name: Remove GitHub Actions runner Ingress Rule
+        if: always()
+        env:
+          front_sg_name: ${{ inputs.front_sg_name }}
+          admin_sg_name: ${{ inputs.admin_sg_name }}
+          runner_address: ${{ steps.get_runner_address.outputs.runner_address }}
+        run: |
+          set +e
+          aws ec2 revoke-security-group-ingress --group-name ${front_sg_name} --protocol tcp --port 443 --cidr ${runner_address}/32
+          aws ec2 revoke-security-group-ingress --group-name ${admin_sg_name} --protocol tcp --port 443 --cidr ${runner_address}/32

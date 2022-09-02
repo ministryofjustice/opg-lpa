@@ -1,0 +1,47 @@
+name: "[Workflow] Destroy ephemeral environment"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+    paths:
+      - "service-*/**"
+      - "cypress/**"
+      - "terraform/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+
+jobs:
+  workspace_name:
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    if: github.event.pull_request.merged == true
+            
+  cleanup_workspace:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    needs:
+      - workspace_name
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
+          role-duration-seconds: 900
+          role-session-name: OPGLPABuildPipeline
+
+        # TODO: Remove echo to run this after confirming it evaluates correctly
+      - name: Run workspace cleanup
+        run: |
+          echo scripts/pipeline/workspace_cleanup/workspace_cleanup.sh ${{ needs.workspace_name.outputs.name }}
