@@ -1,0 +1,195 @@
+name: "[Workflow] Path to Live"
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "service-*/**"
+      - "cypress/**"
+      - "terraform/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+
+jobs:
+  semvar_tag:
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-semvar-tag.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      branch_name: main
+      release_branch: main
+
+  docker_build_scan_push:
+    name: Docker Build, Scan and Push
+    uses: ./.github/workflows/docker_job.yml
+    needs:
+      - semvar_tag
+    with:
+      tag: ${{ needs.semvar_tag.outputs.tag }}
+      branch_name: main
+    secrets: inherit
+
+  terraform_account_preproduction:
+    name: TF Preproduction - Account
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: preproduction
+      is_ephemeral: false
+      terraform_apply: false
+      terraform_directory: ./terraform/account
+    secrets: inherit
+
+  terraform_region_preproduction:
+    name: TF Preproduction - Region
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: preproduction
+      is_ephemeral: false
+      terraform_apply: false
+      terraform_directory: ./terraform/region
+    secrets: inherit
+
+  terraform_email_preproduction:
+    name: TF Preproduction - Email
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: preproduction
+      is_ephemeral: false
+      terraform_apply: false
+      terraform_directory: ./terraform/email
+    secrets: inherit
+
+  terraform_environment_preproduction:
+    name: TF Preproduction - Environment
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: preproduction
+      is_ephemeral: false
+      terraform_apply: false
+      terraform_directory: ./terraform/environment
+    needs:
+      - docker_build_scan_push
+    secrets: inherit
+
+  run_preprodution_feedback_db_task:
+    name: Run preproduction feedbackdb
+    uses: ./.github/workflows/workflow_feedbackdb.yml
+    needs:
+      - terraform_environment_preproduction
+    secrets: inherit
+
+  terraform_outputs:
+    name: Render terraform outputs
+    runs-on: ubuntu-latest
+    needs:
+      - run_preprodution_feedback_db_task
+      - terraform_environment_preproduction
+    steps:
+    - name: Checkout
+      uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+
+    - name: Terraform Outputs from JSON
+      id: terraform_outputs
+      run: |
+        JSON=${{ needs.terraform_environment_preproduction.outputs.terraform_output_as_json }}
+        JSON="${JSON//$'\n'/''}"
+        JSON="${JSON//$'\r'/''}"
+        JSON="${JSON//$'\s+'/''}"
+        echo "::set-output name=terraform_output_as_json::$JSON"
+
+  cypress_tests:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs: 
+      - terraform_outputs
+    with:
+      front_sg_name: ${{ fromJson(steps.terraform_outputs.outputs.terraform_output_as_json).front-securitygroup.value }}
+      admin_sg_name: ${{ fromJson(steps.terraform_outputs.outputs.terraform_output_as_json).admin-securitygroup.value }}
+      admin_url: https://${{ fromJson(steps.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(steps.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "987830934591"
+    secrets: inherit
+
+  terraform_account_production:
+    name: TF Production - Account
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: production
+      is_ephemeral: false
+      terraform_apply: false
+      terraform_directory: ./terraform/account
+    secrets: inherit
+
+  terraform_region_production:
+    name: TF Production - Region
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: production
+      is_ephemeral: false
+      terraform_apply: false
+      terraform_directory: ./terraform/region
+    secrets: inherit
+  
+  terraform_email_production:
+    name: TF Production - Email
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: production
+      is_ephemeral: false
+      terraform_apply: false
+      terraform_directory: ./terraform/email
+    secrets: inherit
+
+  terraform_environment_production:
+    name: TF Production - Environment
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: production
+      is_ephemeral: false
+      terraform_apply: false
+      terraform_directory: ./terraform/environment
+      persist_artifacts: true
+    needs:
+    - docker_build_scan_push
+    secrets: inherit
+
+  run_production_feedback_db_task:
+    name: Run production feedbackdb
+    uses: ./.github/workflows/workflow_feedbackdb.yml
+    needs:
+      - terraform_environment_production
+    secrets: inherit
+
+  run_smoke_tests:
+    runs-on: ubuntu-latest
+    needs:
+      - terraform_environment_production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r scripts/pipeline/requirements.txt
+
+      - name: Run test
+        run: python scripts/pipeline/healthcheck_test/healthcheck_test.py

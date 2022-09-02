@@ -1,6 +1,6 @@
 resource "local_file" "environment_pipeline_tasks_config" {
   content  = jsonencode(local.environment_pipeline_tasks_config)
-  filename = "/tmp/environment_pipeline_tasks_config.json"
+  filename = "/tmp/terraform_artifacts/environment_pipeline_tasks_config.json"
 }
 
 locals {

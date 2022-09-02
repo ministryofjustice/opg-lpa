@@ -1,0 +1,165 @@
+name: "[Docker] Build and Push Images"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: "Tag for docker image"
+        required: true
+        type: string
+      branch_name:
+        description: "Name of the branch doing the build"
+        required: true
+        type: string
+
+jobs:
+  docker_build_scan_push:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - image_name: front_app
+            service_path: ./service-front/docker/app
+            unit_test: true
+            push_to_repo: true
+
+          - image_name: front_web
+            service_path: ./service-front/docker/web
+            unit_test: false
+            push_to_repo: true
+
+          - image_name: front_v2_app
+            service_path: ./service-front-v2/docker/app
+            unit_test: false
+            push_to_repo: true
+
+          - image_name: api_app
+            service_path: ./service-api/docker/app
+            unit_test: true
+            push_to_repo: true
+
+          - image_name: api_web
+            service_path: ./service-api/docker/web
+            unit_test: false
+            push_to_repo: true
+
+          - image_name: admin_app
+            service_path: ./service-admin/docker/app
+            unit_test: true
+            push_to_repo: true
+
+          - image_name: admin_web
+            service_path: ./service-admin/docker/web
+            unit_test: false
+            push_to_repo: true
+
+          - image_name: pdf_app
+            service_path: ./service-pdf/docker/app
+            unit_test: true
+            push_to_repo: true
+
+          - image_name: seeding_app
+            service_path: ./service-seeding/docker/app
+            unit_test: false
+            push_to_repo: true
+
+          - image_name: cypress
+            service_path: ./cypress/
+            override_tag: latest
+            push_to_repo: true
+
+    steps:
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+
+      - uses: unfor19/install-aws-cli-action@35a9630be0168293ad2afccbe06e8e9f47678d2c # pin@v1.0.3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1.7.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
+          role-duration-seconds: 1800
+          role-session-name: OPGMakeaLPAECRGithubAction
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93 # pin@v3
+        if: matrix.image_name == 'front_web'
+        with:
+          node-version: 16.x
+
+      - name: Install Dependencies
+        if: matrix.image_name == 'front_web'
+        run: |
+          pushd service-front/
+          npm ci && npm install -g sass
+          node_modules/grunt-cli/bin/grunt build
+          popd
+
+      - name: Setup Docker Buildx
+        id: docker_buildx
+        uses: docker/setup-buildx-action@dc7b9719a96d48369863986a06765841d7ea23f6 # pin@v2
+        with:
+          install: true
+
+      - name: Setup Docker Layer Cache
+        uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # pin@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ matrix.image_name }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ matrix.image_name }}-
+
+      - name: Build Image
+        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94 # pin@v3
+        with:
+          context: .
+          load: true
+          tags: ${{ matrix.image_name }}:latest
+          push: false
+          file: ${{ matrix.service_path }}/Dockerfile
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - name: Unit Tests
+        if: matrix.unit_test == true
+        run: |
+          docker run --pull never --detach --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests ${{ matrix.image_name }}:latest
+          docker exec tests /app/vendor/bin/phpunit -d memory_limit=256M
+
+      - name: ECR Login
+        id: login_ecr
+        if: matrix.push_to_repo == true
+        uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
+        with:
+          registries: 311462405659
+
+      - name: Tag and Push Container
+        if: matrix.push_to_repo == true
+        env:
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: online-lpa
+          IMAGE_TAG: ${{ inputs.tag }}
+          IMAGE_NAME: ${{ matrix.image_name }}
+          BRANCH_NAME: ${{ inputs.branch_name }}
+        run: |
+          if [ ${{ matrix.override_tag }} ]; then
+            IMAGE_TAG=${{ matrix.override_tag }}
+          fi
+          docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG
+          if [ $BRANCH_NAME == "main" ]; then
+            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:main-$IMAGE_TAG
+            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:latest
+          fi
+            docker push --all-tags $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME
