@@ -48,7 +48,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
           aws-region: eu-west-1
           role-to-assume: arn:aws:iam::${{ inputs.account_id }}:role/opg-lpa-ci
-          role-duration-seconds: 900
+          role-duration-seconds: 3600
           role-session-name: OPGLPABuildPipeline
 
       - name: Get runner address
