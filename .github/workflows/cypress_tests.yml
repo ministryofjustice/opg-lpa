@@ -61,7 +61,7 @@ jobs:
 
       - name: Add GitHub Actions runner Ingress Rule
         run: |
-          python scripts/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
+          python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
 
       - name: Create screenshots directory
         run: |
@@ -237,4 +237,4 @@ jobs:
       - name: Remove GitHub Actions runner Ingress Rule
         if: always()
         run: |
-          python scripts/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json
+          python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json
