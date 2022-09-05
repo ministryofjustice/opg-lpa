@@ -1,4 +1,4 @@
-import { Given } from "cypress-cucumber-preprocessor/steps";
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
 
 Given(`I sign up standard test user`, () => {
     signUp(Cypress.env("email"),Cypress.env("password"));

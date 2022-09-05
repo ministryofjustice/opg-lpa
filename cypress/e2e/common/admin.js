@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 const findActivationDates = () => {
     return Cypress.$('[data-role=user-activation-date]');

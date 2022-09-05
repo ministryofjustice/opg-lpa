@@ -1,19 +1,59 @@
-const { defineConfig } = require('cypress')
+const { defineConfig } = require("cypress");
+const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
+const browserify = require("@badeball/cypress-cucumber-preprocessor/browserify");
+
+// This is used to store data between test steps; it's effectively a global
+// variable container. The main purpose is to enable more natural expressions
+// When fetching some content from a page Then checking it has expected
+// properties.
+const testStore = {}
+
+async function setupNodeEvents(on, config) {
+  await preprocessor.addCucumberPreprocessorPlugin(on, config);
+  on("file:preprocessor", browserify.default(config));
+
+  on("task", {
+    putValue({name, value}) {
+      // prevent different tests using the same name or the same feature setting
+      // the same value multiple times
+      if (name in testStore) {
+        throw new Error(name + ' is already set in the test store');
+      }
+
+      testStore[name] = value;
+      return true;
+    },
+    getValue(name) {
+      return testStore[name];
+    },
+
+    // the following on('task') 10 lines are required for cypress.axe to use custom function to write to the log
+    // and could be removed if we remove dependency on cypress-axe in future
+    log(message) {
+      console.log(message);
+      return null;
+    },
+    table(message) {
+      console.table(message);
+      return null;
+    },
+
+    failed: require('cypress-failed-log/src/failed')(),
+  });
+
+  return config;
+}
 
 module.exports = defineConfig({
-  postLogoutUrl: 'https://www.gov.uk/done/lasting-power-of-attorney',
-  rootRedirectUrl: 'https://www.gov.uk/power-of-attorney/make-lasting-power',
+  postLogoutUrl: "https://www.gov.uk/done/lasting-power-of-attorney",
+  rootRedirectUrl: "https://www.gov.uk/power-of-attorney/make-lasting-power",
   numberOfGuidanceHelpTopics: 22,
   defaultCommandTimeout: 12000,
   requestTimeout: 12000,
   trashAssetsBeforeRuns: false,
   e2e: {
-    // We've imported your old cypress plugins here.
-    // You may want to clean this up later by importing these.
-    setupNodeEvents(on, config) {
-      return require('./cypress/plugins/index.js')(on, config)
-    },
-    baseUrl: 'https://localhost:7002',
-    specPattern: 'cypress/e2e/**/*.feature',
+    specPattern: "cypress/e2e/**/*.feature",
+    supportFile: "cypress/support/e2e.js",
+    setupNodeEvents,
   },
-})
+});
