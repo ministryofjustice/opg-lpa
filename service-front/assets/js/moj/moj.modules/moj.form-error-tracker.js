@@ -1,112 +1,123 @@
 // Analytics form error tracking module for LPA
-// Dependencies: moj, jQuery
+;(function () {
+  'use strict'
 
-(function () {
-  'use strict';
+  const GOVUK = window.GOVUK || {}
+
+  window.moj = window.moj || {}
+  const moj = window.moj
 
   moj.Modules.formErrorTracker = {
 
     init: function () {
-      this.checkErrors();
+      this.checkErrors()
+
       // Make available within popups by adding to the Events object
-      moj.Events.on('formErrorTracker.checkErrors', this.checkErrors);
+      moj.Events.on('formErrorTracker.checkErrors', this.checkErrors)
     },
 
-    checkErrors: function(){
-      // Iterating through link errors
-      var errorsLinked = $('.error-summary-list li a')
-      for (var i = 0; i < errorsLinked.length; i++) {
-        moj.Modules.formErrorTracker.trackError(errorsLinked[i])
-      }
+    checkErrors: function () {
+      // Iterate through link errors
+      document.querySelectorAll('.error-summary-list li a').forEach(function (errorLink) {
+        moj.Modules.formErrorTracker.trackError(errorLink)
+      })
 
-      // Iterating through text errors
-      var errorsText = $('.error-summary-text p')
-      for (var i = 0; i < errorsText.length; i++) {
-        moj.Modules.formErrorTracker.trackErrorText(errorsText[i])
-      }
+      // Iterate through text errors
+      document.querySelectorAll('.error-summary-text p').forEach(function (errorText) {
+        moj.Modules.formErrorTracker.trackErrorText(errorText)
+      })
     },
 
-    trackError: function(error) {
+    trackError: function (error) {
       if (GOVUK.analytics === undefined) {
-        return;
+        return
       }
 
-      var $error = $(error)
-      var errorText = $.trim($error.text())
-      var errorID = $error.attr('href')
-      var questionText = this.getQuestionText(error)
+      const errorText = error.textContent
+      const errorId = error.getAttribute('href')
+      const questionText = this.getQuestionText(error)
 
-      var actionLabel = errorID + ' - ' + errorText
-
-      var options = {
+      const options = {
         transport: 'beacon',
-        label: actionLabel
+        label: errorId + ' - ' + errorText
       }
 
       GOVUK.analytics.trackEvent('form error', questionText, options)
     },
 
-    trackErrorText: function(error){
+    trackErrorText: function (error) {
       if (GOVUK.analytics === undefined) {
-        return;
+        return
       }
 
-      var trackingContext = $('.error-summary-text').data('tracking-context')
-      var trackingSummary = $(error).data('tracking-summary')
+      const errorSummaryElt = document.querySelector('.error-summary-text')
+      let trackingContext = ''
+      if (errorSummaryElt !== null) {
+        trackingContext = errorSummaryElt.getAttribute('data-tracking-context')
+      }
 
-      var options = {
+      const options = {
         transport: 'beacon',
-        label: trackingSummary
+        label: error.getAttribute('data-tracking-summary')
       }
 
       GOVUK.analytics.trackEvent('form error', trackingContext, options)
     },
 
-    getQuestionText: function(error) {
-      var $error = $(error)
-      var errorID = $error.attr('href')
-      var questionText
+    getQuestionText: function (error) {
+      const errorId = error.getAttribute('href')
 
-      if (errorID.indexOf('secret_') >= 0) {
+      let questionText = ''
+
+      if (errorId.indexOf('secret_') >= 0) {
         questionText = 'CSRF error'
       } else {
-        var $element = $(errorID)
-        var elementID = $element.prop('id')
+        const element = document.querySelector(errorId)
+        if (element === null) {
+          return ''
+        }
 
-        var nodeName
+        const elementId = element.getAttribute('id')
+
+        let nodeName
         try {
-          nodeName = document.getElementById(elementID).nodeName.toLowerCase()
+          nodeName = document.getElementById(elementId).nodeName.toLowerCase()
         } catch (e) {
           console.error(e)
 
           // if we can't get the question text, we can't track the error on GA
-          console.error('moj.form-error-tracker.js: unable to track error during form save; culprit was: error ID = ' + errorID, error)
+          console.error('moj.form-error-tracker.js: unable to track error during form save; culprit was: error ID = ' + errorId, error)
           return ''
         }
-
-        var legendText
 
         // If the error is on an input or textarea
         if (nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select') {
           // Get the label
-          questionText = $.trim($('label[for="' + elementID + '"]')[0].childNodes[0].nodeValue)
+          questionText = document.querySelector('label[for="' + elementId + '"]').childNodes[0].nodeValue
+
           // Get the legend for that label/input
-          legendText = $.trim($element.closest('fieldset').find('legend').text())
+          // fieldset which is the parent of the element
+          let legend = null
+          let candidate = element
+          while (candidate !== document.body) {
+            candidate = candidate.parentNode
+            if (candidate.tagName === 'FIELDSET') {
+              legend = candidate.querySelector('legend')
+              break
+            }
+          }
+
+          const legendText = (legend === null ? '' : legend.textContent)
+
           // combine the legend with the label
           questionText = legendText.length > 0 ? legendText + ': ' + questionText : questionText
-        }
-        // If the error is on a fieldset (for radio buttons and checkboxes)
-        else if (nodeName === 'fieldset') {
-          legendText = $.trim($element.find('legend').text())
-          questionText = legendText
-        }
-        // Anything else
-        else {
-          questionText = ''
+        } else if (nodeName === 'fieldset') {
+          // If the error is on a fieldset (for radio buttons and checkboxes)
+          questionText = element.querySelector('legend').textContent
         }
       }
 
       return questionText
     }
-  };
-})();
+  }
+})()
