@@ -87,7 +87,7 @@
    * opts.url (REQUIRED): if you need query string parameters,
    *   use the opts.query, don't put them on opts.url
    * opts.success (REQUIRED): handler for successful response
-   *   signature: fn(responseBody)
+   *   signature: fn(responseBody, responseStatus)
    *   is isJSON is set, responseBody is an object; otherwise, text
    * opts.error (REQUIRED): handler for failure response;
    *   signature: fn(status, Error)
@@ -156,11 +156,11 @@
         const isJSON = opts.isJSON ||
           extractHeaders(r)['content-type'].search(/application\/json/) !== -1
 
-        if (isJSON) {
+        if (isJSON && r.status === 200) {
           resp = JSON.parse(resp)
         }
 
-        opts.success(resp)
+        opts.success(resp, r.status)
       } else if (r.status >= 400) {
         opts.error(r.status, new Error('failed: ' + opts.url + '; status=' + r.status))
       }

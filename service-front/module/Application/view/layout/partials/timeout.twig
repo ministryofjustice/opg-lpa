@@ -24,13 +24,15 @@
 </div>
 
 <script>
-    if(typeof window.timeoutWarningDialog === 'undefined') {
-        // instantiate object and attach events on page load ready event
-        $(window.timeoutWarningDialog = new SessionTimeoutDialog({
-            element: $('#timeoutPopup'),
-            warningPeriodMs: {{ warningPeriodInMinutes * 60000 }}
-        }));
-    }
+document.addEventListener("DOMContentLoaded", function () {
+  if (typeof window.timeoutWarningDialog === 'undefined') {
+    // instantiate object and attach events on page load ready event
+    window.timeoutWarningDialog = new SessionTimeoutDialog({
+      element: '#timeoutPopup',
+      warningPeriodMs: {{ warningPeriodInMinutes * 60000 }}
+    })
+  }
+})
 </script>
 
 {% endif %}
