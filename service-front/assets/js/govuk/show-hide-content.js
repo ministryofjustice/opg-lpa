@@ -20,30 +20,17 @@
       return result
     }
 
-    // Adds ARIA attributes to control + associated content
-    function initToggledContent () {
-      const $control = $(this)
-      const $content = getToggledContent($control)
-
-      // Set aria-controls and defaults
-      if ($content.length) {
-        $control.attr('aria-controls', $content.attr('id'))
-        $control.attr('aria-expanded', 'false')
-        $content.attr('aria-hidden', 'true')
-      }
-    }
-
     // Return toggled content for control
     function getToggledContent ($control) {
-      let id = $control.attr('aria-controls')
+      let id = control.getAttribute('aria-controls')
 
       // ARIA attributes aren't set before init
       if (!id) {
-        id = $control.closest('[data-target]').data('target')
+        id = $(control).closest('[data-target]').data('target')
       }
 
       // Find show/hide content by id
-      return $('#' + id)
+      return document.getElementById(id)
     }
 
     // Show toggled content for control
@@ -77,10 +64,12 @@
     }
 
     // Handle radio show/hide
-    function handleRadioContent ($control, $content) {
+    function handleRadioContent (control) {
+      const $content = getToggledContent($(control))
+
       // All radios in this group which control content
-      const selector = selectors.radio + '[name=' + escapeElementName($control.attr('name')) + '][aria-controls]'
-      const $form = $control.closest('form')
+      const selector = selectors.radio + '[name=' + escapeElementName($(control).attr('name')) + '][aria-controls]'
+      const $form = $(control).closest('form')
       const $radios = $form.length ? $form.find(selector) : $(selector)
 
       // Hide content for radios in group
@@ -89,45 +78,52 @@
       })
 
       // Select content for this control
-      if ($control.is('[aria-controls]')) {
-        showToggledContent($control, $content)
+      if (moj.Helpers.matchesSelector(control, '[aria-controls]')) {
+        showToggledContent($(control), $content)
       }
     }
 
     // Handle checkbox show/hide
-    function handleCheckboxContent ($control, $content) {
-      // Show checkbox content
-      if ($control.is(':checked')) {
-        showToggledContent($control, $content)
-      } else { // Hide checkbox content
-        hideToggledContent($control, $content)
+    function handleCheckboxContent (control) {
+      const $content = getToggledContent($(control))
+
+      if (control.checked) {
+        // Show checkbox content
+        showToggledContent($(control), $content)
+      } else {
+        // Hide checkbox content
+        hideToggledContent($(control), $content)
       }
     }
 
     // Set up event handlers etc
     function init (elementSelector, eventSelectors, handler) {
-      const $container = $(document.body)
+      document.querySelectorAll(elementSelector).forEach(function (control) {
+        // Set aria-controls and defaults
+        const $content = getToggledContent($(control))
 
-      // Handler for clicks on controls
-      function deferred () {
-        const $control = $(this)
-        handler($control, getToggledContent($control))
-      }
+        if ($content.length) {
+          control.setAttribute('aria-controls', $content.attr('id'))
+          control.setAttribute('aria-expanded', 'false')
+          content.setAttribute('aria-hidden', 'true')
+        }
 
-      // Prepare ARIA attributes
-      const $controls = $(elementSelector)
-
-      $controls.each(initToggledContent)
-
-      // Handle events
-      $.each(eventSelectors, function (idx, eventSelector) {
-        $container.on('click.' + selectors.namespace, eventSelector, deferred)
+        // Any already checked on init? Call the handler to show content if so
+        if (control.checked) {
+          handler(control)
+        }
       })
 
-      // Any already :checked on init?
-      if ($controls.is(':checked')) {
-        $controls.filter(':checked').each(deferred)
-      }
+      // Handle events
+      document.body.addEventListener('click', function (e) {
+        for (let eventSelector in eventSelectors) {
+          if (moj.Helpers.matchesSelector(e.target, eventSelector)) {
+            e.preventDefault()
+            handler(e.target)
+            break
+          }
+        }
+      })
     }
 
     // Set up radio show/hide content for container
