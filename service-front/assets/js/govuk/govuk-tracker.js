@@ -1,7 +1,7 @@
 ;(function () {
   'use strict'
 
-  const $ = window.jQuery
+  const moj = window.moj || {}
   const GOVUK = window.GOVUK || {}
 
   const GOVUKTracker = function (gifUrl) {
@@ -26,13 +26,13 @@
     // Set an options object for the pageview (e.g. transport, sessionControl)
     // https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#transport
     if (typeof options === 'object') {
-      pageviewObject = $.extend(pageviewObject || {}, options)
+      pageviewObject = moj.Helpers.extend(pageviewObject || {}, options)
     }
 
-    if (!$.isEmptyObject(pageviewObject)) {
-      this.sendToTracker('pageview', pageviewObject)
-    } else {
+    if (Object.keys(pageviewObject).length === 0) {
       this.sendToTracker('pageview')
+    } else {
+      this.sendToTracker('pageview', pageviewObject)
     }
   }
 
@@ -55,7 +55,7 @@
     }
 
     if (typeof options === 'object') {
-      $.extend(evt, options)
+      moj.Helpers.extend(evt, options)
     }
 
     this.sendToTracker('event', evt)
@@ -68,7 +68,7 @@
       socialTarget: target
     }
 
-    $.extend(trackingOptions, options)
+    moj.Helpers.extend(trackingOptions, options)
 
     this.sendToTracker('social', trackingOptions)
   }
@@ -80,27 +80,28 @@
   }
 
   GOVUKTracker.prototype.payloadParams = function (type, payload) {
-    const data = $.extend({},
+    const data = moj.Helpers.extend(
+      {},
       payload,
       this.dimensions,
       {
         eventType: type,
-        referrer: global.document.referrer,
+        referrer: window.document.referrer,
         gaClientId: this.gaClientId,
-        windowWidth: global.innerWidth,
-        windowHeight: global.innerHeight,
-        screenWidth: global.screen.width,
-        screenHeight: global.screen.height,
-        colorDepth: global.screen.colorDepth
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+        screenWidth: window.screen.width,
+        screenHeight: window.screen.height,
+        colorDepth: window.screen.colorDepth
       }
     )
 
-    if (global.performance) {
-      data.navigationType = global.performance.navigation.type.toString()
-      data.redirectCount = global.performance.navigation.redirectCount.toString()
+    if (window.performance) {
+      data.navigationType = window.performance.navigation.type.toString()
+      data.redirectCount = window.performance.navigation.redirectCount.toString()
 
-      for (const k in global.performance.timing) {
-        const v = global.performance.timing[k]
+      for (const k in window.performance.timing) {
+        const v = window.performance.timing[k]
         if (typeof v === 'string' || typeof v === 'number') {
           data['timing_' + k] = v.toString()
         }
@@ -111,21 +112,25 @@
   }
 
   GOVUKTracker.prototype.sendData = function (params) {
-    const url = this.gifUrl + '?' + $.param(params)
-    $.get(url)
+    moj.Helpers.ajax({
+      url: this.gifUrl,
+      query: params
+    })
   }
 
   GOVUKTracker.prototype.sendToTracker = function (type, payload) {
-    $(global.document).ready(function () {
-      if (global.ga) {
-        global.ga(function (tracker) {
-          this.gaClientId = tracker.get('clientId')
-          this.sendData(this.payloadParams(type, payload))
-        }.bind(this))
+    const self = this
+
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.ga) {
+        window.ga(function (tracker) {
+          self.gaClientId = tracker.get('clientId')
+          self.sendData(self.payloadParams(type, payload))
+        })
       } else {
-        this.sendData(this.payloadParams(type, payload))
+        self.sendData(self.payloadParams(type, payload))
       }
-    }.bind(this))
+    })
   }
 
   GOVUK.GOVUKTracker = GOVUKTracker
