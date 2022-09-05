@@ -189,6 +189,7 @@ module.exports = function (grunt) {
           'assets/js/opg/session-timeout-dialog.js',
           'assets/js/opg/env-vars.js',
           'assets/js/opg/cache-busting.js',
+          'assets/js/opg/lpa-statuses.js',
 
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',
