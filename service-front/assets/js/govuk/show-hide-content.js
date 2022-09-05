@@ -7,6 +7,8 @@
   function ShowHideContent () {
     const self = this
 
+    const handlers = {}
+
     // Radio and Checkbox selectors
     const selectors = {
       namespace: 'ShowHideContent',
@@ -73,7 +75,9 @@
       const $radios = $form.length ? $form.find(selector) : $(selector)
 
       // Hide content for radios in group
-      $radios.each(hideToggledContent)
+      $radios.each(function (idx, radio) {
+        hideToggledContent(radio)
+      })
 
       // Select content for this control
       if (moj.Helpers.matchesSelector(control, '[aria-controls]')) {
@@ -113,7 +117,7 @@
       })
 
       // Handle events
-      self.clickHandler = function (e) {
+      handlers[elementSelector] = function (e) {
         for (let idx in eventSelectors) {
           if (moj.Helpers.matchesSelector(e.target, eventSelectors[idx])) {
             handler(e.target)
@@ -122,24 +126,24 @@
         }
       }
 
-      document.body.addEventListener('click', self.clickHandler)
+      document.body.addEventListener('click', handlers[elementSelector])
     }
 
     // Set up radio show/hide content for container
     self.showHideRadioToggledContent = function () {
-      const selectors = []
+      const eventSelectors = []
 
       // Build an array of radio group selectors; these are used to scope the
       // click handler to only the elements we want to show/hide content for
       document.querySelectorAll(selectors.radio).forEach(function (elt) {
-        const selector = 'input[type="radio"][name="' + elt.getAttribute('name') + '"]'
+        const eventSelector = 'input[type="radio"][name="' + elt.getAttribute('name') + '"]'
 
-        if (selectors.indexOf(selector) === -1) {
-          selectors.push(selector)
+        if (eventSelectors.indexOf(eventSelector) === -1) {
+          eventSelectors.push(eventSelector)
         }
       })
 
-      init(selectors.radio, selectors, handleRadioContent)
+      init(selectors.radio, eventSelectors, handleRadioContent)
     }
 
     // Set up checkbox show/hide content for container
@@ -149,7 +153,8 @@
 
     // Remove event handlers
     self.destroy = function () {
-      document.body.removeEventListener('click', self.clickHandler)
+      document.body.removeEventListener('click', handlers[self.selectors.radio])
+      document.body.removeEventListener('click', handlers[self.selectors.checkbox])
     }
   }
 
