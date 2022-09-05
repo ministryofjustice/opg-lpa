@@ -1,30 +1,29 @@
 // Validation module for LPA
-// Dependencies: moj, _, jQuery
+;(function () {
+  'use strict'
 
-(function () {
-  'use strict';
+  window.moj = window.moj || {}
+  const moj = window.moj
 
   moj.Modules.Validation = {
     selector: '.error-summary[role=alert]',
 
     init: function () {
-      _.bindAll(this, 'render');
-      this.bindEvents();
-      this.render(null, {wrap: 'body'});
-    },
-
-    bindEvents: function () {
-      moj.Events.on('Validation.render', this.render);
+      moj.Events.on('Validation.render', this.render.bind(this))
+      this.render(null, { wrap: 'body' })
     },
 
     render: function (e, params) {
-      var $el = $(this.selector, $(params.wrap));
+      const wrappedElt = document.querySelector(params.wrap)
+      if (wrappedElt === null) {
+        return
+      }
 
       // Focus on error summary
-      if ($el.length > 0) {
-        $el.focus();
+      const errorElts = wrappedElt.querySelectorAll(this.selector)
+      if (errorElts.length > 0) {
+        errorElts[0].focus()
       }
     }
-  };
-
-})();
+  }
+})()
