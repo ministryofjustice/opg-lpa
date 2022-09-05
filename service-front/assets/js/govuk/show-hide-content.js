@@ -108,7 +108,7 @@
     function init (elementSelector, eventSelectors, handler) {
       const $container = $(document.body)
 
-      // Handle control clicks
+      // Handler for clicks on controls
       function deferred () {
         const $control = $(this)
         handler($control, getToggledContent($control))
@@ -130,25 +130,20 @@
       }
     }
 
-    // Get event selectors for all radio groups
-    function getEventSelectorsForRadioGroups () {
-      const radioGroups = []
-
-      // Build an array of radio group selectors
-      return $(selectors.radio).map(function () {
-        const groupName = $(this).attr('name')
-
-        if ($.inArray(groupName, radioGroups) === -1) {
-          radioGroups.push(groupName)
-          return 'input[type="radio"][name="' + $(this).attr('name') + '"]'
-        }
-        return null
-      })
-    }
-
     // Set up radio show/hide content for container
     self.showHideRadioToggledContent = function () {
-      init(selectors.radio, getEventSelectorsForRadioGroups(), handleRadioContent)
+      const selectors = []
+
+      // Build an array of radio group selectors
+      document.querySelectorAll(selectors.radio).forEach(function (elt) {
+        const selector = 'input[type="radio"][name="' + elt.getAttribute('name') + '"]'
+
+        if (selectors.indexOf(selector) === -1) {
+          selectors.push(selector)
+        }
+      })
+
+      init(selectors.radio, selectors, handleRadioContent)
     }
 
     // Set up checkbox show/hide content for container
