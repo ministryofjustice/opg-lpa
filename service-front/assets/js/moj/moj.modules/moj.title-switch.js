@@ -1,88 +1,95 @@
-// Title Switch module for LPA
-// Dependencies: moj, _, jQuery
+// Person title (honorific) options module for LPA
+;(function () {
+  'use strict'
 
-(function () {
-  'use strict';
+  window.moj = window.moj || {}
+  const moj = window.moj
 
   moj.Modules.TitleSwitch = {
     selector: '[name="name-title"]',
 
     init: function () {
-      // bind 'this' as this in following methods
-      _.bindAll(this, 'render', 'selectChanged', 'switchTitle');
-      this.bindEvents();
-    },
+      const self = this
 
-    bindEvents: function () {
-      $('body').on('change.moj.Modules.TitleSwitch', '.js-TitleSwitch-select', this.selectChanged);
+      document.body.addEventListener('change', function (e) {
+        // delegated event listener
+        if (moj.Helpers.matchesSelector(e.target, '.js-TitleSwitch-select')) {
+          self._selectChanged(e)
+        }
+      })
+
       // default moj render event
-      moj.Events.on('render', this.render);
+      moj.Events.on('render', this.render.bind(this))
+
       // custom render event
-      moj.Events.on('TitleSwitch.render', this.render);
+      moj.Events.on('TitleSwitch.render', this.render.bind(this))
     },
 
-    render: function (e, params) {
-      var wrap = params !== undefined && params.wrap !== undefined ? params.wrap : 'body';
-      $(this.selector, wrap).each(this.switchTitle);
-    },
+    _switchTitle: function (titleInput) {
+      const value = titleInput.value
+      const options = JSON.parse(titleInput.getAttribute('data-select-options'))
 
-    switchTitle: function (i, el) {
-      var $titleInput = $(el),
-          $label = $('label[for="' + $titleInput.attr('id') + '"]'),
-          value = $titleInput.val(),
-          options = $titleInput.data('select-options'),
-          _this = this,
-          $select;
-
-      //  If the current value isn't an option then exit and just display as text
-      if (!$.isArray(options) || !_.includes(options, value)) {
-        return;
+      // If the current value isn't an option then exit and just display as text
+      if (Object.prototype.toString.call(options) !== '[object Array]' || options.indexOf(value) === -1) {
+        return
       }
 
       // build select box with the options
-      $select = $('<select>', {
-        'id': $titleInput.attr('id'),
-        'name': $titleInput.attr('name'),
-        'class': 'js-TitleSwitch-select form-control',
-        'data-cy' : $titleInput.attr('id')
-      });
+      const selectId = titleInput.getAttribute('id')
+      const selectName = titleInput.getAttribute('name')
+      const select = moj.Helpers.strToHtml(
+        '<select id="' + selectId + '" name="' + selectName + '" ' +
+        'class="js-TitleSwitch-select form-control" data-cy="' + selectId + '">'
+      )
 
       // add options and select an existing value if possible
-      $.each(options, function (idx, text) {
-        $select.append($('<option>', { value: text }).text(text));
+      options.forEach(function (text) {
+        select.appendChild(
+          moj.Helpers.strToHtml('<option value="' + text + '">' + text + '</option>')
+        )
 
         if (value === text) {
-          $select.val(text);
+          select.value = text
         }
-      });
+      })
 
-      //  Replace the text input with the new select input
-      $titleInput.replaceWith($select);
+      // Replace the text input with the new select input
+      titleInput.parentNode.replaceChild(select, titleInput)
     },
 
-    selectChanged: function (e) {
-      var $titleInput = $(e.target),
-          value = $titleInput.val();
+    _selectChanged: function (e) {
+      const titleInput = e.target
+      const value = titleInput.value
 
       if (value === 'Other') {
-        //  Replace the select input with a text input
-        var $text = $('<input>', {
-          'id': $titleInput.attr('id'),
-          'name': $titleInput.attr('name'),
-          'class': 'form-control',
-          'type':'text',
-          'placeholder': 'Please specify',
-          'data-cy' : $titleInput.attr('id')
-        });
+        // Replace the select input with a text input
+        const id = titleInput.getAttribute('id')
+        const name = titleInput.getAttribute('name')
 
-        //  Replace the select input with the new text input
-        $titleInput.replaceWith($text);
-        $titleInput.val(value);
+        const text = moj.Helpers.strToHtml(
+          '<input id="' + id + '" name="' + name + '" type="text" ' +
+          'class="form-control" placeholder="Please specify" data-cy="' + id + '">'
+        )
 
-        var modifiedTitleField = $(this.selector);
-        modifiedTitleField.focus();
+        titleInput.parentNode.replaceChild(text, titleInput)
+        titleInput.value = value
+
+        const focusOn = document.querySelector(this.selector)
+        if (focusOn !== null) {
+          focusOn.focus()
+        }
       }
-    }
-  };
+    },
 
-})();
+    render: function (e, params) {
+      const wrap = (params !== undefined && params.wrap !== undefined ? params.wrap : 'body')
+      const wrapperElt = document.querySelector(wrap)
+
+      if (wrapperElt === null) {
+        return
+      }
+
+      wrapperElt.querySelectorAll(this.selector).forEach(this._switchTitle)
+    }
+  }
+})()
