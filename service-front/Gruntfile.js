@@ -180,8 +180,8 @@ module.exports = function (grunt) {
           'node_modules/lodash/lodash.js',
           'node_modules/urijs/src/URI.min.js',
           'assets/js/govuk/stageprompt.js',
-          'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
-          'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
+          'assets/js/govuk/show-hide-content.js',
+          'assets/js/govuk/govuk-tracker.js',
           'assets/js/moj/moj.ga-tracker.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/analytics.js',
 
