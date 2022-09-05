@@ -21,7 +21,7 @@
     }
 
     // Return toggled content for control
-    function getToggledContent ($control) {
+    function getToggledContent (control) {
       let id = control.getAttribute('aria-controls')
 
       // ARIA attributes aren't set before init
@@ -34,65 +34,63 @@
     }
 
     // Show toggled content for control
-    function showToggledContent ($control, $content) {
+    function showToggledContent (control, content) {
       // Show content
-      if ($content.hasClass('js-hidden')) {
-        $content.removeClass('js-hidden')
-        $content.attr('aria-hidden', 'false')
+      if (content.classList.contains('js-hidden')) {
+        content.classList.remove('js-hidden')
+        content.setAttribute('aria-hidden', 'false')
 
         // If the controlling input, update aria-expanded
-        if ($control.attr('aria-controls')) {
-          $control.attr('aria-expanded', 'true')
+        if (control.getAttribute('aria-controls')) {
+          control.setAttribute('aria-expanded', 'true')
         }
       }
     }
 
     // Hide toggled content for control
-    function hideToggledContent ($control, $content) {
-      $content = $content || getToggledContent($control)
+    function hideToggledContent (control, content) {
+      content = content || getToggledContent(control)
 
       // Hide content
-      if (!$content.hasClass('js-hidden')) {
-        $content.addClass('js-hidden')
-        $content.attr('aria-hidden', 'true')
+      if (!content.classList.contains('js-hidden')) {
+        content.classList.add('js-hidden')
+        content.setAttribute('aria-hidden', 'true')
 
         // If the controlling input, update aria-expanded
-        if ($control.attr('aria-controls')) {
-          $control.attr('aria-expanded', 'false')
+        if (control.getAttribute('aria-controls')) {
+          control.setAttribute('aria-expanded', 'false')
         }
       }
     }
 
     // Handle radio show/hide
     function handleRadioContent (control) {
-      const $content = getToggledContent($(control))
+      const content = getToggledContent(control)
 
       // All radios in this group which control content
-      const selector = selectors.radio + '[name=' + escapeElementName($(control).attr('name')) + '][aria-controls]'
+      const selector = selectors.radio + '[name=' + escapeElementName(control.getAttribute('name')) + '][aria-controls]'
       const $form = $(control).closest('form')
       const $radios = $form.length ? $form.find(selector) : $(selector)
 
       // Hide content for radios in group
-      $radios.each(function () {
-        hideToggledContent($(this))
-      })
+      $radios.each(hideToggledContent)
 
       // Select content for this control
       if (moj.Helpers.matchesSelector(control, '[aria-controls]')) {
-        showToggledContent($(control), $content)
+        showToggledContent(control, content)
       }
     }
 
     // Handle checkbox show/hide
     function handleCheckboxContent (control) {
-      const $content = getToggledContent($(control))
+      const content = getToggledContent(control)
 
       if (control.checked) {
         // Show checkbox content
-        showToggledContent($(control), $content)
+        showToggledContent(control, content)
       } else {
         // Hide checkbox content
-        hideToggledContent($(control), $content)
+        hideToggledContent(control, content)
       }
     }
 
@@ -100,10 +98,10 @@
     function init (elementSelector, eventSelectors, handler) {
       document.querySelectorAll(elementSelector).forEach(function (control) {
         // Set aria-controls and defaults
-        const $content = getToggledContent($(control))
+        const content = getToggledContent(control)
 
-        if ($content.length) {
-          control.setAttribute('aria-controls', $content.attr('id'))
+        if (content !== null) {
+          control.setAttribute('aria-controls', content.getAttribute('id'))
           control.setAttribute('aria-expanded', 'false')
           content.setAttribute('aria-hidden', 'true')
         }
@@ -115,22 +113,24 @@
       })
 
       // Handle events
-      document.body.addEventListener('click', function (e) {
-        for (let eventSelector in eventSelectors) {
-          if (moj.Helpers.matchesSelector(e.target, eventSelector)) {
-            e.preventDefault()
+      self.clickHandler = function (e) {
+        for (let idx in eventSelectors) {
+          if (moj.Helpers.matchesSelector(e.target, eventSelectors[idx])) {
             handler(e.target)
             break
           }
         }
-      })
+      }
+
+      document.body.addEventListener('click', self.clickHandler)
     }
 
     // Set up radio show/hide content for container
     self.showHideRadioToggledContent = function () {
       const selectors = []
 
-      // Build an array of radio group selectors
+      // Build an array of radio group selectors; these are used to scope the
+      // click handler to only the elements we want to show/hide content for
       document.querySelectorAll(selectors.radio).forEach(function (elt) {
         const selector = 'input[type="radio"][name="' + elt.getAttribute('name') + '"]'
 
@@ -148,9 +148,8 @@
     }
 
     // Remove event handlers
-    self.destroy = function ($container) {
-      $container = $container || $(document.body)
-      $container.off('.' + selectors.namespace)
+    self.destroy = function () {
+      document.body.removeEventListener('click', self.clickHandler)
     }
   }
 
