@@ -118,9 +118,7 @@
 
     const polyfillToggle = function () {
       // Toggle the open attribute on details element
-      (details.getAttribute('open') === 'open'
-        ? details.removeAttribute('open')
-        : details.setAttribute('open', 'open'))
+      details.open ? details.open = false : details.open = true
 
       // Fire a toggle event on the details element; as we've set the
       // open attr, the existing handler for native details will trigger
@@ -159,6 +157,9 @@
           return true
         })
 
+        // mark the element as polyfilled
+        details.setAttribute('data-polyfilled-details', 'true')
+
         return true
       }
 
@@ -196,7 +197,7 @@
       nonNativeInit();
 
       // Call open or close based on current state
-      (details.getAttribute('open') === 'open') ? wrapped.open() : wrapped.close()
+      details.open ? wrapped.open() : wrapped.close()
 
       inited = true
       return inited
@@ -217,10 +218,10 @@
   // treatment, being added to the tab order as appropriate
   const _addDetailsPolyfill = function (tag) {
     if (tag === undefined) {
-      tag = 'details'
+      tag = 'polydetails'
     }
 
-    // Do we have a native implementation which supports an "open" attribute?
+    // Do we have a native implementation which supports an "open" property?
     // Note that we "polyfill" all matching elements, as we want
     // to incorporate ARIA attributes. We also do additional work when we
     // must provide a polyfill for <details> in browsers which don't have it.
