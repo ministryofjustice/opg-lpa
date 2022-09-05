@@ -54,15 +54,21 @@
 
       // note a popup is instantiated for every page, but not every page has
       // a button to open it; therefore we attach event handlers etc.
-      // using querySelectorAll(), so it doesn't fail if the page lacks the button
-      const openFormHandler = this.openForm.bind(this)
+      // to the document, and check whether the clicked element is relevant
+      // in the handler
+      document.addEventListener('click', this.openForm.bind(this))
+
       document.querySelectorAll(this.selector).forEach(function (element) {
-        element.addEventListener('click', openFormHandler)
         element.setAttribute('data-inited', 'true')
       })
     },
 
     openForm: function (e) {
+      // we're only interested in .js-form-popup elements
+      if (!moj.Helpers.matchesSelector(e.target, this.selector)) {
+        return
+      }
+
       e.preventDefault()
 
       let source = e.target
