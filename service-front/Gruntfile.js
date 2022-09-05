@@ -214,7 +214,6 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.dashboard.js',
           'assets/js/moj/moj.modules/moj.ui-behaviour.js',
           'assets/js/moj/moj.modules/moj.applicant.js',
-          'assets/js/moj/moj.modules/moj.who-are-you.js',
           'assets/js/moj/moj.modules/moj.polyfill.js',
           'assets/js/moj/moj.modules/moj.single-use.js',
           'assets/js/moj/moj.modules/moj.analytics.js',
