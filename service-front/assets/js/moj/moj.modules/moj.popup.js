@@ -27,23 +27,17 @@
     let _last = null
 
     const _keydownCloseHandler = function (e) {
-      e.preventDefault()
-
       if (e.which === 27) {
+        e.preventDefault()
         that.close()
       }
-
-      return false
     }
 
     const _clickCloseHandler = function (e) {
-      if (!moj.Helpers.matchesSelector(e.target, '.js-popup-close, .js-cancel')) {
-        return true
+      if (moj.Helpers.matchesSelector(e.target, '.js-popup-close, .js-cancel')) {
+        e.preventDefault()
+        that.close()
       }
-
-      e.preventDefault()
-      that.close()
-      return false
     }
 
     const _shiftTabHandler = function (e) {
