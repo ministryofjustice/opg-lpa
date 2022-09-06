@@ -1,4 +1,4 @@
-FROM composer:2.3 AS composer
+FROM composer:2.4.1 AS composer
 
 RUN adduser -D -g '' appuser
 
