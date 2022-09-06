@@ -95,7 +95,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 ]
             ],
             'expectedDonorText' => [
-                'You must have signed and dated continuation sheet/s 2 before you signed ' .
+                'You must have signed and dated continuation sheet 2 before you signed ' .
                 'section 9 of the LPA, or on the same day.'
             ],
             'expectedAttorneyText' => []
@@ -110,7 +110,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 ]
             ],
             'expectedDonorText' => [
-                'You must have signed and dated continuation sheet/s 2 before you signed ' .
+                'You must have signed and dated continuation sheet 2 before you signed ' .
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
@@ -124,7 +124,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 ]
             ],
             'expectedDonorText' => [
-                'You must have signed and dated continuation sheet/s 2 before you signed ' .
+                'You must have signed and dated continuation sheet 2 before you signed ' .
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
@@ -137,11 +137,24 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                         exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
                         irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
                         nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+                        qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur
+                        qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                        irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                        irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                        qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                        irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
                         qui officia deserunt mollit anim id est laborum.'
                 ]
             ],
             'expectedDonorText' => [
-                'You must have signed and dated continuation sheet/s 2 before you signed ' .
+                'You must have signed and dated continuation sheets 2 before you signed ' .
                 'section 9 of the LPA, or on the same day.'
             ],
             'expectedAttorneyText' => []

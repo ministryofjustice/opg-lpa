@@ -312,9 +312,9 @@
                 {# cs2 cs3 #}
                 {% elseif 2 in continuationSheets and 3 in continuationSheets %}
                     {% if lpa.document.type == 'property-and-financial' %}
-                        <p data-cy="continuation-sheet-info">Continuation sheet 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                        <p data-cy="continuation-sheet-info">Continuation sheet{{ csPluraliser['cs2'] }} 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
                     {% elseif lpa.document.type == 'health-and-welfare' %}
-                        <p data-cy="continuation-sheet-info">Continuation sheet 2 must have been signed and dated before or on the same day as they signed section 5.</p>
+                        <p data-cy="continuation-sheet-info">Continuation sheet{{ csPluraliser['cs2'] }} 2 must have been signed and dated before or on the same day as they signed section 5.</p>
                     {% endif %}
 
                 {# cs1 #}
@@ -322,7 +322,7 @@
                 <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet{{ csPluraliser['cs1'] }} 1 before you signed section 9 of the LPA, or on the same day.</p>
                 {# cs2 #}
                 {% elseif 2 in continuationSheets %}
-                    <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
+                <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet{{ csPluraliser['cs2'] }} 2 before you signed section 9 of the LPA, or on the same day.</p>
                 {# cs3 #}
                 {% elseif 3 in continuationSheets %}
                     {% if lpa.document.type == 'property-and-financial' %}

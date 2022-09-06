@@ -9,6 +9,11 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class ContinuationSheets
 {
     /**
+     * @var int
+     */
+    private $continuationSheet2BoxRows = 14;
+
+    /**
      * Gathers an array on conditions where continuation sheet(s) would be generated in the LPA PDF.
      *
      * @param Lpa $lpa
@@ -80,6 +85,7 @@ class ContinuationSheets
             LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_COUNT;
         $lpaDocument = $lpa->getDocument();
         if (
+            // do getPref or getInstr cover all CS2 scenarios?
             strlen(LpaFormatter::flattenInstructionsOrPreferences($lpaDocument->getPreference())) > $allowedChars ||
             strlen(LpaFormatter::flattenInstructionsOrPreferences($lpaDocument->getInstruction())) > $allowedChars
         ) {
@@ -122,6 +128,30 @@ class ContinuationSheets
         }
 
         $result['cs1'] = $cs1Pluraliser;
+
+        $cs2Pluraliser = '';
+
+        // The following lines are taken from the PDF service.
+        $lpaChars = (LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_WIDTH + 2) *
+          LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_COUNT;
+        $cs2Chars = (LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_WIDTH + 2) * $this->continuationSheet2BoxRows;
+        // Total chars allowed for LPA plus page 1 of CS2
+        $allowedChars = $lpaChars + $cs2Chars;
+
+        $lpaDocument = $lpa->getDocument();
+        $thing = strlen(LpaFormatter::flattenInstructionsOrPreferences($lpaDocument->getInstruction()));
+        var_dump($thing . ' out of ' . $allowedChars);
+        var_dump('####' . $lpaDocument->getInstruction());
+        if (
+            // do getPref or getInstr cover all CS2 scenarios?
+            strlen(LpaFormatter::flattenInstructionsOrPreferences($lpaDocument->getPreference())) > $allowedChars ||
+            strlen(LpaFormatter::flattenInstructionsOrPreferences($lpaDocument->getInstruction())) > $allowedChars
+        ) {
+            $cs2Pluraliser = 's';
+        }
+
+        $result['cs2'] = $cs2Pluraliser;
+
         return $result;
     }
 }
