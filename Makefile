@@ -14,6 +14,8 @@ NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-va
 # This user is in the test data seeded into the system.
 ADMIN_USERS := "seeded_test_user@digital.justice.gov.uk"
 
+COMPOSER_VERSION := "2.4.1"
+
 .PHONY: all
 all:
 	@${MAKE} dc-up
@@ -25,23 +27,23 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run -v `pwd`/service-front/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
-	@docker run -v `pwd`/service-pdf/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-api-composer
 run-api-composer:
-	@docker run -v `pwd`/service-api/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run -v `pwd`/service-admin/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-composers
 run-composers:
-	@docker pull composer:2.3; \
+	@docker pull composer:${COMPOSER_VERSION}; \
 	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
 
 # This will make a docker network called "malpadev", used to communicate from

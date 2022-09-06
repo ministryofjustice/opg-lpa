@@ -33,7 +33,7 @@ fi
 # Install composer dependencies
 COPY --chown=appuser:appuser service-front/composer.json /app/composer.json
 COPY --chown=appuser:appuser service-front/composer.lock /app/composer.lock
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.4.1 \
     && su - appuser -c "composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app" \
     && chown -R appuser:appuser /app/vendor \
     && rm /app/composer.json \
