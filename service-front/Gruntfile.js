@@ -210,7 +210,6 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.print-link.js',
           'assets/js/moj/moj.modules/moj.person-form.js',
           'assets/js/moj/moj.modules/moj.validation.js',
-          'assets/js/moj/moj.modules/moj.sticky-nav.js',
           'assets/js/moj/moj.modules/moj.repeat-application.js',
           'assets/js/moj/moj.modules/moj.dashboard.js',
           'assets/js/moj/moj.modules/moj.ui-behaviour.js',
