@@ -36,10 +36,6 @@
     formEvents: function (i, el) {
       // Set variables
       const $form = $(el)
-      let $allFields = $('input[required], label.required + input, label.required ~ select', $form)
-      const $addressFields = $('input[name^="address"]', $form)
-      let allPopulated
-      let countAddr
       let dob
 
       const getDOB = function () {
@@ -225,34 +221,6 @@
               $('.alert.panel').trigger('focus')
             }
           }
-        }
-
-        $allFields = $('input[required], label.required + input, label.required ~ select', $form)
-
-        allPopulated = true
-
-        // Test required fields are populated
-        $allFields.each(function () {
-          if (allPopulated) {
-            const $field = $(this)
-
-            if ($.trim($field.val()) === '') {
-              allPopulated = false
-            }
-            if ($field.prop('type') === 'checkbox') {
-              allPopulated = $field.prop('checked')
-            }
-          }
-        })
-
-        // Count populated address fields
-        countAddr = $addressFields.filter(function () {
-          return this.value.length !== 0
-        }).length
-
-        // Test address fields - business logic states 2 address fields as min
-        if (countAddr < 2) {
-          allPopulated = false
         }
       })
 
