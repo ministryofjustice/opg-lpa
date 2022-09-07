@@ -28,7 +28,7 @@ class AuthControllerTest extends AbstractControllerTest
         'password' => 'unitTest'
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -234,6 +234,11 @@ class AuthControllerTest extends AbstractControllerTest
         $controller = $this->getController(AuthController::class);
 
         $this->authenticationService->shouldReceive('getSessionExpiry')->once()->andReturn(null);
+        $this->authenticationService->shouldReceive('clearIdentity')->once()->andReturn(null);
+        $this->sessionManager->shouldReceive('destroy')
+            ->with(['clear_storage' => true])
+            ->once()
+            ->andReturn(null);
 
         /** @var Response $result */
         $result = $controller->sessionExpiryAction();
@@ -251,7 +256,7 @@ class AuthControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $this->authenticationService->shouldReceive('clearIdentity')->once();
-        $this->sessionManager->shouldReceive('destroy')->withArgs([['clear_storage'=>true]])->once();
+        $this->sessionManager->shouldReceive('destroy')->withArgs([['clear_storage' => true]])->once();
         $this->redirect->shouldReceive('toUrl')
             ->withArgs(['https://www.gov.uk/done/lasting-power-of-attorney'])->andReturn($response)->once();
 
@@ -265,7 +270,7 @@ class AuthControllerTest extends AbstractControllerTest
         $controller = $this->getController(AuthController::class);
 
         $this->authenticationService->shouldReceive('clearIdentity')->once();
-        $this->sessionManager->shouldReceive('destroy')->withArgs([['clear_storage'=>true]])->once();
+        $this->sessionManager->shouldReceive('destroy')->withArgs([['clear_storage' => true]])->once();
 
         $result = $controller->deletedAction();
 

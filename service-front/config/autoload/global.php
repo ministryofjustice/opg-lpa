@@ -67,18 +67,11 @@ return [
             // The cookie name used in the session
             'name' => 'lpa2',
 
-            // Hash settings
-            'hash_function' => 'sha512',
-            'hash_bits_per_character' => 5,
-
             // Only allow the cookie to be sent over https, if we're using HTTPS.
             'cookie_secure' => true,
 
             // Prevent cookie from being accessed from JavaScript
             'cookie_httponly' => true,
-
-            // Don't accept uninitialized session IDs
-            'use_strict_mode' => true,
 
             // The probability of GC running is gc_probability/gc_divisor
             'gc_probability' => 0,

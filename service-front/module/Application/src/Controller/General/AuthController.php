@@ -175,16 +175,18 @@ class AuthController extends AbstractBaseController
     }
 
     /**
-     * Get session state without refreshing the session
+     * Get session state; if session has expired, clear the session data,
+     * which also resets the cookie
      *
-     * @return JsonModel|HttpResponse
-     * for live session, otherwise 204
+     * @return JsonModel|HttpResponse for live session, otherwise 204
      */
     public function sessionExpiryAction()
     {
         $remainingSeconds = $this->getAuthenticationService()->getSessionExpiry();
 
         if (!$remainingSeconds) {
+            $this->clearSession();
+
             $response = new HttpResponse();
             $response->setStatusCode(204);
             return $response;
