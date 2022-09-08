@@ -53,6 +53,20 @@ jobs:
     with:
       terraform_version: 1.1.2
 
+  # Testing step. This will not be used.
+  notify_slack_testing:
+    name: Notify Slack of Development deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: slackapi/slack-github-action@v1.21.0
+        with:
+          payload: |
+            {
+              "status": "Failed"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
