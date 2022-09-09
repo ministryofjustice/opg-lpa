@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then(`I choose Property and Finance`, () => {
     cy.get("[data-cy=type-property-and-financial]").should('not.be.disabled').check().should('be.checked');

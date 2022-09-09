@@ -1,4 +1,4 @@
-import { And, Then, When } from "cypress-cucumber-preprocessor/steps";
+import { And, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
 When('I visit the {string} JSON endpoint and save the response as {string}', (path, key) => {
     cy.request(path).then((response) => {

@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 const isInViewport = function (window, el) {
     let $el = Cypress.$(el);

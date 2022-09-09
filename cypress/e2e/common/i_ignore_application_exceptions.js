@@ -1,6 +1,6 @@
-import { Given } from "cypress-cucumber-preprocessor/steps";
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
 
-And(`I ignore application exceptions`, () => {
+Given(`I ignore application exceptions`, () => {
     Cypress.on('uncaught:exception', (err, runnable) => {
         return false
     })

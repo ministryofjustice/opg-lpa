@@ -1,29 +1,18 @@
-FROM composer:2.3 AS composer
-
-RUN adduser -D -g '' appuser
-
-COPY --chown=appuser:appuser service-front/composer.json /app/composer.json
-COPY --chown=appuser:appuser service-front/composer.lock /app/composer.lock
-
-RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
-
 FROM php:8.1-fpm-alpine3.15
 
 RUN adduser -D -g '' appuser
 RUN apk add --upgrade apk-tools
 RUN apk upgrade
 
-# security fix for expat
-RUN apk upgrade expat
-
-RUN apk add --update --no-cache icu
-
-RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
-        && pecl install redis \
-        && docker-php-ext-enable redis \
-        && docker-php-ext-install intl \
-        && docker-php-ext-install bcmath \
-        && docker-php-ext-install opcache
+# The --virtual flag puts build dependencies into their own
+# directory to make them easier to remove en masse
+RUN apk add --no-cache icu \
+    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && docker-php-ext-install intl \
+    && docker-php-ext-install bcmath \
+    && docker-php-ext-install opcache
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
@@ -41,6 +30,15 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
     echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
 fi
 
+# Install composer dependencies
+COPY --chown=appuser:appuser service-front/composer.json /app/composer.json
+COPY --chown=appuser:appuser service-front/composer.lock /app/composer.lock
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.4.1 \
+    && su - appuser -c "composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app" \
+    && chown -R appuser:appuser /app/vendor \
+    && rm /app/composer.json \
+    && rm /usr/bin/composer
+
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
 
@@ -55,14 +53,8 @@ COPY --chown=appuser:appuser service-front/public /app/public
 # For tests in CI
 COPY --chown=appuser:appuser service-front/phpunit.xml /app/phpunit.xml
 
-# Keep the composer.lock as security scanners use it
-COPY --chown=appuser:appuser service-front/composer.lock /app/composer.lock
-
-# Shared logging library
-COPY --chown=appuser:appuser shared/logging /shared/logging
-
-# Composer-installed files from the base image
-COPY --chown=appuser:appuser --from=composer /app/vendor /app/vendor
+# Shared code
+COPY --chown=appuser:appuser shared /shared
 
 # PHP config files
 COPY --chown=appuser:appuser service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/

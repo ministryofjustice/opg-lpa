@@ -14,6 +14,8 @@ NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-va
 # This user is in the test data seeded into the system.
 ADMIN_USERS := "seeded_test_user@digital.justice.gov.uk"
 
+COMPOSER_VERSION := "2.4.1"
+
 .PHONY: all
 all:
 	@${MAKE} dc-up
@@ -25,23 +27,23 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run -v `pwd`/service-front/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
-	@docker run -v `pwd`/service-pdf/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-api-composer
 run-api-composer:
-	@docker run -v `pwd`/service-api/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run -v `pwd`/service-admin/:/app/ composer:2.3 install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-composers
 run-composers:
-	@docker pull composer:2.3; \
+	@docker pull composer:${COMPOSER_VERSION}; \
 	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
 
 # This will make a docker network called "malpadev", used to communicate from
@@ -55,7 +57,8 @@ dc-up: run-composers
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
-	aws-vault exec moj-lpa-dev -- aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
+	aws-vault exec moj-lpa-dev -- aws ecr get-login-password --region eu-west-1 | docker login \
+		--username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
 	docker-compose up
 
 # target for users outside MoJ to run the stack without 3rd party integrations
@@ -117,7 +120,8 @@ hard-reset-front:
 	docker-compose build --no-cache front-app
 
 .PHONY: soft-reset-front
-# soft reset only the front app container without no-cache option.  quickest rebuild but runs risk of some staleness if not every change is picked up
+# soft reset only the front app container without no-cache option.
+# quickest rebuild but runs risk of some staleness if not every change is picked up
 soft-reset-front:
 	@${MAKE} dc-down
 	docker-compose build front-app
@@ -142,16 +146,6 @@ reset-flask:
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker rmi lpa-flask-app || true; \
 	docker-compose build --no-cache flask-app
-
-.PHONY: reset-mock-sirius
-reset-mock-sirius:
-	@${MAKE} dc-down
-	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
-	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker rmi mocksirius || true; \
-	docker-compose build --no-cache mocksirius
 
 # hard reset only the api app container
 .PHONY: reset-api
@@ -189,20 +183,29 @@ test-pdf-local:
 	docker stop pdf-test-run;
 	docker rm pdf-test-run;
 
+# CYPRESS_RUNNER_* environment variables are used to consolidate setting environment
+# variables detected by cypress (like CYPRESS_baseUrl) and variables which are
+# only present in the cypress "environment" (i.e. passed to cypress using the -e flag).
+# The runner knows which variables should be set using which mechanism. By passing
+# all variables as CYPRESS_RUNNER_* env vars, picked up by the cypress_runner.py script,
+# we can apply any logic about how to set vars for cypress, as well as provide
+# reasonable defaults (e.g. for CYPRESS_baseUrl), in one location.
 .PHONY: cypress-local
 cypress-local:
 	docker rm -f cypress_tests || true
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" -v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests --entrypoint ./cypress/cypress_start.sh cypress:latest
-
-.PHONY: cypress-local-shell
-cypress-local-shell:
-	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" -e "CYPRESS_headless=true" --entrypoint bash --network="host" -v `pwd`/cypress:/app/cypress --name cypress_tests cypress:latest
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
+		-e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_BASE_URL="https://localhost:7002" \
+		-e CYPRESS_RUNNER_ADMIN_URL="https://localhost:7003" \
+		-e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" \
+		-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests \
+		--entrypoint ./cypress/cypress_start.sh cypress:latest
 
 # Start S3 Monitor and call "cypress open";
 # this requires a globally-installed cypress
 .PHONY: cypress-open
 cypress-open:
 	aws-vault exec moj-lpa-dev -- python3 cypress/s3_monitor.py &
-	CYPRESS_userNumber=`python3 cypress/user_number.py` ./node_modules/.bin/cypress open --project ./
+	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
+		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
+		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"

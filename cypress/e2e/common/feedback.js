@@ -1,4 +1,4 @@
-import { Given } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then(`I can find feedback buttons`, () => {
 

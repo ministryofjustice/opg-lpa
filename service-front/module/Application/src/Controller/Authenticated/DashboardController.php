@@ -162,6 +162,7 @@ class DashboardController extends AbstractAuthenticatedController
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
 
         if ($this->getLpaApplicationService()->deleteApplication($lpaId) !== true) {
+            /** @psalm-suppress UndefinedMagicMethod */
             $this->flashMessenger()->addErrorMessage('LPA could not be deleted');
         }
 

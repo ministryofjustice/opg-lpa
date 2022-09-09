@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Validator;
-use App\Filter\StandardInput as StandardInputFilter;
+use App\Filter\StandardInputFilterChain;
 use Laminas\Filter;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Hidden;
@@ -33,7 +33,7 @@ class UserFind extends AbstractForm
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(new StandardInputFilter());
+            ->attach(StandardInputFilterChain::create());
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(), true);
@@ -46,7 +46,7 @@ class UserFind extends AbstractForm
         $offsetInput = new Input($offset->getName());
 
         $offsetInput->getFilterChain()
-            ->attach(new StandardInputFilter());
+            ->attach(StandardInputFilterChain::create());
 
         $offsetInput->getValidatorChain()
             ->attach(new Validator\Digits(), true);

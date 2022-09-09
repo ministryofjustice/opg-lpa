@@ -1,4 +1,4 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 // For all script tags that have a src attribute, and all link tags that have a href,
 // I can request those assets without error
