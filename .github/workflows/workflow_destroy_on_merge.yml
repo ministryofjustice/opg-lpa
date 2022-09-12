@@ -1,5 +1,17 @@
 name: "[Workflow] Destroy ephemeral environment"
 
+permissions:
+  contents: read
+  security-events: none
+  pull-requests: read
+  actions: none
+  checks: none
+  deployments: none
+  issues: none
+  packages: none
+  repository-projects: none
+  statuses: none
+
 defaults:
   run:
     shell: bash
