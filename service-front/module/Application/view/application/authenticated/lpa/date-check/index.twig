@@ -250,43 +250,44 @@
                 <br>
             </div>
         {% endif %}
-        <div class="person-address flush--ends">
-            <div class="dob-element form-date {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
-                {{ formElementErrorsV2(donorElementDay) }}
-                {{ formElementErrorsV2(donorElementMonth) }}
-                {{ formElementErrorsV2(donorElementYear) }}
-                {{ formElementErrorsV2(donorElement) }}
-
-                <p>
-                {% if lpa.document.donor.canSign %}
-                    This person signed section 9 of the LPA on
-                {% else %}
-                    This person signed continuation sheet 3 on behalf of the donor on
-                {% endif %}
-                </p>
-
-                <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
-                    <legend class="visually-hidden">Check signature dates for donor who signed section 9 of the LPA</legend>
-                    <div class="form-group form-group-day {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ donorElementDayId }}">Day</label>
-                        {{ formElement(donorElementDay) }}
-                    </div>
-
-                    <div class="form-group form-group-month {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ donorElementMonthId }}">Month</label>
-                        {{ formElement(donorElementMonth) }}
-                    </div>
-
-                    <div class="form-group form-group-year {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ donorElementYearId }}">Year</label>
-                        {{ formElement(donorElementYear) }}
-                    </div>
-                </fieldset>
-
-            </div>
-        </div>
 
         {% block donorGuidance %}
+            <div class="person-address flush--ends">
+                <div class="dob-element form-date {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
+                    {{ formElementErrorsV2(donorElementDay) }}
+                    {{ formElementErrorsV2(donorElementMonth) }}
+                    {{ formElementErrorsV2(donorElementYear) }}
+                    {{ formElementErrorsV2(donorElement) }}
+
+                    <p data-cy="donor-check-signature-date-prompt">
+                    {% if lpa.document.donor.canSign %}
+                        This person signed section 9 of the LPA on
+                    {% else %}
+                        This person signed continuation sheet 3 on behalf of the donor, followed by two witnesses, on
+                    {% endif %}
+                    </p>
+
+                    <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
+                        <legend class="visually-hidden">Check signature dates for donor who signed section 9 of the LPA</legend>
+                        <div class="form-group form-group-day {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ donorElementDayId }}">Day</label>
+                            {{ formElement(donorElementDay) }}
+                        </div>
+
+                        <div class="form-group form-group-month {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ donorElementMonthId }}">Month</label>
+                            {{ formElement(donorElementMonth) }}
+                        </div>
+
+                        <div class="form-group form-group-year {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ donorElementYearId }}">Year</label>
+                            {{ formElement(donorElementYear) }}
+                        </div>
+                    </fieldset>
+
+                </div>
+            </div>
+
             {% if continuationSheets is not empty %}
             <div class="panel panel-border-wide text">
                 {# cs1 cs2 cs3 #}
