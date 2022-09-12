@@ -176,7 +176,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             ],
             'expectedDonorText' => [
                 'This person must have signed continuation sheet 3 on the same day as they sign ' .
-                'section 5 and before the certificate provider signs section 10.'
+                'section 5 and before the certificate provider signs section 10.',
             ],
             'expectedAttorneyText' => []
         ],
@@ -221,8 +221,10 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ]
                 ]
             ],
-            'expectedDonorText' => ['Continuation sheet 1 must have been signed and dated before or on the ' .
-                                    'same day as they signed continuation sheet 3.'],
+            'expectedDonorText' => [
+                'Continuation sheet 1 must have been signed and dated before or on the ' .
+                'same day as they signed continuation sheet 3.',
+            ],
             'expectedAttorneyText' => []
         ],
         // CS3 & CS2 PF LPA - donor cannot sign or make a mark, additional info on how attorneys make decisions
@@ -337,16 +339,6 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         ],
     ];
 
-    /* This returns an arbitrary string to imitate a class constant needed when adding twig functions to the
-     * renderer before it tries to render a template. Although none of the twig blocks rendered for the tests
-     * contain the twig functions and it seems that we won't need them, the renderer encounters them anyway
-     * but is happy to fail silently.
-     */
-    private function noop(): string
-    {
-        return "NoopClass";
-    }
-
     /* For the purposes of the test, we extract the variables from the view
      * model and render just the specified template block of the date check tool page view.
      * We do this from the Twig template directly, bypassing the ZfcTwig machinery.
@@ -379,8 +371,15 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         // Although none of the twig blocks rendered for the tests contain the twig functions below and it
         // seems that we won't need them, the renderer encounters them anyway but is happy to fail silently.
         // The noop function therefore returns an arbitrary string to imitate the class constant
-        $noop = $this->noop();
         $renderer = new Environment($loader);
+
+        /* This returns an arbitrary string to imitate real twig functions added to the
+         * renderer before it tries to render a template.
+         */
+        $noop = function () {
+            return 'Noop';
+        };
+
         $renderer->addFunction(new TwigFunction('formElementErrorsV2', $noop));
         $renderer->addFunction(new TwigFunction('form', $noop));
         $renderer->addFunction(new TwigFunction('formErrorTextExchange', $noop));
@@ -390,11 +389,14 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
 
         $vars = (array) $viewModel->getVariables();
         $html = $template->renderBlock($this->templates[$templateName]['block'], $vars);
+
         return $html;
     }
 
-    private function findHtmlMatches(string $html): array
-    {
+    private function findHtmlMatches(
+        string $html,
+        string $selector = "//p[@data-cy='continuation-sheet-info']"
+    ): array {
         $dom = new DOMDocument();
 
         if (empty(trim($html))) {
@@ -403,7 +405,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
 
         $dom->loadHTML($html);
         $xpath = new DOMXpath($dom);
-        $matches = $xpath->query("//p[@data-cy='continuation-sheet-info']");
+        $matches = $xpath->query($selector);
 
         $matchesArray = [];
         foreach ($matches as $match) {
@@ -430,10 +432,34 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             echo "Running tests for donor DateCheckViewModelHelper test case $index\n";
 
             $this->assertEquals(
+                $matchesArray,
                 $expectedText,
-                $matchesArray
             );
         }
+    }
+
+    // LPAL-875
+    // test specifically for text next to the donor signing date boxes,
+    // when the donor cannot sign and we get a CS3 which is also signed by
+    // two witnesses
+    public function testDateCheckViewModelHelperDonorCannotSignWitnesses(): void
+    {
+        $lpa = new Lpa([
+            'document' => [
+                'type' => 'property-and-financial',
+                'donor' => [
+                    'canSign' => false
+                ]
+            ]
+        ]);
+
+        $html = $this->renderViewModel($lpa, 'donor');
+        $matchesArray = $this->findHtmlMatches($html, "//p[@data-cy='donor-check-signature-date-prompt']");
+
+        $this->assertEquals(
+            trim($matchesArray[0]),
+            'This person signed continuation sheet 3 on behalf of the donor, followed by two witnesses, on',
+        );
     }
 
     public function testDateCheckViewModelHelperAttorneyGuidance(): void
@@ -459,8 +485,8 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             echo "Running tests for attorney DateCheckViewModelHelper test case $index\n";
 
             $this->assertEquals(
+                $matchesArray,
                 $expectedText,
-                $matchesArray
             );
         }
     }
