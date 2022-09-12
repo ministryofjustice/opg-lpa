@@ -27,7 +27,7 @@ Then(`I click element marked {string}`, (text) => {
     cy.contains(text).click();
 })
 
-When(`I click {string} for LPA ID {int}`, (clickable, LpaId) => {
+Then(`I click {string} for LPA ID {int}`, (clickable, LpaId) => {
     cy.get("[data-cy=lpa-" + LpaId + "]").find("[data-cy=" + clickable + "]").click();
     cy.OPGCheckA11y();
 })
