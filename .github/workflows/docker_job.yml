@@ -181,11 +181,9 @@ jobs:
         env:
           ECR_REGISTRY_ALIAS: online-lpa
           IMAGE_TAG: ${{ inputs.tag }}
-          IMAGE_NAME: ${{ matrix.image_name }}
         run: |
             cd scripts/pipeline/check_ecr_scan_results/
             python aws_ecr_scan_results.py  --search ${ECR_REGISTRY_ALIAS} \
                                            --tag ${IMAGE_TAG} \
-                                           --test_mode \
-                                           --slack_channel foo \
-                                           --slack_token bar
+                                           --slack_channel C01BKBWGWTY \
+                                           --slack_token ${{ secrets.SLACK_BOT_TOKEN }}                           
