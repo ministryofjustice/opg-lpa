@@ -64,14 +64,17 @@ class DateCheckController extends AbstractLpaController
                 $signDateDonorLifeSustaining = isset($data['sign-date-donor-life-sustaining']) ?
                     $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null;
 
-                $result = DateCheck::checkDates([
-                    'sign-date-donor' => $this->dateArrayToTime($data['sign-date-donor']),
-                    'sign-date-donor-life-sustaining' => $signDateDonorLifeSustaining,
-                    'sign-date-certificate-provider' =>
-                        $this->dateArrayToTime($data['sign-date-certificate-provider']),
-                    'sign-date-attorneys' => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
-                    'sign-date-applicants' => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
-                ], empty($lpa->completedAt));
+                $result = DateCheck::checkDates(
+                    [
+                        'sign-date-donor' => $this->dateArrayToTime($data['sign-date-donor']),
+                        'sign-date-donor-life-sustaining' => $signDateDonorLifeSustaining,
+                        'sign-date-certificate-provider' =>
+                            $this->dateArrayToTime($data['sign-date-certificate-provider']),
+                        'sign-date-attorneys' => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
+                        'sign-date-applicants' => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
+                    ],
+                    empty($lpa->completedAt)
+                );
 
                 if ($result === true) {
                     $queryParams = [];
