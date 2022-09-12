@@ -119,6 +119,36 @@ jobs:
       account_id: "987830934591"
     secrets: inherit
 
+  slack_msg_production_deploy_begin:
+    name: Annouce Production Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      ts: ${{ steps.slack.outputs.ts }}
+    steps:
+      - id: slack
+        uses: slackapi/slack-github-action@v1.21.0
+        with:
+          channel-id: "CHANNEL_ID"
+          payload: |
+            {
+              "text": "Deployment started (In Progress)",
+              "attachments": [
+                {
+                  "pretext": "Deployment started",
+                  "color": "dbab09",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "short": true,
+                      "value": "In Progress"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+
   terraform_account_production:
     name: TF Production - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
@@ -193,3 +223,59 @@ jobs:
 
       - name: Run test
         run: python scripts/pipeline/healthcheck_test/healthcheck_test.py
+
+  slack_msg_production_deploy_complete:
+    name: Post-Deployment Slack message
+    runs-on: ubuntu-latest
+    needs: 
+      - slack_msg_production_deploy_begin
+    steps:
+    - uses: slackapi/slack-github-action@v1.21.0
+      if: success()
+      with:
+        channel-id: "C01BDM8T67J"
+        update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
+        payload: |
+          {
+            "text": "Deployment finished (Completed)",
+            "attachments": [
+              {
+                "pretext": "Deployment finished",
+                "color": "28a745",
+                "fields": [
+                  {
+                    "title": "Status",
+                    "short": true,
+                    "value": "Completed"
+                  }
+                ]
+              }
+            ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+    - uses: slackapi/slack-github-action@v1.21.0
+      if: failure()
+      with:
+        channel-id: "C01BDM8T67J"
+        update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
+        payload: |
+          {
+            "text": "Deployment finished (Failed)",
+            "attachments": [
+              {
+                "pretext": "Deployment finished",
+                "color": "cc0000",
+                "fields": [
+                  {
+                    "title": "Status",
+                    "short": true,
+                    "value": "Failed"
+                  }
+                ]
+              }
+            ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
