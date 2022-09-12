@@ -73,7 +73,8 @@ class DateCheckController extends AbstractLpaController
                         'sign-date-attorneys' => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
                         'sign-date-applicants' => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
                     ],
-                    empty($lpa->completedAt)
+                    empty($lpa->completedAt),
+                    boolval($lpa->document->donor->canSign),
                 );
 
                 if ($result === true) {
