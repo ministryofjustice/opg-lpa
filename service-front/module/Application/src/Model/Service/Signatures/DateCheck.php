@@ -38,7 +38,7 @@ class DateCheck
         $donor = $dates['sign-date-donor'];
         $certificateProvider = $dates['sign-date-certificate-provider'];
 
-        $donorText = 'A person signing on behalf of the donor';
+        $donorText = 'The person signing on behalf of the donor';
         if ($donorCanSign) {
             $donorText = 'The donor';
         }
@@ -65,8 +65,9 @@ class DateCheck
             $allTimestamps['sign-date-donor-life-sustaining'] = $donorLifeSustaining;
 
             if ($donor < $donorLifeSustaining) {
-                $message = "${donorText} must sign Section 5 and any continuation sheets " .
-                    'on the same day or before section 9. ';
+                $message = "${donorText} must sign Section 5 on the same day or before " .
+                    'they sign continuation sheet 3. ';
+
                 if ($isDraft) {
                     $message .= 'You need to print and re-sign sections 9, 10 and 11';
                 } else {
@@ -154,7 +155,7 @@ class DateCheck
                         $futureDonorDateMessage .= 'The donor\'s signature date';
                     } else {
                         $futureDonorDateMessage .=
-                            'The signature date of a person signing on behalf of the donor';
+                            'The signature date of the person signing on behalf of the donor';
                     }
                     $futureDonorDateMessage .= ' cannot be in the future';
 

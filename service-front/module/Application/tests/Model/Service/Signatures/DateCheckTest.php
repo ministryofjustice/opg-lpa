@@ -80,7 +80,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
 
         $this->assertEquals([
             'sign-date-donor-life-sustaining' => [
-                'The donor must sign Section 5 and any continuation sheets on the same day or before section 9. ' .
+                'The donor must sign Section 5 on the same day or before they sign continuation sheet 3. ' .
                 'You need to print and re-sign sections 9, 10 and 11'
             ]
         ], $errors);
@@ -91,7 +91,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
 
         $this->assertEquals([
             'sign-date-donor-life-sustaining' => [
-                'The donor must sign Section 5 and any continuation sheets on the same day or before section 9. ' .
+                'The donor must sign Section 5 on the same day or before they sign continuation sheet 3. ' .
                 'You need to print and re-sign sections 9, 10, 11 and 15'
             ]
         ], $errors);
@@ -351,19 +351,19 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $errors = DateCheck::checkDates($dates, false, $donorCanSign, $this->dateService);
 
         $this->assertContains(
-            'Check your dates. The signature date of a person signing on behalf of the donor ' .
+            'Check your dates. The signature date of the person signing on behalf of the donor ' .
                 'cannot be in the future',
             $errors['sign-date-donor'],
         );
 
         $this->assertContains(
-            'Check your dates. The signature date of a person signing on behalf of the donor ' .
+            'Check your dates. The signature date of the person signing on behalf of the donor ' .
                 'cannot be in the future',
             $errors['sign-date-donor-life-sustaining'],
         );
 
         $this->assertContains(
-            'A person signing on behalf of the donor must be the first person to sign the LPA. ' .
+            'The person signing on behalf of the donor must be the first person to sign the LPA. ' .
                 'You need to print and re-sign sections 10, 11 and 15',
             $errors['sign-date-certificate-provider'],
         );
