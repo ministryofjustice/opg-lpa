@@ -69,9 +69,10 @@ class DateCheck
                     'they sign continuation sheet 3. ';
 
                 if ($isDraft) {
-                    $message .= 'You need to print and re-sign sections 9, 10 and 11';
+                    $message .= 'You need to print and re-sign continuation sheet 3, section 10 and section 11';
                 } else {
-                    $message .= 'You need to print and re-sign sections 9, 10, 11 and 15';
+                    $message .= 'You need to print and re-sign continuation sheet 3 and ' .
+                        'sections 10, 11 and 15';
                 }
                 $errors['sign-date-donor-life-sustaining'][] = $message;
             }
