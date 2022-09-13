@@ -42,12 +42,12 @@ Then('I can see a reminder to sign continuation sheet 4', () => {
 })
 
 Then('I can see that the donor cannot sign', () => {
-    const donorName = 'A person signing on behalf of Mr Christopher Robin (donor)'
+    const donorName = 'The person signing on behalf of Mr Christopher Robin (donor)'
     const donorText = 'This person signed continuation sheet 3 on behalf of the donor, followed by two witnesses, on'
     cy.get('[data-cy=date-check-donor]').find('h3').should('contain.text', donorName);
     cy.get('[data-cy=date-check-donor]').find('p').should('contain.text', donorText);
 
-    const applicantName = 'A person signing on behalf of Mr Christopher Robin (applicant)'
+    const applicantName = 'The person signing on behalf of Mr Christopher Robin (applicant)'
     const applicantText = 'This person signed section 15 of the LPA on behalf of the applicant on'
     cy.get('[data-cy=date-check-applicant]').find('h3').should('contain.text', applicantName);
     cy.get('[data-cy=date-check-applicant]').find('p').should('contain.text', applicantText);
