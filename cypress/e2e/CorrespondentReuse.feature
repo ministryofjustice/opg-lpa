@@ -83,6 +83,7 @@ Feature: Reusable correspondent from cloned LPA
     When I check "whoIsRegistering-donor"
     And I click "save"
     Then I am taken to the correspondent page
+    And I can find "change-correspondent" with data-inited
 
     # Correspondent: check correspondent from cloned LPA is visible, select them and save, check they are selected
     When I click "change-correspondent"

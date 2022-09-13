@@ -21,36 +21,36 @@ const colourPatching = [
 ];
 
 const colourPatch = function (content) {
-    for (let patch in colourPatching) {
-        let oldColour = patch.from;
-        let newColour = patch.to;
-        content = content.replace(oldColour, newColour);
-    }
+  for (let patch in colourPatching) {
+    let oldColour = patch.from;
+    let newColour = patch.to;
+    content = content.replace(oldColour, newColour);
+  }
 
-    return content;
+  return content;
 };
 
 // content is the handlebars template content for the env-vars JS file
 const injectEnvVars = function (content) {
-    // load the template into Handlebars
-    const template = Handlebars.compile(content);
+  // load the template into Handlebars
+  const template = Handlebars.compile(content);
 
-    // construct the ENV_VARS variable to inject into the template
-    // from the nodejs runtime environment variables; these will be from the
-    // pipeline env and similar
-    let envVars = {};
+  // construct the ENV_VARS variable to inject into the template
+  // from the nodejs runtime environment variables; these will be from the
+  // pipeline env and similar
+  let envVars = {};
 
-    // The following variables are set and passed to the template:
-    //   revision: set from the REVISION env var; in CircleCI, this is set
-    //   from a build-unique string in the pipeline;
-    //   this is then used as a cacheBust parameter on JS ajax calls
-    //   (see cache-busting.js)
-    if ('REVISION' in process.env) {
-        envVars.revision = process.env.REVISION;
-    }
+  // The following variables are set and passed to the template:
+  //   revision: set from the REVISION env var; in CircleCI, this is set
+  //   from a build-unique string in the pipeline;
+  //   this is then used as a cacheBust parameter on JS ajax calls
+  //   (see cache-busting.js)
+  if ('REVISION' in process.env) {
+    envVars.revision = process.env.REVISION;
+  }
 
-    // render the template
-    return template({ENV_VARS: envVars});
+  // render the template
+  return template({ENV_VARS: envVars});
 };
 
 module.exports = function (grunt) {
@@ -186,7 +186,6 @@ module.exports = function (grunt) {
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/analytics.js',
 
           // OPG Scripts
-          'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
           'assets/js/opg/jquery-plugin-opg-spinner.js',
           'assets/js/opg/session-timeout-dialog.js',
           'assets/js/opg/env-vars.js',
@@ -210,14 +209,10 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.print-link.js',
           'assets/js/moj/moj.modules/moj.person-form.js',
           'assets/js/moj/moj.modules/moj.validation.js',
-          'assets/js/moj/moj.modules/moj.user-timeout.js',
-          'assets/js/moj/moj.modules/moj.sticky-nav.js',
           'assets/js/moj/moj.modules/moj.repeat-application.js',
           'assets/js/moj/moj.modules/moj.dashboard.js',
           'assets/js/moj/moj.modules/moj.ui-behaviour.js',
           'assets/js/moj/moj.modules/moj.applicant.js',
-          'assets/js/moj/moj.modules/moj.fees.js',
-          'assets/js/moj/moj.modules/moj.who-are-you.js',
           'assets/js/moj/moj.modules/moj.polyfill.js',
           'assets/js/moj/moj.modules/moj.single-use.js',
           'assets/js/moj/moj.modules/moj.analytics.js',

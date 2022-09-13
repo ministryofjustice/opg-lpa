@@ -133,6 +133,9 @@
                 return true;
             });
 
+            // mark the element as polyfilled
+            details.attr('data-polyfilled-details', 'true')
+
             return true;
         };
 
