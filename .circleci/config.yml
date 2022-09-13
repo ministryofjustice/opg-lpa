@@ -452,18 +452,6 @@ path_to_live: &path_to_live
         requires: [test_healthcheck_prod]
 
 workflows:
-  workspace_cleanup:
-    triggers:
-      - schedule:
-          cron: "0 6,18 * * 0-6" # 6am and 6pm
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - workspace_cleanup:
-          name: workspace_cleanup
-
   pr_build:
     <<: *pr_build
 
@@ -1406,24 +1394,3 @@ jobs:
                                            --branch $CIRCLE_BRANCH \
                                            --slack_channel $BUILD_SLACK_CHANNEL \
                                            --slack_token $SLACK_ACCESS_TOKEN
-  workspace_cleanup:
-    docker:
-      - image: hashicorp/terraform:1.1.2
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_ACCESS_TOKEN
-    resource_class: small
-    steps:
-      - checkout
-      - infrastructure_and_deployment/install_workspace_manager
-      - run:
-          name: Cleanup Workspaces
-          command: |
-            cd terraform/environment
-            terraform init
-            export TF_PROTECTED_WORKSPACES=$(~/project/terraform-workspace-manager \
-             -protected-workspaces=true \
-             -aws-account-id=050256574573 \
-             -aws-iam-role=opg-lpa-ci) >> $BASH_ENV
-             echo $TF_PROTECTED_WORKSPACES
-             ~/project/scripts/pipeline/workspace_cleanup/workspace_cleanup.sh ${TF_PROTECTED_WORKSPACES}
