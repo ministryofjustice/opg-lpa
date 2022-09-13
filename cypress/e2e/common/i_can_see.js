@@ -43,7 +43,7 @@ Then('I can see a reminder to sign continuation sheet 4', () => {
 
 Then('I can see that the donor cannot sign', () => {
     const donorName = 'A person signing on behalf of Mr Christopher Robin (donor)'
-    const donorText = 'This person signed continuation sheet 3 on behalf of the donor on'
+    const donorText = 'This person signed continuation sheet 3 on behalf of the donor, followed by two witnesses, on'
     cy.get('[data-cy=date-check-donor]').find('h3').should('contain.text', donorName);
     cy.get('[data-cy=date-check-donor]').find('p').should('contain.text', donorText);
 
