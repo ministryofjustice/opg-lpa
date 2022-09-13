@@ -205,7 +205,7 @@
         {% if lpa.document.donor.canSign %}
             {{ lpa.document.donor.name }} (donor)
         {% else %}
-            A person signing on behalf of {{ lpa.document.donor.name }} (donor)
+            The person signing on behalf of {{ lpa.document.donor.name }} (donor)
         {% endif %}
         </h3>
 
@@ -569,7 +569,7 @@
         <div class="date-check-person person person--full" data-cy="date-check-applicant">
             <h3 class="person-name heading-small flush--ends" data-cy="person-name">
             {% if applicant['isDonor'] and not lpa.document.donor.canSign %}
-                A person signing on behalf of {{ applicant['name'] }} (applicant)
+                The person signing on behalf of {{ applicant['name'] }} (applicant)
             {% else %}
                 {{ applicant['name'] }} (applicant)
             {% endif %}
