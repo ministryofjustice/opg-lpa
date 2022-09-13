@@ -366,16 +366,13 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             'applicants' => []
         ]);
 
-        $loader = new FilesystemLoader('module/Application/view/application');
+        $renderer = new Environment(
+            new FilesystemLoader('module/Application/view/application'),
+            ['cache' => 'build/twig-cache']
+        );
 
-        // Although none of the twig blocks rendered for the tests contain the twig functions below and it
-        // seems that we won't need them, the renderer encounters them anyway but is happy to fail silently.
-        // The noop function therefore returns an arbitrary string to imitate the class constant
-        $renderer = new Environment($loader);
-
-        /* This returns an arbitrary string to imitate real twig functions added to the
-         * renderer before it tries to render a template.
-         */
+        // This returns an arbitrary string to imitate real twig functions added to the
+        // renderer before it tries to render a template.
         $noop = function () {
             return 'Noop';
         };
