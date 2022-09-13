@@ -9,3 +9,12 @@ details {
         margin-top: em(10, 20);
     }
 }
+
+// remove the arrow added by the govuk CSS :before selector
+// on summary elements inside a polyfilled <details>
+[data-polyfilled-details=true] .govuk-details__summary:before {
+    display: none !important;
+}
+[data-polyfilled-details=true] .govuk-details__summary {
+    padding-left: 0 !important;
+}

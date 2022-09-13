@@ -85,7 +85,7 @@ class WhoAreYouForm extends AbstractMainFlowForm
      * Convert form data to model-compatible input data format.
      *
      * @param array $formData. e.g. ['who'=>'other', 'digitalPartner'=>null, 'other'=>null]
-     * @return array e.g. ['who'=>'prefessional', 'subquestion'=>'solicitor', 'qualifier'=>null]
+     * @return array e.g. ['who'=>'professional', 'subquestion'=>'solicitor', 'qualifier'=>null]
      */
     protected function convertFormDataForModel($formData)
     {
