@@ -81,7 +81,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertEquals([
             'sign-date-donor-life-sustaining' => [
                 'The donor must sign Section 5 on the same day or before they sign continuation sheet 3. ' .
-                'You need to print and re-sign sections 9, 10 and 11'
+                'You need to print and re-sign continuation sheet 3, section 10 and section 11'
             ]
         ], $errors);
 
@@ -92,7 +92,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertEquals([
             'sign-date-donor-life-sustaining' => [
                 'The donor must sign Section 5 on the same day or before they sign continuation sheet 3. ' .
-                'You need to print and re-sign sections 9, 10, 11 and 15'
+                'You need to print and re-sign continuation sheet 3 and sections 10, 11 and 15'
             ]
         ], $errors);
     }
