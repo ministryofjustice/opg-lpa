@@ -1,41 +1,38 @@
-// Dependencies: moj, _, jQuery
+;(function () {
+  'use strict'
 
-(function () {
-  'use strict';
+  window.moj = window.moj || {}
+  const moj = window.moj
 
   moj.Modules.Dashboard = {
-
     init: function () {
-      this.changeMobileActions();
-      this.searchFocus();
-    },
-    changeMobileActions: function(){
-      // In list view on mobile, disable DETAILS and show all actions
-      if (moj.Helpers.isMobileWidth()) {
-        $('tr .lpa-actions').each(function(){
-          $('.lpa-manage details', this).before($('.lpa-manage details ul', this));
-          $('.lpa-manage details').addClass('hidden');
-        });
+      // Set background colour of the dashboard search box to white
+      // when it is focused; set to transparent when blurred.
+      // This obscures the prompt text "Search for an LPA or donor".
+      const searchBox = document.querySelector('.js-search-focus')
+
+      if (searchBox === null) {
+        return
       }
-    },
-    searchFocus:function(){
+
       // Add .focus class if there's text already there (on load)
-      if ($('.js-search-focus').val() !== '') {
-        $('.js-search-focus').addClass('focus');
+      if (searchBox.value !== '') {
+        searchBox.classList.add('focus')
       }
+
       // Add .focus class when input gets focus
-      $('.js-search-focus').on('focus', function(){
-        if (!$(this).hasClass('focus')){
-          $(this).addClass('focus');
+      searchBox.addEventListener('focus', function () {
+        if (!searchBox.classList.contains('focus')) {
+          searchBox.classList.add('focus')
         }
-      });
+      })
+
       // Remove .focus class if input is blurred
-      $('.js-search-focus').on('blur', function(){
-        if ($(this).val() === '') {
-          $(this).removeClass('focus');
+      searchBox.addEventListener('blur', function () {
+        if (searchBox.value === '') {
+          searchBox.classList.remove('focus')
         }
-      });
+      })
     }
-  };
-  
-})();
+  }
+})()

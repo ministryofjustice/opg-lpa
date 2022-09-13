@@ -1,13 +1,13 @@
 FROM alpine:latest
 
-
-RUN apk add ruby
-RUN apk add npm
+RUN apk add ruby npm
 
 WORKDIR /app
 
 COPY ./node-build-assets/docker/start.sh /app/
-RUN npm install -g grunt-cli grunt-contrib-watch sass && \
+COPY ./service-front/package*.json /app/
+
+RUN npm ci && \
     chmod +x /app/start.sh
 
 CMD ["/app/start.sh"]
