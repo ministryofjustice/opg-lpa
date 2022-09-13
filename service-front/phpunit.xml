@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./module/Application/tests/Bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage processUncoveredFiles="true">
+  <coverage processUncoveredFiles="true" includeUncoveredFiles="true">
     <include>
       <directory suffix=".php">./module/Application/src</directory>
+      <directory suffix=".php">./build/twig-cache</directory>
     </include>
+    <report>
+      <html outputDirectory="./build/coverage"/>
+    </report>
   </coverage>
   <testsuite name="ApplicationTest">
     <directory>./module/Application/tests/</directory>
