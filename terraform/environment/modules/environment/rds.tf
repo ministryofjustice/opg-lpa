@@ -132,6 +132,30 @@ resource "aws_db_parameter_group" "postgres-db-params" {
   }
 }
 
+resource "aws_db_parameter_group" "postgres13-db-params" {
+  name        = lower("postgres13-db-params-${var.environment_name}")
+  description = "default postgres13 rds parameter group"
+  family      = var.account.psql13_parameter_group_family
+  parameter {
+    name         = "log_min_duration_statement"
+    value        = "500"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "log_statement"
+    value        = "all"
+    apply_method = "pending-reboot"
+  }
+
+
+  parameter {
+    name         = "rds.log_retention_period"
+    value        = "1440"
+    apply_method = "immediate"
+  }
+}
+
 resource "aws_security_group" "rds-client" {
   name                   = "rds-client-${var.environment_name}"
   description            = "rds access for ${var.environment_name}"

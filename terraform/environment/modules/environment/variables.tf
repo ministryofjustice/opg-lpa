@@ -29,6 +29,7 @@ variable "account" {
     skip_final_snapshot                    = bool
     psql_engine_version                    = string
     psql_parameter_group_family            = string
+    psql13_parameter_group_family          = string
     aurora_enabled                         = bool
     aurora_serverless                      = bool
     aurora_instance_count                  = number
