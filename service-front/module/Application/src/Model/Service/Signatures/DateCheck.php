@@ -157,7 +157,13 @@ class DateCheck
 
                 // Applicants must sign on or after last attorney
                 if ($timestamp < $maxAttorneyDate) {
-                    $errors[$applicantKey][] = 'The applicant must sign on the same day or after all section 11s ' .
+                    $applicantSigner = 'applicant';
+                    if ($donorIsApplicant && !$donorCanSign) {
+                        $applicantSigner = 'person signing on behalf of the applicant';
+                    }
+
+                    $errors[$applicantKey][] = 'The ' . $applicantSigner . ' ' .
+                        'must sign on the same day or after all section 11s ' .
                         'have been signed. You need to print and re-sign section 15';
                 }
             }
@@ -189,10 +195,9 @@ class DateCheck
                     $errors[$timestampKey][] =
                         'Check your dates. The attorney\'s signature date cannot be in the future';
                 } elseif (strpos($timestampKey, 'sign-date-applicant-') === 0) {
+                    $applicantMessage = 'applicant\'s signature date';
                     if ($donorIsApplicant && !$donorCanSign) {
                         $applicantMessage = 'signature date of the person signing on behalf of the applicant';
-                    } else {
-                        $applicantMessage = 'applicant\'s signature date';
                     }
 
                     $errors[$timestampKey][] =
