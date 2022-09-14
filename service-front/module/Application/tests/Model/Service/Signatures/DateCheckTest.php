@@ -317,7 +317,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
 
         $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-10'))->once();
 
-        $errors = DateCheck::checkDates($dates, false, true, $this->dateService);
+        $errors = DateCheck::checkDates($dates, false, ['canSign' => true], $this->dateService);
         $this->assertNotTrue($errors);
 
         $this->assertEquals([
@@ -347,8 +347,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
 
         $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-10'))->once();
 
-        $donorCanSign = false;
-        $errors = DateCheck::checkDates($dates, false, $donorCanSign, $this->dateService);
+        $errors = DateCheck::checkDates($dates, false, ['canSign' => false], $this->dateService);
 
         $this->assertContains(
             'Check your dates. The signature date of the person signing on behalf of the donor ' .
@@ -366,6 +365,35 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             'The person signing on behalf of the donor must be the first person to sign the LPA. ' .
                 'You need to print and re-sign sections 10, 11 and 15',
             $errors['sign-date-certificate-provider'],
+        );
+    }
+
+    public function testDonorCannotSignAndIsApplicant()
+    {
+        $dates = [
+            'sign-date-donor' => new DateTime('2015-01-01'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-02'),
+            'sign-date-donor-life-sustaining' => new DateTime('2015-01-03'),
+            'sign-date-attorneys' => [new DateTime('2015-01-04')],
+            'sign-date-applicants' => [new DateTime('2015-01-19')]
+        ];
+
+        $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-10'))->once();
+
+        $errors = DateCheck::checkDates(
+            $dates,
+            false,
+            [
+                'canSign' => false,
+                'isApplicant' => true,
+            ],
+            $this->dateService
+        );
+
+        $this->assertContains(
+            'Check your dates. The signature date of the person signing on behalf of the applicant ' .
+                'cannot be in the future',
+            $errors['sign-date-applicant-0'],
         );
     }
 }

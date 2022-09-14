@@ -15,7 +15,7 @@ class DateCheck
      * If the donor cannot sign, text relating to the donor is
      * replaced with "The person signing on behalf of the donor"
      *
-     * Expects an array:
+     * Expects $dates array:
      * [
      *  'donor' => date,
      *  'certificate-provider' => date,
@@ -25,14 +25,35 @@ class DateCheck
      *    ]
      *  ];
      *
+     * and $donorDetails array:
+     *
+     * [
+     *   'canSign' => bool, // if donor can sign
+     *   'isApplicant' => bool // if donor == applicant
+     * ]
+     *
      * @param   array           $dates
      * @param   boolean         $isDraft
-     * @param   boolean         $donorCanSign
+     * @param   array           $donorDetails
      * @param   IDateService    $dateService
      * @return  array|bool List of errors or true if no errors
      */
-    public static function checkDates(array $dates, $isDraft = false, $donorCanSign = true, $dateService = null)
-    {
+    public static function checkDates(
+        array $dates,
+        bool $isDraft = false,
+        array $donorDetails = [],
+        $dateService = null
+    ) {
+        $donorCanSign = true;
+        if (array_key_exists('canSign', $donorDetails)) {
+            $donorCanSign = boolval($donorDetails['canSign']);
+        }
+
+        $donorIsApplicant = false;
+        if (array_key_exists('isApplicant', $donorDetails)) {
+            $donorIsApplicant = boolval($donorDetails['isApplicant']);
+        }
+
         $errors = [];
 
         $donor = $dates['sign-date-donor'];
@@ -168,8 +189,14 @@ class DateCheck
                     $errors[$timestampKey][] =
                         'Check your dates. The attorney\'s signature date cannot be in the future';
                 } elseif (strpos($timestampKey, 'sign-date-applicant-') === 0) {
+                    if ($donorIsApplicant && !$donorCanSign) {
+                        $applicantMessage = 'signature date of the person signing on behalf of the applicant';
+                    } else {
+                        $applicantMessage = 'applicant\'s signature date';
+                    }
+
                     $errors[$timestampKey][] =
-                        'Check your dates. The applicant\'s signature date cannot be in the future';
+                        'Check your dates. The ' . $applicantMessage . ' cannot be in the future';
                 } else {
                     throw new InvalidArgumentException("timestampKey {$timestampKey} was not recognised");
                 }
