@@ -86,7 +86,8 @@
         inputmode: 'numeric',
         maxlength: '2',
         pattern: '[0-9]*',
-        id: donorElementDayId
+        id: donorElementDayId,
+        'data-cy': 'date-check-date-day'
     }) ? '' }}
     {{ donorElementMonth.setAttributes({
         type: 'text',
@@ -94,7 +95,8 @@
         inputmode: 'numeric',
         maxlength: '2',
         pattern: '[0-9]*',
-        id: donorElementMonthId
+        id: donorElementMonthId,
+        'data-cy': 'date-check-date-month'
     }) ? '' }}
     {{ donorElementYear.setAttributes({
         type: 'text',
@@ -102,7 +104,8 @@
         inputmode: 'numeric',
         maxlength: '4',
         pattern: '[0-9]*',
-        id: donorElementYearId
+        id: donorElementYearId,
+        'data-cy': 'date-check-date-year'
     }) ? '' }}
 
     {% set certificateProviderElement = form.get('sign-date-certificate-provider') %}
@@ -121,7 +124,8 @@
         inputmode: 'numeric',
         maxlength: '2',
         pattern: '[0-9]*',
-        id: certificateProviderElementDayId
+        id: certificateProviderElementDayId,
+        'data-cy': 'date-check-date-day'
     }) ? '' }}
 
     {{ certificateProviderElementMonth.setAttributes({
@@ -130,7 +134,8 @@
         inputmode: 'numeric',
         maxlength: '2',
         pattern: '[0-9]*',
-        id: certificateProviderElementMonthId
+        id: certificateProviderElementMonthId,
+        'data-cy': 'date-check-date-month'
     }) ? '' }}
 
     {{ certificateProviderElementYear.setAttributes({
@@ -139,7 +144,8 @@
         inputmode: 'numeric',
         maxlength: '4',
         pattern: '[0-9]*',
-        id: certificateProviderElementYearId
+        id: certificateProviderElementYearId,
+        'data-cy': 'date-check-date-year'
     }) ? '' }}
 
     {% if form.has('sign-date-donor-life-sustaining') %}
@@ -161,7 +167,8 @@
             inputmode: 'numeric',
             maxlength: '2',
             pattern: '[0-9]*',
-            id: donorLifeSustainingElementDayId
+            id: donorLifeSustainingElementDayId,
+            'data-cy': 'date-check-date-day'
         }) ? '' }}
 
         {{ donorLifeSustainingElementMonth.setAttributes({
@@ -170,7 +177,8 @@
             inputmode: 'numeric',
             maxlength: '2',
             pattern: '[0-9]*',
-            id: donorLifeSustainingElementMonthId
+            id: donorLifeSustainingElementMonthId,
+            'data-cy': 'date-check-date-month'
         }) ? '' }}
 
         {{ donorLifeSustainingElementYear.setAttributes({
@@ -179,7 +187,8 @@
             inputmode: 'numeric',
             maxlength: '4',
             pattern: '[0-9]*',
-            id: donorLifeSustainingElementYearId
+            id: donorLifeSustainingElementYearId,
+            'data-cy': 'date-check-date-year'
         }) ? '' }}
 
     {% endif %}
@@ -225,7 +234,7 @@
                     {% endif %}
                     </p>
 
-                    <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates">
+                    <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
                         <legend class="visually-hidden">Check signature dates for donor who signed section 5 of the LPA</legend>
                         <div class="form-group form-group-day {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ donorLifeSustainingElementDayId }}">Day</label>
@@ -265,7 +274,7 @@
                     {% endif %}
                     </p>
 
-                    <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
+                    <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
                         <legend class="visually-hidden">Check signature dates for donor who signed section 9 of the LPA</legend>
                         <div class="form-group form-group-day {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ donorElementDayId }}">Day</label>
@@ -350,7 +359,7 @@
 
                 <p>This person signed section 10 of the LPA on</p>
 
-                <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates">
+                <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
                     <legend class="visually-hidden">Check signature dates for certificate provider</legend>
                     <div class="form-group form-group-day {{ certificateProviderElement.getMessages|length >0 ? 'error'}}">
                         <label class="form-label" for="{{ certificateProviderElementDayId }}">Day</label>
@@ -389,7 +398,8 @@
             inputmode: 'numeric',
             maxlength: '2',
             pattern: '[0-9]*',
-            id: elementDayId
+            id: elementDayId,
+            'data-cy': 'date-check-date-day'
         }) ? '' }}
         {{ elementMonth.setAttributes({
             type: 'text',
@@ -397,7 +407,8 @@
             inputmode: 'numeric',
             maxlength: '2',
             pattern: '[0-9]*',
-            id: elementMonthId
+            id: elementMonthId,
+            'data-cy': 'date-check-date-month'
         }) ? '' }}
         {{ elementYear.setAttributes({
             type: 'text',
@@ -405,7 +416,8 @@
             inputmode: 'numeric',
             maxlength: '4',
             pattern: '[0-9]*',
-            id: elementYearId
+            id: elementYearId,
+            'data-cy': 'date-check-date-year'
         }) ? '' }}
 
         <div class="date-check-person person person--full" data-cy="primary-attorney">
@@ -425,7 +437,7 @@
                         {% endif %}
                     </p>
 
-                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
                         <legend class="visually-hidden">Check signature dates for primary attorney</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ elementDayId }}">Day</label>
@@ -468,7 +480,8 @@
             inputmode: 'numeric',
             maxlength: '2',
             pattern: '[0-9]*',
-            id: elementDayId
+            id: elementDayId,
+            'data-cy': 'date-check-date-day'
         }) ? '' }}
         {{ elementMonth.setAttributes({
             type: 'text',
@@ -476,7 +489,8 @@
             inputmode: 'numeric',
             maxlength: '2',
             pattern: '[0-9]*',
-            id: elementMonthId
+            id: elementMonthId,
+            'data-cy': 'date-check-date-month'
         }) ? '' }}
         {{ elementYear.setAttributes({
             type: 'text',
@@ -484,7 +498,8 @@
             inputmode: 'numeric',
             maxlength: '4',
             pattern: '[0-9]*',
-            id: elementYearId
+            id: elementYearId,
+            'data-cy': 'date-check-date-year'
         }) ? '' }}
 
         <div class="date-check-person person person--full">
@@ -504,7 +519,7 @@
                         {% endif %}
                     </p>
 
-                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
                         <legend class="visually-hidden">Check signature dates for replacement attorney</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ elementDayId }}">Day</label>
@@ -547,7 +562,8 @@
             inputmode: 'numeric',
             maxlength: '2',
             pattern: '[0-9]*',
-            id: elementDayId
+            id: elementDayId,
+            'data-cy': 'date-check-date-day'
         }) ? '' }}
         {{ elementMonth.setAttributes({
             type: 'text',
@@ -555,7 +571,8 @@
             inputmode: 'numeric',
             maxlength: '2',
             pattern: '[0-9]*',
-            id: elementMonthId
+            id: elementMonthId,
+            'data-cy': 'date-check-date-month'
         }) ? '' }}
         {{ elementYear.setAttributes({
             type: 'text',
@@ -563,7 +580,8 @@
             inputmode: 'numeric',
             maxlength: '4',
             pattern: '[0-9]*',
-            id: elementYearId
+            id: elementYearId,
+            'data-cy': 'date-check-date-year'
         }) ? '' }}
 
         <div class="date-check-person person person--full" data-cy="date-check-applicant">
@@ -591,7 +609,7 @@
                     {% endif %}
                     </p>
 
-                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
                         <legend class="visually-hidden">Check signature dates for applicant</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ elementDayId }}">Day</label>
