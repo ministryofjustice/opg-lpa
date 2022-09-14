@@ -368,8 +368,10 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         );
     }
 
-    public function testDonorCannotSignAndIsApplicant()
+    public function testDonorCannotSignAndIsApplicantFutureDate()
     {
+        // signature date of person signing on behalf of donor, who is the applicant,
+        // is in the future
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-01'),
             'sign-date-certificate-provider' => new DateTime('2015-01-02'),
@@ -393,6 +395,37 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertContains(
             'Check your dates. The signature date of the person signing on behalf of the applicant ' .
                 'cannot be in the future',
+            $errors['sign-date-applicant-0'],
+        );
+    }
+
+    public function testDonorCannotSignAndIsApplicantBeforeAttorneysDate()
+    {
+        // signature date of person signing on behalf of donor, who is the applicant,
+        // is before attorney signing date
+        $dates = [
+            'sign-date-donor' => new DateTime('2015-01-01'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-02'),
+            'sign-date-donor-life-sustaining' => new DateTime('2015-01-03'),
+            'sign-date-attorneys' => [new DateTime('2015-01-04')],
+            'sign-date-applicants' => [new DateTime('2015-01-03')]
+        ];
+
+        $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-10'))->once();
+
+        $errors = DateCheck::checkDates(
+            $dates,
+            false,
+            [
+                'canSign' => false,
+                'isApplicant' => true,
+            ],
+            $this->dateService
+        );
+
+        $this->assertContains(
+            'The person signing on behalf of the applicant must sign on the same day ' .
+                'or after all section 11s have been signed. You need to print and re-sign section 15',
             $errors['sign-date-applicant-0'],
         );
     }
