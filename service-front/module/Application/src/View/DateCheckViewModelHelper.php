@@ -26,6 +26,7 @@ class DateCheckViewModelHelper
                         if ($id == $primaryAttorney->id) {
                             $applicants[] = [
                                 'name' => $primaryAttorney->name,
+                                'isDonor' => false,
                                 'isHuman' => isset($primaryAttorney->dob),
                             ];
                             break;

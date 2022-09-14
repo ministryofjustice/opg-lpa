@@ -34,6 +34,8 @@ class DateCheckController extends AbstractLpaController
             'lpa-id' => $lpa->id
         ]));
 
+        $helperResult = DateCheckViewModelHelper::build($lpa);
+
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
@@ -64,6 +66,13 @@ class DateCheckController extends AbstractLpaController
                 $signDateDonorLifeSustaining = isset($data['sign-date-donor-life-sustaining']) ?
                     $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null;
 
+                // is the donor the applicant?
+                $donorIsApplicant = false;
+                if (count($helperResult['applicants']) == 1) {
+                    $applicant = $helperResult['applicants'][0];
+                    $donorIsApplicant = ($applicant['isDonor'] && $applicant['isHuman']);
+                }
+
                 $result = DateCheck::checkDates(
                     [
                         'sign-date-donor' => $this->dateArrayToTime($data['sign-date-donor']),
@@ -74,7 +83,10 @@ class DateCheckController extends AbstractLpaController
                         'sign-date-applicants' => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
                     ],
                     empty($lpa->completedAt),
-                    boolval($lpa->document->donor->canSign),
+                    [
+                        'canSign' => boolval($lpa->document->donor->canSign),
+                        'isApplicant' => $donorIsApplicant,
+                    ],
                 );
 
                 if ($result === true) {
@@ -97,7 +109,7 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
-        $helperResult = DateCheckViewModelHelper::build($lpa);
+
 
         $viewModel = new ViewModel([
             'form'        => $form,
