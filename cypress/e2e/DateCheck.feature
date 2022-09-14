@@ -18,7 +18,6 @@ Feature: Check signature dates
 
   Scenario: Displays relevant information on signing continuation sheets
     Given I visit the dashboard
-    When I visit the dashboard
     And I click "check-signing-dates" for LPA ID 26997335999
     Then I am taken to "/lpa/26997335999/date-check"
     # Additional attorneys (cs1), additional preferences (2), donor cannot sign or make mark (3)
@@ -38,3 +37,18 @@ Feature: Check signature dates
     When I click "check-signing-dates" for LPA ID 91155453023
     And I click element marked "Check dates"
     Then I can see validation errors refer to the donor and applicant
+
+  Scenario: Displays the correct references to applicant in errors when they are the donor and cannot sign
+    Given I visit the dashboard
+    When I click "check-signing-dates" for LPA ID 26997335999
+    Then I can see that a person is signing on behalf of the applicant "Mr Christopher Robin"
+
+    When I fill in all signature dates on the check dates form
+    And I fill in the applicant signature date as a date in the future
+    And I click element marked "Check dates"
+    Then I can see applicant validation errors about person signing on behalf of the applicant not signing in the future
+
+    When I fill in all signature dates on the check dates form
+    And I fill in the applicant signature date as a date before the attorney signature dates
+    And I click element marked "Check dates"
+    Then I can see applicant validation errors about person signing on behalf of applicant not signing before attorneys
