@@ -78,6 +78,7 @@ class ContinuationSheets
         // The following line is taken from the PDF service.
         $allowedChars = (LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_WIDTH + 2) *
             LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_COUNT;
+
         $lpaDocument = $lpa->getDocument();
         if (
             strlen(LpaFormatter::flattenInstructionsOrPreferences($lpaDocument->getPreference())) > $allowedChars ||

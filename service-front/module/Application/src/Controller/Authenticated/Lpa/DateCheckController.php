@@ -109,18 +109,12 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
-
-
         $viewModel = new ViewModel([
-            'form'        => $form,
+            'form' => $form,
             'returnRoute' => $returnRoute,
         ]);
 
-        $viewModel->setVariables([
-            'continuationNoteKeys' => $helperResult['continuationNoteKeys'],
-            'continuationSheets' => $helperResult['continuationSheets'],
-            'applicants' => $helperResult['applicants']
-        ]);
+        $viewModel->setVariables($helperResult);
 
         return $viewModel;
     }
