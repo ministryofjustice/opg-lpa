@@ -44,8 +44,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setLpaApplicationService' => 'LpaApplicationService',
         ],
         Status::class => [
-//            'setDynamoDbSessionClient' => 'DynamoDbSessionClient',
-            'setDynamoDbCronClient' => 'DynamoDbCronClient',
+            'setDynamoDbClient' => 'DynamoDbSystemMessageClient',
         ],
     ];
 
