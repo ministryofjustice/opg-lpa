@@ -9,7 +9,6 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Session\Exception\RuntimeException;
-use Aws\DynamoDb\DynamoDbClient;
 
 /**
  * Create the SessionManager for use throughout the LPA frontend.
