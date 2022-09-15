@@ -21,19 +21,12 @@ class Status extends AbstractService implements ApiClientAwareInterface
     /**
      * @var DynamoDbClient
      */
-    private $dynamoDbSessionClient;
-
-    /**
-     * @var DynamoDbClient
-     */
-    private $dynamoDbCronClient;
+    private $dynamoDbClient;
 
     /**
      * Services:
-     *  - API 2
-     *  - RedisFront
-     *  - Postcode Anywhere #TODO
-     *  - SendGird #TODO
+     * - DynamoDb (system message table)
+     * - API
      */
     public function check()
     {
@@ -42,20 +35,13 @@ class Status extends AbstractService implements ApiClientAwareInterface
         for ($i = 1; $i <= 6; $i++) {
             $result = array();
 
-            //-----------------------------------
-            // DynamoDB
-
+            // Check DynamoDB
             $result['dynamo'] = $this->dynamo();
 
-            //-----------------------------------
-            // Check API 2
-
+            // Check API
             $result['api'] = $this->api();
 
-            //-----------------------------------
-
             $ok = true;
-
             foreach ($result as $service) {
                 $ok = $ok && $service['ok'];
             }
@@ -71,93 +57,59 @@ class Status extends AbstractService implements ApiClientAwareInterface
         return $result;
     }
 
-    //------------------------------------------------------------------------
-
     private function dynamo()
     {
-        $result = array('ok' => false, 'details' => [
-//            'sessions' => false,
-            'locks' => false,
-        ]);
-
-//        //------------------
-//        // Sessions
-//
-//        try {
-//            $details = $this->dynamoDbSessionClient->describeTable([
-//                'TableName' => $this->getConfig()['session']['dynamodb']['settings']['table_name']
-//            ]);
-//
-//            if ($details['@metadata']['statusCode'] === 200 && in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])) {
-//                // Table is okay
-//                $result['details']['sessions'] = true;
-//            }
-//        } catch (Exception $e) {}
-
-        //------------------
-        // Locks
-
-        try {
-            $details = $this->dynamoDbCronClient->describeTable([
-                'TableName' => $this->getConfig()['cron']['lock']['dynamodb']['settings']['table_name']
-            ]);
-
-            if ($details['@metadata']['statusCode'] === 200 && in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])) {
-                // Table is okay
-                $result['details']['locks'] = true;
-            }
-        } catch (Exception $e) {}
-
-        //----
-
-        // ok is true if and only if all values in details are true.
-        $result['ok'] = array_reduce(
-            $result['details'],
-            function ($carry, $item) {
-                return $carry && $item;
-            },
-            true // initial
+        $result = array(
+            'ok' => false,
         );
+
+        // DynamoDb (system message table)
+        try {
+            $details = $this->dynamoDbClient->describeTable([
+                'TableName' => $this->getConfig()['admin']['dynamodb']['settings']['table_name']
+            ])->toArray();
+
+            if (
+                $details['@metadata']['statusCode'] === 200 &&
+                in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])
+            ) {
+                // Table is okay
+                $result['ok'] = true;
+            }
+        } catch (Exception $e) {
+            $result['ok'] = false;
+        }
 
         return $result;
     }
 
-    //------------------------------------------------------------------------
-
     private function api()
     {
         $result = [
-            'ok'      => false,
-            'details' => [
-                '200' => false,
-            ],
+            'ok' => false,
+            'details' => [],
         ];
 
         try {
             $api = $this->apiClient->httpGet('/ping');
 
-            $result['details']['200'] = true;
-
             $result['ok'] = $api['ok'];
+            unset($api['ok']);
+
+            $result['details']['status'] = 200;
             $result['details'] = $result['details'] + $api;
-        } catch (Exception $e) {}   //  Don't throw exceptions; we just return ok==false
+        } catch (Exception $e) {
+            $result['ok'] = false;
+        }
 
         return $result;
     }
 
     /**
-     * @param DynamoDbClient $dynamoDbSessionClient
+     * @param DynamoDbClient $dynamoDbClient
      */
-    public function setDynamoDbSessionClient(DynamoDbClient $dynamoDbSessionClient)
+    public function setDynamoDbClient(DynamoDbClient $dynamoDbClient)
     {
-        $this->dynamoDbSessionClient = $dynamoDbSessionClient;
-    }
-
-    /**
-     * @param DynamoDbClient $dynamoDbCronClient
-     */
-    public function setDynamoDbCronClient(DynamoDbClient $dynamoDbCronClient)
-    {
-        $this->dynamoDbCronClient = $dynamoDbCronClient;
+        $this->dynamoDbClient = $dynamoDbClient;
     }
 }
