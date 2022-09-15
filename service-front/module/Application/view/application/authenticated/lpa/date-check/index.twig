@@ -275,7 +275,13 @@
                     </p>
 
                     <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
-                        <legend class="visually-hidden">Check signature dates for donor who signed section 9 of the LPA</legend>
+                        <legend class="visually-hidden">Check signature dates for the
+                        {% if lpa.document.donor.canSign %}
+                            donor
+                        {% else %}
+                            person who signed on behalf of the donor
+                        {% endif %}
+                        </legend>
                         <div class="form-group form-group-day {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ donorElementDayId }}">Day</label>
                             {{ formElement(donorElementDay) }}
