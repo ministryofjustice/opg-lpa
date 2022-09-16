@@ -12,6 +12,8 @@ use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -32,9 +34,11 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         ]
     ];
 
+    // test cases for cs2 reference criteria used in the ContinuationSheets class to determine
+    // whether a cs2 will be produced for a particular LPA
     private $testCases = [
         // Continuation sheet 1
-        // LPA has more than 4 primary attorneys (generates CS1)
+        // 0. LPA has more than 4 primary attorneys (generates CS1)
         [
             'lpa' => [
                 'document' => [
@@ -52,7 +56,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
-        // LPA has more than 4 replacement attorneys (generates CS1)
+        // 1. LPA has more than 4 replacement attorneys (generates CS1)
         [
             'lpa' => [
                 'document' => [
@@ -70,7 +74,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
-        // LPA has more than 4 people to notify (generates CS1)
+        // 2. LPA has more than 4 people to notify (generates CS1)
         [
             'lpa' => [
                 'document' => [
@@ -83,15 +87,19 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
-
         // Continuation sheet 2
-        // LPA has additional information on how attorneys should act (section 3) (generates CS2)
+        // 3. LPA has additional information on how attorneys should act (section 3) (generates CS2)
+        // ($multiplePas && $paHow == $jointSomeJointSevOther && $zeroRas)
         [
             'lpa' => [
                 'document' => [
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
                     'primaryAttorneyDecisions' => [
-                        'howDetails' => 'Attorneys should only step in when I am say so.'
-                    ]
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
+                    ],
                 ]
             ],
             'expectedDonorText' => [
@@ -100,12 +108,20 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             ],
             'expectedAttorneyText' => []
         ],
-        // LPA has additional information on how replacement attorneys should act (section 4) (generates CS2)
+        // 4. LPA has additional information on how replacement attorneys should act (section 4) (generates CS2)
+        // ($singlePa && $multipleRas && $raHow == $jointSomeJointSevOther)
         [
             'lpa' => [
                 'document' => [
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
                     'replacementAttorneyDecisions' => [
-                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
                     ]
                 ]
             ],
@@ -114,12 +130,23 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
-        // LPA has additional information on when replacement attorneys should act (generates CS2)
+        // 5. LPA has additional information on when replacement attorneys should act (generates CS2)
+        // ($multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenOther)
         [
             'lpa' => [
                 'document' => [
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                    ],
                     'replacementAttorneyDecisions' => [
-                        'when' => 'When the primary attorney cannot be contacted'
+                        'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS,
                     ]
                 ]
             ],
@@ -128,7 +155,8 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
-        // LPA has additional information in preferences and instructions (section 7) (generates CS2)
+        // 6. LPA has additional information in preferences and instructions (section 7) (generates CS2)
+        // long instruction or preference
         [
             'lpa' => [
                 'document' => [
@@ -146,15 +174,27 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             ],
             'expectedAttorneyText' => []
         ],
-        // Combined CS1 and CS2
-        // 1. LPA has more than 4 people to notify (generates CS1)
-        // 2. additional information on when replacement attorneys should act (generates CS2)
+        // 7. Combined CS1 and CS2
+        //   1. LPA has more than 4 people to notify (generates CS1)
+        //   2. additional information on when replacement attorneys should act (generates CS2)
+        // ($multiplePas && $paHow == $jointSev && $multipleRas && $raWhen = $whenOther)
         [
             'lpa' => [
                 'document' => [
                     'peopleToNotify' => [[], [], [], [], []],
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                    ],
                     'replacementAttorneyDecisions' => [
-                        'when' => 'When the primary attorney cannot be contacted'
+                        'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS,
                     ]
                 ]
             ],
@@ -163,7 +203,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                 'section 9 of the LPA, or on the same day.'],
             'expectedAttorneyText' => []
         ],
-        // Continuation sheet 3
+        // 8. Continuation sheet 3
         // Health & welfare (HW) LPA - donor cannot sign or make a mark
         [
             'lpa' => [
@@ -180,7 +220,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             ],
             'expectedAttorneyText' => []
         ],
-        // Property & finance (PF) LPA - donor cannot sign or make a mark
+        // 9. Property & finance (PF) LPA - donor cannot sign or make a mark
         [
             'lpa' => [
                 'document' => [
@@ -194,7 +234,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'provider has signed section 10.'],
             'expectedAttorneyText' => []
         ],
-        // Continuation sheet 4
+        // 10. Continuation sheet 4
         // Property & finance LPA - primary attorney is a trust corporation
         [
             'lpa' => [
@@ -209,8 +249,8 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             'expectedAttorneyText' => ['They must have signed continuation sheet 4 after the ' .
                                        '\'certificate provider\' has signed section 10 of the LPA form.']
         ],
-        // Combined continuation sheet scenarios
-        // CS3 & CS1 PF LPA - donor cannot sign or make a mark, >4 people to notify
+        // 11. Combined continuation sheet scenarios
+        // CS1 & CS3 PF LPA - donor cannot sign or make a mark, >4 people to notify
         [
             'lpa' => [
                 'document' => [
@@ -227,13 +267,21 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             ],
             'expectedAttorneyText' => []
         ],
-        // CS3 & CS2 PF LPA - donor cannot sign or make a mark, additional info on how attorneys make decisions
+        // 12. CS2 & CS3 PF LPA - donor cannot sign or make a mark, additional info on how attorneys make decisions
+        // ($singlePa && $multipleRas && $raHow == $jointSev)
         [
             'lpa' => [
                 'document' => [
                     'type' => 'property-and-financial',
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
                     'replacementAttorneyDecisions' => [
-                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
                     ],
                     'donor' => [
                         'canSign' => false
@@ -244,15 +292,27 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'same day as they signed continuation sheet 3.'],
             'expectedAttorneyText' => []
         ],
-        // CS3 & CS2 & CS1 PF LPA - donor cannot sign or make a mark,
+        // 13. CS1 & CS2 & CS3 PF LPA - donor cannot sign or make a mark,
         // additional info on how attorneys make decisions, >4 people to notify
+        // ($multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSev)
         [
             'lpa' => [
                 'document' => [
                     'type' => 'property-and-financial',
                     'peopleToNotify' => [[], [], [], [], []],
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY,
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
                     'replacementAttorneyDecisions' => [
-                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
                     ],
                     'donor' => [
                         'canSign' => false
@@ -263,7 +323,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'same day as they signed continuation sheet 3.'],
             'expectedAttorneyText' => []
         ],
-        // CS3 & CS1 HW LPA - donor cannot sign or make a mark, >4 people to notify
+        // 14. CS1 & CS3 HW LPA - donor cannot sign or make a mark, >4 people to notify
         [
             'lpa' => [
                 'document' => [
@@ -280,13 +340,25 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'dated before or on the same day as they signed continuation sheet 3.'],
             'expectedAttorneyText' => []
         ],
-        // CS3 & CS2 HW LPA - donor cannot sign or make a mark, additional info on how attorneys make decisions
+        // 15. CS2 & CS3 HW LPA - donor cannot sign or make a mark, additional info on how attorneys make decisions
+        // ($multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSomeJointSevOther)
         [
             'lpa' => [
                 'document' => [
                     'type' => 'health-and-welfare',
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY,
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
                     'replacementAttorneyDecisions' => [
-                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
                     ],
                     'donor' => [
                         'canSign' => false
@@ -299,7 +371,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'dated before or on the same day as they signed continuation sheet 3.'],
             'expectedAttorneyText' => []
         ],
-        // CS3 & CS2 HW LPA - donor cannot sign or make a mark, >4 people to notify
+        // 16. CS1 & CS3 HW LPA - donor cannot sign or make a mark, >4 people to notify
         [
             'lpa' => [
                 'document' => [
@@ -316,15 +388,26 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'dated before or on the same day as they signed continuation sheet 3.'],
             'expectedAttorneyText' => []
         ],
-        // CS3 & CS2 & CS1 HW LPA - donor cannot sign or make a mark,
+        // 17. CS3 & CS2 & CS1 HW LPA - donor cannot sign or make a mark,
         // additional info on how attorneys make decisions, >4 people to notify
+        // ($multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenNone)
         [
             'lpa' => [
                 'document' => [
                     'type' => 'health-and-welfare',
                     'peopleToNotify' => [[], [], [], [], []],
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                    ],
                     'replacementAttorneyDecisions' => [
-                        'howDetails' => 'Replacement attorneys should only step in when I say so.'
+                        'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
                     ],
                     'donor' => [
                         'canSign' => false
@@ -431,6 +514,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             $this->assertEquals(
                 $matchesArray,
                 $expectedText,
+                "Test case ${index} - Unable to find text: " . print_r($expectedText, true),
             );
         }
     }

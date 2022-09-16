@@ -4,6 +4,7 @@ namespace ApplicationTest\Model\Service\Lpa;
 
 use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use PHPUnit\Framework\TestCase;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use ApplicationTest\Model\Service\AbstractServiceTest;
@@ -108,13 +109,18 @@ class ContinuationSheetTest extends AbstractHttpControllerTestCase
                     dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                     Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
                     mollit anim id est laborum.',
+                'primaryAttorneys' => [
+                    ['type' => 'human'],
+                    ['type' => 'human'],
+                    ['type' => 'human'],
+                ],
                 'replacementAttorneys' => [
                     ['type' => 'human'],
                     ['type' => 'human'],
                     ['type' => 'human'],
                 ],
                 'primaryAttorneyDecisions' => [
-                    'howDetails' => 'Decisions must be made at midnight'
+                    'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
                 ]
             ]
         ]);

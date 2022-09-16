@@ -8,6 +8,10 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class DateCheckViewModelHelper
 {
+    private static function lpaHasAttorneyDecisionDetail(Lpa $lpa)
+    {
+    }
+
     public static function build(Lpa $lpa): array
     {
         $applicants = [];
