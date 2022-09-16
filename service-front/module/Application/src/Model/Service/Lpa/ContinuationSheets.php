@@ -107,8 +107,42 @@ class ContinuationSheets
         $whenNone = ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST;
         $whenOther = ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS;
 
-        // cover all the cs2=yes conditions (see comment on method)
-        return ($singlePa && $multipleRas && $raHow == $jointSev) || // done
+        // cover all the cs2=yes conditions (see comment on method);
+        // using a switch/case here because it makes the coverage report more useful,
+        // showing which case are/aren't covered
+        switch (true) {
+            case $singlePa && $multipleRas && $raHow == $jointSev:
+                return true;
+            case $singlePa && $multipleRas && $raHow == $jointSomeJointSevOther:
+                return true;
+            case $multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSev:
+                return true;
+            case $multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSomeJointSevOther:
+                return true;
+            case $multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenNone:
+                return true;
+            case $multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenOther:
+                return true;
+            case $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen = $whenNone && $raHow == $joint:
+                return true;
+            case (
+                $multiplePas && $paHow == $jointSev && $multipleRas &&
+                $raWhen = $whenNone && $raHow == $jointSomeJointSevOther
+            ):
+                return true;
+            case $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen = $whenOther:
+                return true;
+            case $multiplePas && $paHow == $jointSomeJointSevOther && $zeroRas:
+                return true;
+            case $multiplePas && $paHow == $jointSomeJointSevOther && $singleRa:
+                return true;
+            case $multiplePas && $paHow == $jointSomeJointSevOther && $multipleRas:
+                return true;
+        }
+
+        return false;
+
+        /*return ($singlePa && $multipleRas && $raHow == $jointSev) || // done
             ($singlePa && $multipleRas && $raHow == $jointSomeJointSevOther) || // done
             ($multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSev) || // done
             ($multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSomeJointSevOther) || // done
@@ -122,7 +156,7 @@ class ContinuationSheets
             ($multiplePas && $paHow == $jointSev && $multipleRas && $raWhen = $whenOther) || // done
             ($multiplePas && $paHow == $jointSomeJointSevOther && $zeroRas) || // done
             ($multiplePas && $paHow == $jointSomeJointSevOther && $singleRa) ||
-            ($multiplePas && $paHow == $jointSomeJointSevOther && $multipleRas);
+            ($multiplePas && $paHow == $jointSomeJointSevOther && $multipleRas);*/
     }
 
     /**
