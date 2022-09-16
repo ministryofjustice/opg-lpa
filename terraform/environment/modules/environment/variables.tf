@@ -17,6 +17,7 @@ variable "lambda_container_version" {
 variable "account" {
   type = object({
     dr_enabled                             = bool
+    use_postgres13                         = bool
     performance_platform_enabled           = bool
     pagerduty_service_name                 = string
     account_id                             = string
