@@ -131,7 +131,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             'expectedAttorneyText' => []
         ],
         // 5. LPA has additional information on when replacement attorneys should act (generates CS2)
-        // ($multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenOther)
+        // ($multiplePas && $paHow == $jointSev && $singleRa && $raWhen == $whenOther)
         [
             'lpa' => [
                 'document' => [
@@ -177,7 +177,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         // 7. Combined CS1 and CS2
         //   1. LPA has more than 4 people to notify (generates CS1)
         //   2. additional information on when replacement attorneys should act (generates CS2)
-        // ($multiplePas && $paHow == $jointSev && $multipleRas && $raWhen = $whenOther)
+        // ($multiplePas && $paHow == $jointSev && $multipleRas && $raWhen == $whenOther)
         [
             'lpa' => [
                 'document' => [
@@ -186,12 +186,12 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                         ['type' => 'human'],
                         ['type' => 'human'],
                     ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                    ],
                     'replacementAttorneys' => [
                         ['type' => 'human'],
                         ['type' => 'human'],
-                    ],
-                    'primaryAttorneyDecisions' => [
-                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
                     ],
                     'replacementAttorneyDecisions' => [
                         'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS,
@@ -294,7 +294,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         ],
         // 13. CS1 & CS2 & CS3 PF LPA - donor cannot sign or make a mark,
         // additional info on how attorneys make decisions, >4 people to notify
-        // ($multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSev)
+        // ($multiplePas && $paHow == $joint && $multipleRas && $raHow == $jointSev)
         [
             'lpa' => [
                 'document' => [
@@ -388,9 +388,9 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'dated before or on the same day as they signed continuation sheet 3.'],
             'expectedAttorneyText' => []
         ],
-        // 17. CS3 & CS2 & CS1 HW LPA - donor cannot sign or make a mark,
+        // 17. CS1 & CS2 & CS3 HW LPA - donor cannot sign or make a mark,
         // additional info on how attorneys make decisions, >4 people to notify
-        // ($multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenNone)
+        // ($multiplePas && $paHow == $jointSev && $singleRa && $raWhen == $whenNone)
         [
             'lpa' => [
                 'document' => [
@@ -418,6 +418,142 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                                     'same day as they signed section 5.',
                                     'Section 5 must have been signed and ' .
                                     'dated before or on the same day as they signed continuation sheet 3.'],
+            'expectedAttorneyText' => []
+        ],
+        // 18. CS2 PF LPA
+        // $multiplePas && $paHow == $joint && $multipleRas && $raHow == $jointSomeJointSevOther
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'property-and-financial',
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY,
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'replacementAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
+                    ],
+                ]
+            ],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, ' .
+                'or on the same day.'
+            ],
+            'expectedAttorneyText' => []
+        ],
+        // 19. CS2 PF LPA
+        // $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen == $whenNone && $raHow == $joint
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'property-and-financial',
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'replacementAttorneyDecisions' => [
+                        'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY,
+                    ],
+                ]
+            ],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, ' .
+                'or on the same day.'
+            ],
+            'expectedAttorneyText' => []
+        ],
+        // 20. CS2 PF LPA
+        // $multiplePas && $paHow == $jointSev && $multipleRas &&
+        // $raWhen == $whenNone && $raHow == $jointSomeJointSevOther
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'property-and-financial',
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'replacementAttorneyDecisions' => [
+                        'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
+                    ],
+                ]
+            ],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, ' .
+                'or on the same day.'
+            ],
+            'expectedAttorneyText' => []
+        ],
+        // 21. CS2 PF LPA
+        // $multiplePas && $paHow == $jointSomeJointSevOther && $singleRa
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'property-and-financial',
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                    ],
+                ]
+            ],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, ' .
+                'or on the same day.'
+            ],
+            'expectedAttorneyText' => []
+        ],
+        // 22. CS2 PF LPA
+        // $multiplePas && $paHow == $jointSomeJointSevOther && $multipleRas
+        [
+            'lpa' => [
+                'document' => [
+                    'type' => 'property-and-financial',
+                    'primaryAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                    'primaryAttorneyDecisions' => [
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
+                    ],
+                    'replacementAttorneys' => [
+                        ['type' => 'human'],
+                        ['type' => 'human'],
+                    ],
+                ]
+            ],
+            'expectedDonorText' => [
+                'You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, ' .
+                'or on the same day.'
+            ],
             'expectedAttorneyText' => []
         ],
     ];
@@ -512,8 +648,8 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             echo "Running tests for donor DateCheckViewModelHelper test case $index\n";
 
             $this->assertEquals(
-                $matchesArray,
                 $expectedText,
+                $matchesArray,
                 "Test case ${index} - Unable to find text: " . print_r($expectedText, true),
             );
         }
@@ -566,8 +702,8 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             echo "Running tests for attorney DateCheckViewModelHelper test case $index\n";
 
             $this->assertEquals(
-                $matchesArray,
                 $expectedText,
+                $matchesArray,
             );
         }
     }

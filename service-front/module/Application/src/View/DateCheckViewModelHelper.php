@@ -40,8 +40,7 @@ class DateCheckViewModelHelper
             }
         }
 
-        $continuationSheets = new ContinuationSheets();
-        $continuationNoteKeys = $continuationSheets->getContinuationNoteKeys($lpa);
+        $continuationNoteKeys = (new ContinuationSheets())->getContinuationNoteKeys($lpa);
 
         $continuationSheets = [];
 
