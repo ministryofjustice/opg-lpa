@@ -115,22 +115,22 @@ class ContinuationSheets
                 return true;
             case $singlePa && $multipleRas && $raHow == $jointSomeJointSevOther:
                 return true;
-            case $multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSev:
+            case $multiplePas && $paHow == $joint && $multipleRas && $raHow == $jointSev:
                 return true;
-            case $multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSomeJointSevOther:
+            case $multiplePas && $paHow == $joint && $multipleRas && $raHow == $jointSomeJointSevOther:
                 return true;
-            case $multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenNone:
+            case $multiplePas && $paHow == $jointSev && $singleRa && $raWhen == $whenNone:
                 return true;
-            case $multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenOther:
+            case $multiplePas && $paHow == $jointSev && $singleRa && $raWhen == $whenOther:
                 return true;
-            case $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen = $whenNone && $raHow == $joint:
+            case $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen == $whenNone && $raHow == $joint:
                 return true;
             case (
                 $multiplePas && $paHow == $jointSev && $multipleRas &&
-                $raWhen = $whenNone && $raHow == $jointSomeJointSevOther
+                $raWhen == $whenNone && $raHow == $jointSomeJointSevOther
             ):
                 return true;
-            case $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen = $whenOther:
+            case $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen == $whenOther:
                 return true;
             case $multiplePas && $paHow == $jointSomeJointSevOther && $zeroRas:
                 return true;
@@ -141,22 +141,6 @@ class ContinuationSheets
         }
 
         return false;
-
-        /*return ($singlePa && $multipleRas && $raHow == $jointSev) || // done
-            ($singlePa && $multipleRas && $raHow == $jointSomeJointSevOther) || // done
-            ($multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSev) || // done
-            ($multiplePas && $paHow == $joint && $multipleRas && $raHow = $jointSomeJointSevOther) || // done
-            ($multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenNone) || // done
-            ($multiplePas && $paHow == $jointSev && $singleRa && $raWhen = $whenOther) ||
-            ($multiplePas && $paHow == $jointSev && $multipleRas && $raWhen = $whenNone && $raHow == $joint) ||
-            (
-                $multiplePas && $paHow == $jointSev && $multipleRas &&
-                $raWhen = $whenNone && $raHow == $jointSomeJointSevOther
-            ) ||
-            ($multiplePas && $paHow == $jointSev && $multipleRas && $raWhen = $whenOther) || // done
-            ($multiplePas && $paHow == $jointSomeJointSevOther && $zeroRas) || // done
-            ($multiplePas && $paHow == $jointSomeJointSevOther && $singleRa) ||
-            ($multiplePas && $paHow == $jointSomeJointSevOther && $multipleRas);*/
     }
 
     /**
