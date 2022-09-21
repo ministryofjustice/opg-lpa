@@ -20,20 +20,25 @@ on:
       - ".github/workflows/**"
 
 jobs:
-  semvar_tag:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-semvar-tag.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
-    with:
-      branch_name: main
-      release_branch: main
+  image_tag:
+    name: Generate image tags
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.short_sha.outputs.short_sha }}
+    steps:
+      - name: Set output to short SHA
+        id: short_sha
+        run: |
+          FULL_SHA=$(git rev-parse ${{ github.ref }}^2)
+          echo "::set-output name=short_sha::${FULL_SHA::7}"
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
     needs:
-      - semvar_tag
+      - image_tag
     with:
-      tag: ${{ needs.semvar_tag.outputs.tag }}
-      branch_name: main
+      tag: ${{ needs.image_tag.outputs.short_sha }}
     secrets: inherit
 
   terraform_account_preproduction:
@@ -126,7 +131,7 @@ jobs:
       ts: ${{ steps.slack.outputs.ts }}
     steps:
       - id: slack
-        uses: slackapi/slack-github-action@v1.21.0
+        uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
         with:
           channel-id: "CHANNEL_ID"
           payload: |
@@ -236,7 +241,7 @@ jobs:
     needs: 
       - slack_msg_production_deploy_begin
     steps:
-    - uses: slackapi/slack-github-action@v1.21.0
+    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
       if: success()
       with:
         channel-id: "C01BDM8T67J"
@@ -261,7 +266,7 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    - uses: slackapi/slack-github-action@v1.21.0
+    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
       if: failure()
       with:
         channel-id: "C01BDM8T67J"

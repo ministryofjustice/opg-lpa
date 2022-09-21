@@ -88,14 +88,33 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: OPGMakeaLPAECRGithubAction
 
+      - name: Apply override tag
+        id: set_image_tag
+        env:
+          IMAGE_TAG: ${{ inputs.tag }}
+        run: |
+          if [ ${{ matrix.override_tag }} ]; then
+            IMAGE_TAG=${{ matrix.override_tag }}
+          fi
+          echo "::set-output name=image_tag::${IMAGE_TAG}"
+
+      - name: Check if image already exists
+        id: image_exists
+        run: |
+          aws ecr describe-images --repository-name=online-lpa/${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }}
+          if [ $? -eq 0 ]; then
+            echo "::set-output name=image_exists::true"
+          else
+            echo "::set-output name=image_exists::false"
+
       - name: Use Node.js 16.x
         uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93 # pin@v3
-        if: matrix.image_name == 'front_web'
+        if: matrix.image_name == 'front_web' && steps.image_exists.outputs.image_exists == 'false'
         with:
           node-version: 16.x
 
       - name: Install Dependencies
-        if: matrix.image_name == 'front_web'
+        if: matrix.image_name == 'front_web' && steps.image_exists.outputs.image_exists == 'false'
         run: |
           pushd service-front/
           npm ci && npm install -g sass
@@ -104,12 +123,14 @@ jobs:
 
       - name: Setup Docker Buildx
         id: docker_buildx
+        if: steps.image_exists.outputs.image_exists == 'false'
         uses: docker/setup-buildx-action@dc7b9719a96d48369863986a06765841d7ea23f6 # pin@v2
         with:
           install: true
 
       - name: Setup Docker Layer Cache
         uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # pin@v3
+        if: steps.image_exists.outputs.image_exists == 'false'
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ matrix.image_name }}-${{ github.sha }}
@@ -118,6 +139,7 @@ jobs:
 
       - name: Build Image
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94 # pin@v3
+        if: steps.image_exists.outputs.image_exists == 'false'
         with:
           context: .
           load: true
@@ -128,35 +150,33 @@ jobs:
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
 
       - name: Move cache
+        if: steps.image_exists.outputs.image_exists == 'false'
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Unit Tests
-        if: matrix.unit_test == true
+        if: matrix.unit_test == true && steps.image_exists.outputs.image_exists == 'false'
         run: |
           docker run --pull never --detach --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests ${{ matrix.image_name }}:latest
           docker exec tests /app/vendor/bin/phpunit -d memory_limit=256M
 
       - name: ECR Login
         id: login_ecr
-        if: matrix.push_to_repo == true
+        if: matrix.push_to_repo == true && steps.image_exists.outputs.image_exists == 'false'
         uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
         with:
           registries: 311462405659
 
       - name: Tag and Push Container
-        if: matrix.push_to_repo == true
+        if: matrix.push_to_repo == true && steps.image_exists.outputs.image_exists == 'false'
         env:
           ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
           ECR_REGISTRY_ALIAS: online-lpa
-          IMAGE_TAG: ${{ inputs.tag }}
+          IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
           IMAGE_NAME: ${{ matrix.image_name }}
           BRANCH_NAME: ${{ inputs.branch_name }}
         run: |
-          if [ ${{ matrix.override_tag }} ]; then
-            IMAGE_TAG=${{ matrix.override_tag }}
-          fi
           docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG
           if [ $BRANCH_NAME == "main" ]; then
             docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:main-$IMAGE_TAG
