@@ -12,7 +12,7 @@ resource "aws_ecs_service" "front" {
   wait_for_steady_state = true
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
-    subnets          = data.aws_subnet_ids.private.ids
+    subnets          = data.aws_subnets.private.ids
     assign_public_ip = false
   }
 
