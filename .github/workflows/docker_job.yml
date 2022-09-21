@@ -101,8 +101,7 @@ jobs:
       - name: Check if image already exists
         id: image_exists
         run: |
-          aws ecr describe-images --repository-name=online-lpa/${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }}
-          if [ $? -eq 0 ]; then
+          if aws ecr describe-images --repository-name=online-lpa/${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }} &> /dev/null; then
             echo "::set-output name=image_exists::true"
           else
             echo "::set-output name=image_exists::false"
