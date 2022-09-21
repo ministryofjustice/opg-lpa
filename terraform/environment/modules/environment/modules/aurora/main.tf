@@ -69,7 +69,7 @@ resource "aws_rds_cluster" "cluster_serverless" {
   deletion_protection          = var.deletion_protection
   engine                       = var.engine
   engine_version               = var.engine_version
-  engine_mode                  = "serverless"
+  engine_mode                  = "provisioned"
   final_snapshot_identifier    = "${var.database_name}-${var.environment}-final-snapshot"
   kms_key_id                   = var.kms_key_id
   master_username              = var.master_username
@@ -81,11 +81,33 @@ resource "aws_rds_cluster" "cluster_serverless" {
   vpc_security_group_ids       = var.vpc_security_group_ids
   tags                         = var.tags
 
-  scaling_configuration {
-    auto_pause               = true
-    max_capacity             = 16
-    min_capacity             = 4
-    seconds_until_auto_pause = 300
-    timeout_action           = "ForceApplyCapacityChange"
+  serverlessv2_scaling_configuration {
+    min_capacity = 0.5
+    max_capacity = 4
+  }
+}
+
+resource "aws_rds_cluster_instance" "serverless_instances" {
+  count                           = var.aurora_serverless ? var.instance_count : 0
+  apply_immediately               = var.apply_immediately
+  auto_minor_version_upgrade      = var.auto_minor_version_upgrade
+  db_subnet_group_name            = var.db_subnet_group_name
+  depends_on                      = [aws_rds_cluster.cluster_serverless]
+  cluster_identifier              = "${var.cluster_identifier}-${var.environment}"
+  engine                          = var.engine
+  engine_version                  = var.engine_version
+  identifier                      = "${var.cluster_identifier}-${var.environment}-${count.index}"
+  instance_class                  = "db.serverless"
+  monitoring_interval             = 30
+  monitoring_role_arn             = "arn:aws:iam::${var.account_id}:role/rds-enhanced-monitoring"
+  performance_insights_enabled    = true
+  performance_insights_kms_key_id = var.kms_key_id
+  publicly_accessible             = var.publicly_accessible
+  tags                            = var.tags
+
+  timeouts {
+    create = var.timeout_create
+    update = var.timeout_update
+    delete = var.timeout_delete
   }
 }
