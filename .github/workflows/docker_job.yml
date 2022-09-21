@@ -105,6 +105,7 @@ jobs:
             echo "::set-output name=image_exists::true"
           else
             echo "::set-output name=image_exists::false"
+          fi
 
       - name: Use Node.js 16.x
         uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93 # pin@v3
