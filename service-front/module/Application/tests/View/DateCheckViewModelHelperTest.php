@@ -449,7 +449,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             'expectedAttorneyText' => []
         ],
         // 19. CS2 PF LPA
-        // $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen == $whenNone && $raHow == $joint
+        // $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen == $whenNone && $raHow == $jointSev
         [
             'lpa' => [
                 'document' => [
@@ -467,7 +467,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
                     ],
                     'replacementAttorneyDecisions' => [
                         'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
-                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY,
+                        'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
                     ],
                 ]
             ],

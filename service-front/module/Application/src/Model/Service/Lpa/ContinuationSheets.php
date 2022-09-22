@@ -123,7 +123,7 @@ class ContinuationSheets
                 return true;
             case $multiplePas && $paHow == $jointSev && $singleRa && $raWhen == $whenOther:
                 return true;
-            case $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen == $whenNone && $raHow == $joint:
+            case $multiplePas && $paHow == $jointSev && $multipleRas && $raWhen == $whenNone && $raHow == $jointSev:
                 return true;
             case (
                 $multiplePas && $paHow == $jointSev && $multipleRas &&
