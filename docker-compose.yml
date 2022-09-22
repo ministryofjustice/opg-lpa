@@ -246,7 +246,7 @@ services:
 
   api-app:
     container_name: lpa-api-app
-    image: lpa-pi-app
+    image: lpa-api-app
     build:
       context: ./
 # Enable debug is recommended to default to off for api to avoid slowness. Turn this on if you ever need to debug the api
