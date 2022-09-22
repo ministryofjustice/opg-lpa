@@ -12,7 +12,6 @@ use Application\Model\Service\RedisClient\RedisClient;
 use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManager;
-use Application\Model\Service\System\DynamoCronLock;
 use Application\View\Helper\LocalViewRenderer;
 use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
@@ -38,7 +37,7 @@ class Module implements FormElementProviderInterface
 
     public function onBootstrap(MvcEvent $e)
     {
-        $eventManager        = $e->getApplication()->getEventManager();
+        $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
@@ -56,8 +55,6 @@ class Module implements FormElementProviderInterface
                 echo 'An unknown server error has occurred.';
             }
         });
-
-        //---
 
         $request = $e->getApplication()->getServiceManager()->get('Request');
 
@@ -182,32 +179,20 @@ class Module implements FormElementProviderInterface
                     return new \Http\Adapter\Guzzle6\Client();
                 },
 
-                'Cache' => function (ServiceLocatorInterface $sm) {
+                // required for the system message, set in admin UI
+                'DynamoDbSystemMessageCache' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config')['admin']['dynamodb'];
 
                     $config['keyPrefix'] = $sm->get('config')['stack']['name'];
 
                     $dynamoDbAdapter = new DynamoDbKeyValueStore($config);
-
-                    $dynamoDbAdapter->setDynamoDbClient(new DynamoDbClient($config['client']));
+                    $dynamoDbAdapter->setDynamoDbClient($sm->get('DynamoDbSystemMessageClient'));
 
                     return $dynamoDbAdapter;
                 },
 
-                'DynamoDbCronClient' => function (ServiceLocatorInterface $sm) {
-                    $config = $sm->get('config')['cron']['lock']['dynamodb']['client'];
-
-                    return new DynamoDbClient($config);
-                },
-
-                'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
-                    $config = $sm->get('config')['cron']['lock']['dynamodb'];
-
-                    $config['keyPrefix'] = $sm->get('config')['stack']['name'];
-
-                    $dynamoDbAdapter = new DynamoCronLock($config);
-
-                    return $dynamoDbAdapter;
+                'DynamoDbSystemMessageClient' => function (ServiceLocatorInterface $sm) {
+                    return new DynamoDbClient($sm->get('config')['admin']['dynamodb']['client']);
                 },
 
                 'GovPayClient' => function (ServiceLocatorInterface $sm) {

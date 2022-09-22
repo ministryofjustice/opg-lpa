@@ -17,6 +17,7 @@ variable "lambda_container_version" {
 variable "account" {
   type = object({
     dr_enabled                             = bool
+    use_postgres13                         = bool
     performance_platform_enabled           = bool
     pagerduty_service_name                 = string
     account_id                             = string
@@ -29,6 +30,7 @@ variable "account" {
     skip_final_snapshot                    = bool
     psql_engine_version                    = string
     psql_parameter_group_family            = string
+    psql13_parameter_group_family          = string
     aurora_enabled                         = bool
     aurora_serverless                      = bool
     aurora_instance_count                  = number
@@ -37,6 +39,7 @@ variable "account" {
     log_retention_in_days                  = number
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
+    rds_instance_type                      = string
     regions = map(
       object({
         region     = string

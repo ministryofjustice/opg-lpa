@@ -31,8 +31,8 @@ return [
         //'logout' => getenv('FRONT_DOMAIN').'/completed-feedback',
     ],
 
+    // dynamodb config required to get the system message
     'admin' => [
-
         'dynamodb' => [
             'client' => $DYNAMO_DB_CONFIG,
             'settings' => [
@@ -40,28 +40,9 @@ return [
             ],
             'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
         ],
-
-    ], // admin
-
-    'cron' => [
-
-        'lock' => [
-
-            'dynamodb' => [
-                'client' => $DYNAMO_DB_CONFIG,
-                'settings' => [
-                    'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
-                ],
-                'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
-            ],
-
-        ], // lock
-
-    ], // cron
-
+    ],
 
     'session' => [
-
         // ini session.* settings...
         'native_settings' => [
             // The cookie name used in the session
@@ -82,23 +63,6 @@ return [
 
             // TTL for Redis keys in milliseconds
             'ttlMs' => (1000 * 60 * 60 * 3), // 3 hours,
-        ],
-
-        'dynamodb' => [
-            'client' => $DYNAMO_DB_CONFIG,
-            'settings' => [
-                'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
-                // Whether Time To Live is enabled on the sesson table
-                'ttl_enabled' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ENABLED') ?: true,
-                // The DB field to use for the Time To Live expiry time
-                'ttl_attribute' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ATTRIBUTE') ?: 'expires',
-                'batch_config' => [
-                    // Sleep before each flush to rate limit the garbage collection.
-                    'before' => function () {
-                    },
-                ]
-            ],
-            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
         ],
 
     ], // session
