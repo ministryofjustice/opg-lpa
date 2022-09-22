@@ -10,12 +10,15 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class SystemMessageFactoryTest extends MockeryTestCase
 {
-    public function testInvoke():void
+    public function testInvoke(): void
     {
         $container = Mockery::mock(ContainerInterface::class);
 
         $cache = Mockery::mock(DynamoDbKeyValueStore::class);
-        $container->shouldReceive('get')->withArgs(['Cache'])->once()->andReturn($cache);
+        $container->shouldReceive('get')
+            ->withArgs(['DynamoDbSystemMessageCache'])
+            ->once()
+            ->andReturn($cache);
 
         $systemMessageFactory = new SystemMessageFactory();
         $systemMessageFactory($container, "", null);
