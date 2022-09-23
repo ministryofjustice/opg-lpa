@@ -20,17 +20,24 @@ while : ; do
         # Acquired lock
         echo "Waiting for postgres to be ready before running migrations"
 
-        # wait until code is 0 (all migrations applied), 2 (one or more migrations
-        # missing) or 3 (one or more migrations down)
-        # see https://phinx.readthedocs.io/en/latest/commands.html#the-status-command
-        timeout 90s sh -c 'pgready=1; until [[ ${pgready} -eq 0 || ${pgready} -eq 2 || ${pgready} -eq 3 ]]; do vendor/robmorgan/phinx/bin/phinx status ; pgready=$? ; echo "pgready = $pgready" ; sleep 5 ; done'
+        # wait until code is 0 (all migrations applied), 2 (one or more up migrations
+        # need to be applied) or 3 (one or more down migrations to be applied)
+        # see https://book.cakephp.org/phinx/0/en/commands.html#the-status-command
+        timeout 600s sh -c 'pgready=1; until [[ ${pgready} -eq 0 || ${pgready} -eq 2 || ${pgready} -eq 3 ]]; do vendor/robmorgan/phinx/bin/phinx status ; pgready=$? ; echo "pgready = $pgready" ; sleep 15 ; done'
 
-        echo "Migrating API data to postgres db via phinx"
-        vendor/robmorgan/phinx/bin/phinx migrate
-        if ${seedData}; then
-            vendor/robmorgan/phinx/bin/phinx seed:run
+        if [ "$pgready" -eq "0" -o "$pgready" -eq "2" -o "$pgready" -eq "3" ] ; then
+            echo "Migrating API data to postgres db via phinx"
+            vendor/robmorgan/phinx/bin/phinx migrate
+
+            if ${seedData}; then
+                vendor/robmorgan/phinx/bin/phinx seed:run
+            fi
+
+            exit 0
+        else
+            echo "ERROR: Database is not ready for API data migration via phinx"
+            exit 1
         fi
-        break
     elif [ $retval -eq 1 ]; then
         # Lock not acquired
         break
@@ -45,7 +52,6 @@ while : ; do
         echo "Error with lock system; will re-try"
         sleep 2
     fi
-
 done
 
 exit 0
