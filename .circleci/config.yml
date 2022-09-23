@@ -546,7 +546,7 @@ orbs:
 
   build_containers_and_push_to_ecr:
     orbs:
-      docker: circleci/docker@2.0.3
+      docker: circleci/docker@2.1.4
     commands:
       dockerhub_login:
         steps:
@@ -772,7 +772,7 @@ orbs:
     orbs:
       my_slack:
         <<: *slack_orb
-      docker: circleci/docker@2.0.3
+      docker: circleci/docker@2.1.4
     commands:
       dockerhub_login:
         steps:
