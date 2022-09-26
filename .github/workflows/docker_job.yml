@@ -41,7 +41,7 @@ jobs:
           - image_name: api_app
             service_path: ./service-api/docker/app
             unit_test: true
-            force_push_to_repo: true
+            force_push_to_repo: false
 
           - image_name: api_web
             service_path: ./service-api/docker/web
@@ -109,12 +109,12 @@ jobs:
 
       - name: Use Node.js 16.x
         uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93 # pin@v3
-        if: ${{ (matrix.image_name == 'front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true') }}
+        if: ${{ (matrix.image_name == 'front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
         with:
           node-version: 16.x
 
       - name: Install Dependencies
-        if: ${{ (matrix.image_name == 'front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true') }}
+        if: ${{ (matrix.image_name == 'front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
         run: |
           pushd service-front/
           npm ci && npm install -g sass
@@ -123,14 +123,14 @@ jobs:
 
       - name: Setup Docker Buildx
         id: docker_buildx
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' }}
+        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         uses: docker/setup-buildx-action@dc7b9719a96d48369863986a06765841d7ea23f6 # pin@v2
         with:
           install: true
 
       - name: Setup Docker Layer Cache
         uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # pin@v3
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' }}
+        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ matrix.image_name }}-${{ github.sha }}
@@ -139,7 +139,7 @@ jobs:
 
       - name: Build Image
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94 # pin@v3
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' }}
+        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         with:
           context: .
           load: true
@@ -150,26 +150,26 @@ jobs:
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
 
       - name: Move cache
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' }}
+        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Unit Tests
-        if: matrix.unit_test == true && ( steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' )
+        if: matrix.unit_test == true && ( steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true )
         run: |
           docker run --pull never --detach --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests ${{ matrix.image_name }}:latest
           docker exec tests /app/vendor/bin/phpunit -d memory_limit=256M
 
       - name: ECR Login
         id: login_ecr
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' }}
+        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
         with:
           registries: 311462405659
 
       - name: Tag and Push Container
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' }}
+        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         env:
           ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
           ECR_REGISTRY_ALIAS: online-lpa
@@ -185,19 +185,19 @@ jobs:
             docker push --all-tags $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME
 
       - name: Setup Python
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' }}
+        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4.2.0
         with:
           python-version: "3.9"
 
       - name: Install Python dependencies
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' }}
+        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
 
       - name: Scan Container
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == 'true' }}
+        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         env:
           ECR_REGISTRY_ALIAS: online-lpa
           IMAGE_TAG: ${{ inputs.tag }}
