@@ -650,6 +650,7 @@ orbs:
                 if << parameters.unit_test >> ; then
                   docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
                   docker exec tests /app/vendor/bin/phpunit -d memory_limit=256M
+                  docker logs tests
                 else
                   echo "phpunit tests not required for this service"
                 fi
