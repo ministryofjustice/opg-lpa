@@ -243,12 +243,13 @@ jobs:
       - cypress_tests
       - workspace_name
       - terraform_outputs
+      - image_tag
     environment:
-      name: ${{ needs.workspace_name.outputs.name }}
+      name: "dev_${{ needs.workspace_name.outputs.name }}"
       url: "https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}"
     steps:
       - name: End of PR Workflow
         run: |
-          echo "${{ name }} PR environment tested, built and deployed"
-          echo "Tag Deployed: ${{ needs.pr_deploy.outputs.terraform_container_version }}"
-          echo "URL: https://${{ url }}"
+          echo "${{ needs.workspace_name.outputs.name }} PR environment tested, built and deployed"
+          echo "Tag Deployed: ${{ needs.image_tag.outputs.short_sha }}"
+          echo "URL: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}"
