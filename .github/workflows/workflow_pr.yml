@@ -246,10 +246,10 @@ jobs:
       - image_tag
     environment:
       name: "dev_${{ needs.workspace_name.outputs.name }}"
-      url: "https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}"
+      url: "https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}/home"
     steps:
       - name: End of PR Workflow
         run: |
           echo "${{ needs.workspace_name.outputs.name }} PR environment tested, built and deployed"
           echo "Tag Deployed: ${{ needs.image_tag.outputs.short_sha }}"
-          echo "URL: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}"
+          echo "URL: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}/home"
