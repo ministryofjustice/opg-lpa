@@ -38,6 +38,11 @@ services:
       POSTGRES_DB: lpadb
       POSTGRES_USER: lpauser
       POSTGRES_PASSWORD: lpapass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username=lpauser --dbname=lpadb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     container_name: lpa-redis
@@ -58,7 +63,7 @@ services:
     ports:
       - 4566:4566
     environment:
-      - SERVICES=sqs,s3,lambda
+      - SERVICES=sqs,s3,lambda,secretsmanager
       - DEFAULT_REGION=eu-west-1
       - HOSTNAME=localstack
       - LAMBDA_EXECUTOR=docker
@@ -72,6 +77,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/localstack:/tmp/localstack
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:4566/health?reload"]
 
   local-config:
     container_name: lpa-local-config
@@ -80,9 +87,12 @@ services:
       context: ./local-config/
       dockerfile: ./Dockerfile
     depends_on:
-      - dynamodb
-      - postgres
-      - localstack
+      dynamodb:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
     volumes:
       - ./local-config/:/app/
     environment:
@@ -135,6 +145,10 @@ services:
   feedback-app:
     container_name: lpa-feedback-app
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/front-app
+    depends_on:
+      - feedback-api
+    environment:
+      AWS_XRAY_SDK_ENABLED: "false"
     ports:
       - 9005:8005
 
@@ -155,10 +169,14 @@ services:
       - ./service-front/assets:/app/assets
       - ./service-front/vendor:/app/vendor
     depends_on:
-      - dynamodb
-      - localstack
-      - local-config
-      - node-build-assets
+      dynamodb:
+        condition: service_started
+      localstack:
+        condition: service_healthy
+      local-config:
+        condition: service_started
+      node-build-assets:
+        condition: service_started
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -242,10 +260,14 @@ services:
       - ./service-api/module:/app/module
       - ./service-api/vendor:/app/vendor
     depends_on:
-      - dynamodb
-      - localstack
-      - local-config
-      - postgres
+      dynamodb:
+        condition: service_started
+      localstack:
+        condition: service_healthy
+      local-config:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -286,8 +308,12 @@ services:
     container_name: lpa-feedback-api
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/rest-api
     depends_on:
-      - postgres
-      - feedbackdb
+      postgres:
+        condition: service_healthy
+      feedbackdb:
+        condition: service_started
+      aws-cli:
+        condition: service_started
     environment:
       AWS_XRAY_SDK_ENABLED: "false"
       POSTGRES_HOSTNAME: "postgres"
@@ -295,6 +321,12 @@ services:
       POSTGRES_NAME: "lpadb"
       POSTGRES_USERNAME: "lpauser"
       POSTGRES_PASSWORD: "lpapass"
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
+      AWS_SECURITY_TOKEN: ${AWS_SECURITY_TOKEN}
+      LOCAL_AWS_ENDPOINT: http://localstack:4566
     ports:
       - 9004:8005
 
@@ -331,9 +363,12 @@ services:
       - ./service-admin/config:/app/config
       - ./service-admin/vendor:/app/vendor
     depends_on:
-      - dynamodb
-      - localstack
-      - local-config
+      dynamodb:
+        condition: service_started
+      localstack:
+        condition: service_healthy
+      local-config:
+        condition: service_started
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -382,8 +417,10 @@ services:
     container_name: lpa-pdf-app
     image: lpa-pdf-app
     depends_on:
-      - localstack
-      - local-config
+      localstack:
+        condition: service_healthy
+      local-config:
+        condition: service_started
     volumes:
       - ./service-pdf:/app
     build:
@@ -409,10 +446,10 @@ services:
       context: ./
       dockerfile: service-seeding/docker/app/Dockerfile
     depends_on:
-      - localstack
-      - local-config
-      - api-app
-      - postgres
+      local-config:
+          condition: service_started
+      postgres:
+          condition: service_healthy
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -422,16 +459,34 @@ services:
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
+# aws-cli creates the secret in localstack, for feedback api
+  aws-cli:
+    container_name: lpa-feedback-aws-cli
+    image: amazon/aws-cli:latest
+    stdin_open: true
+    tty: true
+    environment:
+      - AWS_SECRET_ACCESS_KEY=dummy
+      - AWS_ACCESS_KEY_ID=dummy
+    command: --region="eu-west-1" --endpoint-url="http://localstack:4566" secretsmanager create-secret --name opg-flask-api-token --secret-string "{\"test\":\"secret\",\"secret\":\"test\"}"
+    depends_on:
+      localstack:
+        condition: service_healthy
+
   # ---------------------------
   # Create feedback table and db user for PerfPlat
   feedbackdb:
     container_name: lpa-feedbackdb
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/feedbackdb
     depends_on:
-      - localstack
-      - local-config
-      - api-app
-      - postgres
+      localstack:
+        condition: service_healthy
+      local-config:
+        condition: service_started
+      api-app:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -452,7 +507,8 @@ services:
       context: .
       dockerfile: ./service-perfplat/docker/Dockerfile-worker
     depends_on:
-      - postgres
+      postgres:
+          condition: service_healthy
     ports:
       - 7020:8080
     volumes:
