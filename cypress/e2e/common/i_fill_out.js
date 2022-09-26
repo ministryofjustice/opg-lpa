@@ -14,6 +14,14 @@ When(`I select {string} on {string}`, (value, id) => {
     cy.get("[data-cy=" + id + "]").select(value);
 })
 
+When(`I select {string} on {string} with data-inited`, (value, id) => {
+        cy.get("[data-cy=" + id + "][data-inited=true]").select(value);
+})
+
+Then(`I select option {string} of {string}`, (option, object) => {
+    cy.get("[data-cy=" + object + "]").select(option);
+})
+
 Then(`I select element containing {string}`, (linkText) => {
     cy.contains(linkText).select();
 })
