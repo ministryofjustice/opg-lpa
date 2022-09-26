@@ -43,7 +43,7 @@ Feature: Signup
         And I click "save"
         Then I see "There is a problem" in the page text
         And I see "Error" in the title
-        When I select "Mr" on "name-title"
+        When I select "Mr" on "name-title" with data-inited
         And I force fill out
           | name-first| Chris |
           | name-last| Smith |
@@ -60,7 +60,7 @@ Feature: Signup
         Given I log in as standard test user
         Then I see "Make a lasting power of attorney" in the page text
         And I see "Your details" in the title
-        When I select "Mr" on "name-title"
+        When I select "Mr" on "name-title" with data-inited
         And I force fill out
           | name-first| Chris |
           | name-last| Smith |

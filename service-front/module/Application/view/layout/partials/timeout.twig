@@ -26,7 +26,7 @@
 <script>
     if(typeof window.timeoutWarningDialog === 'undefined') {
         // instantiate object and attach events on page load ready event
-        $(window.timeoutWarningDialog = new SessionTimeoutDialog({
+        $(window.timeoutWarningDialog = new window.SessionTimeoutDialog({
             element: $('#timeoutPopup'),
             warningPeriodMs: {{ warningPeriodInMinutes * 60000 }}
         }));

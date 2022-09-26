@@ -1,9 +1,13 @@
-data "aws_subnet_ids" "private" {
-  vpc_id = aws_default_vpc.default.id
+data "aws_subnets" "private" {
+  filter {
+    name   = "vpc-id"
+    values = [aws_default_vpc.default.id]
+  }
 
   tags = {
     Name = "private*"
   }
+
   depends_on = [
     aws_subnet.private
   ]
@@ -38,12 +42,14 @@ resource "aws_subnet" "private" {
 
 resource "aws_db_subnet_group" "data_persistence" {
   name       = "data-persistence-subnet-default"
-  subnet_ids = data.aws_subnet_ids.data_persistence.ids # todo: create new subnet for data layer.
+  subnet_ids = data.aws_subnets.data_persistence.ids # todo: create new subnet for data layer.
 }
 
-data "aws_subnet_ids" "data_persistence" {
-  vpc_id = aws_default_vpc.default.id # todo: create new subnet for data layer.
-
+data "aws_subnets" "data_persistence" {
+  filter {
+    name   = "vpc-id"
+    values = [aws_default_vpc.default.id] # todo: create new subnet for data layer.
+  }
   filter {
     name   = "tag:Name"
     values = ["private"]
