@@ -234,3 +234,21 @@ jobs:
       front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
       account_id: "050256574573"
     secrets: inherit
+
+  end_of_pr_workflow:
+    name: End of PR Workflow
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: 
+      - cypress_tests
+      - workspace_name
+      - terraform_outputs
+    environment:
+      name: ${{ needs.workspace_name.outputs.name }}
+      url: "https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}"
+    steps:
+      - name: End of PR Workflow
+        run: |
+          echo "${{ name }} PR environment tested, built and deployed"
+          echo "Tag Deployed: ${{ needs.pr_deploy.outputs.terraform_container_version }}"
+          echo "URL: https://${{ url }}"
