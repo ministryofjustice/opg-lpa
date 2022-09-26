@@ -12,7 +12,7 @@ Feature: DashboardDeleteLpa
         Then I see "Account activated" in the title
 
         Given I log in as "DashboardDeleteLpaUser" test user
-        When I select "Mr" on "name-title"
+        When I select "Mr" on "name-title" with data-inited
         And I force fill out
           | name-first| Partytime |
           | name-last| Chellingston |
