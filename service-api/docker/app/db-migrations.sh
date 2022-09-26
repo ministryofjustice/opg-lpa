@@ -16,7 +16,8 @@ while : ; do
 
     retval=$?
 
-    if [ $retval -eq 0 ]; then
+    if [ $retval -eq 0 ]
+    then
         # Acquired lock
         echo "Waiting for postgres to be ready before running migrations"
 
@@ -25,7 +26,11 @@ while : ; do
         # see https://book.cakephp.org/phinx/0/en/commands.html#the-status-command
         timeout 600s sh -c 'pgready=1; until [[ ${pgready} -eq 0 || ${pgready} -eq 2 || ${pgready} -eq 3 ]]; do vendor/robmorgan/phinx/bin/phinx status ; pgready=$? ; echo "pgready = $pgready" ; sleep 15 ; done'
 
-        if [ "$pgready" -eq "0" -o "$pgready" -eq "2" -o "$pgready" -eq "3" ] ; then
+        vendor/robmorgan/phinx/bin/phinx status > /dev/null
+        database_ready="$?"
+
+        if [[ $database_ready = "0" || $database_ready = "2" || $database_ready = "3" ]]
+        then
             echo "Migrating API data to postgres db via phinx"
             vendor/robmorgan/phinx/bin/phinx migrate
 
@@ -33,18 +38,21 @@ while : ; do
                 vendor/robmorgan/phinx/bin/phinx seed:run
             fi
 
-            exit 0
+            retval=0
         else
             echo "ERROR: Database is not ready for API data migration via phinx"
-            exit 1
+            retval=1
         fi
+
+        break
     elif [ $retval -eq 1 ]; then
         # Lock not acquired
         break
     else
         let COUNTER=COUNTER+1
 
-        if [ $COUNTER -gt 10 ]; then
+        if [ $COUNTER -gt 10 ]
+        then
             echo "Fatal error: Unable to attempt migrations"
             exit 1
         fi
@@ -54,4 +62,4 @@ while : ; do
     fi
 done
 
-exit 0
+exit $retval
