@@ -453,7 +453,7 @@ services:
       localstack:
           condition: service_healthy
       api-app:
-          condition: service_healthy
+          condition: service_started
     volumes:
       - ./scripts/non_live_seeding:/app
     environment:
