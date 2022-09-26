@@ -13,7 +13,7 @@ Feature: SignupAndChangeDetails
 
     Scenario: Enter valid "About You" details
         Given I log in as "SignupAndChangeDetailsUser" test user
-        When I select "Mr" on "name-title"
+        When I select "Mr" on "name-title" with data-inited
         And I force fill out
           | name-first| Hammer |
           | name-last| Vortigax |

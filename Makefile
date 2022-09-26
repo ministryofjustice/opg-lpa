@@ -193,13 +193,13 @@ test-pdf-local:
 .PHONY: cypress-local
 cypress-local:
 	docker rm -f cypress_tests || true
-	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
+	docker build -f ./cypress/Dockerfile  -t cypress:local .; \
 	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
 		-e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_BASE_URL="https://localhost:7002" \
 		-e CYPRESS_RUNNER_ADMIN_URL="https://localhost:7003" \
 		-e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" \
 		-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests \
-		--entrypoint ./cypress/cypress_start.sh cypress:latest
+		--entrypoint ./cypress/cypress_start.sh cypress:local
 
 # Start S3 Monitor and call "cypress open";
 # this requires a globally-installed cypress

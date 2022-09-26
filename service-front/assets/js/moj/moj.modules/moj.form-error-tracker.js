@@ -1,44 +1,47 @@
+/* globals $ */
 // Analytics form error tracking module for LPA
 // Dependencies: moj, jQuery
+;(function () {
+  'use strict'
 
-(function () {
-  'use strict';
+  const moj = window.moj
+  const GOVUK = window.GOVUK
 
   moj.Modules.formErrorTracker = {
-
     init: function () {
-      this.checkErrors();
+      this.checkErrors()
+
       // Make available within popups by adding to the Events object
-      moj.Events.on('formErrorTracker.checkErrors', this.checkErrors);
+      moj.Events.on('formErrorTracker.checkErrors', this.checkErrors)
     },
 
-    checkErrors: function(){
+    checkErrors: function () {
       // Iterating through link errors
-      var errorsLinked = $('.error-summary-list li a')
-      for (var i = 0; i < errorsLinked.length; i++) {
+      const errorsLinked = $('.error-summary-list li a')
+      for (let i = 0; i < errorsLinked.length; i++) {
         moj.Modules.formErrorTracker.trackError(errorsLinked[i])
       }
 
       // Iterating through text errors
-      var errorsText = $('.error-summary-text p')
-      for (var i = 0; i < errorsText.length; i++) {
+      const errorsText = $('.error-summary-text p')
+      for (let i = 0; i < errorsText.length; i++) {
         moj.Modules.formErrorTracker.trackErrorText(errorsText[i])
       }
     },
 
-    trackError: function(error) {
+    trackError: function (error) {
       if (GOVUK.analytics === undefined) {
-        return;
+        return
       }
 
-      var $error = $(error)
-      var errorText = $.trim($error.text())
-      var errorID = $error.attr('href')
-      var questionText = this.getQuestionText(error)
+      const $error = $(error)
+      const errorText = ('' + $error.text()).trim()
+      const errorID = $error.attr('href')
+      const questionText = this.getQuestionText(error)
 
-      var actionLabel = errorID + ' - ' + errorText
+      const actionLabel = errorID + ' - ' + errorText
 
-      var options = {
+      const options = {
         transport: 'beacon',
         label: actionLabel
       }
@@ -46,15 +49,15 @@
       GOVUK.analytics.trackEvent('form error', questionText, options)
     },
 
-    trackErrorText: function(error){
+    trackErrorText: function (error) {
       if (GOVUK.analytics === undefined) {
-        return;
+        return
       }
 
-      var trackingContext = $('.error-summary-text').data('tracking-context')
-      var trackingSummary = $(error).data('tracking-summary')
+      const trackingContext = $('.error-summary-text').data('tracking-context')
+      const trackingSummary = $(error).data('tracking-summary')
 
-      var options = {
+      const options = {
         transport: 'beacon',
         label: trackingSummary
       }
@@ -62,41 +65,36 @@
       GOVUK.analytics.trackEvent('form error', trackingContext, options)
     },
 
-    getQuestionText: function(error) {
-      var $error = $(error)
-      var errorID = $error.attr('href')
-      var questionText
+    getQuestionText: function (error) {
+      const $error = $(error)
+      const errorID = $error.attr('href')
+      let questionText = ''
 
       if (errorID.indexOf('secret_') >= 0) {
         questionText = 'CSRF error'
       } else {
-        var $element = $(errorID)
-        var elementID = $element.prop('id')
+        const $element = $(errorID)
+        const elementID = $element.prop('id')
 
-        var nodeName = document.getElementById(elementID).nodeName.toLowerCase()
-        var legendText
+        const nodeName = document.getElementById(elementID).nodeName.toLowerCase()
+        let legendText
 
         // If the error is on an input or textarea
         if (nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select') {
           // Get the label
-          questionText = $.trim($('label[for="' + elementID + '"]')[0].childNodes[0].nodeValue)
+          questionText = $('label[for="' + elementID + '"]')[0].childNodes[0].nodeValue.trim()
           // Get the legend for that label/input
-          legendText = $.trim($element.closest('fieldset').find('legend').text())
+          legendText = ('' + $element.closest('fieldset').find('legend').text()).trim()
           // combine the legend with the label
           questionText = legendText.length > 0 ? legendText + ': ' + questionText : questionText
-        }
-        // If the error is on a fieldset (for radio buttons and checkboxes)
-        else if (nodeName === 'fieldset') {
-          legendText = $.trim($element.find('legend').text())
+        } else if (nodeName === 'fieldset') {
+          // If the error is on a fieldset (for radio buttons and checkboxes)
+          legendText = ('' + $element.find('legend').text()).trim()
           questionText = legendText
-        }
-        // Anything else
-        else {
-          questionText = ''
         }
       }
 
       return questionText
     }
-  };
-})();
+  }
+})()
