@@ -7,7 +7,7 @@ Then('I see that included assets such as js and css are ok', () => {
     cy.document().then((doc) => {
         doc.querySelectorAll('script[src]').forEach((el) => {
             cy.request(el.src).then((resp) => {
-                expect(resp.headers['content-type']).to.eq('application/javascript')
+                expect(resp.headers['content-type']).to.include('application/javascript')
             })
         });
         doc.querySelectorAll('link[href]').forEach((el) => {
