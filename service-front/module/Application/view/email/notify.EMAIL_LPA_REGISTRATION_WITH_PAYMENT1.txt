@@ -6,7 +6,7 @@ Online LPA ID: ((lpaId))
 
 # LPA payment confirmation
 
-We have received the application fee for ((donorName))'s property and finance LPA.
+We have received the application fee for ((donorName))'s ((lpaType)) property and finance LPA.
 
 * Payment reference number: ((lpaPaymentReference))
 * Date of payment: ((lpaPaymentDate))
@@ -20,7 +20,7 @@ We have received the application fee for ((donorName))'s property and finance LP
 ((PTNOnly??* Post each person to notify letter))
 ((feeFormPTN??* Post each person to notify letter))
 
-If we do not receive the LPA by ((date)), we'll refund the application  fee.  
+If we do not receive the LPA by ((date)), we'll refund the application  fee.
 
 You can still post the LPA after you've been refunded - we will contact you and ask you to pay the fee again or you can send a cheque with the LPA.
 
