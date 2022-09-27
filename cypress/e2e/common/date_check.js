@@ -12,15 +12,21 @@ Then('I cannot see continuation sheet reminders', () => {
     cy.get('[data-cy=continuation-sheet-info]').should('not.exist');
 })
 
-Then('I can see fields for the donor, certificate provider, attorney, applicant', () => {
-    const expectedNames = ['Mr Dead Pool (donor)',
-                           'Mr Cee Pee (certificate provider)',
-                           'Mr A Att (attorney)',
-                           'Mr Dead Pool (applicant)']
-    cy.get('[data-cy=person-name]').then(($name) => {
-        const names = $name.map(function() {return this.innerText}).toArray()
-        expect(names).to.deep.eq(expectedNames)
-    })
+Then(
+    'I can see fields for the donor {string}, certificate provider {string}, attorney {string}, and applicant {string}',
+    (donorName, certificateProviderName, attorneyName, applicantName) => {
+        const expectedNames = [
+            donorName + ' (donor)',
+            certificateProviderName + ' (certificate provider)',
+            attorneyName + ' (attorney)',
+            applicantName + ' (applicant)'
+        ]
+
+        cy.get('[data-cy=person-name]').then(($name) => {
+            const names = $name.map(function() { return this.innerText }).toArray()
+            expect(names).to.deep.eq(expectedNames)
+        }
+)
 })
 
 Then('I can see a reminder to sign continuation sheet 1, 2 and 3', () => {
@@ -33,25 +39,25 @@ Then('I can see a reminder to sign continuation sheet 4', () => {
     cy.get('[data-cy=primary-attorney]').find('[data-cy=continuation-sheet-info]').should('contain.text', text)
 })
 
-Then('I can see that the donor cannot sign', () => {
-    const donorName = 'The person signing on behalf of Mr Christopher Robin (donor)'
+Then('I can see that the donor {string} cannot sign', (name) => {
+    const donorName = 'The person signing on behalf of ' + name + ' (donor)'
     const donorText = 'This person signed continuation sheet 3 on behalf of the donor, followed by two witnesses, on'
     cy.get('[data-cy=date-check-donor]').find('h3').should('contain.text', donorName)
     cy.get('[data-cy=date-check-donor]').find('p').should('contain.text', donorText)
 
-    const applicantName = 'The person signing on behalf of Mr Christopher Robin (applicant)'
+    const applicantName = 'The person signing on behalf of ' + name + ' (applicant)'
     const applicantText = 'This person signed section 15 of the LPA on behalf of the applicant on'
     cy.get('[data-cy=date-check-applicant]').find('h3').should('contain.text', applicantName)
     cy.get('[data-cy=date-check-applicant]').find('p').should('contain.text', applicantText)
 })
 
-Then('I cannot see that the donor cannot sign', () => {
-    const donorName = 'Mr Dead Pool (donor)'
+Then('I can see that the donor {string} can sign', (name) => {
+    const donorName = name + ' (donor)'
     const donorText = 'This person signed section 9 of the LPA on'
     cy.get('[data-cy=date-check-donor]').find('h3').should('contain.text', donorName)
     cy.get('[data-cy=date-check-donor]').find('p').should('contain.text', donorText)
 
-    const applicantName = 'Mr Dead Pool (applicant)'
+    const applicantName = name + ' (applicant)'
     const applicantText = 'This person signed section 15'
     cy.get('[data-cy=date-check-applicant]').find('h3').should('contain.text', applicantName)
     cy.get('[data-cy=date-check-applicant]').find('p').should('contain.text', applicantText)

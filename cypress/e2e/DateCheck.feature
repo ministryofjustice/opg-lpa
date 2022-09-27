@@ -12,9 +12,9 @@ Feature: Check signature dates
     Then I am taken to "/lpa/91155453023/date-check"
     And I see "Check signature dates" in the title
     And there are "four" ".date-check-person" elements on the page
-    And I can see fields for the donor, certificate provider, attorney, applicant
+    And I can see fields for the donor "Mr Dead Pool", certificate provider "Mr Cee Pee", attorney "Mr A Att", and applicant "Mr Dead Pool"
     And I cannot see continuation sheet reminders
-    And I cannot see that the donor cannot sign
+    And I can see that the donor "Mr Dead Pool" can sign
 
   Scenario: Displays relevant information on signing continuation sheets
     Given I visit the dashboard
@@ -24,7 +24,7 @@ Feature: Check signature dates
     And I can see a reminder to sign continuation sheet 1, 2 and 3
     # primaryAttorney is a trust corporation (4)
     And I can see a reminder to sign continuation sheet 4
-    And I can see that the donor cannot sign
+    And I can see that the donor "Mr Christopher Robin" cannot sign
 
   Scenario: Displays the correct references to donor in errors when they cannot sign
     Given I visit the dashboard
