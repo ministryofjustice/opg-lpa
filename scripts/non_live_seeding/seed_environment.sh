@@ -16,11 +16,26 @@ API_OPTS="--host=${OPG_LPA_POSTGRES_HOSTNAME} --username=${OPG_LPA_POSTGRES_USER
 check_db_exists()
 {
     ret_val=0
+    tries=0
+    database_ready=0
 
-    if [ "$( PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} ${OPG_LPA_POSTGRES_NAME} -tAc "SELECT 1 FROM pg_database WHERE datname='${OPG_LPA_POSTGRES_NAME}'" )" = '1' ]
-    then
-        echo "LPA Database exists. Can continue"
-    else
+    sql="SELECT COUNT(1) FROM pg_database WHERE datname='${OPG_LPA_POSTGRES_NAME}'"
+
+    # ten minutes (40*15)
+    while [ $tries -lt 40 ] ; do
+        tries=$(($tries+1))
+
+        database_ready=$(PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} ${OPG_LPA_POSTGRES_NAME} -tAc "$sql")
+
+        if [ "$database_ready" -eq "1" ] ; then
+            echo "LPA Database exists. Can continue"
+            break
+        fi
+
+        sleep 15
+    done
+
+    if [ ! "$database_ready" -eq "1" ] ; then
         echo "LPA Database does not exist. Seeding will fail"
         ret_val=1
     fi
@@ -51,12 +66,12 @@ check_tables_exist()
              count_tables=0
          fi
 
-         # one minute
-         if [ $tries -gt 12 ] ; then
+         # ten minutes (40*15)
+         if [ $tries -gt 40 ] ; then
             break
          fi
 
-         sleep 5
+         sleep 15
     done
 
     ret_val=1
@@ -73,7 +88,7 @@ if [ "$OPG_LPA_STACK_ENVIRONMENT" == "production" ]; then
 fi
 
 echo "Waiting for postgres to be ready"
-timeout 90s sh -c 'pgready=1; until [ ${pgready} -eq 0 ]; do pg_isready -h ${OPG_LPA_POSTGRES_HOSTNAME} -d ${OPG_LPA_POSTGRES_NAME}; pgready=$? ; sleep 5 ; done'
+timeout 600s sh -c 'pgready=1; until [ ${pgready} -eq 0 ]; do pg_isready -h ${OPG_LPA_POSTGRES_HOSTNAME} -d ${OPG_LPA_POSTGRES_NAME}; pgready=$? ; sleep 5 ; done'
 
 echo "Checking database exists"
 check_db_exists
