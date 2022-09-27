@@ -450,8 +450,8 @@ services:
           condition: service_started
       postgres:
           condition: service_healthy
-      localstack:
-          condition: service_healthy
+      dynamodb:
+          condition: service_started
       api-app:
           condition: service_started
     volumes:
