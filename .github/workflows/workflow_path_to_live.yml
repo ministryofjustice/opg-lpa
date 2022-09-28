@@ -122,6 +122,7 @@ jobs:
   #     admin_url: https://${{ fromJson(steps.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
   #     front_url: https://${{ fromJson(steps.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
   #     account_id: "987830934591"
+  #     ephemeral_environment: false
   #   secrets: inherit
 
   slack_msg_production_deploy_begin:

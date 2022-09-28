@@ -19,7 +19,11 @@ on:
         description: "URL of the frontend"
         required: true
         type: string
-
+      ephemeral_environment:
+        description: "True if tests are run against ephemeral environment"
+        required: false
+        default: true
+        type: boolean
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS:
         required: true
@@ -140,6 +144,7 @@ jobs:
                   cypress:latest
 
       - name: Run Cypress Tests - @Signup,@StitchedClone
+        if: ${{ inputs.ephemeral_environment == true }}
         env:
           CYPRESS_adminUrl: ${{ inputs.admin_url }}
           CYPRESS_baseUrl: ${{ inputs.front_url }}
