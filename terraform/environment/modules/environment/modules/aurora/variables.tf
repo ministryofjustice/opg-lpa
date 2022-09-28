@@ -9,7 +9,7 @@ variable "deletion_protection" {}
 variable "database_name" {}
 variable "db_subnet_group_name" {}
 variable "engine" { default = "aurora-postgresql" }
-variable "engine_version" { default = "10.11" }
+variable "engine_version" { default = "13.6" }
 variable "environment" {}
 variable "kms_key_id" {}
 variable "master_username" {}
@@ -27,3 +27,4 @@ variable "vpc_security_group_ids" {}
 variable "replication_source_identifier" {}
 variable "copy_tags_to_snapshot" { default = true }
 variable "iam_database_authentication_enabled" { default = true }
+variable "psql_aurora_parameter_group_family" { default = "aurora-postgresql13" }
