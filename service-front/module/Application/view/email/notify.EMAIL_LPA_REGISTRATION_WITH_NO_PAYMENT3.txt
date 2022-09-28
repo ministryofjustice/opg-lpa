@@ -4,11 +4,11 @@ NOTIFY TEMPLATE ID: b84aa41d-c94e-4bb7-8747-28b9d6ed0d6c
 
 Online LPA ID: ((lpaId))
 
-#((donorName))'s LPA is ready to print and sign
+#((donorName))'s ((lpaType)) LPA is ready to print and sign
 
  What you need to do next
 
-* Sign in to your account to download and print the LPA and  fee remissions form ((PTN??and each person to notify letter)) here ((viewDocsUrl)) 
+* Sign in to your account to download and print the LPA and  fee remissions form ((PTN??and each person to notify letter)) here ((viewDocsUrl))
 *Get everyone to sign the LPA in the right order – instructions are on the LPA cover sheet. Once everyone’s signed, you can check the order is correct here ((checkDatesUrl))
 * Post the LPA and fee remissions form with supporting evidence to us for registration
 ((PTN??* Post each person to notify letter))
