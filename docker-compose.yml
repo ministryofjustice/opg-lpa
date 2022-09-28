@@ -450,6 +450,12 @@ services:
           condition: service_started
       postgres:
           condition: service_healthy
+      dynamodb:
+          condition: service_started
+      api-app:
+          condition: service_started
+    volumes:
+      - ./scripts/non_live_seeding:/app
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"

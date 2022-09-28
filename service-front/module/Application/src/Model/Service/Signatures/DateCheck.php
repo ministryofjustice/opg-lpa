@@ -11,9 +11,12 @@ class DateCheck
 {
     /**
      * Check that the donor, certificate provider, and attorneys
-     * signed the LPA in the correct order
+     * signed the LPA in the correct order.
+     * If the donor cannot sign, text relating to the donor is
+     * replaced with "The person signing on behalf of the donor"
      *
-     * Expects and array [
+     * Expects $dates array:
+     * [
      *  'donor' => date,
      *  'certificate-provider' => date,
      *    'attorneys' => [
@@ -22,37 +25,81 @@ class DateCheck
      *    ]
      *  ];
      *
+     * and $donorDetails array:
+     *
+     * [
+     *   'canSign' => bool, // if donor can sign
+     *   'isApplicant' => bool // if donor == applicant
+     * ]
+     *
      * @param   array           $dates
      * @param   boolean         $isDraft
+     * @param   array           $donorDetails
      * @param   IDateService    $dateService
      * @return  array|bool List of errors or true if no errors
      */
-    public static function checkDates(array $dates, $isDraft = false, $dateService = null)
-    {
+    public static function checkDates(
+        array $dates,
+        bool $isDraft = false,
+        array $donorDetails = [],
+        $dateService = null
+    ) {
+        $donorCanSign = true;
+        if (array_key_exists('canSign', $donorDetails)) {
+            $donorCanSign = boolval($donorDetails['canSign']);
+        }
+
+        $donorIsApplicant = false;
+        if (array_key_exists('isApplicant', $donorDetails)) {
+            $donorIsApplicant = boolval($donorDetails['isApplicant']);
+        }
+
         $errors = [];
 
         $donor = $dates['sign-date-donor'];
         $certificateProvider = $dates['sign-date-certificate-provider'];
 
-        // Donor must be first
+        $donorText = 'The person signing on behalf of the donor';
+        if ($donorCanSign) {
+            $donorText = 'The donor';
+        }
+
+        // Donor must sign before certificate provider
         if ($donor > $certificateProvider) {
-            $errors['sign-date-certificate-provider'][] = 'The donor must be the first person to sign the LPA. ' . ($isDraft === true ? 'You need to print and re-sign sections 10 and 11' : 'You need to print and re-sign sections 10, 11 and 15');
+            $message = "${donorText} must be the first person to sign the LPA. ";
+            if ($isDraft) {
+                $message .= 'You need to print and re-sign sections 10 and 11';
+            } else {
+                $message .= 'You need to print and re-sign sections 10, 11 and 15';
+            }
+            $errors['sign-date-certificate-provider'][] = $message;
         }
 
         $allTimestamps = [
-            'sign-date-donor'                => $donor,
+            'sign-date-donor' => $donor,
             'sign-date-certificate-provider' => $certificateProvider
         ];
 
+        // Person signing on behalf of donor must sign donor section before CS3 is signed
         if (isset($dates['sign-date-donor-life-sustaining'])) {
             $donorLifeSustaining = $dates['sign-date-donor-life-sustaining'];
             $allTimestamps['sign-date-donor-life-sustaining'] = $donorLifeSustaining;
 
             if ($donor < $donorLifeSustaining) {
-                $errors['sign-date-donor-life-sustaining'][] = 'The donor must sign Section 5 and any continuation sheets on the same day or before section 9. ' . ($isDraft === true ? 'You need to print and re-sign sections 9, 10 and 11' : 'You need to print and re-sign sections 9, 10, 11 and 15');
+                $message = "${donorText} must sign Section 5 on the same day or before " .
+                    'they sign continuation sheet 3. ';
+
+                if ($isDraft) {
+                    $message .= 'You need to print and re-sign continuation sheet 3, section 10 and section 11';
+                } else {
+                    $message .= 'You need to print and re-sign continuation sheet 3 and ' .
+                        'sections 10, 11 and 15';
+                }
+                $errors['sign-date-donor-life-sustaining'][] = $message;
             }
         }
 
+        // Donor must sign before all attorneys
         $minAttorneyDate = $dates['sign-date-attorneys'][0];
         $maxAttorneyDate = $dates['sign-date-attorneys'][0];
         for ($i = 0; $i < count($dates['sign-date-attorneys']); $i++) {
@@ -69,15 +116,28 @@ class DateCheck
 
             // Donor must be first
             if ($donor > $timestamp) {
-                $errors[$attorneyKey][] = 'The donor must be the first person to sign the LPA. ' . ($isDraft === true ? 'You need to print and re-sign sections 10 and 11' : 'You need to print and re-sign sections 10, 11 and 15');
+                $message = "${donorText} must be the first person to sign the LPA. ";
+                if ($isDraft) {
+                    $message .= 'You need to print and re-sign sections 10 and 11';
+                } else {
+                    $message .= 'You need to print and re-sign sections 10, 11 and 15';
+                }
+                $errors[$attorneyKey][] = $message;
             }
         }
 
-        // CP must be next
+        // Certificate provider signature date must be before any attorney signature date
         if ($certificateProvider > $minAttorneyDate) {
-            $errors['sign-date-certificate-provider'][] = 'The certificate provider must sign the LPA before the attorneys. ' . ($isDraft === true ? 'You need to print and re-sign section 11' : 'You need to print and re-sign sections 11 and 15');
+            $message = 'The certificate provider must sign the LPA before the attorneys. ';
+            if ($isDraft) {
+                $message .= 'You need to print and re-sign section 11';
+            } else {
+                $message .= 'You need to print and re-sign sections 11 and 15';
+            }
+            $errors['sign-date-certificate-provider'][] = $message;
         }
 
+        // Donor must sign before applicant
         if (!$isDraft && isset($dates['sign-date-applicants']) && count($dates['sign-date-applicants']) > 0) {
             for ($i = 0; $i < count($dates['sign-date-applicants']); $i++) {
                 $timestamp = $dates['sign-date-applicants'][$i];
@@ -86,12 +146,25 @@ class DateCheck
 
                 // Donor must be first
                 if ($donor > $timestamp) {
-                    $errors[$applicantKey][] = 'The donor must be the first person to sign the LPA. ' . ($isDraft === true ? 'You need to print and re-sign sections 10 and 11' : 'You need to print and re-sign sections 10, 11 and 15');
+                    $message = "${donorText} must be the first person to sign the LPA. ";
+                    if ($isDraft) {
+                        $message .= 'You need to print and re-sign sections 10 and 11';
+                    } else {
+                        $message .= 'You need to print and re-sign sections 10, 11 and 15';
+                    }
+                    $errors[$applicantKey][] = $message;
                 }
 
                 // Applicants must sign on or after last attorney
                 if ($timestamp < $maxAttorneyDate) {
-                    $errors[$applicantKey][] = 'The applicant must sign on the same day or after all section 11s have been signed. ' . ($isDraft === true ? '' : '') . 'You need to print and re-sign section 15';
+                    $applicantSigner = 'applicant';
+                    if ($donorIsApplicant && !$donorCanSign) {
+                        $applicantSigner = 'person signing on behalf of the applicant';
+                    }
+
+                    $errors[$applicantKey][] = 'The ' . $applicantSigner . ' ' .
+                        'must sign on the same day or after all section 11s ' .
+                        'have been signed. You need to print and re-sign section 15';
                 }
             }
         }
@@ -102,17 +175,33 @@ class DateCheck
             if ($timestamp instanceof DateTime) {
                 $timestamp = $timestamp->getTimestamp();
             }
+
             if ($timestamp > $today) {
-                if ($timestampKey === 'sign-date-donor') {
-                    $errors[$timestampKey][] = 'Check your dates. The donor\'s signature date cannot be in the future';
+                if ($timestampKey === 'sign-date-donor' || $timestampKey === 'sign-date-donor-life-sustaining') {
+                    $futureDonorDateMessage = 'Check your dates. ';
+                    if ($donorCanSign) {
+                        $futureDonorDateMessage .= 'The donor\'s signature date';
+                    } else {
+                        $futureDonorDateMessage .=
+                            'The signature date of the person signing on behalf of the donor';
+                    }
+                    $futureDonorDateMessage .= ' cannot be in the future';
+
+                    $errors[$timestampKey][] = $futureDonorDateMessage;
                 } elseif ($timestampKey === 'sign-date-certificate-provider') {
-                    $errors[$timestampKey][] = 'Check your dates. The certificate provider\'s signature date cannot be in the future';
-                } elseif ($timestampKey === 'sign-date-donor-life-sustaining') {
-                    $errors[$timestampKey][] = 'Check your dates. The donor\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] =
+                        'Check your dates. The certificate provider\'s signature date cannot be in the future';
                 } elseif (strpos($timestampKey, 'sign-date-attorney-') === 0) {
-                    $errors[$timestampKey][] = 'Check your dates. The attorney\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] =
+                        'Check your dates. The attorney\'s signature date cannot be in the future';
                 } elseif (strpos($timestampKey, 'sign-date-applicant-') === 0) {
-                    $errors[$timestampKey][] = 'Check your dates. The applicant\'s signature date cannot be in the future';
+                    $applicantMessage = 'applicant\'s signature date';
+                    if ($donorIsApplicant && !$donorCanSign) {
+                        $applicantMessage = 'signature date of the person signing on behalf of the applicant';
+                    }
+
+                    $errors[$timestampKey][] =
+                        'Check your dates. The ' . $applicantMessage . ' cannot be in the future';
                 } else {
                     throw new InvalidArgumentException("timestampKey {$timestampKey} was not recognised");
                 }

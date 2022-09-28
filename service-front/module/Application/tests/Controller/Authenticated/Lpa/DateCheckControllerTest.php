@@ -6,7 +6,6 @@ use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Form\Lpa\DateCheckForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
-use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
@@ -16,6 +15,7 @@ class DateCheckControllerTest extends AbstractControllerTest
      * @var MockInterface|DateCheckForm
      */
     private $form;
+
     private $postData = [
         'sign-date-donor'                 => ['day' => 1, 'month' => 2, 'year' => 2016],
         'sign-date-donor-life-sustaining' => ['day' => 1, 'month' => 2, 'year' => 2016],
@@ -26,7 +26,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         'sign-date-certificate-provider'  => ['day' => 1, 'month' => 2, 'year' => 2016]
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
