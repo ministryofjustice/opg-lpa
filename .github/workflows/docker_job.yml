@@ -158,8 +158,7 @@ jobs:
       - name: Unit Tests
         if: matrix.unit_test == true && ( steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true )
         run: |
-          docker run --pull never --detach --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests ${{ matrix.image_name }}:latest
-          docker exec tests /app/vendor/bin/phpunit -d memory_limit=256M
+          docker run --pull never --detach --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests ${{ matrix.image_name }}:latest /app/vendor/bin/phpunit -d memory_limit=256M
 
       - name: ECR Login
         id: login_ecr
