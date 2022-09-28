@@ -4,6 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Signatures\DateCheck;
+use Application\View\DateCheckViewModelHelper;
 use Laminas\View\Model\ViewModel;
 
 class DateCheckController extends AbstractLpaController
@@ -32,6 +33,8 @@ class DateCheckController extends AbstractLpaController
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, [
             'lpa-id' => $lpa->id
         ]));
+
+        $helperResult = DateCheckViewModelHelper::build($lpa);
 
         $request = $this->convertRequest();
 
@@ -63,14 +66,28 @@ class DateCheckController extends AbstractLpaController
                 $signDateDonorLifeSustaining = isset($data['sign-date-donor-life-sustaining']) ?
                     $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null;
 
-                $result = DateCheck::checkDates([
-                    'sign-date-donor' => $this->dateArrayToTime($data['sign-date-donor']),
-                    'sign-date-donor-life-sustaining' => $signDateDonorLifeSustaining,
-                    'sign-date-certificate-provider' =>
-                        $this->dateArrayToTime($data['sign-date-certificate-provider']),
-                    'sign-date-attorneys' => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
-                    'sign-date-applicants' => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
-                ], empty($lpa->completedAt));
+                // is the donor the applicant?
+                $donorIsApplicant = false;
+                if (count($helperResult['applicants']) == 1) {
+                    $applicant = $helperResult['applicants'][0];
+                    $donorIsApplicant = ($applicant['isDonor'] && $applicant['isHuman']);
+                }
+
+                $result = DateCheck::checkDates(
+                    [
+                        'sign-date-donor' => $this->dateArrayToTime($data['sign-date-donor']),
+                        'sign-date-donor-life-sustaining' => $signDateDonorLifeSustaining,
+                        'sign-date-certificate-provider' =>
+                            $this->dateArrayToTime($data['sign-date-certificate-provider']),
+                        'sign-date-attorneys' => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
+                        'sign-date-applicants' => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
+                    ],
+                    empty($lpa->completedAt),
+                    [
+                        'canSign' => boolval($lpa->document->donor->canSign),
+                        'isApplicant' => $donorIsApplicant,
+                    ],
+                );
 
                 if ($result === true) {
                     $queryParams = [];
@@ -92,35 +109,14 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
-        $applicants = [];
-
-        if ($lpa->completedAt !== null) {
-            if ($lpa->document->whoIsRegistering === 'donor') {
-                $applicants[0] = [
-                    'name' => $lpa->document->donor->name,
-                    'isHuman' => true,
-                ];
-            } elseif (is_array($lpa->document->whoIsRegistering)) {
-                // Applicant is one or more primary attorneys
-                foreach ($lpa->document->whoIsRegistering as $id) {
-                    foreach ($lpa->document->primaryAttorneys as $primaryAttorney) {
-                        if ($id == $primaryAttorney->id) {
-                            $applicants[] = [
-                                'name' => $primaryAttorney->name,
-                                'isHuman' => isset($primaryAttorney->dob),
-                            ];
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return new ViewModel([
-            'form'        => $form,
+        $viewModel = new ViewModel([
+            'form' => $form,
             'returnRoute' => $returnRoute,
-            'applicants'  => $applicants,
         ]);
+
+        $viewModel->setVariables($helperResult);
+
+        return $viewModel;
     }
 
 
@@ -138,6 +134,7 @@ class DateCheckController extends AbstractLpaController
             'returnRoute' => $returnRoute,
         ]);
     }
+
 
     private function dateArrayToTime(array $dateArray)
     {

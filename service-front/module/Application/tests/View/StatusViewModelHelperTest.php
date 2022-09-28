@@ -356,12 +356,14 @@ class StatusViewModelHelperTest extends MockeryTestCase
      */
     private function renderViewModel(?ViewModel $viewModel): string
     {
-        $loader = new FilesystemLoader('module/Application/view/application');
+        $renderer = new Environment(
+            new FilesystemLoader('module/Application/view'),
+            ['cache' => 'build/twig-cache']
+        );
 
-        $renderer = new Environment($loader);
         $renderer->addFunction(new TwigFunction('formatLpaId', FormatLpaId::class));
 
-        $template = $renderer->load('authenticated/lpa/status/index.twig');
+        $template = $renderer->load('application/authenticated/lpa/status/index.twig');
 
         $vars = (array) $viewModel->getVariables();
         return $template->renderBlock('content', $vars);
