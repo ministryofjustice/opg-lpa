@@ -16,5 +16,10 @@
     .date-check-person .person-address {
         position: relative;
     }
+    .date-check-person h3.person-name {
+        max-width: 65%;
+    }
+    .date-check-person .person-address p {
+        max-width: 65%;
+    }
 }
-
