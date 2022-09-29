@@ -21,8 +21,6 @@
     "comma-dangle": "off",
     "comma-spacing": "off",
     "dot-notation": "off",
-    "eol-last": "off",
-    "indent": "off",
     "key-spacing": "off",
     "no-extra-semi": "off",
     "no-irregular-whitespace": "off",
