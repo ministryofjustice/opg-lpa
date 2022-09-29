@@ -131,3 +131,7 @@ Then('I can see applicant validation errors about person signing on behalf of ap
         'all section 11s have been signed. You need to print and re-sign section 15'
     cy.get('[data-cy=date-check-applicant]').find('.error-message').should('contain.text', errorText)
 })
+
+Then('the visually-hidden legend for {string} states {string}', (fieldset, text) => {
+    cy.get('[data-cy=' + fieldset).find('legend.visually-hidden').contains(text)
+})
