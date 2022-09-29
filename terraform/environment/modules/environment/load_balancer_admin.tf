@@ -68,18 +68,6 @@ resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
   description       = "MoJ Sites to Admin ELB - HTTPS"
 }
 
-resource "aws_security_group_rule" "admin_loadbalancer_ingress_production" {
-  count     = var.environment_name == "production" ? 1 : 0
-  type      = "ingress"
-  from_port = 443
-  to_port   = 443
-  protocol  = "tcp"
-  #tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.admin_loadbalancer.id
-  description       = "Anywhere to Production Admin ELB - HTTPS"
-}
-
 resource "aws_security_group_rule" "admin_loadbalancer_egress" {
   type      = "egress"
   from_port = 0
