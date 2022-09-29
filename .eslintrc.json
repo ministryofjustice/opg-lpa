@@ -14,12 +14,6 @@
 
   "extends": "eslint:recommended",
 
-  "globals": {
-    "document": "readonly",
-    "navigator": "readonly",
-    "window": "readonly"
-  },
-
   "ignorePatterns": ["service-front/assets/js/opg/env-vars.template.js"],
 
   "rules": {
