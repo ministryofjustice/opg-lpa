@@ -17,33 +17,12 @@
   "ignorePatterns": ["service-front/assets/js/opg/env-vars.template.js"],
 
   "rules": {
-    "dot-notation": "off",
-    "key-spacing": "off",
     "no-extra-semi": "off",
-    "no-irregular-whitespace": "off",
-    "no-mixed-spaces-and-tabs": "off",
-    "no-multi-spaces": "off",
-    "no-multiple-empty-lines": "off",
     "no-redeclare": "off",
     "no-tabs": "off",
-    "no-trailing-spaces": "off",
     "no-undef": "off",
     "no-unused-vars": "off",
     "no-use-before-define": "off",
-    "no-useless-escape": "off",
-    "no-whitespace-before-property": "off",
-    "operator-linebreak": "off",
-    "padded-blocks": "off",
-    "prefer-regex-literals": "off",
-    "quote-props": "off",
-    "quotes": "off",
-    "semi": "off",
-    "space-before-blocks": "off",
-    "space-before-function-paren": "off",
-    "space-in-parens": "off",
-    "space-infix-ops": "off",
-    "space-unary-ops": "off",
-    "spaced-comment": "off",
-    "valid-typeof": "off"
+    "no-useless-escape": "off"
   }
 }
