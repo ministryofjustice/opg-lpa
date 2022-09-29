@@ -1,24 +1,26 @@
 {
   "parserOptions": {
     "ecmaVersion": 2022,
-    "ecmaFeatures": {
-      "jsx": true
-    },
     "sourceType": "module"
   },
 
+  "parser": "@babel/eslint-parser",
+
   "env": {
     "es2021": true,
-    "browser": true
+    "browser": true,
+    "node": true
   },
 
-  "extends": "standard",
+  "extends": "eslint:recommended",
 
   "globals": {
     "document": "readonly",
     "navigator": "readonly",
     "window": "readonly"
   },
+
+  "ignorePatterns": ["service-front/assets/js/opg/env-vars.template.js"],
 
   "rules": {
     "no-var": "off",
@@ -30,6 +32,7 @@
     "eol-last": "off",
     "indent": "off",
     "key-spacing": "off",
+    "no-extra-semi": "off",
     "no-irregular-whitespace": "off",
     "no-mixed-spaces-and-tabs": "off",
     "no-multi-spaces": "off",
@@ -38,6 +41,7 @@
     "no-tabs": "off",
     "no-trailing-spaces": "off",
     "no-undef": "off",
+    "no-unused-vars": "off",
     "no-use-before-define": "off",
     "no-useless-escape": "off",
     "no-whitespace-before-property": "off",
