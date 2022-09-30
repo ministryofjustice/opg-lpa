@@ -26,19 +26,19 @@ Feature: Check signature dates
     And I can see a reminder to sign continuation sheet 4
     And I can see that the donor "Mr Christopher Robin" cannot sign
 
-  Scenario: Displays the correct references to donor in errors when they cannot sign
+  Scenario: Displays the correct references to donor/applicant in errors when they cannot sign
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 26997335999
     And I click element marked "Check dates"
     And the visually-hidden legend for "date-check-date" states "Check signature dates for the person who signed on behalf of the donor"
-    Then I can see validation errors do not refer to the donor
+    Then I can see validation errors refer to the person signing on behalf of the donor/applicant
 
-  Scenario: Displays the correct references to applicant in errors when they can sign
+  Scenario: Displays the correct references to donor/applicant in errors when they can sign
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 91155453023
     And I click element marked "Check dates"
     And the visually-hidden legend for "date-check-date" states "Check signature dates for the donor"
-    Then I can see validation errors refer to the donor and applicant
+    Then I can see validation errors refer to the donor/applicant
 
   Scenario: Displays the correct references to applicant in errors when they are the donor and cannot sign
     Given I visit the dashboard

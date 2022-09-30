@@ -63,14 +63,14 @@ Then('I can see that the donor {string} can sign', (name) => {
     cy.get('[data-cy=date-check-applicant]').find('p').should('contain.text', applicantText)
 })
 
-Then('I can see validation errors do not refer to the donor', () => {
+Then('I can see validation errors refer to the person signing on behalf of the donor/applicant', () => {
     const donorText = 'Enter the signature date of the person signing on behalf of the donor'
     const applicantText = 'Enter the signature date of the person signing on behalf of the applicant'
     cy.get('[data-cy=date-check-donor]').find('.error-message').should('contain.text', donorText)
     cy.get('[data-cy=date-check-applicant]').find('.error-message').should('contain.text', applicantText)
 })
 
-Then('I can see validation errors refer to the donor and applicant', () => {
+Then('I can see validation errors refer to the donor/applicant', () => {
     const donorText = 'Enter the donor\'s signature date'
     cy.get('[data-cy=date-check-donor]').find('.error-message').should('contain.text', donorText)
 
