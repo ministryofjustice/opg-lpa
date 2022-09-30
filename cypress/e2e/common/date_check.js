@@ -25,9 +25,9 @@ Then(
         cy.get('[data-cy=person-name]').then(($name) => {
             const names = $name.map(function() { return this.innerText }).toArray()
             expect(names).to.deep.eq(expectedNames)
-        }
+        })
+    }
 )
-})
 
 Then('I can see a reminder to sign continuation sheet 1, 2 and 3', () => {
     const text = 'Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.'
@@ -63,14 +63,14 @@ Then('I can see that the donor {string} can sign', (name) => {
     cy.get('[data-cy=date-check-applicant]').find('p').should('contain.text', applicantText)
 })
 
-Then('I can see validation errors refer to the person signing on behalf of the donor/applicant', () => {
+Then('I can see validation errors refer to the person signing on behalf of the donor, who is also the applicant', () => {
     const donorText = 'Enter the signature date of the person signing on behalf of the donor'
     const applicantText = 'Enter the signature date of the person signing on behalf of the applicant'
     cy.get('[data-cy=date-check-donor]').find('.error-message').should('contain.text', donorText)
     cy.get('[data-cy=date-check-applicant]').find('.error-message').should('contain.text', applicantText)
 })
 
-Then('I can see validation errors refer to the donor/applicant', () => {
+Then('I can see validation errors refer to the donor, who is also the applicant', () => {
     const donorText = 'Enter the donor\'s signature date'
     cy.get('[data-cy=date-check-donor]').find('.error-message').should('contain.text', donorText)
 
@@ -89,7 +89,7 @@ Then('I fill in all signature dates on the check dates form', () => {
     let signatureDate = new Date(Date.now() - (MS_PER_DAY * 40))
 
     // fill in all date fields
-    cy.get('[data-cy=date-check-date]').each(elt => {
+    cy.get('fieldset.date-check-dates').each(elt => {
         fillSignatureDateInputs(elt, signatureDate)
 
         // move to next day
@@ -97,10 +97,22 @@ Then('I fill in all signature dates on the check dates form', () => {
     })
 })
 
-Then('I fill in the applicant signature date as a date in the future', () => {
-    const tomorrow = new Date(Date.now() + MS_PER_DAY)
-    cy.get('#sign-date-applicant-0').each(elt => {
-        fillSignatureDateInputs(elt, tomorrow)
+// fieldset should be a partial selector for the fieldset containing the date boxes to fill;
+// e.g. to fill all primary attorney dates, use 'date-check-primary-attorney'
+// day = 'today', 'tomorrow', 'yesterday'
+Then('I fill in the {string} signature dates with {string}', (fieldset, day) => {
+    let timestamp = Date.now()
+
+    if (day === 'tomorrow') {
+        timestamp += MS_PER_DAY
+    } else if (day === 'yesterday') {
+        timestamp -= MS_PER_DAY
+    }
+
+    const dateObj = new Date(timestamp)
+
+    cy.get('[data-cy^=' + fieldset + ']').each(elt => {
+        fillSignatureDateInputs(elt, dateObj)
     })
 })
 
@@ -108,22 +120,6 @@ Then('I can see applicant validation errors about person signing on behalf of th
     const errorText = 'Check your dates. The signature date of the person signing on behalf ' +
         'of the applicant cannot be in the future'
     cy.get('[data-cy=date-check-applicant]').find('.error-message').should('contain.text', errorText)
-})
-
-Then('I fill in the applicant signature date as a date before the attorney signature dates', () => {
-    // find a date in the past
-    const yesterday = new Date(Date.now() - MS_PER_DAY)
-    const dayBeforeYesterday = new Date(Date.now() - (2 * MS_PER_DAY))
-
-    // set attorney signature dates to it
-    cy.get('[data-cy=primary-attorney]').each(elt => {
-        fillSignatureDateInputs(elt, yesterday)
-    })
-
-    // set applicant signature date to a date one day before the attorney signature date
-    cy.get('#sign-date-applicant-0').each(elt => {
-        fillSignatureDateInputs(elt, dayBeforeYesterday)
-    })
 })
 
 Then('I can see applicant validation errors about person signing on behalf of applicant not signing before attorneys', () => {

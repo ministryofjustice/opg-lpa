@@ -30,27 +30,39 @@ Feature: Check signature dates
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 26997335999
     And I click element marked "Check dates"
-    And the visually-hidden legend for "date-check-date" states "Check signature dates for the person who signed on behalf of the donor"
-    Then I can see validation errors refer to the person signing on behalf of the donor/applicant
+    And the visually-hidden legend for "date-check-donor-date" states "Check signature dates for the person who signed on behalf of the donor"
+    Then I can see validation errors refer to the person signing on behalf of the donor, who is also the applicant
 
   Scenario: Displays the correct references to donor/applicant in errors when they can sign
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 91155453023
     And I click element marked "Check dates"
-    And the visually-hidden legend for "date-check-date" states "Check signature dates for the donor"
-    Then I can see validation errors refer to the donor/applicant
+    And the visually-hidden legend for "date-check-donor-date" states "Check signature dates for the donor"
+    Then I can see validation errors refer to the donor, who is also the applicant
 
   Scenario: Displays the correct references to applicant in errors when they are the donor and cannot sign
     Given I visit the dashboard
     When I click "check-signing-dates" for LPA ID 26997335999
     Then I can see that a person is signing on behalf of the applicant "Mr Christopher Robin"
 
+    # applicant signs in the future
     When I fill in all signature dates on the check dates form
-    And I fill in the applicant signature date as a date in the future
+    And I fill in the "date-check-applicant" signature dates with "tomorrow"
     And I click element marked "Check dates"
     Then I can see applicant validation errors about person signing on behalf of the applicant not signing in the future
 
+    # applicants sign before attorneys
     When I fill in all signature dates on the check dates form
-    And I fill in the applicant signature date as a date before the attorney signature dates
+    And I fill in the "date-check-primary-attorney" signature dates with "today"
+    And I fill in the "date-check-applicant" signature dates with "yesterday"
     And I click element marked "Check dates"
     Then I can see applicant validation errors about person signing on behalf of applicant not signing before attorneys
+
+  Scenario: Certificate provider error message if they sign before the donor
+    Given I visit the dashboard
+    When I click "check-signing-dates" for LPA ID 88668805824
+    And I fill in the "date-check-donor" signature dates with "today"
+    And I fill in the "date-check-primary-attorney" signature dates with "today"
+    And I fill in the "date-check-applicant" signature dates with "today"
+    And I fill in the "date-check-certificate" signature dates with "yesterday"
+    And I click element marked "Check dates"

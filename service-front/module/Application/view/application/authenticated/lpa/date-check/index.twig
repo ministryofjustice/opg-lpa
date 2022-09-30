@@ -234,7 +234,7 @@
                     {% endif %}
                     </p>
 
-                    <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
+                    <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-donor-life-date">
                         <legend class="visually-hidden">
                         Check signature dates for the
                         {% if lpa.document.donor.canSign %}
@@ -281,7 +281,7 @@
                     {% endif %}
                     </p>
 
-                    <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
+                    <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-donor-date">
                         <legend class="visually-hidden">Check signature dates for the
                         {% if lpa.document.donor.canSign %}
                             donor
@@ -372,7 +372,7 @@
 
                 <p>This person signed section 10 of the LPA on</p>
 
-                <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
+                <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-certificate-provider-date">
                     <legend class="visually-hidden">Check signature dates for certificate provider</legend>
                     <div class="form-group form-group-day {{ certificateProviderElement.getMessages|length >0 ? 'error'}}">
                         <label class="form-label" for="{{ certificateProviderElementDayId }}">Day</label>
@@ -450,7 +450,7 @@
                         {% endif %}
                     </p>
 
-                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-primary-attorney-{{idx}}-date">
                         <legend class="visually-hidden">Check signature dates for primary attorney</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ elementDayId }}">Day</label>
@@ -532,7 +532,7 @@
                         {% endif %}
                     </p>
 
-                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-replacement-attorney-{{idx}}-date">
                         <legend class="visually-hidden">Check signature dates for replacement attorney</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ elementDayId }}">Day</label>
@@ -622,7 +622,7 @@
                     {% endif %}
                     </p>
 
-                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-date">
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-applicant-{{idx}}-date">
                         <legend class="visually-hidden">Check signature dates for applicant</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
                             <label class="form-label" for="{{ elementDayId }}">Day</label>
