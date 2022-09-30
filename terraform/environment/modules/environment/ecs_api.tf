@@ -9,9 +9,9 @@ resource "aws_ecs_service" "api" {
   launch_type                        = "FARGATE"
   platform_version                   = "1.3.0"
   propagate_tags                     = "TASK_DEFINITION"
-  deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 150
   wait_for_steady_state              = true
+  deployment_minimum_healthy_percent = 50
+  deployment_maximum_percent         = 200
   network_configuration {
     security_groups = [
       aws_security_group.api_ecs_service.id,
