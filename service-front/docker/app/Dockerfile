@@ -6,7 +6,7 @@ RUN apk upgrade
 
 # The --virtual flag puts build dependencies into their own
 # directory to make them easier to remove en masse
-RUN apk add --no-cache icu \
+RUN apk add --no-cache icu fcgi \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
     && pecl install redis \
     && docker-php-ext-enable redis \
@@ -59,6 +59,10 @@ COPY --chown=appuser:appuser shared /shared
 # PHP config files
 COPY --chown=appuser:appuser service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=appuser:appuser service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+
+COPY --chown=root:root service-front/docker/app/health-check.sh /usr/local/bin/health-check.sh
+
+RUN chmod +x /usr/local/bin/health-check.sh
 
 WORKDIR /app
 
