@@ -11,7 +11,7 @@ resource "aws_ecs_service" "front" {
   propagate_tags                     = "TASK_DEFINITION"
   wait_for_steady_state              = true
   deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 150
+  deployment_maximum_percent         = 200
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
     subnets          = data.aws_subnets.private.ids
