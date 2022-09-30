@@ -5,7 +5,7 @@ RUN adduser -D -g '' appuser
 RUN apk add --upgrade apk-tools
 RUN apk upgrade
 
-RUN apk add --no-cache postgresql-libs icu \
+RUN apk add --no-cache postgresql-libs icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev icu-dev \
     && docker-php-ext-install pgsql pdo_pgsql \
     && docker-php-ext-install bcmath \
@@ -59,8 +59,9 @@ COPY --chown=appuser:appuser service-api/docker/app/php-fpm-logging.conf /usr/lo
 # Migration script
 COPY --chown=appuser:appuser service-api/docker/app/db-migrations.sh /app/db-migrations.sh
 COPY --chown=appuser:appuser service-api/phinx.php /app/phinx.php
+COPY --chown=root:root service-api/docker/app/health-check.sh /usr/local/bin/health-check.sh
 
-RUN chmod +x /app/db-migrations.sh
+RUN chmod +x /app/db-migrations.sh /usr/local/bin/health-check.sh
 
 WORKDIR /app
 
