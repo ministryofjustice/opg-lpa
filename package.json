@@ -1,5 +1,17 @@
 {
+  "name": "opg-lpa",
+  "description": "The Office of the Public Guardian Lasting Power of Attorney online service: Managed by opg-org-infra &amp; Terraform.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "lint:check": "eslint service-front/assets/js"
+  },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
     "@badeball/cypress-cucumber-preprocessor": "^12.0.1",
     "@cypress/browserify-preprocessor": "^3.0.2",
     "axe-core": "^4.1.4",
@@ -9,21 +21,16 @@
     "cypress-intellij-reporter": "^0.0.6",
     "cypress-plugin-tab": "^1.0.5",
     "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.5",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.1",
     "pdf-lib": "^1.17.1",
+    "prettier": "^2.7.1",
     "snyk": "^1.931.0",
     "strip-ansi": "^6.0.0"
-  },
-  "name": "opg-lpa",
-  "description": "The Office of the Public Guardian Lasting Power of Attorney online service: Managed by opg-org-infra &amp; Terraform.",
-  "version": "1.0.0",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs",
-    "test": "tests"
   },
   "repository": {
     "type": "git",
