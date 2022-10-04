@@ -60,7 +60,7 @@ COPY --chown=appuser:appuser shared /shared
 COPY --chown=appuser:appuser service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=appuser:appuser service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
-COPY --chown=root:root service-front/docker/app/health-check.sh /usr/local/bin/health-check.sh
+COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 
 RUN chmod +x /usr/local/bin/health-check.sh
 
