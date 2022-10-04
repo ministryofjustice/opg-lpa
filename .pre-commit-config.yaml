@@ -37,4 +37,5 @@ repos:
     hooks:
     - id: eslint
       additional_dependencies:
+      -   eslint@8.24.0
       -   eslint-plugin-prettier@v4.2.1
