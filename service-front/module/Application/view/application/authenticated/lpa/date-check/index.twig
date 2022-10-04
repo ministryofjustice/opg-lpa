@@ -361,7 +361,7 @@
         {% endblock %}
     </div>
 
-    <div class="date-check-person person person--full">
+    <div class="date-check-person person person--full" data-cy="date-check-certificate-provider">
         <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
         <div class="person-address flush--ends">
             <div class="dob-element form-date {{ certificateProviderElement.getMessages|length >0 ? 'form-group-error'}}">
@@ -433,7 +433,7 @@
             'data-cy': 'date-check-date-year'
         }) ? '' }}
 
-        <div class="date-check-person person person--full" data-cy="primary-attorney">
+        <div class="date-check-person person person--full" data-cy="date-check-primary-attorney">
             <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ attorney.name }} (attorney)</h3>
             <div class="person-address flush--ends">
                 <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">

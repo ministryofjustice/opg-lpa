@@ -36,7 +36,7 @@ Then('I can see a reminder to sign continuation sheet 1, 2 and 3', () => {
 
 Then('I can see a reminder to sign continuation sheet 4', () => {
     const text = 'They must have signed continuation sheet 4 after the \'certificate provider\' has signed section 10 of the LPA form.'
-    cy.get('[data-cy=primary-attorney]').find('[data-cy=continuation-sheet-info]').should('contain.text', text)
+    cy.get('[data-cy=date-check-primary-attorney]').find('[data-cy=continuation-sheet-info]').should('contain.text', text)
 })
 
 Then('I can see that the donor {string} cannot sign', (name) => {
@@ -99,7 +99,7 @@ Then('I fill in all signature dates on the check dates form', () => {
 
 // fieldset should be a partial selector for the fieldset containing the date boxes to fill;
 // e.g. to fill all primary attorney dates, use 'date-check-primary-attorney'
-// day = 'today', 'tomorrow', 'yesterday'
+// day = 'today', 'tomorrow', 'yesterday', 'N days ago'
 Then('I fill in the {string} signature dates with {string}', (fieldset, day) => {
     let timestamp = Date.now()
 
@@ -107,6 +107,12 @@ Then('I fill in the {string} signature dates with {string}', (fieldset, day) => 
         timestamp += MS_PER_DAY
     } else if (day === 'yesterday') {
         timestamp -= MS_PER_DAY
+    } else {
+        const matches = day.match(/^(\d+) days ago/)
+        if (matches !== null) {
+            const numDays = matches[1]
+            timestamp -= (MS_PER_DAY * parseInt(numDays))
+        }
     }
 
     const dateObj = new Date(timestamp)
@@ -130,4 +136,54 @@ Then('I can see applicant validation errors about person signing on behalf of ap
 
 Then('the visually-hidden legend for {string} states {string}', (fieldset, text) => {
     cy.get('[data-cy=' + fieldset).find('legend.visually-hidden').contains(text)
+})
+
+Then('I can see errors about the certificate provider not signing before the donor', () => {
+    const errorText = 'The donor must be the first person to sign the LPA. ' +
+        'You need to print and re-sign sections 10, 11 and 15'
+    cy.get('[data-cy=date-check-certificate-provider] .error-message').should('contain.text', errorText)
+})
+
+Then('I can see primary attorney errors explaining that the donor must be the first person to sign', () => {
+    const errorText = 'The donor must be the first person to sign the LPA. ' +
+        'You need to print and re-sign sections 10, 11 and 15'
+    cy.get('[data-cy=date-check-primary-attorney] .error-message').should('contain.text', errorText)
+})
+
+Then('I can see applicant errors explaining that the donor must be the first person to sign', () => {
+    const errorText = 'The donor must be the first person to sign the LPA. ' +
+        'You need to print and re-sign sections 10, 11 and 15'
+    cy.get('[data-cy=date-check-applicant] .error-message').should('contain.text', errorText)
+})
+
+Then('I can see applicant errors explaining that the applicant must sign on or after date when section 11s were signed', () => {
+    const errorText = 'The applicant must sign on the same day or after all section 11s have been signed. ' +
+        'You need to print and re-sign section 15'
+    cy.get('[data-cy=date-check-applicant] .error-message').should('contain.text', errorText)
+})
+
+Then('I can see a warning that the donor\'s signature date cannot be in the future', () => {
+    const errorText = 'Check your dates. The donor\'s signature date cannot be in the future'
+    cy.get('[data-cy=date-check-donor] .error-message').should('contain.text', errorText)
+})
+
+Then('I can see a warning that the primary attorneys\' signature dates cannot be in the future', () => {
+    const errorText = 'Check your dates. The attorney\'s signature date cannot be in the future'
+    cy.get('[data-cy=date-check-primary-attorney] .error-message').should('contain.text', errorText)
+})
+
+Then('I can see a warning that the certificate provider\'s signature date cannot be in the future', () => {
+    const errorText = 'Check your dates. The certificate provider\'s signature date cannot be in the future'
+    cy.get('[data-cy=date-check-certificate-provider] .error-message').should('contain.text', errorText)
+})
+
+Then('I can see a warning that the applicant\'s signature date cannot be in the future', () => {
+    const errorText = 'Check your dates. The applicant\'s signature date cannot be in the future'
+    cy.get('[data-cy=date-check-applicant] .error-message').should('contain.text', errorText)
+})
+
+Then('I can see donor errors explaining that the donor must sign section 9 after section 5', () => {
+    const errorText = 'The donor must sign Section 5 on the same day or before they sign continuation sheet 3. ' +
+        'You need to print and re-sign continuation sheet 3 and sections 10, 11 and 15'
+    cy.get('[data-cy=date-check-donor] .error-message').should('contain.text', errorText)
 })
