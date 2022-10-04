@@ -1,0 +1,25 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "requireConfigFile": false
+  },
+
+  "env": {
+    "browser": true
+  },
+
+  "extends": ["plugin:prettier/recommended", "eslint:recommended"],
+
+  "ignorePatterns": ["js/opg/env-vars.template.js", "js/lpa/lpa.templates.js"],
+
+  "rules": {
+    "no-extra-semi": "off",
+    "no-redeclare": "off",
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "no-use-before-define": "off",
+    "no-useless-escape": "off",
+    "prettier/prettier": "off"
+  }
+}
