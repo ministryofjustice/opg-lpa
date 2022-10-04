@@ -11,7 +11,7 @@
 
   "extends": ["plugin:prettier/recommended", "eslint:recommended"],
 
-  "ignorePatterns": ["service-front/assets/js/opg/env-vars.template.js", "service-front/assets/js/lpa/lpa.templates.js"],
+  "ignorePatterns": ["js/opg/env-vars.template.js", "js/lpa/lpa.templates.js"],
 
   "rules": {
     "no-extra-semi": "off",
