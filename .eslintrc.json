@@ -9,9 +9,9 @@
     "browser": true
   },
 
-  "extends": "plugin:prettier/recommended",
+  "extends": ["plugin:prettier/recommended", "eslint:recommended"],
 
-  "ignorePatterns": ["service-front/assets/js/opg/env-vars.template.js"],
+  "ignorePatterns": ["service-front/assets/js/opg/env-vars.template.js", "service-front/assets/js/lpa/lpa.templates.js"],
 
   "rules": {
     "no-extra-semi": "off",
