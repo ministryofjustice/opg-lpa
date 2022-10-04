@@ -209,8 +209,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          "SCRIPT_NAME=/health SCRIPT_FILENAME=/health REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000"
+          "CMD",
+          "/usr/local/bin/health-check.sh"
         ]
       interval: 10s
       timeout: 15s
@@ -316,8 +316,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          "SCRIPT_NAME=/health SCRIPT_FILENAME=/health REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000"
+          "CMD",
+          "/usr/local/bin/health-check.sh"
         ]
       interval: 10s
       timeout: 15s
@@ -413,8 +413,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          "SCRIPT_NAME=/health SCRIPT_FILENAME=/health REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000"
+          "CMD",
+          "/usr/local/bin/health-check.sh"
         ]
       interval: 10s
       timeout: 15s

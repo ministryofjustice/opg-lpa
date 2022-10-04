@@ -59,7 +59,7 @@ COPY --chown=appuser:appuser service-api/docker/app/php-fpm-logging.conf /usr/lo
 # Migration script
 COPY --chown=appuser:appuser service-api/docker/app/db-migrations.sh /app/db-migrations.sh
 COPY --chown=appuser:appuser service-api/phinx.php /app/phinx.php
-COPY --chown=root:root service-api/docker/app/health-check.sh /usr/local/bin/health-check.sh
+COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 
 RUN chmod +x /app/db-migrations.sh /usr/local/bin/health-check.sh
 
