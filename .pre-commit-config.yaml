@@ -32,7 +32,6 @@ repos:
     rev: 22.3.0
     hooks:
     - id: black
-repos:
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v8.24.0
     hooks:
