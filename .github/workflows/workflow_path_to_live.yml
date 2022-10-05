@@ -26,13 +26,9 @@ jobs:
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
       - name: Set output to short SHA
         id: short_sha
-        run: |
-          FULL_SHA=$(git rev-parse ${{ github.ref }}^2)
-          echo "::set-output name=short_sha::${FULL_SHA::7}"
+        run: echo "::set-output name=short_sha::${GITHUB_SHA::7}"
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
@@ -53,7 +49,12 @@ jobs:
       is_ephemeral: false
       terraform_apply: false
       terraform_directory: ./terraform/account
-    secrets: inherit
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_region_preproduction:
     name: TF Preproduction - Region
@@ -64,7 +65,12 @@ jobs:
       is_ephemeral: false
       terraform_apply: false
       terraform_directory: ./terraform/region
-    secrets: inherit
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_email_preproduction:
     name: TF Preproduction - Email
@@ -75,7 +81,12 @@ jobs:
       is_ephemeral: false
       terraform_apply: true
       terraform_directory: ./terraform/email
-    secrets: inherit
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_environment_preproduction:
     name: TF Preproduction - Environment
@@ -88,7 +99,12 @@ jobs:
       terraform_directory: ./terraform/environment
     needs:
       - docker_build_scan_push
-    secrets: inherit
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   run_preprodution_feedback_db_task:
     name: Run preproduction feedbackdb
@@ -97,9 +113,11 @@ jobs:
       - terraform_environment_preproduction
     secrets: inherit
 
-  terraform_outputs:
+  preprod_terraform_outputs:
     name: Render terraform outputs
     runs-on: ubuntu-latest
+    outputs:
+      terraform_output_as_json: ${{ steps.terraform_outputs.outputs.terraform_output_as_json }}
     needs:
       - run_preprodution_feedback_db_task
       - terraform_environment_preproduction
@@ -116,16 +134,66 @@ jobs:
         JSON="${JSON//$'\s+'/''}"
         echo "::set-output name=terraform_output_as_json::$JSON"
 
-  # cypress_tests:
+  # cypress_tests_Signup_StichedPF:
   #   name: Run Cypress tests
   #   uses: ./.github/workflows/cypress_tests.yml
-  #   needs: 
-  #     - terraform_outputs
+  #   needs:
+  #     - preprod_terraform_outputs
   #   with:
-  #     admin_url: https://${{ fromJson(steps.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-  #     front_url: https://${{ fromJson(steps.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+  #     admin_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+  #     front_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
   #     account_id: "987830934591"
-  #     ephemeral_environment: false
+  #     cypress_tags: "@Signup,@StitchedPF"
+  #   secrets: inherit
+
+  # cypress_tests_Signup_StichedHW:
+  #   name: Run Cypress tests
+  #   uses: ./.github/workflows/cypress_tests.yml
+  #   needs:
+  #     - preprod_terraform_outputs
+  #   with:
+  #     admin_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+  #     front_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+  #     account_id: "987830934591"
+  #     cypress_tags: "@Signup,@StitchedHW"
+  #   secrets: inherit
+
+  # cypress_tests_Signup_StichedClone:
+  #   name: Run Cypress tests
+  #   uses: ./.github/workflows/cypress_tests.yml
+  #   needs:
+  #     - preprod_terraform_outputs
+  #   with:
+  #     admin_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+  #     front_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+  #     account_id: "987830934591"
+  #     cypress_tags: "@Signup,@StitchedClone"
+  #   secrets: inherit
+
+  # cypress_tests_SignupIncluded:
+  #   name: Run Cypress tests
+  #   uses: ./.github/workflows/cypress_tests.yml
+  #   needs:
+  #     - preprod_terraform_outputs
+  #   with:
+  #     admin_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+  #     front_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+  #     account_id: "987830934591"
+  #     cypress_tags: "@SignupIncluded"
+  #   secrets: inherit
+
+  # # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
+  # # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
+  # cypress_tests_Remaining:
+  #   name: Run Cypress tests
+  #   uses: ./.github/workflows/cypress_tests.yml
+  #   needs:
+  #     - preprod_terraform_outputs
+  #   with:
+  #     admin_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+  #     front_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+  #     account_id: "987830934591"
+  #     cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
   #   secrets: inherit
 
   slack_msg_production_deploy_begin:
@@ -178,7 +246,12 @@ jobs:
       is_ephemeral: false
       terraform_apply: false
       terraform_directory: ./terraform/region
-    secrets: inherit
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   
   terraform_email_production:
     name: TF Production - Email
@@ -189,7 +262,12 @@ jobs:
       is_ephemeral: false
       terraform_apply: false
       terraform_directory: ./terraform/email
-    secrets: inherit
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_environment_production:
     name: TF Production - Environment
@@ -203,7 +281,12 @@ jobs:
       persist_artifacts: true
     needs:
     - docker_build_scan_push
-    secrets: inherit
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   run_production_feedback_db_task:
     name: Run production feedbackdb
