@@ -95,7 +95,6 @@
 
     </ol>
 
-
     <h2 class="heading-large">Documents</h2>
 
     <div class="panel-cta">
@@ -143,7 +142,9 @@
 
     <p>If you cannot view the documents, you'll need to <a rel="noreferrer noopener" target="_blank" href="https://get.adobe.com/uk/reader/" data-journey-click="page:link:external: Acrobat Reader">download Acrobat Reader from the Adobe website (opens in new tab)</a>.</p>
 
+    {% block continuationSheetNotes %}
     {{ macros.continuationNotes(continuationNoteKeys) }}
+    {% endblock %}
 
     <h2 class="heading-large">Sign the LPA in the right order</h2>
 
