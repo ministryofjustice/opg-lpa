@@ -291,7 +291,11 @@ jobs:
     if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     needs:
-      - cypress_tests
+      - cypress_tests_Remaining
+      - cypress_tests_SignupIncluded
+      - cypress_tests_Signup_StichedClone
+      - cypress_tests_Signup_StichedHW
+      - cypress_tests_Signup_StichedPF
       - workspace_name
       - terraform_outputs
       - image_tag
