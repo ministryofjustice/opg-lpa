@@ -39,6 +39,7 @@ jobs:
       - image_tag
     with:
       tag: ${{ needs.image_tag.outputs.short_sha }}
+      branch_name: "main"
     secrets: inherit
 
   terraform_account_preproduction:
@@ -134,7 +135,7 @@ jobs:
       - id: slack
         uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
         with:
-          channel-id: "CHANNEL_ID"
+          channel-id: "C01BDM8T67J"
           payload: |
             {
               "text": "Deployment started (In Progress)",
