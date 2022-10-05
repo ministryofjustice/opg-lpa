@@ -2,7 +2,6 @@ const {
   Then, After,
 } = require("@badeball/cypress-cucumber-preprocessor");
 
-// blah
 /*
  * Find all elements which are error summary headings.
  * For each, ensure that it is an h2.
