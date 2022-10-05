@@ -56,8 +56,9 @@ class StatusViewModelHelperTest extends MockeryTestCase
             ],
         ]);
 
-        $this->renderer = new ViewModelRenderer('application/authenticated/lpa/status/index.twig');
+        $this->renderer = new ViewModelRenderer();
         $this->renderer->addFunction('formatLpaId', FormatLpaId::class);
+        $this->renderer->loadTemplate('application/authenticated/lpa/status/index.twig');
     }
 
     private $testCases = [
@@ -404,7 +405,7 @@ class StatusViewModelHelperTest extends MockeryTestCase
          * but ignores the view itself, layout, most filters and functions, view helpers
          * etc. as far as possible.
          */
-        $html = $this->renderer->render('content', $viewModel);
+        $html = $this->renderer->render($viewModel, 'content');
 
         $dom = new DOMDocument();
         $dom->loadHTML($html);
