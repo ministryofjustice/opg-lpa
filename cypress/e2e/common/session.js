@@ -9,7 +9,7 @@ Then('I hack the session to have {int} seconds remaining', (seconds) => {
     };
 
     cy.request(requestOptions).then((response) => {
-        expect(response.body.remainingSeconds).to.eql(seconds);
+        expect(response.body.remainingSeconds).to.be.at.most(seconds);
     });
 });
 
