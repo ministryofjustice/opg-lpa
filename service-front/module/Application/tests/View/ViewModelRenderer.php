@@ -49,11 +49,22 @@ class ViewModelRenderer
      * adding Twig functions with addFunction().
      *
      * @param string $templatePath Path to the Twig template,
-     *     relative to module/Application/view/application
+     *     relative to module/Application/view/
      */
     public function loadTemplate(string $templatePath)
     {
         $this->template = $this->renderer->load($templatePath);
+    }
+
+    /**
+     * Load a Twig template from a string. Note that this should be done *after*
+     * adding Twig functions with addFunction().
+     *
+     * @param string $template Template to load.
+     */
+    public function loadTemplateString(string $template)
+    {
+        $this->template = $this->renderer->createTemplate($template);
     }
 
     /**
@@ -78,13 +89,19 @@ class ViewModelRenderer
      * Render the block $block using $viewModel to populate its placeholder
      * variables.
      *
-     * @param string $block Block to render within the template
      * @param ViewModel $viewModel ViewModel instance to use for populating
      *     variable placeholders in the template
+     * @param ?string $block Block to render within the template; if null, the
+     *     whole template is rendered
      */
-    public function render(string $block, ViewModel $viewModel): string
+    public function render(ViewModel $viewModel, ?string $block = null): string
     {
         $vars = (array) $viewModel->getVariables();
+
+        if (is_null($block)) {
+            return $this->template->render($vars);
+        }
+
         return $this->template->renderBlock($block, $vars);
     }
 }
