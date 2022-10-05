@@ -85,7 +85,7 @@ class IngressManager:
                         print("found ci ingress rule in " + sg_id)
                         timestamp = rule["Description"][-10:]
                         # Only remove rules that are at least an hour old to prevent affecting other Cypress runs
-                        if int(timestamp) < int(time.time()) - 3600:
+                        if int(time.time()) - int(timestamp) > 3600:
                             logger.info("Ignoring ingress rule in %s due to age", sg_id)
                             continue
                         else:
