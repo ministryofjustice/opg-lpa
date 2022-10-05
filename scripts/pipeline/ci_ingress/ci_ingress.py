@@ -141,7 +141,7 @@ class IngressManager:
                             "IpRanges": [
                                 {
                                     "CidrIp": ingress_cidr,
-                                    "Description": "ci ingress %s" % time.time(),
+                                    "Description": "ci ingress %s" % int(time.time()),
                                 },
                             ],
                             "ToPort": 443,
