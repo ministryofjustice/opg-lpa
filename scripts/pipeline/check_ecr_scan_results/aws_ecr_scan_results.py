@@ -130,10 +130,8 @@ class ECRScanChecker:
                         finding_result = self.summarise_finding(finding, tag, image)
                         finding_results.append(finding_result)
                     report += self.render("finding.j2", {"results": finding_results})
-                else:
-                    report += self.render("no_scan_results.j2", {"image": image})
-                report += self.write_build_details(branch, build_url)
-                self.post_to_slack(report, slack_channel, slack_token, test_mode)
+                    report += self.write_build_details(branch, build_url)
+                    self.post_to_slack(report, slack_channel, slack_token, test_mode)
             except self.aws_ecr_client.exceptions.ImageNotFoundException:
                 print(
                     f"skipping finding check for image: {image} tag: {tag} - no image present"
@@ -243,7 +241,7 @@ def main():
     parser.add_argument("--slack_channel", help="slack channel to post to")
     parser.add_argument(
         "--test_mode",
-        help="run the script in test mode, does not post to slack",
+        help="run   e script in test mode, does not post to slack",
         dest="test_mode",
         action="store_true",
     )
