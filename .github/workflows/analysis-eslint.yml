@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v2
-
       - name: Run eslint
         run: |
+          npm install
           npm run lint:check
