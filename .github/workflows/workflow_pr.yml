@@ -1,0 +1,310 @@
+name: "[Workflow] PR"
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "service-*/**"
+      - "cypress/**"
+      - "terraform/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+
+permissions:
+  contents: write
+  security-events: write
+  pull-requests: read
+  actions: none
+  checks: none
+  deployments: none
+  issues: none
+  packages: none
+  repository-projects: none
+  statuses: none
+
+jobs:
+  workspace_name:
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+  branch_name:
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+
+  image_tag:
+    name: Generate image tags
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.short_sha.outputs.short_sha }}
+    steps:
+      - name: Set output to short SHA
+        id: short_sha
+        run: echo "::set-output name=short_sha::${GITHUB_SHA::7}"
+
+  terraform_lint:
+    name: TF - Lint
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    with:
+      terraform_version: 1.1.2
+
+  docker_build_scan_push:
+    name: Docker Build, Scan and Push
+    uses: ./.github/workflows/docker_job.yml
+    needs:
+      - image_tag
+      - branch_name
+    with:
+      tag: ${{ needs.image_tag.outputs.short_sha }}
+      branch_name: ${{ needs.branch_name.outputs.parsed }}
+    secrets: inherit
+
+  terraform_account_development:
+    name: TF Development - Account
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    needs:
+      - workspace_name
+      - terraform_lint
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: development
+      is_ephemeral: false
+      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_iam_role: opg-lpa-ci
+      terraform_apply: true
+      terraform_directory: ./terraform/account
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_region_development:
+    name: TF Development - Region
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    needs:
+      - workspace_name
+      - terraform_lint
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: development
+      is_ephemeral: false
+      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_iam_role: opg-lpa-ci
+      terraform_apply: true
+      terraform_directory: ./terraform/region
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_email_development:
+    name: TF Development - Email
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    needs:
+      - workspace_name
+      - terraform_lint
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: development
+      is_ephemeral: false
+      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_iam_role: opg-lpa-ci
+      terraform_apply: true
+      terraform_directory: ./terraform/email
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_environment_development:
+    name: TF Development - Environment
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    needs:
+      - docker_build_scan_push
+      - workspace_name
+      - image_tag
+      - terraform_email_development
+      - terraform_account_development
+      - terraform_region_development
+    with:
+      terraform_version: 1.1.2
+      use_ssh_private_key: true
+      terraform_workspace: ${{ needs.workspace_name.outputs.name }}
+      is_ephemeral: true
+      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_iam_role: opg-lpa-ci
+      terraform_apply: true
+      terraform_directory: ./terraform/environment
+      terraform_variables: "-var container_version=${{ needs.image_tag.outputs.short_sha }} -var lambda_container_version=latest"
+      persist_artifacts: true
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  run_dev_feedback_db_task:
+    name: Run development feedbackdb
+    uses: ./.github/workflows/workflow_feedbackdb.yml
+    needs:
+      - terraform_environment_development
+    secrets: inherit
+
+  seed_dev_environment:
+    name: Seed development environment
+    runs-on: ubuntu-latest
+    needs:
+      - terraform_environment_development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+
+      - name: Download Terraform Task definition
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
+        with:
+          name: terraform-artifact
+          path: /tmp/
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
+          role-duration-seconds: 900
+          role-session-name: OPGLPABuildPipeline
+
+      - name: Setup Python
+        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4.2.0
+        with:
+          python-version: "3.9"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/pipeline/requirements.txt
+
+      - name: Start seeding ECS task
+        run: |
+          pip install -e scripts/pipeline/lib
+          python scripts/pipeline/start_task/ecs_start_task.py --task_name seeding
+
+  terraform_outputs:
+    name: Render terraform outputs
+    runs-on: ubuntu-latest
+    needs:
+      - seed_dev_environment
+      - terraform_environment_development
+      - run_dev_feedback_db_task
+    outputs:
+      terraform_output_as_json: ${{ steps.terraform_outputs.outputs.terraform_output_as_json }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+
+      - name: Terraform Outputs from JSON
+        id: terraform_outputs
+        run: |
+          JSON=${{ needs.terraform_environment_development.outputs.terraform_output_as_json }}
+          JSON="${JSON//$'\n'/''}"
+          JSON="${JSON//$'\r'/''}"
+          JSON="${JSON//$'\s+'/''}"
+          echo "::set-output name=terraform_output_as_json::$JSON"
+
+  cypress_tests_Signup_StichedPF:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "050256574573"
+      cypress_tags: "@Signup,@StitchedPF"
+    secrets: inherit
+
+  cypress_tests_Signup_StichedHW:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "050256574573"
+      cypress_tags: "@Signup,@StitchedHW"
+    secrets: inherit
+
+  cypress_tests_Signup_StichedClone:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "050256574573"
+      cypress_tags: "@Signup,@StitchedClone"
+    secrets: inherit
+
+  cypress_tests_SignupIncluded:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "050256574573"
+      cypress_tags: "@SignupIncluded"
+    secrets: inherit
+
+  # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
+  # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
+  cypress_tests_Remaining:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "050256574573"
+      cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
+    secrets: inherit
+
+  end_of_pr_workflow:
+    name: End of PR Workflow
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs:
+      - cypress_tests_Remaining
+      - cypress_tests_SignupIncluded
+      - cypress_tests_Signup_StichedClone
+      - cypress_tests_Signup_StichedHW
+      - cypress_tests_Signup_StichedPF
+      - workspace_name
+      - terraform_outputs
+      - image_tag
+    environment:
+      name: "dev_${{ needs.workspace_name.outputs.name }}"
+      url: "https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}/home"
+    steps:
+      - name: End of PR Workflow
+        run: |
+          echo "${{ needs.workspace_name.outputs.name }} PR environment tested, built and deployed"
+          echo "Tag Deployed: ${{ needs.image_tag.outputs.short_sha }}"
+          echo "URL: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}/home"
