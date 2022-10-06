@@ -1,4 +1,4 @@
-name: analysis_eslint
+name: eslint analysis
 
 on:
   push:
