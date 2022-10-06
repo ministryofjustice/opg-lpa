@@ -209,7 +209,7 @@ jobs:
       - seed_dev_environment
       - terraform_environment_development
       - run_dev_feedback_db_task
-    outputs: 
+    outputs:
       terraform_output_as_json: ${{ steps.terraform_outputs.outputs.terraform_output_as_json }}
     steps:
       - name: Checkout
@@ -224,7 +224,7 @@ jobs:
           JSON="${JSON//$'\s+'/''}"
           echo "::set-output name=terraform_output_as_json::$JSON"
 
-  cypress_tests:
+  cypress_tests_Signup_StichedPF:
     name: Run Cypress tests
     uses: ./.github/workflows/cypress_tests.yml
     needs:
@@ -233,14 +233,69 @@ jobs:
       admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
       front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
       account_id: "050256574573"
+      cypress_tags: "@Signup,@StitchedPF"
+    secrets: inherit
+
+  cypress_tests_Signup_StichedHW:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "050256574573"
+      cypress_tags: "@Signup,@StitchedHW"
+    secrets: inherit
+
+  cypress_tests_Signup_StichedClone:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "050256574573"
+      cypress_tags: "@Signup,@StitchedClone"
+    secrets: inherit
+
+  cypress_tests_SignupIncluded:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "050256574573"
+      cypress_tags: "@SignupIncluded"
+    secrets: inherit
+
+  # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
+  # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
+  cypress_tests_Remaining:
+    name: Run Cypress tests
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
+      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      account_id: "050256574573"
+      cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
     secrets: inherit
 
   end_of_pr_workflow:
     name: End of PR Workflow
     if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: 
-      - cypress_tests
+    needs:
+      - cypress_tests_Remaining
+      - cypress_tests_SignupIncluded
+      - cypress_tests_Signup_StichedClone
+      - cypress_tests_Signup_StichedHW
+      - cypress_tests_Signup_StichedPF
       - workspace_name
       - terraform_outputs
       - image_tag
