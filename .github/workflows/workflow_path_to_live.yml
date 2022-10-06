@@ -106,14 +106,14 @@ jobs:
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-  run_preprodution_feedback_db_task:
-    name: Run preproduction feedbackdb
-    uses: ./.github/workflows/workflow_feedbackdb.yml
-    with:
-      account_id: "987830934591"
-    needs:
-      - terraform_environment_preproduction
-    secrets: inherit
+  # run_preprodution_feedback_db_task:
+  #   name: Run preproduction feedbackdb
+  #   uses: ./.github/workflows/workflow_feedbackdb.yml
+  #   with:
+  #     account_id: "987830934591"
+  #   needs:
+  #     - terraform_environment_preproduction
+  #   secrets: inherit
 
   preprod_terraform_outputs:
     name: Render terraform outputs
@@ -121,7 +121,6 @@ jobs:
     outputs:
       terraform_output_as_json: ${{ steps.terraform_outputs.outputs.terraform_output_as_json }}
     needs:
-      - run_preprodution_feedback_db_task
       - terraform_environment_preproduction
     steps:
     - name: Checkout
@@ -280,19 +279,21 @@ jobs:
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-  run_production_feedback_db_task:
-    name: Run production feedbackdb
-    uses: ./.github/workflows/workflow_feedbackdb.yml
-    with:
-      account_id: "980242665824"
-    needs:
-      - terraform_environment_production
-    secrets: inherit
+  # run_production_feedback_db_task:
+  #   name: Run production feedbackdb
+  #   uses: ./.github/workflows/workflow_feedbackdb.yml
+  #   with:
+  #     account_id: "980242665824"
+  #   needs:
+  #     - terraform_environment_production
+  #   secrets: inherit
 
   run_smoke_tests:
     runs-on: ubuntu-latest
     needs:
       - terraform_environment_production
+      - terraform_region_production
+      - terraform_account_production
     steps:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
