@@ -1,0 +1,25 @@
+name: eslint analysis
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+jobs:
+  tfsec:
+    name: Run eslint
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v2
+      - name: Run eslint
+        run: |
+          npm install
+          npm run lint:check
