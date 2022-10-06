@@ -1,4 +1,4 @@
-# name: analysis_eslint
+name: analysis_eslint
 
 on:
   push:
