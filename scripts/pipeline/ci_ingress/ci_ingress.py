@@ -73,6 +73,38 @@ class IngressManager:
             ],
         )
 
+    def clear_added_ingress_rule_from_sg(self, ingress_cidr: str):
+        """Remove own ingress rule from security group"""
+        for sg_id in self.security_groups:
+            for ip_permissions in self.get_security_group(sg_id)["SecurityGroups"][0][
+                "IpPermissions"
+            ]:
+                for rule in ip_permissions["IpRanges"]:
+                    if "CidrIp" in rule and rule["CidrIp"] == ingress_cidr:
+                        logger.info(
+                            "Removing security group ingress rule from %s",
+                            sg_id,
+                        )
+                        try:
+                            self.aws_ec2_client.revoke_security_group_ingress(
+                                GroupId=sg_id,
+                                IpPermissions=[
+                                    {
+                                        "FromPort": ip_permissions["FromPort"],
+                                        "IpProtocol": ip_permissions["IpProtocol"],
+                                        "IpRanges": [rule],
+                                        "ToPort": ip_permissions["ToPort"],
+                                    },
+                                ],
+                            )
+                        except Exception as exception:
+                            logger.info(exception)
+                            if not self.verify_ingress_rule(sg_id):
+                                # Continue as the rule was lilely to have been removed by another job
+                                continue
+                            else:
+                                exit(1)
+
     def clear_all_ci_ingress_rules_from_sg(self):
         for sg_id in self.security_groups:
             for ip_permissions in self.get_security_group(sg_id)["SecurityGroups"][0][
@@ -105,15 +137,13 @@ class IngressManager:
                                         },
                                     ],
                                 )
-                                if self.verify_ingress_rule(sg_id):
-                                    logger.info(
-                                        "Verify: Found security group rule that should have been removed from %s",
-                                        sg_id,
-                                    )
-                                    exit(1)
                             except Exception as exception:
                                 logger.info(exception)
-                                exit(1)
+                                if not self.verify_ingress_rule(sg_id):
+                                    # Continue as the rule was lilely to have been removed by another job
+                                    continue
+                                else:
+                                    exit(1)
 
     def verify_ingress_rule(self, sg_id):
         sg_rules = self.get_security_group(sg_id)["SecurityGroups"][0]["IpPermissions"][
@@ -179,6 +209,7 @@ def main():
         work.add_ci_ingress_rule_to_sg(ingress_cidr)
     else:
         work.clear_all_ci_ingress_rules_from_sg()
+        work.clear_added_ingress_rule_from_sg(ingress_cidr)
 
 
 if __name__ == "__main__":
