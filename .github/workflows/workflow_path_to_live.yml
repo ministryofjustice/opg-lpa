@@ -202,18 +202,43 @@ jobs:
           channel-id: "C01BDM8T67J"
           payload: |
             {
-              "text": "Deployment started (In Progress)",
-              "attachments": [
+              "blocks": [
                 {
-                  "pretext": "Deployment started",
-                  "color": "dbab09",
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Production Deployment",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
                   "fields": [
                     {
-                      "title": "Status",
-                      "short": true,
-                      "value": "In Progress"
+                      "type": "mrkdwn",
+                      "text": "*Status:*\nStarted"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
                     }
                   ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n ${{ github.sha }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
+                  }
                 }
               ]
             }
@@ -290,6 +315,8 @@ jobs:
 
   run_smoke_tests:
     runs-on: ubuntu-latest
+    outputs:
+      smoke_test_status: ${{ steps.smoke_tests.outputs.smoke_test_status }}
     needs:
       - terraform_environment_production
       - terraform_region_production
@@ -314,62 +341,119 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r scripts/pipeline/requirements.txt
 
-      - name: Run test
-        run: python scripts/pipeline/healthcheck_test/healthcheck_test.py
+      - name: Run smoke tests
+        id: smoke_tests
+        run: |
+          if python scripts/pipeline/healthcheck_test/healthcheck_test.py; then
+            echo "::set-output name=smoke_test_status::passed"
+          else
+            echo "::set-output name=smoke_test_status::failed"
+          fi
 
-  slack_msg_production_deploy_complete:
+  slack_msg_production_deploy_success:
     name: Post-Deployment Slack message
     runs-on: ubuntu-latest
+    if: always()
     needs: 
       - slack_msg_production_deploy_begin
       - run_smoke_tests
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: success()
+      if: needs.run_smoke_tests.smoke_test_status = 'passed'
       with:
         channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
-          {
-            "text": "Deployment finished (Completed)",
-            "attachments": [
-              {
-                "pretext": "Deployment finished",
-                "color": "28a745",
-                "fields": [
-                  {
-                    "title": "Status",
-                    "short": true,
-                    "value": "Completed"
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Production Deployment",
+                    "emoji": true
                   }
-                ]
-              }
-            ]
-          }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\nStarted"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n ${{ github.sha }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
+                  }
+                }
+              ]
+            }
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: failure()
+      if: needs.run_smoke_tests.smoke_test_status = 'failed'
       with:
         channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
-          {
-            "text": "Deployment finished (Failed)",
-            "attachments": [
-              {
-                "pretext": "Deployment finished",
-                "color": "cc0000",
-                "fields": [
-                  {
-                    "title": "Status",
-                    "short": true,
-                    "value": "Failed"
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Production Deployment",
+                    "emoji": true
                   }
-                ]
-              }
-            ]
-          }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\nStarted"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n ${{ github.sha }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
+                  }
+                }
+              ]
+            }
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
