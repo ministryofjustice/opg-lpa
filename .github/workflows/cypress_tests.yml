@@ -36,14 +36,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials - Security Group & ECR
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
           aws-region: eu-west-1
-          role-duration-seconds: 3600
-          role-session-name: OPGLPACypressTests
+          role-to-assume: arn:aws:iam::${{ inputs.account_id }}:role/opg-lpa-ci
+          role-duration-seconds: 900
+          role-session-name: OPGLPACypressTestsSecurityGroupECR
 
       - name: Setup Python
         uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4
@@ -69,16 +70,6 @@ jobs:
         run: |
           mkdir -p /tmp/screenshots
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::${{ inputs.account_id }}:role/opg-lpa-ci
-          role-duration-seconds: 3600
-          role-session-name: OPGLPACypressTests
-
       - name: ECR Login
         id: login_ecr
         uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
@@ -94,6 +85,16 @@ jobs:
         run: |
           docker pull $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG
           docker tag $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$IMAGE_TAG
+
+      - name: Configure AWS Credentials - Cypress / S3Monitor
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
+          role-duration-seconds: 3600
+          role-session-name: OPGLPACypressTestsCypressS3Monitor
 
       - name: Run Cypress Tests - ${{ inputs.cypress_tags }}
         env:
@@ -137,7 +138,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
           aws-region: eu-west-1
           role-duration-seconds: 900
-          role-session-name: OPGLPACypressTests
+          role-to-assume: arn:aws:iam::${{ inputs.account_id }}:role/opg-lpa-ci
+          role-session-name: OPGLPACypressTestsSecurityGroupEnd
 
       - name: Remove GitHub Actions runner Ingress Rule
         if: always()
