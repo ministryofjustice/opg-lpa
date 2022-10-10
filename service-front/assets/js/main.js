@@ -1,5 +1,5 @@
 // ====================================================================================
-// INITITALISE ALL MOJ MODULES TEST
+// INITITALISE ALL MOJ MODULES
 ;$(moj.init);
 
 
