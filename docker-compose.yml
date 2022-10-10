@@ -206,6 +206,16 @@ services:
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
 
       OPG_LPA_OS_PLACES_HUB_ENDPOINT : "https://api.os.uk/search/places/v1/postcode"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/usr/local/bin/health-check.sh"
+        ]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
 
   front-ssl:
     container_name: lpa-front-ssl
@@ -303,6 +313,16 @@ services:
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/usr/local/bin/health-check.sh"
+        ]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
 
   feedback-api:
     container_name: lpa-feedback-api
@@ -390,6 +410,16 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-admin-app
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/usr/local/bin/health-check.sh"
+        ]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
 
   admin-ssl:
     container_name: lpa-admin-ssl

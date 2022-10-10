@@ -5,7 +5,7 @@ RUN adduser -D -g '' appuser
 RUN apk add --upgrade apk-tools
 RUN apk upgrade
 
-RUN apk add --no-cache icu \
+RUN apk add --no-cache icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
     && docker-php-ext-install intl \
     && docker-php-ext-install bcmath
@@ -47,6 +47,10 @@ COPY --chown=appuser:appuser shared /shared
 
 COPY --chown=appuser:appuser service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=appuser:appuser service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+
+COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
+
+RUN chmod +x /usr/local/bin/health-check.sh
 
 WORKDIR /app
 
