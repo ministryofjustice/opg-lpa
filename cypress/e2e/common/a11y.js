@@ -1,7 +1,6 @@
 const {
   Then, After,
 } = require("@badeball/cypress-cucumber-preprocessor");
-// TEST
 
 /*
  * Find all elements which are error summary headings.
