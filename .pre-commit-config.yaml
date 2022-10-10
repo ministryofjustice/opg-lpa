@@ -36,7 +36,7 @@ repos:
     rev: v8.24.0
     hooks:
     - id: eslint
-      files: service-front/assets/js cypress/e2e/common
+      files: service-front/assets/js|cypress/e2e/common
       additional_dependencies:
       -   eslint@8.24.0
       -   eslint-plugin-prettier@v4.2.1
