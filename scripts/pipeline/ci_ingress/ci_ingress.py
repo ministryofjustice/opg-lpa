@@ -14,12 +14,33 @@ class IngressManager:
     aws_account_id = ""
     aws_iam_session = ""
     aws_ec2_client = ""
+    assume_new_role = False
     security_groups = []
 
     def __init__(self, config_file):
         self.read_parameters_from_file(config_file)
-        self.set_iam_role_session()
-        self.aws_ec2_client = boto3.client(
+
+        current_role_arn = boto3.client("sts").get_caller_identity().get("Arn")
+        if os.getenv("CI"):
+            role_to_assume_arn = "arn:aws:iam::{}:role/opg-lpa-ci".format(
+                self.aws_account_id
+            )
+        else:
+            role_to_assume_arn = "arn:aws:iam::{}:role/operator".format(self.aws_account_id)
+
+        # Extract the role name and account id from the ARNs
+        role_to_assume_name = role_to_assume_arn.split("/")[1]
+        current_role_name = current_role_arn.split("/")[1]
+        role_to_assume_account = role_to_assume_arn.split(":")[4]
+        current_role_account = current_role_arn.split(":")[4]
+
+        if role_to_assume_name == current_role_name and role_to_assume_account == current_role_account:
+            logger.info("Already using necessary AWS role - will not reassume role")
+            self.aws_ec2_client = boto3.client("ec2")
+            self.assume_new_role = False
+        else:
+            self.assume_new_role = True
+            self.aws_ec2_client = boto3.client(
             "ec2",
             region_name=self.aws_region,
             aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
@@ -27,7 +48,12 @@ class IngressManager:
                 "SecretAccessKey"
             ],
             aws_session_token=self.aws_iam_session["Credentials"]["SessionToken"],
-        )
+            )
+        
+
+        if self.assume_new_role:
+            self.set_iam_role_session()
+
 
     def read_parameters_from_file(self, config_file):
         with open(config_file) as json_file:
