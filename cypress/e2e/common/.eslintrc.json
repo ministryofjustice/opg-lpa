@@ -12,6 +12,7 @@
   "extends": ["plugin:prettier/recommended", "eslint:recommended"],
 
   "rules": {
+    "no-undef": "off",
     "prettier/prettier": "off"
   }
 }
