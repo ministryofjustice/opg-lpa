@@ -14,11 +14,27 @@ class IngressManager:
     aws_account_id = ""
     aws_iam_session = ""
     aws_ec2_client = ""
-    assume_new_role = False
     security_groups = []
 
     def __init__(self, config_file):
         self.read_parameters_from_file(config_file)
+        self.assume_role("ec2")
+
+
+    def read_parameters_from_file(self, config_file):
+        with open(config_file) as json_file:
+            parameters = json.load(json_file)
+            self.aws_region = parameters["region"]
+            self.aws_account_id = parameters["account_id"]
+            self.security_groups = [
+                parameters["front_load_balancer_security_group_id"],
+                parameters["admin_load_balancer_security_group_id"],
+            ]
+    
+    def assume_role(self, service_name="ec2"):
+        """ Assume a role and create a new session if necessary, otherwise use the current session """
+
+        assume_new_role = False
 
         current_role_arn = boto3.client("sts").get_caller_identity().get("Arn")
         if os.getenv("CI"):
@@ -36,12 +52,12 @@ class IngressManager:
 
         if role_to_assume_name == current_role_name and role_to_assume_account == current_role_account:
             logger.info("Already using necessary AWS role - will not reassume role")
-            self.aws_ec2_client = boto3.client("ec2")
-            self.assume_new_role = False
+            self.aws_ec2_client = boto3.client(service_name)
+            assume_new_role = False
         else:
-            self.assume_new_role = True
+            assume_new_role = True
             self.aws_ec2_client = boto3.client(
-            "ec2",
+            service_name,
             region_name=self.aws_region,
             aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
             aws_secret_access_key=self.aws_iam_session["Credentials"][
@@ -49,21 +65,9 @@ class IngressManager:
             ],
             aws_session_token=self.aws_iam_session["Credentials"]["SessionToken"],
             )
-        
 
-        if self.assume_new_role:
+        if assume_new_role:
             self.set_iam_role_session()
-
-
-    def read_parameters_from_file(self, config_file):
-        with open(config_file) as json_file:
-            parameters = json.load(json_file)
-            self.aws_region = parameters["region"]
-            self.aws_account_id = parameters["account_id"]
-            self.security_groups = [
-                parameters["front_load_balancer_security_group_id"],
-                parameters["admin_load_balancer_security_group_id"],
-            ]
 
     def set_iam_role_session(self):
         if os.getenv("CI"):
