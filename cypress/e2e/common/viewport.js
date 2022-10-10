@@ -1,5 +1,4 @@
 import { Then } from "@badeball/cypress-cucumber-preprocessor";
-// TEST
 
 const isInViewport = function (window, el) {
     let $el = Cypress.$(el);
