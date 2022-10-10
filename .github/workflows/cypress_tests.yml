@@ -70,21 +70,21 @@ jobs:
         run: |
           mkdir -p /tmp/screenshots
 
-      - name: ECR Login
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
-        with:
-          registries: 311462405659
+      # - name: ECR Login
+      #   id: login_ecr
+      #   uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
+      #   with:
+      #     registries: 311462405659
 
-      - name: Pull Cypress Container Image
-        env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: online-lpa
-          IMAGE_TAG: latest
-          IMAGE_NAME: cypress
-        run: |
-          docker pull $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG
-          docker tag $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$IMAGE_TAG
+      # - name: Pull Cypress Container Image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+      #     ECR_REGISTRY_ALIAS: online-lpa
+      #     IMAGE_TAG: latest
+      #     IMAGE_NAME: cypress
+      #   run: |
+      #     docker pull $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG
+      #     docker tag $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$IMAGE_TAG
 
       - name: Configure AWS Credentials - Cypress / S3Monitor
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
