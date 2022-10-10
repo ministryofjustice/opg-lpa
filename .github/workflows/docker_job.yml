@@ -21,57 +21,67 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
+      # TODO: Do not merge until these are changed to the correct values
       matrix:
         include:
           - image_name: front_app
             service_path: ./service-front/docker/app
             unit_test: true
+            override_tag: latest
             force_push_to_repo: false
 
           - image_name: front_web
             service_path: ./service-front/docker/web
             unit_test: false
+            override_tag: latest
             force_push_to_repo: false
 
           - image_name: front_v2_app
             service_path: ./service-front-v2/docker/app
             unit_test: false
+            override_tag: latest
             force_push_to_repo: false
 
           - image_name: api_app
             service_path: ./service-api/docker/app
             unit_test: true
+            override_tag: latest
             force_push_to_repo: false
 
           - image_name: api_web
             service_path: ./service-api/docker/web
             unit_test: false
+            override_tag: latest
             force_push_to_repo: false
 
           - image_name: admin_app
             service_path: ./service-admin/docker/app
             unit_test: true
+            override_tag: latest
             force_push_to_repo: false
 
           - image_name: admin_web
             service_path: ./service-admin/docker/web
             unit_test: false
+            override_tag: latest
             force_push_to_repo: false
 
           - image_name: pdf_app
             service_path: ./service-pdf/docker/app
+            override_tag: latest
             unit_test: true
             force_push_to_repo: false
 
           - image_name: seeding_app
             service_path: ./service-seeding/docker/app
+            override_tag: latest
             unit_test: false
             force_push_to_repo: false
 
           - image_name: cypress
             service_path: ./cypress/
             override_tag: latest
-            force_push_to_repo: true
+            force_push_to_repo: false
 
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
