@@ -1,0 +1,19 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module",
+    "requireConfigFile": false
+  },
+
+  "env": {
+    "browser": true
+  },
+
+  "extends": ["plugin:prettier/recommended", "eslint:recommended"],
+
+  "rules": {
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "prettier/prettier": "off"
+  }
+}

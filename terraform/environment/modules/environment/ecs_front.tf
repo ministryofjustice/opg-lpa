@@ -2,14 +2,16 @@
 // front ECS Service level config
 
 resource "aws_ecs_service" "front" {
-  name                  = "front"
-  cluster               = aws_ecs_cluster.online-lpa.id
-  task_definition       = aws_ecs_task_definition.front.arn
-  desired_count         = var.account.autoscaling.front.minimum
-  launch_type           = "FARGATE"
-  platform_version      = "1.3.0"
-  propagate_tags        = "TASK_DEFINITION"
-  wait_for_steady_state = true
+  name                               = "front"
+  cluster                            = aws_ecs_cluster.online-lpa.id
+  task_definition                    = aws_ecs_task_definition.front.arn
+  desired_count                      = var.account.autoscaling.front.minimum
+  launch_type                        = "FARGATE"
+  platform_version                   = "1.3.0"
+  propagate_tags                     = "TASK_DEFINITION"
+  wait_for_steady_state              = true
+  deployment_minimum_healthy_percent = 50
+  deployment_maximum_percent         = 200
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
     subnets          = data.aws_subnets.private.ids
@@ -220,6 +222,13 @@ locals {
           "protocol" : "tcp"
         }
       ],
+      "healthCheck" : {
+        "command" : ["CMD", "/usr/local/bin/health-check.sh"],
+        "startPeriod" : 90,
+        "interval" : 10,
+        "timeout" : 15,
+        "retries" : 3
+      },
       "volumesFrom" : [],
       "logConfiguration" : {
         "logDriver" : "awslogs",
