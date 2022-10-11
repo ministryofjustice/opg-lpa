@@ -31,7 +31,7 @@ on:
 
 jobs:
   workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
     if: github.event.pull_request.merged == true
             
   cleanup_workspace:
