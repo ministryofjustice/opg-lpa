@@ -54,7 +54,7 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: preproduction
@@ -70,7 +70,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: preproduction
@@ -86,7 +86,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: preproduction
@@ -222,7 +222,7 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
     needs: 
       - slack_msg_production_deploy_begin
     with:
@@ -240,7 +240,7 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
     needs: 
       - slack_msg_production_deploy_begin
     with:
@@ -258,7 +258,7 @@ jobs:
   
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d85e0b1b1b84ca98b6ec27d251d8e6319c95df9 # pin@v1.8.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: production
