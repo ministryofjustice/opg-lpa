@@ -83,7 +83,7 @@
 
     GOVUK.setConsentCookie = function (options) {
         var cookieConsent = GOVUK.getConsentCookie()
-        var regEx = new RegExp('^www\.')
+        var regEx = new RegExp('^www.')
         var cookieDomain = regEx.test(document.domain) ? document.domain.replace(regEx, '.') : document.domain;
 
         if (!cookieConsent) {
