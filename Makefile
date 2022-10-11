@@ -46,17 +46,12 @@ run-composers:
 	@docker pull composer:${COMPOSER_VERSION}; \
 	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
 
-# This will make a docker network called "malpadev", used to communicate from
-# the perfplatworkerproxy lambda (running in localstack) to the perfplatworker
-# lambda (running as a docker container).
-# The name of the network created here must match the one in the docker-compose.yml.
 .PHONY: dc-up
 dc-up: run-composers
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	aws-vault exec moj-lpa-dev -- aws ecr get-login-password --region eu-west-1 | docker login \
 		--username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
 	docker-compose up

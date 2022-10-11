@@ -122,16 +122,6 @@ To run the unit tests for the PHP applications:
 make dc-unit-tests
 ```
 
-To run the unit tests for the performance platform (Python):
-
-```zsh
-virtualenv -p python3 ~/venv/perfplat
-source ~/venv/perfplat/bin/activate
-cd service-perfplat
-pip install -e.\[dev\]
-pytest
-```
-
 For how to run the functional tests, please see seperate README in tests/functional directory.
 
 ### Load tests

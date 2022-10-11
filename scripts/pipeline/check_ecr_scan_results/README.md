@@ -6,7 +6,7 @@ Information about ECR scan on image push is available at <https://docs.aws.amazo
 
 The script takes arguments for:
 
-- Repository name search terms (comma separated) e.g, `online-lpa,perfplat`.
+- Repository name search terms (comma separated) e.g, `online-lpa`.
 - Image tag (optional) default to `latest`.
 - Slack token.
 - Slack channel to use for posting results.
@@ -44,7 +44,7 @@ this is the full list of options and flags:
 
 ``` bash
 aws-vault exec identity -- python3 aws_ecr_scan_results.py \
-  --search online-lpa,perfplat-worker \
+  --search online-lpa \
   --tag <image-tagged> \
   --slack_token $SLACK_ACCESS_TOKEN \
   --slack_channel $BUILD_SLACK_CHANNEL \

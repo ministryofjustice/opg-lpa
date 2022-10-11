@@ -227,7 +227,7 @@ def main():
         "--search",
         default="",
         help="a comma separated list of repository names to partial match:"
-        "for example online-lpa,perfplat",
+        "for example online-lpa",
     )
     parser.add_argument(
         "--tag", default="latest", help="Image tag to check scan results for."

@@ -11,8 +11,6 @@ Code to render the above diagram in [mermaidjs](https://mermaid-js.github.io/mer
 ```
 graph
   adminlb[admin load balancer/admin-ssl] --> adminweb[admin-web]
-  perfplatworker --> SQS-1
-  perfplatworker --> db[RDS/Postgres]
   adminweb --> adminapp[admin-app]
   adminapp --> apiweb
   adminapp --> dynamodb
@@ -24,12 +22,12 @@ graph
   frontapp --> dynamodb
   frontapp --> pdf[pdf-app]
   pdf --> S3
-  pdf --> SQS-2
+  pdf --> SQS-1
   apiweb --> apiapp[api-app]
   apiapp --> db[RDS/Postgres]
   apiapp --> opgdatalpa[Sirius gateway]
   apiapp --> S3
-  apiapp --> SQS-2
+  apiapp --> SQS-1
 ```
 
 The purpose of each component in the diagram:
@@ -48,9 +46,7 @@ The purpose of each component in the diagram:
 * Redis: Stores PHP session data for front-app
 * RDS/postgres: Back-end storage for LPA and related data. Also stores user credentials. In AWS, this is an RDS instance; in local dev, it's a PostgreSQL container
 * Sirius gateway: API for accessing data about LPA applications from the Sirius case management system. Currently used to get the status of LPA applications, using the A-ref from the Make an LPA service as the reference. In dev, this is mocked out by gateway + mocksirius (see below).
-* perfplat-worker: Python lambda function (running on localstack in dev and Lambda in AWS) which receives jobs triggered by placing events on the SQS-1 queue. Intended to fetch data and put it into a database. Currently proof of concept only.
-* SQS-1: Queue for managing asynchronous jobs for the performance platform components. Events added to this queue trigger the perfplat-worker lambda function. Currently proof of concept only.
-* SQS-2: Queue for managing PDF generation jobs. Jobs are added by api-app, then picked up and serviced by pdf-app.
+* SQS-1: Queue for managing PDF generation jobs. Jobs are added by api-app, then picked up and serviced by pdf-app.
 * S3: Generated PDF forms are stored here for 24 hours, to be downloaded by users.
 
 Note that this diagram excludes components which only live in CI (pipelines in CircleCI) and/or dev (your local machine):
@@ -61,4 +57,3 @@ Note that this diagram excludes components which only live in CI (pipelines in C
 * mocksirius: The mock opg-data-lpa (in Prism) for dev and CI which mocks Sirius responses for cypress tests; note that we don't talk directly to Sirius in live, but go through the opg-data-lpa Sirius gateway
 * gateway: An nginx container which directs traffic to mocksirius in dev and CI, appending the necessary Prism headers so that we get the right response from mocksirius
 * seeding: Adds test data to the postgres db in dev
-* perfplatconfig: Sets up the perfplat dev proxy locally; this is a work-around for the fact that we can't connect SQS queue events directly to a docker lambda in dev - instead, we add a proxy lambda wired up to an SQS event trigger which forwards requests onto the perfplatworker proper
