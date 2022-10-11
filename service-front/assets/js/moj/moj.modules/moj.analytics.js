@@ -30,7 +30,7 @@
 
       // Use document.domain in dev, preview and staging so that tracking works
       // Otherwise remove proceeding www, as only prod will append www to the URL
-      var regEx = new RegExp('^www\.')
+      var regEx = new RegExp('^www.')
       var cookieDomain = regEx.test(document.domain) ? document.domain.replace(regEx, '.') : document.domain;
 
       // Configure profiles and make interface public
