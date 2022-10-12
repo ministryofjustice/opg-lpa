@@ -17,7 +17,7 @@ services:
     container_name: lpa-postgres
     image: postgres:13.6
     ports:
-      - 5432:5432
+      - 5434:5432
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: lpadb
@@ -46,7 +46,7 @@ services:
     image: localstack/localstack:0.12.18
     privileged: true
     ports:
-      - 4566:4566
+      - 4568:4566
     environment:
       - SERVICES=sqs,s3,lambda,secretsmanager
       - DEFAULT_REGION=eu-west-1
