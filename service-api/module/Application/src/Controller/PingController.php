@@ -147,11 +147,10 @@ class PingController extends AbstractRestfulController
         // OPG Gateway
 
         try {
-            $url = new Uri($this->trackMyLpaEndpoint . 'A00000000000');
+            $url = new Uri(rtrim($this->trackMyLpaEndpoint, '/') . '/healthcheck');
 
             $request = new Request('GET', $url, $headers = [
-                'Accept'        => 'application/json',
-                'Content-type'  => 'application/json'
+                'Accept' => 'application/json',
             ]);
 
             $provider = CredentialProvider::defaultProvider();
@@ -163,11 +162,12 @@ class PingController extends AbstractRestfulController
 
             $response = $this->httpClient->sendRequest($signed_request);
 
-            // We're looking up a non-existing LPA, thus we expect a 404.
-            if ($response->getStatusCode() === 404) {
+            // Healthcheck should return a 200 code if Sirius gateway is OK
+            if ($response->getStatusCode() === 200) {
                 $opgGateway = true;
             }
         } catch (Exception $ignore) {
+            $this->getLogger()->err($ignore->getMessage());
         }
 
         //---------------------------------------------
