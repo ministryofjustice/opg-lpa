@@ -59,7 +59,8 @@ class Service extends AbstractService
             throw new RuntimeException("Missing config: ['processing-status']['endpoint']");
         }
 
-        $this->processingStatusServiceUri = $config['processing-status']['endpoint'];
+        $this->processingStatusServiceUri = rtrim($config['processing-status']['endpoint'], '/');
+        $this->processingStatusServiceUri .= '/lpa-online-tool/lpas/';
     }
 
     public function setAwsSignatureV4(SignatureV4 $awsSignature)

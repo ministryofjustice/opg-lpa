@@ -167,7 +167,9 @@ class PingController extends AbstractRestfulController
                 $opgGateway = true;
             }
         } catch (Exception $ignore) {
-            $this->getLogger()->err($ignore->getMessage());
+            $this->getLogger()->err(
+                'Error returned by Sirius gateway healthcheck: ' . $ignore->getMessage()
+            );
         }
 
         //---------------------------------------------
