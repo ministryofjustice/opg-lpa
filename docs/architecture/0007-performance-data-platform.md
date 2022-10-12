@@ -5,10 +5,12 @@ Date: 2021-09-06
 ## Status
 
 * Proposed (2021-06-16)
+* Rejected partially (2022-09-26)
 
-Note: this decision was recorded retrospectively after we added ADRs.
-The original process was recorded in a private wiki, but the gist of
-those discussions is collected here for reference.
+After discussions in the team, we decided to scale this back considerably to
+just a feedback form running as a Python Flask application alongside our PHP app.
+This just records user satisfaction scores. The more complex infrastructure
+(SQS queues, lambdas etc.) were replaced with a simpler docker-based approach.
 
 ## Context
 
@@ -59,8 +61,7 @@ We agreed that an **embedded** design for the solution's high-level architecture
 
 ![Data platform - container view](../images/structurizr-ContainerEmbedded.png)
 
-(The above diagrams use the [C4 model](https://c4model.com/). The [Structurizr](https://structurizr.com/)
-source is in [the design directory](../design/0007-performance-data-platform-c4.structurizr).)
+(The above diagrams use the [C4 model](https://c4model.com/).)
 
 This re-uses parts of the existing stack to implement ingress and storage for the data platform,
 in particular:
