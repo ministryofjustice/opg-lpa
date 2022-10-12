@@ -75,7 +75,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
      */
     public function __construct(
         Lpa $lpa = null,
-        $templateFileName = null,
+        ?string $templateFileName = null,
         array $options = [],
         ?PdftkFactory $pdftkFactory = null
     ) {
