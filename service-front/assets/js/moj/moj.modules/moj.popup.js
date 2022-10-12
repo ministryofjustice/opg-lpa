@@ -1,7 +1,7 @@
 /* globals $ */
 // Popup module for LPA
 // Dependencies: moj, jQuery
-;(function () {
+(function () {
   'use strict'
 
   const moj = window.moj

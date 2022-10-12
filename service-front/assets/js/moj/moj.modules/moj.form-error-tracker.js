@@ -1,7 +1,7 @@
 /* globals $ */
 // Analytics form error tracking module for LPA
 // Dependencies: moj, jQuery
-;(function () {
+(function () {
   'use strict'
 
   const moj = window.moj
