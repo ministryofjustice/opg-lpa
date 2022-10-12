@@ -1,7 +1,7 @@
 /* globals _, $ */
 // Person Form module for LPA
 // Dependencies: moj, _, jQuery
-;(function () {
+(function () {
   'use strict'
 
   const moj = window.moj
