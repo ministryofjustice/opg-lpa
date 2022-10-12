@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
-            "version": "4.1.0",
+            "version": "4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alphagov/notifications-php-client.git",
-                "reference": "0f078242965e4029015ec2c50b6cd23af77c7b98"
+                "reference": "5bc25ece4261983bbb504fe065df2bfd38e86632"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alphagov/notifications-php-client/zipball/0f078242965e4029015ec2c50b6cd23af77c7b98",
-                "reference": "0f078242965e4029015ec2c50b6cd23af77c7b98",
+                "url": "https://api.github.com/repos/alphagov/notifications-php-client/zipball/5bc25ece4261983bbb504fe065df2bfd38e86632",
+                "reference": "5bc25ece4261983bbb504fe065df2bfd38e86632",
                 "shasum": ""
             },
             "require": {
@@ -26,15 +26,11 @@
                 "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "php-http/curl-client": "*",
                 "php-http/guzzle6-adapter": "*",
                 "php-http/message": "^1.1",
                 "php-http/mock-client": "*",
                 "php-http/socket-client": "^2.1.0",
                 "phpspec/phpspec": "^5.0|^7.2"
-            },
-            "suggest": {
-                "ext-curl": "To send requests using cURL"
             },
             "type": "library",
             "autoload": {
@@ -59,9 +55,9 @@
             "description": "PHP client for GOV.UK Notifications",
             "support": {
                 "issues": "https://github.com/alphagov/notifications-php-client/issues",
-                "source": "https://github.com/alphagov/notifications-php-client/tree/4.1.0"
+                "source": "https://github.com/alphagov/notifications-php-client/tree/4.2.0"
             },
-            "time": "2022-07-04T11:35:23+00:00"
+            "time": "2022-10-06T13:35:15+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -115,16 +111,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.235.15",
+            "version": "3.238.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "635914c29fc875c58a85fdf981c27f1f561eaf50"
+                "reference": "14fb64c934614ea5a52c9931189f687f30b6ba3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/635914c29fc875c58a85fdf981c27f1f561eaf50",
-                "reference": "635914c29fc875c58a85fdf981c27f1f561eaf50",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/14fb64c934614ea5a52c9931189f687f30b6ba3b",
+                "reference": "14fb64c934614ea5a52c9931189f687f30b6ba3b",
                 "shasum": ""
             },
             "require": {
@@ -203,9 +199,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.235.15"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.238.3"
             },
-            "time": "2022-09-23T18:16:52+00:00"
+            "time": "2022-10-07T18:16:40+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -1273,16 +1269,16 @@
         },
         {
             "name": "laminas/laminas-filter",
-            "version": "2.20.0",
+            "version": "2.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-filter.git",
-                "reference": "fa2ef11911a5b99e4323ee24e9ed85703f14a983"
+                "reference": "7835f3f3227b1892676cb7366fbed0e521cac845"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-filter/zipball/fa2ef11911a5b99e4323ee24e9ed85703f14a983",
-                "reference": "fa2ef11911a5b99e4323ee24e9ed85703f14a983",
+                "url": "https://api.github.com/repos/laminas/laminas-filter/zipball/7835f3f3227b1892676cb7366fbed0e521cac845",
+                "reference": "7835f3f3227b1892676cb7366fbed0e521cac845",
                 "shasum": ""
             },
             "require": {
@@ -1347,7 +1343,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-09-21T11:31:28+00:00"
+            "time": "2022-09-30T09:15:24+00:00"
         },
         {
             "name": "laminas/laminas-form",
@@ -3073,16 +3069,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "14.0.2",
+            "version": "14.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
-                "reference": "097bfbc0b2b7b771a7abbb57c0873985700aa4e2"
+                "reference": "d4b78d4c0ecdf87e264388175a7fbde769341f6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/097bfbc0b2b7b771a7abbb57c0873985700aa4e2",
-                "reference": "097bfbc0b2b7b771a7abbb57c0873985700aa4e2",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d4b78d4c0ecdf87e264388175a7fbde769341f6b",
+                "reference": "d4b78d4c0ecdf87e264388175a7fbde769341f6b",
                 "shasum": ""
             },
             "require": {
@@ -3103,7 +3099,7 @@
                 "MIT"
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
-            "time": "2022-06-09T14:44:38+00:00"
+            "time": "2022-09-29T08:44:41+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -4330,16 +4326,16 @@
         },
         {
             "name": "symfony/validator",
-            "version": "v4.4.45",
+            "version": "v4.4.46",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/validator.git",
-                "reference": "06db9bfca8fefea4dfe8e804bbcd0aa79a414d0c"
+                "reference": "51d06a00a7a8e9c45b91735932040b9f1df2c994"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/validator/zipball/06db9bfca8fefea4dfe8e804bbcd0aa79a414d0c",
-                "reference": "06db9bfca8fefea4dfe8e804bbcd0aa79a414d0c",
+                "url": "https://api.github.com/repos/symfony/validator/zipball/51d06a00a7a8e9c45b91735932040b9f1df2c994",
+                "reference": "51d06a00a7a8e9c45b91735932040b9f1df2c994",
                 "shasum": ""
             },
             "require": {
@@ -4416,7 +4412,7 @@
             "description": "Provides tools to validate values",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/validator/tree/v4.4.45"
+                "source": "https://github.com/symfony/validator/tree/v4.4.46"
             },
             "funding": [
                 {
@@ -4432,7 +4428,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-04T16:19:35+00:00"
+            "time": "2022-09-15T12:26:05+00:00"
         },
         {
             "name": "theiconic/php-ga-measurement-protocol",
@@ -7425,16 +7421,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v6.1.4",
+            "version": "v6.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "7fccea8728aa2d431a6725b02b3ce759049fc84d"
+                "reference": "17524a64ebcfab68d237bbed247e9a9917747096"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/7fccea8728aa2d431a6725b02b3ce759049fc84d",
-                "reference": "7fccea8728aa2d431a6725b02b3ce759049fc84d",
+                "url": "https://api.github.com/repos/symfony/console/zipball/17524a64ebcfab68d237bbed247e9a9917747096",
+                "reference": "17524a64ebcfab68d237bbed247e9a9917747096",
                 "shasum": ""
             },
             "require": {
@@ -7501,7 +7497,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v6.1.4"
+                "source": "https://github.com/symfony/console/tree/v6.1.5"
             },
             "funding": [
                 {
@@ -7517,7 +7513,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-26T10:32:31+00:00"
+            "time": "2022-09-03T14:24:42+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -7887,16 +7883,16 @@
         },
         {
             "name": "symfony/string",
-            "version": "v6.1.4",
+            "version": "v6.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "290972cad7b364e3befaa74ba0ec729800fb161c"
+                "reference": "17c08b068176996a1d7db8d00ffae3c248267016"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/290972cad7b364e3befaa74ba0ec729800fb161c",
-                "reference": "290972cad7b364e3befaa74ba0ec729800fb161c",
+                "url": "https://api.github.com/repos/symfony/string/zipball/17c08b068176996a1d7db8d00ffae3c248267016",
+                "reference": "17c08b068176996a1d7db8d00ffae3c248267016",
                 "shasum": ""
             },
             "require": {
@@ -7952,7 +7948,7 @@
                 "utf8"
             ],
             "support": {
-                "source": "https://github.com/symfony/string/tree/v6.1.4"
+                "source": "https://github.com/symfony/string/tree/v6.1.5"
             },
             "funding": [
                 {
@@ -7968,7 +7964,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-12T18:05:43+00:00"
+            "time": "2022-09-02T08:05:20+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -8022,16 +8018,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "4.27.0",
+            "version": "4.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "faf106e717c37b8c81721845dba9de3d8deed8ff"
+                "reference": "52e96bea381e6cb07a672aefec791a5817694a26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/faf106e717c37b8c81721845dba9de3d8deed8ff",
-                "reference": "faf106e717c37b8c81721845dba9de3d8deed8ff",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/52e96bea381e6cb07a672aefec791a5817694a26",
+                "reference": "52e96bea381e6cb07a672aefec791a5817694a26",
                 "shasum": ""
             },
             "require": {
@@ -8070,6 +8066,7 @@
                 "phpdocumentor/reflection-docblock": "^5",
                 "phpmyadmin/sql-parser": "5.1.0||dev-master",
                 "phpspec/prophecy": ">=1.9.0",
+                "phpstan/phpdoc-parser": "1.2.* || 1.6.4",
                 "phpunit/phpunit": "^9.0",
                 "psalm/plugin-phpunit": "^0.16",
                 "slevomat/coding-standard": "^7.0",
@@ -8123,9 +8120,9 @@
             ],
             "support": {
                 "issues": "https://github.com/vimeo/psalm/issues",
-                "source": "https://github.com/vimeo/psalm/tree/4.27.0"
+                "source": "https://github.com/vimeo/psalm/tree/4.28.0"
             },
-            "time": "2022-08-31T13:47:09+00:00"
+            "time": "2022-10-07T16:13:24+00:00"
         },
         {
             "name": "webmozart/path-util",
