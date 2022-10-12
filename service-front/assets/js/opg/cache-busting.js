@@ -11,7 +11,7 @@
             return url;
         }
 
-        var url = window.URI(url);
+        url = window.URI(url);
         url.addQuery({revision: revision});
         return url.toString();
     };
