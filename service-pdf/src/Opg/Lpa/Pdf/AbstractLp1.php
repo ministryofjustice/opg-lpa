@@ -384,9 +384,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         }
 
         if (count($peopleToNotify) > self::MAX_PEOPLE_TO_NOTIFY_SECTION_6) {
-            // TODO - Historic bug - the check box on the H&W PDF is named incorrecly
-            $this->setCheckBox('has-more-than-4-notified-people')   //Property and Finance
-                 ->setCheckBox('has-more-than-5-notified-people');  //Health and Welfare
+            // This check box is named incorrectly on the HW PDF and should be
+            // 'has-more-than-4-notified-people', as it is in the PF PDF;
+            // but as this would require a change to the PDF to fix, we instead just set
+            // the misnamed HW checkbox as well as the properly-named PF one
+            $this->setCheckBox('has-more-than-4-notified-people')   // Property and Finance
+                 ->setCheckBox('has-more-than-5-notified-people');  // Health and Welfare
         }
     }
 
