@@ -11,6 +11,7 @@ use MakeLogger\Logging\Logger;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Laminas\View\Model\JsonModel;
 use Http\Client\HttpClient;
+use GuzzleHttp\Psr7\Response;
 
 class PingControllerTest extends MockeryTestCase
 {
@@ -34,7 +35,7 @@ class PingControllerTest extends MockeryTestCase
      */
     private $logger;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->database = Mockery::mock(ZendDbAdapter::class);
 
@@ -42,11 +43,13 @@ class PingControllerTest extends MockeryTestCase
 
         $this->httpClient = Mockery::mock(HttpClient::class);
 
-        $this->controller = new PingController($this->database,
+        $this->controller = new PingController(
+            $this->database,
             $this->sqsClient,
             'http://test',
             'http://test',
-            $this->httpClient);
+            $this->httpClient
+        );
 
         $this->logger = Mockery::mock(Logger::class);
         $this->controller->setLogger($this->logger);
@@ -61,6 +64,12 @@ class PingControllerTest extends MockeryTestCase
                     'ApproximateNumberOfMessagesNotVisible' => 2,
                 ]
             ]);
+
+        $mockResponse = Mockery::mock(Response::class);
+        $mockResponse->shouldReceive('getStatusCode')->andReturn(500);
+
+        $this->httpClient->shouldReceive('sendRequest')
+            ->andReturn($mockResponse);
 
         $pingResult = [
             'database' => [
