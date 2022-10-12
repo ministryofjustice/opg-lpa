@@ -60,16 +60,17 @@
             pageviewObject = $.extend(pageviewObject || {}, options)
         }
 
+        var domain, i, l
         if (!$.isEmptyObject(pageviewObject)) {
             sendToGa('send', 'pageview', pageviewObject)
-            for (var i = 0, l = this.trackerDomains.length; i < l; i++) {
-                var domain = this.trackerDomains[i]
+            for (i = 0, l = this.trackerDomains.length; i < l; i++) {
+                domain = this.trackerDomains[i]
                 sendToGa(domain +'.send', 'pageview', pageviewObject)
             }
         } else {
             sendToGa('send', 'pageview')
-            for (var i = 0, l = this.trackerDomains.length; i < l; i++) {
-                var domain = this.trackerDomains[i]
+            for (i = 0, l = this.trackerDomains.length; i < l; i++) {
+                domain = this.trackerDomains[i]
                 sendToGa(domain +'.send', 'pageview')
             }
         }

@@ -1,4 +1,4 @@
-/* globals $, window, document, GOVUK */
+/* globals $, GOVUK */
 /* exported SessionTimeoutDialog */
 // SESSION TIMEOUT POPUP LOGIC
 /**
