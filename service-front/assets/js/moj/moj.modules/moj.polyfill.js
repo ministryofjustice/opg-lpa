@@ -5,7 +5,7 @@
 // https://bugzilla.mozilla.org/show_bug.cgi?id=591737
 // http://www.sitepoint.com/fixing-the-details-element/
 // A fork of https://github.com/alphagov/govuk_elements/commits/master/assets/javascripts/govuk/details.polyfill.js
-;(function () {
+(function () {
   'use strict'
 
   const moj = window.moj
