@@ -280,7 +280,9 @@ services:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
 
-      OPG_LPA_PROCESSING_STATUS_ENDPOINT: ""
+      # if you have opg-data-lpa running locally, this allows the front-app
+      # /ping endpoints to return more realistic values
+      OPG_LPA_PROCESSING_STATUS_ENDPOINT: "http://host.docker.internal:4343/v1/"
 
       # lifetime (in seconds) of authentication tokens
       OPG_LPA_AUTH_TOKEN_TTL: 4500
