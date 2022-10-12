@@ -4,6 +4,7 @@ namespace ApplicationTest\View;
 
 use Application\View\StatusViewModelHelper;
 use Application\View\Helper\FormatLpaId;
+use ApplicationTest\View\ViewModelRenderer;
 use DateTime;
 use DOMDocument;
 use DOMXpath;
@@ -13,9 +14,6 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Twig\Loader\FilesystemLoader;
-use Twig\Environment;
-use Twig\TwigFunction;
 
 /**
  * The intention of this test is to check which status will be shown on the page, and
@@ -41,6 +39,9 @@ class StatusViewModelHelperTest extends MockeryTestCase
     /** @var array */
     private const PROGRESS_BAR_STEPS = ['waiting', 'received', 'checking', 'processed'];
 
+    /** @var ViewModelRenderer */
+    private $renderer;
+
     public function setUp(): void
     {
         $this->trackFromDate = (new DateTime('now'))->modify('-7 days');
@@ -54,6 +55,10 @@ class StatusViewModelHelperTest extends MockeryTestCase
                 ]
             ],
         ]);
+
+        $this->renderer = new ViewModelRenderer();
+        $this->renderer->addFunction('formatLpaId', FormatLpaId::class);
+        $this->renderer->loadTemplate('application/authenticated/lpa/status/index.twig');
     }
 
     private $testCases = [
@@ -346,29 +351,6 @@ class StatusViewModelHelperTest extends MockeryTestCase
         ],
     ];
 
-    /* For the purposes of the test, we extract the variables from the view
-     * model and render just the 'content' block of the detailed status page view.
-     * We do this from the Twig template directly, bypassing the ZfcTwig machinery.
-     * This replicates what happens in ZfcTwig
-     * (see vendor/kokspflanze/zfc-twig/src/View/TwigRenderer.php),
-     * but ignores the view itself, layout, most filters and functions, view helpers
-     * etc. as far as possible.
-     */
-    private function renderViewModel(?ViewModel $viewModel): string
-    {
-        $renderer = new Environment(
-            new FilesystemLoader('module/Application/view'),
-            ['cache' => 'build/twig-cache']
-        );
-
-        $renderer->addFunction(new TwigFunction('formatLpaId', FormatLpaId::class));
-
-        $template = $renderer->load('application/authenticated/lpa/status/index.twig');
-
-        $vars = (array) $viewModel->getVariables();
-        return $template->renderBlock('content', $vars);
-    }
-
     private function buildAndTestViewModel($index, $testCase)
     {
         $lpaId = $testCase['lpaId'];
@@ -415,8 +397,15 @@ class StatusViewModelHelperTest extends MockeryTestCase
             $this->expectedWorkingDaysBeforeReceipt,
         );
 
-        // render and check the HTML
-        $html = $this->renderViewModel($viewModel);
+        /* For the purposes of the test, we extract the variables from the view
+         * model and render just the 'content' block of the detailed status page view.
+         * We do this from the Twig template directly, bypassing the ZfcTwig machinery.
+         * This replicates what happens in ZfcTwig
+         * (see vendor/kokspflanze/zfc-twig/src/View/TwigRenderer.php),
+         * but ignores the view itself, layout, most filters and functions, view helpers
+         * etc. as far as possible.
+         */
+        $html = $this->renderer->render($viewModel, 'content');
 
         $dom = new DOMDocument();
         $dom->loadHTML($html);

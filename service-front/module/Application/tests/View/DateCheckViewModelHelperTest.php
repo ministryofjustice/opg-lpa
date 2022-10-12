@@ -6,6 +6,7 @@ use Application\Form\Lpa\DateCheckForm;
 use Application\View\Helper\FormElementErrorsV2;
 use Application\View\Helper\FormErrorTextExchange;
 use Application\View\DateCheckViewModelHelper;
+use ApplicationTest\View\ViewModelRenderer;
 use DOMDocument;
 use DOMXpath;
 use Laminas\ServiceManager\AbstractPluginManager;
@@ -15,22 +16,31 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
-use Twig\TwigFunction;
 
 class DateCheckViewModelHelperTest extends MockeryTestCase
 {
+    /** @var ViewModelRenderer */
+    private $renderer;
+
+    public function setUp(): void
+    {
+        $this->renderer = new ViewModelRenderer();
+        $this->renderer->addFunction('formElementErrorsV2');
+        $this->renderer->addFunction('form');
+        $this->renderer->addFunction('formErrorTextExchange');
+        $this->renderer->addFunction('formElement');
+    }
+
     /** @var array */
     /* The keys correspond to the tests that check specific twig blocks in the given template */
     private $templates = [
         'donor' => [
             'block' => 'donorGuidance',
-            'path' => 'authenticated/lpa/date-check/index.twig'
+            'path' => 'application/authenticated/lpa/date-check/index.twig'
         ],
         'attorney' => [
             'block' => 'attorneyGuidance',
-            'path' => 'authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig'
+            'path' => 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig'
         ]
     ];
 
@@ -585,28 +595,8 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             'applicants' => []
         ]);
 
-        $renderer = new Environment(
-            new FilesystemLoader('module/Application/view/application'),
-            ['cache' => 'build/twig-cache']
-        );
-
-        // This returns an arbitrary string to imitate real twig functions added to the
-        // renderer before it tries to render a template.
-        $noop = function () {
-            return 'Noop';
-        };
-
-        $renderer->addFunction(new TwigFunction('formElementErrorsV2', $noop));
-        $renderer->addFunction(new TwigFunction('form', $noop));
-        $renderer->addFunction(new TwigFunction('formErrorTextExchange', $noop));
-        $renderer->addFunction(new TwigFunction('formElement', $noop));
-
-        $template = $renderer->load($this->templates[$templateName]['path']);
-
-        $vars = (array) $viewModel->getVariables();
-        $html = $template->renderBlock($this->templates[$templateName]['block'], $vars);
-
-        return $html;
+        $this->renderer->loadTemplate($this->templates[$templateName]['path']);
+        return $this->renderer->render($viewModel, $this->templates[$templateName]['block']);
     }
 
     private function findHtmlMatches(
