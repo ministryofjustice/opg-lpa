@@ -1,6 +1,6 @@
 /* globals $ */
 // Dependencies: moj, jQuery
-;(function () {
+(function () {
   'use strict'
 
   const moj = window.moj

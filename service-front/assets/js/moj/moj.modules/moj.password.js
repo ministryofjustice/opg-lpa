@@ -1,6 +1,6 @@
 // Password module for LPA
 // Dependencies: moj, jQuery
-;(function () {
+(function () {
   const moj = window.moj
   const $ = window.$
 
