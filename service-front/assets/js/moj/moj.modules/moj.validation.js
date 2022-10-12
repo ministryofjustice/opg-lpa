@@ -1,7 +1,7 @@
 /* globals _, $ */
 // Validation module for LPA
 // Dependencies: moj, _, jQuery
-;(function () {
+(function () {
   'use strict'
 
   const moj = window.moj

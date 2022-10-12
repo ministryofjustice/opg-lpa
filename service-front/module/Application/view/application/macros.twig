@@ -106,10 +106,11 @@
 
 {% macro continuationNotes(continuationNoteKeys) %}
 
-    {% if continuationNoteKeys|length > 0 %}
+    {%- if continuationNoteKeys|length > 0 -%}
         <h3 class="heading-medium">Continuation sheets</h3>
 
-        {% for cnote in continuationNoteKeys %}
+        {%- for cnote in continuationNoteKeys -%}
+            {%- if cnote != 'HAS_ATTORNEY_DECISIONS' and cnote != 'LONG_INSTRUCTIONS_OR_PREFERENCES' -%}
             <p data-cy="continuation-sheet-notes">
                 {% if cnote == 'ALL_PEOPLE_OVERFLOW' %}
                     An LPA form only has enough space to add 4 attorneys, 2 replacement attorneys and 4 people to notify. The extra attorneys, replacements and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
@@ -131,13 +132,14 @@
                     As the donor appointed a Trust Corporation as an attorney, an authorised person from the corporation will need to sign 'continuation sheet 4'. The continuation sheet is included at the end of the LPA form.
                 {% endif %}
             </p>
-        {% endfor %}
+            {%- endif -%}
+        {%- endfor -%}
 
-        {% if 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys or 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys %}
+        {%- if 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys or 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys -%}
             <p data-cy="continuation-sheet-notes">
                 As there are extra instructions for the attorneys on the LPA, the donor will need to sign 'continuation sheet 2'. The continuation sheet is included at the end of the LPA form.
             </p>
-        {% endif %}
-    {% endif %}
+        {%- endif -%}
+    {%- endif -%}
 
 {% endmacro %}

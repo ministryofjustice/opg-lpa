@@ -1,7 +1,7 @@
 // https://github.com/alphagov/govuk_publishing_components/master/app/assets/javascripts/govuk_publishing_components/lib/cookie-functions.js
 // used by the cookie banner component
 
-;(function (global) {
+(function (global) {
     'use strict'
 
     var GOVUK = global.GOVUK || {}
