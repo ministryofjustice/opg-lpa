@@ -1,5 +1,7 @@
 <?php
 
+// Script for testing PDF generation from JSON fixtures.
+
 // Get path to JSON LPA fixture file to load from command line;
 // files in tests/fixtures can be used
 $filepath = $argv[1];
