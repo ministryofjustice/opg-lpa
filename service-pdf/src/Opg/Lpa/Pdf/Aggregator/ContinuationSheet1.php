@@ -23,8 +23,13 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
      * @param array $replacementAttorneys
      * @param array $peopleToNotify
      */
-    public function __construct(Lpa $lpa = null, array $primaryAttorneys, array $replacementAttorneys, array $peopleToNotify, ?PdftkFactory $pdftkFactory = null)
-    {
+    public function __construct(
+        Lpa $lpa = null,
+        array $primaryAttorneys,
+        array $replacementAttorneys,
+        array $peopleToNotify,
+        ?PdftkFactory $pdftkFactory = null
+    ) {
         //  Set up all the additional actors for processing
         $this->actorGroups = [
             'primaryAttorney'     => $primaryAttorneys,
@@ -36,7 +41,8 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
     }
 
     /**
-     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
+     * Create the PDF in preparation for it to be generated
+     * - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
      */

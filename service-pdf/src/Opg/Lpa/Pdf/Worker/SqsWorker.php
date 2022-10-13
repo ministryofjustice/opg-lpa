@@ -1,22 +1,52 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Worker;
 
-use Opg\Lpa\Pdf\Config\Config;
 use Laminas\Filter\Decompress;
+use MakeLogger\Logging\SimpleLoggerTrait;
+use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\PdfRenderer;
 use Aws\Sqs\SqsClient;
 
-class SqsWorker extends AbstractWorker
+class SqsWorker
 {
+    use SimpleLoggerTrait;
+
+    /** @var PdfRenderer */
+    private PdfRenderer $pdfRenderer;
 
     /**
-     * Return the object for handling the response
-     *
-     * @param $docId
-     * @return Response\AbstractResponse
+     * Constructor
      */
-    protected function getResponseObject($docId)
+    public function __construct()
     {
-        return new Response\S3Response($docId);
+        $this->pdfRenderer = new PdfRenderer(Config::getInstance());
+    }
+
+    /**
+     * @param string $docId Unique ID representing this job/document.
+     * @param string $type The type of PDF to generate.
+     * @param string $lpaData JSON document representing the LPA document.
+     * @throws Exception
+     */
+    private function run($docId, $type, $lpaData)
+    {
+        $pdf = $this->pdfRenderer->render($docId, $type, $lpaData);
+        $pdfFilePath = $pdf['filepath'];
+
+        if (is_null($pdfFilePath)) {
+            $this->getLogger()->err('null path returned for generated PDF');
+            return null;
+        }
+
+        try {
+            $response = new Response\S3Response($docId);
+            $response->save($pdf['content']);
+        } finally {
+            unlink($pdfFilePath);
+        }
+
+        return null;
     }
 
     /**
@@ -32,15 +62,11 @@ class SqsWorker extends AbstractWorker
 
         $client = new SqsClient($config['queue']['sqs']['client']);
 
-        //---
-
         if (!isset($config['queue']['sqs']['settings']['url'])) {
             throw new \Exception('SQS URL not configured');
         }
 
         $sqsUrl = $config['queue']['sqs']['settings']['url'];
-
-        //---
 
         try {
             $result = $client->receiveMessage([
@@ -72,18 +98,15 @@ class SqsWorker extends AbstractWorker
                     'lpaId' => $lpaId,
                 ]);
 
-                //---
-
                 try {
                     $startTime = microtime(true);
 
                     // Generate the PDF
                     $this->run($lpaMessage['jobId'], $body['type'], $body['lpa']);
 
-                    $this->getLogger()->info("----------------- DONE - Generation time: ".
+                    $this->getLogger()->info("----------------- DONE - Generation time: " .
                         (microtime(true) - $startTime) .
                         " seconds to make PDF for LPA " . $lpaId);
-
                 } catch (\Exception $e) {
                     $this->getLogger()->err("Error generating PDF", [
                         'jobId' => $lpaMessage['jobId'],
@@ -98,16 +121,12 @@ class SqsWorker extends AbstractWorker
                     'QueueUrl' => $sqsUrl,
                     'ReceiptHandle' => $sqsMessage['ReceiptHandle'],
                 ]);
-
             } else {
                 $this->getLogger()->debug("No message found in queue for this poll, finishing thread.");
             }
-
         } catch (\Exception $e) {
-            $this->getLogger()->emerg("Exception in SqsWorker: ".$e->getMessage());
+            $this->getLogger()->emerg("Exception in SqsWorker: " . $e->getMessage());
             sleep(5);
         }
-
     }
-
 }

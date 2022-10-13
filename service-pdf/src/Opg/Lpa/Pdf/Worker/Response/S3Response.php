@@ -4,45 +4,57 @@ namespace Opg\Lpa\Pdf\Worker\Response;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use Laminas\Crypt\BlockCipher;
 use Laminas\Crypt\Symmetric\Exception\InvalidArgumentException;
-use SplFileInfo;
+use MakeLogger\Logging\SimpleLoggerTrait;
+use Opg\Lpa\Pdf\Config\Config;
 
 /**
  * Stores the generated PDF into Amazon S3
  *
- * Files will be automatically deleted after a period by the bucket's Lifecycle policy
+ * Files will be automatically deleted after a period by the bucket's lifecycle policy
  */
-class S3Response extends AbstractResponse
+class S3Response
 {
+    use SimpleLoggerTrait;
+
+    /** @var string */
+    private $docId;
+
+    /** @var Config */
+    private $config;
+
+    /**
+     * Constructor
+     *
+     * @param $docId
+     */
+    public function __construct($docId)
+    {
+        $this->docId = $docId;
+        $this->config = Config::getInstance();
+    }
+
     /**
      * Store the file on the passed path for retrieval by the API service.
      *
-     * @param SplFileInfo $file
+     * @param string $filecontents
      * @throws InvalidArgumentException|S3Exception
      */
-    public function save(SplFileInfo $file)
+    public function save(string $fileContents)
     {
-        $this->getLogger()->info('Response received: ' . $file->getRealPath());
-
-        //  Get the file contents and encrypt them
-        $fileContents = file_get_contents($file->getRealPath());
-
-        //  Create the S3 client
+        // Create the S3 client
         $workerConfig = $this->config['worker']['s3Response'];
         $workerSettingsConfig = $workerConfig['settings'];
         $s3 = new S3Client($workerConfig['client']);
 
         try {
-
-            //  Put the encrypted file to S3
+            // Put the file to S3
             $file = $workerSettingsConfig + [
-                'Key'  => (string)$this->docId,
+                'Key' => (string)$this->docId,
                 'Body' => $fileContents,
             ];
 
             $s3->putObject($file);
-
         } catch (S3Exception $e) {
             $this->getLogger()->emerg('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
             throw $e;
