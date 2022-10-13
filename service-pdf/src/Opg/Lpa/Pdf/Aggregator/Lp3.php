@@ -12,7 +12,8 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class Lp3 extends AbstractAggregator
 {
     /**
-     * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
+     * Create the PDF in preparation for it to be generated
+     * - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
      */

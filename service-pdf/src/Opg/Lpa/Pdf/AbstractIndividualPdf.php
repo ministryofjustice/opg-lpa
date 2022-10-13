@@ -69,10 +69,11 @@ abstract class AbstractIndividualPdf extends AbstractPdf
         //  If an LPA was provided confirm that the LPA provided can be used to generate this type of PDF
         if ($lpa instanceof Lpa) {
             //  If applicable check that the document can be created
-            if (($this instanceof AbstractLp1 && !$lpa->canGenerateLP1())
+            if (
+                ($this instanceof AbstractLp1 && !$lpa->canGenerateLP1())
                 || ($this instanceof Lp3 && !$lpa->canGenerateLP3())
-                || ($this instanceof Lpa120 && !$lpa->canGenerateLPA120())) {
-
+                || ($this instanceof Lpa120 && !$lpa->canGenerateLPA120())
+            ) {
                 throw new Exception('LPA does not contain all the required data to generate ' . get_class($this));
             }
         }
@@ -133,7 +134,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
      * @throws \setasign\Fpdi\PdfReader\PdfReaderException
      */
-    protected function drawStrikeThroughsAndBlanks() : void
+    protected function drawStrikeThroughsAndBlanks(): void
     {
         // If no strike throughs and blanks are specified skip the rest of this method
         if (empty($this->strikeThroughTargets) && empty($this->blankTargets)) {
@@ -178,18 +179,20 @@ abstract class AbstractIndividualPdf extends AbstractPdf
 
         if (!$disableStrikeThroughLines) {
             foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
-                $pdf->setPage($pageNo + 1);
+                $pdf->setPage(intval($pageNo) + 1);
 
                 foreach ($pageDrawingTargets as $pageDrawingTarget) {
                     //  Get the coordinates for this target from the config (y is inverted)
                     if (isset($this->config['strike_throughs'][$pageDrawingTarget])) {
                         $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
 
-                        $pdf->Line($targetStrikeThroughCoordinates['bx'],
+                        $pdf->Line(
+                            $targetStrikeThroughCoordinates['bx'],
                             $pdf->getPageHeight() - $targetStrikeThroughCoordinates['by'],
                             $targetStrikeThroughCoordinates['tx'],
                             $pdf->getPageHeight() - $targetStrikeThroughCoordinates['ty'],
-                            ['width' => 10, 'color' => [0, 0, 0]]);
+                            ['width' => 10, 'color' => [0, 0, 0]]
+                        );
 
                         $changesMade = true;
                     }
@@ -199,20 +202,22 @@ abstract class AbstractIndividualPdf extends AbstractPdf
 
         if (!$disableBlanks) {
             foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
-                $pdf->setPage($pageNo + 1);
+                $pdf->setPage(intval($pageNo) + 1);
 
                 foreach ($pageDrawingTargets as $pageDrawingTarget) {
                     //  Get the coordinates for this target from the config (y is inverted)
                     if (isset($this->config['blanks'][$pageDrawingTarget])) {
                         $blankCoordinates = $this->config['blanks'][$pageDrawingTarget];
 
-                        $pdf->Rect($blankCoordinates['x1'],
+                        $pdf->Rect(
+                            $blankCoordinates['x1'],
                             $pdf->getPageHeight() - $blankCoordinates['y2'],
                             $blankCoordinates['x2'] - $blankCoordinates['x1'],
                             $blankCoordinates['y2'] - $blankCoordinates['y1'],
                             'F',
                             [],
-                            [255, 255, 255]);
+                            [255, 255, 255]
+                        );
 
                         $changesMade = true;
                     }
@@ -313,7 +318,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
 
         //  Now deduct any shifted pages AFTER the original page number
         foreach ($this->constituentPdfs as $insertAfterPageNumber => $constituentPdfsToInsert) {
-            if ($insertAfterPageNumber == 'end' || (is_numeric($insertAfterPageNumber) && $insertAfterPageNumber >= $originalPageNumber)) {
+            if (
+                $insertAfterPageNumber == 'end'
+                || (is_numeric($insertAfterPageNumber) && $insertAfterPageNumber >= $originalPageNumber)
+            ) {
                 $adjustedPageShift -= count($constituentPdfsToInsert);
             }
         }

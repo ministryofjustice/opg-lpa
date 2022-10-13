@@ -11,27 +11,27 @@ class Config implements Countable, ArrayAccess
 
     private $container = null;
 
-    private function __construct()
+    private function __construct(array $config = null)
     {
-        if ($this->container === null) {
-            $this->container = include('global.php');
+        $allConfig = include('global.php');
 
-            if (stream_resolve_include_path('local.php') !== false) {
-                $this->container = static::merge($this->container, include('local.php'));
-            }
+        if (!is_null($config)) {
+            $allConfig = self::merge($allConfig, $config);
         }
+
+        $this->container = $allConfig;
     }
 
-    public static function getInstance()
+    public static function getInstance(array $config = null)
     {
         if (self::$instance === null) {
-            self::$instance = new self();
+            self::$instance = new self($config);
         }
 
         return self::$instance;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -40,22 +40,22 @@ class Config implements Countable, ArrayAccess
         }
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->container[$offset]);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->container[$offset]);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return (isset($this->container[$offset]) ? $this->container[$offset] : null);
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->container);
     }
