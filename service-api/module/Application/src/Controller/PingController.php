@@ -151,6 +151,7 @@ class PingController extends AbstractRestfulController
 
             $request = new Request('GET', $url, $headers = [
                 'Accept' => 'application/json',
+                'Content-type'  => 'application/json',
             ]);
 
             $provider = CredentialProvider::defaultProvider();
@@ -158,9 +159,9 @@ class PingController extends AbstractRestfulController
             $signer = new SignatureV4('execute-api', 'eu-west-1');
 
             // Sign the request with an AWS Authorization header.
-            $signed_request = $signer->signRequest($request, $provider()->wait());
+            $signedRequest = $signer->signRequest($request, $provider()->wait());
 
-            $response = $this->httpClient->sendRequest($signed_request);
+            $response = $this->httpClient->sendRequest($signedRequest);
 
             // Healthcheck should return a 200 code if Sirius gateway is OK
             if ($response->getStatusCode() === 200) {
