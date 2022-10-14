@@ -229,7 +229,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n ${{ github.sha }}"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
                     }
                   ]
                 },
@@ -350,13 +350,14 @@ jobs:
             echo "::set-output name=smoke_test_status::failed"
           fi
 
-  slack_msg_production_deploy_success:
+  slack_msg_production_deployed:
     name: Post-Deployment Slack message
     runs-on: ubuntu-latest
     if: always()
     needs: 
       - slack_msg_production_deploy_begin
       - run_smoke_tests
+      - image_tag
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
       if: needs.run_smoke_tests.smoke_test_status = 'passed'
@@ -392,7 +393,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n ${{ github.sha }}"
+                      "text": "*Commit:* <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
                     }
                   ]
                 },
@@ -442,7 +443,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n ${{ github.sha }}"
+                      "text": "*Commit:* <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
                     }
                   ]
                 },
