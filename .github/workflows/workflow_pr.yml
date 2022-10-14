@@ -229,13 +229,16 @@ jobs:
   post_deployment_slack_msg:
     name: Post-Deployment Slack message
     runs-on: ubuntu-latest
+    outputs:
+      ts: ${{ steps.slack.outputs.ts }}
     needs: 
       - terraform_outputs
       - image_tag
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
+      id: slack
       with:
-        channel-id: "C01BDFQHTRU"
+        channel-id: "C01BKBWGWTY"
         payload: |
             {
               "icon_emoji": ":thinking_face:",
@@ -359,10 +362,15 @@ jobs:
       - terraform_outputs
       - image_tag
       - post_deployment_slack_msg
+      - cypress_tests_Remaining
+      - cypress_tests_SignupIncluded
+      - cypress_tests_Signup_StichedClone
+      - cypress_tests_Signup_StichedHW
+      - cypress_tests_Signup_StichedPF
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
       with:
-        channel-id: "C01BDFQHTRU"
+        channel-id: "C01BKBWGWTY"
         update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
         payload: |
             {
