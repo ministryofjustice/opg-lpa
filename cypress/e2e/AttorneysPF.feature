@@ -22,7 +22,7 @@ Feature: Add attorneys to a Property and Finance LPA
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find use-my-details if lpa is new
         And I can find "use-trust-corporation"
-        And I force fill out
+        And I quickly fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day| 22 |
@@ -43,7 +43,7 @@ Feature: Add attorneys to a Property and Finance LPA
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on "name-title"
-        And I force fill out
+        And I quickly fill out
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -70,17 +70,12 @@ Feature: Add attorneys to a Property and Finance LPA
         And I opt not to re-use details if lpa is a clone
         # line below is deliberately Mr rather than Mrs, as was done in Casper tests
         When I select "Mr" on "name-title"
+        # NB we don't need to type in all fields, just the name then move to another field
+        # so the JS change event triggers to show the duplicate person error message
         And I force fill out
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
-            | dob-date-month| 10 |
-            | dob-date-year| 1988 |
-            | email-address| opglpademo+AmyWheeler@gmail.com |
-            | address-address1| Brickhill Cottage |
-            | address-address2| Birch Cross |
-            | address-address3| Marchington, Uttoxeter, Staffordshire |
-            | address-postcode| ST14 8NX |
         Then I see "There is also an attorney called Amy Wheeler. A person cannot be named as an attorney twice on the same LPA." in the page text
         # Add 2cnd attorney
         When I select "Mr" on "name-title"
@@ -113,7 +108,7 @@ Feature: Add attorneys to a Property and Finance LPA
         And I opt not to re-use details if lpa is a clone
         And I click "use-trust-corporation"
         And I type " " into "name"
-        And I force fill out
+        And I quickly fill out
             | number | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | email-address| opglpademo+trustcorp@gmail.com |
             | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -128,17 +123,36 @@ Feature: Add attorneys to a Property and Finance LPA
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
+
+        # LPAL-1033 - should not see this error message when name is empty,
+        # only the "Enter the company's name" error message
+        And I do not see "must-be-greater-than-or-equal:1" in the page text
+
+        When I type " " into "number"
+        And I quickly fill out
+            | name | Standard Trust |
+            | email-address| opglpademo+trustcorp@gmail.com |
+            | address-address1 | 1 Laburnum Place |
+            | address-address2 | Sketty |
+            | address-address3 | Swansea, Abertawe |
+            | address-postcode | SA2 8HT |
+        And I click "form-save"
+        Then I see in the page text
+            | There is a problem |
+            | Enter the company's registration number |
+
+        # LPAL-1033 - should not see this error message when number is empty,
+        # only the "Enter the company's registration number" error message
+        And I do not see "must-be-greater-than-or-equal:1" in the page text
+
         When I type "qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB" into "name"
         And I click "form-save"
         Then I see in the page text
             | There is a problem |
             | Enter a company name that's less than 76 characters long |
-            | Enter a registration number that's less than 76 characters long |
-            | Change address line 1 so that it has fewer than 51 characters |
-            | Change address line 2 so that it has fewer than 51 characters |
-            | Change address line 3 so that it has fewer than 51 characters |
+
         # Re-add 2cnd attorney, correctly this time
-        When I force fill out
+        When I quickly fill out
             | name | Standard Trust |
             | number | 678437685 |
             | email-address| opglpademo+trustcorp@gmail.com |
