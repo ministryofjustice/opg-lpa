@@ -360,7 +360,7 @@ jobs:
       - image_tag
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: needs.run_smoke_tests.smoke_test_status = 'passed'
+      if: needs.run_smoke_tests.smoke_test_status == 'passed'
       with:
         channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
@@ -410,7 +410,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: needs.run_smoke_tests.smoke_test_status = 'failed'
+      if: needs.run_smoke_tests.smoke_test_status == 'failed'
       with:
         channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
