@@ -37,7 +37,7 @@ Feature: Add attorneys to a Health and Welfare LPA
             | dob-date-month | 9 |
         # shift focus to the title drop-down to trigger the client-side age validation
         And I select "Mrs" on "name-title"
-        Then I see "This attorney is under 18. I understand that the attorney must be at least 18 on the date the donor sign the LPA, otherwise the LPA will be rejected." in the page text
+        Then I see "This attorney is under 18. I understand that the attorney must be at least 18 on the date the donor signs the LPA, otherwise the LPA will be rejected." in the page text
 
         # check client-side age validation - over 100
         When I force fill out

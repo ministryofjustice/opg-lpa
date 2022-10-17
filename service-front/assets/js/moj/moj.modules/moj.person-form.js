@@ -198,7 +198,7 @@
                       alertType: 'important-small',
                       alertMessage: ageWarningAlertStart + ' I understand that the ' + actorType +
                           ' must be at least 18 <strong class="bold-small">on the date ' +
-                          ageWarningAlertMiddle + ' sign the LPA</strong>, ' +
+                          ageWarningAlertMiddle + ' signs the LPA</strong>, ' +
                           'otherwise the LPA will be rejected.'
                     })
                   )
