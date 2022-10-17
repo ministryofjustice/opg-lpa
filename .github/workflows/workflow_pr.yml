@@ -217,7 +217,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
 
-      - name: Terraform Outputs from JSON
+      - name: Terraform Outputs from JSON 
         id: terraform_outputs
         run: |
           JSON=${{ needs.terraform_environment_development.outputs.terraform_output_as_json }}
@@ -227,7 +227,7 @@ jobs:
           echo "::set-output name=terraform_output_as_json::$JSON"
 
   cypress_tests_Signup_StichedPF:
-    name: Run Cypress tests
+    name: Run Cypress tests - @Signup,@StitchedPF
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - terraform_outputs
@@ -239,7 +239,7 @@ jobs:
     secrets: inherit
 
   cypress_tests_Signup_StichedHW:
-    name: Run Cypress tests
+    name: Run Cypress tests - @Signup,@StitchedHW
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - terraform_outputs
@@ -251,7 +251,7 @@ jobs:
     secrets: inherit
 
   cypress_tests_Signup_StichedClone:
-    name: Run Cypress tests
+    name: Run Cypress tests - @Signup,@StitchedClone
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - terraform_outputs
@@ -263,7 +263,7 @@ jobs:
     secrets: inherit
 
   cypress_tests_SignupIncluded:
-    name: Run Cypress tests
+    name: Run Cypress tests - @SignupIncluded
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - terraform_outputs
@@ -277,7 +277,7 @@ jobs:
   # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
   # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
   cypress_tests_Remaining:
-    name: Run Cypress tests
+    name: Run Cypress tests - Remaining
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - terraform_outputs
