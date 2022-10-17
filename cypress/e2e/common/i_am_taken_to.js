@@ -1,7 +1,5 @@
 import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
-var lpaid;
-
 Then(`I am taken to {string}`, (url) => {
     cy.url().should('eq', Cypress.config().baseUrl + url);
     cy.OPGCheckA11y();

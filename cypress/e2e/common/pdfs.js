@@ -14,7 +14,7 @@ const requestUntilRefreshUrl = (href, tries) => {
         if (content.includes('url')) {
             const refreshUrl = content.substring(7);
 
-            return new Cypress.Promise((resolve, reject) => {
+            return new Cypress.Promise((resolve) => {
                 resolve(refreshUrl);
             });
         }

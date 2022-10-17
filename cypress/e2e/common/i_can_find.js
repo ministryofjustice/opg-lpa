@@ -4,7 +4,7 @@ Then(`I can find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]");
 })
 
-Then(`I can find use-my-details if lpa is new`, (object) => {
+Then(`I can find use-my-details if lpa is new`, () => {
   if (Cypress.env('clonedLpa') !== true) {
       cy.get("[data-cy=use-my-details]");
   }
@@ -31,7 +31,7 @@ Then(`I can find {string} and it is visible`, (object) => {
 })
 
 Then(`I can find {string} wrapped with error highlighting`, (object) => {
-    cy.get("div.form-group-error").within((el) => {
+    cy.get("div.form-group-error").within(() => {
       cy.get("[data-cy=" + object + "]");
     })
 })
