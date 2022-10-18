@@ -37,7 +37,7 @@ resource "aws_db_instance" "api" {
   kms_key_id                          = local.is_primary_region ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
   username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   password                            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  parameter_group_name                = var.account.use_postgres13 == true ? aws_db_parameter_group.postgres13-db-params.name : aws_db_parameter_group.postgres-db-params.name
+  parameter_group_name                = aws_db_parameter_group.postgres13-db-params.name
   vpc_security_group_ids              = [aws_security_group.rds-api.id]
   auto_minor_version_upgrade          = false
   maintenance_window                  = "wed:05:00-wed:09:00"
@@ -54,12 +54,6 @@ resource "aws_db_instance" "api" {
   performance_insights_kms_key_id     = data.aws_kms_key.rds.arn
   copy_tags_to_snapshot               = true
   snapshot_identifier                 = !local.is_primary_region ? data.aws_db_snapshot.api_snapshot[0].id : null
-
-  lifecycle {
-    ignore_changes = [
-      latest_restorable_time
-    ]
-  }
 }
 
 // setup a bunch of alarms that are useful for our needs
@@ -106,30 +100,6 @@ module "api_aurora" {
   vpc_security_group_ids        = [aws_security_group.rds-api.id]
   tags                          = local.db_component_tag
   copy_tags_to_snapshot         = true
-}
-
-resource "aws_db_parameter_group" "postgres-db-params" {
-  name        = lower("postgres-db-params-${var.environment_name}")
-  description = "default postgres rds parameter group"
-  family      = var.account.psql_parameter_group_family
-  parameter {
-    name         = "log_min_duration_statement"
-    value        = "500"
-    apply_method = "immediate"
-  }
-
-  parameter {
-    name         = "log_statement"
-    value        = "all"
-    apply_method = "pending-reboot"
-  }
-
-
-  parameter {
-    name         = "rds.log_retention_period"
-    value        = "1440"
-    apply_method = "immediate"
-  }
 }
 
 resource "aws_db_parameter_group" "postgres13-db-params" {
