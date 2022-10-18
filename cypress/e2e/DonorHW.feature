@@ -29,6 +29,15 @@ Feature: Add donor to Health and Welfare LPA
         And I click element marked "Find UK address"
         # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
         Then I can find "address-search-result" with 6 options
+
+        # Check error message when donor > 100 years old
+        When I force fill out
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1808 |
+        And I select "Mr" on "name-title"
+        Then I see "By saving this section, you confirm that the donor is more than 100 years old. If not, please change the date." in the page text
+
         When I select "Mrs" on "name-title"
         And I force fill out
             | name-first | Nancy |
@@ -46,6 +55,7 @@ Feature: Add donor to Health and Welfare LPA
         Then I can find "save-and-continue"
         And I cannot find "add-donor"
         And I see "Mrs Nancy Garrison" in the page text
+
         # following line uses force click because view-change-donor button is partly obscured
         When I force click "view-change-donor"
         Then I can find "form-donor"
