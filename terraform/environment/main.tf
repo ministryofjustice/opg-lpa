@@ -52,7 +52,9 @@ module "environment_dns" {
 
 
 module "cross_region_backup" {
-  count  = local.account.always_on ? 1 : 0
+  # do not merge without uncommenting this line
+  # count  = local.account.always_on ? 1 : 0
+  count = 0
   source = "./modules/rds_cross_region_backup"
   providers = {
     aws             = aws.eu_west_1
