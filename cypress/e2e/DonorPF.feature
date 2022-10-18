@@ -34,6 +34,7 @@ Feature: Add donor to Property and Finance LPA
         When I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | otherNames | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day | 22 |
             | dob-date-month | 10 |
             | dob-date-year | 1988 |
@@ -48,6 +49,7 @@ Feature: Add donor to Property and Finance LPA
             | Enter the donor's title |
             | Enter a first name that's less than 54 characters long |
             | Enter a last name that's less than 62 characters long |
+            | Enter other names that are less than 51 characters long |
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
@@ -63,6 +65,7 @@ Feature: Add donor to Property and Finance LPA
             | address-address2| Undercliff Drive |
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
+        And I clear the value in "otherNames"
         And I check "cannot-sign"
         And I click "form-save"
         Then I cannot find "form-donor"
