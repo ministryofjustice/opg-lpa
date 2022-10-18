@@ -175,6 +175,9 @@
             // Cleanup
             $('.js-age-check').remove()
 
+            let ageWarningAlertStart
+            let ageWarningAlertMiddle
+
             dob = getDOB()
             if (dob !== null) {
               // Display alerts if under 18 or over 100 years old
@@ -182,8 +185,8 @@
               // A server side validation check is in place for dob greater than today.
               if (dob > minAge && dob < new Date()) {
                 //  Build up the under 18 warning message
-                let ageWarningAlertStart = 'The ' + actorType + ' is under 18.'
-                let ageWarningAlertMiddle = 'the donor'
+                ageWarningAlertStart = 'The ' + actorType + ' is under 18.'
+                ageWarningAlertMiddle = 'the donor'
 
                 if ($.inArray(actorType, ['attorney', 'replacement attorney', 'person to notify']) > -1) {
                   ageWarningAlertStart = 'This ' + actorType + ' is under 18.'
@@ -204,14 +207,20 @@
                   )
                 )
               } else if (dob <= maxAge) {
+                if ($.inArray(actorType, ['attorney', 'replacement attorney']) > -1) {
+                  ageWarningAlertMiddle = 'this ' + actorType
+                } else if (actorType === 'donor') {
+                  ageWarningAlertMiddle = 'the donor'
+                }
+
                 // Over 100
                 $('.dob-element', $form).after(
                   $(
                     tplAlert({
                       elementJSref: 'js-age-check',
                       alertType: 'important-small',
-                      alertMessage: 'By saving this section, you confirm that the person ' +
-                          'is more than 100 years old. If not, please change the date.'
+                      alertMessage: 'By saving this section, you confirm that ' + ageWarningAlertMiddle +
+                          ' is more than 100 years old. If not, please change the date.'
                     })
                   )
                 )

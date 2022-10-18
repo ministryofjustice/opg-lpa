@@ -55,6 +55,16 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
         Then I see "There is also a replacement attorney called Isobel Ward. A person cannot be named as a replacement attorney twice on the same LPA." in the page text
+
+        # Check error message when replacement attorney > 100 years old
+        When I force fill out
+            | dob-date-day | 21  |
+            | dob-date-month | 9 |
+            | dob-date-year | 1910 |
+        # shift focus to the title drop-down to trigger the client-side age validation
+        And I select "Mrs" on "name-title"
+        Then I see "By saving this section, you confirm that this replacement attorney is more than 100 years old. If not, please change the date." in the page text
+
         When I select "Mr" on "name-title"
         And I force fill out
             | name-first | Ewan |
@@ -70,6 +80,7 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         Then I cannot find "form-attorney"
         And I see "Ms Isobel Ward" in the page text
         And I see "Mr Ewan Adams" in the page text
+
         When I click occurrence 1 of "delete-attorney"
         And I click "delete"
         # Check we are back to 1 attorney listed

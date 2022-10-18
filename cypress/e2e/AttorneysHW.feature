@@ -46,7 +46,7 @@ Feature: Add attorneys to a Health and Welfare LPA
             | dob-date-year | 1910 |
         # shift focus to the title drop-down to trigger the client-side age validation
         And I select "Mrs" on "name-title"
-        Then I see "By saving this section, you confirm that the person is more than 100 years old. If not, please change the date." in the page text
+        Then I see "By saving this section, you confirm that this attorney is more than 100 years old. If not, please change the date." in the page text
 
         When I select "Mrs" on "name-title"
         And I force fill out
