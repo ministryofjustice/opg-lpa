@@ -20,7 +20,7 @@
         "php": "^8.1",
         "guzzlehttp/guzzle": "^6.3",
         "aws/aws-sdk-php": "^3.204.5",
-        "ministryofjustice/opg-lpa-datamodels": "^14.0",
+        "ministryofjustice/opg-lpa-datamodels": "14.0.4",
         "michelf/php-markdown": "^1.9.1",
         "php-http/guzzle6-adapter": "^2.0.2",
         "laminas/laminas-mvc": "^3.2",
