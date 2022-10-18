@@ -48,7 +48,7 @@ GOVUK.performance.stageprompt = (function () {
       analyticsCallback.apply(null, splitAction(journeyStage));
     }
 
-    journeyHelpers.on('click', function (event) {
+    journeyHelpers.on('click', function () {
       analyticsCallback.apply(null, splitAction($(this).data('journey-click')));
     });
   };
