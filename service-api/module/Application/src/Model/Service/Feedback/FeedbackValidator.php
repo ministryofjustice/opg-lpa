@@ -59,6 +59,10 @@ class FeedbackValidator
             $validators['phone'] = new StringLengthValidator(['min' => 1]);
         }
 
+        if (!isset($validators['agent'])) {
+            $validators['agent'] = new StringLengthValidator(['min' => 1]);
+        }
+
         $this->validators = $validators;
     }
 
@@ -77,7 +81,7 @@ class FeedbackValidator
             $feedbackData[$fieldName] ??= null;
         }
 
-        // remove any optional fields which are empty or null
+        // remove any optional fields which are not set or contain an empty string
         foreach (self::OPTIONAL_FIELDS as $_ => $fieldName) {
             if (!isset($feedbackData[$fieldName]) || "${feedbackData[$fieldName]}" === '') {
                 unset($feedbackData[$fieldName]);
