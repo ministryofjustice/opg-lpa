@@ -70,7 +70,7 @@ class FeedbackValidatorTest extends MockeryTestCase
         $this->assertFalse($this->sut->isValid($feedbackData));
     }
 
-    public function testEmailProvidedButEmptyString(): void
+    public function testEmailProvidedAsEmptyString(): void
     {
         $feedbackData = [
             'rating' => 'satisfied',
@@ -98,6 +98,36 @@ class FeedbackValidatorTest extends MockeryTestCase
         );
     }
 
+    public function testPhoneProvidedAsEmptyString(): void
+    {
+        $feedbackData = [
+            'rating' => 'satisfied',
+            'details' => 'very good',
+            'email' => '',
+            'phone' => '',
+        ];
+
+        $this->assertTrue(
+            $this->sut->isValid($feedbackData),
+            'empty phone string should be allowed and not be validated'
+        );
+    }
+
+    public function testPhoneProvidedButNotString(): void
+    {
+        $feedbackData = [
+            'rating' => 'satisfied',
+            'details' => 'very good',
+            'email' => '',
+            'phone' => 32222,
+        ];
+
+        $this->assertFalse(
+            $this->sut->isValid($feedbackData),
+            'empty phone string should be allowed and not be validated'
+        );
+    }
+
     public function testValid(): void
     {
         $feedbackData = [
@@ -107,6 +137,8 @@ class FeedbackValidatorTest extends MockeryTestCase
             'details' => str_repeat('c ', 1000),
 
             'email' => 'emilfoo@example.com',
+
+            'phone' => '0111 2121 9999 extension 110'
         ];
 
         $this->assertTrue($this->sut->isValid($feedbackData));
