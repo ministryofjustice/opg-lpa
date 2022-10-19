@@ -22,7 +22,6 @@ class FeedbackValidator
 
     // matches service-front FeedbackForm.php radio button values,
     // which are not centrally stored anywhere, so replicated here
-    /** @var array */
     public const VALID_RATINGS = [
         'very-satisfied',
         'satisfied',
@@ -32,7 +31,6 @@ class FeedbackValidator
     ];
 
     // matches service-front FeedbackForm.php $maxFeedbackLength
-    /** @var int */
     public const MAX_DETAILS_LENGTH = 2000;
 
     private array $validators = [];
