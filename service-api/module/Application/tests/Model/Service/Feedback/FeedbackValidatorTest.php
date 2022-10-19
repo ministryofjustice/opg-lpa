@@ -128,6 +128,38 @@ class FeedbackValidatorTest extends MockeryTestCase
         );
     }
 
+    public function testAgentProvidedAsEmptyString(): void
+    {
+        $feedbackData = [
+            'rating' => 'satisfied',
+            'details' => 'very good',
+            'email' => '',
+            'phone' => '',
+            'agent' => '',
+        ];
+
+        $this->assertTrue(
+            $this->sut->isValid($feedbackData),
+            'non-empty agent string should be allowed and not be validated'
+        );
+    }
+
+    public function testAgentProvidedButNotString(): void
+    {
+        $feedbackData = [
+            'rating' => 'satisfied',
+            'details' => 'very good',
+            'email' => '',
+            'phone' => '',
+            'agent' => 1,
+        ];
+
+        $this->assertFalse(
+            $this->sut->isValid($feedbackData),
+            'non-string agent should not pass validation'
+        );
+    }
+
     public function testValid(): void
     {
         $feedbackData = [
@@ -137,8 +169,8 @@ class FeedbackValidatorTest extends MockeryTestCase
             'details' => str_repeat('c ', 1000),
 
             'email' => 'emilfoo@example.com',
-
-            'phone' => '0111 2121 9999 extension 110'
+            'phone' => '0111 2121 9999 extension 110',
+            'agent' => 'Firefox',
         ];
 
         $this->assertTrue($this->sut->isValid($feedbackData));
