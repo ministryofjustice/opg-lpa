@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Feedback;
 
 use Laminas\Validator\InArray as InArrayValidator;
+use Laminas\Validator\StringLength as StringLengthValidator;
 
 class FeedbackValidator
 {
@@ -17,6 +18,10 @@ class FeedbackValidator
         'very-dissatisfied',
     ];
 
+    // matches service-front FeedbackForm.php $maxFeedbackLength
+    /** @var int */
+    public const MAX_DETAILS_LENGTH = 2000;
+
     private array $validators = [];
 
     public function __construct(array $validators = [])
@@ -24,6 +29,12 @@ class FeedbackValidator
         if (!isset($validators['rating'])) {
             $validators['rating'] = new InArrayValidator([
                 'haystack' => self::VALID_RATINGS
+            ]);
+        }
+
+        if (!isset($validators['details'])) {
+            $validators['details'] = new StringLengthValidator([
+                'min' => 1, 'max' => self::MAX_DETAILS_LENGTH
             ]);
         }
 
@@ -45,6 +56,14 @@ class FeedbackValidator
         }
 
         if (!$this->validators['rating']->isValid($feedbackData['rating'])) {
+            return false;
+        }
+
+        if (!isset($feedbackData['details'])) {
+            return false;
+        }
+
+        if (!$this->validators['details']->isValid($feedbackData['details'])) {
             return false;
         }
 
