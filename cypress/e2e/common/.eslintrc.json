@@ -20,6 +20,5 @@
   "extends": ["plugin:prettier/recommended", "eslint:recommended"],
 
   "rules": {
-    "prettier/prettier": "off"
   }
 }

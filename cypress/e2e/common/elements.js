@@ -1,25 +1,25 @@
-import { Then } from "@badeball/cypress-cucumber-preprocessor";
+import { Then } from '@badeball/cypress-cucumber-preprocessor';
 
 /* Element testing and handling */
 
 // map from natural language text to number
 const MapNumberTextToNumber = {
-    'zero': 0,
-    'a single': 1,
-    'one': 1,
-    'two': 2,
-    'four': 4,
-    'ten': 10
+  zero: 0,
+  'a single': 1,
+  one: 1,
+  two: 2,
+  four: 4,
+  ten: 10,
 };
 
 // map from natural language text to HTML tag name
 const MapElementSpecifierToTag = {
-    'level 1 heading': 'H1',
-    'level 2 heading': 'H2',
-    'list item': 'LI',
+  'level 1 heading': 'H1',
+  'level 2 heading': 'H2',
+  'list item': 'LI',
 
-    // LPA list item selector for dashboard
-    'LPA': 'ul[data-cy=lpa-list] > li.list-item',
+  // LPA list item selector for dashboard
+  LPA: 'ul[data-cy=lpa-list] > li.list-item',
 };
 
 /**
@@ -31,27 +31,30 @@ const MapElementSpecifierToTag = {
  * contextSelector: selector for the element within which to search for the
  *     expected elements; 'document' makes the document the context
  */
-const checkNumberOfElements = (numberText, elementSpecifier, contextSelector) => {
-    let tag = MapElementSpecifierToTag[elementSpecifier];
-    if (tag === undefined) {
-        tag = elementSpecifier;
-    }
+const checkNumberOfElements = (
+  numberText,
+  elementSpecifier,
+  contextSelector,
+) => {
+  let tag = MapElementSpecifierToTag[elementSpecifier];
+  if (tag === undefined) {
+    tag = elementSpecifier;
+  }
 
-    let numberExpected = MapNumberTextToNumber[numberText];
-    if (numberExpected === undefined) {
-        numberExpected = parseInt(numberExpected);
-    }
+  let numberExpected = MapNumberTextToNumber[numberText];
+  if (numberExpected === undefined) {
+    numberExpected = parseInt(numberExpected);
+  }
 
-    // select elements matching the specifier and count them
-    if (contextSelector === 'document') {
-        cy.document().then((doc) => {
-            expect(doc.querySelectorAll(tag).length).to.equal(numberExpected);
-        });
-    }
-    else {
-        let ctx = Cypress.$(contextSelector);
-        expect(ctx[0].querySelectorAll(tag).length).to.equal(numberExpected);
-    }
+  // select elements matching the specifier and count them
+  if (contextSelector === 'document') {
+    cy.document().then((doc) => {
+      expect(doc.querySelectorAll(tag).length).to.equal(numberExpected);
+    });
+  } else {
+    let ctx = Cypress.$(contextSelector);
+    expect(ctx[0].querySelectorAll(tag).length).to.equal(numberExpected);
+  }
 };
 
 /**
@@ -62,10 +65,10 @@ const checkNumberOfElements = (numberText, elementSpecifier, contextSelector) =>
  *     expressed as a key from the MapElementSpecifierToTag array
  */
 Then('{string} is a {string} element', (dataCyReference, elementSpecifier) => {
-    cy.get("[data-cy=" + dataCyReference + "]").then((els) => {
-        expect(els.length).to.equal(1);
-        expect(els[0].tagName).to.equal(MapElementSpecifierToTag[elementSpecifier]);
-    });
+  cy.get('[data-cy=' + dataCyReference + ']').then((els) => {
+    expect(els.length).to.equal(1);
+    expect(els[0].tagName).to.equal(MapElementSpecifierToTag[elementSpecifier]);
+  });
 });
 
 /**
@@ -77,51 +80,68 @@ Then('{string} is a {string} element', (dataCyReference, elementSpecifier) => {
  *     expressed as a key from the MapElementSpecifierToTag array; if this
  *     is not a key in MapElementSpecifierToTag, it is used as-is
  */
-Then('there is {string} {string} element on the page', (numberText, elementSpecifier) => {
+Then(
+  'there is {string} {string} element on the page',
+  (numberText, elementSpecifier) => {
     checkNumberOfElements(numberText, elementSpecifier, 'document');
-});
+  },
+);
 
-Then('there are {string} {string} elements on the page', (numberText, elementSpecifier) => {
+Then(
+  'there are {string} {string} elements on the page',
+  (numberText, elementSpecifier) => {
     checkNumberOfElements(numberText, elementSpecifier, 'document');
-});
+  },
+);
 
 // dataCyReference specifies a data-cy value for the context within which
 // the elements should occur
-Then('there is {string} {string} element inside {string}', (numberText, elementSpecifier, dataCyReference) => {
-    cy.get("[data-cy=" + dataCyReference + "]").then((els) => {
-        checkNumberOfElements(numberText, elementSpecifier, els[0]);
+Then(
+  'there is {string} {string} element inside {string}',
+  (numberText, elementSpecifier, dataCyReference) => {
+    cy.get('[data-cy=' + dataCyReference + ']').then((els) => {
+      checkNumberOfElements(numberText, elementSpecifier, els[0]);
     });
-});
+  },
+);
 
-Then('there are {string} {string} elements inside {string}', (numberText, elementSpecifier, dataCyReference) => {
-    cy.get("[data-cy=" + dataCyReference + "]").then((els) => {
-        checkNumberOfElements(numberText, elementSpecifier, els[0]);
+Then(
+  'there are {string} {string} elements inside {string}',
+  (numberText, elementSpecifier, dataCyReference) => {
+    cy.get('[data-cy=' + dataCyReference + ']').then((els) => {
+      checkNumberOfElements(numberText, elementSpecifier, els[0]);
     });
-});
+  },
+);
 
 /**
  * Check whether text in an element is overflowing. There is an overflow
  * when the scrollWidth of an element is greater than its clientWidth.
  */
 Then('the text in {string} does not overflow', (dataCyReference) => {
-    cy.get("[data-cy=" + dataCyReference + "]").then((els) => {
-        let el = els[0];
-        let clientWidth = el.clientWidth;
-        let scrollWidth = el.scrollWidth;
-        let overflowHidden = (Cypress.$(el).css('overflow') === 'hidden');
+  cy.get('[data-cy=' + dataCyReference + ']').then((els) => {
+    let el = els[0];
+    let clientWidth = el.clientWidth;
+    let scrollWidth = el.scrollWidth;
+    let overflowHidden = Cypress.$(el).css('overflow') === 'hidden';
 
-        let msg = "element [data-cy=\"" + dataCyReference +
-            "\"]'s clientWidth [" + clientWidth + "] is less than " +
-            "its scrollWidth [" + scrollWidth + "], and overflow:hidden is " +
-            "not set on it - text may overflow";
+    let msg =
+      'element [data-cy="' +
+      dataCyReference +
+      '"]\'s clientWidth [' +
+      clientWidth +
+      '] is less than ' +
+      'its scrollWidth [' +
+      scrollWidth +
+      '], and overflow:hidden is ' +
+      'not set on it - text may overflow';
 
-        if (scrollWidth > clientWidth) {
-            expect(overflowHidden).to.eql(true, msg);
-        }
-        else {
-            expect(clientWidth).to.be.at.least(scrollWidth, msg);
-        }
-    });
+    if (scrollWidth > clientWidth) {
+      expect(overflowHidden).to.eql(true, msg);
+    } else {
+      expect(clientWidth).to.be.at.least(scrollWidth, msg);
+    }
+  });
 });
 
 /**
@@ -130,12 +150,12 @@ Then('the text in {string} does not overflow', (dataCyReference) => {
  * and open or not
  */
 Then('the instructions expandable element should not be present', () => {
-    cy.get("[data-cy=details-instructions]").should('not.exist');
+  cy.get('[data-cy=details-instructions]').should('not.exist');
 });
 
 Then('the instructions expandable element should be present and closed', () => {
-    cy.get("[data-cy=details-instructions]").then((els) => {
-        const $els = Cypress.$(els);
-        expect($els.attr('open')).to.not.exist;
-    });
+  cy.get('[data-cy=details-instructions]').then((els) => {
+    const $els = Cypress.$(els);
+    expect($els.attr('open')).to.not.exist;
+  });
 });
