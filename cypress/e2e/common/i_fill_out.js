@@ -1,7 +1,7 @@
 import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 When(`I type {string} into {string}`, (value, id) => {
-    cy.get("[data-cy=" + id + "]").type(value);
+    cy.get("[data-cy=" + id + "]").clear({force: true}).type(value);
 })
 
 When(`I type {string} into {string} working around cypress bug`, (value, id) => {
@@ -48,6 +48,16 @@ When("I force fill out", (dataTable) => {
         cy.get("[data-cy=" + row[0] + "]").clear({force: true}).type(row[1], {force: true});
     });
 });
+
+When("I quickly fill out", (dataTable) => {
+    const rawTable = dataTable.rawTable
+
+    rawTable.forEach(row => {
+        cy.get("[data-cy=" + row[0] + "]").each(elt => {
+            Cypress.$(elt).attr("value", row[1])
+        })
+    })
+})
 
 Then("I force fill out {string} element with {string}", (element, value) => {
     cy.get(element).clear({ force: true }).type(value, {force: true})

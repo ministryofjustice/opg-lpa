@@ -1,4 +1,3 @@
-/* globals $ */
 (function () {
   'use strict'
 

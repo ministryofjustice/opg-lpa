@@ -1,4 +1,3 @@
-/* globals $ */
 // Help System module for LPA
 // Dependencies: popup, moj, jQuery
 (function (global) {

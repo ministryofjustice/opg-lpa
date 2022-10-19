@@ -17,6 +17,7 @@
     "gaConfig": "readonly",
     "ga": "readonly",
     "_gaq": "readonly",
+    "lpa": "readonly",
     "$": "readonly"
   },
 
@@ -25,7 +26,6 @@
   "ignorePatterns": ["js/opg/env-vars.template.js", "js/lpa/lpa.templates.js"],
 
   "rules": {
-    "no-unused-vars": "off",
     "prettier/prettier": "off"
   }
 }
