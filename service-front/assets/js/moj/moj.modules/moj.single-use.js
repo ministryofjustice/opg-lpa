@@ -5,7 +5,7 @@
     'use strict';
 
     // Define the class
-    var SingleUse = function (options) {
+    var SingleUse = function () {
         this.settings = {
             selector: '.js-single-use'
         };
