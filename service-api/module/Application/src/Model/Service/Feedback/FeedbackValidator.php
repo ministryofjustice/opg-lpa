@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\Feedback;
 
+use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Laminas\Validator\InArray as InArrayValidator;
 use Laminas\Validator\StringLength as StringLengthValidator;
 
@@ -38,6 +39,10 @@ class FeedbackValidator
             ]);
         }
 
+        if (!isset($validators['email'])) {
+            $validators['email'] = new EmailAddressValidator();
+        }
+
         $this->validators = $validators;
     }
 
@@ -64,6 +69,16 @@ class FeedbackValidator
         }
 
         if (!$this->validators['details']->isValid($feedbackData['details'])) {
+            return false;
+        }
+
+        // email is allowed to be a zero-length string; if not a zero-length
+        // string, it must look like an email address
+        if (
+            isset($feedbackData['email']) &&
+            strlen($feedbackData['email']) > 0 &&
+            !$this->validators['email']->isValid($feedbackData['email'])
+        ) {
             return false;
         }
 
