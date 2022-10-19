@@ -2,22 +2,20 @@
 // this value is set in the env-vars.js file, generated from env-vars.template.js.
 
 (function (window) {
+  var cacheBustingUrl = function (url) {
+    // defined in env-vars JS file
+    var revision = window.getBuildRevision();
 
-    var cacheBustingUrl = function (url) {
-        // defined in env-vars JS file
-        var revision = window.getBuildRevision();
+    if (revision === undefined) {
+      return url;
+    }
 
-        if (revision === undefined) {
-            return url;
-        }
+    url = window.URI(url);
+    url.addQuery({ revision: revision });
+    return url.toString();
+  };
 
-        url = window.URI(url);
-        url.addQuery({revision: revision});
-        return url.toString();
-    };
-
-    window.cacheBusting = {
-        url: cacheBustingUrl,
-    };
-
+  window.cacheBusting = {
+    url: cacheBustingUrl,
+  };
 })(window);

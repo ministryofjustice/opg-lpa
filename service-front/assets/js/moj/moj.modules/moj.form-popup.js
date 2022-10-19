@@ -13,7 +13,7 @@
     defaults: {
       selector: '.js-form-popup',
       overlayIdent: 'form-popup',
-      overlaySource: '#content'
+      overlaySource: '#content',
     },
 
     init: function () {
@@ -33,16 +33,24 @@
     bindEvents: function () {
       $('body')
         // form open
-        .on('click.moj.Modules.FormPopup', this.settings.selector, this.btnClick)
+        .on(
+          'click.moj.Modules.FormPopup',
+          this.settings.selector,
+          this.btnClick,
+        )
         // submit form
-        .on('submit.moj.Modules.FormPopup', '#popup.form-popup form', this.submitForm);
-        moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails);
+        .on(
+          'submit.moj.Modules.FormPopup',
+          '#popup.form-popup form',
+          this.submitForm,
+        );
+      moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails);
     },
 
     btnClick: function (e) {
       // if our clicked element is not a link traverse up the dom to find the parent that is one.
       var source = $(e.target).closest('a'),
-          href = source.attr('href');
+        href = source.attr('href');
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
@@ -98,16 +106,15 @@
         source: this.originalSource,
         beforeOpen: function () {
           // trigger title replacement event
-          moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
+          moj.Events.trigger('TitleSwitch.render', { wrap: '#popup' });
           // trigger postcode lookup event
-          moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
+          moj.Events.trigger('PostcodeLookup.render', { wrap: '#popup' });
           // trigger person form events
-          moj.Events.trigger('PersonForm.render', {wrap: '#popup'});
+          moj.Events.trigger('PersonForm.render', { wrap: '#popup' });
           // trigger polyfill form events
-          moj.Events.trigger('Polyfill.fill', {wrap: '#popup'});
-        }
+          moj.Events.trigger('Polyfill.fill', { wrap: '#popup' });
+        },
       });
-
     },
 
     submitForm: function (e) {
@@ -119,7 +126,7 @@
 
       //  If a method is set on the form use that value instead of the default post
       if ($form.attr('method') !== undefined) {
-          method = $form.attr('method');
+        method = $form.attr('method');
       }
 
       $.ajax({
@@ -128,7 +135,7 @@
         data: $form.serialize(),
         context: $form,
         success: this.ajaxSuccess,
-        error: this.ajaxError
+        error: this.ajaxError,
       });
 
       return false;
@@ -150,30 +157,45 @@
       } else {
         // if field errors, display them
         if (response.errors !== undefined) {
-          data = {errors: []};
+          data = { errors: [] };
           $.each(response.errors, function (name, errors) {
-            data.errors.push({label_id: name + '_label', label: $('#' + name + '_label').text(), error: errors[0]});
-            moj.Events.trigger('Validation.renderFieldSummary', {form: $form, name: name, errors: errors});
+            data.errors.push({
+              label_id: name + '_label',
+              label: $('#' + name + '_label').text(),
+              error: errors[0],
+            });
+            moj.Events.trigger('Validation.renderFieldSummary', {
+              form: $form,
+              name: name,
+              errors: errors,
+            });
           });
-          moj.Events.trigger('Validation.renderSummary', {form: $form, data: data});
+          moj.Events.trigger('Validation.renderSummary', {
+            form: $form,
+            data: data,
+          });
           // Track form errors
-          moj.Events.trigger('formErrorTracker.checkErrors', {wrap: '#popup'});
+          moj.Events.trigger('formErrorTracker.checkErrors', {
+            wrap: '#popup',
+          });
           // show error summary
         } else if (response.success === undefined) {
           // repopulate popup
           $('#popup-content').html(response);
           // trigger title replacement event
-          moj.Events.trigger('TitleSwitch.render', {wrap: '#popup'});
+          moj.Events.trigger('TitleSwitch.render', { wrap: '#popup' });
           // trigger postcode lookup event
-          moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
+          moj.Events.trigger('PostcodeLookup.render', { wrap: '#popup' });
           // trigger validation accessibility method
-          moj.Events.trigger('Validation.render', {wrap: '#popup'});
+          moj.Events.trigger('Validation.render', { wrap: '#popup' });
           //  If the form submitted a reuse details parameter then execute the check details
           if ($form.serialize().indexOf('reuse-details') !== -1) {
             moj.Events.trigger('FormPopup.checkReusedDetails');
           }
           // Track form errors
-          moj.Events.trigger('formErrorTracker.checkErrors', {wrap: '#popup'});
+          moj.Events.trigger('formErrorTracker.checkErrors', {
+            wrap: '#popup',
+          });
         } else {
           window.location.reload();
         }
@@ -189,9 +211,9 @@
     ajaxError: function () {
       // an error occured, reload the page
       window.location.reload();
-    }
+    },
   };
 
   // Add module to MOJ namespace
   moj.Modules.FormPopup = new FormPopup();
-}());
+})();
