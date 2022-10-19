@@ -147,11 +147,11 @@ class PingController extends AbstractRestfulController
         // OPG Gateway
 
         try {
-            $url = new Uri($this->trackMyLpaEndpoint . 'A00000000000');
+            $url = new Uri(rtrim($this->trackMyLpaEndpoint, '/') . '/healthcheck');
 
             $request = new Request('GET', $url, $headers = [
-                'Accept'        => 'application/json',
-                'Content-type'  => 'application/json'
+                'Accept' => 'application/json',
+                'Content-type'  => 'application/json',
             ]);
 
             $provider = CredentialProvider::defaultProvider();
@@ -159,15 +159,18 @@ class PingController extends AbstractRestfulController
             $signer = new SignatureV4('execute-api', 'eu-west-1');
 
             // Sign the request with an AWS Authorization header.
-            $signed_request = $signer->signRequest($request, $provider()->wait());
+            $signedRequest = $signer->signRequest($request, $provider()->wait());
 
-            $response = $this->httpClient->sendRequest($signed_request);
+            $response = $this->httpClient->sendRequest($signedRequest);
 
-            // We're looking up a non-existing LPA, thus we expect a 404.
-            if ($response->getStatusCode() === 404) {
+            // Healthcheck should return a 200 code if Sirius gateway is OK
+            if ($response->getStatusCode() === 200) {
                 $opgGateway = true;
             }
         } catch (Exception $ignore) {
+            $this->getLogger()->info(
+                "Error returned by Sirius gateway healthcheck at $url: " . $ignore->getMessage()
+            );
         }
 
         //---------------------------------------------

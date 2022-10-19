@@ -187,6 +187,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
 
     resources = [
       var.account.sirius_api_gateway_arn,
+      var.account.sirius_api_healthcheck_arn,
     ]
   }
   statement {
