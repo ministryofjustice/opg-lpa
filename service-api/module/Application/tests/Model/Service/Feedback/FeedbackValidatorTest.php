@@ -98,66 +98,60 @@ class FeedbackValidatorTest extends MockeryTestCase
         );
     }
 
-    public function testPhoneProvidedAsEmptyString(): void
+    // tests for optional fields which can be not set, set to the empty
+    // string, or must be a valid string (email if field == 'email',
+    // non-empty string otherwise etc.)
+    public function testOptionalFieldValidation(): void
     {
-        $feedbackData = [
+        $feedbackDataPristine = [
             'rating' => 'satisfied',
             'details' => 'very good',
-            'email' => '',
-            'phone' => '',
+
+            // optional fields we're testing
+            'email' => 'email@emil.com',
+            'fromPage' => '/home',
+            'agent' => 'Firefox',
+            'phone' => '0111 111 1111',
         ];
 
-        $this->assertTrue(
-            $this->sut->isValid($feedbackData),
-            'empty phone string should be allowed and not be validated'
-        );
-    }
+        // optional fields...
+        foreach (FeedbackValidator::OPTIONAL_FIELDS as $key => $fieldName) {
+            $feedbackData = array_merge($feedbackDataPristine, []);
 
-    public function testPhoneProvidedButNotString(): void
-    {
-        $feedbackData = [
-            'rating' => 'satisfied',
-            'details' => 'very good',
-            'email' => '',
-            'phone' => 32222,
-        ];
+            // ...can have an empty string in them and be ignored
+            $feedbackData[$fieldName] = '';
 
-        $this->assertFalse(
-            $this->sut->isValid($feedbackData),
-            'non-string phone number should not pass validation'
-        );
-    }
+            $this->assertTrue(
+                $this->sut->isValid($feedbackData),
+                "empty string in $fieldName should be allowed and not be validated"
+            );
 
-    public function testAgentProvidedAsEmptyString(): void
-    {
-        $feedbackData = [
-            'rating' => 'satisfied',
-            'details' => 'very good',
-            'email' => '',
-            'phone' => '',
-            'agent' => '',
-        ];
+            // ...or be null and be ignored
+            $feedbackData[$fieldName] = null;
 
-        $this->assertTrue(
-            $this->sut->isValid($feedbackData),
-            'non-empty agent string should be allowed and not be validated'
-        );
-    }
+            $this->assertTrue(
+                $this->sut->isValid($feedbackData),
+                "null in $fieldName should be allowed and not be validated"
+            );
 
-    public function testAgentProvidedButNotString(): void
-    {
-        $feedbackData = [
-            'rating' => 'satisfied',
-            'details' => 'very good',
-            'email' => '',
-            'phone' => '',
-            'agent' => 1,
-        ];
+            // ...or not be set at all and be ignored
+            unset($feedbackData[$fieldName]);
 
-        $this->assertFalse(
-            $this->sut->isValid($feedbackData),
-            'non-string agent should not pass validation'
-        );
+            $this->assertTrue(
+                $this->sut->isValid($feedbackData),
+                "not set $fieldName should be allowed and not be validated"
+            );
+
+            // ...or will fail validation if they have a non-valid value
+            // (for our purposes here, we use an array, as none of these fields
+            // should accept an array)
+            $feedbackData[$fieldName] = [];
+
+            $this->assertFalse(
+                $this->sut->isValid($feedbackData),
+                "$fieldName has a non-valid value and validation should fail"
+            );
+        }
     }
 
     public function testValid(): void

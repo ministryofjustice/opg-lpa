@@ -63,6 +63,10 @@ class FeedbackValidator
             $validators['agent'] = new StringLengthValidator(['min' => 1]);
         }
 
+        if (!isset($validators['fromPage'])) {
+            $validators['fromPage'] = new StringLengthValidator(['min' => 1]);
+        }
+
         $this->validators = $validators;
     }
 
@@ -83,16 +87,19 @@ class FeedbackValidator
 
         // remove any optional fields which are not set or contain an empty string
         foreach (self::OPTIONAL_FIELDS as $_ => $fieldName) {
-            if (!isset($feedbackData[$fieldName]) || "${feedbackData[$fieldName]}" === '') {
+            if (!isset($feedbackData[$fieldName]) || $feedbackData[$fieldName] === '') {
                 unset($feedbackData[$fieldName]);
             }
         }
 
         // validate any remaining fields
         $valid = true;
+
         foreach ($feedbackData as $fieldName => $value) {
-            if (!$this->validators[$fieldName]->isValid($value)) {
-                $valid = false;
+            $valid = isset($this->validators[$fieldName]) &&
+                $this->validators[$fieldName]->isValid($value);
+
+            if (!$valid) {
                 break;
             }
         }
