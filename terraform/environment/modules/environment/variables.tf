@@ -17,7 +17,6 @@ variable "lambda_container_version" {
 variable "account" {
   type = object({
     dr_enabled                             = bool
-    use_postgres13                         = bool
     performance_platform_enabled           = bool
     pagerduty_service_name                 = string
     account_id                             = string
@@ -30,7 +29,6 @@ variable "account" {
     auth_token_ttl_secs                    = number
     skip_final_snapshot                    = bool
     psql_engine_version                    = string
-    psql_parameter_group_family            = string
     psql13_parameter_group_family          = string
     aurora_enabled                         = bool
     aurora_serverless                      = bool
