@@ -135,6 +135,10 @@ return [
 
     'processing-status' => [
         'track-from-date' => getenv('OPG_LPA_API_TRACK_FROM_DATE') ?: '2019-04-01',
-        'endpoint' => getenv('OPG_LPA_PROCESSING_STATUS_ENDPOINT'),
+
+        // should be in form https://<domain>:<port>/<api version>;
+        // this is a temporary fix so that our code works with existing environment variable settings
+        // without needing to be modified - just strip the specific path from the end of the URI
+        'endpoint' => str_replace('/lpa-online-tool/lpas/', '', getenv('OPG_LPA_PROCESSING_STATUS_ENDPOINT')),
     ]
 ];
