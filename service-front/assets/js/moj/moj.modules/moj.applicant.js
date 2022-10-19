@@ -1,4 +1,3 @@
-/* globals $ */
 // Dependencies: moj, jQuery
 (function () {
   'use strict'

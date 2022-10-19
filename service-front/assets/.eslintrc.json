@@ -9,12 +9,23 @@
     "browser": true
   },
 
+  "globals": {
+    "_": "readonly",
+    "GOVUK": "readonly",
+    "moj": "readonly",
+    "jQuery": "readonly",
+    "gaConfig": "readonly",
+    "ga": "readonly",
+    "_gaq": "readonly",
+    "lpa": "readonly",
+    "$": "readonly"
+  },
+
   "extends": ["plugin:prettier/recommended", "eslint:recommended"],
 
   "ignorePatterns": ["js/opg/env-vars.template.js", "js/lpa/lpa.templates.js"],
 
   "rules": {
-    "no-undef": "off",
     "prettier/prettier": "off"
   }
 }
