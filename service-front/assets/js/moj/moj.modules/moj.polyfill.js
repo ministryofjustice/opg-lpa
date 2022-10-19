@@ -1,4 +1,3 @@
-/* globals $ */
 // <details> polyfill
 // http://caniuse.com/#feat=details
 // FF Support for HTML5's <details> and <summary>

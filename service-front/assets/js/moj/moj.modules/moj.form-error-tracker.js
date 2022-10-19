@@ -1,4 +1,3 @@
-/* globals $ */
 // Analytics form error tracking module for LPA
 // Dependencies: moj, jQuery
 (function () {
