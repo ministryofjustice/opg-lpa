@@ -15,9 +15,14 @@ class FeedbackValidatorTest extends MockeryTestCase
         $this->sut = new FeedbackValidator();
     }
 
-    public function testRatingNotSet(): void
+    public function testNoData(): void
     {
         $this->assertFalse($this->sut->isValid([]));
+    }
+
+    public function testRatingNotSet(): void
+    {
+        $this->assertFalse($this->sut->isValid(['details' => 'foo']));
     }
 
     public function testRatingOutsideValidRange(): void
