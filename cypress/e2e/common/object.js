@@ -1,4 +1,4 @@
-import { And } from "@badeball/cypress-cucumber-preprocessor";
+import { And } from '@badeball/cypress-cucumber-preprocessor';
 
 /**
  * Set up expectations that an object stored in the testStore
@@ -16,26 +16,26 @@ import { And } from "@badeball/cypress-cucumber-preprocessor";
  *     the object
  */
 And('the object {string} should have these properties:', (key, dataTable) => {
-    // this can only run after setting a key in the testStore
-    cy.task('getValue', key).then((obj) => {
-        let rows = dataTable.rawTable;
+  // this can only run after setting a key in the testStore
+  cy.task('getValue', key).then((obj) => {
+    let rows = dataTable.rawTable;
 
-        for (let index in rows) {
-            let row = rows[index];
-            let name = row[0];
-            let value = row[1];
+    for (let index in rows) {
+      let row = rows[index];
+      let name = row[0];
+      let value = row[1];
 
-            // we do some basic type conversion here so we can cope with booleans,
-            // numbers and strings
-            value = (value === 'true') ? true : value;
-            value = (value === 'false') ? false : value;
+      // we do some basic type conversion here so we can cope with booleans,
+      // numbers and strings
+      value = value === 'true' ? true : value;
+      value = value === 'false' ? false : value;
 
-            let potentialFloat = parseFloat(value);
-            if (!isNaN(potentialFloat)) {
-                value = potentialFloat;
-            }
+      let potentialFloat = parseFloat(value);
+      if (!isNaN(potentialFloat)) {
+        value = potentialFloat;
+      }
 
-            expect(obj).to.have.nested.property(name, value);
-        }
-    })
+      expect(obj).to.have.nested.property(name, value);
+    }
+  });
 });
