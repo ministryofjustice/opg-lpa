@@ -68,7 +68,7 @@ class FeedbackServiceTest extends AbstractServiceTest
 
     public function testAddValidationFails()
     {
-        $data = [];
+        $data = ['details' => 'looks great'];
 
         $this->feedbackValidator->shouldReceive('isValid')->with($data)->andReturn(false);
 
