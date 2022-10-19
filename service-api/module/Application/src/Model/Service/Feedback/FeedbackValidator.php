@@ -35,6 +35,14 @@ class FeedbackValidator
 
     private array $validators = [];
 
+    /**
+     * Constructor
+     *
+     * @param array $validators Validators to apply to fields;
+     *     keys are field names, values are Laminas\Validator
+     *     instances. If a validator is not set for a field,
+     *     a default is used.
+     */
     public function __construct(array $validators = [])
     {
         if (!isset($validators['rating'])) {
@@ -75,8 +83,12 @@ class FeedbackValidator
      *
      * Other fields, if present, are validated to ensure they
      * have the correct data types.
+     *
+     * @param array $feedbackData Data to be validated; fieldnames
+     *    outside of MANDATORY_FIELDS + OPTIONAL_FIELDS are ignored
+     * @return bool true if valid, else false
      */
-    public function isValid(array $feedbackData, $debug = false): bool
+    public function isValid(array $feedbackData): bool
     {
         // force any empty mandatory fields to null
         foreach (self::MANDATORY_FIELDS as $_ => $fieldName) {
