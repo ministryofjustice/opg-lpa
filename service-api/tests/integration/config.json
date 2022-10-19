@@ -5,6 +5,6 @@
         "dbname": "lpadb",
         "username": "lpauser",
         "password": "lpapass",
-        "port": 5432
+        "port": 5434
     }
 }
