@@ -8,6 +8,18 @@ use Laminas\Validator\StringLength as StringLengthValidator;
 
 class FeedbackValidator
 {
+    public const MANDATORY_FIELDS = [
+        'rating',
+        'details'
+    ];
+
+    public const OPTIONAL_FIELDS = [
+        'agent',
+        'fromPage',
+        'email',
+        'phone'
+    ];
+
     // matches service-front FeedbackForm.php radio button values,
     // which are not centrally stored anywhere, so replicated here
     /** @var array */
@@ -43,6 +55,10 @@ class FeedbackValidator
             $validators['email'] = new EmailAddressValidator();
         }
 
+        if (!isset($validators['phone'])) {
+            $validators['phone'] = new StringLengthValidator(['min' => 1]);
+        }
+
         $this->validators = $validators;
     }
 
@@ -54,34 +70,29 @@ class FeedbackValidator
      * Other fields, if present, are validated to ensure they
      * have the correct data types.
      */
-    public function isValid(array $feedbackData): bool
+    public function isValid(array $feedbackData, $debug = false): bool
     {
-        if (!isset($feedbackData['rating'])) {
-            return false;
+        // force any empty mandatory fields to null
+        foreach (self::MANDATORY_FIELDS as $_ => $fieldName) {
+            $feedbackData[$fieldName] ??= null;
         }
 
-        if (!$this->validators['rating']->isValid($feedbackData['rating'])) {
-            return false;
+        // remove any optional fields which are empty or null
+        foreach (self::OPTIONAL_FIELDS as $_ => $fieldName) {
+            if (!isset($feedbackData[$fieldName]) || "${feedbackData[$fieldName]}" === '') {
+                unset($feedbackData[$fieldName]);
+            }
         }
 
-        if (!isset($feedbackData['details'])) {
-            return false;
+        // validate any remaining fields
+        $valid = true;
+        foreach ($feedbackData as $fieldName => $value) {
+            if (!$this->validators[$fieldName]->isValid($value)) {
+                $valid = false;
+                break;
+            }
         }
 
-        if (!$this->validators['details']->isValid($feedbackData['details'])) {
-            return false;
-        }
-
-        // email is allowed to be a zero-length string; if not a zero-length
-        // string, it must look like an email address
-        if (
-            isset($feedbackData['email']) &&
-            strlen($feedbackData['email']) > 0 &&
-            !$this->validators['email']->isValid($feedbackData['email'])
-        ) {
-            return false;
-        }
-
-        return true;
+        return $valid;
     }
 }

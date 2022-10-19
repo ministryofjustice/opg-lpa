@@ -124,7 +124,7 @@ class FeedbackValidatorTest extends MockeryTestCase
 
         $this->assertFalse(
             $this->sut->isValid($feedbackData),
-            'empty phone string should be allowed and not be validated'
+            'non-string phone number should not pass validation'
         );
     }
 
