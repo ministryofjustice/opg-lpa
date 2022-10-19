@@ -9,10 +9,17 @@
     "browser": true
   },
 
+  "globals": {
+    "cy": "readonly",
+    "Cypress": "readonly",
+    "require": "readonly",
+    "expect": "readonly",
+    "assert": "readonly"
+  },
+
   "extends": ["plugin:prettier/recommended", "eslint:recommended"],
 
   "rules": {
-    "no-undef": "off",
     "prettier/prettier": "off"
   }
 }

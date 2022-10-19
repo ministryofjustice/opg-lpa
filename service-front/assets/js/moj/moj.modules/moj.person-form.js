@@ -1,4 +1,3 @@
-/* globals _, $ */
 // Person Form module for LPA
 // Dependencies: moj, _, jQuery
 (function () {

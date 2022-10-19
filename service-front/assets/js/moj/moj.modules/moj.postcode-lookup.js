@@ -1,4 +1,3 @@
-/* globals _, $ */
 // Postcode lookup module for LPA
 // Dependencies: moj, _, jQuery
 (function () {
@@ -67,7 +66,7 @@
       this.$wrap.find('.js-PostcodeLookup__change').closest('div').removeClass('hidden')
     },
 
-    changeClicked: function (e) {
+    changeClicked: function () {
       this.$wrap.find('.js-PostcodeLookup__change').closest('div').addClass('hidden')
       this.$wrap.find('.js-PostcodeLookup__search').removeClass('hidden')
       if (moj.Helpers.hasCleanFields(this.$postalFields) && !$('.error-summary').length) {
@@ -102,7 +101,7 @@
       return false
     },
 
-    toggleClicked: function (e) {
+    toggleClicked: function () {
       this.toggleAddress()
       return false
     },

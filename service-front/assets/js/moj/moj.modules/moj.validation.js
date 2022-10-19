@@ -1,4 +1,3 @@
-/* globals _, $ */
 // Validation module for LPA
 // Dependencies: moj, _, jQuery
 (function () {
