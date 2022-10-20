@@ -91,12 +91,12 @@ class FeedbackValidator
     public function isValid(array $feedbackData): bool
     {
         // force any empty mandatory fields to null
-        foreach (self::MANDATORY_FIELDS as $_ => $fieldName) {
+        foreach (self::MANDATORY_FIELDS as $fieldName) {
             $feedbackData[$fieldName] ??= null;
         }
 
         // remove any optional fields which are not set or contain an empty string
-        foreach (self::OPTIONAL_FIELDS as $_ => $fieldName) {
+        foreach (self::OPTIONAL_FIELDS as $fieldName) {
             if (!isset($feedbackData[$fieldName]) || $feedbackData[$fieldName] === '') {
                 unset($feedbackData[$fieldName]);
             }
@@ -105,9 +105,9 @@ class FeedbackValidator
         // validate any remaining fields
         $valid = true;
 
-        foreach ($feedbackData as $fieldName => $value) {
+        foreach ($feedbackData as $fieldName => $fieldValue) {
             $valid = isset($this->validators[$fieldName]) &&
-                $this->validators[$fieldName]->isValid($value);
+                $this->validators[$fieldName]->isValid($fieldValue);
 
             if (!$valid) {
                 break;
