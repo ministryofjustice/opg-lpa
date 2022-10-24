@@ -51,9 +51,12 @@ return [
     ],
 
     'pdf' => [
+        // Appended to the LPA JSON string before hashing to produce unique docId;
+        // should be set to the git commit ID or similar property which uniquely
+        // identifies the running version of the application
+        'docIdSuffix' => getenv('OPG_LPA_COMMON_APP_VERSION') ?: null,
 
         'cache' => [
-
             's3' => [
                 'settings' => [
                     'Bucket' => getenv('OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET') ?: null,

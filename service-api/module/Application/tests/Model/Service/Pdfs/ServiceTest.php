@@ -16,15 +16,17 @@ use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
 use Laminas\Crypt\BlockCipher;
 use Laminas\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
+use hash;
 
 class ServiceTest extends AbstractServiceTest
 {
     private $config = [
         'pdf' => [
+            'docIdSuffix' => 'MrFoo',
             'cache' => [
                 's3' => [
                     'settings' => [
-                        'Bucket' => null
+                        'Bucket' => 's3bucketname'
                     ],
                     'client' => [
                         'version' => '2006-03-01',
@@ -92,8 +94,14 @@ class ServiceTest extends AbstractServiceTest
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(400, $validationError->getStatus());
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
+        $this->assertEquals(
+            'Your request could not be processed due to validation error',
+            $validationError->getDetail()
+        );
+        $this->assertEquals(
+            'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
+            $validationError->getType()
+        );
         $this->assertEquals('Bad Request', $validationError->getTitle());
         $validation = $validationError->validation;
         $this->assertEquals(1, count($validation));
@@ -115,9 +123,9 @@ class ServiceTest extends AbstractServiceTest
         $data = $service->fetch($lpa->getId(), 'lpa120');
 
         $this->assertEquals([
-            'type'     => 'lpa120',
+            'type' => 'lpa120',
             'complete' => false,
-            'status'   => Service::STATUS_NOT_AVAILABLE
+            'status' => Service::STATUS_NOT_AVAILABLE
         ], $data);
 
         $serviceBuilder->verify();
@@ -137,9 +145,9 @@ class ServiceTest extends AbstractServiceTest
         $data = $service->fetch($lpa->getId(), 'lp3');
 
         $this->assertEquals([
-            'type'     => 'lp3',
+            'type' => 'lp3',
             'complete' => false,
-            'status'   => Service::STATUS_NOT_AVAILABLE
+            'status' => Service::STATUS_NOT_AVAILABLE
         ], $data);
 
         $serviceBuilder->verify();
@@ -168,9 +176,9 @@ class ServiceTest extends AbstractServiceTest
         $data = $service->fetch($lpa->getId(), 'lp1');
 
         $this->assertEquals([
-            'type'     => 'lp1',
+            'type' => 'lp1',
             'complete' => true,
-            'status'   => Service::STATUS_IN_QUEUE
+            'status' => Service::STATUS_IN_QUEUE
         ], $data);
 
         $serviceBuilder->verify();
@@ -198,9 +206,9 @@ class ServiceTest extends AbstractServiceTest
         $data = $service->fetch($lpa->getId(), 'lp1');
 
         $this->assertEquals([
-            'type'     => 'lp1',
+            'type' => 'lp1',
             'complete' => true,
-            'status'   => Service::STATUS_READY
+            'status' => Service::STATUS_READY
         ], $data);
 
         $serviceBuilder->verify();
@@ -229,14 +237,14 @@ class ServiceTest extends AbstractServiceTest
         $data = $service->fetch($lpa->getId(), 'lp1');
 
         $this->assertEquals([
-            'type'     => 'lp1',
+            'type' => 'lp1',
             'complete' => true,
-            'status'   => Service::STATUS_IN_QUEUE
+            'status' => Service::STATUS_IN_QUEUE
         ], $data);
 
         $serviceBuilder->verify();
     }
-    
+
     public function testFetchLpa120PdfNotAvailable()
     {
         $lpa = FixturesData::getHwLpa();
@@ -279,7 +287,17 @@ class ServiceTest extends AbstractServiceTest
         $s3ResultBody->shouldReceive('getContents')->andReturn($encryptedData)->once();
         $s3Result = new Result();
         $s3Result['Body'] = $s3ResultBody;
-        $s3Client->shouldReceive('getObject')->andReturn($s3Result)->once();
+
+        $expectedKey = 'lp1-' . hash(
+            'md5',
+            $lpa->toJson() . $this->config['pdf']['docIdSuffix']
+        );
+
+        $expectedClientSettings = $this->config['pdf']['cache']['s3']['settings'] + ['Key' => $expectedKey];
+
+        $s3Client->shouldReceive('getObject')
+            ->with($expectedClientSettings)
+            ->andReturn($s3Result)->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder

@@ -145,14 +145,18 @@ class DownloadController extends AbstractLpaController
      */
     private function pdfIsReady($lpaId, $pdfType)
     {
-        $details = $this->getLpaApplicationService()
-                        ->getPdf($lpaId, $pdfType);
+        $result = $this->getLpaApplicationService()
+                    ->getPdf($lpaId, $pdfType);
 
-        $this->getLogger()->info('PDF status is ' . $details['status'], [
+        $this->getLogger()->info('PDF status is ' . $result['status'], [
             'lpaId' => $lpaId,
         ]);
 
-        return ($details['status'] === 'ready');
+        if (!is_array($result)) {
+            return $result;
+        }
+
+        return ($result['status'] === 'ready');
     }
 
     /**

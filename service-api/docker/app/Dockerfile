@@ -37,6 +37,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
+ARG OPG_LPA_COMMON_APP_VERSION
+ENV OPG_LPA_COMMON_APP_VERSION=${OPG_LPA_COMMON_APP_VERSION}
+
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
 
