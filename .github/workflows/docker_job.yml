@@ -148,6 +148,8 @@ jobs:
           file: ${{ matrix.service_path }}/Dockerfile
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+          build-args: |
+            OPG_LPA_COMMON_APP_VERSION=${{ github.sha }}
 
       - name: Move cache
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
@@ -205,4 +207,4 @@ jobs:
             python aws_ecr_scan_results.py  --search ${ECR_REGISTRY_ALIAS} \
                                            --tag ${IMAGE_TAG} \
                                            --slack_channel C01BKBWGWTY \
-                                           --slack_token ${{ secrets.SLACK_BOT_TOKEN }}                           
+                                           --slack_token ${{ secrets.SLACK_BOT_TOKEN }}

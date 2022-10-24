@@ -16,6 +16,9 @@ ADMIN_USERS := "seeded_test_user@digital.justice.gov.uk"
 
 COMPOSER_VERSION := "2.4.1"
 
+# Unique identifier for this version of the application
+APP_VERSION := $(shell echo -n `git rev-parse --short HEAD`)
+
 .PHONY: all
 all:
 	@${MAKE} dc-up
@@ -52,6 +55,7 @@ dc-up: run-composers
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	aws-vault exec moj-lpa-dev -- aws ecr get-login-password --region eu-west-1 | docker login \
 		--username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
 	docker-compose up
@@ -87,7 +91,6 @@ dc-build-clean:
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
 	rm -fr ./service-pdf/vendor; \
-	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache
 
 # standard reset only the front app container - useful for quick reset when only been working on front component
@@ -98,7 +101,6 @@ reset-front:
 	@${MAKE} dc-down
 	@docker system prune -f --volumes; \
 	docker rmi lpa-front-app || true; \
-	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	docker-compose build --no-cache front-app
 
 # hard reset only the front app container - cleaning up vendor folders too, useful when changing versions of deps
@@ -111,7 +113,6 @@ hard-reset-front:
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
-	if [ "`docker network ls | grep malpadev`" = "" ] ; then docker network create malpadev ; fi; \
 	docker-compose build --no-cache front-app
 
 .PHONY: soft-reset-front
