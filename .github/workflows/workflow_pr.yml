@@ -33,9 +33,9 @@ permissions:
 
 jobs:
   workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@7dbf85fb133f6f241ce93f99850c780bfede7e9c # pin@v1.10.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
   branch_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@7dbf85fb133f6f241ce93f99850c780bfede7e9c # pin@v1.10.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
 
   image_tag:
     name: Generate image tags
@@ -49,7 +49,7 @@ jobs:
 
   terraform_lint:
     name: TF - Lint
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@7dbf85fb133f6f241ce93f99850c780bfede7e9c # pin@v1.10.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     with:
       terraform_version: 1.1.2
 
@@ -66,7 +66,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@7dbf85fb133f6f241ce93f99850c780bfede7e9c # pin@v1.10.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -87,7 +87,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@7dbf85fb133f6f241ce93f99850c780bfede7e9c # pin@v1.10.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -108,7 +108,7 @@ jobs:
 
   terraform_email_development:
     name: TF Development - Email
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@7dbf85fb133f6f241ce93f99850c780bfede7e9c # pin@v1.10.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -129,7 +129,7 @@ jobs:
 
   terraform_environment_development:
     name: TF Development - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@7dbf85fb133f6f241ce93f99850c780bfede7e9c # pin@v1.10.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs:
       - docker_build_scan_push
       - workspace_name
