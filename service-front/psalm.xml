@@ -8,7 +8,6 @@
 >
     <projectFiles>
         <directory name="module/Application/src" />
-        <directory name="../shared/logging/module/MakeLogger/src/" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>
