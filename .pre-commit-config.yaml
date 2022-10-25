@@ -18,16 +18,9 @@ repos:
     rev: 1.4.0
     hooks:
     - id: php-lint-all
-    - id: php-cs
-      files: \.(php)$
-      args: [--standard=PSR12 -p]
     - id: php-cbf
       files: \.(php)$
       args: [--standard=PSR12 -p]
-    - id: php-stan
-      files: \.(php)$
-      args: [--memory-limit=1024M]
-    - id: php-cs-fixer
   - repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:
