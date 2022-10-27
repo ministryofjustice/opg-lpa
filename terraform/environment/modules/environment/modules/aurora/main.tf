@@ -127,7 +127,7 @@ resource "aws_rds_cluster_parameter_group" "postgres-aurora-params" {
   parameter {
     name         = "log_statement"
     value        = "none"
-    apply_method = "pending-reboot"
+    apply_method = "immediate"
   }
 
   parameter {

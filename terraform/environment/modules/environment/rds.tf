@@ -115,7 +115,7 @@ resource "aws_db_parameter_group" "postgres13-db-params" {
   parameter {
     name         = "log_statement"
     value        = "none"
-    apply_method = "pending-reboot"
+    apply_method = "immediate"
   }
 
 
