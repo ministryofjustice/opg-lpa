@@ -135,6 +135,8 @@ abstract class AbstractServiceBuilder
         if ($this->logger === null) {
             $this->logger = Mockery::mock(Logger::class);
             $this->logger->shouldReceive('info');
+            $this->logger->shouldReceive('debug');
+            $this->logger->shouldReceive('err');
         }
 
         /** @var AbstractService $service */

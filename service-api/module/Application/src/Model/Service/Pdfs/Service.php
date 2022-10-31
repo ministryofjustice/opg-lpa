@@ -19,10 +19,17 @@ class Service extends AbstractService
     /**
      * PDF status constants
      */
-    const STATUS_NOT_AVAILABLE   = 'not-available';  // PDF cannot be generated as we do not have all teh data.
-    const STATUS_NOT_QUEUED      = 'not-in-queue';   // The LPA is not in the PDF queue.
-    const STATUS_IN_QUEUE        = 'in-queue';       // The LPA is in the PDF queue.
-    const STATUS_READY           = 'ready';          // THe PDF is available for immediate download.
+    // PDF cannot be generated as we do not have all the data
+    public const STATUS_NOT_AVAILABLE = 'not-available';
+
+    // The LPA is not in the PDF queue
+    public const STATUS_NOT_QUEUED = 'not-in-queue';
+
+    // The LPA is in the PDF queue
+    public const STATUS_IN_QUEUE = 'in-queue';
+
+    // THe PDF is available for immediate download
+    public const STATUS_READY = 'ready';
 
     /**
      * @var array
@@ -78,7 +85,8 @@ class Service extends AbstractService
             return $details;
         }
 
-        //  If they've added '.pdf' onto the end of the type they want to download the file - create array including '.pdf'...
+        // If they've added '.pdf' onto the end of the type they want to
+        // download the file - create array including '.pdf'...
         $typesWithExtention = array_map(function ($v) {
             return "{$v}.pdf";
         }, $this->pdfTypes);
@@ -157,13 +165,14 @@ class Service extends AbstractService
 
             // If we get here it exists in the bucket...
             return self::STATUS_READY;
-        } catch (\Aws\S3\Exception\S3Exception $ignore) {}
+        } catch (\Aws\S3\Exception\S3Exception $ignore) {
+            $this->getLogger()->err('Exception while attempting to get PDF info from S3');
+        }
 
         /*
          * Technically with SQS we have no way of knowing if a PDF is in the queue, but with
          * fifo duplication detection, we can assume it's not and attempt to re-submit it.
          */
-
         return self::STATUS_NOT_QUEUED;
     }
 
@@ -184,8 +193,6 @@ class Service extends AbstractService
         $message = (new Compress('Gz'))->filter($message);
 
         $jobId = $this->getPdfIdent($lpa, $type);
-
-        //---
 
         if (!isset($this->pdfConfig['queue']['sqs']['settings']['url'])) {
             throw new \Exception('SQS URL not configured');
@@ -228,6 +235,11 @@ class Service extends AbstractService
 
     /**
      * Generates a unique identifier the represents the LPA data and type of form ( lp1, lp3, etc. ).
+     * This is used as the key for the LPA form in the S3 bucket.
+     * The docIdSuffix is a unique identifier for this version of the application,
+     * meaning that whenever we update the application, we implicitly flush
+     * the cache; any PDFs in the cache for old versions of the app will expire after
+     * 24 hours and be cleaned up by the S3 bucket itself.
      *
      * @param Lpa $lpa
      * @param $type
@@ -235,11 +247,14 @@ class Service extends AbstractService
      */
     private function getPdfIdent(Lpa $lpa, $type)
     {
-        // A date is included as a fail-safe to ensure stale documents aren't returned.
-        // The date rolls over at 3am to minimise disruption (PDF generation taking slightly longer).
+        $docIdSuffix = '';
+        if (isset($this->pdfConfig['docIdSuffix'])) {
+            $docIdSuffix = $this->pdfConfig['docIdSuffix'];
+        }
+
         $hash = hash(
             'md5',
-            $lpa->toJson() . date('Y-m-d', strtotime('-3 hours'))
+            $lpa->toJson() . $docIdSuffix
         );
 
         return strtolower("{$type}-{$hash}");

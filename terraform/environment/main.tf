@@ -66,19 +66,19 @@ module "cross_region_backup" {
 
 }
 
-output "admin-domain" {
+output "admin_domain" {
   value = module.environment_dns.admin_domain
 }
 
-output "front-domain" {
+output "front_domain" {
   value = module.environment_dns.front_domain
 }
 
-output "front-fqdn" {
+output "front_fqdn" {
   value = module.environment_dns.front_fqdn
 }
 
-output "admin-fqdn" {
+output "admin_fqdn" {
   value = module.environment_dns.admin_fqdn
 }
 
