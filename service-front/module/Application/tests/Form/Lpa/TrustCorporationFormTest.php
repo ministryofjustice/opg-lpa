@@ -13,7 +13,7 @@ class TrustCorporationFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->setUpForm(new TrustCorporationForm());
     }
@@ -68,11 +68,9 @@ class TrustCorporationFormTest extends MockeryTestCase
         $this->assertEquals([
             'name' => [
                 0 => 'cannot-be-blank',
-                1 => 'must-be-greater-than-or-equal:1'
             ],
             'number' => [
                 0 => 'cannot-be-blank',
-                1 => 'must-be-greater-than-or-equal:1'
             ],
             'email-address' => [
                 0 => 'invalid-email-address'
