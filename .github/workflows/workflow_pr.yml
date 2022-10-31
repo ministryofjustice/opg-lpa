@@ -33,9 +33,9 @@ permissions:
 
 jobs:
   workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
   branch_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
 
   image_tag:
     name: Generate image tags
@@ -45,11 +45,11 @@ jobs:
     steps:
       - name: Set output to short SHA
         id: short_sha
-        run: echo "::set-output name=short_sha::${GITHUB_SHA::7}"
+        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
   terraform_lint:
     name: TF - Lint
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     with:
       terraform_version: 1.1.2
 
@@ -66,7 +66,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -87,7 +87,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -108,7 +108,7 @@ jobs:
 
   terraform_email_development:
     name: TF Development - Email
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -129,7 +129,7 @@ jobs:
 
   terraform_environment_development:
     name: TF Development - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs:
       - docker_build_scan_push
       - workspace_name
@@ -212,19 +212,38 @@ jobs:
       - terraform_environment_development
       - run_dev_feedback_db_task
     outputs:
-      terraform_output_as_json: ${{ steps.terraform_outputs.outputs.terraform_output_as_json }}
+      admin_fqdn: ${{ steps.admin_fqdn.outputs.value }}
+      front_fqdn: ${{ steps.front_fqdn.outputs.value }}
     steps:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
 
-      - name: Terraform Outputs from JSON 
-        id: terraform_outputs
+      - name: Download Terraform Task definition
+        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
+        with:
+          name: terraform-artifact
+          path: /tmp/
+      
+      - name: Set environment variable
+        id: set_var
         run: |
-          JSON=${{ needs.terraform_environment_development.outputs.terraform_output_as_json }}
-          JSON="${JSON//$'\n'/''}"
-          JSON="${JSON//$'\r'/''}"
-          JSON="${JSON//$'\s+'/''}"
-          echo "::set-output name=terraform_output_as_json::$JSON"
+          content=$(cat /tmp/environment_pipeline_tasks_config.json)
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          echo "configJson=${content}" >> $GITHUB_OUTPUT
+
+      - name: Extract Admin FQDN from JSON
+        id: admin_fqdn
+        env:
+          configJson: ${{steps.set_var.outputs.configJson}}
+        run: |
+          echo "value=${{ fromJson(env.configJson).admin_fqdn }}" >> $GITHUB_OUTPUT
+
+      - name: Extract Front FQDN from JSON
+        id: front_fqdn
+        run: |
+          echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
 
   post_deployment_slack_msg:
     name: Post-Deployment Slack message
@@ -234,6 +253,9 @@ jobs:
     needs: 
       - terraform_outputs
       - image_tag
+    env:
+      FRONT_URL: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
+      ADMIN_URL: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
       id: slack
@@ -284,7 +306,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Front URL:* https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}\n*Admin URL:* https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}"
+                    "text": "*Front URL:* ${{ env.FRONT_URL }}\n*Admin URL:* ${{ env.ADMIN_URL }}"
                   }
                 }
 
@@ -299,8 +321,8 @@ jobs:
     needs:
       - terraform_outputs
     with:
-      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,@StitchedPF"
     secrets: inherit
@@ -311,8 +333,8 @@ jobs:
     needs:
       - terraform_outputs
     with:
-      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,@StitchedHW"
     secrets: inherit
@@ -323,8 +345,8 @@ jobs:
     needs:
       - terraform_outputs
     with:
-      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,@StitchedClone"
     secrets: inherit
@@ -335,8 +357,8 @@ jobs:
     needs:
       - terraform_outputs
     with:
-      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@SignupIncluded"
     secrets: inherit
@@ -349,8 +371,8 @@ jobs:
     needs:
       - terraform_outputs
     with:
-      admin_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-      front_url: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
     secrets: inherit
@@ -367,6 +389,9 @@ jobs:
       - cypress_tests_Signup_StichedClone
       - cypress_tests_Signup_StichedHW
       - cypress_tests_Signup_StichedPF
+    env:
+      FRONT_URL: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
+      ADMIN_URL: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
       with:
@@ -417,7 +442,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Front URL:* https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}\n*Admin URL:* https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}"
+                     "text": "*Front URL:* https://${{ env.FRONT_URL }}\n*Admin URL:* https://${{ env.ADMIN_URL }}"
                   }
                 }
 
@@ -442,10 +467,12 @@ jobs:
       - image_tag
     environment:
       name: "dev_${{ needs.workspace_name.outputs.name }}"
-      url: "https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}/home"
+      url: "https://${{ env.FRONT_URL }}/home"
+    env:
+      FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
     steps:
       - name: End of PR Workflow
         run: |
           echo "${{ needs.workspace_name.outputs.name }} PR environment tested, built and deployed"
           echo "Tag Deployed: ${{ needs.image_tag.outputs.short_sha }}"
-          echo "URL: https://${{ fromJson(needs.terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}/home"
+          echo "URL: https://${{ env.FRONT_URL }}/home"

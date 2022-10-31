@@ -40,7 +40,7 @@ jobs:
     steps:
       - name: Set output to short SHA
         id: short_sha
-        run: echo "::set-output name=short_sha::${GITHUB_SHA::7}"
+        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
@@ -54,7 +54,7 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: preproduction
@@ -70,7 +70,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: preproduction
@@ -86,7 +86,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: preproduction
@@ -119,21 +119,41 @@ jobs:
     name: Render terraform outputs
     runs-on: ubuntu-latest
     outputs:
-      terraform_output_as_json: ${{ steps.terraform_outputs.outputs.terraform_output_as_json }}
+      admin_fqdn: ${{ steps.admin_fqdn.outputs.value }}
+      front_fqdn: ${{ steps.front_fqdn.outputs.value }}
     needs:
       - terraform_environment_preproduction
     steps:
     - name: Checkout
       uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
 
+    - name: Download Terraform Task definition
+      uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
+      with:
+        name: terraform-artifact
+        path: /tmp/
+
     - name: Terraform Outputs from JSON
-      id: terraform_outputs
+      id: set_var
       run: |
-        JSON=${{ needs.terraform_environment_preproduction.outputs.terraform_output_as_json }}
-        JSON="${JSON//$'\n'/''}"
-        JSON="${JSON//$'\r'/''}"
-        JSON="${JSON//$'\s+'/''}"
-        echo "::set-output name=terraform_output_as_json::$JSON"
+        content=$(cat /tmp/environment_pipeline_tasks_config.json)
+        content="${content//'%'/'%25'}"
+        content="${content//$'\n'/'%0A'}"
+        content="${content//$'\r'/'%0D'}"
+        echo "configJson=${content}" >> $GITHUB_OUTPUT
+
+    - name: Extract Admin FQDN from JSON
+      id: admin_fqdn
+      env:
+        configJson: ${{steps.set_var.outputs.configJson}}
+      run: |
+        echo "value=${{ fromJson(env.configJson).admin_fqdn }}" >> $GITHUB_OUTPUT
+
+    - name: Extract Front FQDN from JSON
+      id: front_fqdn
+      run: |
+        echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
+
 
   cypress_tests_Signup_StichedPF:
     name: Run Cypress tests - @Signup,@StitchedPF
@@ -141,8 +161,8 @@ jobs:
     needs:
       - preprod_terraform_outputs
     with:
-      admin_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-      front_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@Signup,@StitchedPF"
     secrets: inherit
@@ -153,8 +173,8 @@ jobs:
     needs:
       - preprod_terraform_outputs
     with:
-      admin_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-      front_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@Signup,@StitchedHW"
     secrets: inherit
@@ -165,8 +185,8 @@ jobs:
     needs:
       - preprod_terraform_outputs
     with:
-      admin_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-      front_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@SignupIncluded"
     secrets: inherit
@@ -179,8 +199,8 @@ jobs:
     needs:
       - preprod_terraform_outputs
     with:
-      admin_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).admin-fqdn.value }}
-      front_url: https://${{ fromJson(needs.preprod_terraform_outputs.outputs.terraform_output_as_json).front-fqdn.value }}
+      admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
     secrets: inherit
@@ -247,7 +267,7 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs: 
       - slack_msg_production_deploy_begin
     with:
@@ -265,7 +285,7 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs: 
       - slack_msg_production_deploy_begin
     with:
@@ -283,7 +303,7 @@ jobs:
   
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@da7e79760d7dcc16fe5c7efe8fe3674a8d55e420 # pin@v1.9.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: production
@@ -345,9 +365,9 @@ jobs:
         id: smoke_tests
         run: |
           if python scripts/pipeline/healthcheck_test/healthcheck_test.py; then
-            echo "::set-output name=smoke_test_status::passed"
+            echo "smoke_test_status=passed" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=smoke_test_status::failed"
+            echo "smoke_test_status=failed" >> $GITHUB_OUTPUT
           fi
 
   slack_msg_production_deployed:
@@ -393,7 +413,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:* <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
                     }
                   ]
                 },
@@ -443,7 +463,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:* <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
                     }
                   ]
                 },
