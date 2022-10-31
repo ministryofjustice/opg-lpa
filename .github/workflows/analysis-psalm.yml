@@ -9,7 +9,7 @@ on:
       - "service-admin/**"
       - "service-api/**"
       - "service-front/**"
-      - 'service-pdf/**'
+      - "service-pdf/**"
 jobs:
   psalm_all_php:
     name: psalm-scan
