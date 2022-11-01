@@ -402,7 +402,7 @@ Then(
   `I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction`,
   () => {
     cy.runPythonApiCommand(
-      'createLpa.py -hw -d -a -r -cp -pn -i -w donor -co -y -ra true -pa',
+      'createLpa.py -hw -d -a -r -cp -pn -i -w donor -co -y -ra true -pa normal-pay-by-cheque',
     )
       .its('stdout')
       .as('lpaId')
@@ -419,7 +419,7 @@ Then(
   `I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction`,
   () => {
     cy.runPythonApiCommand(
-      'createLpa.py -d -a -r -cp -pn -i -w donor -co -y -ra true -pa',
+      'createLpa.py -d -a -r -cp -pn -i -w donor -co -y -ra true -pa low-income-claiming-reduction',
     )
       .its('stdout')
       .as('lpaId')
@@ -436,7 +436,7 @@ Then(
   `I create PF LPA test fixture with donor, single attorney, cert provider, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction`,
   () => {
     cy.runPythonApiCommand(
-      'createLpa.py -d -asingle -cp -i -w donor -co -y -ra true -pa',
+      'createLpa.py -d -asingle -cp -i -w donor -co -y -ra true -pa low-income-claiming-reduction',
     )
       .its('stdout')
       .as('lpaId')
@@ -450,16 +450,16 @@ Then(
 );
 
 Then(
-  `I create PF LPA test fixture with donor, single attorney, cert provider, instructions, preferences, applicant, correspondent, who are you as first primary attorney, not repeat application, fee reduction`,
+  `I create PF LPA test fixture with donor, single attorney, cert provider, instructions, preferences, applicant, correspondent, who are you as first primary attorney, not repeat application, on benefits fee reduction`,
   () => {
     cy.runPythonApiCommand(
-      'createLpa.py -d -asingle -cp -i -w 1 -co -y -ra false -pa',
+      'createLpa.py -d -asingle -cp -i -w 1 -co -y -ra false -pa on-benefits',
     )
       .its('stdout')
       .as('lpaId')
       .then((lpaId) => {
         cy.log(
-          'Created PF LPA test fixture with donor, single attorney, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you as first primary attorney, not repeat application, fee reduction through the API with id ' +
+          'Created PF LPA test fixture with donor, single attorney, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you as first primary attorney, not repeat application, on benefits fee reduction through the API with id ' +
             lpaId,
         );
       });

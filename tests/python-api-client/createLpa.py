@@ -37,7 +37,13 @@ parser.add_argument(
     "-ra", type=str, choices=["true", "false"], help="Set Repeat Application"
 )
 
-parser.add_argument("-pa", action="store_true", default=False, help="Set Payment")
+payment_choices = [
+    "on-benefits",
+    "normal-pay-by-cheque",
+    "low-income-claiming-reduction",
+]
+parser.add_argument("-pa", type=str, choices=payment_choices, help="Set Payment")
+
 args = parser.parse_args()
 
 if args.hw:
@@ -83,15 +89,17 @@ if args.co:
 if args.y:
     addWhoAreYou(lpaId)
 if args.ra:
-    # note that setting this just adds a flag that the repeat application question
+    # note that invoking this just adds a flag that the repeat application question
     # has been answered; it should always be true
     setRepeatApplication(lpaId)
 
     if args.ra == "true":
         setRepeatCaseNumber(lpaId)
 if args.pa:
-    if args.hw:
+    if args.pa == "normal-pay-by-cheque":
         setPaymentNormalFeeWithCheque(lpaId)
-    else:
+    elif args.pa == "low-income-claiming-reduction":
         setPaymentLowIncomeClaimingReduction(lpaId)
+    elif args.pa == "on-benefits":
+        setPaymentOnBenefits(lpaId)
 print(lpaId)

@@ -5,7 +5,7 @@ Feature: Checkout for a Property and Finance LPA
 
     Background:
         Given I ignore application exceptions
-        And I create PF LPA test fixture with donor, single attorney, cert provider, instructions, preferences, applicant, correspondent, who are you as first primary attorney, not repeat application, fee reduction
+        And I create PF LPA test fixture with donor, single attorney, cert provider, instructions, preferences, applicant, correspondent, who are you as first primary attorney, not repeat application, on benefits fee reduction
 
     @focus @CleanupFixtures
     Scenario: Checkout

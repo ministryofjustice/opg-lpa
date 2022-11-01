@@ -462,6 +462,10 @@ def setPayment(
     putToAPI(lpaId, payment, "payment")
 
 
+def setPaymentOnBenefits(lpaId):
+    setPayment(lpaId, amount=0, reducedFeeReceivesBenefits=True)
+
+
 def setPaymentNormalFeeWithCheque(lpaId):
     setPayment(lpaId, method="cheque")
 
