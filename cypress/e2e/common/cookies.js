@@ -1,13 +1,47 @@
 const { Then } = require('@badeball/cypress-cucumber-preprocessor');
 
+// couldn't get cypress to do what I wanted, so I made my own
+// function for checking whether _ga and _gid cookies are present;
+// unlike cypress, which isn't able to retry and sometimes can't
+// get a cookie because the browser hasn't set it yet, we can
+// add a loop to retry until we get what we want, or until we fail
+const checkCookies = function (shouldBeSet, tries) {
+  if (tries === undefined) {
+    tries = 0;
+  }
+
+  if (tries > 2) {
+    cy.log('TOO MANY TRIES');
+    return cy.wrap(false).should('be.true');
+  }
+
+  return cy.getCookies().then((cookies) => {
+    cy.log(JSON.stringify(cookies));
+
+    const gaCookie = cookies.filter((cookie) => cookie['name'] === '_ga');
+    const gidCookie = cookies.filter((cookie) => cookie['name'] === '_gid');
+    const cookiesSet = gaCookie.length > 0 && gidCookie.length > 0;
+
+    cy.log('ARE COOKIES SET? ' + cookiesSet);
+    cy.log('SHOULD THEY BE? ' + shouldBeSet);
+
+    if (cookiesSet === shouldBeSet) {
+      return cy.wrap(true).should('be.true');
+    }
+
+    // try again
+    return cy.wait(500).then(() => {
+      return checkCookies(shouldBeSet, tries + 1);
+    });
+  });
+};
+
 Then('analytics cookies are set', () => {
-  cy.getCookie('_ga').should('not.be.null');
-  cy.getCookie('_gid').should('not.be.null');
+  return checkCookies(true);
 });
 
 Then('analytics cookies are not set', () => {
-  cy.getCookie('_ga').should('be.null');
-  cy.getCookie('_gid').should('be.null');
+  return checkCookies(false);
 });
 
 // decision: "rejected" or "accepted"
