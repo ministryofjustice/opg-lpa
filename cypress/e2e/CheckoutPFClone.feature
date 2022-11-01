@@ -12,9 +12,18 @@ Feature: Checkout for a Property and Finance LPA
         When I log in as appropriate test user
         And I visit the checkout page for the test fixture lpa
         Then I am taken to the checkout page
-        # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        And I see the following summary information
+        # in local dev, we have to go to the payment page again, select the £0 payment option,
+        # then save and confirm; the checkout page requires us to have just visited the payment
+        # page before reaching this one, otherwise we get an irrelevant prompt about the certificate
+        # provider; this is because the checkout page assumes that if the LPA is incomplete, it's
+        # because we skipped the certificate provider selection
+        When I visit the fee reduction page for the test fixture lpa
+        And I check "reducedFeeReceivesBenefits"
+        And I click "save"
+
+        # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
+        Then I see the following summary information
             | Type | Property and finance | |
             | Donor | | |
             | Name | Mrs Nancy Garrison | donor |

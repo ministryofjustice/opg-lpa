@@ -428,6 +428,7 @@ def setRepeatApplication(lpaId):
         "metadata": {
             "replacement-attorneys-confirmed": True,
             "repeat-application-confirmed": True,
+            "people-to-notify-confirmed": True,
         }
     }
     patchViaAPI(lpaId, metadata)
