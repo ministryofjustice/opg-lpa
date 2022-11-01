@@ -31,7 +31,12 @@ parser.add_argument(
 
 parser.add_argument("-y", action="store_true", default=False, help="Set Who Are You")
 parser.add_argument("-co", action="store_true", default=False, help="Add Correspondent")
-parser.add_argument("-ra", action="store_true", help="Set Repeat Application")
+
+# if true, set a repeat case number
+parser.add_argument(
+    "-ra", type=str, choices=["true", "false"], help="Set Repeat Application"
+)
+
 parser.add_argument("-pa", action="store_true", default=False, help="Set Payment")
 args = parser.parse_args()
 
@@ -78,8 +83,11 @@ if args.co:
 if args.y:
     addWhoAreYou(lpaId)
 if args.ra:
+    # note that setting this just adds a flag that the repeat application question
+    # has been answered; it should always be true
     setRepeatApplication(lpaId)
-    if not args.hw:
+
+    if args.ra == "true":
         setRepeatCaseNumber(lpaId)
 if args.pa:
     if args.hw:

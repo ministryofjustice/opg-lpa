@@ -452,7 +452,9 @@ Then(
 Then(
   `I create PF LPA test fixture with donor, single attorney, cert provider, instructions, preferences, applicant, correspondent, who are you as first primary attorney, not repeat application, fee reduction`,
   () => {
-    cy.runPythonApiCommand('createLpa.py -d -asingle -cp -i -w 1 -co -y -pa')
+    cy.runPythonApiCommand(
+      'createLpa.py -d -asingle -cp -i -w 1 -co -y -ra false -pa',
+    )
       .its('stdout')
       .as('lpaId')
       .then((lpaId) => {
