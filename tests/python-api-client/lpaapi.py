@@ -418,6 +418,27 @@ def addCorrespondent(lpaId):
     putToAPI(lpaId, correspondent, "correspondent")
 
 
+def addTrustCorpCorrespondent(lpaId):
+    correspondent = {
+        "who": "attorney",
+        "name": None,
+        "email": {"address": "opglpademo+trustcorp@gmail.com"},
+        "phone": None,
+        "address": {
+            "address1": "1 Laburnum Place",
+            "address2": "Sketty",
+            "address3": "Swansea, Abertawe",
+            "postcode": "SA2 8HT",
+        },
+        "company": "Standard Trust",
+        "contactByPost": False,
+        "contactInWelsh": False,
+        "contactDetailsEnteredManually": True,
+    }
+
+    putToAPI(lpaId, correspondent, "correspondent")
+
+
 def addWhoAreYou(lpaId):
     whoAreYou = {"who": "donor", "qualifier": None}
     putToAPI(lpaId, whoAreYou, "who-are-you")

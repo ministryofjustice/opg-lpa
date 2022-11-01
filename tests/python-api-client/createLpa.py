@@ -30,7 +30,11 @@ parser.add_argument(
 )
 
 parser.add_argument("-y", action="store_true", default=False, help="Set Who Are You")
-parser.add_argument("-co", action="store_true", default=False, help="Add Correspondent")
+
+# correspondent
+parser.add_argument(
+    "-co", type=str, choices=["trustcorp", "donor"], help="Add Correspondent"
+)
 
 # if true, set a repeat case number
 parser.add_argument(
@@ -85,7 +89,10 @@ if args.w:
         who = [who]
     setWhoIsRegistering(lpaId, who)
 if args.co:
-    addCorrespondent(lpaId)
+    if args.co == "donor":
+        addCorrespondent(lpaId)
+    elif args.co == "trustcorp":
+        addTrustCorpCorrespondent(lpaId)
 if args.y:
     addWhoAreYou(lpaId)
 if args.ra:
