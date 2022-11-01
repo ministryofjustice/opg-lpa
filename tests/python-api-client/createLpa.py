@@ -22,14 +22,16 @@ parser.add_argument(
 parser.add_argument(
     "-i", action="store_true", default=False, help="Set Instructions and Preferences"
 )
+
+# donor = donor
+# 1 = first primary attorney
 parser.add_argument(
-    "-w", action="store_true", default=False, help="Set Who is Registering"
+    "-w", type=str, choices=["donor", "1"], help="Set Who is Registering"
 )
+
 parser.add_argument("-y", action="store_true", default=False, help="Set Who Are You")
 parser.add_argument("-co", action="store_true", default=False, help="Add Correspondent")
-parser.add_argument(
-    "-ra", action="store_true", default=False, help="Set Repeat Application"
-)
+parser.add_argument("-ra", action="store_true", help="Set Repeat Application")
 parser.add_argument("-pa", action="store_true", default=False, help="Set Payment")
 args = parser.parse_args()
 
@@ -66,7 +68,11 @@ if args.i:
     setInstruction(lpaId)
     setPreference(lpaId)
 if args.w:
-    setWhoIsRegistering(lpaId)
+    # if registrant is not "donor", API expects an array of attorney IDs
+    who = args.w
+    if who != "donor":
+        who = [who]
+    setWhoIsRegistering(lpaId, who)
 if args.co:
     addCorrespondent(lpaId)
 if args.y:
