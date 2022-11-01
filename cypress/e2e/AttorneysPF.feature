@@ -22,7 +22,7 @@ Feature: Add attorneys to a Property and Finance LPA
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find use-my-details if lpa is new
         And I can find "use-trust-corporation"
-        And I quickly fill out
+        And I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day| 22 |
@@ -43,7 +43,7 @@ Feature: Add attorneys to a Property and Finance LPA
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on "name-title"
-        And I quickly fill out
+        And I force fill out
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -108,7 +108,7 @@ Feature: Add attorneys to a Property and Finance LPA
         And I opt not to re-use details if lpa is a clone
         And I click "use-trust-corporation"
         And I type " " into "name"
-        And I quickly fill out
+        And I force fill out
             | number | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | email-address| opglpademo+trustcorp@gmail.com |
             | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -129,7 +129,7 @@ Feature: Add attorneys to a Property and Finance LPA
         And I do not see "must-be-greater-than-or-equal:1" in the page text
 
         When I type " " into "number"
-        And I quickly fill out
+        And I force fill out
             | name | Standard Trust |
             | email-address| opglpademo+trustcorp@gmail.com |
             | address-address1 | 1 Laburnum Place |
@@ -152,7 +152,7 @@ Feature: Add attorneys to a Property and Finance LPA
             | Enter a company name that's less than 76 characters long |
 
         # Re-add 2cnd attorney, correctly this time
-        When I quickly fill out
+        When I force fill out
             | name | Standard Trust |
             | number | 678437685 |
             | email-address| opglpademo+trustcorp@gmail.com |
