@@ -405,16 +405,16 @@ Then(
 );
 
 Then(
-  `I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction`,
+  `I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, not repeat application, fee reduction`,
   () => {
     cy.runPythonApiCommand(
-      'createLpa.py -hw -d -a -r -cp -pn -i -w donor -co donor -y -ra true -pa normal-pay-by-cheque',
+      'createLpa.py -hw -d -a -r -cp -pn -i -w donor -co donor -y -ra false -pa normal-pay-by-cheque',
     )
       .its('stdout')
       .as('lpaId')
       .then((lpaId) => {
         cy.log(
-          'Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction through the API with id ' +
+          'Created HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, not repeat application, fee reduction through the API with id ' +
             lpaId,
         );
       });
