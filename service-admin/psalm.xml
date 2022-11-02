@@ -7,7 +7,6 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <directory name="../shared/logging/module/MakeLogger/src" />
         <directory name="src/App/src" />
         <ignoreFiles>
             <directory name="vendor" />

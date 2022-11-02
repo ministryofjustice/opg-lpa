@@ -146,13 +146,8 @@ class DateCheck
 
                 // Donor must be first
                 if ($donor > $timestamp) {
-                    $message = "${donorText} must be the first person to sign the LPA. ";
-                    if ($isDraft) {
-                        $message .= 'You need to print and re-sign sections 10 and 11';
-                    } else {
-                        $message .= 'You need to print and re-sign sections 10, 11 and 15';
-                    }
-                    $errors[$applicantKey][] = $message;
+                    $errors[$applicantKey][] = "${donorText} must be the first person to sign the LPA. " .
+                        'You need to print and re-sign sections 10, 11 and 15';
                 }
 
                 // Applicants must sign on or after last attorney
