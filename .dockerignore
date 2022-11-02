@@ -1,0 +1,9 @@
+.git
+.gitignore
+.github
+terraform
+docs
+
+*/LICENSE
+*/LICENSE.md
+*/README.md
