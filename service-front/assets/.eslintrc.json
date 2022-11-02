@@ -5,6 +5,8 @@
     "requireConfigFile": false
   },
 
+  "parser": "@babel/eslint-parser",
+
   "env": {
     "browser": true
   },
@@ -26,6 +28,5 @@
   "ignorePatterns": ["js/opg/env-vars.template.js", "js/lpa/lpa.templates.js"],
 
   "rules": {
-    "prettier/prettier": "off"
   }
 }

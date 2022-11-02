@@ -2,7 +2,6 @@
 // INITITALISE ALL MOJ MODULES
 $(moj.init);
 
-
 // ====================================================================================
 // INITITALISE ALL GOVUK MODULES
 
@@ -10,7 +9,6 @@ $(moj.init);
 // to toggle hidden content
 var showHideContent = new GOVUK.ShowHideContent();
 showHideContent.init();
-
 
 // ====================================================================================
 // SIMPLE UTILITIES

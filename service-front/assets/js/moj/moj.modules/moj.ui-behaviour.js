@@ -2,22 +2,21 @@
 // Dependencies: moj, jQuery
 
 (function () {
-    'use strict';
+  'use strict';
 
-    moj.Modules.UIBehaviour = {
+  moj.Modules.UIBehaviour = {
+    init: function () {
+      this.sectionScrollTo();
+    },
 
-        init: function () {
-            this.sectionScrollTo();
-        },
+    sectionScrollTo: function () {
+      var sectionToScrollTo = $('#current');
 
-        sectionScrollTo: function(){
-            var sectionToScrollTo = $('#current');
-
-            if (sectionToScrollTo.offset() !== undefined ) {
-                setTimeout(function() {
-                    window.scrollTo(0, sectionToScrollTo.offset().top);
-                }, 1);
-            }
-        }
-    };
+      if (sectionToScrollTo.offset() !== undefined) {
+        setTimeout(function () {
+          window.scrollTo(0, sectionToScrollTo.offset().top);
+        }, 1);
+      }
+    },
+  };
 })();
