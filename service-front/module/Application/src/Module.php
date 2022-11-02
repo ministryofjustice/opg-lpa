@@ -210,12 +210,9 @@ class Module implements FormElementProviderInterface
                     $ttlMs = $config['session']['redis']['ttlMs'];
 
                     $request = $sm->get('Request');
-                    $logger = $this->getLogger();
 
-                    $filter = function () use ($request, $logger) {
-                        $shouldWrite = !$request->getHeaders()->has('X-SessionReadOnly');
-
-                        return $shouldWrite;
+                    $filter = function () use ($request) {
+                        return !$request->getHeaders()->has('X-SessionReadOnly');
                     };
 
                     return new FilteringSaveHandler($redisUrl, $ttlMs, [$filter], new Redis());

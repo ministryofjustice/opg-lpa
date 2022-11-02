@@ -168,7 +168,6 @@ class FilteringSaveHandler implements SaveHandlerInterface
         $key = $this->getKey($id);
 
         if ($doWrite) {
-
             // This appears to return a Redis instance, not a boolean; so we
             // check that here so we always get a boolean.
             $success = $this->redisClient->setEx($key, $this->ttl, $data);

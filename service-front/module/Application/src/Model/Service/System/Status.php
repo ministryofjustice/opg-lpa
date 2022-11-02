@@ -7,6 +7,7 @@ use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Aws\DynamoDb\DynamoDbClient;
 use Exception;
+use Laminas\Session\SaveHandler\SaveHandlerInterface;
 
 /**
  * Goes through all required services and checks they're operating.
@@ -18,14 +19,16 @@ class Status extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
 
-    /**
-     * @var DynamoDbClient
-     */
+    /** @var DynamoDbClient */
     private $dynamoDbClient;
+
+    /** @var SaveHandlerInterface */
+    private $sessionSaveHandler;
 
     /**
      * Services:
      * - DynamoDb (system message table)
+     * - Session save handler
      * - API
      */
     public function check()
@@ -40,6 +43,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
             // Check API
             $result['api'] = $this->api();
+
+            // TODO Check session save handling
 
             $ok = true;
             foreach ($result as $service) {
@@ -111,5 +116,13 @@ class Status extends AbstractService implements ApiClientAwareInterface
     public function setDynamoDbClient(DynamoDbClient $dynamoDbClient)
     {
         $this->dynamoDbClient = $dynamoDbClient;
+    }
+
+    /**
+     * @param SaveHandlerInterface $saveHandler
+     */
+    public function setSessionSaveHandler(SaveHandlerInterface $saveHandler)
+    {
+        $this->sessionSaveHandler = $saveHandler;
     }
 }
