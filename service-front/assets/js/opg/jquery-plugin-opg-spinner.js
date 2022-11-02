@@ -10,7 +10,7 @@
 
   // Create the defaults once
   var pluginName = 'spinner',
-      defaults = { disabledClass: 'disabled', placement: 'after' };
+    defaults = { disabledClass: 'disabled', placement: 'after' };
 
   // The actual plugin constructor
   function Plugin(element, options) {
@@ -20,7 +20,9 @@
     // Set master element
     this.element = element;
     this.$el = $(element);
-    this.$spinElement = this.options.element ? $(this.options.element) : this.$el;
+    this.$spinElement = this.options.element
+      ? $(this.options.element)
+      : this.$el;
 
     this._defaults = defaults;
     this._name = pluginName;
@@ -29,15 +31,22 @@
   }
 
   Plugin.prototype = {
-
     init: function () {
       if (this.disabled()) {
         return;
       }
       if (this.options.placement === 'after') {
-        this.$spinElement.after($('<img src="/assets/v2/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
+        this.$spinElement.after(
+          $(
+            '<img src="/assets/v2/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />',
+          ),
+        );
       } else if (this.options.placement === 'before') {
-        this.$spinElement.before($('<img src="/assets/v2/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
+        this.$spinElement.before(
+          $(
+            '<img src="/assets/v2/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />',
+          ),
+        );
       }
       this.disable();
     },
@@ -80,21 +89,25 @@
     },
 
     isFormControl: function () {
-      if (this.element.tagName === 'SELECT' || this.element.tagName === 'BUTTON' || this.element.tagName === 'INPUT') {
+      if (
+        this.element.tagName === 'SELECT' ||
+        this.element.tagName === 'BUTTON' ||
+        this.element.tagName === 'INPUT'
+      ) {
         return true;
       }
     },
 
     isLink: function () {
       return this.element.tagName === 'A';
-    }
+    },
   };
 
   // Plugin wrapper
   $.fn[pluginName] = function (options) {
     return this.each(function () {
       var data = $.data(this),
-          plugin = 'plugin_' + pluginName;
+        plugin = 'plugin_' + pluginName;
 
       if (data[plugin]) {
         if (options === 'off') {
@@ -107,5 +120,4 @@
       }
     });
   };
-
 })(jQuery);
