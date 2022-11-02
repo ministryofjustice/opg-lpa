@@ -44,7 +44,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
             // Check API
             $result['api'] = $this->api();
 
-            // TODO Check session save handling
+            // Check session save handling
+            $result['sessionSaveHandler'] = $this->session();
 
             $ok = true;
             foreach ($result as $service) {
@@ -108,6 +109,13 @@ class Status extends AbstractService implements ApiClientAwareInterface
         }
 
         return $result;
+    }
+
+    private function session()
+    {
+        return [
+            'ok' => $this->sessionSaveHandler->open('', ''),
+        ];
     }
 
     /**
