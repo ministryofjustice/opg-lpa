@@ -7,25 +7,31 @@ use Application\Model\Service\System\Status;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result as AwsResult;
+use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use Mockery;
 use Mockery\MockInterface;
 
 class StatusTest extends AbstractServiceTest
 {
     /**
-     * @var $apiClient Client|MockInterface
+     * @var Client|MockInterface
      */
     private $apiClient;
 
     /**
-     * @var $dynamoDbSessionClient DynamoDbClient|MockInterface
+     * @var DynamoDbClient|MockInterface
      */
     private $dynamoDbSessionClient;
 
     /**
-     * @var dynamoDbCronClient DynamoDbClient|MockInterface
+     * @var DynamoDbClient|MockInterface
      */
-    private $dynamoDbCronClient;
+    private $dynamoDbClient;
+
+    /**
+     * @var SaveHandlerInterface|MockInterface
+     */
+    private $sessionSaveHandler;
 
     /**
      * @var $service Status
@@ -40,19 +46,22 @@ class StatusTest extends AbstractServiceTest
             'admin' => [
                 'dynamodb' => [
                     'settings' => [
-                        'table_name' => "admin-test-table"
+                        'table_name' => 'admin-test-table',
                     ]
                 ]
             ]
         ];
 
-        $this->apiClient = Mockery::mock(Client::class);
-
         $this->service = new Status($this->authenticationService, $config);
+
+        $this->apiClient = Mockery::mock(Client::class);
         $this->service->setApiClient($this->apiClient);
 
         $this->dynamoDbClient = Mockery::mock(DynamoDbClient::class);
         $this->service->setDynamoDbClient($this->dynamoDbClient);
+
+        $this->sessionSaveHandler = Mockery::mock(SaveHandlerInterface::class);
+        $this->service->setSessionSaveHandler($this->sessionSaveHandler);
     }
 
     public function testCheckAllOk(): void
@@ -71,6 +80,8 @@ class StatusTest extends AbstractServiceTest
             ->times(6)
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
+        $this->sessionSaveHandler->shouldReceive('open')->times(6)->andReturn(true);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -83,17 +94,20 @@ class StatusTest extends AbstractServiceTest
                     'status' => 200,
                 ]
             ],
+            'sessionSaveHandler' => [
+                'ok' => true,
+            ],
             'ok' => true,
             'iterations' => 6,
         ], $result);
     }
 
-    public function testCheckInvalidCron(): void
+    public function testCheckDynamoInvalid(): void
     {
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->times(1)
+            ->once()
             ->andReturn([
                 'ok' => true,
             ]);
@@ -101,11 +115,12 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->times(1)
+            ->once()
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 500]]));
 
-        $result = $this->service->check();
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
 
+        $result = $this->service->check();
 
         $this->assertEquals([
             'dynamo' => [
@@ -117,6 +132,9 @@ class StatusTest extends AbstractServiceTest
                     'status' => '200',
                 ]
             ],
+            'sessionSaveHandler' => [
+                'ok' => true,
+            ],
             'ok' => false,
             'iterations' => 1,
         ], $result);
@@ -127,7 +145,7 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->times(1)
+            ->once()
             ->andReturn([
                 'ok' => false,
             ]);
@@ -135,8 +153,10 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->times(1)
+            ->once()
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
 
         $result = $this->service->check();
 
@@ -149,6 +169,47 @@ class StatusTest extends AbstractServiceTest
                 'details' => [
                     'status' => 200,
                 ]
+            ],
+            'sessionSaveHandler' => [
+                'ok' => true,
+            ],
+            'ok' => false,
+            'iterations' => 1,
+        ], $result);
+    }
+
+    public function testCheckSessionSaveHandlerInvalid(): void
+    {
+        $this->apiClient
+            ->shouldReceive('httpGet')
+            ->withArgs(['/ping'])
+            ->once()
+            ->andReturn([
+                'ok' => true,
+            ]);
+
+        $this->dynamoDbClient
+            ->shouldReceive('describeTable')
+            ->withArgs([['TableName' => 'admin-test-table']])
+            ->once()
+            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(false);
+
+        $result = $this->service->check();
+
+        $this->assertEquals([
+            'dynamo' => [
+                'ok' => true,
+            ],
+            'api' => [
+                'ok' => true,
+                'details' => [
+                    'status' => 200,
+                ]
+            ],
+            'sessionSaveHandler' => [
+                'ok' => false,
             ],
             'ok' => false,
             'iterations' => 1,
