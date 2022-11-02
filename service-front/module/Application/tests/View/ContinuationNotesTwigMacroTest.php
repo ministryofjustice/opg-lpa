@@ -68,7 +68,7 @@ class ContinuationNotesTwigMacroTest extends MockeryTestCase
         // check explanatory paragraph has the correct text in it
         $this->assertEquals(
             'As there are extra instructions for the attorneys on the LPA, ' .
-                'the donor will need to sign continuation sheet 2. ' .
+                'the donor will need to sign \'continuation sheet 2\'. ' .
                 'The continuation sheet is included at the end of the LPA form.',
             trim(($matches[0])->textContent),
             'continuation sheet 2 explanatory paragraph contains incorrect text'
