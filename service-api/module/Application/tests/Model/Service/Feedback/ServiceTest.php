@@ -1,4 +1,5 @@
 <?php
+
 namespace ApplicationTest\Model\Service\Feedback;
 
 use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryInterface;
@@ -8,7 +9,6 @@ use Mockery;
 
 class ServiceTest extends AbstractServiceTest
 {
-
     public function testAddWithEmptyData()
     {
         $feedbackRepository = Mockery::mock(FeedbackRepositoryInterface::class);
@@ -77,17 +77,16 @@ class ServiceTest extends AbstractServiceTest
             ->withFeedbackRepository($feedbackRepository)
             ->build();
 
-        $to = new DateTime;
-        $from = new DateTime;
+        $to = new DateTime();
+        $from = new DateTime();
         $pruneDate = $service->getPruneDate();
 
         // We should prune feedback received before the $pruneDate
-        $feedbackRepository->shouldReceive('prune')->withArgs([$pruneDate]);
+        $feedbackRepository->shouldReceive('prune')->withArgs([$pruneDate])->once();
 
         // And receive a request for the feedback for the passed date range
-        $feedbackRepository->shouldReceive('getForDateRange')->withArgs([$to, $from]);
+        $feedbackRepository->shouldReceive('getForDateRange')->withArgs([$to, $from])->once();
 
         $service->get($to, $from);
     }
-
 }

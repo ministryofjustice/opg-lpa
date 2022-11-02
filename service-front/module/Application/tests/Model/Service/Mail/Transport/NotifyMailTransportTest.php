@@ -31,10 +31,12 @@ class NotifyMailTransportTest extends MockeryTestCase
         );
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with('feedback@uat.digital.justice.gov.uk', '3fb12879-7665-4ffe-a76f-ed90cde7a35d', $data);
+            ->with('feedback@uat.digital.justice.gov.uk', '3fb12879-7665-4ffe-a76f-ed90cde7a35d', $data)
+            ->once();
 
         $this->notifyClient->shouldReceive('sendEmail')
-            ->with('other@uat.digital.justice.gov.uk', '3fb12879-7665-4ffe-a76f-ed90cde7a35d', $data);
+            ->with('other@uat.digital.justice.gov.uk', '3fb12879-7665-4ffe-a76f-ed90cde7a35d', $data)
+            ->once();
 
         $this->transport->send($mailParams);
     }
