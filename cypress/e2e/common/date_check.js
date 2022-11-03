@@ -14,6 +14,12 @@ const fillSignatureDateInputs = (elt, signatureDate) => {
     .attr('value', signatureDate.getFullYear());
 };
 
+Then('I visit the date check page for the LPA with A-ref {string}', (aRef) => {
+  const lpaId = aRef.replace('A', '').replace(/ /g, '');
+  const path = '/lpa/' + lpaId + '/date-check';
+  cy.visit(path);
+});
+
 Then('I cannot see continuation sheet reminders', () => {
   cy.get('[data-cy=continuation-sheet-info]').should('not.exist');
 });

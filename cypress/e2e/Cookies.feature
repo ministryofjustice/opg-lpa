@@ -19,6 +19,7 @@ Feature: Cookies
         And I click "usageCookies-yes"
         And I click "cookies-save"
         And I see "You’ve set your cookie preferences." in the page text
+
         Then I visit "/cookies"
         And "usageCookies-yes" is checked
         And analytics cookies are set
@@ -26,6 +27,7 @@ Feature: Cookies
         When I click "usageCookies-no"
         And I click "cookies-save"
         And I see "You’ve set your cookie preferences." in the page text
+
         Then I visit "/cookies"
         And "usageCookies-no" is checked
         And analytics cookies are not set
@@ -49,3 +51,7 @@ Feature: Cookies
         And I can see a hide button to close the cookies banner
         When I click "hide-cookies-banner"
         Then the cookie banner is not visible
+
+        # ensure that the cookies stay unset when we navigate the site
+        When I visit "/home"
+        Then analytics cookies are not set

@@ -2,7 +2,19 @@ const { PDFDocument } = require("pdf-lib");
 const axeWrapper = require("./axe_wrapper");
 
 Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
-    cy.exec('python3 tests/python-api-client/' + pythonCommand)
+    cy.exec('python3 tests/python-api-client/' + pythonCommand, {failOnNonZeroExit: false}).then(result => {
+        if (result.code !== 0) {
+            throw new Error(
+                'Call to API failed' +
+                    '\ncommand: ' + pythonCommand +
+                    '\ncode: ' + result.code +
+                    '\nstdout: ' + (result.stdout || '<EMPTY>') +
+                    '\nstderr: ' + (result.stderr || '<EMPTY>')
+            )
+        }
+
+        return cy.wrap(result)
+    })
 });
 
 Cypress.Commands.add("visitWithChecks", (url) => {

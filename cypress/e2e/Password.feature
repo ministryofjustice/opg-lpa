@@ -1,7 +1,7 @@
 @Password
 Feature: Password
 
-    I want to be able to reset or change my password
+    I want to be able to change my password
 
     @focus
     Scenario: Change password with mismatched details
@@ -35,36 +35,3 @@ Feature: Password
           | Choose a new password that includes at least one capital letter (A-Z) |
           | Enter matching passwords |
       And I see "Error" in the title
-
-    # note that the following requires Signup.feature to have run, to test resetting a password for an existing user
-    # todo The password email sent when a user doesn't exist yet, has a different title,
-    # isn't tested by Casper, and a test may need adding here
-    @focus
-    Scenario: Reset Password using email link
-      Given I visit the login page
-      When I visit link containing "Forgotten your password?"
-      Then I am taken to "/forgot-password"
-      And I see "Reset your password" in the title
-      When I populate email fields with standard test user address
-      Then I see "We've emailed a link" in the page text
-      And I see standard test user in the page text
-      And I use password reset email to visit the link
-
-      # first try a mismatch
-      When I try to change password with a mismatch on forgotten password link
-      Then I see in the page text
-          | There is a problem |
-          | Enter matching passwords |
-
-      # second use a valid new password
-      When I choose a new password
-      Then I am taken to the login page
-      And I see "Password successfully reset" in the page text
-      When I log in with new password
-      # change password back to old one. This wasn't in the original casper tests, but ensures this feature doesn't have any side effects
-      And I visit link containing "Your details"
-      Then I am taken to "/user/about-you"
-      When I visit link containing "Change Password"
-      Then I am taken to "/user/change-password"
-      When I change password back to my old one
-      And I see "Your new password has been saved" in the page text

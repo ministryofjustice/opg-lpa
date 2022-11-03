@@ -22,3 +22,7 @@ Then('I see in the page text', (dataTable) => {
 Then(`I see standard test user in the page text`, () => {
   cy.contains(Cypress.env('email'));
 });
+
+Then(`I see {string} user in the page text`, (name) => {
+  cy.contains(Cypress.env(name + '-user'));
+});

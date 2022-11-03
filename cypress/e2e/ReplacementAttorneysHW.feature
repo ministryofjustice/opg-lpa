@@ -104,7 +104,7 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         # both replacement attorneys can be seen again
         And I see "Ms Isobel Ward" in the page text
         And I see "Mr Ewan Adams" in the page text
-        # re-view 2cnd replacement attorney
+        # re-view 2nd replacement attorney
         When I click occurrence 1 of "view-change-attorney"
         Then I can find "form-attorney"
         And I see "name-title" prepopulated with "Mr"

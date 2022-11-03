@@ -72,8 +72,7 @@ Feature: Add donor to Property and Finance LPA
         Then I can find "save-and-continue"
         And I cannot find "add-donor"
         And I see "Mrs Nancy Garrison" in the page text
-        # following line uses force click because view-change-donor button is partly obscured
-        When I force click "view-change-donor"
+        When I click "view-change-donor"
         Then I can find "form-donor"
         And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
