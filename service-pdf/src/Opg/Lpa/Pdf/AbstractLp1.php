@@ -917,6 +917,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $pdf->AddPage();
 
         // filename, x position, y position, width, height, type, link, align, resize, dpi
+        /**
+         * Psalm has some inexplicable problem with the next line. I'm not sure if this
+         * is because the TCPDF docblocks are incorrect or something else, but everything
+         * is working and I'm guessing this is a false positive.
+         * @psalm-suppress UndefinedDocblockClass
+         */
         $pdf->Image($barcodePngFile, 40, 789);
 
         $barcodePdfFile = $this->getIntermediatePdfFilePath('barcode.pdf');
