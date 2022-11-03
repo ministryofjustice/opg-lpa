@@ -8,7 +8,6 @@ use MakeLogger\Logging\LoggerTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
-use Application\Model\Service\RedisClient\RedisClient;
 use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManager;
@@ -211,12 +210,9 @@ class Module implements FormElementProviderInterface
                     $ttlMs = $config['session']['redis']['ttlMs'];
 
                     $request = $sm->get('Request');
-                    $logger = $this->getLogger();
 
-                    $filter = function () use ($request, $logger) {
-                        $shouldWrite = !$request->getHeaders()->has('X-SessionReadOnly');
-
-                        return $shouldWrite;
+                    $filter = function () use ($request) {
+                        return !$request->getHeaders()->has('X-SessionReadOnly');
                     };
 
                     return new FilteringSaveHandler($redisUrl, $ttlMs, [$filter], new Redis());
