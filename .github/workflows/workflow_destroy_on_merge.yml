@@ -53,7 +53,10 @@ jobs:
           role-duration-seconds: 900
           role-session-name: OPGLPABuildPipeline
 
-        # TODO: Remove echo to run this after confirming it evaluates correctly
       - name: Run workspace cleanup
         run: |
-          echo scripts/pipeline/workspace_cleanup/workspace_cleanup.sh ${{ needs.workspace_name.outputs.name }}
+          scripts/pipeline/workspace_cleanup/workspace_cleanup.sh ${{ needs.workspace_name.outputs.name }}
+
+      - name: Run Github environment cleanup
+        run: |
+          scripts/pipeline/environment_cleanup/environment_cleanup.sh dev_${{ needs.workspace_name.outputs.name }}
