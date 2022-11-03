@@ -27,7 +27,7 @@ class SqsWorker
      * @param string $docId Unique ID representing this job/document.
      * @param string $type The type of PDF to generate.
      * @param string $lpaData JSON document representing the LPA document.
-     * @throws Exception
+     * @throws \Exception
      */
     private function run($docId, $type, $lpaData)
     {
