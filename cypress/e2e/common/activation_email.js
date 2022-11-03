@@ -15,6 +15,10 @@ Then(`I use activation email for {string} to visit the link`, (name) => {
   openEmailAndVisitLink('activation', Cypress.env(name + '-identifier'));
 });
 
+Then(`I use password reset email for {string} to visit the link`, (name) => {
+  openEmailAndVisitLink('passwordreset', Cypress.env(name + '-identifier'));
+});
+
 function openEmailAndVisitLink(type, identifier) {
   if (!identifier) {
     identifier = Cypress.env('userNumber');

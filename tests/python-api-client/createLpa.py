@@ -22,15 +22,32 @@ parser.add_argument(
 parser.add_argument(
     "-i", action="store_true", default=False, help="Set Instructions and Preferences"
 )
+
+# donor = donor
+# 1 = first primary attorney
 parser.add_argument(
-    "-w", action="store_true", default=False, help="Set Who is Registering"
+    "-w", type=str, choices=["donor", "1"], help="Set Who is Registering"
 )
+
 parser.add_argument("-y", action="store_true", default=False, help="Set Who Are You")
-parser.add_argument("-co", action="store_true", default=False, help="Add Correspondent")
+
+# correspondent
 parser.add_argument(
-    "-ra", action="store_true", default=False, help="Set Repeat Application"
+    "-co", type=str, choices=["trustcorp", "donor"], help="Add Correspondent"
 )
-parser.add_argument("-pa", action="store_true", default=False, help="Set Payment")
+
+# if true, set a repeat case number
+parser.add_argument(
+    "-ra", type=str, choices=["true", "false"], help="Set Repeat Application"
+)
+
+payment_choices = [
+    "on-benefits",
+    "normal-pay-by-cheque",
+    "low-income-claiming-reduction",
+]
+parser.add_argument("-pa", type=str, choices=payment_choices, help="Set Payment")
+
 args = parser.parse_args()
 
 if args.hw:
@@ -66,18 +83,30 @@ if args.i:
     setInstruction(lpaId)
     setPreference(lpaId)
 if args.w:
-    setWhoIsRegistering(lpaId)
+    # if registrant is not "donor", API expects an array of attorney IDs
+    who = args.w
+    if who != "donor":
+        who = [who]
+    setWhoIsRegistering(lpaId, who)
 if args.co:
-    addCorrespondent(lpaId)
+    if args.co == "donor":
+        addCorrespondent(lpaId)
+    elif args.co == "trustcorp":
+        addTrustCorpCorrespondent(lpaId)
 if args.y:
     addWhoAreYou(lpaId)
 if args.ra:
+    # note that invoking this just adds a flag that the repeat application question
+    # has been answered; it should always be true
     setRepeatApplication(lpaId)
-    if not args.hw:
+
+    if args.ra == "true":
         setRepeatCaseNumber(lpaId)
 if args.pa:
-    if args.hw:
+    if args.pa == "normal-pay-by-cheque":
         setPaymentNormalFeeWithCheque(lpaId)
-    else:
+    elif args.pa == "low-income-claiming-reduction":
         setPaymentLowIncomeClaimingReduction(lpaId)
+    elif args.pa == "on-benefits":
+        setPaymentOnBenefits(lpaId)
 print(lpaId)
