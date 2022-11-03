@@ -490,5 +490,5 @@ jobs:
 
       - name: Run Github environment cleanup
         run: |
-          ../../scripts/pipeline/environment_cleanup/environment_cleanup.sh dev_${{ needs.workspace_name.outputs.name }}
+          ./scripts/pipeline/environment_cleanup/environment_cleanup.sh dev_${{ needs.workspace_name.outputs.name }}
 
