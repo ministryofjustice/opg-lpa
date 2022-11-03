@@ -145,7 +145,7 @@ Feature: Add attorneys to a Property and Finance LPA
         # only the "Enter the company's registration number" error message
         And I do not see "must-be-greater-than-or-equal:1" in the page text
 
-        When I type "qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB" into "name"
+        When I type "qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB" into "name" working around cypress bug
         And I click "form-save"
         Then I see in the page text
             | There is a problem |
