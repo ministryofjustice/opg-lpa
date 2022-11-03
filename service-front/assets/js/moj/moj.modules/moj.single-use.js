@@ -25,18 +25,18 @@
 
     useHandler: function (e) {
       var target = $(e.target);
-
-      // When clicked, we prevent the event firing or percolating from now on
-      target.on('click', this.noop);
-      target.on('submit', this.noop);
-
       // Disable the link or form submit button
       var tagName = target.prop('tagName');
 
       if (tagName === 'A') {
+        // When clicked, we prevent the event firing or percolating from now on
+        target.on('click', this.noop);
         // Disable link
         target.attr('disabled', 'disabled');
       } else if (tagName === 'FORM') {
+        // When clicked, we prevent the event firing or percolating from now on
+        target.on('click', this.noop);
+        target.on('submit', this.noop);
         // Disable submit button(s)
         target
           .find('input[type=submit]')
