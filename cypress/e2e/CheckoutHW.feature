@@ -5,7 +5,7 @@ Feature: Checkout for a Health and Welfare LPA
 
     Background:
         Given I ignore application exceptions
-        And I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction
+        And I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, not repeat application, fee reduction
 
     @focus @CleanupFixtures
     Scenario: Checkout
