@@ -485,7 +485,10 @@ jobs:
       - end_of_pr_workflow
       - workspace_name
     steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+
       - name: Run Github environment cleanup
         run: |
-          scripts/pipeline/environment_cleanup/environment_cleanup.sh dev_${{ needs.workspace_name.outputs.name }}
+          ../../scripts/pipeline/environment_cleanup/environment_cleanup.sh dev_${{ needs.workspace_name.outputs.name }}
 
