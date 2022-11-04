@@ -489,6 +489,8 @@ jobs:
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
 
       - name: Run Github environment cleanup
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./scripts/pipeline/environment_cleanup/environment_cleanup.sh dev_${{ needs.workspace_name.outputs.name }}
 

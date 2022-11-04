@@ -58,5 +58,7 @@ jobs:
           scripts/pipeline/workspace_cleanup/workspace_cleanup.sh ${{ needs.workspace_name.outputs.name }}
 
       - name: Run Github environment cleanup
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           scripts/pipeline/environment_cleanup/environment_cleanup.sh dev_${{ needs.workspace_name.outputs.name }}
