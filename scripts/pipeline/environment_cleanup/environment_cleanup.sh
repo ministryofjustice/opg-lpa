@@ -15,6 +15,6 @@ if [ "${RESPONSE}" == "204" ]; then
   echo "Environment $1 deleted"
   exit 0
 else
-  echo "Environment $1 not deleted"
+  echo "Environment $1 not deleted. Github API returned ${RESPONSE}"
   exit 1
 fi
