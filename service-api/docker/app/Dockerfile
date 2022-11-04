@@ -29,11 +29,11 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
     fi ;
 
 # Install composer dependencies
-COPY --chown=appuser:appuser service-api/composer.json /app/composer.json
-COPY --chown=appuser:appuser service-api/composer.lock /app/composer.lock
+COPY --chown=root:root service-api/composer.json /app/composer.json
+COPY --chown=root:root service-api/composer.lock /app/composer.lock
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.4.1 \
-    && su - appuser -c "composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app" \
-    && chown -R appuser:appuser /app/vendor \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
+    && chown -R root:root /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
@@ -44,24 +44,24 @@ ENV OPG_LPA_COMMON_APP_VERSION=${OPG_LPA_COMMON_APP_VERSION}
 RUN apk del .build-dependencies
 
 # Core files for the application
-COPY --chown=appuser:appuser service-api/db/migrations /app/db/migrations
-COPY --chown=appuser:appuser service-api/config /app/config
-COPY --chown=appuser:appuser service-api/module /app/module
-COPY --chown=appuser:appuser service-api/public /app/public
+COPY --chown=root:root service-api/db/migrations /app/db/migrations
+COPY --chown=root:root service-api/config /app/config
+COPY --chown=root:root service-api/module /app/module
+COPY --chown=root:root service-api/public /app/public
 
 # For tests in CI
-COPY --chown=appuser:appuser service-api/phpunit.xml /app/phpunit.xml
+COPY --chown=root:root service-api/phpunit.xml /app/phpunit.xml
 
 # Shared code
-COPY --chown=appuser:appuser shared /shared
+COPY --chown=root:root shared /shared
 
 # PHP config files
-COPY --chown=appuser:appuser service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY --chown=appuser:appuser service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=root:root service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 # Migration script
-COPY --chown=appuser:appuser service-api/docker/app/db-migrations.sh /app/db-migrations.sh
-COPY --chown=appuser:appuser service-api/phinx.php /app/phinx.php
+COPY --chown=root:root service-api/docker/app/db-migrations.sh /app/db-migrations.sh
+COPY --chown=root:root service-api/phinx.php /app/phinx.php
 COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 
 RUN chmod +x /app/db-migrations.sh /usr/local/bin/health-check.sh

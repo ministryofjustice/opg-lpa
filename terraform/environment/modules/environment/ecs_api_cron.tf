@@ -77,10 +77,13 @@ resource "aws_ecs_task_definition" "api_crons" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  container_definitions    = "[${local.api_app}]"
+  container_definitions    = "[${local.api_app}, ${local.api_app_init_container}]"
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.api_component_tag
+  volume {
+    name = "app_tmp"
+  }
 }
 
 //------------------------------------------------
