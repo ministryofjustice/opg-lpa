@@ -24,11 +24,11 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
     fi
 
 # Install composer dependencies
-COPY --chown=appuser:appuser service-pdf/composer.json /app/composer.json
-COPY --chown=appuser:appuser service-pdf/composer.lock /app/composer.lock
+COPY --chown=root:root service-pdf/composer.json /app/composer.json
+COPY --chown=root:root service-pdf/composer.lock /app/composer.lock
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.4.1 \
-    && su - appuser -c "composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app" \
-    && chown -R appuser:appuser /app/vendor \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
+    && chown -R root:root /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
@@ -37,14 +37,14 @@ RUN apk del .build-dependencies
 
 # This is version 3.2.1 of this tool, we will need to check this regularly.
 # PDFTK does have a community based docker container, but the version is not up to date.
-COPY --chown=appuser:appuser service-pdf/bin/pdftk /usr/local/bin/pdftk
+COPY --chown=root:root service-pdf/bin/pdftk /usr/local/bin/pdftk
 
 RUN curl -sS -o /usr/local/bin/pdftk-all.jar https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/build/libs/pdftk-all.jar \
-    && chmod u+x /usr/local/bin/pdftk
+    && chmod 755 /usr/local/bin/pdftk
 
-COPY --chown=appuser:appuser shared /shared
-COPY --chown=appuser:appuser service-pdf /app
-COPY --chown=appuser:appuser service-pdf/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root shared /shared
+COPY --chown=root:root service-pdf /app
+COPY --chown=root:root service-pdf/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 
 WORKDIR /app
 

@@ -51,10 +51,13 @@ resource "aws_ecs_task_definition" "pdf" {
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.pdf_app}]"
+  container_definitions    = "[${local.pdf_app},  ${local.pdf_app_init_container}]"
   task_role_arn            = aws_iam_role.pdf_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.pdf_component_tag
+  volume {
+    name = "app_tmp"
+  }
 }
 
 //----------------
@@ -161,12 +164,40 @@ data "aws_ecr_repository" "lpa_pdf_app" {
 // pdf ECS Service Task Container level config
 
 locals {
+
+  pdf_app_init_container = jsonencode(
+    {
+      "name" : "permissions-init",
+      "image" : "busybox:latest",
+      "entryPoint" : [
+        "sh",
+        "-c"
+      ],
+      "command" : [
+        "chmod 766 /tmp/"
+      ],
+      "mountPoints" : [
+        {
+          "containerPath" : "/tmp/",
+          "sourceVolume" : "app_tmp"
+        }
+      ],
+      "essential" : false
+    }
+  )
+
   pdf_app = jsonencode(
     {
       "cpu" : 1,
       "essential" : true,
+      "readonlyRootFilesystem" : true,
       "image" : "${data.aws_ecr_repository.lpa_pdf_app.repository_url}:${var.container_version}",
-      "mountPoints" : [],
+      "mountPoints" : [
+        {
+          "containerPath" : "/tmp/",
+          "sourceVolume" : "app_tmp"
+        }
+      ],
       "name" : "app",
       "portMappings" : [
         {
@@ -184,6 +215,12 @@ locals {
           "awslogs-stream-prefix" : "${var.environment_name}.pdf-app.online-lpa"
         }
       },
+      "dependsOn" : [
+        {
+          "containerName" : "permissions-init",
+          "condition" : "SUCCESS"
+        }
+      ],
       "secrets" : [
         { "name" : "OPG_LPA_PDF_OWNER_PASSWORD", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_owner_password.name}" }
       ],

@@ -123,10 +123,13 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.api_web}, ${local.api_app}]"
+  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.api_app_init_container}]"
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.api_component_tag
+  volume {
+    name = "app_tmp"
+  }
 }
 
 
@@ -286,13 +289,40 @@ locals {
     }
   )
 
+  api_app_init_container = jsonencode(
+    {
+      "name" : "permissions-init",
+      "image" : "busybox:latest",
+      "entryPoint" : [
+        "sh",
+        "-c"
+      ],
+      "command" : [
+        "chmod 766 /tmp/"
+      ],
+      "mountPoints" : [
+        {
+          "containerPath" : "/tmp",
+          "sourceVolume" : "app_tmp"
+        }
+      ],
+      "essential" : false
+    }
+  )
+
   api_app = jsonencode(
     {
       "cpu" : 1,
       "essential" : true,
+      "readonlyRootFilesystem" : true,
       "image" : "${data.aws_ecr_repository.lpa_api_app.repository_url}:${var.container_version}",
-      "mountPoints" : [],
       "name" : "app",
+      "mountPoints" : [
+        {
+          "containerPath" : "/tmp",
+          "sourceVolume" : "app_tmp"
+        }
+      ],
       "portMappings" : [
         {
           "containerPort" : 9000,
@@ -316,6 +346,12 @@ locals {
           "awslogs-stream-prefix" : "${var.environment_name}.api-app.online-lpa"
         }
       },
+      "dependsOn" : [
+        {
+          "containerName" : "permissions-init",
+          "condition" : "SUCCESS"
+        }
+      ],
       "secrets" : [
         { "name" : "OPG_LPA_API_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
         { "name" : "OPG_LPA_POSTGRES_USERNAME", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },

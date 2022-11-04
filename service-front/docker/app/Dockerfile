@@ -31,11 +31,11 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 fi
 
 # Install composer dependencies
-COPY --chown=appuser:appuser service-front/composer.json /app/composer.json
-COPY --chown=appuser:appuser service-front/composer.lock /app/composer.lock
+COPY --chown=root:root service-front/composer.json /app/composer.json
+COPY --chown=root:root service-front/composer.lock /app/composer.lock
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.4.1 \
-    && su - appuser -c "composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app" \
-    && chown -R appuser:appuser /app/vendor \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
+    && chown -R root:root /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
@@ -43,22 +43,22 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 RUN apk del .build-dependencies
 
 # Core files for the application
-COPY --chown=appuser:appuser service-front/assets /app/assets
-COPY --chown=appuser:appuser service-front/config /app/config
-COPY --chown=appuser:appuser service-front/content /app/content
-COPY --chown=appuser:appuser service-front/data /app/data
-COPY --chown=appuser:appuser service-front/module /app/module
-COPY --chown=appuser:appuser service-front/public /app/public
+COPY --chown=root:root service-front/assets /app/assets
+COPY --chown=root:root service-front/config /app/config
+COPY --chown=root:root service-front/content /app/content
+COPY --chown=root:root service-front/data /app/data
+COPY --chown=root:root service-front/module /app/module
+COPY --chown=root:root service-front/public /app/public
 
 # For tests in CI
-COPY --chown=appuser:appuser service-front/phpunit.xml /app/phpunit.xml
+COPY --chown=root:root service-front/phpunit.xml /app/phpunit.xml
 
 # Shared code
-COPY --chown=appuser:appuser shared /shared
+COPY --chown=root:root shared /shared
 
 # PHP config files
-COPY --chown=appuser:appuser service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY --chown=appuser:appuser service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=root:root service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 

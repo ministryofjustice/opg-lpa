@@ -68,10 +68,13 @@ resource "aws_ecs_task_definition" "admin" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.admin_web}, ${local.admin_app}]"
+  container_definitions    = "[${local.admin_web}, ${local.admin_app}, ${local.admin_app_init_container}]"
   task_role_arn            = aws_iam_role.admin_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.admin_component_tag
+  volume {
+    name = "app_tmp"
+  }
 }
 
 //----------------
@@ -142,6 +145,7 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
+      # "readonlyRootFilesystem" : true,
       "image" : "${data.aws_ecr_repository.lpa_admin_web.repository_url}:${var.container_version}",
       "mountPoints" : [],
       "name" : "web",
@@ -170,12 +174,39 @@ locals {
     }
   )
 
+  admin_app_init_container = jsonencode(
+    {
+      "name" : "permissions-init",
+      "image" : "busybox:latest",
+      "entryPoint" : [
+        "sh",
+        "-c"
+      ],
+      "command" : [
+        "chmod 766 /tmp/"
+      ],
+      "mountPoints" : [
+        {
+          "containerPath" : "/tmp",
+          "sourceVolume" : "app_tmp"
+        }
+      ],
+      "essential" : false
+    }
+  )
+
   admin_app = jsonencode(
     {
       "cpu" : 1,
       "essential" : true,
+      "readonlyRootFilesystem" : true,
       "image" : "${data.aws_ecr_repository.lpa_admin_app.repository_url}:${var.container_version}",
-      "mountPoints" : [],
+      "mountPoints" : [
+        {
+          "containerPath" : "/tmp",
+          "sourceVolume" : "app_tmp"
+        }
+      ],
       "name" : "app",
       "portMappings" : [
         {
@@ -200,6 +231,12 @@ locals {
           "awslogs-stream-prefix" : "${var.environment_name}.admin-app.online-lpa"
         }
       },
+      "dependsOn" : [
+        {
+          "containerName" : "permissions-init",
+          "condition" : "SUCCESS"
+        }
+      ],
       "secrets" : [
         { "name" : "OPG_LPA_ADMIN_JWT_SECRET", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.name}" },
         { "name" : "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
