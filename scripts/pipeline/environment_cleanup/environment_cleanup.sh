@@ -9,7 +9,7 @@ if [ "$1" == "-h" ]; then
   exit 0
 fi
 
-RESPONSE=$(curl -X DELETE -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GITHUB_TOKEN}" https://api.github.com/repos/ministryofjustice/opg-lpa/environments/$1)
+RESPONSE=$(curl -X DELETE -v -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GITHUB_TOKEN}" https://api.github.com/repos/ministryofjustice/opg-lpa/environments/$1)
 
 if [ "${RESPONSE}" == "204" ]; then
   echo "Environment $1 deleted"
