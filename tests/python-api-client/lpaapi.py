@@ -418,6 +418,27 @@ def addCorrespondent(lpaId):
     putToAPI(lpaId, correspondent, "correspondent")
 
 
+def addTrustCorpCorrespondent(lpaId):
+    correspondent = {
+        "who": "attorney",
+        "name": None,
+        "email": {"address": "opglpademo+trustcorp@gmail.com"},
+        "phone": None,
+        "address": {
+            "address1": "1 Laburnum Place",
+            "address2": "Sketty",
+            "address3": "Swansea, Abertawe",
+            "postcode": "SA2 8HT",
+        },
+        "company": "Standard Trust",
+        "contactByPost": False,
+        "contactInWelsh": False,
+        "contactDetailsEnteredManually": True,
+    }
+
+    putToAPI(lpaId, correspondent, "correspondent")
+
+
 def addWhoAreYou(lpaId):
     whoAreYou = {"who": "donor", "qualifier": None}
     putToAPI(lpaId, whoAreYou, "who-are-you")
@@ -428,6 +449,7 @@ def setRepeatApplication(lpaId):
         "metadata": {
             "replacement-attorneys-confirmed": True,
             "repeat-application-confirmed": True,
+            "people-to-notify-confirmed": True,
         }
     }
     patchViaAPI(lpaId, metadata)
@@ -460,6 +482,10 @@ def setPayment(
         "reducedFeeUniversalCredit": reducedFeeUniversalCredit,
     }
     putToAPI(lpaId, payment, "payment")
+
+
+def setPaymentOnBenefits(lpaId):
+    setPayment(lpaId, amount=0, reducedFeeReceivesBenefits=True)
 
 
 def setPaymentNormalFeeWithCheque(lpaId):

@@ -115,8 +115,10 @@ class FilteringSaveHandler implements SaveHandlerInterface
         $result = false;
 
         try {
-            // this will throw a RedisException if the Redis server is unavailable
-            $result = $this->redisClient->connect($this->redisHost, $this->redisPort);
+            // this will throw a RedisException if the Redis server is unavailable;
+            // the '@' suppresses PHP warning messages, e.g. if the Redis server's
+            // domain name cannot be resolved (in this case, an exception is still thrown)
+            $result = @$this->redisClient->connect($this->redisHost, $this->redisPort);
         } catch (RedisException $e) {
             $this->getLogger()->err(sprintf(
                 'Unable to connect to Redis server at %s:%s',
@@ -168,7 +170,6 @@ class FilteringSaveHandler implements SaveHandlerInterface
         $key = $this->getKey($id);
 
         if ($doWrite) {
-
             // This appears to return a Redis instance, not a boolean; so we
             // check that here so we always get a boolean.
             $success = $this->redisClient->setEx($key, $this->ttl, $data);
