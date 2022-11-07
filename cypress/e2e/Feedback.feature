@@ -19,7 +19,16 @@ Feature: Feedback
             | Select a rating for this service |
             | Do not forget to leave your feedback in the box |
         And I see "Error" in the title
-        When I select satisfied
+        # click through all the radio buttons due to history of bug in this area (see LPAL-1038)
+        When I select very satisfied
+        And I select satisfied
+        And I select neither satisfied or dissatisfied
+        And I select dissatisfied
+        And I select very dissatisfied
+        And I select neither satisfied or dissatisfied
+        And I select dissatisfied
+        And I select satisfied
+        And I select very satisfied
         And I submit the feedback
         Then I see in the page text
             | There is a problem |
