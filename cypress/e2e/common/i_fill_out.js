@@ -58,16 +58,6 @@ When('I force fill out', (dataTable) => {
   });
 });
 
-When('I quickly fill out', (dataTable) => {
-  const rawTable = dataTable.rawTable;
-
-  rawTable.forEach((row) => {
-    cy.get('[data-cy=' + row[0] + ']').each((elt) => {
-      Cypress.$(elt).attr('value', row[1]);
-    });
-  });
-});
-
 Then('I force fill out {string} element with {string}', (element, value) => {
   cy.get(element).clear({ force: true }).type(value, { force: true });
 });
