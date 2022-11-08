@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "lint:check": "eslint service-front/assets/js cypress/e2e/common"
+    "lint:check": "eslint --fix service-front/assets/js cypress/e2e/common"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

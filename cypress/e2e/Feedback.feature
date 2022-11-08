@@ -29,6 +29,7 @@ Feature: Feedback
         When I select neither satisfied or dissatisfied
         And I set feedback email as "cypress@opg-lpa-test.net"
         And I set feedback content as "Cypress feedback form test"
+        Then I expect submitted feedback form to contain a rating of "neither-satisfied-or-dissatisfied"
         And I submit the feedback
         Then I see "Thank you" in the title
         And I can find link pointing to "/home"
