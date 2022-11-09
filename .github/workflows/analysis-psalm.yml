@@ -26,6 +26,8 @@ jobs:
             path: "./service-admin"
           - name: service-pdf
             path: "./service-pdf"
+          - name: shared
+            path: "./shared"
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
