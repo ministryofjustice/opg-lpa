@@ -60,7 +60,7 @@
     "autoload": {
         "psr-4": {
             "Application\\": "module/Application/src/",
-            "MakeLogger\\": "../shared/logging/module/MakeLogger/src/",
+            "MakeShared\\": "../shared/module/MakeShared/src/",
             "Alphagov\\Pay\\": "module/Alphagov/Pay/src/"
         }
     },
