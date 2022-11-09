@@ -1,6 +1,6 @@
 <?php
 
-namespace MakeLogger\Logging;
+namespace MakeShared\Logging;
 
 use Laminas\Mvc\MvcEvent;
 use Laminas\Log\Processor\ProcessorInterface;

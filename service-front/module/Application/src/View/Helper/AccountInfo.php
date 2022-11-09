@@ -10,7 +10,7 @@ use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Model\ViewModel;
-use MakeLogger\Logging\LoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 
 class AccountInfo extends AbstractHelper
 {

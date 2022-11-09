@@ -1,11 +1,12 @@
 <?php
+
 namespace Application\Model\DataAccess\Postgres;
 
-use MakeLogger\Logging\LoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 
-
-class AbstractBase {
+class AbstractBase
+{
     use LoggerTrait;
 
     /**
@@ -24,7 +25,7 @@ class AbstractBase {
      * @param DbWrapper $dbWrapper
      * @param array $config
      */
-    public final function __construct(DbWrapper $dbWrapper, array $config = [])
+    final public function __construct(DbWrapper $dbWrapper, array $config = [])
     {
         $this->dbWrapper = $dbWrapper;
         $this->config = $config;

@@ -1,14 +1,14 @@
 <?php
 
-namespace MakeLogger\Logging;
+namespace MakeShared\Logging;
 
 use Laminas\Log\Logger as LaminasLogger;
 use Laminas\Log\Writer\Stream as StreamWriter;
 use Laminas\Log\Formatter\Json as JsonFormatter;
 use Laminas\Stdlib\ArrayUtils;
-use MakeLogger\Logging\MvcEventProcessor;
-use MakeLogger\Logging\HeadersProcessor;
-use MakeLogger\Logging\TraceIdProcessor;
+use MakeShared\Logging\MvcEventProcessor;
+use MakeShared\Logging\HeadersProcessor;
+use MakeShared\Logging\TraceIdProcessor;
 use Traversable;
 
 /**

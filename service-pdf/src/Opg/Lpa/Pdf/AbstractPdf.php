@@ -5,7 +5,7 @@ namespace Opg\Lpa\Pdf;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use MakeLogger\Logging\LoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\PdftkFactory;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Exception;

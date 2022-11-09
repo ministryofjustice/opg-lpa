@@ -6,8 +6,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\RequestInterface as Request;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-
-use MakeLogger\Logging\MvcEventProcessor;
+use MakeShared\Logging\MvcEventProcessor;
 
 class MvcEventProcessorTest extends MockeryTestCase
 {
@@ -38,9 +37,9 @@ class MvcEventProcessorTest extends MockeryTestCase
         $fakeEvent->shouldReceive('getController')->andReturn('MyController')->once();
         $fakeEvent->shouldReceive('getParam')
                   ->with('exception')
-                  ->andReturn(NULL)
+                  ->andReturn(null)
                   ->once();
-        $fakeEvent->shouldReceive('isError')->andReturn(TRUE)->once();
+        $fakeEvent->shouldReceive('isError')->andReturn(true)->once();
         $fakeEvent->shouldReceive('getError')->andReturn('generic error')->once();
 
         $logEvent = [

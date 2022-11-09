@@ -7,7 +7,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Aws\Sqs\SqsClient;
-use MakeLogger\Logging\Logger;
+use MakeShared\Logging\Logger;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Laminas\View\Model\JsonModel;
 use Http\Client\HttpClient;

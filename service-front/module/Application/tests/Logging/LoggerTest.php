@@ -3,11 +3,9 @@
 namespace ApplicationTest\Logging;
 
 use Laminas\Log\Writer\Stream as StreamWriter;
-
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-
-use MakeLogger\Logging\Logger;
+use MakeShared\Logging\Logger;
 
 class LoggerTest extends MockeryTestCase
 {
