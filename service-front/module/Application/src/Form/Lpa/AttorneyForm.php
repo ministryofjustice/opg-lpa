@@ -16,9 +16,6 @@ class AttorneyForm extends AbstractActorForm
         'name-last' => [
             'type' => 'Text',
         ],
-        'otherNames' => [
-            'type' => 'Text',
-        ],
         'dob-date' => [
             'type' => 'Application\Form\Fieldset\Dob',
         ],
