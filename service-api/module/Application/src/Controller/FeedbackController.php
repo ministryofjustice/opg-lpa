@@ -1,11 +1,12 @@
 <?php
+
 namespace Application\Controller;
 
 use Laminas\Mvc\MvcEvent;
 use DateTime;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use MakeLogger\Logging\LoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\Feedback\Service as FeedbackService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
@@ -97,7 +98,6 @@ class FeedbackController extends AbstractRestfulController
             );
         }
 
-        return new NoContentResponse;
+        return new NoContentResponse();
     }
-
 }

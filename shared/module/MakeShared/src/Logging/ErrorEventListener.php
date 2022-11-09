@@ -1,13 +1,13 @@
 <?php
 
-namespace MakeLogger\Logging;
+namespace MakeShared\Logging;
 
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\Event;
 use Laminas\Mvc\MvcEvent;
-use MakeLogger\Logging\LoggerTrait;
-use MakeLogger\Logging\MvcEventProcessor;
+use MakeShared\Logging\LoggerTrait;
+use MakeShared\Logging\MvcEventProcessor;
 
 /**
  * Listener for error events arising from controllers.
