@@ -8,7 +8,6 @@ use Laminas\Filter;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Hidden;
 use Laminas\InputFilter\Input;
-use Laminas\InputFilter\InputFilter;
 
 /**
  * Class UserFind
@@ -25,8 +24,7 @@ class UserFind extends AbstractForm
     {
         parent::__construct(self::class, $options);
 
-        $inputFilter = new InputFilter();
-        $this->setInputFilter($inputFilter);
+        $inputFilter = $this->getInputFilter();
 
         //  query field
         $field = new Text('query');

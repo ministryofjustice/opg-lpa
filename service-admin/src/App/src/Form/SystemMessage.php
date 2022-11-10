@@ -5,7 +5,6 @@ namespace App\Form;
 use App\Filter\StandardInputFilterChain;
 use Laminas\Form\Element\Textarea;
 use Laminas\InputFilter\Input;
-use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\StringLength;
 
 /**
@@ -33,8 +32,7 @@ class SystemMessage extends AbstractForm
         $this->add($field);
 
         // Filter inputs
-        $inputFilter = new InputFilter();
-        $this->setInputFilter($inputFilter);
+        $inputFilter = $this->getInputFilter();
 
         $input = new Input($field->getName());
         $input->setRequired(false);
@@ -54,7 +52,7 @@ class SystemMessage extends AbstractForm
 
         $inputFilter->add($input);
 
-        //  Csrf field
-        $this->addCsrfElement($inputFilter);
+        // Csrf field
+        $this->addCsrfElement();
     }
 }

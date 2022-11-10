@@ -7,7 +7,6 @@ use Laminas\Form\Element\Csrf;
 use Laminas\Form\Form as LaminasForm;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\Input;
-use Laminas\InputFilter\InputFilter;
 
 /**
  * Class AbstractForm
@@ -19,7 +18,7 @@ abstract class AbstractForm extends LaminasForm
      * @param InputFilter $inputFilter
      * @return void
      */
-    protected function addCsrfElement(InputFilter $inputFilter): void
+    protected function addCsrfElement(): void
     {
         $options = $this->getOptions();
 
@@ -37,7 +36,7 @@ abstract class AbstractForm extends LaminasForm
 
         $this->add($field);
 
-        $inputFilter->add($input);
+        $this->getInputFilter()->add($input);
     }
 
     /**
