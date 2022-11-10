@@ -38,5 +38,8 @@ class UserSearch extends AbstractForm
 
         $this->add($field);
         $this->getInputFilter()->add($input);
+
+        // Csrf field
+        $this->addCsrfElement();
     }
 }
