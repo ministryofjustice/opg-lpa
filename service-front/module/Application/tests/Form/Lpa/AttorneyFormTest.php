@@ -13,7 +13,7 @@ class AttorneyFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->setUpForm(new AttorneyForm());
     }
@@ -33,7 +33,6 @@ class AttorneyFormTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-title'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-first'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-last'));
-        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('otherNames'));
         $this->assertInstanceOf('Application\Form\Fieldset\Dob', $this->form->get('dob-date'));
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email-address'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-address1'));
