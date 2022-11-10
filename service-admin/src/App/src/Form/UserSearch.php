@@ -32,8 +32,7 @@ class UserSearch extends AbstractForm
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(StandardInputFilterChain::create())
-            ->attach(new Filter\StringToLower());
+            ->attach(StandardInputFilterChain::create());
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(), true)
