@@ -114,14 +114,20 @@ resource "aws_db_parameter_group" "postgres13-db-params" {
 
   parameter {
     name         = "log_statement"
-    value        = "all"
-    apply_method = "pending-reboot"
+    value        = "none"
+    apply_method = "immediate"
   }
 
 
   parameter {
     name         = "rds.log_retention_period"
     value        = "1440"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "log_duration"
+    value        = "1"
     apply_method = "immediate"
   }
 }
