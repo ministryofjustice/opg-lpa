@@ -56,4 +56,14 @@ abstract class AbstractForm extends LaminasForm
 
         return $data;
     }
+
+    /**
+     * Ensures that the data is set through the form's InputFilter so the filters
+     * are actually applied.
+     */
+    public function setData(iterable $data)
+    {
+        $filteredData = $this->getInputFilter()->setData($data)->getValues();
+        return parent::setData($filteredData);
+    }
 }

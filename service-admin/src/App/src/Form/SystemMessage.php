@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Filter\StandardInputFilterChain;
 use Laminas\Form\Element\Textarea;
 use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
@@ -27,11 +28,14 @@ class SystemMessage extends AbstractForm
     {
         parent::__construct(self::class, $options);
 
+        // Message HTML field
+        $field = new Textarea('message');
+        $this->add($field);
+
+        // Filter inputs
         $inputFilter = new InputFilter();
         $this->setInputFilter($inputFilter);
 
-        //  Message field
-        $field = new Textarea('message');
         $input = new Input($field->getName());
         $input->setRequired(false);
 
@@ -45,7 +49,9 @@ class SystemMessage extends AbstractForm
         $input->getValidatorChain()
             ->attach($validator);
 
-        $this->add($field);
+        $input->getFilterChain()
+            ->attach(StandardInputFilterChain::create());
+
         $inputFilter->add($input);
 
         //  Csrf field
