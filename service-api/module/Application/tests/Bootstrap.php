@@ -14,7 +14,7 @@ spl_autoload_register(function ($class) {
     $baseDirs = [
         __DIR__ . '/',
         __DIR__ . '/../src/',
-        __DIR__ . '/../../../../shared//module/MakeShared/src/',
+        __DIR__ . '/../../../../shared/module/MakeShared/src/',
     ];
 
     //  Strip out any leading "ApplicationTest" if present
