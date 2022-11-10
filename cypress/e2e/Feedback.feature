@@ -19,16 +19,7 @@ Feature: Feedback
             | Select a rating for this service |
             | Do not forget to leave your feedback in the box |
         And I see "Error" in the title
-        # click through all the radio buttons due to history of bug in this area (see LPAL-1038)
-        When I select very satisfied
-        And I select satisfied
-        And I select neither satisfied or dissatisfied
-        And I select dissatisfied
-        And I select very dissatisfied
-        And I select neither satisfied or dissatisfied
-        And I select dissatisfied
-        And I select satisfied
-        And I select very satisfied
+        When I select satisfied
         And I submit the feedback
         Then I see in the page text
             | There is a problem |
@@ -38,6 +29,7 @@ Feature: Feedback
         When I select neither satisfied or dissatisfied
         And I set feedback email as "cypress@opg-lpa-test.net"
         And I set feedback content as "Cypress feedback form test"
+        Then I expect submitted feedback form to contain a rating of "neither-satisfied-or-dissatisfied"
         And I submit the feedback
         Then I see "Thank you" in the title
         And I can find link pointing to "/home"
