@@ -23,7 +23,9 @@ class SystemMessage extends AbstractHelper
             $message = trim($message);
         }
 
-        if ($message != '') {
+        if ($message !== '') {
+            $message = htmlspecialchars($message);
+
             echo <<<SYSMESS
             <div class="notice">
               <i class="icon icon-important"></i>
