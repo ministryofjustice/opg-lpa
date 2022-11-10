@@ -19,14 +19,35 @@ Feature: Feedback
             | Select a rating for this service |
             | Do not forget to leave your feedback in the box |
         And I see "Error" in the title
-        When I select satisfied
+        # note-  extra testing of clicking radion buttons due to historic bug LPAL-1038
+        When I select rating "very-satisfied"
+        Then I can see that rating "very-satisfied" is selected
+        When I select rating "satisfied"
+        Then I can see that rating "satisfied" is selected
+        When I select rating "neither-satisfied-or-dissatisfied"
+        Then I can see that rating "neither-satisfied-or-dissatisfied" is selected
+        When I select rating "dissatisfied"
+        Then I can see that rating "dissatisfied" is selected
+        When I select rating "very-dissatisfied"
+        Then I can see that rating "very-dissatisfied" is selected
+        When I select rating "dissatisfied"
+        Then I can see that rating "dissatisfied" is selected
+        When I select rating "neither-satisfied-or-dissatisfied"
+        Then I can see that rating "neither-satisfied-or-dissatisfied" is selected
+        When I select rating "satisfied"
+        Then I can see that rating "satisfied" is selected
+        When I select rating "very-satisfied"
+        Then I can see that rating "very-satisfied" is selected
+        When I select rating "neither-satisfied-or-dissatisfied"
+        Then I can see that rating "neither-satisfied-or-dissatisfied" is selected
         And I submit the feedback
         Then I see in the page text
             | There is a problem |
             | Do not forget to leave your feedback in the box |
         And I can find "feedback-textarea" wrapped with error highlighting
         And I see "Error" in the title
-        When I select neither satisfied or dissatisfied
+        When I select rating "neither-satisfied-or-dissatisfied"
+        Then I can see that rating "neither-satisfied-or-dissatisfied" is selected
         And I set feedback email as "cypress@opg-lpa-test.net"
         And I set feedback content as "Cypress feedback form test"
         Then I expect submitted feedback form to contain a rating of "neither-satisfied-or-dissatisfied"
