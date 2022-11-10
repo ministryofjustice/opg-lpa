@@ -259,12 +259,14 @@ jobs:
     steps:
     - name: Login to Jira
       uses: atlassian/gajira-login@master
+      continue-on-error: true
       env:
         JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
         JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
         JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
     - name: Find in commit messages
       uses: atlassian/gajira-find-issue-key@master
+      continue-on-error: true
       id: jira_ticket
       with:
         string: ${{ github.event.pull_request.title }}
@@ -408,6 +410,7 @@ jobs:
     steps:
     - name: Login to Jira
       uses: atlassian/gajira-login@master
+      continue-on-error: true
       env:
         JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
         JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
@@ -416,6 +419,7 @@ jobs:
     - name: Find in commit messages
       uses: atlassian/gajira-find-issue-key@master
       id: jira_ticket
+      continue-on-error: true
       with:
         string: ${{ github.event.pull_request.title }}
 
