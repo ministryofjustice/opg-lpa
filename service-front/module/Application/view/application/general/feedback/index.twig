@@ -4,7 +4,7 @@
 
 {%- set pageTitle = 'Send us feedback' -%}
 
-{% set type = form.get('rating').setOptions({ label: 'Rate your experience' }) %}
+{% set rating = form.get('rating').setOptions({ label: 'Rate your experience' }) %}
 
 {% block errorSummary %}
     {% include 'application/general/feedback/partials/index-error-summary.twig' %}
@@ -16,7 +16,6 @@
 
 {{ form.setAttribute('class', 'form js-single-use') ? '' }}
 
-{% set type = form.get('rating') %}
 {% set details = form.get('details') %}
 {% set email = form.get('email') %}
 {% set phone = form.get('phone') %}
@@ -46,10 +45,7 @@
     'data-cy': 'feedback-phone'
 }) ? ''}}
 
-{% set allOptions = type.getOptions() %}
-{% set typeValueOptions = allOptions['value_options'] %}
-
-{{ type.setOptions({
+{{ rating.setOptions({
     label_attributes: {'class': 'block-label'}
 }) ? ''}}
 
@@ -63,12 +59,12 @@
             <p>If you have a question about your LPA, please email <a href="mailto:customerservices@publicguardian.gov.uk">customerservices@publicguardian.gov.uk</a> who will be able to help.</p>
         </div>
 
-        <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
-            <label class="heading-medium flush--top text" for="{{ type.getAttribute('id') }}">
+        <div class="form-group {{ rating.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ rating.getAttribute('id') }}">
                 How would you rate your experience with this service?
             </label>
-            {{ formElementErrorsV2(type) }}
-            {{ formRadio(type) }}
+            {{ formElementErrorsV2(rating) }}
+            {{ formRadio(rating) }}
         </div>
 
         <div class="form-group {{ details.getMessages|length >0 ? 'form-group-error'}}">
@@ -104,5 +100,3 @@
 {{ form().closeTag|raw }}
 
 {% endblock content %}
-
-
