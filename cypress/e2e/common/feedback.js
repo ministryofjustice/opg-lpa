@@ -1,3 +1,4 @@
+const path = require('path');
 import { Then } from '@badeball/cypress-cucumber-preprocessor';
 
 Then(`I can find feedback buttons`, () => {
@@ -42,3 +43,26 @@ Then(
     });
   },
 );
+
+Then(`I can export feedback and download it as a CSV file`, () => {
+  cy.intercept('POST', '/feedback?export=true', (req) => {
+    req.continue((res) => {
+      const contentDisposition = res.headers['content-disposition'];
+      const downloadedFile = contentDisposition.split('filename=')[1];
+      const downloadsFolder = Cypress.config('downloadsFolder');
+      cy.readFile(path.join(downloadsFolder, downloadedFile)).should('exist');
+    });
+  });
+
+  // work-around for cypress bug when downloading files from a link;
+  // see https://github.com/cypress-io/cypress/issues/7083#issuecomment-858489694
+  cy.document().then((doc) => {
+    doc.addEventListener('click', () => {
+      setTimeout(function () {
+        doc.location.reload();
+      }, 1000);
+    });
+  });
+
+  cy.contains('Export').click();
+});
