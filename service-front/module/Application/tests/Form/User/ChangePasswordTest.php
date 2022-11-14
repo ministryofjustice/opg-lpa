@@ -15,7 +15,7 @@ class ChangePasswordTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $form = new ChangePasswordForm();
 
@@ -53,6 +53,34 @@ class ChangePasswordTest extends MockeryTestCase
             'password_current'      => 'P@55word',
             'password'              => 'P@55word',
             'password_confirm'      => 'P@55word',
+            'skip_confirm_password' => '0',
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+
+        $this->assertEquals([], $this->form->getMessages());
+    }
+
+    public function testValidateByModelOKWithHTMLTags()
+    {
+        $this->form->setData(array_merge([
+            'password_current'      => 'P@55word',
+            'password'              => '<>P@55word',
+            'password_confirm'      => '<>P@55word',
+            'skip_confirm_password' => '0',
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+
+        $this->assertEquals([], $this->form->getMessages());
+    }
+
+    public function testValidateByModelOKWithLeadingAndTrailingSpaces()
+    {
+        $this->form->setData(array_merge([
+            'password_current'      => 'P@55word',
+            'password'              => '  P@55word  ',
+            'password_confirm'      => '  P@55word  ',
             'skip_confirm_password' => '0',
         ], $this->getCsrfData()));
 
