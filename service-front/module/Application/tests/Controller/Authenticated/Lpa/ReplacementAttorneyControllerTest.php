@@ -9,11 +9,11 @@ use Application\Form\Lpa\TrustCorporationForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Common\Address;
-use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Common\Address;
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
@@ -60,7 +60,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         'email' => ['address' => 'unit@test.com']
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

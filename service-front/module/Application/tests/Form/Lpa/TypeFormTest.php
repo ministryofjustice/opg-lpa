@@ -5,7 +5,7 @@ namespace ApplicationTest\Form\Lpa;
 use Application\Form\Lpa\TypeForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Document\Document;
 
 class TypeFormTest extends MockeryTestCase
 {
@@ -14,7 +14,7 @@ class TypeFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->setUpForm(new TypeForm());
     }

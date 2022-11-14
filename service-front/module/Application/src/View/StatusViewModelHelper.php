@@ -5,7 +5,7 @@ namespace Application\View;
 use DateInterval;
 use DateTime;
 use Laminas\View\Model\ViewModel;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class StatusViewModelHelper
 {

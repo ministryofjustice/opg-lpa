@@ -4,11 +4,11 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Application\Form\Lpa\CorrespondentForm;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\PhoneNumber;
+use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeShared\DataModel\Lpa\Document\Donor;
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\Common\PhoneNumber;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
@@ -149,7 +149,7 @@ class CorrespondentController extends AbstractLpaActorController
     /**
      * Simple function to get the best correspondent actor for the LPA
      *
-     * @return \Opg\Lpa\DataModel\AbstractData|null
+     * @return \MakeShared\DataModel\AbstractData|null
      */
     private function getLpaCorrespondent()
     {

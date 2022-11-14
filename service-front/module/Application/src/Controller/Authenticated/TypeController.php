@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Model\FormFlowChecker;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use RuntimeException;

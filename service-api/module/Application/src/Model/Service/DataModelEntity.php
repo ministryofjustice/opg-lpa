@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service;
 
-use Opg\Lpa\DataModel\AbstractData;
+use MakeShared\DataModel\AbstractData;
 
 class DataModelEntity implements EntityInterface
 {

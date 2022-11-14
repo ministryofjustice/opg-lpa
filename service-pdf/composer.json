@@ -34,7 +34,8 @@
         "psr-4": {
             "Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/",
             "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/",
-            "MakeShared\\": "../shared/module/MakeShared/src/"
+            "MakeShared\\": "../shared/module/MakeShared/src/",
+            "MakeSharedTest\\": "../shared/module/MakeShared/tests/"
         }
     },
     "include-path": ["config/"]

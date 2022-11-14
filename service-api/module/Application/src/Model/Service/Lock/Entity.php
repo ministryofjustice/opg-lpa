@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Lock;
 
 use Application\Model\Service\EntityInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use DateTime;
 
 class Entity implements EntityInterface

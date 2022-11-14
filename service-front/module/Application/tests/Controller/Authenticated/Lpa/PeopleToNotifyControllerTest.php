@@ -8,11 +8,11 @@ use Application\Form\Lpa\PeopleToNotifyForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Common\Address;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Common\Address;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
@@ -43,7 +43,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         ]
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

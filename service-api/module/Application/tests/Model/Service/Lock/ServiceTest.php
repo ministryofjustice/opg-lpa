@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Service\Lock;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Lock\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeSharedTest\DataModel\FixturesData;
 use DateTime;
 
 class ServiceTest extends AbstractServiceTest
