@@ -109,6 +109,7 @@ Feature: Admin
     And I click "submit-button"
     And I see "No system message has been set" in the page text
 
+  @focus
   Scenario: View feedback sent to the service
     Given I visit the admin sign-in page
     And I log in to admin
