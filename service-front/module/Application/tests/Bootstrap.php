@@ -47,5 +47,5 @@ if (file_exists($composerAutoloadFile)) {
     require_once $composerAutoloadFile;
 }
 
-require __DIR__ . '/../../../vendor/ministryofjustice/opg-lpa-datamodels/tests/OpgTest/Lpa/DataModel/FixturesData.php';
+require __DIR__ . '/../../../../shared/module/MakeShared/tests/DataModel/FixturesData.php';
 require __DIR__ . '/ControllerFactory/NonDispatchableController.php';

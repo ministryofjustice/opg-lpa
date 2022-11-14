@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller;
 
 use DateTime;
 use Mockery;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\User\User;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;

@@ -3,8 +3,8 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
-use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\CertificateProvider;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\View\Model\ViewModel;
 
 class CertificateProviderController extends AbstractLpaActorController

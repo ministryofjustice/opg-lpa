@@ -5,19 +5,19 @@ namespace ApplicationTest\Model;
 use Application\Model\FormFlowChecker;
 use ApplicationTest\Bootstrap;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
+use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use MakeShared\DataModel\Lpa\Document\CertificateProvider;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Document\Donor;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
+use MakeShared\DataModel\Lpa\Payment\Calculator;
+use MakeShared\DataModel\Lpa\Payment\Payment;
 use DateTime;
 use Exception;
 use RuntimeException;
@@ -111,7 +111,7 @@ class FormFlowCheckerTest extends MockeryTestCase
 
     ];
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = require __DIR__ . '/../../config/module.routes.php';
 

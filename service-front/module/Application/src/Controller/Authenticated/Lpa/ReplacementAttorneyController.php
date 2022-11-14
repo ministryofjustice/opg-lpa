@@ -3,9 +3,9 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
+use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\View\Model\ViewModel;
 
 class ReplacementAttorneyController extends AbstractLpaActorController

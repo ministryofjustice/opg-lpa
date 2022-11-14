@@ -3,7 +3,7 @@
 namespace Application\Model\DataAccess\Repository\User;
 
 use DateTime;
-use Opg\Lpa\DataModel\User\User as UserModel;
+use MakeShared\DataModel\User\User as UserModel;
 
 interface UserRepositoryInterface
 {

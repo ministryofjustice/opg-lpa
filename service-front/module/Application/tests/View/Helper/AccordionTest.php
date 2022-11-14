@@ -4,7 +4,7 @@ namespace ApplicationTest\View\Helper;
 
 use Application\View\Helper\Accordion;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Mockery;
 use Laminas\Router\RouteMatch;
 

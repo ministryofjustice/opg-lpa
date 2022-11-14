@@ -11,8 +11,8 @@ use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\User\User;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\User\User;
+use MakeSharedTest\DataModel\FixturesData;
 use ArrayObject;
 use DateTime;
 
@@ -33,7 +33,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private $authUserRepository;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 

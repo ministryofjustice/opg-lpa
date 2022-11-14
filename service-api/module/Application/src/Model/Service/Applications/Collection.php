@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Applications;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Paginator\Paginator;
 
 class Collection extends Paginator

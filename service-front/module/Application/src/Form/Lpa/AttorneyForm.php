@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 
 class AttorneyForm extends AbstractActorForm
 {

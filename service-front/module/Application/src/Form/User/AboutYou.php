@@ -3,7 +3,7 @@
 namespace Application\Form\User;
 
 use Application\Form\Lpa\AbstractActorForm;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\User\User;
 use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
 

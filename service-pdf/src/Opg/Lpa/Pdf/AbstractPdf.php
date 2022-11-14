@@ -2,8 +2,8 @@
 
 namespace Opg\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Lpa\Formatter;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Formatter;
+use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use MakeShared\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\PdftkFactory;

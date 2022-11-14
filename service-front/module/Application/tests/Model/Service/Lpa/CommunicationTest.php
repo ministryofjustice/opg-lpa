@@ -6,16 +6,16 @@ use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Mail\MailParameters;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use DateTime;
 use Hamcrest\MatcherAssert;
 use Hamcrest\Matchers;
 use Mockery;
-use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\LongName;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\Common\LongName;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Payment\Payment;
 use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
@@ -61,7 +61,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                         "first" => "Elizabeth",
                         "last" => "Stout",
                     ],
-                 ]),
+                   ]),
                 ],
             ]),
          // note that the system represents no payment, by having a payment object with the reason for no payment set within it
@@ -194,7 +194,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                         "first" => "Elizabeth",
                         "last" => "Stout",
                     ],
-                 ]),
+                   ]),
                 ],
             ]),
          // note that the system represents no payment, by having a payment object with the reason for no payment set within it
@@ -327,7 +327,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                         "first" => "Elizabeth",
                         "last" => "Stout",
                     ],
-                 ]),
+                   ]),
                 ],
             ]),
          // note that the system represents no payment, by having a payment object with the reason for no payment set within it
@@ -461,7 +461,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                         "first" => "Elizabeth",
                         "last" => "Stout",
                     ],
-                 ]),
+                   ]),
                 ],
             ]),
          // note that the system represents no payment, by having a payment object with the reason for no payment set within it
@@ -594,7 +594,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                         "first" => "Elizabeth",
                         "last" => "Stout",
                     ],
-                  ]),
+                   ]),
                 ]
             ]),
             'payment' => new Payment([
@@ -726,7 +726,7 @@ class CommunicationTest extends AbstractEmailServiceTest
                         "first" => "Elizabeth",
                         "last" => "Stout",
                     ],
-                  ]),
+                   ]),
                 ]
             ]),
             'payment' => new Payment([
@@ -859,8 +859,8 @@ class CommunicationTest extends AbstractEmailServiceTest
                         "first" => "Elizabeth",
                         "last" => "Stout",
                     ],
-                 ]),
-               ]
+                   ]),
+                ]
             ]),
             'payment' => new Payment([
                 'method' => 'cheque',
@@ -873,7 +873,7 @@ class CommunicationTest extends AbstractEmailServiceTest
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
                       ->andReturn('https://some.url');
-        
+
         $this->service->shouldReceive('moneyFormat')
             ->with('110.00')
             ->andReturn('110.00');
@@ -928,7 +928,7 @@ class CommunicationTest extends AbstractEmailServiceTest
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
-        
+
         $this->service->shouldReceive('moneyFormat')
             ->with('110.00')
             ->andReturn('110.00');
@@ -977,8 +977,8 @@ class CommunicationTest extends AbstractEmailServiceTest
                         "first" => "Elizabeth",
                         "last" => "Stout",
                     ],
-                 ]),
-              ],
+                   ]),
+                ],
             ]),
             'payment' => new Payment([
                 'method' => 'cheque',
@@ -992,7 +992,7 @@ class CommunicationTest extends AbstractEmailServiceTest
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
-        
+
         $this->service->shouldReceive('moneyFormat')
             ->with('110.00')
             ->andReturn('110.00');
@@ -1047,7 +1047,7 @@ class CommunicationTest extends AbstractEmailServiceTest
             ->andReturn('A22222222');
         $this->service->shouldReceive('url')
             ->andReturn('https://some.url');
-        
+
         $this->service->shouldReceive('moneyFormat')
             ->with('41.00')
             ->andReturn('41.00');

@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 
 class PeopleToNotifyForm extends AbstractActorForm
 {

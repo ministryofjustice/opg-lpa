@@ -6,12 +6,12 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTra
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryTrait;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\Service\AbstractService;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
+use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use DateTime;
 use Exception;
 

@@ -8,7 +8,7 @@ use Application\Model\Service\Lpa\Communication;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use MakeShared\DataModel\Lpa\Payment\Calculator;
 use RuntimeException;
 use Laminas\Form\ElementInterface;
 use Laminas\Http\Response;
@@ -36,7 +36,7 @@ class CheckoutControllerTest extends AbstractControllerTest
      */
     private $submitButton;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -440,8 +440,7 @@ class CheckoutControllerTest extends AbstractControllerTest
             $this->submitButton->shouldReceive('setAttribute')
                 ->withArgs(['data-cy', 'confirm-and-pay-by-card'])
                 ->andReturn($this->submitButton)->once();
-        }
-        else {
+        } else {
             $this->blankMainFlowForm->shouldReceive('get')
               ->withArgs(['submit'])->andReturn($this->submitButton)->once();
         }

@@ -8,8 +8,8 @@ use Application\Library\DateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
-use Opg\Lpa\DataModel\Lpa\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Paginator\Adapter\Callback as PaginatorCallback;
 use Laminas\Paginator\Adapter\NullFill as PaginatorNull;
 use RuntimeException;
@@ -57,7 +57,6 @@ class Service extends AbstractService
             }
 
             $created = $this->getApplicationRepository()->insert($lpa);
-
         } while (!$created);
 
         $entity = new DataModelEntity($lpa);
@@ -136,7 +135,7 @@ class Service extends AbstractService
      * @param string $userId : restrict results to this user ID
      * @return Lpa[]
      */
-    public function filterByIdsAndUser(array $lpaIds, string $userId) : array
+    public function filterByIdsAndUser(array $lpaIds, string $userId): array
     {
         $records = $this->getApplicationRepository()->getByIdsAndUser($lpaIds, $userId);
         $lpas = [];
@@ -186,7 +185,7 @@ class Service extends AbstractService
 
         // If there are no records, just return an empty paginator...
         if ($count == 0) {
-            return new Collection(new PaginatorNull);
+            return new Collection(new PaginatorNull());
         }
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...

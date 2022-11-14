@@ -3,7 +3,7 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use MakeShared\DataModel\Lpa\Payment\Calculator;
 use Laminas\View\Model\ViewModel;
 
 class HomeController extends AbstractBaseController
@@ -20,27 +20,31 @@ class HomeController extends AbstractBaseController
 
     public function redirectAction()
     {
-        return $this->redirect()->toUrl( $this->config()['redirects']['index'] );
+        return $this->redirect()->toUrl($this->config()['redirects']['index']);
     }
 
-    public function enableCookieAction(){
+    public function enableCookieAction()
+    {
         return new ViewModel();
     }
 
-    public function termsAction(){
+    public function termsAction()
+    {
         return new ViewModel();
     }
 
-    public function accessibilityAction(){
+    public function accessibilityAction()
+    {
         return new ViewModel();
     }
 
-    public function privacyAction(){
+    public function privacyAction()
+    {
         return new ViewModel();
     }
 
-    public function contactAction(){
+    public function contactAction()
+    {
         return new ViewModel();
     }
-
 }

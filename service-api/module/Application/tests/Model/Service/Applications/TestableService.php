@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Applications;
 
 use Application\Model\Service\Applications\Service;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class TestableService extends Service
 {

@@ -21,7 +21,8 @@
     },
     "autoload": {
         "psr-4": {
-            "MakeShared\\": "module/MakeShared/src/"
+            "MakeShared\\": "module/MakeShared/src/",
+            "MakeSharedTest\\": "module/MakeShared/tests/"
         }
     }
 }

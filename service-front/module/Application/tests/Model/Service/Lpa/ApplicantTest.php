@@ -7,11 +7,11 @@ use Application\Model\Service\Lpa\Application;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
+use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class ApplicantTest extends AbstractServiceTest
 {
@@ -25,7 +25,7 @@ class ApplicantTest extends AbstractServiceTest
      */
     private $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -35,7 +35,7 @@ class ApplicantTest extends AbstractServiceTest
         $this->service->setLpaApplicationService($this->applicationService);
     }
 
-    public function testRemoveAttorney() : void
+    public function testRemoveAttorney(): void
     {
         $lpa = new Lpa(['document' => new Document(['whoIsRegistering' => [111, 222, 333]])]);
 
@@ -46,7 +46,7 @@ class ApplicantTest extends AbstractServiceTest
         $this->service->removeAttorney($lpa, 222);
     }
 
-    public function testRemoveAttorneyNotInList() : void
+    public function testRemoveAttorneyNotInList(): void
     {
         $lpa = new Lpa(['document' => new Document(['whoIsRegistering' => [111, 222, 333]])]);
 
@@ -55,7 +55,7 @@ class ApplicantTest extends AbstractServiceTest
         $this->service->removeAttorney($lpa, 444);
     }
 
-    public function testCleanUpAttorneyInList() : void
+    public function testCleanUpAttorneyInList(): void
     {
         $lpa = new Lpa(['document' => new Document([
                 'whoIsRegistering' => [111, 222, 333],
@@ -70,7 +70,7 @@ class ApplicantTest extends AbstractServiceTest
         $this->service->cleanUp($lpa);
     }
 
-    public function testCleanUpAttorneyJointDecisions() : void
+    public function testCleanUpAttorneyJointDecisions(): void
     {
         $lpa = new Lpa(['document' => new Document([
                 'whoIsRegistering' => [111, 222, 333],
@@ -85,7 +85,7 @@ class ApplicantTest extends AbstractServiceTest
         $this->service->cleanUp($lpa);
     }
 
-    public function testCleanUpAttorneyNotInList() : void
+    public function testCleanUpAttorneyNotInList(): void
     {
         $lpa = new Lpa(['document' => new Document([
                 'whoIsRegistering' => [111, 222, 333],

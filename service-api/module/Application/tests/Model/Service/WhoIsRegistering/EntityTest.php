@@ -4,9 +4,9 @@ namespace ApplicationTest\Model\Service\WhoIsRegistering;
 
 use Application\Model\Service\WhoIsRegistering\Entity;
 use Mockery;
-use Opg\Lpa\DataModel\AbstractData;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\AbstractData;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeSharedTest\DataModel\FixturesData;
 use PHPUnit\Framework\TestCase;
 
 class EntityTest extends TestCase
@@ -24,7 +24,7 @@ class EntityTest extends TestCase
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 

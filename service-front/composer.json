@@ -61,6 +61,7 @@
         "psr-4": {
             "Application\\": "module/Application/src/",
             "MakeShared\\": "../shared/module/MakeShared/src/",
+            "MakeSharedTest\\": "../shared/module/MakeShared/tests/",
             "Alphagov\\Pay\\": "module/Alphagov/Pay/src/"
         }
     },
