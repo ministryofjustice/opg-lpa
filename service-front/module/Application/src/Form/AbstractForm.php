@@ -23,20 +23,25 @@ abstract class AbstractForm extends Form
      */
     protected function addToInputFilter(array $inputData)
     {
-        //  Merge the required input filters into the input data
-        $inputData = array_merge_recursive([
-            'filters'  => [
-                [
-                    'name' => 'StripTags'
-                ],
-                [
-                    'name' => 'StringTrim'
-                ],
-            ]
-        ], $inputData);
+        // Only add the StripTags and StringTrim filters for
+        // non-password fields; if used for password fields, these
+        // filters strip leading/trailing spaces and remove anything that
+        // looks like HTML, such as <>
+        if (!in_array($inputData['name'], ['password', 'password_confirm', 'password_current'])) {
+            // Merge additional input filters for non-password fields
+            $inputData = array_merge_recursive([
+                'filters'  => [
+                    [
+                        'name' => 'Laminas\Filter\StripTags'
+                    ],
+                    [
+                        'name' => 'Laminas\Filter\StringTrim'
+                    ],
+                ]
+            ], $inputData);
+        }
 
         $filter = $this->getInputFilter();
-
         $filter->add($inputData);
     }
 }
