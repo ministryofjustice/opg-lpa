@@ -13,7 +13,7 @@ class RegistrationTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->setUpForm(new RegistrationForm());
     }
@@ -47,6 +47,54 @@ class RegistrationTest extends MockeryTestCase
             'password'              => 'P@55word',
             'password_confirm'      => 'P@55word',
             'skip_confirm_password' => '0',
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+
+        $this->assertEquals([], $this->form->getMessages());
+    }
+
+    public function testValidateByModelOKWithHTMLTags()
+    {
+        $this->form->setData(array_merge([
+            'email'                 => 'a@b.com',
+            'email_confirm'         => 'a@b.com',
+            'terms'                 => '1',
+            'password'              => '<>P@55word',
+            'password_confirm'      => '<>P@55word',
+            'skip_confirm_password' => '0',
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+
+        $this->assertEquals([], $this->form->getMessages());
+    }
+
+    public function testValidateByModelOKWithTrailingAndLeadingSpaces()
+    {
+        $this->form->setData(array_merge([
+            'email'                 => 'a@b.com',
+            'email_confirm'         => 'a@b.com',
+            'terms'                 => '1',
+            'password'              => '  P@55word  ',
+            'password_confirm'      => '  P@55word  ',
+            'skip_confirm_password' => '0',
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+
+        $this->assertEquals([], $this->form->getMessages());
+    }
+
+    public function testValidateByModelOKWithHTMLTagsAndSkippedConfirm()
+    {
+        $this->form->setData(array_merge([
+            'email'                 => 'a@b.com',
+            'email_confirm'         => 'a@b.com',
+            'terms'                 => '1',
+            'password'              => '<>P@55word',
+            'password_confirm'      => '',
+            'skip_confirm_password' => '1',
         ], $this->getCsrfData()));
 
         $this->assertTrue($this->form->isValid());
