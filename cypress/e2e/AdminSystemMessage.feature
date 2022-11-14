@@ -1,4 +1,4 @@
-@Admin
+@AdminSystemMessage
 Feature: AdminSystemMessage
 
   I want to be able to visit the admin page, set a system message, and have it safely rendered in the user-facing site (LPAL-1022)
