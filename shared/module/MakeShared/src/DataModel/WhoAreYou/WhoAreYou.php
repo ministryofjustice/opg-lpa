@@ -39,7 +39,11 @@ class WhoAreYou extends AbstractData
             'qualifier',
             new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
                 $object = $context->getObject();
-                $options = $object::options();
+                if (is_null($object)) {
+                    return;
+                }
+
+                $options = get_class($object)::options();
 
                 // Don't validate if 'who' isn't set...
                 if (!is_string($object->who)) {
