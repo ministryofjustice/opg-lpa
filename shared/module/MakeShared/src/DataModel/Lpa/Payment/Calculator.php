@@ -48,7 +48,7 @@ class Calculator
 
     public static function getLowIncomeFee(bool $isRepeatApplication = false): float
     {
-        return (float) self::getFullFee($isRepeatApplication) / 2;
+        return self::getFullFee($isRepeatApplication) / 2;
     }
 
     public static function getBenefitsFee(): float

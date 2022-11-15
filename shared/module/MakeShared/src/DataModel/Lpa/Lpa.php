@@ -299,14 +299,12 @@ class Lpa extends AbstractData
         if ($this->hasDocument()) {
             $replacementAttorneys = $this->getDocument()->getReplacementAttorneys();
 
-            if (is_array($replacementAttorneys)) {
-                if (!is_null($index)) {
-                    return (isset($replacementAttorneys[$index])
-                        && $replacementAttorneys[$index] instanceof AbstractAttorney);
-                }
-
-                return (count($replacementAttorneys) > 0);
+            if (!is_null($index)) {
+                return (isset($replacementAttorneys[$index])
+                    && $replacementAttorneys[$index] instanceof AbstractAttorney);
             }
+
+            return (count($replacementAttorneys) > 0);
         }
 
         return false;
