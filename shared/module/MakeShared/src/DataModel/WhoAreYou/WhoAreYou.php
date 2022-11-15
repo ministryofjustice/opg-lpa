@@ -26,12 +26,43 @@ class WhoAreYou extends AbstractData
      */
     protected $qualifier;
 
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraints('who', [
+            new Assert\NotBlank(),
+            new Assert\Choice([
+                'choices' => array_keys(self::options())
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraint(
+            'qualifier',
+            new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
+                $object = $context->getObject();
+                $options = $object::options();
+
+                // Don't validate if 'who' isn't set...
+                if (!is_string($object->who)) {
+                    return;
+                }
+
+                // Check this, but don't validate. It's validated above.
+                if (!isset($options[$object->who])) {
+                    return;
+                }
+
+                // A qualifier is optional, so only invalid if a qualifier is not allowed, but one is set.
+                if ($options[$object->who]['qualifier'] == false && !is_null($value)) {
+                    $context->buildViolation((new Assert\IsNull())->message)->addViolation();
+                }
+            })
+        );
+    }
+
     /**
-     * @return (bool|null[])[][] An array representing the valid option.
-     *
-     * @psalm-return array{donor: array{subquestion: array{0: null}, qualifier: false}, friendOrFamily: array{subquestion: array{0: null}, qualifier: false}, financeProfessional: array{subquestion: array{0: null}, qualifier: false}, legalProfessional: array{subquestion: array{0: null}, qualifier: false}, estatePlanningProfessional: array{subquestion: array{0: null}, qualifier: false}, digitalPartner: array{subquestion: array{0: null}, qualifier: false}, charity: array{subquestion: array{0: null}, qualifier: false}, organisation: array{subquestion: array{0: null}, qualifier: false}, other: array{subquestion: array{0: null}, qualifier: true}, notSaid: array{subquestion: array{0: null}, qualifier: false}}
+     * @return array An array representing the valid option.
      */
-    public static function options(): array
+    public static function options()
     {
         return [
             'donor' => [
@@ -95,5 +126,43 @@ class WhoAreYou extends AbstractData
                 'qualifier' => false,
             ],
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getWho(): string
+    {
+        return $this->who;
+    }
+
+    /**
+     * @param string $who
+     * @return $this
+     */
+    public function setWho(string $who): WhoAreYou
+    {
+        $this->who = $who;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getQualifier()
+    {
+        return $this->qualifier;
+    }
+
+    /**
+     * @param null|string $qualifier
+     * @return $this
+     */
+    public function setQualifier($qualifier)
+    {
+        $this->qualifier = $qualifier;
+
+        return $this;
     }
 }

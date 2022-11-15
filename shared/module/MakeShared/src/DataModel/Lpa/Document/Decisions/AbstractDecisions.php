@@ -30,6 +30,33 @@ abstract class AbstractDecisions extends AbstractData
      */
     protected $howDetails;
 
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraints('how', [
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Choice([
+                'choices' => [
+                    self::LPA_DECISION_HOW_DEPENDS,
+                    self::LPA_DECISION_HOW_JOINTLY,
+                    self::LPA_DECISION_HOW_SINGLE_ATTORNEY,
+                    self::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
+                ]
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('howDetails', [
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'min' => 1,
+                'max' => (1000 * 1024)
+            ]),
+        ]);
+    }
+
     /**
      * @return string
      */
@@ -39,10 +66,51 @@ abstract class AbstractDecisions extends AbstractData
     }
 
     /**
+     * @param string|null $how
+     * @return $this
+     */
+    public function setHow($how): AbstractDecisions
+    {
+        $this->how = $how;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getWhen()
     {
         return $this->when;
+    }
+
+    /**
+     * @param string|null $when
+     * @return $this
+     */
+    public function setWhen($when): AbstractDecisions
+    {
+        $this->when = $when;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHowDetails()
+    {
+        return $this->howDetails;
+    }
+
+    /**
+     * @param string|null $howDetails
+     * @return $this
+     */
+    public function setHowDetails($howDetails): AbstractDecisions
+    {
+        $this->howDetails = $howDetails;
+
+        return $this;
     }
 }

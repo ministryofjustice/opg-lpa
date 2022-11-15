@@ -8,5 +8,5 @@ class NotBlank extends SymfonyConstraints\NotBlank
 {
     use ValidatorPathTrait;
 
-    public string $message = 'cannot-be-blank';
+    public $message = 'cannot-be-blank';
 }
