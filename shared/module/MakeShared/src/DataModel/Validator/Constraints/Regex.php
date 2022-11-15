@@ -1,8 +1,8 @@
 <?php
 
-namespace MakeShared\datamodel\validator\constraints;
+namespace MakeShared\DataModel\Validator\Constraints;
 
-use symfony\Component\Validator\Constraints as SymfonyConstraints;
+use Symfony\Component\Validator\Constraints as SymfonyConstraints;
 
 class Regex extends SymfonyConstraints\Regex
 {

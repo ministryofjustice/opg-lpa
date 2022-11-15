@@ -18,7 +18,7 @@ use MakeSharedTest\DataModel\Lpa\TestableLpa;
  */
 class FixturesData
 {
-    private static $fixturesPath = '/../../../fixtures/';
+    private static $fixturesPath = '/../fixtures/';
 
     public static function getHwLpaJson()
     {
