@@ -64,19 +64,19 @@ class NotifiedPerson extends AbstractData
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof Name ? $v : new Name($v));
+                return ($value instanceof Name ? $value : new Name($value));
             case 'address':
-                return ($v instanceof Address ? $v : new Address($v));
+                return ($value instanceof Address ? $value : new Address($value));
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     /**

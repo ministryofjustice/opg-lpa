@@ -161,23 +161,23 @@ class Correspondence extends AbstractData
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof LongName ? $v : new LongName($v));
+                return ($value instanceof LongName ? $value : new LongName($value));
             case 'address':
-                return ($v instanceof Address ? $v : new Address($v));
+                return ($value instanceof Address ? $value : new Address($value));
             case 'email':
-                return ($v instanceof EmailAddress ? $v : new EmailAddress($v));
+                return ($value instanceof EmailAddress ? $value : new EmailAddress($value));
             case 'phone':
-                return ($v instanceof PhoneNumber ? $v : new PhoneNumber($v));
+                return ($value instanceof PhoneNumber ? $value : new PhoneNumber($value));
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     /**

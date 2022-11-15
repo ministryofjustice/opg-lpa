@@ -286,40 +286,40 @@ class Document extends AbstractData
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'donor':
-                return (($v instanceof Donor || is_null($v)) ? $v : new Donor($v));
+                return (($value instanceof Donor || is_null($value)) ? $value : new Donor($value));
             case 'primaryAttorneyDecisions':
-                return (($v instanceof Decisions\PrimaryAttorneyDecisions || is_null($v)) ?
-                    $v : new Decisions\PrimaryAttorneyDecisions($v));
+                return (($value instanceof Decisions\PrimaryAttorneyDecisions || is_null($value)) ?
+                    $value : new Decisions\PrimaryAttorneyDecisions($value));
             case 'replacementAttorneyDecisions':
-                return (($v instanceof Decisions\ReplacementAttorneyDecisions || is_null($v)) ?
-                    $v : new Decisions\ReplacementAttorneyDecisions($v));
+                return (($value instanceof Decisions\ReplacementAttorneyDecisions || is_null($value)) ?
+                    $value : new Decisions\ReplacementAttorneyDecisions($value));
             case 'correspondent':
-                return (($v instanceof Correspondence || is_null($v)) ? $v : new Correspondence($v));
+                return (($value instanceof Correspondence || is_null($value)) ? $value : new Correspondence($value));
             case 'certificateProvider':
-                return (($v instanceof CertificateProvider || is_null($v)) ? $v : new CertificateProvider($v));
+                return (($value instanceof CertificateProvider || is_null($value)) ? $value : new CertificateProvider($value));
             case 'primaryAttorneys':
             case 'replacementAttorneys':
-                return array_map(function ($v) {
-                    if ($v instanceof Attorneys\AbstractAttorney) {
-                        return $v;
+                return array_map(function ($value) {
+                    if ($value instanceof Attorneys\AbstractAttorney) {
+                        return $value;
                     } else {
-                        return Attorneys\AbstractAttorney::factory($v);
+                        return Attorneys\AbstractAttorney::factory($value);
                     }
-                }, $v);
+                }, $value);
             case 'peopleToNotify':
-                return array_map(function ($v) {
-                    return ($v instanceof NotifiedPerson ? $v : new NotifiedPerson($v));
-                }, $v);
+                return array_map(function ($value) {
+                    return ($value instanceof NotifiedPerson ? $value : new NotifiedPerson($value));
+                }, $value);
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     /**

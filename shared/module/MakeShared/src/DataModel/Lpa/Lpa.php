@@ -238,10 +238,10 @@ class Lpa extends AbstractData
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'startedAt':
@@ -249,14 +249,14 @@ class Lpa extends AbstractData
             case 'createdAt':
             case 'completedAt':
             case 'lockedAt':
-                return (($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime($v));
+                return (($value instanceof \DateTime || is_null($value)) ? $value : new \DateTime($value));
             case 'payment':
-                return (($v instanceof Payment || is_null($v)) ? $v : new Payment($v));
+                return (($value instanceof Payment || is_null($value)) ? $value : new Payment($value));
             case 'document':
-                return (($v instanceof Document || is_null($v)) ? $v : new Document($v));
+                return (($value instanceof Document || is_null($value)) ? $value : new Document($value));
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     /**

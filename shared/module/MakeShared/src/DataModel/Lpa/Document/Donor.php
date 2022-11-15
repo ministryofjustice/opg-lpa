@@ -110,23 +110,23 @@ class Donor extends AbstractData
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof LongName ? $v : new LongName($v));
+                return ($value instanceof LongName ? $value : new LongName($value));
             case 'address':
-                return ($v instanceof Address ? $v : new Address($v));
+                return ($value instanceof Address ? $value : new Address($value));
             case 'dob':
-                return (($v instanceof Dob || is_null($v)) ? $v : new Dob($v));
+                return (($value instanceof Dob || is_null($value)) ? $value : new Dob($value));
             case 'email':
-                return (($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress($v));
+                return (($value instanceof EmailAddress || is_null($value)) ? $value : new EmailAddress($value));
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     /**

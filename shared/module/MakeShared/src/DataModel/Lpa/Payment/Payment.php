@@ -154,21 +154,21 @@ class Payment extends AbstractData
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'date':
-                return (($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime($v));
+                return (($value instanceof \DateTime || is_null($value)) ? $value : new \DateTime($value));
             case 'amount':
-                return (!is_int($v) ? $v : (float)$v);
+                return (!is_int($value) ? $value : (float)$value);
             case 'email':
-                return (($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress($v));
+                return (($value instanceof EmailAddress || is_null($value)) ? $value : new EmailAddress($value));
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     /**
