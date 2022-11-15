@@ -43,6 +43,55 @@ class Address extends AbstractData
      */
     protected $postcode;
 
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraints('address1', [
+            new Assert\NotBlank(),
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'max' => self::ADDRESS_LINE_MAX_LENGTH
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('address2', [
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'max' => self::ADDRESS_LINE_MAX_LENGTH
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('address3', [
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'max' => self::ADDRESS_LINE_MAX_LENGTH
+            ]),
+        ]);
+
+        // This could be improved, but we'd need to be very careful not to block valid postcodes.
+        $metadata->addPropertyConstraints('postcode', [
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'min' => self::POSTCODE_MIN_LENGTH,
+                'max' => self::POSTCODE_MAX_LENGTH,
+            ]),
+        ]);
+
+        // We required either address2 OR postcode to be set for an address to be considered valid.
+        $metadata->addConstraint(new CallbackConstraintSymfony(function ($object, ExecutionContextInterface $context) {
+            if (empty($object->address2) && empty($object->postcode)) {
+                $context->buildViolation((new Assert\NotNull())->message)->atPath('address2/postcode')->addViolation();
+            }
+        }));
+    }
+
     /**
      * Returns a comma separated string representation of the address.
      *
@@ -59,5 +108,81 @@ class Address extends AbstractData
         $address = rtrim(trim($address), ',');
 
         return $address;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress1(): string
+    {
+        return $this->address1;
+    }
+
+    /**
+     * @param string $address1
+     * @return $this
+     */
+    public function setAddress1(string $address1): Address
+    {
+        $this->address1 = $address1;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress2()
+    {
+        return $this->address2;
+    }
+
+    /**
+     * @param string $address2
+     * @return $this
+     */
+    public function setAddress2($address2): Address
+    {
+        $this->address2 = $address2;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress3()
+    {
+        return $this->address3;
+    }
+
+    /**
+     * @param string $address3
+     * @return $this
+     */
+    public function setAddress3($address3): Address
+    {
+        $this->address3 = $address3;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostcode()
+    {
+        return $this->postcode;
+    }
+
+    /**
+     * @param string $postcode
+     * @return $this
+     */
+    public function setPostcode($postcode): Address
+    {
+        $this->postcode = $postcode;
+
+        return $this;
     }
 }

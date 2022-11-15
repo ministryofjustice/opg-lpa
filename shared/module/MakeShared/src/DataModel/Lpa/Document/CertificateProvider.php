@@ -27,23 +27,79 @@ class CertificateProvider extends AbstractData
      */
     protected $address;
 
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraints('name', [
+            new Assert\NotBlank(),
+            new Assert\Type([
+                'type' => '\MakeShared\DataModel\Common\Name'
+            ]),
+            new ValidConstraintSymfony(),
+        ]);
+
+        $metadata->addPropertyConstraints('address', [
+            new Assert\NotBlank(),
+            new Assert\Type([
+                'type' => '\MakeShared\DataModel\Common\Address'
+            ]),
+            new ValidConstraintSymfony(),
+        ]);
+    }
+
     /**
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $value mixed Value to map.
-     *
+     * @param mixed $v mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $value)
+    protected function map($property, $v)
     {
         switch ($property) {
             case 'name':
-                return ($value instanceof Name ? $value : new Name($value));
+                return ($v instanceof Name ? $v : new Name($v));
             case 'address':
-                return ($value instanceof Address ? $value : new Address($value));
+                return ($v instanceof Address ? $v : new Address($v));
         }
 
-        return parent::map($property, $value);
+        return parent::map($property, $v);
+    }
+
+    /**
+     * @return Name
+     */
+    public function getName(): Name
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param Name $name
+     * @return $this
+     */
+    public function setName(Name $name): CertificateProvider
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param Address $address
+     * @return $this
+     */
+    public function setAddress(Address $address): CertificateProvider
+    {
+        $this->address = $address;
+
+        return $this;
     }
 }

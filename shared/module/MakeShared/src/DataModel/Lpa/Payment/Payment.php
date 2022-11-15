@@ -73,26 +73,102 @@ class Payment extends AbstractData
      */
     protected $reducedFeeUniversalCredit;
 
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraints('method', [
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Choice([
+                'choices' => [
+                    self::PAYMENT_TYPE_CARD,
+                    self::PAYMENT_TYPE_CHEQUE
+                ]
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('email', [
+            new Assert\Type([
+                'type' => '\MakeShared\DataModel\Common\EmailAddress'
+            ]),
+            new ValidConstraintSymfony(),
+        ]);
+
+        $metadata->addPropertyConstraints('amount', [
+            new Assert\Type([
+                'type' => 'float'
+            ]),
+            new Assert\Range([
+                'min' => 0
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('reference', [
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'max' => 32
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('gatewayReference', [
+            new Assert\Type([
+                'type' => 'string'
+            ]),
+            new Assert\Length([
+                'max' => 64
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('date', [
+            new Assert\Custom\DateTimeUTC(),
+        ]);
+
+        $metadata->addPropertyConstraints('reducedFeeReceivesBenefits', [
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('reducedFeeAwardedDamages', [
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('reducedFeeLowIncome', [
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
+        ]);
+
+        $metadata->addPropertyConstraints('reducedFeeUniversalCredit', [
+            new Assert\Type([
+                'type' => 'bool'
+            ]),
+        ]);
+    }
+
     /**
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $value mixed Value to map.
-     *
+     * @param mixed $v mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $value)
+    protected function map($property, $v)
     {
         switch ($property) {
             case 'date':
-                return (($value instanceof \DateTime || is_null($value)) ? $value : new \DateTime($value));
+                return (($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime($v));
             case 'amount':
-                return (!is_int($value) ? $value : (float)$value);
+                return (!is_int($v) ? $v : (float)$v);
             case 'email':
-                return (($value instanceof EmailAddress || is_null($value)) ? $value : new EmailAddress($value));
+                return (($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress($v));
         }
 
-        return parent::map($property, $value);
+        return parent::map($property, $v);
     }
 
     /**
@@ -101,6 +177,36 @@ class Payment extends AbstractData
     public function getMethod()
     {
         return $this->method;
+    }
+
+    /**
+     * @param string $method
+     * @return $this
+     */
+    public function setMethod($method): Payment
+    {
+        $this->method = $method;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return $this
+     */
+    public function setEmail($email): Payment
+    {
+        $this->email = $email;
+
+        return $this;
     }
 
     /**
@@ -131,11 +237,71 @@ class Payment extends AbstractData
     }
 
     /**
+     * @param string $reference
+     * @return $this
+     */
+    public function setReference($reference): Payment
+    {
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGatewayReference()
+    {
+        return $this->gatewayReference;
+    }
+
+    /**
+     * @param string $gatewayReference
+     * @return $this
+     */
+    public function setGatewayReference($gatewayReference): Payment
+    {
+        $this->gatewayReference = $gatewayReference;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param DateTime $date
+     * @return $this
+     */
+    public function setDate($date): Payment
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isReducedFeeReceivesBenefits()
     {
         return $this->reducedFeeReceivesBenefits;
+    }
+
+    /**
+     * @param bool $reducedFeeReceivesBenefits
+     * @return $this
+     */
+    public function setReducedFeeReceivesBenefits($reducedFeeReceivesBenefits): Payment
+    {
+        $this->reducedFeeReceivesBenefits = $reducedFeeReceivesBenefits;
+
+        return $this;
     }
 
     /**
@@ -147,6 +313,17 @@ class Payment extends AbstractData
     }
 
     /**
+     * @param bool $reducedFeeAwardedDamages
+     * @return $this
+     */
+    public function setReducedFeeAwardedDamages($reducedFeeAwardedDamages): Payment
+    {
+        $this->reducedFeeAwardedDamages = $reducedFeeAwardedDamages;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isReducedFeeLowIncome()
@@ -155,10 +332,32 @@ class Payment extends AbstractData
     }
 
     /**
+     * @param bool $reducedFeeLowIncome
+     * @return $this
+     */
+    public function setReducedFeeLowIncome($reducedFeeLowIncome): Payment
+    {
+        $this->reducedFeeLowIncome = $reducedFeeLowIncome;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isReducedFeeUniversalCredit()
     {
         return $this->reducedFeeUniversalCredit;
+    }
+
+    /**
+     * @param bool $reducedFeeUniversalCredit
+     * @return $this
+     */
+    public function setReducedFeeUniversalCredit($reducedFeeUniversalCredit): Payment
+    {
+        $this->reducedFeeUniversalCredit = $reducedFeeUniversalCredit;
+
+        return $this;
     }
 }

@@ -18,4 +18,38 @@ class PhoneNumber extends AbstractData
      * @var string A phone number.
      */
     protected $number;
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        // As there is only 1 property, include NotBlank as there is no point this object existing without it.
+        // Regex taken from: https://github.com/Respect/Validation/blob/master/library/Rules/Phone.php
+        $metadata->addPropertyConstraints('number', [
+            new Assert\NotBlank(),
+            new Assert\Regex([
+                // a fairly loose regex, it allows for country codes plus between
+                // 8 and 15 numbers/spaces
+                'pattern' => '/^[+|0]?[0-9 ]{8,15}$/',
+                'message' => 'invalid-phone-number',
+            ]),
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getNumber(): string
+    {
+        return $this->number;
+    }
+
+    /**
+     * @param string $number
+     * @return $this
+     */
+    public function setNumber(string $number): PhoneNumber
+    {
+        $this->number = $number;
+
+        return $this;
+    }
 }
