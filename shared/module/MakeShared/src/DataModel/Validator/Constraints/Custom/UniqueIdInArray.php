@@ -6,5 +6,5 @@ use Symfony\Component\Validator\Constraint;
 
 class UniqueIdInArray extends Constraint
 {
-    public $notUnique = 'id-not-unique';
+    public string $notUnique = 'id-not-unique';
 }

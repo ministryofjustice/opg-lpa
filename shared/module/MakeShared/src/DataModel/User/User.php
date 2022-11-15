@@ -54,7 +54,7 @@ class User extends AbstractData
      */
     protected $email;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    public static function loadValidatorMetadata(ClassMetadata $metadata): void
     {
         $metadata->addPropertyConstraints('id', [
             new Assert\NotBlank(),
@@ -111,26 +111,27 @@ class User extends AbstractData
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
+     *
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'updatedAt':
             case 'createdAt':
-                return (($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime($v));
+                return (($value instanceof \DateTime || is_null($value)) ? $value : new \DateTime($value));
             case 'name':
-                return (($v instanceof Name || is_null($v)) ? $v : new Name($v));
+                return (($value instanceof Name || is_null($value)) ? $value : new Name($value));
             case 'address':
-                return (($v instanceof Address || is_null($v)) ? $v : new Address($v));
+                return (($value instanceof Address || is_null($value)) ? $value : new Address($value));
             case 'dob':
-                return (($v instanceof Dob || is_null($v)) ? $v : new Dob($v));
+                return (($value instanceof Dob || is_null($value)) ? $value : new Dob($value));
             case 'email':
-                return (($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress($v));
+                return (($value instanceof EmailAddress || is_null($value)) ? $value : new EmailAddress($value));
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     /**
@@ -190,9 +191,6 @@ class User extends AbstractData
         return $this;
     }
 
-    /**
-     * @return Name|null
-     */
     public function getName(): Name|null
     {
         return $this->name;

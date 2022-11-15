@@ -151,19 +151,6 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     }
 
     /**
-     * Calls validate(), including all validations needed at the API level.
-     *
-     * @return ValidatorResponse
-     */
-    public function validateForApi()
-    {
-        return $this->validate([], [
-            'Default',
-            'required-at-api'
-        ]);
-    }
-
-    /**
      * Validates the concrete class which this method is called on.
      *
      * @param $properties array An array of property names to check. An empty array means all properties.
@@ -241,7 +228,10 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * Returns $this as an array, propagating to all properties that implement AccessorInterface.
      *
      * @param bool $retainDateTimeInstances
-     * @return array
+     *
+     * @return ((array|mixed)[]|mixed|string)[]
+     *
+     * @psalm-return array<string, array<array|mixed>|mixed|string>
      */
     public function toArray(bool $retainDateTimeInstances = false)
     {
@@ -270,16 +260,6 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
         }
 
         return $values;
-    }
-
-    /**
-     * Return the array to use whenever json_encode() is called on this instance.
-     *
-     * @return mixed
-     */
-    public function jsonSerialize(): mixed
-    {
-        return $this->toArray();
     }
 
     /**
@@ -322,7 +302,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param $prefix
      * @return array
      */
-    private function flattenArray($array, $prefix)
+    private function flattenArray(array $array, string $prefix)
     {
         $result = [];
         foreach ($array as $key => $value) {
@@ -341,9 +321,12 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * converts it to a multidimensional array.
      *
      * @param $array array Flat array.
+     *
      * @return array Multidimensional array
+     *
+     * @psalm-return array<empty, empty>
      */
-    private function unFlattenArray($array)
+    private function unFlattenArray(array $array): array
     {
         $result = [];
 
@@ -368,9 +351,8 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * Populates the concrete class' properties with the array.
      *
      * @param array $data
-     * @return self
      */
-    public function populate(array $data)
+    public function populate(array $data): static
     {
         // Foreach each passed property...
         foreach ($data as $k => $v) {
@@ -384,19 +366,6 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     }
 
     /**
-     * Populates the concrete class' properties with the passed flat array.
-     *
-     * @param array $data
-     * @return self
-     */
-    public function populateWithFlatArray(array $data)
-    {
-        $data = $this->unFlattenArray($data);
-
-        return $this->populate($data);
-    }
-
-    /**
      * Basic mapper. This should be overridden in the concrete class if needed.
      * This is included here to ensure the method is always available
      * and - by default - returns the original value it was passed.
@@ -405,7 +374,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param $value mixed The value we've been passed.
      * @return mixed The potentially updated value.
      */
-    protected function map(/** @noinspection PhpUnusedParameterInspection */$property, $value)
+    protected function map(/** @noinspection PhpUnusedParameterInspection */string $property, $value)
     {
         return $value;
     }

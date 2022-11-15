@@ -26,6 +26,9 @@ class Human extends AbstractAttorney
      */
     protected $dob;
 
+    /**
+     * @return void
+     */
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('name', [
@@ -64,48 +67,15 @@ class Human extends AbstractAttorney
         return parent::map($property, $v);
     }
 
+    /**
+     * @return (mixed|string)[]
+     *
+     * @psalm-return array{type: 'human'}
+     */
     public function toArray(bool $retainDateTimeInstances = false)
     {
         return array_merge(parent::toArray($retainDateTimeInstances), [
             'type' => 'human'
         ]);
-    }
-
-    /**
-     * @return Name
-     */
-    public function getName(): Name
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param Name $name
-     * @return $this
-     */
-    public function setName(Name $name): Human
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Dob
-     */
-    public function getDob(): Dob
-    {
-        return $this->dob;
-    }
-
-    /**
-     * @param Dob $dob
-     * @return $this
-     */
-    public function setDob(Dob $dob): Human
-    {
-        $this->dob = $dob;
-
-        return $this;
     }
 }

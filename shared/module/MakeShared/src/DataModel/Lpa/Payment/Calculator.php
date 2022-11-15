@@ -39,19 +39,19 @@ class Calculator
         return $lpa->getPayment();
     }
 
-    public static function getFullFee($isRepeatApplication = false)
+    public static function getFullFee(bool $isRepeatApplication = false): float
     {
         $fee = self::STANDARD_FEE / ($isRepeatApplication ? 2 : 1);
 
         return (float) $fee;
     }
 
-    public static function getLowIncomeFee($isRepeatApplication = false)
+    public static function getLowIncomeFee(bool $isRepeatApplication = false): float
     {
         return (float) self::getFullFee($isRepeatApplication) / 2;
     }
 
-    public static function getBenefitsFee()
+    public static function getBenefitsFee(): float
     {
         return 0.0;
     }

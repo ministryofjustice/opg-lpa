@@ -87,50 +87,19 @@ class Dob extends AbstractData
      */
     protected $date;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        // As there is only 1 property, include NotBlank as there is no point this object existing without it.
-        $metadata->addPropertyConstraints('date', [
-            new Assert\NotBlank(),
-            new Assert\Custom\DateTimeUTC(),
-            new Assert\LessThanOrEqual([
-                'value' => new \DateTime('today'),
-                'message' => 'must-be-less-than-or-equal-to-today'
-            ]),
-        ]);
-    }
-
     /**
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
+     *
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'date':
-                return self::parseDob($v);
+                return self::parseDob($value);
         }
 
-        return parent::map($property, $v);
-    }
-
-    /**
-     * @return DateTime
-     */
-    public function getDate(): DateTime
-    {
-        return $this->date;
-    }
-
-    /**
-     * @param DateTime $date
-     * @return $this
-     */
-    public function setDate(DateTime $date): Dob
-    {
-        $this->date = $date;
-
-        return $this;
+        return parent::map($property, $value);
     }
 }

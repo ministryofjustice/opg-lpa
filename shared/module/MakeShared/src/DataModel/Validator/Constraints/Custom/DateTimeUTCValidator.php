@@ -14,6 +14,9 @@ use DateTime;
  */
 class DateTimeUTCValidator extends ConstraintValidator
 {
+    /**
+     * @return void
+     */
     public function validate($value, Constraint $constraint)
     {
         if (null === $value) {

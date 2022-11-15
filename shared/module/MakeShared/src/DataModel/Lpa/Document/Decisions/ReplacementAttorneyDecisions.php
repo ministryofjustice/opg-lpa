@@ -16,6 +16,9 @@ class ReplacementAttorneyDecisions extends AbstractDecisions
      */
     protected $whenDetails;
 
+    /**
+     * @return void
+     */
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('when', [
@@ -40,24 +43,5 @@ class ReplacementAttorneyDecisions extends AbstractDecisions
                 'max' => (1000 * 1024)
             ]),
         ]);
-    }
-
-    /**
-     * @return string
-     */
-    public function getWhenDetails()
-    {
-        return $this->whenDetails;
-    }
-
-    /**
-     * @param string|null $whenDetails
-     * @return $this
-     */
-    public function setWhenDetails($whenDetails): ReplacementAttorneyDecisions
-    {
-        $this->whenDetails = $whenDetails;
-
-        return $this;
     }
 }

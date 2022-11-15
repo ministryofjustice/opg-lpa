@@ -15,6 +15,9 @@ class PrimaryAttorneyDecisions extends AbstractDecisions
      */
     protected $canSustainLife;
 
+    /**
+     * @return void
+     */
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('when', [
@@ -42,16 +45,5 @@ class PrimaryAttorneyDecisions extends AbstractDecisions
     public function isCanSustainLife()
     {
         return $this->canSustainLife;
-    }
-
-    /**
-     * @param bool $canSustainLife
-     * @return $this
-     */
-    public function setCanSustainLife($canSustainLife): PrimaryAttorneyDecisions
-    {
-        $this->canSustainLife = $canSustainLife;
-
-        return $this;
     }
 }
