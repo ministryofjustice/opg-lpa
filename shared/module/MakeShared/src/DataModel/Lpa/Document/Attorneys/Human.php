@@ -49,19 +49,19 @@ class Human extends AbstractAttorney
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof Name ? $v : new Name($v));
+                return ($value instanceof Name ? $value : new Name($value));
             case 'dob':
-                return ($v instanceof Dob ? $v : new Dob($v));
+                return ($value instanceof Dob ? $value : new Dob($value));
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     public function toArray(bool $retainDateTimeInstances = false)

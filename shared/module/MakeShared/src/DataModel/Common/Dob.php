@@ -102,17 +102,17 @@ class Dob extends AbstractData
 
     /**
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'date':
-                return self::parseDob($v);
+                return self::parseDob($value);
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     /**

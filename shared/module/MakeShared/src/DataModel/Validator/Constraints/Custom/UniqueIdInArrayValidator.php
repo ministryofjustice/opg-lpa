@@ -13,15 +13,15 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class UniqueIdInArrayValidator extends ConstraintValidator
 {
-    public function validate($values, Constraint $constraint)
+    public function validate($value, Constraint $constraint)
     {
-        if (null === $values || empty($values)) {
+        if (null === $value || empty($value)) {
             return;
         }
 
         $ids = []; // Array of ids we've seen so far.
 
-        foreach ($values as $actor) {
+        foreach ($value as $actor) {
             // Don't includes actors with no id set.
             if (is_null($actor->id)) {
                 continue;
