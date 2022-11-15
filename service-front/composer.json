@@ -60,6 +60,7 @@
     "autoload": {
         "psr-4": {
             "Application\\": "module/Application/src/",
+            "ApplicationTest\\": "module/Application/tests/",
             "MakeShared\\": "../shared/module/MakeShared/src/",
             "MakeSharedTest\\": "../shared/module/MakeShared/tests/",
             "Alphagov\\Pay\\": "module/Alphagov/Pay/src/"
