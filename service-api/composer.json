@@ -5,16 +5,10 @@
     "prefer-stable": true,
     "license": "MIT",
     "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
-            "no-api": true
-        }
     ],
     "require": {
         "php": "^8.1",
         "aws/aws-sdk-php": "^3.204.5",
-        "ministryofjustice/opg-lpa-datamodels": "^14.0",
         "laminas/laminas-authentication": "^2.8",
         "laminas/laminas-cache": "^3.1.2",
         "laminas/laminas-cache-storage-adapter-memory": "2.0",
@@ -32,7 +26,9 @@
         "robmorgan/phinx": "^0.12.9",
         "laminas/laminas-db": "^2.13.4",
         "symfony/console": "^6.1",
-        "laminas/laminas-cli": "^1.5"
+        "laminas/laminas-cli": "^1.5",
+        "symfony/validator": "^4.2",
+        "egulias/email-validator": "~1.2"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
