@@ -387,9 +387,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      */
     public function populateWithFlatArray(array $data)
     {
-        var_dump($data);
         $data = $this->unFlattenArray($data);
-        var_dump($data);
 
         return $this->populate($data);
     }
