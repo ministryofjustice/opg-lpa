@@ -102,19 +102,19 @@ abstract class AbstractAttorney extends AbstractData
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'address':
-                return ($v instanceof Address ? $v : new Address($v));
+                return ($value instanceof Address ? $value : new Address($value));
             case 'email':
-                return ($v instanceof EmailAddress ? $v : new EmailAddress($v));
+                return ($value instanceof EmailAddress ? $value : new EmailAddress($value));
         }
 
-        return parent::map($property, $v);
+        return parent::map($property, $value);
     }
 
     /**
