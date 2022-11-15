@@ -8,5 +8,5 @@ class NotNull extends SymfonyConstraints\NotNull
 {
     use ValidatorPathTrait;
 
-    public $message = 'cannot-be-null';
+    public string $message = 'cannot-be-null';
 }

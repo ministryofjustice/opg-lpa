@@ -55,191 +55,27 @@ class Donor extends AbstractData
      */
     protected $canSign;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraints('name', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\LongName'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-
-        $metadata->addPropertyConstraints('otherNames', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'min' => self::OTHER_NAMES_MIN_LENGTH,
-                'max' => self::OTHER_NAMES_MAX_LENGTH,
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('address', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Address'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-
-        $metadata->addPropertyConstraints('dob', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Dob'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-
-        $metadata->addPropertyConstraints('email', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\EmailAddress'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-
-        $metadata->addPropertyConstraints('canSign', [
-            new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
-        ]);
-    }
-
     /**
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
+     *
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof LongName ? $v : new LongName($v));
+                return ($value instanceof LongName ? $value : new LongName($value));
             case 'address':
-                return ($v instanceof Address ? $v : new Address($v));
+                return ($value instanceof Address ? $value : new Address($value));
             case 'dob':
-                return (($v instanceof Dob || is_null($v)) ? $v : new Dob($v));
+                return (($value instanceof Dob || is_null($value)) ? $value : new Dob($value));
             case 'email':
-                return (($v instanceof EmailAddress || is_null($v)) ? $v : new EmailAddress($v));
+                return (($value instanceof EmailAddress || is_null($value)) ? $value : new EmailAddress($value));
         }
 
-        return parent::map($property, $v);
-    }
-
-    /**
-     * @return LongName
-     */
-    public function getName(): LongName
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param LongName $name
-     * @return $this
-     */
-    public function setName(LongName $name): Donor
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOtherNames()
-    {
-        return $this->otherNames;
-    }
-
-    /**
-     * @param string $otherNames
-     * @return $this
-     */
-    public function setOtherNames($otherNames): Donor
-    {
-        $this->otherNames = $otherNames;
-
-        return $this;
-    }
-
-    /**
-     * @return Address
-     */
-    public function getAddress(): Address
-    {
-        return $this->address;
-    }
-
-    /**
-     * @param Address $address
-     * @return $this
-     */
-    public function setAddress(Address $address): Donor
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    /**
-     * @return Dob
-     */
-    public function getDob(): Dob
-    {
-        return $this->dob;
-    }
-
-    /**
-     * @param Dob $dob
-     * @return $this
-     */
-    public function setDob(Dob $dob): Donor
-    {
-        $this->dob = $dob;
-
-        return $this;
-    }
-
-    /**
-     * @return EmailAddress
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param EmailAddress $email
-     * @return $this
-     */
-    public function setEmail($email): Donor
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCanSign(): bool
-    {
-        return $this->canSign;
-    }
-
-    /**
-     * @param bool $canSign
-     * @return $this
-     */
-    public function setCanSign(bool $canSign): Donor
-    {
-        $this->canSign = $canSign;
-
-        return $this;
+        return parent::map($property, $value);
     }
 }

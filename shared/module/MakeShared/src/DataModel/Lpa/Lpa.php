@@ -127,121 +127,15 @@ class Lpa extends AbstractData
      */
     protected $metadata = [];
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraints('id', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'int'
-            ]),
-            new Assert\Range([
-                'min' => 0,
-                'max' => 99999999999
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('startedAt', [
-            new Assert\NotBlank(),
-            new Assert\Custom\DateTimeUTC(),
-        ]);
-
-        $metadata->addPropertyConstraints('createdAt', [
-            new Assert\Custom\DateTimeUTC(),
-        ]);
-
-        $metadata->addPropertyConstraints('updatedAt', [
-            new Assert\NotBlank(),
-            new Assert\Custom\DateTimeUTC(),
-        ]);
-
-        $metadata->addPropertyConstraints('completedAt', [
-            new Assert\Custom\DateTimeUTC(),
-        ]);
-
-        $metadata->addPropertyConstraints('lockedAt', [
-            new Assert\Custom\DateTimeUTC(),
-        ]);
-
-        $metadata->addPropertyConstraints('user', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'xdigit'
-            ]),
-            new Assert\Length([
-                'min' => 32,
-                'max' => 32
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('payment', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Lpa\Payment\Payment'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-
-        $metadata->addPropertyConstraints('whoAreYouAnswered', [
-            new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('locked', [
-            new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('seed', [
-            new Assert\Type([
-                'type' => 'int'
-            ]),
-            new Assert\Range([
-                'min' => 0,
-                'max' => 99999999999
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('repeatCaseNumber', [
-            new Assert\Type([
-                'type' => 'int'
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('document', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Lpa\Document\Document'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-
-        $metadata->addPropertyConstraints('metadata', [
-            new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'array'
-            ]),
-            new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
-                // Max allowed size when JSON encoded in bytes.
-                $bytes = 1024 * 1024 * 1;
-
-                // Put a $bytes limit (when JSON encoded) on the metadata array.
-                if (is_array($value) && strlen(json_encode($value)) >  $bytes) {
-                    $context->buildViolation('must-be-less-than-or-equal:' . $bytes . '-bytes')->addViolation();
-                }
-            })
-        ]);
-    }
-
     /**
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
+     *
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'startedAt':
@@ -249,105 +143,14 @@ class Lpa extends AbstractData
             case 'createdAt':
             case 'completedAt':
             case 'lockedAt':
-                return (($v instanceof \DateTime || is_null($v)) ? $v : new \DateTime($v));
+                return (($value instanceof \DateTime || is_null($value)) ? $value : new \DateTime($value));
             case 'payment':
-                return (($v instanceof Payment || is_null($v)) ? $v : new Payment($v));
+                return (($value instanceof Payment || is_null($value)) ? $value : new Payment($value));
             case 'document':
-                return (($v instanceof Document || is_null($v)) ? $v : new Document($v));
+                return (($value instanceof Document || is_null($value)) ? $value : new Document($value));
         }
 
-        return parent::map($property, $v);
-    }
-
-    /**
-     * Return an abbreviated (summary) version of the LPA.
-     *
-     * @return array
-     */
-    public function abbreviatedToArray()
-    {
-        $data = $this->toArray();
-
-        // Include these top level fields...
-        $data = array_intersect_key($data, array_flip([
-            'id',
-            'lockedAt',
-            'startedAt',
-            'updatedAt',
-            'createdAt',
-            'completedAt',
-            'user',
-            'locked',
-            'document',
-            'metadata'
-        ]));
-
-        // Include these document level fields...
-        $data['document'] = array_intersect_key($data['document'], array_flip([
-            'donor', 'type'
-        ]));
-
-        return $data;
-    }
-
-    /**
-     * Perform a deep compare of this LPA against a supplied comparison
-     *
-     * @param $comparisonLpa
-     * @return bool
-     */
-    public function equals($comparisonLpa)
-    {
-        return $this == $comparisonLpa;
-    }
-
-    /**
-     * Perform a deep compare of this LPA's document against a supplied comparison ignoring the metadata properties
-     *
-     * @param $comparisonLpa
-     * @return bool
-     */
-    public function equalsIgnoreMetadata($comparisonLpa)
-    {
-        return $comparisonLpa !== null && $this->document == $comparisonLpa->document;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return $this
-     */
-    public function setId($id): Lpa
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getStartedAt(): \DateTime
-    {
-        return $this->startedAt;
-    }
-
-    /**
-     * @param \DateTime $startedAt
-     * @return $this
-     */
-    public function setStartedAt(\DateTime $startedAt): Lpa
-    {
-        $this->startedAt = $startedAt;
-
-        return $this;
+        return parent::map($property, $value);
     }
 
     /**
@@ -359,166 +162,11 @@ class Lpa extends AbstractData
     }
 
     /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt): Lpa
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt(): \DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt(\DateTime $updatedAt): Lpa
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getCompletedAt()
-    {
-        return $this->completedAt;
-    }
-
-    /**
-     * @param \DateTime|null $completedAt
-     * @return $this
-     */
-    public function setCompletedAt($completedAt)
-    {
-        $this->completedAt = $completedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getLockedAt()
-    {
-        return $this->lockedAt;
-    }
-
-    /**
-     * @param \DateTime|null $lockedAt
-     * @return $this
-     */
-    public function setLockedAt($lockedAt)
-    {
-        $this->lockedAt = $lockedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUser(): string
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param string $user
-     * @return $this
-     */
-    public function setUser(string $user): Lpa
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
      * @return Payment
      */
     public function getPayment()
     {
         return $this->payment;
-    }
-
-    /**
-     * @param Payment $payment
-     * @return $this
-     */
-    public function setPayment($payment): Lpa
-    {
-        $this->payment = $payment;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWhoAreYouAnswered(): bool
-    {
-        return $this->whoAreYouAnswered;
-    }
-
-    /**
-     * @param bool $whoAreYouAnswered
-     * @return $this
-     */
-    public function setWhoAreYouAnswered(bool $whoAreYouAnswered): Lpa
-    {
-        $this->whoAreYouAnswered = $whoAreYouAnswered;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLocked(): bool
-    {
-        return is_null($this->locked) ? false : $this->locked;
-    }
-
-    /**
-     * @param bool $locked
-     * @return $this
-     */
-    public function setLocked(bool $locked): Lpa
-    {
-        $this->locked = $locked;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSeed()
-    {
-        return $this->seed;
-    }
-
-    /**
-     * @param int $seed
-     * @return $this
-     */
-    public function setSeed($seed): Lpa
-    {
-        $this->seed = $seed;
-
-        return $this;
     }
 
     /**
@@ -530,17 +178,6 @@ class Lpa extends AbstractData
     }
 
     /**
-     * @param int|null $repeatCaseNumber
-     * @return $this
-     */
-    public function setRepeatCaseNumber($repeatCaseNumber)
-    {
-        $this->repeatCaseNumber = $repeatCaseNumber;
-
-        return $this;
-    }
-
-    /**
      * @return Document
      */
     public function getDocument()
@@ -549,33 +186,11 @@ class Lpa extends AbstractData
     }
 
     /**
-     * @param Document $document
-     * @return $this
-     */
-    public function setDocument($document): Lpa
-    {
-        $this->document = $document;
-
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public function getMetadata(): array
     {
         return $this->metadata;
-    }
-
-    /**
-     * @param array $metadata
-     * @return $this
-     */
-    public function setMetadata(array $metadata): Lpa
-    {
-        $this->metadata = $metadata;
-
-        return $this;
     }
 
     //Simple property checks
@@ -594,39 +209,6 @@ class Lpa extends AbstractData
     public function hasType(): bool
     {
         return $this->hasDocument() && $this->getDocument()->getType() != null;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasDonor(): bool
-    {
-        return $this->getDocument()->getDonor() instanceof Donor;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasWhenLpaStarts(): bool
-    {
-        return $this->hasType()
-            && $this->getDocument()->getType() == Document::LPA_TYPE_PF
-            && $this->hasPrimaryAttorneyDecisions()
-            && in_array($this->getDocument()->getPrimaryAttorneyDecisions()->getWhen(), [
-                PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY,
-                PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW
-            ]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasLifeSustaining(): bool
-    {
-        return $this->hasType()
-            && $this->getDocument()->getType() == Document::LPA_TYPE_HW
-            && $this->hasPrimaryAttorneyDecisions()
-            && is_bool($this->getDocument()->getPrimaryAttorneyDecisions()->isCanSustainLife());
     }
 
     /**
@@ -680,14 +262,6 @@ class Lpa extends AbstractData
     public function isHowPrimaryAttorneysMakeDecisionJointly(): bool
     {
         return $this->isHowPrimaryAttorneysMakeDecisionHasValue(AbstractDecisions::LPA_DECISION_HOW_JOINTLY);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHowPrimaryAttorneysMakeDecisionDepends(): bool
-    {
-        return $this->isHowPrimaryAttorneysMakeDecisionHasValue(AbstractDecisions::LPA_DECISION_HOW_DEPENDS);
     }
 
     /**
@@ -749,25 +323,9 @@ class Lpa extends AbstractData
     /**
      * @return bool
      */
-    public function isWhenReplacementAttorneyStepInDepends(): bool
-    {
-        return $this->isWhenReplacementAttorneyStepInHasValue(ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS);
-    }
-
-    /**
-     * @return bool
-     */
     public function isWhenReplacementAttorneyStepInWhenLastPrimaryUnableAct(): bool
     {
         return $this->isWhenReplacementAttorneyStepInHasValue(ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWhenReplacementAttorneyStepInWhenFirstPrimaryUnableAct(): bool
-    {
-        return $this->isWhenReplacementAttorneyStepInHasValue(ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST);
     }
 
     /**
@@ -797,32 +355,6 @@ class Lpa extends AbstractData
     }
 
     /**
-     * @return bool
-     */
-    public function isHowReplacementAttorneysMakeDecisionJointlyAndSeverally(): bool
-    {
-        return $this->isHowReplacementAttorneysMakeDecisionHasValue(
-            AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
-        );
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHowReplacementAttorneysMakeDecisionJointly(): bool
-    {
-        return $this->isHowReplacementAttorneysMakeDecisionHasValue(AbstractDecisions::LPA_DECISION_HOW_JOINTLY);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHowReplacementAttorneysMakeDecisionDepends(): bool
-    {
-        return $this->isHowReplacementAttorneysMakeDecisionHasValue(AbstractDecisions::LPA_DECISION_HOW_DEPENDS);
-    }
-
-    /**
      * @param null|string $valueToCheck
      * @return bool
      */
@@ -849,76 +381,11 @@ class Lpa extends AbstractData
     }
 
     /**
-     * @param null|string $whichGroup
-     * @return bool
-     */
-    public function hasTrustCorporation(?string $whichGroup = null): bool
-    {
-        if ($this->hasDocument()) {
-            //  By default we will check all the attorneys
-            $primaryAttorneys = $this->getDocument()->getPrimaryAttorneys();
-            $replacementAttorneys = $this->getDocument()->getReplacementAttorneys();
-            $attorneys = array_merge($primaryAttorneys, $replacementAttorneys);
-
-            if ($whichGroup == 'primary') {
-                $attorneys = $primaryAttorneys;
-            } elseif ($whichGroup == 'replacement') {
-                $attorneys = $replacementAttorneys;
-            }
-
-            foreach ($attorneys as $attorney) {
-                if ($attorney instanceof TrustCorporation) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @return bool
      */
     public function hasCertificateProvider(): bool
     {
         return ($this->hasDocument() && $this->getDocument()->getCertificateProvider() instanceof CertificateProvider);
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasCertificateProviderSkipped(): bool
-    {
-        return ($this->hasDocument() && array_key_exists(Lpa::CERTIFICATE_PROVIDER_SKIPPED, $this->getMetadata()));
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasCorrespondent(): bool
-    {
-        return ($this->hasDocument() && $this->getDocument()->getCorrespondent() instanceof Correspondence);
-    }
-
-    /**
-     * @param int|null $index
-     * @return bool
-     */
-    public function hasPeopleToNotify(?int $index = null): bool
-    {
-        if ($this->hasDocument()) {
-            $peopleToNotify = $this->getDocument()->getPeopleToNotify();
-
-            if (count($peopleToNotify) > 0) {
-                if (!is_null($index)) {
-                    return ($peopleToNotify[$index] instanceof NotifiedPerson);
-                }
-
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -930,47 +397,7 @@ class Lpa extends AbstractData
             && (!is_null($this->getDocument()->getInstruction()) || !is_null($this->getDocument()->getPreference())));
     }
 
-    /**
-     * @return bool
-     */
-    public function hasApplicant(): bool
-    {
-        return ($this->hasDocument() && ($this->getDocument()->getWhoIsRegistering() == 'donor'
-                || (is_array($this->getDocument()->getWhoIsRegistering())
-                    && count($this->getDocument()->getWhoIsRegistering()) > 0)));
-    }
-
     // For Generation Checks
-
-    /**
-     * Can a LP1 currently be generated.
-     *
-     * @return bool
-     */
-    public function canGenerateLP1()
-    {
-        return $this->isStateCreated();
-    }
-
-    /**
-     * Can a LP3 currently be generated.
-     *
-     * @return bool
-     */
-    public function canGenerateLP3()
-    {
-        return ($this->isStateCompleted() && count($this->getDocument()->getPeopleToNotify()) > 0);
-    }
-
-    /**
-     * Can a LPA120 currently be generated.
-     *
-     * @return bool
-     */
-    public function canGenerateLPA120()
-    {
-        return ($this->isStateCompleted() && $this->isEligibleForFeeReduction());
-    }
 
     // State Checks
 
@@ -1057,16 +484,6 @@ class Lpa extends AbstractData
         }
 
         return $complete;
-    }
-
-    /**
-     * LPA Instrument is created and created date is set
-     *
-     * @return bool
-     */
-    public function hasCreated(): bool
-    {
-        return ($this->hasFinishedCreation() && $this->getCreatedAt() !== null);
     }
 
     /**

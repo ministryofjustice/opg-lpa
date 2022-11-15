@@ -13,6 +13,9 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class UniqueIdInArrayValidator extends ConstraintValidator
 {
+    /**
+     * @return void
+     */
     public function validate($values, Constraint $constraint)
     {
         if (null === $values || empty($values)) {

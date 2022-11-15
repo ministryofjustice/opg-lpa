@@ -29,6 +29,9 @@ class TrustCorporation extends AbstractAttorney
      */
     protected $number;
 
+    /**
+     * @return void
+     */
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('name', [
@@ -52,48 +55,15 @@ class TrustCorporation extends AbstractAttorney
         ]);
     }
 
+    /**
+     * @return (mixed|string)[]
+     *
+     * @psalm-return array{type: 'trust'}
+     */
     public function toArray(bool $retainDateTimeInstances = false)
     {
         return array_merge(parent::toArray($retainDateTimeInstances), [
             'type' => 'trust'
         ]);
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return $this
-     */
-    public function setName(string $name): TrustCorporation
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNumber(): string
-    {
-        return $this->number;
-    }
-
-    /**
-     * @param string $number
-     * @return $this
-     */
-    public function setNumber(string $number): TrustCorporation
-    {
-        $this->number = $number;
-
-        return $this;
     }
 }

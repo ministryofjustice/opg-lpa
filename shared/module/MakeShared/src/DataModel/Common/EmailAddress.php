@@ -19,41 +19,11 @@ class EmailAddress extends AbstractData
      */
     protected $address;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        // As there is only 1 property, include NotBlank as there is no point this object existing without it.
-        $metadata->addPropertyConstraints('address', [
-            new Assert\NotBlank(),
-            new Assert\Email([
-                'strict' => true
-            ])
-        ]);
-    }
-
     /**
      * @return string The email address.
      */
     public function __toString()
     {
         return $this->address;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAddress(): string
-    {
-        return $this->address;
-    }
-
-    /**
-     * @param string $address
-     * @return $this
-     */
-    public function setAddress(string $address): EmailAddress
-    {
-        $this->address = $address;
-
-        return $this;
     }
 }

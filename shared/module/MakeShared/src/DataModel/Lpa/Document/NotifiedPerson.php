@@ -32,107 +32,23 @@ class NotifiedPerson extends AbstractData
      */
     protected $address;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraints('id', [
-            new Assert\NotBlank([
-                'groups' => ['required-at-api']
-            ]),
-            new Assert\Type([
-                'type' => 'int'
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('name', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Name'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-
-        $metadata->addPropertyConstraints('address', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Address'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-    }
-
     /**
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
+     *
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'name':
-                return ($v instanceof Name ? $v : new Name($v));
+                return ($value instanceof Name ? $value : new Name($value));
             case 'address':
-                return ($v instanceof Address ? $v : new Address($v));
+                return ($value instanceof Address ? $value : new Address($value));
         }
 
-        return parent::map($property, $v);
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return $this
-     */
-    public function setId(int $id): NotifiedPerson
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return Name
-     */
-    public function getName(): Name
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param Name $name
-     * @return $this
-     */
-    public function setName(Name $name): NotifiedPerson
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Address
-     */
-    public function getAddress(): Address
-    {
-        return $this->address;
-    }
-
-    /**
-     * @param Address $address
-     * @return $this
-     */
-    public function setAddress(Address $address): NotifiedPerson
-    {
-        $this->address = $address;
-
-        return $this;
+        return parent::map($property, $value);
     }
 }

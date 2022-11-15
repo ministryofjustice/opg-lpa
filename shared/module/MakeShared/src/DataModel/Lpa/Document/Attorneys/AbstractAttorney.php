@@ -32,35 +32,6 @@ abstract class AbstractAttorney extends AbstractData
      */
     protected $email;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraints('id', [
-            new Assert\NotBlank([
-                'groups' => [
-                    'required-at-api'
-                ]
-            ]),
-            new Assert\Type([
-                'type' => 'int'
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('address', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Address'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-
-        $metadata->addPropertyConstraints('email', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\EmailAddress'
-            ]),
-            new ValidConstraintSymfony(),
-        ]);
-    }
-
     /**
      * Instantiates a concrete instance of either Human or TrustCorporation
      * depending on the data passed to it.
@@ -102,75 +73,19 @@ abstract class AbstractAttorney extends AbstractData
      * Map property values to their correct type.
      *
      * @param string $property string Property name
-     * @param mixed $v mixed Value to map.
+     * @param mixed $value mixed Value to map.
+     *
      * @return mixed Mapped value.
      */
-    protected function map($property, $v)
+    protected function map($property, $value)
     {
         switch ($property) {
             case 'address':
-                return ($v instanceof Address ? $v : new Address($v));
+                return ($value instanceof Address ? $value : new Address($value));
             case 'email':
-                return ($v instanceof EmailAddress ? $v : new EmailAddress($v));
+                return ($value instanceof EmailAddress ? $value : new EmailAddress($value));
         }
 
-        return parent::map($property, $v);
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return $this
-     */
-    public function setId(int $id): AbstractAttorney
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return Address
-     */
-    public function getAddress(): Address
-    {
-        return $this->address;
-    }
-
-    /**
-     * @param Address $address
-     * @return $this
-     */
-    public function setAddress(Address $address): AbstractAttorney
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    /**
-     * @return EmailAddress
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param EmailAddress $email
-     * @return $this
-     */
-    public function setEmail($email): AbstractAttorney
-    {
-        $this->email = $email;
-
-        return $this;
+        return parent::map($property, $value);
     }
 }

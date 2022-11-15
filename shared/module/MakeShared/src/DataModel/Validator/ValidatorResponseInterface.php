@@ -15,11 +15,4 @@ interface ValidatorResponseInterface extends IteratorAggregate, ArrayAccess, Ser
      * @return bool
      */
     public function hasErrors();
-
-    /**
-     * Returns a copy of the response's errors as a native array.
-     *
-     * @return array
-     */
-    public function getArrayCopy();
 }

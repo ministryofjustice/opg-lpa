@@ -37,40 +37,6 @@ class Name extends AbstractData
      */
     protected $last;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraints('title', [
-            new Assert\NotIdenticalTo(''),  // Not identical to en empty string
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'min' => self::TITLE_MIN_LENGTH,
-                'max' => self::TITLE_MAX_LENGTH,
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('first', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::FIRST_NAME_MAX_LENGTH,
-            ]),
-        ]);
-
-        $metadata->addPropertyConstraints('last', [
-            new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::LAST_NAME_MAX_LENGTH,
-            ]),
-        ]);
-    }
-
     /**
      * Returns a string representation of the name.
      *
@@ -86,62 +52,5 @@ class Name extends AbstractData
         $name = trim($name);
 
         return $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     * @return $this
-     */
-    public function setTitle(string $title): Name
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFirst(): string
-    {
-        return $this->first;
-    }
-
-    /**
-     * @param string $first
-     * @return $this
-     */
-    public function setFirst(string $first): Name
-    {
-        $this->first = $first;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLast(): string
-    {
-        return $this->last;
-    }
-
-    /**
-     * @param string $last
-     * @return $this
-     */
-    public function setLast(string $last): Name
-    {
-        $this->last = $last;
-
-        return $this;
     }
 }
