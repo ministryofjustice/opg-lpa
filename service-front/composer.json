@@ -9,18 +9,10 @@
         "zf2"
     ],
     "homepage": "https://github.com/ministryofjustice/opg-lpa",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
-            "no-api": true
-        }
-    ],
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^6.3",
         "aws/aws-sdk-php": "^3.204.5",
-        "ministryofjustice/opg-lpa-datamodels": "14.0.4",
         "michelf/php-markdown": "^1.9.1",
         "php-http/guzzle6-adapter": "^2.0.2",
         "laminas/laminas-mvc": "^3.2",
@@ -36,7 +28,9 @@
         "theiconic/php-ga-measurement-protocol": "^2.9",
         "laminas/laminas-log": "^2.13",
         "guzzlehttp/psr7": "^1.8.4",
-        "alphagov/notifications-php-client": "^4.0.1"
+        "alphagov/notifications-php-client": "^4.0.1",
+        "symfony/validator": "^4.2",
+        "egulias/email-validator": "~1.2"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
