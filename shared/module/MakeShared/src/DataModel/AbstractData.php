@@ -345,21 +345,17 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      */
     private function unFlattenArray($array)
     {
-        $result = [];
-
         foreach ($array as $key => $value) {
             $keys = explode('-', $key);
 
-            $position = &$result;
-
-            foreach ($keys as $index) {
-                $position = &$position[$index];
+            if (count($keys) == 2) {
+                $result = [];
+                $result[$keys[1]] = $value;
+                $array[$keys[0]] = $result;
             }
-
-            $position = $value;
         }
 
-        return $result;
+        return $array;
     }
 
     // Hydrator methods
@@ -391,7 +387,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      */
     public function populateWithFlatArray(array $data)
     {
+        var_dump($data);
         $data = $this->unFlattenArray($data);
+        var_dump($data);
 
         return $this->populate($data);
     }
