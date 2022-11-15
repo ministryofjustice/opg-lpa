@@ -61,7 +61,7 @@ class Dob extends AbstractData
 
                 //  Try again with ISO-8601 format
                 $parsedDate = DateTime::createFromFormat('Y-m-d\TH:i:s.u\Z', $v);
-                if ($parsedDate !== false && $parsedDate instanceof DateTime) {
+                if ($parsedDate !== false) {
                     return $parsedDate;
                 }
 
