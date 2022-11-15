@@ -3,7 +3,7 @@
 namespace MakeShared\DataModel\Common;
 
 use MakeShared\DataModel\AbstractData;
-use MakeShared\DataModel\Validator\Constraints as Assert;
+use MakeShared\DataModel\Validator\Constraints as SymfonyConstraints;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
@@ -24,8 +24,8 @@ class PhoneNumber extends AbstractData
         // As there is only 1 property, include NotBlank as there is no point this object existing without it.
         // Regex taken from: https://github.com/Respect/Validation/blob/master/library/Rules/Phone.php
         $metadata->addPropertyConstraints('number', [
-            new Assert\NotBlank(),
-            new Assert\Regex([
+            new SymfonyConstraints\NotBlank(),
+            new SymfonyConstraints\Regex([
                 // a fairly loose regex, it allows for country codes plus between
                 // 8 and 15 numbers/spaces
                 'pattern' => '/^[+|0]?[0-9 ]{8,15}$/',
