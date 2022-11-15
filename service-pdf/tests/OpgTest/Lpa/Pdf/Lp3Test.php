@@ -2,8 +2,8 @@
 
 namespace OpgTest\Lpa\Pdf;
 
-use MakeTest\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use MakeTest\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Lp3;
 use Opg\Lpa\Pdf\PdftkFactory;
 use OpgTest\Lpa\Pdf\AbstractPdfTestCase;

@@ -4,7 +4,7 @@ namespace OpgTest\Lpa\Pdf;
 
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
-use MakeShared\Pdf\Lpa120;
+use Opg\Lpa\Pdf\Lpa120;
 use Exception;
 
 class Lpa120Test extends AbstractPdfTestCase
