@@ -11,6 +11,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Model\Service\Authentication\Service as AppAuthenticationService;
+use Application\Model\Service\Feedback\FeedbackValidator;
 use Alphagov\Notifications\Client as NotifyClient;
 use Aws\Credentials\CredentialProvider;
 use Aws\Sns\SnsClient;
@@ -145,6 +146,10 @@ class Module
 
                 'AppAuthenticationService' => function ($sm) {
                     return new AppAuthenticationService($sm->get('config')['session']['token_ttl']);
+                },
+
+                'FeedbackValidator' => function () {
+                    return new FeedbackValidator();
                 },
 
             ], // factories

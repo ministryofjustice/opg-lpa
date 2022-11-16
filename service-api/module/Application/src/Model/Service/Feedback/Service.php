@@ -13,6 +13,8 @@ class Service extends AbstractService
 
     public const FEEDBACK_TTL = '-2 years';
 
+    private FeedbackValidator $feedbackValidator;
+
     /**
      * @var DateTime
      */
@@ -27,7 +29,10 @@ class Service extends AbstractService
     public function add(array $feedback): bool
     {
         // Filter out any 'non-allowed' fields
-        $allowed = ['agent', 'fromPage', 'rating', 'details', 'email', 'phone'];
+        $allowed = array_merge(
+            FeedbackValidator::MANDATORY_FIELDS,
+            FeedbackValidator::OPTIONAL_FIELDS
+        );
         $feedback = array_intersect_key($feedback, array_flip($allowed));
 
         // Feedback cannot be empty
@@ -36,10 +41,17 @@ class Service extends AbstractService
             return false;
         }
 
+        // validator only checks the validity of fields which can be saved as feedback
+        if (!$this->feedbackValidator->isValid($feedback)) {
+            $this->getLogger()->err('Feedback data failed validation');
+            return false;
+        }
+
         $dbInsertResult = $this->getFeedbackRepository()->insert($feedback);
         if (!$dbInsertResult) {
             $this->getLogger()->err('Error inserting feedback into database: invalid query');
         }
+
         return $dbInsertResult;
     }
 
@@ -74,5 +86,10 @@ class Service extends AbstractService
         $this->pruneBeforeDate = new DateTime(self::FEEDBACK_TTL);
 
         return $this->pruneBeforeDate;
+    }
+
+    public function setFeedbackValidator(FeedbackValidator $feedbackValidator)
+    {
+        $this->feedbackValidator = $feedbackValidator;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
@@ -8,10 +9,9 @@ use Laminas\Db\Sql\Predicate\Operator;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 
-
 class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRepositoryInterface
 {
-    const FEEDBACK_TABLE = 'feedback';
+    public const FEEDBACK_TABLE = 'feedback';
 
     /**
      * Insert a new feedback item
@@ -19,10 +19,18 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      * @param array $feedback
      * @return bool
      */
-    public function insert(array $feedback) : bool
+    public function insert(array $feedback): bool
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::FEEDBACK_TABLE);
+
+        // escape fields that may contain html tags
+        $fieldsToEscape = ['details', 'agent', 'fromPage', 'phone'];
+        foreach ($fieldsToEscape as $fieldName) {
+            if (isset($feedback[$fieldName])) {
+                $feedback[$fieldName] = htmlentities($feedback[$fieldName]);
+            }
+        }
 
         $data = [
             'received' => gmdate(DbWrapper::TIME_FORMAT),
@@ -36,8 +44,7 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
 
         try {
             $sql->execute();
-        }
-        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
+        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             $this->getLogger()->err('Error running insert query for feedback');
             $this->getLogger()->err($e->getMessage());
             $this->getLogger()->err($e->getTraceAsString());
@@ -54,7 +61,7 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      * @param DateTime $to
      * @return Traversable
      */
-    public function getForDateRange(DateTime $from, DateTime $to) : Traversable
+    public function getForDateRange(DateTime $from, DateTime $to): Traversable
     {
         $criteria = [
             new Operator('received', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $from->format('c')),
@@ -86,7 +93,7 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      * @param DateTime $before
      * @return bool
      */
-    public function prune(DateTime $before) : bool
+    public function prune(DateTime $before): bool
     {
         $sql = $this->dbWrapper->createSql();
         $delete = $sql->delete(self::FEEDBACK_TABLE);
