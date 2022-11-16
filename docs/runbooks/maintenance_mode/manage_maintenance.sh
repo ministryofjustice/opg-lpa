@@ -11,7 +11,7 @@ function enable_maintenance() {
   MM_DNS_PREFIX="${ENVIRONMENT}."
   if [ $ENVIRONMENT = "production" ]
   then
-    MM_DNS_PREFIX=""
+    MM_DNS_PREFIX="www."
   fi
  aws elbv2 modify-rule \
   --rule-arn $MM_RULE_ARN \
