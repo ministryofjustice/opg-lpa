@@ -17,10 +17,11 @@ The instructions below help you to do that, so you can query data and perform da
     3. optionally give a description
 6. Leave all defaults for **environment type, instance type** and **platform**.
 7. Adjust the **Cost-saving setting** to suit your needs, basing this on how long you will need the instance.
-8 under the **Network settings (advanced)** drop tab:
-    1. Leave the **Network (VPC)** dropdown as is.
-    2. select a public facing **Subnet** from the dropdown. **Note** these are usually the shorter named groups.
-    3. Failure to do this will mean your instance cannot be accessed and will fail to deploy
+8. under the **Network settings (advanced)** drop tab:
+    1. Change **Connection** to Secure Shell (SSH)
+    2. Leave the **Network (VPC)** dropdown as is.
+    3. select a public facing **Subnet** from the dropdown. **Note** these are usually the shorter named groups.
+    4. Failure to do this will mean your instance cannot be accessed and will fail to deploy
 
 ### Once Connected
 
