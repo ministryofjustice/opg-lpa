@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "feedbackdb" {
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.feedbackdb_app}, ${local.feedback_app_init_container}]"
+  container_definitions    = "[${local.feedbackdb_app}, ${local.app_init_container}]"
   task_role_arn            = aws_iam_role.feedbackdb_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.feedbackdb_component_tag
@@ -55,27 +55,6 @@ data "aws_ecr_repository" "lpa_feedbackdb_app" {
 // feedbackdb ECS Service Task Container level config
 
 locals {
-
-  feedback_app_init_container = jsonencode(
-    {
-      "name" : "permissions-init",
-      "image" : "busybox:latest",
-      "entryPoint" : [
-        "sh",
-        "-c"
-      ],
-      "command" : [
-        "chmod 766 /tmp/"
-      ],
-      "mountPoints" : [
-        {
-          "containerPath" : "/tmp",
-          "sourceVolume" : "app_tmp"
-        }
-      ],
-      "essential" : false
-    }
-  )
 
   feedbackdb_app = jsonencode(
     {

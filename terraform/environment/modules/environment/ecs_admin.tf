@@ -68,7 +68,7 @@ resource "aws_ecs_task_definition" "admin" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.admin_web}, ${local.admin_app}, ${local.admin_app_init_container}]"
+  container_definitions    = "[${local.admin_web}, ${local.admin_app}, ${local.app_init_container}]"
   task_role_arn            = aws_iam_role.admin_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.admin_component_tag
@@ -145,7 +145,6 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      # "readonlyRootFilesystem" : true,
       "image" : "${data.aws_ecr_repository.lpa_admin_web.repository_url}:${var.container_version}",
       "mountPoints" : [],
       "name" : "web",
@@ -171,27 +170,6 @@ locals {
         { "name" : "TIMEOUT", "value" : "60" },
         { "name" : "CONTAINER_VERSION", "value" : var.container_version }
       ]
-    }
-  )
-
-  admin_app_init_container = jsonencode(
-    {
-      "name" : "permissions-init",
-      "image" : "busybox:latest",
-      "entryPoint" : [
-        "sh",
-        "-c"
-      ],
-      "command" : [
-        "chmod 766 /tmp/"
-      ],
-      "mountPoints" : [
-        {
-          "containerPath" : "/tmp",
-          "sourceVolume" : "app_tmp"
-        }
-      ],
-      "essential" : false
     }
   )
 
