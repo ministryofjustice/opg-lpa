@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "pdf" {
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.pdf_app},  ${local.pdf_app_init_container}]"
+  container_definitions    = "[${local.pdf_app},  ${local.app_init_container}]"
   task_role_arn            = aws_iam_role.pdf_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.pdf_component_tag
@@ -164,27 +164,6 @@ data "aws_ecr_repository" "lpa_pdf_app" {
 // pdf ECS Service Task Container level config
 
 locals {
-
-  pdf_app_init_container = jsonencode(
-    {
-      "name" : "permissions-init",
-      "image" : "busybox:latest",
-      "entryPoint" : [
-        "sh",
-        "-c"
-      ],
-      "command" : [
-        "chmod 766 /tmp/"
-      ],
-      "mountPoints" : [
-        {
-          "containerPath" : "/tmp/",
-          "sourceVolume" : "app_tmp"
-        }
-      ],
-      "essential" : false
-    }
-  )
 
   pdf_app = jsonencode(
     {

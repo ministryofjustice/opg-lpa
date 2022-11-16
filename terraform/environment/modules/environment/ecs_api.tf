@@ -123,7 +123,7 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.api_app_init_container}]"
+  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.app_init_container}]"
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.api_component_tag
@@ -286,27 +286,6 @@ locals {
         { "name" : "TIMEOUT", "value" : "60" },
         { "name" : "CONTAINER_VERSION", "value" : var.container_version }
       ]
-    }
-  )
-
-  api_app_init_container = jsonencode(
-    {
-      "name" : "permissions-init",
-      "image" : "busybox:latest",
-      "entryPoint" : [
-        "sh",
-        "-c"
-      ],
-      "command" : [
-        "chmod 766 /tmp/"
-      ],
-      "mountPoints" : [
-        {
-          "containerPath" : "/tmp",
-          "sourceVolume" : "app_tmp"
-        }
-      ],
-      "essential" : false
     }
   )
 
