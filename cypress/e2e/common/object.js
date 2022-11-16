@@ -1,4 +1,4 @@
-import { And } from '@badeball/cypress-cucumber-preprocessor';
+import { Then } from '@badeball/cypress-cucumber-preprocessor';
 
 /**
  * Set up expectations that an object stored in the testStore
@@ -15,7 +15,7 @@ import { And } from '@badeball/cypress-cucumber-preprocessor';
  *   value: the expected value of the property referenced by propertyPath within
  *     the object
  */
-And('the object {string} should have these properties:', (key, dataTable) => {
+Then('the object {string} should have these properties:', (key, dataTable) => {
   // this can only run after setting a key in the testStore
   cy.task('getValue', key).then((obj) => {
     let rows = dataTable.rawTable;
