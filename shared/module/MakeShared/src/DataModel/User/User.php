@@ -7,7 +7,7 @@ use MakeShared\DataModel\Common\Address;
 use MakeShared\DataModel\Common\Dob;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\Name;
-use MakeShared\DataModel\Validator\Constraints as Assert;
+use MakeShared\DataModel\Validator\Constraints as ValidatorConstraints;
 use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use DateTime;
@@ -57,50 +57,50 @@ class User extends AbstractData
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('id', [
-            new Assert\NotBlank(),
-            new Assert\Type([
+            new ValidatorConstraints\NotBlank(),
+            new ValidatorConstraints\Type([
                 'type' => 'xdigit'
             ]),
-            new Assert\Length([
+            new ValidatorConstraints\Length([
                 'min' => 32,
                 'max' => 32
             ]),
         ]);
 
         $metadata->addPropertyConstraints('createdAt', [
-            new Assert\NotBlank(),
-            new Assert\Custom\DateTimeUTC(),
+            new ValidatorConstraints\NotBlank(),
+            new ValidatorConstraints\Custom\DateTimeUTC(),
         ]);
 
         $metadata->addPropertyConstraints('updatedAt', [
-            new Assert\NotBlank(),
-            new Assert\Custom\DateTimeUTC(),
+            new ValidatorConstraints\NotBlank(),
+            new ValidatorConstraints\Custom\DateTimeUTC(),
         ]);
 
         $metadata->addPropertyConstraints('name', [
-            new Assert\NotBlank(),
-            new Assert\Type([
+            new ValidatorConstraints\NotBlank(),
+            new ValidatorConstraints\Type([
                 'type' => '\MakeShared\DataModel\Common\Name'
             ]),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('address', [
-            new Assert\Type([
+            new ValidatorConstraints\Type([
                 'type' => '\MakeShared\DataModel\Common\Address'
             ]),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('dob', [
-            new Assert\Type([
+            new ValidatorConstraints\Type([
                 'type' => '\MakeShared\DataModel\Common\Dob'
             ]),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\Type([
+            new ValidatorConstraints\Type([
                 'type' => '\MakeShared\DataModel\Common\EmailAddress'
             ]),
             new ValidConstraintSymfony(),
