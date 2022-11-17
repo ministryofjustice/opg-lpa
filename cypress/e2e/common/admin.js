@@ -88,3 +88,10 @@ Then(`I can export feedback and download it as a CSV file`, () => {
 
   cy.contains('Export').click();
 });
+
+Then(
+  'the information icon for the system message should not be on the page',
+  () => {
+    cy.get('div.notice > i.icon.icon-important').should('not.exist');
+  },
+);

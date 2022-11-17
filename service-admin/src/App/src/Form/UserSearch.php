@@ -7,7 +7,6 @@ use App\Filter\StandardInputFilterChain;
 use Laminas\Filter;
 use Laminas\Form\Element\Text;
 use Laminas\InputFilter\Input;
-use Laminas\InputFilter\InputFilter;
 
 /**
  * Class UserSearch
@@ -24,16 +23,12 @@ class UserSearch extends AbstractForm
     {
         parent::__construct(self::class, $options);
 
-        $inputFilter = new InputFilter();
-        $this->setInputFilter($inputFilter);
-
         //  Email field
         $field = new Text('email');
         $input = new Input($field->getName());
 
         $input->getFilterChain()
-            ->attach(StandardInputFilterChain::create())
-            ->attach(new Filter\StringToLower());
+            ->attach(StandardInputFilterChain::create());
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(), true)
@@ -42,6 +37,9 @@ class UserSearch extends AbstractForm
         $input->setRequired(true);
 
         $this->add($field);
-        $inputFilter->add($input);
+        $this->getInputFilter()->add($input);
+
+        // Csrf field
+        $this->addCsrfElement();
     }
 }

@@ -223,7 +223,7 @@ jobs:
         with:
           name: terraform-artifact
           path: /tmp/
-      
+
       - name: Set environment variable
         id: set_var
         run: |
@@ -250,7 +250,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       ts: ${{ steps.slack.outputs.ts }}
-    needs: 
+    needs:
       - terraform_outputs
       - image_tag
     env:
@@ -388,14 +388,14 @@ jobs:
       admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
-      cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
+      cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage"
     secrets: inherit
 
 
   post_tests_slack_msg:
     name: Post-Tests Slack message
     runs-on: ubuntu-latest
-    needs: 
+    needs:
       - terraform_outputs
       - image_tag
       - post_deployment_slack_msg

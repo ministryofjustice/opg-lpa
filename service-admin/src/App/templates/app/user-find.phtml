@@ -17,6 +17,8 @@
                         Find users by full or partial email address. If found, a summary of the user with a link to their full details will be shown.
                     </p>
 
+                    <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+
                     <?php $this->insert('snippet::input-text', [
                         'formLabel'     => 'Query',
                         'formElement'   => $form->get('query'),
