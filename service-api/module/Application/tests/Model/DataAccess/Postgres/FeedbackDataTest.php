@@ -1,9 +1,9 @@
 <?php
+
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-
 use Application\Model\DataAccess\Postgres\FeedbackData;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 use DateTime;
@@ -12,19 +12,17 @@ use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Sql;
-
 use ApplicationTest\Helpers;
-
 
 class FeedbackDataTest extends MockeryTestCase
 {
-    public function testInsertSuccess() : void
+    public function testInsertSuccess(): void
     {
-        $expected = TRUE;
+        $expected = true;
 
         $data = [
             'email' => 'boff@bip',
-            'details' => 'Great site',
+            'details' => '<script>Great site</script>',
         ];
 
         // mocks
@@ -43,10 +41,18 @@ class FeedbackDataTest extends MockeryTestCase
 
         $insertMock->shouldReceive('columns')
             ->with(['received', 'message']);
+
         $insertMock->shouldReceive('values')
-            ->withArgs(function ($valuesArg) use ($data) {
-                return $valuesArg['message'] == json_encode($data) &&
-                    Helpers::isGmDateString($valuesArg['received']);
+            ->withArgs(function ($valuesArg) {
+                $expectedData = json_encode([
+                    'email' => 'boff@bip',
+                    'details' => '&lt;script&gt;Great site&lt;/script&gt;',
+                ]);
+
+                $messageOk = $valuesArg['message'] == $expectedData;
+                $receivedOk = Helpers::isGmDateString($valuesArg['received']);
+
+                return $messageOk && $receivedOk;
             });
 
         $sqlMock->shouldReceive('prepareStatementForSqlObject')
@@ -54,7 +60,7 @@ class FeedbackDataTest extends MockeryTestCase
             ->andReturn($statementMock);
 
         $statementMock->shouldReceive('execute')
-            ->andReturn(TRUE);
+            ->andReturn(true);
 
         // test method
         $feedbackData = new FeedbackData($dbWrapperMock);
@@ -64,7 +70,7 @@ class FeedbackDataTest extends MockeryTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testGetForDateRange() : void
+    public function testGetForDateRange(): void
     {
         $expected = [
             'received' => '2021-08-01T01:02:00+00:00',
