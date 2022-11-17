@@ -9,6 +9,7 @@ use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\Feedback\FeedbackValidator;
 use Application\Model\Service\Users\Service as UsersService;
 use GuzzleHttp\Client;
 use Http\Client\HttpClient;
@@ -34,6 +35,9 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setConfig'         => 'config',
             'setNotifyClient'   => 'NotifyClient',
             'setUsersService'   => UsersService::class,
+        ],
+        Feedback\Service::class => [
+            'setFeedbackValidator' => 'FeedbackValidator',
         ],
         Password\Service::class => [
             'setAuthenticationService' => AuthenticationService::class,

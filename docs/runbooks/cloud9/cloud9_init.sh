@@ -65,7 +65,7 @@ function add_rds_sgs() {
 
 function postgresql() {
   local environment_name=$(echo ${1:?} | awk '{print tolower($0)}')
-  local db_instance=$(aws rds describe-db-instances --db-instance-identifier api-${environment_name})
+  local db_instance=$(aws rds describe-db-instances --db-instance-identifier api2-${environment_name}-0)
 
   export AWS_DEFAULT_REGION=eu-west-1
   export PGHOST=$( jq -r .'DBInstances'[0].'Endpoint'.'Address' <<< "${db_instance}")
