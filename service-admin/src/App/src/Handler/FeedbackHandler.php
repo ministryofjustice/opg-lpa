@@ -65,7 +65,7 @@ class FeedbackHandler extends AbstractHandler
                 $result = $this->feedbackService->search($startDate, $endDate);
 
                 if ($result === false) {
-                    //  Set a general error message
+                    // Set a general error message
                     $form->setMessages([[
                         'There was a problem retrieving the feedback',
                     ]]);
@@ -73,11 +73,12 @@ class FeedbackHandler extends AbstractHandler
                     $feedback = $this->parseFeedbackResults($result['results']);
                     $earliestAvailableTime = new DateTime($result['prunedBefore']);
 
-                    //  Check to see if this is an export request
+                    // Check to see if this is an export request
                     $queryParams = $request->getQueryParams();
                     $isExport = (array_key_exists('export', $queryParams) && $queryParams['export'] === 'true');
 
                     if ($isExport) {
+                        // note that this terminates script processing with exit()
                         $this->exportToCsv($feedback);
                     }
                 }
@@ -148,22 +149,24 @@ class FeedbackHandler extends AbstractHandler
     private function exportToCsv(array $data): void
     {
         $filename = sprintf('FeedbackExport_%s_%s.csv', date('Y-m-d'), date('h.i.s'));
-        $fullFilename = '/tmp/' . $filename;
 
-        $file = fopen($fullFilename, "w");
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-disposition: attachment; filename=' . $filename);
+        header('Pragma: no-cache');
+        header('Expires: 0');
 
-        if (!$file) {
-            throw new \RuntimeException('could not open file ' . $fullFilename);
-        }
+        ob_end_clean();
 
-        //  Write the headings to the first line
+        $file = fopen('php://output', 'w');
+
+        // Write the headings
         $headings = array_keys($data);
         fputcsv($file, $headings);
 
-        //  Determine the number of rows
+        // Determine the number of rows
         $numberOfRows = count(end($data));
 
-        //  Loop through the data and extract out the lines using the headings
+        // Loop through the data and extract out the lines using the headings
         for ($i = 0; $i < $numberOfRows; $i++) {
             $thisLineData = [];
 
@@ -171,27 +174,14 @@ class FeedbackHandler extends AbstractHandler
                 $thisLineData[] = $data[$heading][$i];
             }
 
-            //  Add the line to the CSV
+            // Add the line to the CSV
             fputcsv($file, $thisLineData);
         }
 
         fclose($file);
 
-        $file = fopen($fullFilename, 'rb');
+        ob_flush();
 
-        if (!$file) {
-            throw new \RuntimeException('could not read file ' . $fullFilename);
-        }
-
-        header('Content-Type: text/csv; charset=utf-8');
-        header("Content-disposition: attachment; filename=" . $filename);
-        header('Pragma: no-cache');
-        header("Expires: 0");
-
-        //  Dump the file and remove the local copy
-        fpassthru($file);
-        unlink($fullFilename);
-
-        exit;
+        exit();
     }
 }
