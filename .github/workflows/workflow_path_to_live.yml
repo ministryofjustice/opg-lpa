@@ -202,7 +202,7 @@ jobs:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
-      cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded"
+      cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage"
     secrets: inherit
 
   slack_msg_production_deploy_begin:
@@ -269,7 +269,7 @@ jobs:
   terraform_account_production:
     name: TF Production - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
-    needs: 
+    needs:
       - slack_msg_production_deploy_begin
     with:
       terraform_version: 1.1.2
@@ -287,7 +287,7 @@ jobs:
   terraform_region_production:
     name: TF Production - Region
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
-    needs: 
+    needs:
       - slack_msg_production_deploy_begin
     with:
       terraform_version: 1.1.2
@@ -301,7 +301,7 @@ jobs:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  
+
   terraform_environment_production:
     name: TF Production - Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
@@ -375,7 +375,7 @@ jobs:
     name: Post-Deployment Slack message
     runs-on: ubuntu-latest
     if: always()
-    needs: 
+    needs:
       - slack_msg_production_deploy_begin
       - run_smoke_tests
       - image_tag

@@ -40,7 +40,9 @@ class UserFindHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $form = new UserFind();
+        $form = new UserFind([
+            'csrf' => $this->getTokenData('csrf'),
+        ]);
 
         $limit = self::$LIMIT;
 
