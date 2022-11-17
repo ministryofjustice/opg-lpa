@@ -9,6 +9,7 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInt
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryInterface;
 use Application\Model\Service\AbstractService;
+use Application\Model\Service\Feedback\FeedbackValidator;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\Logging\Logger;
@@ -50,6 +51,8 @@ abstract class AbstractServiceBuilder
      */
     private $feedbackRepository = null;
 
+    /** @var MockInterface|FeedbackValidator */
+    private $feedbackValidator = null;
 
     /**
      * @param $logger
@@ -120,6 +123,13 @@ abstract class AbstractServiceBuilder
         return $this;
     }
 
+    public function withFeedbackValidator($feedbackValidator)
+    {
+        $this->feedbackValidator = $feedbackValidator;
+
+        return $this;
+    }
+
     /**
      * @return AbstractService
      */
@@ -168,6 +178,10 @@ abstract class AbstractServiceBuilder
             $service->setFeedbackRepository($this->feedbackRepository);
         }
 
+        if ($this->feedbackValidator !== null) {
+            $service->setFeedbackValidator($this->feedbackValidator);
+        }
+
         return $service;
     }
 
@@ -198,6 +212,10 @@ abstract class AbstractServiceBuilder
 
         if ($this->feedbackRepository !== null) {
             $this->feedbackRepository->mockery_verify();
+        }
+
+        if ($this->feedbackValidator !== null) {
+            $this->feedbackValidator->mockery_verify();
         }
 
         Mockery::close();
