@@ -44,10 +44,14 @@ run-api-composer:
 run-admin-composer:
 	@docker run -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
+.PHONY: run-shared-composer
+run-shared-composer:
+	@docker run -v `pwd`/shared/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+
 .PHONY: run-composers
 run-composers:
 	@docker pull composer:${COMPOSER_VERSION}; \
-	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer
+	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer run-shared-composer
 
 .PHONY: dc-up
 dc-up: run-composers

@@ -8,7 +8,7 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use MakeLogger\Logging\Logger;
+use MakeShared\Logging\Logger;
 use Laminas\EventManager\EventManager;
 use Laminas\EventManager\ResponseCollection;
 use Laminas\Http\Header\ContentType;
@@ -58,7 +58,7 @@ abstract class AbstractAuthControllerTest extends MockeryTestCase
     /**
      * Set up the services in default configuration - these can be adapted in the subclasses before getting the controller to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
 

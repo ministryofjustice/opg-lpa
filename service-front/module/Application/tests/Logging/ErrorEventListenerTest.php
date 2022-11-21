@@ -2,14 +2,14 @@
 
 namespace ApplicationTest\Logging;
 
-use MakeLogger\Logging\ErrorEventListener;
+use MakeShared\Logging\ErrorEventListener;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\Event;
 use Laminas\EventManager\EventManager;
 use Laminas\Mvc\MvcEvent;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use MakeLogger\Logging\Logger;
+use MakeShared\Logging\Logger;
 
 class ErrorEventListenerTest extends MockeryTestCase
 {

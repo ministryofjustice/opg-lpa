@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service\ApiClient;
 
-use MakeLogger\Logging\Logger;
+use MakeShared\Logging\Logger;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use GuzzleHttp\Psr7\Request;

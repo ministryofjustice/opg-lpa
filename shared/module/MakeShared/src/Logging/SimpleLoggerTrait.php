@@ -1,6 +1,6 @@
 <?php
 
-namespace MakeLogger\Logging;
+namespace MakeShared\Logging;
 
 use Laminas\Log\Logger as LaminasLogger;
 use Laminas\Log\Writer\Stream as StreamWriter;
@@ -9,7 +9,7 @@ use Laminas\Log\Writer\Stream as StreamWriter;
  * Simplified trait for logging in applications which don't use laminas-mvc.
  * Do not use in classes which already use LoggerTrait from this package.
  *
- * @package MakeLogger\Logging
+ * @package MakeShared\Logging
  */
 trait SimpleLoggerTrait
 {

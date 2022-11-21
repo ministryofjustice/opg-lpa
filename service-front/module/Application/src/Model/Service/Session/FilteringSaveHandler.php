@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Session;
 
-use MakeLogger\Logging\LoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use InvalidArgumentException;
 use Redis;

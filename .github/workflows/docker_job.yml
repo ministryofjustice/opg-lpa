@@ -117,7 +117,7 @@ jobs:
         if: ${{ (matrix.image_name == 'front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
         run: |
           pushd service-front/
-          npm ci && npm install -g sass
+          npm ci -y && npm install -g sass
           node_modules/grunt-cli/bin/grunt build
           popd
 

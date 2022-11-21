@@ -9,7 +9,7 @@ use Application\Model\Service\Stats\Service as StatsService;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use MakeLogger\Logging\Logger;
+use MakeShared\Logging\Logger;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class StatsControllerTest extends MockeryTestCase
@@ -29,7 +29,7 @@ class StatsControllerTest extends MockeryTestCase
      */
     private $logger;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->statsService = Mockery::mock(StatsService::class);
 

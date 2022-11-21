@@ -2,7 +2,7 @@
 
 namespace Opg\Lpa\Pdf;
 
-use MakeLogger\Logging\SimpleLoggerTrait;
+use MakeShared\Logging\SimpleLoggerTrait;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;

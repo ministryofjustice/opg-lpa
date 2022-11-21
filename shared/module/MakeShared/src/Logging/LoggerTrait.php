@@ -1,10 +1,10 @@
 <?php
 
-namespace MakeLogger\Logging;
+namespace MakeShared\Logging;
 
 /**
  * Trait LoggerTrait
- * @package MakeLogger\Logging
+ * @package MakeShared\Logging
  */
 trait LoggerTrait
 {

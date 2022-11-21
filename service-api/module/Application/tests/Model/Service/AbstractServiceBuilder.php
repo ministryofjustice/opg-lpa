@@ -12,7 +12,7 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\Feedback\FeedbackValidator;
 use Mockery;
 use Mockery\MockInterface;
-use MakeLogger\Logging\Logger;
+use MakeShared\Logging\Logger;
 
 abstract class AbstractServiceBuilder
 {

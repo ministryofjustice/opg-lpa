@@ -2,7 +2,7 @@
 
 namespace Application\Form\Validator;
 
-use MakeLogger\Logging\LoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 use Laminas\Math\Rand;
 use Laminas\Session\Container;
 use Laminas\Validator\Csrf as LaminasCsrfValidator;
