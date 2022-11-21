@@ -20,7 +20,6 @@ class IngressManager:
         self.read_parameters_from_file(config_file)
         self.assume_role("ec2")
 
-
     def read_parameters_from_file(self, config_file):
         with open(config_file) as json_file:
             parameters = json.load(json_file)
@@ -30,9 +29,9 @@ class IngressManager:
                 parameters["front_load_balancer_security_group_id"],
                 parameters["admin_load_balancer_security_group_id"],
             ]
-    
+
     def assume_role(self, service_name="ec2"):
-        """ Assume a role and create a new session if necessary, otherwise use the current session """
+        """Assume a role and create a new session if necessary, otherwise use the current session"""
 
         assume_new_role = False
 
@@ -42,7 +41,9 @@ class IngressManager:
                 self.aws_account_id
             )
         else:
-            role_to_assume_arn = "arn:aws:iam::{}:role/operator".format(self.aws_account_id)
+            role_to_assume_arn = "arn:aws:iam::{}:role/operator".format(
+                self.aws_account_id
+            )
 
         # Extract the role name and account id from the ARNs
         role_to_assume_name = role_to_assume_arn.split("/")[1]
@@ -50,23 +51,13 @@ class IngressManager:
         role_to_assume_account = role_to_assume_arn.split(":")[4]
         current_role_account = current_role_arn.split(":")[4]
 
-        if role_to_assume_name == current_role_name and role_to_assume_account == current_role_account:
+        if (
+            role_to_assume_name == current_role_name
+            and role_to_assume_account == current_role_account
+        ):
             logger.info("Already using necessary AWS role - will not reassume role")
             self.aws_ec2_client = boto3.client(service_name)
-            assume_new_role = False
         else:
-            assume_new_role = True
-            self.aws_ec2_client = boto3.client(
-            service_name,
-            region_name=self.aws_region,
-            aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
-            aws_secret_access_key=self.aws_iam_session["Credentials"][
-                "SecretAccessKey"
-            ],
-            aws_session_token=self.aws_iam_session["Credentials"]["SessionToken"],
-            )
-
-        if assume_new_role:
             self.set_iam_role_session()
 
     def set_iam_role_session(self):
