@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use Laminas\InputFilter\InputFilter;
 use DateTime;
 use Exception;
 
@@ -21,8 +20,7 @@ class Feedback extends AbstractForm
     {
         parent::__construct(self::class, $options);
 
-        $inputFilter = new InputFilter();
-        $this->setInputFilter($inputFilter);
+        $inputFilter = $this->getInputFilter();
 
         //  Start date
         $startDate = new Fieldset\Date('start-date');
@@ -36,8 +34,8 @@ class Feedback extends AbstractForm
         $this->add($endDate);
         $inputFilter->add($endDate->getInputFilter(), $endDate->getName());
 
-        //  Csrf field
-        $this->addCsrfElement($inputFilter);
+        // Csrf field
+        $this->addCsrfElement();
     }
 
     /**

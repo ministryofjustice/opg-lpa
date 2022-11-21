@@ -9,13 +9,31 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class SystemMessageTest extends MockeryTestCase
 {
-    public function testInvoke():void
+    public function testInvokeEmptySystemMessage(): void
     {
         $cache = Mockery::mock(DynamoDbKeyValueStore::class);
         $cache->shouldReceive('getItem')
-                ->withArgs(['system-message'])->once()->andReturn("test message  ");
+                ->withArgs(['system-message'])->once()->andReturn("");
 
         $systemMessage = new SystemMessage($cache);
-        $systemMessage();
+        $this->assertEquals('', $systemMessage());
+    }
+
+    public function testInvoke(): void
+    {
+        $cache = Mockery::mock(DynamoDbKeyValueStore::class);
+        $cache->shouldReceive('getItem')
+            ->withArgs(['system-message'])
+            ->once()
+            ->andReturn('  <script>alert("hello");</script>test message &   ');
+
+        $systemMessage = new SystemMessage($cache);
+        $actualMessage = $systemMessage();
+
+        $this->assertStringContainsString('<i class="icon icon-important"></i>', $actualMessage);
+
+        $expectedCleanedMessage = '<strong class="bold-small text">' .
+            '&lt;script&gt;alert(&quot;hello&quot;);&lt;/script&gt;test message &amp;</strong>';
+        $this->assertStringContainsString($expectedCleanedMessage, $actualMessage);
     }
 }

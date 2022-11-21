@@ -27,6 +27,8 @@ $this->addErrorMap([
 
                 <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
 
+                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+
                 <div class="text">
                     <p>Search for a user by email address. If found, the user's account status and other details will be displayed.</p>
                 </div>

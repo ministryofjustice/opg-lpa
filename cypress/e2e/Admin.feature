@@ -3,7 +3,6 @@ Feature: Admin
 
   I want to be able to visit the admin page and carry out admin functions
 
-  @focus
   Scenario: Log in to admin, find users, search for deleted user
     Given I log in to admin
     When I click "find-users-link"
@@ -26,7 +25,6 @@ Feature: Admin
     And I click "submit-button"
     Then deleted user is displayed with deletion date of "5th May 2021 at 12:21:20 pm"
 
-  @focus
   Scenario: Set a system message
     Given I visit the admin sign-in page
     And I log in to admin
@@ -37,8 +35,7 @@ Feature: Admin
     And I click "submit-button"
     Then I see "System message set" in the page text
 
-  @focus
-    # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
+  # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
   Scenario: System message should now be set on user-facing site.
     When I visit "/home"
     Then I see "Your pizza is burning" in the page text
@@ -47,7 +44,6 @@ Feature: Admin
     When I visit "/signup"
     Then I see "Your pizza is burning" in the page text
 
-  @focus
   Scenario: Remove system message
     Given I visit the admin sign-in page
     And I log in to admin
@@ -57,17 +53,18 @@ Feature: Admin
     And I click "submit-button"
     Then I see "System message removed" in the page text
 
-  @focus
-    # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
+  # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
   Scenario: System message should now be removed on user-facing site.
     When I visit "/home"
     Then I do not see "Your pizza is burning" in the page text
+    And the information icon for the system message should not be on the page
     When I visit "/login"
     Then I do not see "Your pizza is burning" in the page text
+    And the information icon for the system message should not be on the page
     When I visit "/signup"
     Then I do not see "Your pizza is burning" in the page text
+    And the information icon for the system message should not be on the page
 
-  @focus
   Scenario: Set and remove a system message consecutively i:e having previously set and removed it, we do this again to ensure it still works
     Given I visit the admin sign-in page
     And I log in to admin
@@ -77,8 +74,7 @@ Feature: Admin
     And I click "submit-button"
     Then I see "System message set" in the page text
 
-  @focus
-    # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
+  # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
   Scenario: System message should now be set on user-facing site.
     When I visit "/home"
     Then I see "Your pizza is burning" in the page text
@@ -87,7 +83,6 @@ Feature: Admin
     When I visit "/signup"
     Then I see "Your pizza is burning" in the page text
 
-  @focus
   Scenario: Remove second system message
     Given I visit the admin sign-in page
     And I log in to admin
@@ -97,8 +92,7 @@ Feature: Admin
     And I click "submit-button"
     Then I see "System message removed" in the page text
 
-  @focus
-    # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
+  # due to home page being on different url from admin, this scenario has to be seperate, but relies on previous scenario having run
   Scenario: System message should now be removed on user-facing site.
     When I visit "/home"
     Then I do not see "Your pizza is burning" in the page text
@@ -107,7 +101,6 @@ Feature: Admin
     When I visit "/signup"
     Then I do not see "Your pizza is burning" in the page text
 
-  @focus
   Scenario: Try to set empty message on system message
     Given I visit the admin sign-in page
     And I log in to admin
@@ -142,3 +135,6 @@ Feature: Admin
         | test-no-email-no-number |
         | test-no-num             |
         | test                    |
+
+    # LPAL-1053: check feedback export to CSV works correctly
+    And I can export feedback and download it as a CSV file
