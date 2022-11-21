@@ -57,10 +57,13 @@ Feature: Admin
   Scenario: System message should now be removed on user-facing site.
     When I visit "/home"
     Then I do not see "Your pizza is burning" in the page text
+    And the information icon for the system message should not be on the page
     When I visit "/login"
     Then I do not see "Your pizza is burning" in the page text
+    And the information icon for the system message should not be on the page
     When I visit "/signup"
     Then I do not see "Your pizza is burning" in the page text
+    And the information icon for the system message should not be on the page
 
   Scenario: Set and remove a system message consecutively i:e having previously set and removed it, we do this again to ensure it still works
     Given I visit the admin sign-in page

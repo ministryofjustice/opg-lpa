@@ -19,19 +19,20 @@ class SystemMessage extends AbstractHelper
     {
         $message = $this->cache->getItem('system-message');
 
-        if ($message !== null) {
-            $message = trim($message);
+        // case when message is null or ''
+        if (empty($message)) {
+            return '';
         }
 
-        if ($message != '') {
-            echo <<<SYSMESS
-            <div class="notice">
-              <i class="icon icon-important"></i>
-              <p>
-                <strong class="bold-small text">$message</strong>
-              </p>
-            </div>
+        $message = htmlspecialchars(trim($message));
+
+        return <<<SYSMESS
+        <div class="notice">
+          <i class="icon icon-important"></i>
+          <p>
+            <strong class="bold-small text">$message</strong>
+          </p>
+        </div>
 SYSMESS;
-        }
     }
 }
