@@ -8,7 +8,6 @@ use Laminas\Filter;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Password;
 use Laminas\InputFilter\Input;
-use Laminas\InputFilter\InputFilter;
 
 /**
  * Class SignIn
@@ -25,8 +24,7 @@ class SignIn extends AbstractForm
     {
         parent::__construct(self::class, $options);
 
-        $inputFilter = new InputFilter();
-        $this->setInputFilter($inputFilter);
+        $inputFilter = $this->getInputFilter();
 
         //  Email field
         $field = new Text('email');
@@ -57,8 +55,8 @@ class SignIn extends AbstractForm
         $this->add($field);
         $inputFilter->add($input);
 
-        //  Csrf field
-        $this->addCsrfElement($inputFilter);
+        // Csrf field
+        $this->addCsrfElement();
     }
 
     /**

@@ -35,7 +35,9 @@ class UserSearchHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $form = new UserSearch();
+        $form = new UserSearch([
+            'csrf' => $this->getTokenData('csrf'),
+        ]);
 
         $user = null;
         $email = null;
