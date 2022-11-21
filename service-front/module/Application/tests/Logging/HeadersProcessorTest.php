@@ -4,8 +4,7 @@ namespace ApplicationTest\Logging;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-
-use MakeLogger\Logging\HeadersProcessor;
+use MakeShared\Logging\HeadersProcessor;
 
 class HeadersProcessorTest extends MockeryTestCase
 {

@@ -3,7 +3,7 @@
 namespace Opg\Lpa\Pdf\Worker;
 
 use Laminas\Filter\Decompress;
-use MakeLogger\Logging\SimpleLoggerTrait;
+use MakeShared\Logging\SimpleLoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdfRenderer;
 use Aws\Sqs\SqsClient;

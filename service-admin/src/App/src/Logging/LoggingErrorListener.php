@@ -2,7 +2,7 @@
 
 namespace App\Logging;
 
-use MakeLogger\Logging\SimpleLoggerTrait;
+use MakeShared\Logging\SimpleLoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;

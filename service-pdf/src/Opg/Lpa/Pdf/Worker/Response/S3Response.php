@@ -5,7 +5,7 @@ namespace Opg\Lpa\Pdf\Worker\Response;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Laminas\Crypt\Symmetric\Exception\InvalidArgumentException;
-use MakeLogger\Logging\SimpleLoggerTrait;
+use MakeShared\Logging\SimpleLoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
 
 /**
