@@ -23,6 +23,7 @@ variable "accounts" {
       is_production      = string
       retention_in_days  = number
       dr_enabled         = bool
+      always_on_aurora   = bool
       dns_firewall = object({
         enabled         = bool
         domains_allowed = list(string)
