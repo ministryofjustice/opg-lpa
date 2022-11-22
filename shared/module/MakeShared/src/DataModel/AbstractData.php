@@ -343,13 +343,19 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param $array array Flat array.
      * @return array Multidimensional array
      */
-    private function unFlattenArray2($array)
+
+    private function unFlattenArray($array)
     {
         foreach ($array as $key => $value) {
             $keys = explode('-', $key);
 
             if (count($keys) == 2) {
-                $result = [];
+                $firstkey = $keys[0];
+                if (isset($array[$firstkey])) {
+                    $result = $array[$firstkey];
+                } else {
+                    $result = [];
+                }
                 $result[$keys[1]] = $value;
                 $array[$keys[0]] = $result;
             }
@@ -358,8 +364,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
         return $array;
     }
 
-    private function unFlattenArray($array)
+    private function unFlattenArrayOrig($array)
     {
+        var_dump($array);
         $result = [];
 
         foreach ($array as $key => $value) {
@@ -374,6 +381,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
             $position = $value;
         }
 
+        var_dump($result);
         return $result;
     }
 
