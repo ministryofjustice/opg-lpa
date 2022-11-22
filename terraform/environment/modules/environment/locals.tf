@@ -78,4 +78,26 @@ locals {
   feedbackdb_component_tag = {
     component = "feedbackdb"
   }
+
+  app_init_container = jsonencode(
+    {
+      "name" : "permissions-init",
+      "image" : "busybox:latest",
+      "entryPoint" : [
+        "sh",
+        "-c"
+      ],
+      "command" : [
+        "chmod 766 /tmp/"
+      ],
+      "mountPoints" : [
+        {
+          "containerPath" : "/tmp",
+          "sourceVolume" : "app_tmp"
+        }
+      ],
+      "essential" : false
+    }
+  )
+
 }
