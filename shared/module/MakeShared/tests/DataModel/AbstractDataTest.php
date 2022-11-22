@@ -119,4 +119,36 @@ class AbstractDataTest extends TestCase
         $unFlattened = $user->populateWithFlatArray($flattened);
         $this->assertEquals([1], $unFlattened->get('id'));
     }
+
+    public function testUnflatten()
+    {
+        $user = new User();
+        $user->set('id', [1]);
+        $testArray = [ "secret_356e1815f83ca55abbf4c709bd759ecc" =>
+            "c9c6efd77da44c7a3c10613f452c084c80602db8fc12fd63b2363e7bd0b60544e23a3162310161871845e92b824fbac12040b7d3ad1febfddd62a25b719adead" ,
+            "name-title" => "Mr" ,
+            "name-first" => "Test" ,
+            "name-last" => "User" ,
+            "dob-date" => "1982-11-28" ,
+            "address-address1" => "THE PUBLIC GUARDIAN" ,
+            "address-address2" => "EMBANKMENT HOUSE" ,
+            "address-address3" => "ELECTRIC AVENUE, NOTTINGHAM" ,
+            "address-postcode" => "NG2 1AR",
+        ];
+        $unFlattened = $user->populateWithFlatArray($testArray);
+        $this->assertEquals("Mr", $unFlattened->getName()->getTitle());
+        $this->assertEquals("Test", $unFlattened->getName()->getFirst());
+        $this->assertEquals("User", $unFlattened->getName()->getLast());
+        $this->assertEquals("1982-11-28", $unFlattened->getDob()->getDate()->format('Y-m-d'));
+        $this->assertEquals("THE PUBLIC GUARDIAN", $unFlattened->getAddress()->getAddress1());
+        $this->assertEquals("EMBANKMENT HOUSE", $unFlattened->getAddress()->getAddress2());
+        $this->assertEquals("ELECTRIC AVENUE, NOTTINGHAM", $unFlattened->getAddress()->getAddress3());
+        $this->assertEquals("NG2 1AR", $unFlattened->getAddress()->getPostcode());
+
+        // test that original array is unchanged.  this won't pass for now, new func should sort it,  shoud not do pass by reference
+        $this->assertEquals(
+            $testArray["secret_356e1815f83ca55abbf4c709bd759ecc"],
+            "c9c6efd77da44c7a3c10613f452c084c80602db8fc12fd63b2363e7bd0b60544e23a3162310161871845e92b824fbac12040b7d3ad1febfddd62a25b719adead"
+        );
+    }
 }
