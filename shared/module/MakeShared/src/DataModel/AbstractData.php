@@ -359,27 +359,6 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
         return $array;
     }
 
-    private function unFlattenArrayOrig($array)
-    {
-        var_dump($array);
-        $result = [];
-
-        foreach ($array as $key => $value) {
-            $keys = explode('-', $key);
-
-            $position = &$result;
-
-            foreach ($keys as $index) {
-                $position = &$position[$index];
-            }
-
-            $position = $value;
-        }
-
-        var_dump($result);
-        return $result;
-    }
-
     // Hydrator methods
 
     /**
