@@ -79,11 +79,13 @@ resource "aws_ecs_task_definition" "front" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}]"
+  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}, ${local.app_init_container}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.front_component_tag
-
+  volume {
+    name = "app_tmp"
+  }
 }
 
 //----------------
@@ -212,8 +214,14 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
+      "readonlyRootFilesystem" : true,
       "image" : "${data.aws_ecr_repository.lpa_front_app.repository_url}:${var.container_version}",
-      "mountPoints" : [],
+      "mountPoints" : [
+        {
+          "containerPath" : "/tmp",
+          "sourceVolume" : "app_tmp"
+        }
+      ],
       "name" : "app",
       "portMappings" : [
         {
@@ -238,6 +246,12 @@ locals {
           "awslogs-stream-prefix" : "${var.environment_name}.front-app.online-lpa"
         }
       },
+      "dependsOn" : [
+        {
+          "containerName" : "permissions-init",
+          "condition" : "SUCCESS"
+        }
+      ],
       "secrets" : [
         { "name" : "OPG_LPA_FRONT_CSRF_SALT", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.name}" },
         { "name" : "OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_webhook_token.name}" },
