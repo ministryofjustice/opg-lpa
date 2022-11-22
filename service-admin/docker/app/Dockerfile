@@ -24,29 +24,29 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
     fi ;
 
 # Install composer dependencies
-COPY --chown=appuser:appuser service-admin/composer.json /app/composer.json
-COPY --chown=appuser:appuser service-admin/composer.lock /app/composer.lock
+COPY --chown=root:root service-admin/composer.json /app/composer.json
+COPY --chown=root:root service-admin/composer.lock /app/composer.lock
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.4.1 \
-    && su - appuser -c "composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app" \
-    && chown -R appuser:appuser /app/vendor \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
+    && chown -R root:root /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
 
-COPY --chown=appuser:appuser service-admin/config /app/config
-COPY --chown=appuser:appuser service-admin/public /app/public
-COPY --chown=appuser:appuser service-admin/src /app/src
+COPY --chown=root:root service-admin/config /app/config
+COPY --chown=root:root service-admin/public /app/public
+COPY --chown=root:root service-admin/src /app/src
 
 # Need this to run unit tests in CI
-COPY --chown=appuser:appuser service-admin/phpunit.xml.dist /app/phpunit.xml.dist
-COPY --chown=appuser:appuser service-admin/test /app/test
+COPY --chown=root:root service-admin/phpunit.xml.dist /app/phpunit.xml.dist
+COPY --chown=root:root service-admin/test /app/test
 
-COPY --chown=appuser:appuser shared /shared
+COPY --chown=root:root shared /shared
 
-COPY --chown=appuser:appuser service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY --chown=appuser:appuser service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=root:root service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 

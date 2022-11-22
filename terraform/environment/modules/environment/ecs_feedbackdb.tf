@@ -27,10 +27,13 @@ resource "aws_ecs_task_definition" "feedbackdb" {
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.feedbackdb_app}]"
+  container_definitions    = "[${local.feedbackdb_app}, ${local.app_init_container}]"
   task_role_arn            = aws_iam_role.feedbackdb_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.feedbackdb_component_tag
+  volume {
+    name = "app_tmp"
+  }
 }
 
 
@@ -52,12 +55,19 @@ data "aws_ecr_repository" "lpa_feedbackdb_app" {
 // feedbackdb ECS Service Task Container level config
 
 locals {
+
   feedbackdb_app = jsonencode(
     {
       "cpu" : 1,
       "essential" : true,
+      "readonlyRootFilesystem" : true,
       "image" : "${data.aws_ecr_repository.lpa_feedbackdb_app.repository_url}:latest",
-      "mountPoints" : [],
+      "mountPoints" : [
+        {
+          "containerPath" : "/tmp",
+          "sourceVolume" : "app_tmp"
+        }
+      ],
       "name" : "app",
       "portMappings" : [
         {
@@ -75,6 +85,12 @@ locals {
           "awslogs-stream-prefix" : "${var.environment_name}.feedbackdb.online-lpa"
         }
       },
+      "dependsOn" : [
+        {
+          "containerName" : "permissions-init",
+          "condition" : "SUCCESS"
+        }
+      ],
       "secrets" : [
         { "name" : "OPG_LPA_POSTGRES_USERNAME", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
         { "name" : "OPG_LPA_POSTGRES_PASSWORD", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
