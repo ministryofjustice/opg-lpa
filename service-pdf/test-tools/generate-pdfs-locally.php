@@ -12,7 +12,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 // NOTE: this only runs inside the docker container, if the autoload
 // file has been generated inside it; otherwise, this script
-// can't find the MakeLogger package. To run it outside the docker
+// can't find the MakeShared package. To run it outside the docker
 // container, you'll need to regenerate the autoload.php file
 // manually first, e.g. with
 //

@@ -1,12 +1,13 @@
 <?php
+
 namespace Application\Model\DataAccess\Repository\Application;
 
 use RuntimeException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use MakeLogger\Logging\Logger;
+use MakeShared\Logging\Logger;
 
-trait ApplicationRepositoryTrait {
-
+trait ApplicationRepositoryTrait
+{
     /**
      * @var ApplicationRepositoryInterface
      */
@@ -23,7 +24,7 @@ trait ApplicationRepositoryTrait {
     /**
      * @return ApplicationRepositoryInterface
      */
-    private function getApplicationRepository() : ApplicationRepositoryInterface
+    private function getApplicationRepository(): ApplicationRepositoryInterface
     {
         if (!($this->applicationRepository instanceof ApplicationRepositoryInterface)) {
             throw new \RuntimeException("Instance of ApplicationRepository not set");
@@ -32,7 +33,7 @@ trait ApplicationRepositoryTrait {
         return $this->applicationRepository;
     }
 
-    protected function getLpa(int $lpaId) : ?Lpa
+    protected function getLpa(int $lpaId): ?Lpa
     {
         $result = $this->getApplicationRepository()->getById($lpaId);
 
@@ -43,7 +44,7 @@ trait ApplicationRepositoryTrait {
         return new Lpa($result);
     }
 
-    protected function updateLpa(Lpa $lpa) : bool
+    protected function updateLpa(Lpa $lpa): bool
     {
         $logger = new Logger();
 
@@ -65,5 +66,4 @@ trait ApplicationRepositoryTrait {
 
         return $result;
     }
-
 }

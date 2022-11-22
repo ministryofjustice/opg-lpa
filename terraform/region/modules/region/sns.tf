@@ -20,4 +20,21 @@ resource "aws_sns_topic" "rds_events" {
 resource "aws_db_event_subscription" "rds_events" {
   name      = "${local.account_name}-${local.region_name}-rds-event-sub"
   sns_topic = aws_sns_topic.rds_events.arn
+
+  event_categories = [
+    "availability",
+    "configuration change",
+    "failover",
+    "maintenance",
+    "failure",
+    "security patching",
+    "recovery",
+    "creation",
+    "deletion",
+    "global-failover",
+    "serverless",
+    "read replica",
+    "creation",
+  ]
+
 }
