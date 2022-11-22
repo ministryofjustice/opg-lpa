@@ -48,7 +48,7 @@ class StatusControllerTest extends AbstractControllerTest
 
     public function testIndexActionInvalidStatus()
     {
-/** @var StatusController $controller */
+        /** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
 
         $status = "InvalidStatus";
