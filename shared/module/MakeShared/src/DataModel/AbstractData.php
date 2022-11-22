@@ -350,12 +350,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
             $keys = explode('-', $key);
 
             if (count($keys) == 2) {
-                $firstkey = $keys[0];
-                if (isset($array[$firstkey])) {
-                    $result = $array[$firstkey];
-                } else {
-                    $result = [];
-                }
+                $result = $array[$keys[0]] ?? [];
                 $result[$keys[1]] = $value;
                 $array[$keys[0]] = $result;
             }
