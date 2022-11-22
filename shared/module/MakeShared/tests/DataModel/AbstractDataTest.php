@@ -107,17 +107,17 @@ class AbstractDataTest extends TestCase
     {
         $user = new User();
         $user->set('id', [1]);
-        $flattened = $user->flatten('test');
-        $this->assertEquals(1, $flattened['testid-0']);
+        $flattenedUser = $user->flatten('test');
+        $this->assertEquals(1, $flattenedUser['testid-0']);
     }
 
     public function testPopulateWithFlatArray()
     {
         $user = new User();
         $user->set('id', [1]);
-        $flattened = $user->flatten('test');
-        $unFlattened = $user->populateWithFlatArray($flattened);
-        $this->assertEquals([1], $unFlattened->get('id'));
+        $flattenedUser = $user->flatten('test');
+        $unFlattenedUser = $user->populateWithFlatArray($flattenedUser);
+        $this->assertEquals([1], $unFlattenedUser->get('id'));
     }
 
     public function testUnflatten()
@@ -135,15 +135,15 @@ class AbstractDataTest extends TestCase
             "address-address3" => "ELECTRIC AVENUE, NOTTINGHAM" ,
             "address-postcode" => "NG2 1AR",
         ];
-        $unFlattened = $user->populateWithFlatArray($testArray);
-        $this->assertEquals("Mr", $unFlattened->getName()->getTitle());
-        $this->assertEquals("Test", $unFlattened->getName()->getFirst());
-        $this->assertEquals("User", $unFlattened->getName()->getLast());
-        $this->assertEquals("1982-11-28", $unFlattened->getDob()->getDate()->format('Y-m-d'));
-        $this->assertEquals("THE PUBLIC GUARDIAN", $unFlattened->getAddress()->getAddress1());
-        $this->assertEquals("EMBANKMENT HOUSE", $unFlattened->getAddress()->getAddress2());
-        $this->assertEquals("ELECTRIC AVENUE, NOTTINGHAM", $unFlattened->getAddress()->getAddress3());
-        $this->assertEquals("NG2 1AR", $unFlattened->getAddress()->getPostcode());
+        $unFlattenedUser = $user->populateWithFlatArray($testArray);
+        $this->assertEquals("Mr", $unFlattenedUser->getName()->getTitle());
+        $this->assertEquals("Test", $unFlattenedUser->getName()->getFirst());
+        $this->assertEquals("User", $unFlattenedUser->getName()->getLast());
+        $this->assertEquals("1982-11-28", $unFlattenedUser->getDob()->getDate()->format('Y-m-d'));
+        $this->assertEquals("THE PUBLIC GUARDIAN", $unFlattenedUser->getAddress()->getAddress1());
+        $this->assertEquals("EMBANKMENT HOUSE", $unFlattenedUser->getAddress()->getAddress2());
+        $this->assertEquals("ELECTRIC AVENUE, NOTTINGHAM", $unFlattenedUser->getAddress()->getAddress3());
+        $this->assertEquals("NG2 1AR", $unFlattenedUser->getAddress()->getPostcode());
 
         // test that original array is unchanged.  this won't pass for now, new func should sort it,  shoud not do pass by reference
         $this->assertEquals(
