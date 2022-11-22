@@ -124,8 +124,7 @@ class AbstractDataTest extends TestCase
     {
         $user = new User();
         $user->set('id', [1]);
-        $testArray = [ "secret_356e1815f83ca55abbf4c709bd759ecc" =>
-            "c9c6efd77da44c7a3c10613f452c084c80602db8fc12fd63b2363e7bd0b60544e23a3162310161871845e92b824fbac12040b7d3ad1febfddd62a25b719adead" ,
+        $testArray = [ "foo" => "bar" ,
             "name-title" => "Mr" ,
             "name-first" => "Test" ,
             "name-last" => "User" ,
@@ -136,19 +135,27 @@ class AbstractDataTest extends TestCase
             "address-postcode" => "NG2 1AR",
         ];
         $unFlattenedUser = $user->populateWithFlatArray($testArray);
-        $this->assertEquals("Mr", $unFlattenedUser->getName()->getTitle());
-        $this->assertEquals("Test", $unFlattenedUser->getName()->getFirst());
-        $this->assertEquals("User", $unFlattenedUser->getName()->getLast());
+        $userName = $unFlattenedUser->getName();
+        $userAddress = $unFlattenedUser->getAddress();
+        $this->assertEquals("Mr", $userName->getTitle());
+        $this->assertEquals("Test", $userName->getFirst());
+        $this->assertEquals("User", $userName->getLast());
         $this->assertEquals("1982-11-28", $unFlattenedUser->getDob()->getDate()->format('Y-m-d'));
-        $this->assertEquals("THE PUBLIC GUARDIAN", $unFlattenedUser->getAddress()->getAddress1());
-        $this->assertEquals("EMBANKMENT HOUSE", $unFlattenedUser->getAddress()->getAddress2());
-        $this->assertEquals("ELECTRIC AVENUE, NOTTINGHAM", $unFlattenedUser->getAddress()->getAddress3());
-        $this->assertEquals("NG2 1AR", $unFlattenedUser->getAddress()->getPostcode());
+        $this->assertEquals("THE PUBLIC GUARDIAN", $userAddress->getAddress1());
+        $this->assertEquals("EMBANKMENT HOUSE", $userAddress->getAddress2());
+        $this->assertEquals("ELECTRIC AVENUE, NOTTINGHAM", $userAddress->getAddress3());
+        $this->assertEquals("NG2 1AR", $userAddress->getPostcode());
 
-        // test that original array is unchanged.  this won't pass for now, new func should sort it,  shoud not do pass by reference
-        $this->assertEquals(
-            $testArray["secret_356e1815f83ca55abbf4c709bd759ecc"],
-            "c9c6efd77da44c7a3c10613f452c084c80602db8fc12fd63b2363e7bd0b60544e23a3162310161871845e92b824fbac12040b7d3ad1febfddd62a25b719adead"
-        );
+        // Test that original array is unchanged.  Original unflatten function used pass-by-reference with potential side effects,
+        // so prove this is no longer the case.
+        $this->assertEquals($testArray["foo"], "bar");
+        $this->assertEquals("Mr", $testArray["name-title"]);
+        $this->assertEquals("Test", $testArray["name-first"]);
+        $this->assertEquals("User", $testArray["name-last"]);
+        $this->assertEquals("1982-11-28", $testArray["dob-date"]);
+        $this->assertEquals("THE PUBLIC GUARDIAN", $testArray["address-address1"]);
+        $this->assertEquals("EMBANKMENT HOUSE", $testArray["address-address2"]);
+        $this->assertEquals("ELECTRIC AVENUE, NOTTINGHAM", $testArray["address-address3"]);
+        $this->assertEquals("NG2 1AR", $testArray["address-postcode"]);
     }
 }
