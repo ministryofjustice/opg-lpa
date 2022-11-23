@@ -100,7 +100,6 @@ services:
   front-web:
     container_name: lpa-front-web
     image: lpa-front-web
-    read_only: true
     depends_on:
       - front-app
       - front-v2-app
@@ -119,7 +118,6 @@ services:
   front-v2-app:
     container_name: lpa-front-v2-app
     image: lpa-front-v2-app
-    read_only: true
     build:
       context: ./
       dockerfile: service-front-v2/docker/app/Dockerfile
@@ -131,7 +129,6 @@ services:
   feedback-app:
     container_name: lpa-feedback-app
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/front-app
-    read_only: true
     depends_on:
       - feedback-api
     environment:
@@ -142,7 +139,6 @@ services:
   front-app:
     container_name: lpa-front-app
     image: lpa-front-app
-    read_only: true
     build:
       context: ./
 # Ideally, debug would always be enabled for front-app, as we often want to debug it. In practice, this still runs too slowly so we leave it off as default
@@ -230,7 +226,6 @@ services:
   api-web:
     container_name: lpa-api-web
     image: lpa-api-web
-    read_only: true
     depends_on:
       - api-app
     build:
@@ -246,7 +241,6 @@ services:
   api-app:
     container_name: lpa-api-app
     image: lpa-api-app
-    read_only: true
     build:
       context: ./
 # Enable debug is recommended to default to off for api to avoid slowness. Turn this on if you ever need to debug the api
@@ -349,7 +343,6 @@ services:
   admin-web:
     container_name: lpa-admin-web
     image: lpa-admin-web
-    read_only: true
     depends_on:
       - admin-app
     volumes:
@@ -365,7 +358,6 @@ services:
   admin-app:
     container_name: lpa-admin-app
     image: lpa-admin-app
-    read_only: true
     build:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
@@ -441,7 +433,6 @@ services:
   pdf-app:
     container_name: lpa-pdf-app
     image: lpa-pdf-app
-    read_only: true
     depends_on:
       localstack:
         condition: service_healthy
