@@ -12,21 +12,21 @@ resource "aws_elasticache_subnet_group" "private_subnets" {
 
 
 resource "aws_elasticache_replication_group" "front_cache" {
-  replication_group_id          = "${local.account_name_short}-${local.region_name}-front-cache-rg"
-  replication_group_description = "front cache replication group"
-  parameter_group_name          = "default.redis6.x"
-  engine                        = "redis"
-  engine_version                = "6.x"
-  node_type                     = "cache.t2.micro"
-  number_cache_clusters         = local.cache_cluster_count
-  transit_encryption_enabled    = true
-  at_rest_encryption_enabled    = true
-  automatic_failover_enabled    = true
-  maintenance_window            = "wed:05:00-wed:09:00"
-  snapshot_window               = "02:00-04:50"
-  notification_topic_arn        = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
-  subnet_group_name             = aws_elasticache_subnet_group.private_subnets.name
-  security_group_ids            = [aws_security_group.front_cache.id]
+  replication_group_id       = "${local.account_name_short}-${local.region_name}-front-cache-rg"
+  description                = "front cache replication group"
+  parameter_group_name       = "default.redis6.x"
+  engine                     = "redis"
+  engine_version             = "6.x"
+  node_type                  = "cache.t2.micro"
+  number_cache_clusters      = local.cache_cluster_count
+  transit_encryption_enabled = true
+  at_rest_encryption_enabled = true
+  automatic_failover_enabled = true
+  maintenance_window         = "wed:05:00-wed:09:00"
+  snapshot_window            = "02:00-04:50"
+  notification_topic_arn     = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
+  subnet_group_name          = aws_elasticache_subnet_group.private_subnets.name
+  security_group_ids         = [aws_security_group.front_cache.id]
 
   tags = local.front_component_tag
 }
