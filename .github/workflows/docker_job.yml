@@ -23,53 +23,58 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - image_name: front_app
+          - image_name: online-lpa/front_app
             service_path: ./service-front/docker/app
             unit_test: true
             force_push_to_repo: false
 
-          - image_name: front_web
+          - image_name: online-lpa/front_web
             service_path: ./service-front/docker/web
             unit_test: false
             force_push_to_repo: false
 
-          - image_name: front_v2_app
+          - image_name: online-lpa/front_v2_app
             service_path: ./service-front-v2/docker/app
             unit_test: false
             force_push_to_repo: false
 
-          - image_name: api_app
+          - image_name: online-lpa/api_app
             service_path: ./service-api/docker/app
             unit_test: true
             force_push_to_repo: false
 
-          - image_name: api_web
+          - image_name: online-lpa/api_web
             service_path: ./service-api/docker/web
             unit_test: false
             force_push_to_repo: false
 
-          - image_name: admin_app
+          - image_name: online-lpa/admin_app
             service_path: ./service-admin/docker/app
             unit_test: true
             force_push_to_repo: false
 
-          - image_name: admin_web
+          - image_name: online-lpa/admin_web
             service_path: ./service-admin/docker/web
             unit_test: false
             force_push_to_repo: false
 
-          - image_name: pdf_app
+          - image_name: online-lpa/pdf_app
             service_path: ./service-pdf/docker/app
             unit_test: true
             force_push_to_repo: false
 
-          - image_name: seeding_app
+          - image_name: online-lpa/seeding_app
             service_path: ./service-seeding/docker/app
             unit_test: false
             force_push_to_repo: false
 
-          - image_name: cypress
+          - image_name: online-lpa/cypress
             service_path: ./cypress/
+            override_tag: latest
+            force_push_to_repo: true
+
+          - image_name: lambda-aurora_scheduler
+            service_path: ./aurora-scheduler/docker
             override_tag: latest
             force_push_to_repo: true
 
@@ -101,7 +106,7 @@ jobs:
       - name: Check if image already exists
         id: image_exists
         run: |
-          if aws ecr describe-images --repository-name=online-lpa/${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }} &> /dev/null; then
+          if aws ecr describe-images --repository-name=${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }} &> /dev/null; then
             echo "::set-output name=image_exists::true"
           else
             echo "::set-output name=image_exists::false"
@@ -109,12 +114,12 @@ jobs:
 
       - name: Use Node.js 16.x
         uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93 # pin@v3
-        if: ${{ (matrix.image_name == 'front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
+        if: ${{ (matrix.image_name == 'online-lpa/front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
         with:
           node-version: 16.x
 
       - name: Install Dependencies
-        if: ${{ (matrix.image_name == 'front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
+        if: ${{ (matrix.image_name == 'online-lpa/front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
         run: |
           pushd service-front/
           npm ci -y && npm install -g sass
@@ -173,17 +178,16 @@ jobs:
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         env:
           ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: online-lpa
           IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
           IMAGE_NAME: ${{ matrix.image_name }}
           BRANCH_NAME: ${{ inputs.branch_name }}
         run: |
-          docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG
+          docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
           if [ $BRANCH_NAME == "main" ]; then
-            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:main-$IMAGE_TAG
-            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:latest
+            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:main-$IMAGE_TAG
+            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:latest
           fi
-            docker push --all-tags $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME
+            docker push --all-tags $ECR_REGISTRY/$IMAGE_NAME
 
       - name: Setup Python
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
