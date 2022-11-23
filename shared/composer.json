@@ -1,6 +1,6 @@
 {
     "name": "ministryofjustice/opg-lpa-shared",
-    "description": "Code shared between the services for creating Lasting Power of Attorney PDF documents",
+    "description": "Code that is shared between the service-front, service-pdf, service-admin, service-api components of the Make An LPA service",
     "minimum-stability": "stable",
     "license": "MIT",
     "config": {
