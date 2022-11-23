@@ -38,9 +38,13 @@ resource "aws_route53_record" "casper_amazonses_mx" {
 resource "aws_s3_bucket" "mailbox" {
   bucket = "opg-lpa-casper-mailbox"
   acl    = "private"
-  lifecycle_rule {
-    id      = "expiremessages"
-    enabled = true
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "mailbox" {
+  bucket = aws_s3_bucket.mailbox.id
+  rule {
+    id     = "expiremessages"
+    status = "Enabled"
     expiration {
       days = 1
     }
