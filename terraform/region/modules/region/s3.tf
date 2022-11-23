@@ -50,17 +50,20 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
 }
 
 #versioning not required for a logging bucket bucket logging not needed. 
-#encryption of ALB access logs not supported with CMK
-#tfsec:ignore:aws-s3-enable-bucket-logging  #tfsec:ignore:aws-s3-enable-versioning #tfsec:ignore:aws-s3-encryption-customer-key
+#tfsec:ignore:aws-s3-enable-bucket-logging  #tfsec:ignore:aws-s3-enable-versioning
 resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${local.account_name}-${local.region_name}-lb-access-logs"
   acl    = "private"
+}
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "aws:kms"
-      }
+#tfsec:ignore:aws-s3-encryption-customer-key
+#encryption of ALB access logs not supported with CMK
+resource "aws_s3_bucket_server_side_encryption_configuration" "access_log" {
+  bucket = aws_s3_bucket.access_log.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "aws:kms"
     }
   }
 }
@@ -83,24 +86,28 @@ resource "aws_s3_bucket" "lpa_pdf_cache" {
   bucket        = lower("online-lpa-pdf-cache-${local.account_name}-${local.region_name}")
   acl           = "private"
   force_destroy = local.account_name != "production" ? true : false
+}
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = aws_kms_key.lpa_pdf_cache.arn
-        sse_algorithm     = "aws:kms"
-      }
-    }
-  }
-
-  # Clear items out teh cache after 1 day.
-  lifecycle_rule {
-    enabled = true
+resource "aws_s3_bucket_lifecycle_configuration" "lpa_pdf_cache" {
+  bucket = aws_s3_bucket.lpa_pdf_cache.id
+  rule {
+    id     = "expiremessages"
+    status = "Enabled"
     expiration {
       days = 1
     }
   }
+}
 
+resource "aws_s3_bucket_server_side_encryption_configuration" "lpa_pdf_cache" {
+  bucket = aws_s3_bucket.lpa_pdf_cache.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.lpa_pdf_cache.arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
 }
 
 resource "aws_s3_bucket_policy" "lpa_pdf_cache" {

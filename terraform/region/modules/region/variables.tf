@@ -5,6 +5,7 @@ variable "account" {
     account_id         = string
     is_production      = string
     dr_enabled         = bool
+    always_on_aurora   = bool
     retention_in_days  = number
     regions = map(
       object({
