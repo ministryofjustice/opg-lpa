@@ -16,6 +16,6 @@ module "eu-west-2" {
   account_name = local.account_name
   providers = {
     aws            = aws.eu-west-2
-    aws.management = aws.management
+    aws.management = aws.management_eu_west_2
   }
 }
