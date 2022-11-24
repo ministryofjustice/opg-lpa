@@ -57,6 +57,11 @@ Note that this diagram excludes components which only live in CI (pipelines in C
 * localstack: Mimics the functionality of AWS services (S3, lambda) in dev
 * local-config: Sets up S3 buckets, dynamodb database and SQS queues in dev
 * node-build-assets: Dynamically rebuilds JS and CSS in dev (if you're editing those files, this container refreshes the compiled JS/CSS as the source files change)
+* seeding: Adds test data to the postgres db in dev
+
+There are some additional patches which can be manually applied to enable the following extra containers (see tests/sirius_gateway_mock.md for instructions):
+
 * mocksirius: The mock opg-data-lpa (in Prism) for dev and CI which mocks Sirius responses for cypress tests; note that we don't talk directly to Sirius in live, but go through the opg-data-lpa Sirius gateway
 * gateway: An nginx container which directs traffic to mocksirius in dev and CI, appending the necessary Prism headers so that we get the right response from mocksirius
-* seeding: Adds test data to the postgres db in dev
+
+This can occasionally be useful when you want to test the dashboard statuses with something closer to a real Sirius (our cypress tests intercept Sirius requests and mock the responses, removing the need for an actual service).
