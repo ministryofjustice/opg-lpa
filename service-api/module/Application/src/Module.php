@@ -14,6 +14,7 @@ use Application\Model\Service\Authentication\Service as AppAuthenticationService
 use Application\Model\Service\Feedback\FeedbackValidator;
 use Alphagov\Notifications\Client as NotifyClient;
 use Aws\Credentials\CredentialProvider;
+use Aws\Rds\AuthTokenGenerator;
 use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
@@ -91,11 +92,16 @@ class Module
                     $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};" .
                         "port={$dbconf['port']};dbname={$dbconf['dbname']}";
 
+                    // TODO: Comletely rework this so that it's not so messy
+                    $provider = CredentialProvider::defaultProvider();
+                    $RdsAuthGenerator = new AuthTokenGenerator($provider);
+                    $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', $dbconf['username']);
+    
                     return new ZendDbAdapter([
                         'dsn' => $dsn,
                         'driver' => 'pdo',
-                        'username' => $dbconf['username'],
-                        'password' => $dbconf['password'],
+                        'username' => 'db_userx',
+                        'password' => $token,
                         'driver_options' => [
                             // RDS doesn't play well with persistent connections
                             PDO::ATTR_PERSISTENT => false,
@@ -103,7 +109,7 @@ class Module
                         ],
                     ]);
                 },
-
+                
                 'Laminas\Authentication\AuthenticationService' => function ($sm) {
                     // NonPersistent persists only for the life of the request...
                     return new AuthenticationService(new NonPersistent());

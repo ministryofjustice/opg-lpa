@@ -241,6 +241,17 @@ data "aws_iam_policy_document" "api_permissions_role" {
       data.aws_kms_key.lpa_pdf_sqs.arn,
     ]
   }
+  
+  statement {
+    sid    = "ConnectRDS"
+    effect = "Allow"
+
+    actions = [
+      "rds-db:connect",
+    ]
+
+    resources = ["arn:aws:rds-db:eu-west-1:050256574573:dbuser:*/*"]
+  }
 }
 
 data "aws_ecr_repository" "lpa_api_web" {

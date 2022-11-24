@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "assume_rds_iam" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      identifiers = ["ec2.amazonaws.com"]
+      identifiers = ["ecs-tasks.amazonaws.com"]
       type        = "Service"
     }
   }
