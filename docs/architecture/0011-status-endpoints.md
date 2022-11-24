@@ -18,6 +18,8 @@ The Make an LPA service has these public endpoints which describe the state of t
   Used for manual checks.
 * Make frontend /ping/json - https://lastingpowerofattorney.gov.uk/ping/json - returns a JSON equivalent of the /ping endpoint.
   Used for manual checks.
+* Make frontend /ping/elb - https://lastingpowerofattorney.gov.uk/ping/elb - returns a 200 code and a short piece of text
+  Not used.
 * Make front end /ping/pingdom - https://lastingpowerofattorney.gov.uk/ping/pingdom - returns an XML equivalent (but simplified) of the /ping endpoint, in [the pingdom custom HTTP check XML format](https://www.pingdom.com/blog/new-pingdom-feature-custom-monitoring-type/).
   Used by pingdom.
 * Make frontend nginx /robots.txt - http://`<front>`/robots.txt - not a status page as such, but used as one.
