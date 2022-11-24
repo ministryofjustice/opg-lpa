@@ -82,7 +82,7 @@ locals {
   app_init_container = jsonencode(
     {
       "name" : "permissions-init",
-      "image" : "busybox:latest",
+      "image" : "public.ecr.aws/docker/library/busybox:stable",
       "entryPoint" : [
         "sh",
         "-c"
