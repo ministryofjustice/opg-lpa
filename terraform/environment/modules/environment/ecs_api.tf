@@ -241,7 +241,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
       data.aws_kms_key.lpa_pdf_sqs.arn,
     ]
   }
-  
+
   statement {
     sid    = "ConnectRDS"
     effect = "Allow"
