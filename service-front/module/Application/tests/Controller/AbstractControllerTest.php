@@ -35,6 +35,7 @@ use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
 use Laminas\EventManager\EventManager;
 use Laminas\EventManager\ResponseCollection;
+use Laminas\Http\Header\HeaderInterface;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractController;
@@ -271,6 +272,15 @@ abstract class AbstractControllerTest extends MockeryTestCase
         $this->userDetails = Mockery::mock(Details::class);
 
         $this->request = Mockery::mock(Request::class);
+
+        // always return application/x-www-form-urlencoded as content-type request header
+        $contentTypeHeader = Mockery::mock(HeaderInterface::class);
+        $contentTypeHeader->shouldReceive('getFieldValue')
+            ->andReturn('application/x-www-form-urlencoded');
+
+        $this->request->shouldReceive('getHeaders')
+            ->with('content-type')
+            ->andReturn($contentTypeHeader);
 
         $this->responseCollection->shouldReceive('stopped')->andReturn(false);
 

@@ -13,6 +13,7 @@ use Laminas\Authentication\Result;
 use Laminas\Http\Response;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayObject;
+use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
@@ -23,10 +24,7 @@ class AuthControllerTest extends AbstractControllerTest
      * @var MockInterface|Login
      */
     private $form;
-    private $postData = [
-        'email' => 'unit@test.com',
-        'password' => 'unitTest'
-    ];
+    private $postData;
 
     public function setUp(): void
     {
@@ -34,6 +32,12 @@ class AuthControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('getMethod')->andReturn('POST');
         $this->request->shouldReceive('isPost')->andReturn(true);
+
+        $this->postData = new Parameters([
+            'email' => 'unit@test.com',
+            'password' => 'unitTest'
+        ]);
+
         $this->request->shouldReceive('getPost')->andReturn($this->postData);
 
         $this->form = Mockery::mock(Login::class);

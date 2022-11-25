@@ -83,10 +83,14 @@ abstract class AbstractBaseController extends AbstractActionController
     {
         $contentType = $this->convertRequest()->getHeaders('content-type');
         if ($contentType instanceof ArrayIterator) {
+            // get last header value
             $contentType = $contentType->offsetGet(count($contentType) - 1);
         }
 
-        if (str_starts_with('application/json', $contentType->getFieldValue())) {
+        if (
+            $contentType !== false &&
+            str_starts_with('application/json', $contentType->getFieldValue())
+        ) {
             $bodyArray = json_decode($this->convertRequest()->getContent(), true);
             return new Parameters($bodyArray);
         }
