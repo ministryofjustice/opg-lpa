@@ -90,7 +90,7 @@ class Module
 
                     $dbconf = $config['db']['postgres']['default'];
                     $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};" .
-                        "port={$dbconf['port']};dbname={$dbconf['dbname']}";
+                        "port={$dbconf['port']};dbname={$dbconf['dbname']};sslmode=verify-full;sslrootcert=/etc/ssl/certs/rds-ca-2019-root.pem";
 
                     // TODO: Comletely rework this so that it's not so messy
                     $provider = CredentialProvider::defaultProvider();

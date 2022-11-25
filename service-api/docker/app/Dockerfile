@@ -66,6 +66,8 @@ COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-
 
 RUN chmod +x /app/db-migrations.sh /usr/local/bin/health-check.sh
 
+RUN wget -O /etc/ssl/certs/rds-ca-2019-root.pem https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem
+
 WORKDIR /app
 
 USER appuser
