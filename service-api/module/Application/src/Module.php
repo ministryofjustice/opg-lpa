@@ -97,6 +97,9 @@ class Module
                     $RdsAuthGenerator = new AuthTokenGenerator($provider);
                     $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', $dbconf['username']);
     
+                    # TODO: This must not be here outside of the dev environment
+                    var_dump($token);
+
                     return new ZendDbAdapter([
                         'dsn' => $dsn,
                         'driver' => 'pdo',
