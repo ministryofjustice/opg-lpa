@@ -95,11 +95,8 @@ class Module
                     // TODO: Comletely rework this so that it's not so messy
                     $provider = CredentialProvider::defaultProvider();
                     $RdsAuthGenerator = new AuthTokenGenerator($provider);
-                    $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', $dbconf['username']);
+                    $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', 'db_userx');
     
-                    # TODO: This must not be here outside of the dev environment
-                    var_dump($token);
-
                     return new ZendDbAdapter([
                         'dsn' => $dsn,
                         'driver' => 'pdo',
