@@ -92,13 +92,16 @@ class Module
                     $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};" .
                         "port={$dbconf['port']};dbname={$dbconf['dbname']};sslmode=verify-full;sslrootcert=/etc/ssl/certs/rds-ca-2019-root.pem";
 
-                    // TODO: Comletely rework this so that it's not so messy
+                    // TODO: Completely rework this so that it's not so messy
                     $provider = CredentialProvider::defaultProvider();
                     $RdsAuthGenerator = new AuthTokenGenerator($provider);
                     // Hardcoded to use test-specific RDS instance
                     $token = $RdsAuthGenerator->createToken("api2-1220lpal517.cluster-cycofak3lgax.eu-west-1.rds.amazonaws.com", 'eu-west-1', 'db_userx');
                     // $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', 'db_userx');
-    
+                    
+                    // TODO: This must only be in dev
+                    $this->getLogger()->info('Token: ' . $token);
+
                     return new ZendDbAdapter([
                         'dsn' => $dsn,
                         'driver' => 'pdo',
