@@ -99,9 +99,6 @@ class Module
                     $token = $RdsAuthGenerator->createToken("api2-1220lpal517.cluster-cycofak3lgax.eu-west-1.rds.amazonaws.com", 'eu-west-1', 'db_userx');
                     // $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', 'db_userx');
                     
-                    // TODO: This must only be in dev
-                    $this->getLogger()->info('Token: ' . $token);
-
                     return new ZendDbAdapter([
                         'dsn' => $dsn,
                         'driver' => 'pdo',
