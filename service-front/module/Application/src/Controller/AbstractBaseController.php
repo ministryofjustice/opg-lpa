@@ -5,11 +5,13 @@ namespace Application\Controller;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManager;
 use MakeShared\Logging\LoggerTrait;
+use Laminas\Stdlib\Parameters;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\View\Model\ViewModel;
+use ArrayIterator;
 
 abstract class AbstractBaseController extends AbstractActionController
 {
@@ -68,6 +70,28 @@ abstract class AbstractBaseController extends AbstractActionController
         $request = $this->request;
 
         return $request;
+    }
+
+    /**
+     * Get request data, converting it to an array if it is a JSON
+     * request.
+     *
+     * If multiple values are provided for the content-type header,
+     * the last-supplied value is used.
+     */
+    protected function getData(): Parameters
+    {
+        $contentType = $this->convertRequest()->getHeaders('content-type');
+        if ($contentType instanceof ArrayIterator) {
+            $contentType = $contentType->offsetGet(count($contentType) - 1);
+        }
+
+        if (str_starts_with('application/json', $contentType->getFieldValue())) {
+            $bodyArray = json_decode($this->convertRequest()->getContent(), true);
+            return new Parameters($bodyArray);
+        }
+
+        return $this->convertRequest()->getPost();
     }
 
     /**
