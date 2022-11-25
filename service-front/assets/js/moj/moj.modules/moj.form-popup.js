@@ -117,6 +117,44 @@
       });
     },
 
+    // break down field names with square brackets so we match how this
+    // works for form-encoded POST data
+    //
+    // field has name and value properties;
+    // name may be "dob-date[day]"; in this case, we create a dob-date
+    // key whose value is a new object with a day property
+    //
+    // data is the JSON data so far constructed from the form
+    _decomposeFormField: function (field, data) {
+      var name = field.name;
+      var value = field.value;
+
+      var pat = /^([^[\]]+?)\[([^[\]]+)\]/;
+      var matches = pat.exec(name);
+      if (matches === null) {
+        data[name] = value;
+        return data;
+      }
+
+      // e.g. for "dob-date[day]", this will be "dob-date"
+      name = matches[1];
+
+      // e.g. for "dob-date[day]", this will be day
+      var subname = matches[2];
+
+      // e.g. for "dob-date[day]", "dob-date[month]" and "dob-date[year]",
+      // this will end up being {day: <day>, month: <month>, year: <year>}
+      var subdata = data[name] || {};
+
+      // recursively construct the sub object
+      data[name] = this._decomposeFormField(
+        { name: subname, value: value },
+        subdata,
+      );
+
+      return data;
+    },
+
     submitForm: function (e) {
       var $form = $(e.target),
         url = $form.attr('action'),
@@ -129,10 +167,17 @@
         method = $form.attr('method');
       }
 
+      var data = {};
+      var that = this;
+      $form.serializeArray().forEach(function (item) {
+        data = that._decomposeFormField(item, data);
+      });
+
       $.ajax({
         url: url,
         type: method,
-        data: $form.serialize(),
+        contentType: 'application/json',
+        data: JSON.stringify(data),
         context: $form,
         success: this.ajaxSuccess,
         error: this.ajaxError,
