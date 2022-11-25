@@ -95,7 +95,9 @@ class Module
                     // TODO: Comletely rework this so that it's not so messy
                     $provider = CredentialProvider::defaultProvider();
                     $RdsAuthGenerator = new AuthTokenGenerator($provider);
-                    $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', 'db_userx');
+                    // Hardcoded to use test-specific RDS instance
+                    $token = $RdsAuthGenerator->createToken("api2-1220lpal517.cluster-cycofak3lgax.eu-west-1.rds.amazonaws.com", 'eu-west-1', 'db_userx');
+                    // $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', 'db_userx');
     
                     return new ZendDbAdapter([
                         'dsn' => $dsn,
