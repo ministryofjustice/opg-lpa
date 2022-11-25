@@ -48,7 +48,7 @@ class CorrespondentController extends AbstractLpaActorController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // Set the initial correspondent data - if the correspondent
@@ -256,7 +256,7 @@ class CorrespondentController extends AbstractLpaActorController
                 }
             } else {
                 // This is a regular post from the form so just validate and save the data
-                $form->setData($request->getPost());
+                $form->setData($this->getData());
 
                 if ($form->isValid()) {
                     // Extract the model data from the form and process it

@@ -62,7 +62,7 @@ class RegisterController extends AbstractBaseController
         $viewModel = new ViewModel();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $data = $form->getData();
@@ -117,7 +117,7 @@ class RegisterController extends AbstractBaseController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $email = $form->getData()['email'];

@@ -21,7 +21,7 @@ class CertificateProviderController extends AbstractLpaActorController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $this->getMetadata()->setCertificateProviderSkipped($this->getLpa());
@@ -78,7 +78,7 @@ class CertificateProviderController extends AbstractLpaActorController
 
         if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // persist data
@@ -131,7 +131,7 @@ class CertificateProviderController extends AbstractLpaActorController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // persist data

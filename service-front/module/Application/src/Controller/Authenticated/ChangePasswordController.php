@@ -25,7 +25,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $data = $form->getData();

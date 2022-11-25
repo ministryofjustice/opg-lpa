@@ -23,7 +23,7 @@ class HowReplacementAttorneysMakeDecisionController extends AbstractLpaControlle
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $postData = $request->getPost();
+            $postData = $this->getData();
 
             if ($postData['how'] != ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
                 $form->setValidationGroup(['how']);

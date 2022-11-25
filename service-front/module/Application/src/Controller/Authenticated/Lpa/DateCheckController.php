@@ -40,7 +40,7 @@ class DateCheckController extends AbstractLpaController
 
         if ($request->isPost()) {
             // Set the post data in the form and validate it
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $data = $form->getData();

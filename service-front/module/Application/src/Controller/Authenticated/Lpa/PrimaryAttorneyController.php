@@ -98,7 +98,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // persist data
@@ -175,7 +175,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $postData = $request->getPost();
+            $postData = $this->getData();
             $form->setData($postData);
 
             if ($form->isValid()) {
@@ -360,7 +360,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $addOk = $this->getLpaApplicationService()->addPrimaryAttorney(

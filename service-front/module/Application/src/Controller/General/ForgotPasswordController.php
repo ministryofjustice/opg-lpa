@@ -40,7 +40,7 @@ class ForgotPasswordController extends AbstractBaseController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $result = $this->userService->requestPasswordResetEmail($form->getData()['email']);
@@ -109,7 +109,7 @@ class ForgotPasswordController extends AbstractBaseController
         $request = $this->getRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $result = $this->userService->setNewPassword($token, $form->getData()['password']);

@@ -22,7 +22,7 @@ class TypeController extends AbstractLpaController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $lpaType = $form->getData()['type'];

@@ -160,7 +160,7 @@ class CheckoutController extends AbstractLpaController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if (!$form->isValid()) {
                 return $this->redirect()->toRoute(

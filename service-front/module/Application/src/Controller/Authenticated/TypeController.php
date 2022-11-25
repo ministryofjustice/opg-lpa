@@ -26,7 +26,7 @@ class TypeController extends AbstractAuthenticatedController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 $lpa = $this->getLpaApplicationService()->createApplication();

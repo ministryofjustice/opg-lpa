@@ -21,7 +21,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // set user has confirmed if there are people to notify
@@ -110,7 +110,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
         if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // persist data
@@ -175,7 +175,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // update details

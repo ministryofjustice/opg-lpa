@@ -47,7 +47,7 @@ class AuthController extends AbstractBaseController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // Check if we're going to redirect to a deep(er) link (before we kill the session)

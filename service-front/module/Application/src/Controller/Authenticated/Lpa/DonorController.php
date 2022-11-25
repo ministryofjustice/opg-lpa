@@ -73,7 +73,7 @@ class DonorController extends AbstractLpaActorController
 
         if ($request->isPost() && !$this->reuseActorDetails($form)) {
             // Set the post data
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // persist data
@@ -120,7 +120,7 @@ class DonorController extends AbstractLpaActorController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $postData = $request->getPost();
+            $postData = $this->getData();
             $postData['canSign'] = (bool) $postData['canSign'];
 
             $form->setData($postData);

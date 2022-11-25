@@ -41,7 +41,7 @@ class AboutYouController extends AbstractAuthenticatedController
 
         if ($request->isPost()) {
             // Merge any existing data - this is required for the datamodel validation that will execute in the form
-            $data = $request->getPost()->toArray();
+            $data = $this->getData()->toArray();
             $existingData = array_intersect_key($userDetailsArr, array_flip(['id', 'createdAt', 'updatedAt']));
 
             // Validate the new data with the existing data that doesn't change in the form

@@ -23,7 +23,7 @@ class WhenLpaStartsController extends AbstractLpaController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $postData = $request->getPost();
+            $postData = $this->getData();
 
             $form->setData($postData);
 

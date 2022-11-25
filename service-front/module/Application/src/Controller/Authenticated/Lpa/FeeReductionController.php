@@ -168,7 +168,7 @@ class FeeReductionController extends AbstractLpaController
 
         if ($request->isPost()) {
             // set data for validation
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // if no applying reduced fee, set payment in LPA including amount.

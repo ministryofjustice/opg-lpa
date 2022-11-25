@@ -19,7 +19,7 @@ class InstructionsController extends AbstractLpaController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $postData = $request->getPost();
+            $postData = $this->getData();
 
             // set data for validation
             $form->setData($postData);

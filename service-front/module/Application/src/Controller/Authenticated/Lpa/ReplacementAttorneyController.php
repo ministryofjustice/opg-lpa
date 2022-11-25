@@ -22,7 +22,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // set user has confirmed if there are replacement attorneys
@@ -99,7 +99,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // persist to the api
@@ -176,7 +176,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $postData = $request->getPost();
+            $postData = $this->getData();
             $form->setData($postData);
 
             if ($form->isValid()) {
@@ -323,7 +323,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 // persist data to the api

@@ -25,7 +25,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $form->setData($this->getData());
 
             if ($form->isValid()) {
                 //  Get the user ID and email address
