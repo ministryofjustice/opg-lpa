@@ -89,7 +89,7 @@ abstract class AbstractBaseController extends AbstractActionController
 
         if (
             $contentType !== false &&
-            str_starts_with('application/json', $contentType->getFieldValue())
+            str_starts_with($contentType->getFieldValue(), 'application/json')
         ) {
             $bodyArray = json_decode($this->convertRequest()->getContent(), true);
             return new Parameters($bodyArray);
