@@ -100,11 +100,9 @@ class Module
                     $provider()->wait();
                     $RdsAuthGenerator = new AuthTokenGenerator($provider);
                     // Hardcoded to use test-specific RDS instance
-                    $token = $RdsAuthGenerator->createToken("api2-1220lpal517.cluster-cycofak3lgax.eu-west-1.rds.amazonaws.com", 'eu-west-1', 'db_userx');
+                    $token = $RdsAuthGenerator->createToken("api2-1220lpal517.cluster-cycofak3lgax.eu-west-1.rds.amazonaws.com:5432", 'eu-west-1', 'db_userx');
                     // $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', 'db_userx');
                     
-                    $this->getLogger()->info("Provider: " . var_dump($RdsAuthGenerator));
-                    $this->getLogger()->info("Provider: " . var_dump($provider));
                     $this->getLogger()->info("Token: " . var_dump($token));
 
                     return new ZendDbAdapter([
