@@ -3,8 +3,8 @@
 namespace ApplicationTest\Model\Service\WhoAreYou;
 
 use Application\Model\Service\WhoAreYou\Entity;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeSharedTest\DataModel\FixturesData;
 use PHPUnit\Framework\TestCase;
 
 class EntityTest extends TestCase
@@ -22,7 +22,7 @@ class EntityTest extends TestCase
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 

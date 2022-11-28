@@ -12,8 +12,8 @@ use Http\Client\Exception;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeSharedTest\DataModel\FixturesData;
 use Psr\Http\Message\ResponseInterface;
 
 class ApplicationTest extends MockeryTestCase

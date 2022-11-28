@@ -5,8 +5,8 @@ namespace Application\Model\Service\Lpa;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
 class ReplacementAttorneyCleanup extends AbstractService
 {

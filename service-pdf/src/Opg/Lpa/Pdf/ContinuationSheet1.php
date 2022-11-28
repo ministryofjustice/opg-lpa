@@ -2,11 +2,11 @@
 
 namespace Opg\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
+use MakeShared\DataModel\Lpa\Lpa;
 
 /**
  * Class ContinuationSheet1

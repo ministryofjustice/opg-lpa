@@ -3,7 +3,7 @@
 namespace Application\View\Helper;
 
 use Application\Model\FormFlowChecker;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\View\Helper\AbstractHelper;
 
 class FinalCheckAccessible extends AbstractHelper

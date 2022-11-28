@@ -8,8 +8,8 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -24,7 +24,7 @@ class TypeControllerTest extends AbstractControllerTest
         'type' => 'property-and-financial'
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

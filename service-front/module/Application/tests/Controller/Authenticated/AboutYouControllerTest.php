@@ -9,7 +9,7 @@ use Hamcrest\MatcherAssert;
 use Hamcrest\Matchers;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\User\User;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 

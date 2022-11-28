@@ -3,7 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
+use MakeShared\DataModel\Lpa\Document\Donor;
 use Laminas\View\Model\ViewModel;
 
 class DonorController extends AbstractLpaActorController

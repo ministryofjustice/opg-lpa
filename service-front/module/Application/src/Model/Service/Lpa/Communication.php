@@ -4,7 +4,7 @@ namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use DateTime;
 use DateTimeZone;
 use DateInterval;
@@ -37,7 +37,7 @@ class Communication extends AbstractEmailService
         $to = [$userEmailAddress];
 
         $this->lpaTypeTitleCase = 'Health and welfare';
-        if ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_PF) {
+        if ($lpa->document->type === \MakeShared\DataModel\Lpa\Document\Document::LPA_TYPE_PF) {
             $this->lpaTypeTitleCase = 'Property and financial affairs';
         }
 
@@ -62,17 +62,15 @@ class Communication extends AbstractEmailService
             // we have a payment reference, so this is an online payment
             $to = $this->setUpEmailFieldsForOnlinePayment($lpa, $userEmailAddress, $to);
             $this->setUpEmailFieldsForPayments($lpa);
-        }
-        else {
+        } else {
             if ($lpa->payment->method == 'cheque') {
             // we have a cheque payment
                 $this->setUpEmailFieldsForChequePayment($lpa);
                 $this->setUpEmailFieldsForPayments($lpa);
-            }
-            else {
+            } else {
                 // we have a zero payment, which is effectively no payment at this time (OPG may later contact the customer for payment)
                 $this->setUpEmailFieldsForNoPayment($lpa);
-           }
+            }
         }
 
         try {
@@ -86,7 +84,7 @@ class Communication extends AbstractEmailService
         return true;
     }
 
-    public function setUpEmailFieldsForOnlinePayment(Lpa $lpa, String $userEmailAddress, Array $to)
+    public function setUpEmailFieldsForOnlinePayment(Lpa $lpa, string $userEmailAddress, array $to)
     {
         $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
 
@@ -120,7 +118,7 @@ class Communication extends AbstractEmailService
         }
 
         return $to;
-    } 
+    }
 
     public function setUpEmailFieldsForChequePayment(Lpa $lpa)
     {
@@ -140,12 +138,11 @@ class Communication extends AbstractEmailService
     {
         $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
 
-        if (empty($lpa->document->peopleToNotify)) { 
+        if (empty($lpa->document->peopleToNotify)) {
                 $this->data = array_merge($this->data, [
                     'PTN' => false,
                 ]);
-        }
-        else {
+        } else {
                 $this->data = array_merge($this->data, [
                     'PTN' => true,
                 ]);
@@ -156,8 +153,8 @@ class Communication extends AbstractEmailService
     {
         // fill out email fields appropriately that apply to cheque and online payments
         //
-        if (empty($lpa->document->peopleToNotify)) { 
-            if (is_null($lpa->payment->reducedFeeLowIncome))  {
+        if (empty($lpa->document->peopleToNotify)) {
+            if (is_null($lpa->payment->reducedFeeLowIncome)) {
                 // we have no reduced fee, and no Person(s) to Notify
                 $this->data = array_merge($this->data, [
                     'PTNOnly' => false,
@@ -165,8 +162,7 @@ class Communication extends AbstractEmailService
                     'FeeFormPTN' => false,
                     'remission' => false,
                 ]);
-            }
-            else {
+            } else {
                 // we have reduced fee, but no Person(s) to Notify
                 $this->data = array_merge($this->data, [
                     'PTNOnly' => false,
@@ -175,9 +171,8 @@ class Communication extends AbstractEmailService
                     'remission' => true,
                 ]);
             }
-        }
-        else {
-            if (is_null($lpa->payment->reducedFeeLowIncome) ) {
+        } else {
+            if (is_null($lpa->payment->reducedFeeLowIncome)) {
                 // we do not have reduced fee but we do have Person(s) to Notify
                 $this->data = array_merge($this->data, [
                     'PTNOnly' => true,
@@ -185,8 +180,7 @@ class Communication extends AbstractEmailService
                     'FeeFormPTN' => false,
                     'remission' => false,
                 ]);
-            }
-            else {
+            } else {
                 // we have reduced fee and Person(s) to Notify
                 $this->data = array_merge($this->data, [
                     'PTNOnly' => false,
@@ -195,7 +189,7 @@ class Communication extends AbstractEmailService
                     'remission' => true,
                 ]);
             }
-        } 
+        }
     }
 
     public function setUserDetailsSession(Container $userDetailsSession)

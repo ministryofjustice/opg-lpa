@@ -3,10 +3,10 @@
 namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractService;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Formatter as LpaFormatter;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Formatter as LpaFormatter;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class ContinuationSheets
 {

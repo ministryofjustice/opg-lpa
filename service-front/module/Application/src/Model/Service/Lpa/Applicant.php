@@ -4,8 +4,8 @@ namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class Applicant extends AbstractService
 {

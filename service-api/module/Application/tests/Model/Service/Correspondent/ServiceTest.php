@@ -5,8 +5,8 @@ namespace ApplicationTest\Model\Service\Correspondent;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeSharedTest\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {

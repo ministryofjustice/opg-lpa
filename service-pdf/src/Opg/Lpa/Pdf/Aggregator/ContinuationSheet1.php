@@ -3,7 +3,7 @@
 namespace Opg\Lpa\Pdf\Aggregator;
 
 use Opg\Lpa\Pdf\ContinuationSheet1 as ContinuationSheet1Pdf;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\PdftkFactory;
 
 /**

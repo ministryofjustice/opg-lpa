@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Document\Document;
 
 class InstructionsAndPreferencesForm extends AbstractMainFlowForm
 {

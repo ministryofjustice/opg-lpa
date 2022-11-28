@@ -1,0 +1,14 @@
+{
+  "method" : "cheque",
+  "email" : {
+    "address" : "test@payment.com"
+  },
+  "amount" : 82.0,
+  "reference" : null,
+  "gatewayReference" : null,
+  "date" : "2017-03-24T16:21:52.804Z",
+  "reducedFeeReceivesBenefits" : null,
+  "reducedFeeAwardedDamages" : null,
+  "reducedFeeLowIncome" : null,
+  "reducedFeeUniversalCredit" : null
+}

@@ -13,7 +13,7 @@ use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\PredicateSet;
-use Opg\Lpa\DataModel\User\User as ProfileUserModel;
+use MakeShared\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Repository\User as UserRepository;

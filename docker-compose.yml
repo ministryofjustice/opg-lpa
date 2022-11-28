@@ -156,6 +156,7 @@ services:
       - ./service-front/node_modules:/app/node_modules
       - ./service-front/assets:/app/assets
       - ./service-front/vendor:/app/vendor
+      - ./shared:/shared
     depends_on:
       dynamodb:
         condition: service_started
@@ -260,6 +261,7 @@ services:
       - ./service-api/config:/app/config
       - ./service-api/module:/app/module
       - ./service-api/vendor:/app/vendor
+      - ./shared:/shared
     depends_on:
       dynamodb:
         condition: service_started
@@ -377,6 +379,7 @@ services:
       - ./service-admin/src:/app/src
       - ./service-admin/config:/app/config
       - ./service-admin/vendor:/app/vendor
+      - ./shared:/shared
     depends_on:
       dynamodb:
         condition: service_started
@@ -449,6 +452,7 @@ services:
         condition: service_started
     volumes:
       - ./service-pdf:/app
+      - ./shared:/shared
     tmpfs:
       - /tmp/
     build:

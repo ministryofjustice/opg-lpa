@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
 use Laminas\Form\FormInterface;
 
 class CorrespondentForm extends AbstractActorForm

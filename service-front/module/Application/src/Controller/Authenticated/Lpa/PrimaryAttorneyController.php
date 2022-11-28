@@ -4,12 +4,12 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Application\Model\Service\Lpa\Applicant as ApplicantService;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
+use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
+use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Laminas\View\Model\ViewModel;
 
 class PrimaryAttorneyController extends AbstractLpaActorController

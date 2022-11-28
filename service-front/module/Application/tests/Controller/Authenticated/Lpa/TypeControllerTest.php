@@ -7,7 +7,7 @@ use Application\Form\Lpa\TypeForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Document\Document;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -22,7 +22,7 @@ class TypeControllerTest extends AbstractControllerTest
         'type' => Document::LPA_TYPE_HW
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -40,10 +40,10 @@ class TypeControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('bind')->withArgs([$this->lpa->document->flatten()])->once();
         $this->setMatchedRouteName($controller, 'lpa/form-type');
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])
-            ->andReturn('lpa/donor?lpa-id=' .$this->lpa->id)->once();
+            ->andReturn('lpa/donor?lpa-id=' . $this->lpa->id)->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/dashboard/create-lpa', ['lpa-id' => $this->lpa->id]])
-            ->andReturn('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id)->once();
+            ->andReturn('user/dashboard/create-lpa?lpa-id=' . $this->lpa->id)->once();
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();
@@ -51,8 +51,8 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id, $result->getVariable('cloneUrl'));
-        $this->assertEquals('lpa/donor?lpa-id=' .$this->lpa->id, $result->getVariable('nextUrl'));
+        $this->assertEquals('user/dashboard/create-lpa?lpa-id=' . $this->lpa->id, $result->getVariable('cloneUrl'));
+        $this->assertEquals('lpa/donor?lpa-id=' . $this->lpa->id, $result->getVariable('nextUrl'));
         $this->assertEquals('', $result->getVariable('isChangeAllowed'));
         $this->assertEquals([], $result->getVariable('analyticsDimensions'));
     }
@@ -68,10 +68,10 @@ class TypeControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('bind')->withArgs([$this->lpa->document->flatten()])->once();
         $this->setMatchedRouteName($controller, 'lpa/form-type');
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])
-            ->andReturn('lpa/donor?lpa-id=' .$this->lpa->id)->once();
+            ->andReturn('lpa/donor?lpa-id=' . $this->lpa->id)->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/dashboard/create-lpa', ['lpa-id' => $this->lpa->id]])
-            ->andReturn('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id)->once();
+            ->andReturn('user/dashboard/create-lpa?lpa-id=' . $this->lpa->id)->once();
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();
@@ -79,8 +79,8 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id, $result->getVariable('cloneUrl'));
-        $this->assertEquals('lpa/donor?lpa-id=' .$this->lpa->id, $result->getVariable('nextUrl'));
+        $this->assertEquals('user/dashboard/create-lpa?lpa-id=' . $this->lpa->id, $result->getVariable('cloneUrl'));
+        $this->assertEquals('lpa/donor?lpa-id=' . $this->lpa->id, $result->getVariable('nextUrl'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
         $this->assertEquals([
             'dimension2' => date('Y-m-d'),
@@ -96,10 +96,10 @@ class TypeControllerTest extends AbstractControllerTest
         $this->setPostInvalid($this->form);
         $this->setMatchedRouteName($controller, 'lpa/form-type');
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])
-            ->andReturn('lpa/donor?lpa-id=' .$this->lpa->id)->once();
+            ->andReturn('lpa/donor?lpa-id=' . $this->lpa->id)->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/dashboard/create-lpa', ['lpa-id' => $this->lpa->id]])
-            ->andReturn('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id)->once();
+            ->andReturn('user/dashboard/create-lpa?lpa-id=' . $this->lpa->id)->once();
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();
@@ -107,8 +107,8 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id, $result->getVariable('cloneUrl'));
-        $this->assertEquals('lpa/donor?lpa-id=' .$this->lpa->id, $result->getVariable('nextUrl'));
+        $this->assertEquals('user/dashboard/create-lpa?lpa-id=' . $this->lpa->id, $result->getVariable('cloneUrl'));
+        $this->assertEquals('lpa/donor?lpa-id=' . $this->lpa->id, $result->getVariable('nextUrl'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
         $this->assertEquals([], $result->getVariable('analyticsDimensions'));
     }

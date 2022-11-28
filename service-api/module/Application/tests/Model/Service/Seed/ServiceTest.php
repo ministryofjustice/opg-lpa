@@ -7,8 +7,8 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInt
 use Application\Model\Service\Seed\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use ApplicationTest\Model\Service\Applications\ServiceBuilder as ApplicationsServiceBuilder;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
 
 class ServiceTest extends AbstractServiceTest

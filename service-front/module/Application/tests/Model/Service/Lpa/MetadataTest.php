@@ -7,7 +7,7 @@ use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class MetadataTest extends AbstractServiceTest
 {
@@ -21,7 +21,7 @@ class MetadataTest extends AbstractServiceTest
      */
     private $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -31,7 +31,7 @@ class MetadataTest extends AbstractServiceTest
         $this->service->setLpaApplicationService($this->applicationService);
     }
 
-    public function testSetReplacementAttorneysConfirmed() : void
+    public function testSetReplacementAttorneysConfirmed(): void
     {
         $this->applicationService->shouldReceive('updateApplication')
             ->withArgs([null, ['metadata' => ['replacement-attorneys-confirmed' => true]]])
@@ -43,7 +43,7 @@ class MetadataTest extends AbstractServiceTest
     }
 
 
-    public function testSetCertificateProviderSkipped() : void
+    public function testSetCertificateProviderSkipped(): void
     {
         $this->applicationService->shouldReceive('updateApplication')
             ->withArgs([null, ['metadata' => ['certificate-provider-was-skipped' => true]]])
@@ -61,7 +61,7 @@ class MetadataTest extends AbstractServiceTest
         $this->assertTrue($result);
     }
 
-    public function testSetPeopleToNotifyConfirmed() : void
+    public function testSetPeopleToNotifyConfirmed(): void
     {
         $this->applicationService->shouldReceive('updateApplication')
             ->withArgs([null, ['metadata' => ['people-to-notify-confirmed' => true]]])
@@ -72,7 +72,7 @@ class MetadataTest extends AbstractServiceTest
         $this->assertTrue($result);
     }
 
-    public function testSetRepeatApplicationConfirmed() : void
+    public function testSetRepeatApplicationConfirmed(): void
     {
         $this->applicationService->shouldReceive('updateApplication')
             ->withArgs([null, ['metadata' => ['repeat-application-confirmed' => true]]])
@@ -83,7 +83,7 @@ class MetadataTest extends AbstractServiceTest
         $this->assertTrue($result);
     }
 
-    public function testSetInstructionConfirmed() : void
+    public function testSetInstructionConfirmed(): void
     {
         $this->applicationService->shouldReceive('updateApplication')
             ->withArgs([null, ['metadata' => ['instruction-confirmed' => true]]])
@@ -94,7 +94,7 @@ class MetadataTest extends AbstractServiceTest
         $this->assertTrue($result);
     }
 
-    public function testSetAnalyticsReturnCount() : void
+    public function testSetAnalyticsReturnCount(): void
     {
         $this->applicationService->shouldReceive('updateApplication')
             ->withArgs([null, ['metadata' => ['analyticsReturnCount' => 10]]])

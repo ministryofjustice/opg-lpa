@@ -2,7 +2,7 @@
 
 namespace Application\Library\ApiProblem;
 
-use Opg\Lpa\DataModel\Validator\ValidatorResponseInterface;
+use MakeShared\DataModel\Validator\ValidatorResponseInterface;
 
 /**
  * Special case API problem for LPA Data Model validation errors.

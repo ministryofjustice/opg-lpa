@@ -4,7 +4,7 @@ namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use RuntimeException;
 
 /**

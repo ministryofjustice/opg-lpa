@@ -52,3 +52,4 @@ __pycache__
 **/build
 .coverage
 .php-cs-fixer.cache
+shared/module/MakeShared/tests/autoload.php

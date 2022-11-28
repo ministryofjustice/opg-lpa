@@ -2,8 +2,8 @@
 
 // phpcs:ignoreFile
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Payment\Calculator;
 
 require_once '../vendor/autoload.php';
 include "Randomizer.php";

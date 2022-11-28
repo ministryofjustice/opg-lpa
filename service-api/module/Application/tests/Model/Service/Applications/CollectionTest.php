@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Applications;
 
 use Application\Model\Service\Applications\Collection;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeSharedTest\DataModel\FixturesData;
 use PHPUnit\Framework\TestCase;
 use Laminas\Paginator\Adapter\ArrayAdapter;
 

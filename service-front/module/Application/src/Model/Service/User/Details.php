@@ -7,7 +7,7 @@ use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Mail\MailParameters;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\User\User;
 use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Session\Container;
 use Exception;

@@ -7,7 +7,7 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTra
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\Applications\Service as ApplicationService;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use RuntimeException;
 
 class Service extends AbstractService

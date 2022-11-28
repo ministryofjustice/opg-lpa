@@ -7,11 +7,11 @@ use Application\Form\Lpa\DonorForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Common\Dob;
-use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\LongName;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Common\Dob;
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\Common\LongName;
+use MakeShared\DataModel\Lpa\Document\Donor;
+use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
@@ -34,7 +34,7 @@ class DonorControllerTest extends AbstractControllerTest
         'canSign' => true
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

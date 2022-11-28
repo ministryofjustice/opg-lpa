@@ -3,8 +3,8 @@
 namespace Application\Form\Lpa;
 
 use Application\Form\AbstractCsrfForm;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class DateCheckForm extends AbstractCsrfForm
 {
