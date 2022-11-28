@@ -27,10 +27,13 @@ use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use MakeShared\Logging\LoggerTrait;
 
 class Module
 {
     public const VERSION = '3.0.3-dev';
+
+    use LoggerTrait;
 
     public function onBootstrap(MvcEvent $e)
     {
@@ -94,11 +97,14 @@ class Module
 
                     // TODO: Completely rework this so that it's not so messy
                     $provider = CredentialProvider::defaultProvider();
+                    $provider()->wait();
                     $RdsAuthGenerator = new AuthTokenGenerator($provider);
                     // Hardcoded to use test-specific RDS instance
                     $token = $RdsAuthGenerator->createToken("api2-1220lpal517.cluster-cycofak3lgax.eu-west-1.rds.amazonaws.com", 'eu-west-1', 'db_userx');
                     // $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', 'db_userx');
                     
+                    $this->getLogger()->info(var_dump($token));
+
                     return new ZendDbAdapter([
                         'dsn' => $dsn,
                         'driver' => 'pdo',
