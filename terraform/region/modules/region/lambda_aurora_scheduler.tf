@@ -53,7 +53,7 @@ resource "aws_cloudwatch_event_target" "start_schedule_lambda" {
   rule      = aws_cloudwatch_event_rule.start_schedule[0].name
   target_id = "lambda_function"
   arn       = one(module.aurora_scheduler[*].lambda_function.arn)
-  input     = "{\"commands\":[\"start\"]}"
+  input     = "{\"command\":\"start\"}"
 }
 
 resource "aws_cloudwatch_event_target" "stop_schedule_lambda" {
@@ -61,7 +61,7 @@ resource "aws_cloudwatch_event_target" "stop_schedule_lambda" {
   rule      = aws_cloudwatch_event_rule.stop_schedule[0].name
   target_id = "lambda_function"
   arn       = one(module.aurora_scheduler[*].lambda_function.arn)
-  input     = "{\"commands\":[\"stop\"]}"
+  input     = "{\"command\":\"stop\"}"
 }
 
 resource "aws_lambda_permission" "allow_events_bridge_start_lambda" {
