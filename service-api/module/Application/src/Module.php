@@ -96,7 +96,7 @@ class Module
                         "port={$dbconf['port']};dbname={$dbconf['dbname']};sslmode=verify-full;sslrootcert=/etc/ssl/certs/rds-ca-2019-root.pem";
 
                     // TODO: Completely rework this so that it's not so messy
-                    $provider = CredentialProvider::defaultProvider();
+                    $provider = CredentialProvider::ecsCredentials();
                     $provider()->wait();
                     $RdsAuthGenerator = new AuthTokenGenerator($provider);
                     // Hardcoded to use test-specific RDS instance
