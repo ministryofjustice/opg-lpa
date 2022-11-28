@@ -2,8 +2,8 @@
 
 namespace Opg\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use MakeShared\DataModel\Lpa\Lpa;
 
 /**
  * Class ContinuationSheet4

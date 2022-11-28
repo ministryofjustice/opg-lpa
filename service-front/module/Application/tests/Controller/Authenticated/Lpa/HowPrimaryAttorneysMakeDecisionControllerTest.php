@@ -8,7 +8,7 @@ use Application\Model\Service\Lpa\Applicant;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -28,7 +28,7 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
      */
     private $applicantService;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

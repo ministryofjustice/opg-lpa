@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\AbstractData;
+use MakeShared\DataModel\AbstractData;
 use Laminas\Form\FormInterface;
 
 abstract class AbstractActorForm extends AbstractLpaForm
@@ -13,7 +13,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
      * An actor model object is a Donor, Human, TrustCorporation, CertificateProvider,
      * PeopleToNotify model object.
      *
-     * @var \Opg\Lpa\DataModel\AbstractData $actor
+     * @var \MakeShared\DataModel\AbstractData $actor
      */
     protected $actorModel;
 

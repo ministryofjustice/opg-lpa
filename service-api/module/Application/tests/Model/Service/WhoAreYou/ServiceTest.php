@@ -8,8 +8,8 @@ use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\Service\WhoAreYou\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
-use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\WhoAreYou\WhoAreYou;
+use MakeSharedTest\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {

@@ -3,7 +3,7 @@
 namespace OpgTest\Lpa\Pdf;
 
 use Opg\Lpa\Pdf\AbstractIndividualPdf;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use ConfigSetUp;
 use Opg\Lpa\Pdf\Aggregator\AbstractAggregator;
 use Opg\Lpa\Pdf\Config\Config;
@@ -28,7 +28,7 @@ abstract class AbstractPdfTestCase extends TestCase
      */
     protected $factory;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         ConfigSetUp::init();
 
@@ -95,13 +95,13 @@ abstract class AbstractPdfTestCase extends TestCase
     // returns assoc array
     protected function getPfLpaJSON()
     {
-        return json_decode(file_get_contents(self::FIXTURES_DIR . 'lpa-pf.json'), TRUE);
+        return json_decode(file_get_contents(self::FIXTURES_DIR . 'lpa-pf.json'), true);
     }
 
     // returns assoc array
     protected function getHwLpaJSON()
     {
-        return json_decode(file_get_contents(self::FIXTURES_DIR . 'lpa-hw.json'), TRUE);
+        return json_decode(file_get_contents(self::FIXTURES_DIR . 'lpa-hw.json'), true);
     }
 
     // load assoc array from JSON and return an LPA

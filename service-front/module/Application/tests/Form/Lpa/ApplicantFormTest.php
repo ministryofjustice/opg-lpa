@@ -5,7 +5,7 @@ namespace ApplicationTest\Form\Lpa;
 use Application\Form\Lpa\ApplicantForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class ApplicantFormTest extends MockeryTestCase
 {
@@ -14,7 +14,7 @@ class ApplicantFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         //  Set up the form with the LPA data
         $lpa = new Lpa([

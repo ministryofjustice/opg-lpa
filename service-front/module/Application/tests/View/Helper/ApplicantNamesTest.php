@@ -3,14 +3,14 @@
 namespace ApplicationTest\View\Helper;
 
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Application\View\Helper\Traits\ConcatNamesTrait;
 
 class ApplicantNamesTest extends MockeryTestCase
 {
     use ConcatNamesTrait;
 
-    public function testInvoke():void
+    public function testInvoke(): void
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
         $lpa->document->whoIsRegistering = ["donor"];

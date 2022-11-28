@@ -7,7 +7,7 @@ use Application\Form\Lpa\WhenReplacementAttorneyStepInForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -29,7 +29,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

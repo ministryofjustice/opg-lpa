@@ -3,7 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use MakeShared\DataModel\Lpa\Payment\Calculator;
 use Laminas\View\Model\ViewModel;
 
 class SummaryController extends AbstractLpaController

@@ -8,7 +8,7 @@ use DOMDocument;
 use DOMXpath;
 use Laminas\View\Model\ViewModel;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 /**
  * Unit tests for the Twig macro which renders continuation sheet prompts

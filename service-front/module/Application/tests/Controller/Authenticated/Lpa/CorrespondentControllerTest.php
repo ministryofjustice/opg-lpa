@@ -7,11 +7,11 @@ use Application\Form\Lpa\CorrespondentForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\LongName;
-use Opg\Lpa\DataModel\Common\PhoneNumber;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\Common\LongName;
+use MakeShared\DataModel\Common\PhoneNumber;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
@@ -51,7 +51,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         'phone' => ['number' => '0123456789']
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

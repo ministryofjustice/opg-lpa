@@ -2,15 +2,15 @@
 
 namespace Opg\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Common\Address;
-use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\LongName;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\Common\PhoneNumber;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\Common\Address;
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\Common\LongName;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\Common\PhoneNumber;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Payment\Payment;
 
 /**
  * Class Lpa120

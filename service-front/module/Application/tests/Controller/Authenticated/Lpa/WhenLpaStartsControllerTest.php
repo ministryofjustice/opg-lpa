@@ -7,7 +7,7 @@ use Application\Form\Lpa\WhenLpaStartsForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -22,7 +22,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
         'when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

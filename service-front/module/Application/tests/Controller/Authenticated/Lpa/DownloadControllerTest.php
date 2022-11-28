@@ -8,7 +8,7 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Exception;
 use Mockery;
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use Laminas\Http\Header\HeaderInterface;
 use Laminas\Http\Headers;
 use Laminas\Http\Response;
