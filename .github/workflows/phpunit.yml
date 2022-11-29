@@ -33,6 +33,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Configure AWS Credentials
+        if: matrix.scan.path == './service-api' # aws creds currently needed for service-api but dependency will be removed in LPAL-1075
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1.7.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
