@@ -103,6 +103,7 @@ class Module
                     $token = $RdsAuthGenerator->createToken("api2-1220lpal517.cluster-cycofak3lgax.eu-west-1.rds.amazonaws.com:5432", 'eu-west-1', 'db_userx');
                     // $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', 'db_userx');
                     
+                    $this->getLogger()->info("Provider: " . var_dump($provider));
                     $this->getLogger()->info("RDS Auth Token: " . var_dump($token));
                     $this->getLogger()->info("URI: " . $_ENV['AWS_CONTAINER_CREDENTIALS_RELATIVE_URI']);
 
