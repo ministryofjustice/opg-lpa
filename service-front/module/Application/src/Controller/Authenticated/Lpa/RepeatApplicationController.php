@@ -3,9 +3,9 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Payment\Calculator;
+use MakeShared\DataModel\Lpa\Payment\Payment;
 use Laminas\View\Model\ViewModel;
 
 class RepeatApplicationController extends AbstractLpaController

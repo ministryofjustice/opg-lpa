@@ -6,7 +6,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
+use MakeShared\DataModel\Lpa\Document\Donor;
 use RuntimeException;
 
 class Service extends AbstractService

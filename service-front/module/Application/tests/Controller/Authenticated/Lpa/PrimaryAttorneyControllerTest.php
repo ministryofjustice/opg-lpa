@@ -9,13 +9,13 @@ use Application\Model\Service\Lpa\Applicant;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Common\Address;
-use Opg\Lpa\DataModel\Common\EmailAddress;
-use Opg\Lpa\DataModel\Common\LongName;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Common\Address;
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\Common\LongName;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
@@ -62,7 +62,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
      */
     private $applicantService;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

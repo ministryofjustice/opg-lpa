@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Service\WhoIsRegistering;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\WhoIsRegistering\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeSharedTest\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {

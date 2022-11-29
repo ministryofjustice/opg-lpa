@@ -6,8 +6,8 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
+use MakeSharedTest\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {

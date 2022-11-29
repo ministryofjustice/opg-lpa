@@ -3,7 +3,7 @@
 namespace Application\View\Helper;
 
 use Application\Model\FormFlowChecker;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Router\RouteMatch;
 use Laminas\View\Helper\AbstractHelper;
 
@@ -140,7 +140,7 @@ class Accordion extends AbstractHelper
                     } elseif ($route == 'lpa/fee-reduction') {
                         // The last page is a special case as we cannot check past it.
                         // Therefore we have a custom check.
-                        if ($this->lpa->payment instanceof \Opg\Lpa\DataModel\Lpa\Payment\Payment) {
+                        if ($this->lpa->payment instanceof \MakeShared\DataModel\Lpa\Payment\Payment) {
                             $barsInPlay[] = ['routeName' => $route];
                         }
                     }

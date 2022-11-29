@@ -7,7 +7,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
-use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
+use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use RuntimeException;
 
 class Service extends AbstractService

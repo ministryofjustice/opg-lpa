@@ -1,12 +1,13 @@
 <?php
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
+
 use Application\Controller\Authenticated\DashboardController;
 use Application\Controller\Authenticated\Lpa\StatusController;
 use ApplicationTest\Controller\AbstractControllerTest;
 use ApplicationTest\Controller\Authenticated\TestableDashboardController;
 use DateTime;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\Lpa\Payment\Payment;
 use Laminas\View\Model\ViewModel;
 use Laminas\Http\Response;
 use Laminas\Session\Container;
@@ -46,13 +47,14 @@ class StatusControllerTest extends AbstractControllerTest
     }
 
     public function testIndexActionInvalidStatus()
-    {/** @var StatusController $controller */
+    {
+        /** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
 
         $status = "InvalidStatus";
         $this->lpaApplicationService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn(['91333263035' => ['found'=>true, 'status'=>$status]]);
+            ->andReturn(['91333263035' => ['found' => true, 'status' => $status]]);
 
         $response = new Response();
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
@@ -73,12 +75,11 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->lpaApplicationService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn(['91333263035' => ['found'=>true, 'status'=>$status]]);
+            ->andReturn(['91333263035' => ['found' => true, 'status' => $status]]);
 
         $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-
     }
     public function statusProvider()
     {
@@ -98,7 +99,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->lpaApplicationService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn(['91333263035' => ['found'=>true, 'status'=>'Waiting']]);
+            ->andReturn(['91333263035' => ['found' => true, 'status' => 'Waiting']]);
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();

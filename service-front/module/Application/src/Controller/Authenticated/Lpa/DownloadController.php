@@ -7,7 +7,7 @@ use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use Exception;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Document\Document;
 
 class DownloadController extends AbstractLpaController
 {

@@ -3,7 +3,7 @@
 namespace Application\Model\Service\WhoIsRegistering;
 
 use Application\Model\Service\EntityInterface;
-use Opg\Lpa\DataModel\AccessorInterface as LpaAccessorInterface;
+use MakeShared\DataModel\AccessorInterface as LpaAccessorInterface;
 
 class Entity implements EntityInterface
 {

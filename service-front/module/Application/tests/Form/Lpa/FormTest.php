@@ -6,7 +6,7 @@ use Application\Form\AbstractCsrfForm;
 use Application\Form\Lpa\AbstractLpaForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use ReflectionClass;
 
 class FormTest extends MockeryTestCase

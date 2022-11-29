@@ -2,8 +2,8 @@
 
 namespace OpgTest\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\Pdf\ContinuationSheet2;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 

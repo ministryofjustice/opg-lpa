@@ -3,7 +3,7 @@
 namespace Application\Form\Lpa;
 
 use Application\Model\FormFlowChecker;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 abstract class AbstractMainFlowForm extends AbstractLpaForm
 {

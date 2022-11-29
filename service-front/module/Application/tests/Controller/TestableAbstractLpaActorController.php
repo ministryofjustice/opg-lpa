@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller;
 
 use Application\Controller\AbstractLpaActorController;
 use Application\Form\Lpa\AbstractActorForm;
-use Opg\Lpa\DataModel\AbstractData;
+use MakeShared\DataModel\AbstractData;
 
 class TestableAbstractLpaActorController extends AbstractLpaActorController
 {

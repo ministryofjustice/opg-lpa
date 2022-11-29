@@ -13,9 +13,9 @@ use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class DateCheckViewModelHelperTest extends MockeryTestCase
 {

@@ -9,7 +9,7 @@ use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
 use Laminas\ServiceManager\AbstractPluginManager;

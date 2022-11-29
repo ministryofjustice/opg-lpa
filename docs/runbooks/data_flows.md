@@ -17,17 +17,18 @@ graph
   frontlb[front load balancer/front-ssl] --> frontweb[front-web]
   frontweb --> frontapp[front-app]
   frontweb --> frontappv2[front-app-v2]
-  frontweb --> Redis
+  frontapp --> Redis
+  frontapp --> Notify
+  frontapp --> OrdnanceSurvey
   frontapp --> apiweb[api-web]
   frontapp --> dynamodb
-  frontapp --> pdf[pdf-app]
-  pdf --> S3
-  pdf --> SQS-1
   apiweb --> apiapp[api-app]
   apiapp --> db[RDS/Postgres]
   apiapp --> opgdatalpa[Sirius gateway]
   apiapp --> S3
-  apiapp --> SQS-1
+  apiapp --> SQS
+  pdf[pdf-app] --> SQS
+  pdf --> S3
 ```
 
 The purpose of each component in the diagram:
@@ -46,14 +47,21 @@ The purpose of each component in the diagram:
 * Redis: Stores PHP session data for front-app
 * RDS/postgres: Back-end storage for LPA and related data. Also stores user credentials. In AWS, this is an RDS instance; in local dev, it's a PostgreSQL container
 * Sirius gateway: API for accessing data about LPA applications from the Sirius case management system. Currently used to get the status of LPA applications, using the A-ref from the Make an LPA service as the reference. In dev, this is mocked out by gateway + mocksirius (see below).
-* SQS-1: Queue for managing PDF generation jobs. Jobs are added by api-app, then picked up and serviced by pdf-app.
+* SQS: Queue for managing PDF generation jobs. Jobs are added by api-app, then picked up and serviced by pdf-app.
 * S3: Generated PDF forms are stored here for 24 hours, to be downloaded by users.
+* Notify: Government service for sending emails. We use this to email users about activating their account, changing their email address, being asked to sign an LPA etc.
+* OrdnanceSurvey: Postcode lookup service we use for populating addresses when adding people and trust corporations.
 
 Note that this diagram excludes components which only live in CI (pipelines in CircleCI) and/or dev (your local machine):
 
 * localstack: Mimics the functionality of AWS services (S3, lambda) in dev
 * local-config: Sets up S3 buckets, dynamodb database and SQS queues in dev
 * node-build-assets: Dynamically rebuilds JS and CSS in dev (if you're editing those files, this container refreshes the compiled JS/CSS as the source files change)
+* seeding: Adds test data to the postgres db in dev
+
+There are some additional patches which can be manually applied to enable the following extra containers (see tests/sirius_gateway_mock.md for instructions):
+
 * mocksirius: The mock opg-data-lpa (in Prism) for dev and CI which mocks Sirius responses for cypress tests; note that we don't talk directly to Sirius in live, but go through the opg-data-lpa Sirius gateway
 * gateway: An nginx container which directs traffic to mocksirius in dev and CI, appending the necessary Prism headers so that we get the right response from mocksirius
-* seeding: Adds test data to the postgres db in dev
+
+This can occasionally be useful when you want to test the dashboard statuses with something closer to a real Sirius (our cypress tests intercept Sirius requests and mock the responses, removing the need for an actual service).

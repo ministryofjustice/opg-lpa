@@ -5,8 +5,8 @@ namespace ApplicationTest\Form\Lpa;
 use Application\Form\Lpa\DateCheckForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class DateCheckFormTest extends MockeryTestCase
 {
@@ -15,7 +15,7 @@ class DateCheckFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         //  Set up the form with the LPA data
         $lpa = new Lpa([

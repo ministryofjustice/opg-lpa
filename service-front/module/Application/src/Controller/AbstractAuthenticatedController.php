@@ -7,7 +7,7 @@ use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\User\User;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\Session\Container;

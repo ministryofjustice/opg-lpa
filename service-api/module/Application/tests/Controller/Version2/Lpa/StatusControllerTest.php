@@ -12,7 +12,7 @@ use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class StatusControllerTest extends AbstractControllerTest
 {

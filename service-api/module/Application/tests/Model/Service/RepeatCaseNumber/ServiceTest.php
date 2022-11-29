@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Service\RepeatCaseNumber;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\RepeatCaseNumber\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeSharedTest\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {

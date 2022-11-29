@@ -4,7 +4,7 @@ namespace ApplicationTest\Library\ApiProblem;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Validator\ValidatorResponseInterface;
+use MakeShared\DataModel\Validator\ValidatorResponseInterface;
 
 class ValidationApiProblemTest extends MockeryTestCase
 {

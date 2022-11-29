@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use MakeShared\DataModel\Lpa\Document\CertificateProvider;
 
 class CertificateProviderForm extends AbstractActorForm
 {

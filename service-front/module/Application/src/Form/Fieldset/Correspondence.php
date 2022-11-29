@@ -4,7 +4,7 @@ namespace Application\Form\Fieldset;
 
 use Laminas\Form\Fieldset;
 use Laminas\Hydrator\ClassMethodsHydrator as ClassMethodsHydrator;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence as CorrespondenceModel;
+use MakeShared\DataModel\Lpa\Document\Correspondence as CorrespondenceModel;
 
 class Correspondence extends Fieldset
 {
