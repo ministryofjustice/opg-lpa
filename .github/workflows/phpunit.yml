@@ -38,8 +38,8 @@ jobs:
           php-version: "8.1"
       - name: pdftk install
         run: |
-          apt-get update
-          apt-get install pdftk-java
+          sudo apt-get update
+          sudo apt-get install pdftk-java
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
