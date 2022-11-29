@@ -60,7 +60,6 @@ jobs:
       - image_tag
       - branch_name
     with:
-      tag: ${{ needs.image_tag.outputs.short_sha }}
       branch_name: ${{ needs.branch_name.outputs.parsed }}
     secrets: inherit
 
