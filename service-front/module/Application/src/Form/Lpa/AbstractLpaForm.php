@@ -3,8 +3,8 @@
 namespace Application\Form\Lpa;
 
 use Application\Form\AbstractCsrfForm;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Validator\ValidatorResponse;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Validator\ValidatorResponse;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\FormInterface;

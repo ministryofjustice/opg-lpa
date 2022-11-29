@@ -4,7 +4,7 @@ namespace Application\Model\DataAccess\Repository\Application;
 
 use DateTime;
 use Traversable;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 interface ApplicationRepositoryInterface
 {

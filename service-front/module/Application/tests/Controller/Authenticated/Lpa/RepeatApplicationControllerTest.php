@@ -7,7 +7,7 @@ use Application\Form\Lpa\RepeatApplicationForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -26,7 +26,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         'repeatCaseNumber' => '12345'
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

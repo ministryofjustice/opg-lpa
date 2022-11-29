@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
+use MakeShared\DataModel\Lpa\Document\Donor;
 
 class DonorForm extends AbstractActorForm
 {

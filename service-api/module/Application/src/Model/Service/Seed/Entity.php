@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Seed;
 
 use Application\Model\Service\EntityInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class Entity implements EntityInterface
 {

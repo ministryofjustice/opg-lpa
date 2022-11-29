@@ -8,9 +8,9 @@ use Application\Form\Lpa\CertificateProviderForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Lpa\Document\CertificateProvider;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -26,7 +26,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
      */
     private $form;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

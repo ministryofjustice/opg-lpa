@@ -3,7 +3,7 @@
 namespace Opg\Lpa\Pdf\Aggregator;
 
 use Opg\Lpa\Pdf\ContinuationSheet2 as ContinuationSheet2Pdf;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\PdftkFactory;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
@@ -71,10 +71,12 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
 
             try {
                 //  TODO - implement a check for this instead of just getting the content...
-                if (in_array($this->cs2Type, [
+                if (
+                    in_array($this->cs2Type, [
                     ContinuationSheet2Pdf::CS2_TYPE_PREFERENCES,
                     ContinuationSheet2Pdf::CS2_TYPE_INSTRUCTIONS,
-                ])) {
+                    ])
+                ) {
                     $content = $this->getInstructionsAndPreferencesContent($fullContent, $page);
                 } else {
                     $content = $this->getContinuationSheet2Content($fullContent, $page);

@@ -13,7 +13,7 @@ use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use Mockery;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeSharedTest\DataModel\FixturesData;
 use Laminas\Crypt\BlockCipher;
 use Laminas\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 use hash;

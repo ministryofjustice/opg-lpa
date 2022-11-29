@@ -4,8 +4,8 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Lpa\ContinuationSheets;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Opg\Lpa\DataModel\Common\LongName;
+use MakeShared\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\Common\LongName;
 use Laminas\View\Model\ViewModel;
 
 class CompleteController extends AbstractLpaController

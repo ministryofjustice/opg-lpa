@@ -6,8 +6,8 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInt
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\User\User;
 
 abstract class AbstractServiceTest extends MockeryTestCase
 {

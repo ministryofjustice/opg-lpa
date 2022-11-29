@@ -1,8 +1,9 @@
 <?php
+
 namespace OpgTest\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\Pdf\Lp1f;
 use Opg\Lpa\Pdf\Lp1h;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
@@ -109,7 +110,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
                 },
                 "type": "trust"
             }
-        ]', TRUE);
+        ]', true);
 
         return $data;
     }
@@ -311,8 +312,10 @@ class AbstractLp1Test extends AbstractPdfTestCase
         // has this continuation sheet, but the extended notes are in
         // the instructions box rather than preferences box
         $preferencesMaxSize = $this->getInstructionsPreferencesBoxSize();
-        $data['document']['preference'] = str_repeat('hello ',
-            intval($preferencesMaxSize / 6) + 6);
+        $data['document']['preference'] = str_repeat(
+            'hello ',
+            intval($preferencesMaxSize / 6) + 6
+        );
 
         // Remove the payment. This prevents the LPA from being treated as complete,
         // which in turn means that generate() will create a stamped draft,
@@ -334,7 +337,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
         // we do the double json_encode/json_decode to get the JSON into a
         // stripped down associative array format we can more easily work with
         $actualContinuationSheets = $this->getReflectionPropertyValue('constituentPdfs', $pdf);
-        $actualSheets = json_decode(json_encode($actualContinuationSheets), TRUE);
+        $actualSheets = json_decode(json_encode($actualContinuationSheets), true);
 
         // Assert that the "has more preferences" checkbox is ticked
         $expectedData = ['has-more-preferences' => 'On'];

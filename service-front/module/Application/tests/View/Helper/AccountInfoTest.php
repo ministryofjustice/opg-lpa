@@ -10,8 +10,8 @@
 namespace ApplicationTest\View\Helper;
 
 use Application\Model\Service\Authentication\AuthenticationService;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\User\User;
 use Application\View\Helper\AccountInfo;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

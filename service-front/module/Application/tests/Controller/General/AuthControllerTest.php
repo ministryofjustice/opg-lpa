@@ -8,7 +8,7 @@ use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Authentication\Result;
 use Laminas\Http\Response;
 use Laminas\Session\Container;

@@ -2,7 +2,7 @@
 
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
 class TrustCorporationForm extends AbstractActorForm
 {

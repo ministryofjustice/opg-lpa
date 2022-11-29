@@ -11,7 +11,7 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\PasswordValidatorTrait;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\User\User;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Laminas\Math\BigInteger\BigInteger;
 
