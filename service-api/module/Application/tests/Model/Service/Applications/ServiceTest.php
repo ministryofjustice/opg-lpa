@@ -11,11 +11,11 @@ use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use EmptyIterator;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Formatter;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\User\User;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Formatter;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\User\User;
+use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
 
 class ServiceTest extends AbstractServiceTest

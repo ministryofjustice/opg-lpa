@@ -2,8 +2,8 @@
 
 namespace OpgTest\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\Pdf\Lpa120;
 use Exception;
 

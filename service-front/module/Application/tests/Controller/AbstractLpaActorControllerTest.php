@@ -4,8 +4,8 @@ namespace ApplicationTest\Controller;
 
 use Application\Form\Lpa\AbstractActorForm;
 use Mockery;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 
 class AbstractLpaActorControllerTest extends AbstractControllerTest

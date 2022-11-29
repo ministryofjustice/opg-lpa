@@ -10,8 +10,8 @@ use Exception;
 use Hamcrest\Matchers;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Lpa;
 
 class ReplacementAttorneyCleanupTest extends AbstractServiceTest
 {
@@ -25,7 +25,7 @@ class ReplacementAttorneyCleanupTest extends AbstractServiceTest
      */
     private $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -38,7 +38,7 @@ class ReplacementAttorneyCleanupTest extends AbstractServiceTest
     /**
      * @throws Exception
      */
-    public function testCleanUpWhenDecisionsInvalid() : void
+    public function testCleanUpWhenDecisionsInvalid(): void
     {
         $lpa = new Lpa(['document' => ['replacementAttorneyDecisions' => ['when' => new DateTime('2018-01-01')]]]);
 
@@ -52,7 +52,7 @@ class ReplacementAttorneyCleanupTest extends AbstractServiceTest
         $this->service->cleanUp($lpa);
     }
 
-    public function testCleanUpHowDecisionsInvalid() : void
+    public function testCleanUpHowDecisionsInvalid(): void
     {
         $lpa = new Lpa(['document' => ['replacementAttorneyDecisions' => ['how' => 'Test how']]]);
 

@@ -3,7 +3,7 @@
 namespace Opg\Lpa\Pdf\Aggregator;
 
 use Opg\Lpa\Pdf\Lp3 as Lp3Pdf;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 
 /**
  * Class Lp3

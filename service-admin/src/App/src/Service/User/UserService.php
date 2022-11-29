@@ -3,7 +3,7 @@
 namespace App\Service\User;
 
 use App\Service\ApiClient\Client as ApiClient;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\User\User;
 use DateTime;
 use DateTimeZone;
 use Exception;

@@ -18,7 +18,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 //
 // $ composer dump-autoload
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdfRenderer;
 

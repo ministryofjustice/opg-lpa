@@ -2,11 +2,11 @@
 
 namespace OpgTest\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Common\Address;
-use Opg\Lpa\DataModel\Common\LongName;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Common\Address;
+use MakeShared\DataModel\Common\LongName;
+use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Lp1f;
 use Exception;
 

@@ -1,14 +1,14 @@
 <?php
+
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
-use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
+use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
-
 
 class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
 {
@@ -20,7 +20,7 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
      * @param WhoAreYou $answer
      * @return bool
      */
-    public function insert(WhoAreYou $answer) : bool
+    public function insert(WhoAreYou $answer): bool
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::WHO_TABLE);
@@ -51,7 +51,7 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
      * @param $options
      * @return array
      */
-    public function getStatsForTimeRange(DateTime $start, DateTime $end, array $options) : array
+    public function getStatsForTimeRange(DateTime $start, DateTime $end, array $options): array
     {
         $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::WHO_TABLE);
@@ -75,12 +75,12 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
          */
 
         // Gives us an array with the 'who' options as keys, and the count value all set to 0.
-        foreach($options as $key => &$value) {
+        foreach ($options as $key => &$value) {
             $value = [ 'count' => 0 ];
         }
 
         // Map each DB result to the category.
-        foreach($results as $result) {
+        foreach ($results as $result) {
             $who = $result['who'];
             if (isset($options[$who])) {
                 $options[$who]['count'] = $result['count'];

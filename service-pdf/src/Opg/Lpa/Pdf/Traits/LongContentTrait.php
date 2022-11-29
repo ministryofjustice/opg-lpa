@@ -2,10 +2,10 @@
 
 namespace Opg\Lpa\Pdf\Traits;
 
-use Opg\Lpa\DataModel\Lpa\Formatter As LpaFormatter;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Formatter as LpaFormatter;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Document;
 
 /**
  * Trait LongContentTrait
@@ -121,11 +121,12 @@ trait LongContentTrait
     {
         $content = '';
 
-        if ((count($lpaDocument->primaryAttorneys) == 1
+        if (
+            (count($lpaDocument->primaryAttorneys) == 1
                 || (count($lpaDocument->primaryAttorneys) > 1
                     && $lpaDocument->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
-            && count($lpaDocument->replacementAttorneys) > 1) {
-
+            && count($lpaDocument->replacementAttorneys) > 1
+        ) {
             switch ($lpaDocument->replacementAttorneyDecisions->how) {
                 case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
                     $content = "Replacement attorneys are to act jointly and severally\r\n";

@@ -2,7 +2,7 @@
 
 namespace Opg\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
 /**
  * Class Lp1f

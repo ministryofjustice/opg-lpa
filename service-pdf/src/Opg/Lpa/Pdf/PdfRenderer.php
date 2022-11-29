@@ -3,8 +3,8 @@
 namespace Opg\Lpa\Pdf;
 
 use MakeShared\Logging\SimpleLoggerTrait;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Lp1f;
 use Opg\Lpa\Pdf\Lp1h;

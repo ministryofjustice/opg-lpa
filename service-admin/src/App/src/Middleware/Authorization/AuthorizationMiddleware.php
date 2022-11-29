@@ -7,7 +7,7 @@ use App\Service\ApiClient\ApiException;
 use App\Service\Authentication\AuthenticationService;
 use App\Service\Authentication\Identity;
 use App\Service\User\UserService;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\User\User;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

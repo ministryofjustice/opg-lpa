@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Authenticated;
 use Application\Controller\Authenticated\DashboardController;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
-use OpgTest\Lpa\DataModel\FixturesData;
+use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;

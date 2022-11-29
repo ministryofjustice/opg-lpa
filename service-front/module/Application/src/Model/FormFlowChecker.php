@@ -2,10 +2,10 @@
 
 namespace Application\Model;
 
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Payment\Payment;
 use RuntimeException;
 
 class FormFlowChecker
@@ -195,18 +195,20 @@ class FormFlowChecker
 
         // check if route exists in the mapping table.
         if (!array_key_exists($currentRouteName, $this->accessibleFunctionMap)) {
-            throw new RuntimeException('Check() received an undefined route: '. $currentRouteName);
+            throw new RuntimeException('Check() received an undefined route: ' . $currentRouteName);
         }
 
         // Once an LPA has been locked, only allow the following pages.
-        if (!empty($this->lpa)
+        if (
+            !empty($this->lpa)
             && $this->lpa->isLocked() === true
             && $currentRouteName != 'lpa/complete'
             && strpos($currentRouteName, 'lpa/date-check') === false
             && $currentRouteName != 'lpa/download'
             && $currentRouteName != 'lpa/download/check'
             && $currentRouteName != 'lpa/download/file'
-            && $currentRouteName != 'lpa/status'){
+            && $currentRouteName != 'lpa/status'
+        ) {
             return 'lpa/view-docs';
         }
 
@@ -350,8 +352,10 @@ class FormFlowChecker
     /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isLifeSustainingAccessible()
     {
-        if ($this->lpa->hasType() && $this->lpa->hasDonor()
-            && $this->lpa->getDocument()->getType() == Document::LPA_TYPE_HW) {
+        if (
+            $this->lpa->hasType() && $this->lpa->hasDonor()
+            && $this->lpa->getDocument()->getType() == Document::LPA_TYPE_HW
+        ) {
             return true;
         }
 
@@ -361,8 +365,10 @@ class FormFlowChecker
     /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isWhenLpaStartsAccessible()
     {
-        if ($this->lpa->hasType() && $this->lpa->hasDonor()
-            && $this->lpa->getDocument()->getType() == Document::LPA_TYPE_PF) {
+        if (
+            $this->lpa->hasType() && $this->lpa->hasDonor()
+            && $this->lpa->getDocument()->getType() == Document::LPA_TYPE_PF
+        ) {
             return true;
         }
 
@@ -498,8 +504,10 @@ class FormFlowChecker
     /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isWhenReplacementAttorneyStepInAccessible()
     {
-        if ($this->lpaHasReplacementAttorney() && $this->lpa->hasMultiplePrimaryAttorneys()
-            && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
+        if (
+            $this->lpaHasReplacementAttorney() && $this->lpa->hasMultiplePrimaryAttorneys()
+            && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+        ) {
             return true;
         }
 
@@ -510,14 +518,18 @@ class FormFlowChecker
     private function isHowReplacementAttorneysMakeDecisionAccessible()
     {
         if ($this->lpa->hasMultipleReplacementAttorneys()) {
-            if (count($this->lpa->getDocument()->getPrimaryAttorneys()) == 1
+            if (
+                count($this->lpa->getDocument()->getPrimaryAttorneys()) == 1
                 || $this->isLpaWhenReplacementAttorneyStepInWhenLastPrimaryUnableAct()
                 || ($this->lpa->hasMultiplePrimaryAttorneys()
-                    && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointly())) {
+                    && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointly())
+            ) {
                 return true;
             } else {
-                if ($this->lpa->hasMultiplePrimaryAttorneys()
-                    && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
+                if (
+                    $this->lpa->hasMultiplePrimaryAttorneys()
+                    && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+                ) {
                     return 'lpa/when-replacement-attorney-step-in';
                 }
             }
@@ -528,52 +540,57 @@ class FormFlowChecker
 
     private function isCertificateProviderAccessible()
     {
-        if ($this->lpaHasPrimaryAttorney() && (
-           ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasNoReplacementAttorney()
+        if (
+            $this->lpaHasPrimaryAttorney() && (
+            ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasNoReplacementAttorney()
                && $this->metadataIsPresent(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED))
-           || ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasSingleReplacementAttorney())
-           || ($this->lpaHasSinglePrimaryAttorney() && $this->lpa->hasMultipleReplacementAttorneys()
+            || ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasSingleReplacementAttorney())
+            || ($this->lpaHasSinglePrimaryAttorney() && $this->lpa->hasMultipleReplacementAttorneys()
                && $this->lpa->isHowReplacementAttorneysMakeDecisionHasValue())
-           || ($this->lpa->hasMultiplePrimaryAttorneys() && $this->lpa->isHowPrimaryAttorneysMakeDecisionHasValue()
+            || ($this->lpa->hasMultiplePrimaryAttorneys() && $this->lpa->isHowPrimaryAttorneysMakeDecisionHasValue()
                && $this->lpaHasNoReplacementAttorney()
                && $this->metadataIsPresent(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED))
-           || ($this->lpa->hasMultiplePrimaryAttorneys() && $this->lpa->isHowPrimaryAttorneysMakeDecisionDepends()
+            || ($this->lpa->hasMultiplePrimaryAttorneys() && $this->lpa->isHowPrimaryAttorneysMakeDecisionDepends()
                && $this->lpa->hasMultipleReplacementAttorneys())
-           || ($this->lpa->hasMultiplePrimaryAttorneys() && ($this->lpa->isHowPrimaryAttorneysMakeDecisionJointly()
+            || ($this->lpa->hasMultiplePrimaryAttorneys() && ($this->lpa->isHowPrimaryAttorneysMakeDecisionJointly()
                    || $this->lpa->isHowPrimaryAttorneysMakeDecisionDepends())
                && $this->lpaHasSingleReplacementAttorney())
-           || ($this->lpa->hasMultiplePrimaryAttorneys() && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointly()
+            || ($this->lpa->hasMultiplePrimaryAttorneys() && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointly()
                && $this->lpa->hasMultipleReplacementAttorneys()
                && $this->lpa->isHowReplacementAttorneysMakeDecisionHasValue())
-           || ($this->lpa->hasMultiplePrimaryAttorneys()
+            || ($this->lpa->hasMultiplePrimaryAttorneys()
                && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()
                && $this->lpaHasSingleReplacementAttorney() && $this->isLpaWhenReplacementAttorneyStepInHasValue())
-           || ($this->lpa->hasMultiplePrimaryAttorneys()
+            || ($this->lpa->hasMultiplePrimaryAttorneys()
                && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()
                && $this->lpa->hasMultipleReplacementAttorneys() && $this->isLpaWhenReplacementAttorneyStepInHasValue()
                && ($this->lpa->getDocument()->getReplacementAttorneyDecisions()->getWhen()
                    != ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST))
-           || ($this->lpa->hasMultiplePrimaryAttorneys()
+            || ($this->lpa->hasMultiplePrimaryAttorneys()
                && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()
                && $this->lpa->hasMultipleReplacementAttorneys()
                && $this->isLpaWhenReplacementAttorneyStepInWhenLastPrimaryUnableAct()
                && $this->lpa->isHowReplacementAttorneysMakeDecisionHasValue())
-        )) {
+            )
+        ) {
             return true;
         } else {
-            if ($this->lpa->hasMultipleReplacementAttorneys() && (
+            if (
+                $this->lpa->hasMultipleReplacementAttorneys() && (
                 count($this->lpa->getDocument()->getPrimaryAttorneys()) == 1
                 || ($this->lpa->hasMultiplePrimaryAttorneys() && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointly())
                 || ($this->lpa->hasMultiplePrimaryAttorneys()
                     && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()
                     && $this->isLpaWhenReplacementAttorneyStepInWhenLastPrimaryUnableAct())
-            ) && (
+                ) && (
                 !$this->lpa->isHowReplacementAttorneysMakeDecisionHasValue()
                 || $this->lpa->getDocument()->getReplacementAttorneyDecisions()->getHow() == null)
             ) {
                 return 'lpa/how-replacement-attorneys-make-decision';
-            } elseif ($this->lpaHasReplacementAttorney() && $this->lpa->hasMultiplePrimaryAttorneys()
-                && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
+            } elseif (
+                $this->lpaHasReplacementAttorney() && $this->lpa->hasMultiplePrimaryAttorneys()
+                && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+            ) {
                 return 'lpa/when-replacement-attorney-step-in';
             }
 
@@ -613,8 +630,10 @@ class FormFlowChecker
 
     private function isPeopleToNotifyAccessible()
     {
-        if ($this->isCertificateProviderAccessible() === true && ($this->lpaHasCertificateProviderSkipped()
-                || $this->lpaHasCertificateProvider())) {
+        if (
+            $this->isCertificateProviderAccessible() === true && ($this->lpaHasCertificateProviderSkipped()
+                || $this->lpaHasCertificateProvider())
+        ) {
             return true;
         }
 
@@ -719,8 +738,10 @@ class FormFlowChecker
     /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isFeeReductionAccessible()
     {
-        if ($this->isRepeatApplicationAccessible() === true
-            && $this->metadataIsPresent(Lpa::REPEAT_APPLICATION_CONFIRMED)) {
+        if (
+            $this->isRepeatApplicationAccessible() === true
+            && $this->metadataIsPresent(Lpa::REPEAT_APPLICATION_CONFIRMED)
+        ) {
             return true;
         }
 
@@ -890,8 +911,10 @@ class FormFlowChecker
     /** @noinspection PhpUnusedPrivateMethodInspection */
     private function returnToWhenReplacementAttorneyStepIn()
     {
-        if (!$this->lpaHasReplacementAttorney() || !$this->lpa->hasMultiplePrimaryAttorneys()
-            || !$this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
+        if (
+            !$this->lpaHasReplacementAttorney() || !$this->lpa->hasMultiplePrimaryAttorneys()
+            || !$this->lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+        ) {
             return "NA";
         }
 
@@ -905,9 +928,11 @@ class FormFlowChecker
             return "NA";
         }
 
-        if (count($this->lpa->getDocument()->getPrimaryAttorneys()) != 1
+        if (
+            count($this->lpa->getDocument()->getPrimaryAttorneys()) != 1
             && !$this->isLpaWhenReplacementAttorneyStepInWhenLastPrimaryUnableAct()
-            && !($this->lpa->hasMultiplePrimaryAttorneys() && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointly())) {
+            && !($this->lpa->hasMultiplePrimaryAttorneys() && $this->lpa->isHowPrimaryAttorneysMakeDecisionJointly())
+        ) {
             return "NA";
         }
 
@@ -1075,14 +1100,18 @@ class FormFlowChecker
     private function isLpaReplacementAttorneysAndDecisionsSatisfied(): bool
     {
         if ($this->lpaHasReplacementAttorney()) {
-            if ($this->isLpaWhenReplacementAttorneyStepInRequired()
-                && !$this->isLpaWhenReplacementAttorneyStepInHasValue()) {
+            if (
+                $this->isLpaWhenReplacementAttorneyStepInRequired()
+                && !$this->isLpaWhenReplacementAttorneyStepInHasValue()
+            ) {
                 return false;
             }
 
-            if ($this->lpa->hasMultipleReplacementAttorneys()
+            if (
+                $this->lpa->hasMultipleReplacementAttorneys()
                 && $this->isLpaHowReplacementAttorneyMakeDecisionRequired()
-                && !$this->lpa->isHowReplacementAttorneysMakeDecisionHasValue()) {
+                && !$this->lpa->isHowReplacementAttorneysMakeDecisionHasValue()
+            ) {
                 return false;
             }
         }

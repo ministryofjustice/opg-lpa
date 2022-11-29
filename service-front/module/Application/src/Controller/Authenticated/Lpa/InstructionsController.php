@@ -3,7 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Document\Document;
 use Laminas\View\Model\ViewModel;
 
 class InstructionsController extends AbstractLpaController

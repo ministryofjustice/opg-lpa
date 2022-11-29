@@ -5,7 +5,7 @@ namespace Application\View\Helper;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Interop\Container\ContainerInterface;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\User\User;
 use Laminas\Mvc\Application;
 use Laminas\Mvc\View\Http\ViewManager;
 use Laminas\Router\RouteMatch;

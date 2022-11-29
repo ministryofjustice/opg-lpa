@@ -6,7 +6,7 @@ use Application\Controller\AbstractBaseController;
 use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;

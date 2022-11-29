@@ -11,9 +11,9 @@ use DOMXpath;
 use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Common\LongName;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Common\LongName;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Document\Document;
 
 /**
  * The intention of this test is to check which status will be shown on the page, and

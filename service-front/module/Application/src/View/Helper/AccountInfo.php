@@ -4,8 +4,8 @@ namespace Application\View\Helper;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\User\User;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\User\User;
 use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Helper\AbstractHelper;

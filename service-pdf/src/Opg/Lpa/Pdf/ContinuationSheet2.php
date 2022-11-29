@@ -2,7 +2,7 @@
 
 namespace Opg\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
 

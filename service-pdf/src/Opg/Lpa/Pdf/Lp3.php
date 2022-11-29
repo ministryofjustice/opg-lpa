@@ -2,12 +2,12 @@
 
 namespace Opg\Lpa\Pdf;
 
-use Opg\Lpa\DataModel\Common\LongName;
-use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Opg\Lpa\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\Common\LongName;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
+use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\PdftkFactory;
 
 /**

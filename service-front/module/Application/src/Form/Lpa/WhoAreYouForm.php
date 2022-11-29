@@ -2,8 +2,8 @@
 
 namespace Application\Form\Lpa;
 
-use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
-use Opg\Lpa\DataModel\Validator\ValidatorResponse;
+use MakeShared\DataModel\WhoAreYou\WhoAreYou;
+use MakeShared\DataModel\Validator\ValidatorResponse;
 
 class WhoAreYouForm extends AbstractMainFlowForm
 {
