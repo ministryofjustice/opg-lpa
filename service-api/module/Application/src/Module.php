@@ -4,6 +4,7 @@ namespace Application;
 
 use GuzzleHttp\Client;
 use PDO;
+use Exception;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Model\DataAccess\Repository;
 use Application\Model\DataAccess\Postgres;
@@ -96,11 +97,16 @@ class Module
                         "port={$dbconf['port']};dbname={$dbconf['dbname']};sslmode=verify-full;sslrootcert=/etc/ssl/certs/rds-ca-2019-root.pem";
 
                     // TODO: Completely rework this so that it's not so messy
-                    $provider = CredentialProvider::ecsCredentials();
-                    $provider()->wait();
-                    $RdsAuthGenerator = new AuthTokenGenerator($provider);
+                    try {
+                        $provider = CredentialProvider::defaultProvider();
+                        $provider()->wait();
+                        $RdsAuthGenerator = new AuthTokenGenerator($provider);
+                        $token = $RdsAuthGenerator->createToken("api2-1220lpal517.cluster-cycofak3lgax.eu-west-1.rds.amazonaws.com:5432", 'eu-west-1', 'db_userx');
+                    } catch (Exception $e) {
+                        $this->getLogger()->info($e->getMessage());
+                    }
+                    
                     // Hardcoded to use test-specific RDS instance
-                    $token = $RdsAuthGenerator->createToken("api2-1220lpal517.cluster-cycofak3lgax.eu-west-1.rds.amazonaws.com:5432", 'eu-west-1', 'db_userx');
                     // $token = $RdsAuthGenerator->createToken($dbconf['host'] . ":" . $dbconf['port'], 'eu-west-1', 'db_userx');
                     
                     $this->getLogger()->info("Provider: " . var_dump($provider));
