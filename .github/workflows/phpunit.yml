@@ -33,13 +33,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Setup PHP
-        if: steps.filter.outputs.check == 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.1"
       - name: Composer install
-        if: steps.filter.outputs.check == 'true'
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
-        if: steps.filter.outputs.check == 'true'
         run: ./vendor/bin/phpunit
