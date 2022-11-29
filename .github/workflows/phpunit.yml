@@ -35,9 +35,6 @@ jobs:
       - name: path filters
         uses: dorny/paths-filter@v2
         id: filter
-        with:
-          filters: |
-            check: '${{ matrix.scan.path }}/**'
       - name: Setup PHP
         if: steps.filter.outputs.check == 'true'
         uses: shivammathur/setup-php@v2
