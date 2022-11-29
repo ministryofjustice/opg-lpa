@@ -142,6 +142,7 @@ jobs:
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
     needs:
       - docker_build_scan_push
+      - phpunit_tests
       - workspace_name
       - image_tag
       - terraform_email_development
