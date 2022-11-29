@@ -36,6 +36,10 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.1"
+      - name: pdftk install
+        run: |
+          apt-get update
+          apt-get install pdftk-java
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
