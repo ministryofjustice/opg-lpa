@@ -32,9 +32,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: path filters
-        uses: dorny/paths-filter@v2
-        id: filter
       - name: Setup PHP
         if: steps.filter.outputs.check == 'true'
         uses: shivammathur/setup-php@v2
