@@ -46,6 +46,7 @@ jobs:
         with:
           php-version: "8.1"
       - name: pdftk install
+        if: ${{ matrix.scan.path } == "./service-pdf"
         run: |
           sudo apt-get update
           sudo apt-get install pdftk-java
