@@ -11,6 +11,7 @@ class PdftkFactoryTest extends TestCase
     public function testPdftkNotAvailable(): void
     {
         $this->expectException(RuntimeException::class);
-        new PdftkFactory('margleFooBandersnatchLoopSnaggler');
+        $factory = new PdftkFactory('margleFooBandersnatchLoopSnaggler');
+        $factory->getPdftkCommand();
     }
 }
