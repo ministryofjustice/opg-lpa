@@ -95,3 +95,19 @@ Then(
     cy.get('div.notice > i.icon.icon-important').should('not.exist');
   },
 );
+
+Then(
+  'long, long feedback details from user {string} displays correctly in the page',
+  (user) => {
+    cy.window().then((window) => {
+      cy.get('[data-role=from]:contains(' + user + ')').then((elt) => {
+        // check left-hand edge of details cell is within the viewport
+        const details = elt.siblings('[data-role=details]');
+        const rect = details[0].getBoundingClientRect();
+        expect(rect.left).to.be.within(0, window.innerWidth);
+
+        return elt;
+      });
+    });
+  },
+);
