@@ -8,8 +8,46 @@ resource "aws_wafv2_web_acl" "main" {
   }
 
   rule {
+    name     = "Allow-ON-Keyword"
+    priority = 5
+
+    override_action {
+      count {}
+    }
+
+    statement {
+      regex_pattern_set_reference_statement {
+        arn = aws_wafv2_regex_pattern_set.allow_on_keyword.arn
+
+        field_to_match {
+          json_body {
+            match_pattern {
+              all {}
+            }
+            match_scope       = "ALL"
+            oversize_handling = "CONTINUE"
+          }
+        }
+
+        text_transformation {
+          priority = 0
+          type     = "NONE"
+        }
+
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "allow-on-keyword"
+      sampled_requests_enabled   = true
+    }
+
+  }
+
+  rule {
     name     = "AWS-AWSManagedRulesPHPRuleSet"
-    priority = 0
+    priority = 10
 
     override_action {
       none {}
@@ -31,7 +69,7 @@ resource "aws_wafv2_web_acl" "main" {
 
   rule {
     name     = "AWS-AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 1
+    priority = 20
 
     override_action {
       none {}
@@ -53,7 +91,7 @@ resource "aws_wafv2_web_acl" "main" {
 
   rule {
     name     = "AWS-AWSManagedRulesCommonRuleSet"
-    priority = 2
+    priority = 30
 
     override_action {
       none {}
@@ -67,6 +105,7 @@ resource "aws_wafv2_web_acl" "main" {
         excluded_rule {
           name = "NoUserAgent_HEADER"
         }
+
       }
     }
 
@@ -82,6 +121,18 @@ resource "aws_wafv2_web_acl" "main" {
     metric_name                = "${local.account_name}-${local.region_name}-web-acl"
     sampled_requests_enabled   = true
   }
+}
+
+// Avoid false-positives for the AWSManagedRulesCommonRuleSet rule - see AWS support ticket 11374935181
+resource "aws_wafv2_regex_pattern_set" "allow_on_keyword" {
+  name        = "on-keyword"
+  description = "On keyword regex pattern set"
+  scope       = "REGIONAL"
+
+  regular_expression {
+    regex_string = ".*[oO][nN].*=.*$"
+  }
+
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
