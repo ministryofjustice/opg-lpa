@@ -12,6 +12,6 @@ class PdftkFactoryTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $factory = new PdftkFactory('margleFooBandersnatchLoopSnaggler');
-        $factory->getPdftkCommand();
+        $factory->create('foo.pdf');
     }
 }
