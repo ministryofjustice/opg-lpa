@@ -53,6 +53,17 @@ jobs:
     with:
       terraform_version: 1.1.2
 
+  phpunit_tests:
+    name: Run PHPUnit tests
+    uses: ./.github/workflows/phpunit.yml
+    needs:
+      - image_tag
+      - branch_name
+    with:
+      tag: ${{ needs.image_tag.outputs.short_sha }}
+      branch_name: ${{ needs.branch_name.outputs.parsed }}
+    secrets: inherit
+
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
