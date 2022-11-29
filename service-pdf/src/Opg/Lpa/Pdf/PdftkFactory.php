@@ -31,13 +31,10 @@ class PdftkFactory
 
             // "command" is POSIX-compatible and available on Mac and Linux systems,
             // but may not work if you decide to run this on Windows
-            $process = popen(sprintf('command -v %s', escapeshellarg($this->command)), 'r');
+            $result = exec(sprintf('command -v %s', escapeshellarg($this->command)));
 
-            // pclose() returns the exit code from the opened process or -1 on error
-            $checkCommand = pclose($process);
-
-            if ($checkCommand !== 0) {
-                $this->$commandAvailable = false;
+            if ($result === '') {
+                $this->commandAvailable = false;
             }
         }
 
@@ -46,9 +43,17 @@ class PdftkFactory
 
     /**
      * @returns string pdftk command
-     * @throws RuntimeException if the pdftk command is not accessible
      */
     public function getPdftkCommand(): string
+    {
+        return $this->command;
+    }
+
+    /**
+     * @param array|string $pdf Name(s) of PDF(s) to create
+     * @throws RuntimeException if the pdftk command is not accessible
+     */
+    public function create(string|array $pdf): PdftkPdf
     {
         if (!$this->checkPdftkAvailable()) {
             throw new RuntimeException(
@@ -56,14 +61,6 @@ class PdftkFactory
             );
         }
 
-        return $this->command;
-    }
-
-    /**
-     * @param array|string $pdf Name(s) of PDF(s) to create
-     */
-    public function create(string|array $pdf): PdftkPdf
-    {
         return new PdftkPdf($pdf, ['command' => $this->command]);
     }
 }
