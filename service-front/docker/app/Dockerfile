@@ -34,7 +34,7 @@ fi
 COPY --chown=root:root service-front/composer.json /app/composer.json
 COPY --chown=root:root service-front/composer.lock /app/composer.lock
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.4.1 \
-    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer
@@ -49,9 +49,6 @@ COPY --chown=root:root service-front/content /app/content
 COPY --chown=root:root service-front/data /app/data
 COPY --chown=root:root service-front/module /app/module
 COPY --chown=root:root service-front/public /app/public
-
-# For tests in CI
-COPY --chown=root:root service-front/phpunit.xml /app/phpunit.xml
 
 # Shared code
 COPY --chown=root:root shared /shared
