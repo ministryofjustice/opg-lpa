@@ -11,7 +11,7 @@ resource "aws_wafv2_web_acl" "main" {
     name     = "Allow-ON-Keyword"
     priority = 5
 
-    override_action {
+    action {
       count {}
     }
 
