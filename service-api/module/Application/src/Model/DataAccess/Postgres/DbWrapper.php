@@ -4,6 +4,7 @@ namespace Application\Model\DataAccess\Postgres;
 
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
 use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
 use Laminas\Db\ResultSet\ResultSet;
@@ -104,6 +105,7 @@ class DbWrapper
      * ]
      *
      * @return ResultInterface
+     * @throws LaminasDbAdapterRuntimeException
      */
     public function select(string $tableName, array $criteria = [], array $options = []): ResultInterface
     {
@@ -140,6 +142,7 @@ class DbWrapper
             $select->columns($options['columns']);
         }
 
+        /** @throws LaminasDbAdapterRuntimeException */
         return $sql->prepareStatementForSqlObject($select)->execute();
     }
 }
