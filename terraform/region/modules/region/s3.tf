@@ -176,7 +176,7 @@ resource "aws_s3_bucket_acl" "redacted_logs" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "redacted_logs" {
-  bucket = aws_s3_bucket.access_log.id
+  bucket = aws_s3_bucket.redacted_logs.id
 
   rule {
     apply_server_side_encryption_by_default {
