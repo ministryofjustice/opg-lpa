@@ -13,6 +13,7 @@ use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\PredicateSet;
+use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Postgres\ApplicationData;
@@ -33,7 +34,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     private function getByField(array $where): ?array
     {
-        $result = $this->dbWrapper->select(self::USERS_TABLE, $where, ['limit' => 1]);
+        try {
+            $result = $this->dbWrapper->select(self::USERS_TABLE, $where, ['limit' => 1]);
+        } catch (LaminasDbAdapterRuntimeException $e) {
+            // this occurs where the select against the db fails
+            return null;
+        }
 
         if (!$result->isQueryResult() || $result->count() != 1) {
             return null;
