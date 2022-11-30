@@ -20,6 +20,17 @@ resource "aws_kms_alias" "lpa_pdf_cache" {
   target_key_id = aws_kms_key.lpa_pdf_cache.key_id
 }
 
+resource "aws_kms_key" "redacted_logs" {
+  description             = "S3 bucket encryption key for redacted_logs"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+}
+
+resource "aws_kms_alias" "redacted_logs" {
+  name          = "alias/redacted_logs-${terraform.workspace}"
+  target_key_id = aws_kms_key.redacted_logs.key_id
+}
+
 # See the following link for further information
 # https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html
 resource "aws_kms_key" "cloudwatch_encryption" {
