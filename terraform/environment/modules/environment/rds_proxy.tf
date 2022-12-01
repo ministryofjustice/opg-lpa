@@ -76,11 +76,11 @@ resource "aws_iam_role_policy_attachment" "rds-api" {
 }
 
 resource "aws_secretsmanager_secret" "lambda_rds_test_proxy_creds" {
-  name          = lower("lambda-rds-test-proxy-creds-${var.environment_name}")
+  name = lower("lambda-rds-test-proxy-creds-${var.environment_name}")
 }
 
 resource "aws_secretsmanager_secret_version" "lambda_rds_test_proxy_creds" {
-  secret_id     = aws_secretsmanager_secret.lambda_rds_test_proxy_creds.id
+  secret_id = aws_secretsmanager_secret.lambda_rds_test_proxy_creds.id
   secret_string = jsonencode({
     "username"             = local.db.username
     "password"             = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
