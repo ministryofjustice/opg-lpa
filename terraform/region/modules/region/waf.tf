@@ -20,9 +20,7 @@ resource "aws_wafv2_web_acl" "main" {
         arn = aws_wafv2_regex_pattern_set.allow_on_keyword.arn
 
         field_to_match {
-          body {
-            oversize_handling = "CONTINUE"
-          }
+          body {}
         }
 
         text_transformation {
