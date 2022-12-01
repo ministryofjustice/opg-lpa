@@ -340,7 +340,7 @@ locals {
       ],
       "environment" : [
         { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
-        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : local.db.endpoint },
+        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : aws_db_proxy.rds-api.endpoint },
         { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(local.db.port) },
         { "name" : "OPG_LPA_POSTGRES_NAME", "value" : local.db.name },
         { "name" : "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value" : var.account.sirius_api_gateway_endpoint },

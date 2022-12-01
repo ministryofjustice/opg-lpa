@@ -22,7 +22,6 @@ data "aws_subnets" "public" {
   }
 }
 
-
 module "allowed_ip_list" {
   source = "github.com/ministryofjustice/terraform-aws-moj-ip-whitelist.git"
 }
