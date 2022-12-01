@@ -1,11 +1,11 @@
 locals {
 
   db = { #will be removed once we use aurora in pre and production.
-    endpoint   = var.account.aurora_enabled ? module.api_aurora[0].endpoint : aws_db_instance.api[0].address
-    port       = var.account.aurora_enabled ? module.api_aurora[0].port : aws_db_instance.api[0].port
-    name       = var.account.aurora_enabled ? module.api_aurora[0].name : aws_db_instance.api[0].name
-    username   = var.account.aurora_enabled ? module.api_aurora[0].master_username : aws_db_instance.api[0].username
-    id         = var.account.aurora_enabled ? module.api_aurora[0].cluster.id : aws_db_instance.api[0].id
+    endpoint = var.account.aurora_enabled ? module.api_aurora[0].endpoint : aws_db_instance.api[0].address
+    port     = var.account.aurora_enabled ? module.api_aurora[0].port : aws_db_instance.api[0].port
+    name     = var.account.aurora_enabled ? module.api_aurora[0].name : aws_db_instance.api[0].name
+    username = var.account.aurora_enabled ? module.api_aurora[0].master_username : aws_db_instance.api[0].username
+    id       = var.account.aurora_enabled ? module.api_aurora[0].cluster.id : aws_db_instance.api[0].id
   }
 
   account_name_short = var.account.account_name_short
