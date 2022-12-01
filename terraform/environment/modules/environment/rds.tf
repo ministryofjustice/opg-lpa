@@ -162,7 +162,7 @@ resource "aws_security_group_rule" "rds-api" {
   description              = "RDS client to RDS - Postgres"
 }
 
-resource "aws_security_group_rule" "rds-api" {
+resource "aws_security_group_rule" "proxy-rds" {
   type                     = "ingress"
   from_port                = 5432
   to_port                  = 5432
