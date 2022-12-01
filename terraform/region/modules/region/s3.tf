@@ -149,3 +149,47 @@ data "aws_iam_policy_document" "lpa_pdf_cache_policy" {
     }
   }
 }
+
+# A bucket to hold redacted logs until they expired
+
+resource "aws_s3_bucket" "redacted_logs" {
+  bucket = "redacted-logs.${local.account_name}.${local.region_name}.lpa.opg.justice.gov.uk"
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "redacted_logs" {
+  bucket = aws_s3_bucket.redacted_logs.bucket
+  rule {
+    id     = "expirelogs"
+    status = "Enabled"
+
+    expiration {
+      days = 120
+    }
+
+
+  }
+}
+
+resource "aws_s3_bucket_acl" "redacted_logs" {
+  bucket = aws_s3_bucket.redacted_logs.id
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "redacted_logs" {
+  bucket = aws_s3_bucket.redacted_logs.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.redacted_logs.arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "redacted_logs" {
+  bucket                  = aws_s3_bucket.redacted_logs.id
+  block_public_acls       = true
+  block_public_policy     = true
+  restrict_public_buckets = true
+  ignore_public_acls      = true
+}
