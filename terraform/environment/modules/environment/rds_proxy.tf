@@ -1,12 +1,15 @@
 resource "aws_db_proxy" "rds-api" {
   name          = lower("api-${var.environment_name}")
   engine_family = "POSTGRESQL"
+  // Temporary - this is automatically disabled by AWS after 24 hours
+  debug_logging = true
   require_tls   = true
   role_arn      = aws_iam_role.rds-api.arn
   auth {
+    auth_scheme = "SECRETS"
     description = "RDS Proxy Auth"
     iam_auth    = "DISABLED"
-    secret_arn  = data.aws_secretsmanager_secret_version.api_rds_password.arn
+    secret_arn  = data.aws_secretsmanager_secret.api_rds_password.arn
     username    = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   }
 
