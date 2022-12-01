@@ -9,8 +9,7 @@ resource "aws_db_proxy" "rds-api" {
     auth_scheme = "SECRETS"
     description = "RDS Proxy Auth"
     iam_auth    = "DISABLED"
-    secret_arn  = data.aws_secretsmanager_secret.api_rds_password.arn
-    username    = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
+    secret_arn  = aws_secretsmanager_secret.lambda_rds_test_proxy_creds.arn
   }
 
   vpc_security_group_ids = [aws_security_group.rds-api.id]
@@ -74,4 +73,20 @@ data "aws_iam_policy_document" "rds-api" {
 resource "aws_iam_role_policy_attachment" "rds-api" {
   role       = aws_iam_role.rds-api.name
   policy_arn = aws_iam_policy.rds-api.arn
+}
+
+resource "aws_secretsmanager_secret" "lambda_rds_test_proxy_creds" {
+  name          = lower("lambda-rds-test-proxy-creds-${var.environment_name}")
+}
+
+resource "aws_secretsmanager_secret_version" "lambda_rds_test_proxy_creds" {
+  secret_id     = aws_secretsmanager_secret.lambda_rds_test_proxy_creds.id
+  secret_string = jsonencode({
+    "username"             = local.db.username
+    "password"             = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
+    "engine"               = "postgres"
+    "host"                 = local.db.endpoint
+    "port"                 = local.db.port
+    "dbInstanceIdentifier" = local.db.id
+  })
 }
