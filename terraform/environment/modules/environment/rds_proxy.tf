@@ -32,7 +32,7 @@ resource "aws_db_proxy_target" "rds-api" {
 
 resource "aws_iam_role" "rds-api" {
   name               = lower("api-${var.environment_name}")
-  assume_role_policy = data.aws_iam_policy_document.rds-api.json
+  assume_role_policy = data.aws_iam_policy_document.assume-role-rds-api.json
 }
 
 resource "aws_iam_policy" "rds-api" {
