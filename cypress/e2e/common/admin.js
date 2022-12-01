@@ -97,7 +97,7 @@ Then(
 );
 
 Then(
-  'long, long feedback details from user {string} displays correctly in the page',
+  'very long feedback details from user {string} displays correctly in the page',
   (user) => {
     cy.window().then((window) => {
       cy.get('[data-role=from]:contains(' + user + ')').then((elt) => {

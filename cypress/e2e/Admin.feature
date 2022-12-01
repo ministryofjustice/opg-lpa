@@ -154,4 +154,4 @@ Feature: Admin
     And I force fill out "#id-year-end-date" element with "2022"
     And I click "submit-button"
 
-    Then long, long feedback details from user "longwindeduser@test.com" displays correctly in the page
+    Then very long feedback details from user "longwindeduser@test.com" displays correctly in the page
