@@ -140,7 +140,9 @@ $this->addErrorMap([
                                             <?php for ($i = 0; $i < count($feedback[$feedbackFields[0]]); $i++) { ?>
                                                 <tr>
                                                     <?php foreach ($feedbackFields as $feedbackField) { ?>
-                                                        <td><?= $feedback[$feedbackField][$i]; ?></td>
+                                                        <td data-role="<?= strtolower(str_replace(' ', '-', $feedbackField)); ?>">
+                                                            <?= $feedback[$feedbackField][$i]; ?>
+                                                        </td>
                                                     <?php } ?>
                                                 </tr>
                                             <?php } ?>

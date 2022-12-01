@@ -14,6 +14,12 @@
     width: 25%;
 }
 
+#feedback-table td[data-role=details] {
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .user-find-result {
     padding-top: 10px;
     padding-bottom: 10px;
