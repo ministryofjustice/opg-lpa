@@ -57,14 +57,7 @@ data "aws_iam_policy_document" "rds-api" {
   statement {
     actions = ["secretsmanager:GetSecretValue"]
     resources = [
-      data.aws_secretsmanager_secret_version.api_rds_password.arn
-    ]
-  }
-
-  statement {
-    actions = ["kms:Decrypt"]
-    resources = [
-      data.aws_kms_alias.multi_region_secrets_encryption_alias.arn
+      aws_secretsmanager_secret.lambda_rds_test_proxy_creds.arn
     ]
   }
 
