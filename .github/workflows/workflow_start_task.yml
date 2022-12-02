@@ -11,6 +11,10 @@ on:
         description: "AWS account of the role to assume"
         required: true
         type: string
+      task_name:
+        description: "Name of the task to run"
+        required: true
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS:
         required: true
@@ -51,8 +55,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r scripts/pipeline/requirements.txt
 
-      - name: Start feedbackdb ECS task
+      - name: Start ECS task
         run: |
           pip install -e scripts/pipeline/lib
-          python scripts/pipeline/start_task/ecs_start_task.py --task_name feedbackdb
+          python scripts/pipeline/start_task/ecs_start_task.py --task_name ${{ inputs.task_name }}
 
