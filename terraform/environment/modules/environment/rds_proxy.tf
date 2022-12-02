@@ -12,7 +12,7 @@ resource "aws_db_proxy" "rds-api" {
     secret_arn  = aws_secretsmanager_secret.lambda_rds_test_proxy_creds.arn
   }
 
-  vpc_security_group_ids = [aws_security_group.rds-api.id]
+  vpc_security_group_ids = [aws_security_group.rds-proxy.id]
   vpc_subnet_ids         = data.aws_subnets.private.ids
 }
 
