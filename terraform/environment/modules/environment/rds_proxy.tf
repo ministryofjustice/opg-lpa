@@ -1,15 +1,13 @@
 resource "aws_db_proxy" "rds-api" {
   name          = lower("api-${var.environment_name}")
   engine_family = "POSTGRESQL"
-  // Temporary - this is automatically disabled by AWS after 24 hours
-  debug_logging = true
   require_tls   = true
   role_arn      = aws_iam_role.rds-api.arn
   auth {
     auth_scheme = "SECRETS"
     description = "RDS Proxy Auth"
     iam_auth    = "DISABLED"
-    secret_arn  = aws_secretsmanager_secret.lambda_rds_test_proxy_creds.arn
+    secret_arn  = aws_secretsmanager_secret.rds-api-proxy-creds.arn
   }
 
   vpc_security_group_ids = [aws_security_group.rds-proxy.id]
@@ -57,7 +55,7 @@ data "aws_iam_policy_document" "rds-api" {
   statement {
     actions = ["secretsmanager:GetSecretValue"]
     resources = [
-      aws_secretsmanager_secret.lambda_rds_test_proxy_creds.arn
+      aws_secretsmanager_secret.rds-api-proxy-creds.arn
     ]
   }
 
@@ -83,13 +81,13 @@ resource "aws_iam_role_policy_attachment" "rds-api" {
   policy_arn = aws_iam_policy.rds-api.arn
 }
 
-resource "aws_secretsmanager_secret" "lambda_rds_test_proxy_creds" {
-  name       = lower("lambda-rds-test-proxy-creds-${var.environment_name}")
+resource "aws_secretsmanager_secret" "rds-api-proxy-creds" {
+  name       = lower("${var.environment_name}/rds-proxy-creds")
   kms_key_id = data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_id
 }
 
-resource "aws_secretsmanager_secret_version" "lambda_rds_test_proxy_creds" {
-  secret_id = aws_secretsmanager_secret.lambda_rds_test_proxy_creds.id
+resource "aws_secretsmanager_secret_version" "rds-api-proxy-creds" {
+  secret_id = aws_secretsmanager_secret.rds-api-proxy-creds.id
   secret_string = jsonencode({
     "username"             = local.db.username
     "password"             = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
@@ -123,11 +121,11 @@ resource "aws_security_group_rule" "proxy-rds-api" {
 }
 
 resource "aws_security_group_rule" "proxy-rds-outbound" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.rds-proxy.id
-  description       = "RDS proxy outbound - All"
+  type                     = "egress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.rds-api.id
+  security_group_id        = aws_security_group.rds-proxy.id
+  description              = "RDS proxy outbound - All"
 }
