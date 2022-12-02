@@ -61,6 +61,13 @@ data "aws_iam_policy_document" "rds-api" {
     ]
   }
 
+  statement {
+    actions = ["kms:Decrypt"]
+    resources = [
+      data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn
+    ]
+  }
+
 }
 
 resource "aws_iam_role_policy_attachment" "rds-api" {
@@ -69,7 +76,8 @@ resource "aws_iam_role_policy_attachment" "rds-api" {
 }
 
 resource "aws_secretsmanager_secret" "lambda_rds_test_proxy_creds" {
-  name = lower("lambda-rds-test-proxy-creds-${var.environment_name}")
+  name       = lower("lambda-rds-test-proxy-creds-${var.environment_name}")
+  kms_key_id = data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_id
 }
 
 resource "aws_secretsmanager_secret_version" "lambda_rds_test_proxy_creds" {
