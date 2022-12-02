@@ -12,7 +12,7 @@ resource "aws_wafv2_web_acl" "main" {
     priority = 5
 
     action {
-      count {}
+      allow {}
     }
 
     statement {
@@ -20,13 +20,7 @@ resource "aws_wafv2_web_acl" "main" {
         arn = aws_wafv2_regex_pattern_set.allow_on_keyword.arn
 
         field_to_match {
-          json_body {
-            match_pattern {
-              all {}
-            }
-            match_scope       = "ALL"
-            oversize_handling = "CONTINUE"
-          }
+          body {}
         }
 
         text_transformation {
