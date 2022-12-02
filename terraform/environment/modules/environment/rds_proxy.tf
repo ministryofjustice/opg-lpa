@@ -66,6 +66,14 @@ data "aws_iam_policy_document" "rds-api" {
     resources = [
       data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn
     ]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+
+      values = [
+        "secretsmanager.${data.aws_region.current.name}.amazonaws.com"
+      ]
+    }
   }
 
 }
@@ -90,4 +98,36 @@ resource "aws_secretsmanager_secret_version" "lambda_rds_test_proxy_creds" {
     "port"                 = local.db.port
     "dbInstanceIdentifier" = local.db.id
   })
+}
+
+resource "aws_security_group" "rds-proxy" {
+  name                   = "rds-proxy-${var.environment_name}"
+  description            = "API RDS Proxy Access"
+  vpc_id                 = data.aws_vpc.default.id
+  revoke_rules_on_delete = true
+  tags                   = local.db_component_tag
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group_rule" "proxy-rds-api" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.rds-client.id
+  security_group_id        = aws_security_group.rds-proxy.id
+  description              = "RDS proxy to RDS - Postgres"
+}
+
+resource "aws_security_group_rule" "proxy-rds-outbound" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "aa-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.rds-proxy.id
+  description       = "RDS proxy outbound - All"
 }
