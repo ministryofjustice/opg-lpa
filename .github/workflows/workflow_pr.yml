@@ -157,52 +157,23 @@ jobs:
 
   run_dev_feedback_db_task:
     name: Run development feedbackdb
-    uses: ./.github/workflows/workflow_feedbackdb.yml
+    uses: ./.github/workflows/workflow_start_task.yml
     with:
       account_id: "050256574573"
+      task_name: "feedbackdb"
     needs:
       - terraform_environment_development
     secrets: inherit
 
-  seed_dev_environment:
-    name: Seed development environment
-    runs-on: ubuntu-latest
+  run_dev_seed_db_task:
+    name: Run development feedbackdb
+    uses: ./.github/workflows/workflow_start_task.yml
+    with:
+      account_id: "050256574573"
+      task_name: "seeding"
     needs:
       - terraform_environment_development
-    steps:
-      - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
-
-      - name: Download Terraform Task definition
-        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
-        with:
-          name: terraform-artifact
-          path: /tmp/
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
-          role-duration-seconds: 900
-          role-session-name: OPGLPABuildPipeline
-
-      - name: Setup Python
-        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4.2.0
-        with:
-          python-version: "3.9"
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r scripts/pipeline/requirements.txt
-
-      - name: Start seeding ECS task
-        run: |
-          pip install -e scripts/pipeline/lib
-          python scripts/pipeline/start_task/ecs_start_task.py --task_name seeding
+    secrets: inherit
 
   terraform_outputs:
     name: Render terraform outputs
