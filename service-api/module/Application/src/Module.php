@@ -98,7 +98,7 @@ class Module
                         'password' => $dbconf['password'],
                         'driver_options' => [
                             // RDS doesn't play well with persistent connections
-                            PDO::ATTR_PERSISTENT => false,
+                            PDO::ATTR_PERSISTENT => true,
                             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                         ],
                     ]);
