@@ -126,7 +126,7 @@ resource "aws_security_group_rule" "proxy-rds-outbound" {
   type              = "egress"
   from_port         = 0
   to_port           = 0
-  protocol          = "aa-1"
+  protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.rds-proxy.id
   description       = "RDS proxy outbound - All"
