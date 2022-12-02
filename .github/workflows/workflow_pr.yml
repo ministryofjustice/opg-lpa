@@ -179,7 +179,7 @@ jobs:
     name: Render terraform outputs
     runs-on: ubuntu-latest
     needs:
-      - seed_dev_environment
+      - run_dev_seed_db_task
       - terraform_environment_development
       - run_dev_feedback_db_task
     outputs:
