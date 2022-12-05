@@ -1,12 +1,7 @@
 name: phpunit tests
 
 on:
-  workflow_call:
-    inputs:
-      branch_name:
-        description: "Name of the branch doing the build"
-        required: true
-        type: string
+  workflow_call
 
 jobs:
   phpunit_all_services:
