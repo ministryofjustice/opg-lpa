@@ -56,10 +56,6 @@ jobs:
   phpunit_tests:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit.yml
-    needs:
-      - branch_name
-    with:
-      branch_name: ${{ needs.branch_name.outputs.parsed }}
     secrets: inherit
 
   docker_build_scan_push:
