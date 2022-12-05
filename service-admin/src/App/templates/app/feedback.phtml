@@ -141,7 +141,7 @@ $this->addErrorMap([
                                                 <tr>
                                                     <?php foreach ($feedbackFields as $feedbackField) { ?>
                                                         <td data-role="<?= strtolower(str_replace(' ', '-', $feedbackField)); ?>">
-                                                            <?= $feedback[$feedbackField][$i]; ?>
+                                                            <?= htmlentities($feedback[$feedbackField][$i]); ?>
                                                         </td>
                                                     <?php } ?>
                                                 </tr>
