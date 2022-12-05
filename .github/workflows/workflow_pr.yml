@@ -57,7 +57,6 @@ jobs:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit.yml
     needs:
-      - image_tag
       - branch_name
     with:
       branch_name: ${{ needs.branch_name.outputs.parsed }}
