@@ -18,3 +18,11 @@ metadata.json
 terraform
 tests/load
 tests/sirius-gateway-mock
+*/phpunit.xml
+*/phpunit.xml.dist
+*/psalm.xml
+service-api/tests
+service-front/module/Application/tests
+service-pdf/tests
+service-pdf/test-tools
+service-admin/test
