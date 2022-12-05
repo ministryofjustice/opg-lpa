@@ -4,6 +4,7 @@
 */README.md
 */build
 */Makefile
+*/notify.*.txt
 .git
 .github
 .gitignore
