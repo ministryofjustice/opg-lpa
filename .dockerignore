@@ -23,9 +23,7 @@ tests/sirius-gateway-mock
 */phpunit.xml.dist
 */psalm.xml
 service-api/tests
-service-api/testCoverage.sh
 service-front/module/Application/tests
-service-front/testCoverage.sh
 service-pdf/tests
 service-pdf/test-tools
 service-admin/test
