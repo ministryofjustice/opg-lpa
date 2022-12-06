@@ -33,6 +33,7 @@
         "mezzio/mezzio-fastroute": "^3.3.0",
         "mezzio/mezzio-helpers": "^5.7.0",
         "mezzio/mezzio-platesrenderer": "^2.4.0",
+        "mezzio/mezzio-tooling": "^2.2.0",
         "php-http/guzzle6-adapter": "^2.0.2",
         "psr/http-message": "^1.0",
         "psr/http-server-middleware": "^1.0",
@@ -56,7 +57,6 @@
     "require-dev": {
         "filp/whoops": "^2.14.4",
         "laminas/laminas-development-mode": "^3.5.0",
-        "mezzio/mezzio-tooling": "^2.2.0",
         "phpspec/prophecy-phpunit": "^2.0.1",
         "phpunit/phpunit": "^9.5.10",
         "roave/security-advisories": "dev-master",
