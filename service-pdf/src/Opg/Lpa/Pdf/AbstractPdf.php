@@ -101,7 +101,12 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
             //  Create a new copy of the PDF for this so as not to trigger the command finally
             $pageCountPdf = $this->pdftkFactory->create($templateFile);
 
-            if (preg_match('/NumberOfPages: (\d+)/', $pageCountPdf->getData(), $m)) {
+            $data = $pageCountPdf->getData();
+            if (is_bool($data)) {
+                $data = '';
+            }
+
+            if (preg_match('/NumberOfPages: (\d+)/', $data, $m)) {
                 $this->numberOfPages = intval($m[1]);
             }
         }
