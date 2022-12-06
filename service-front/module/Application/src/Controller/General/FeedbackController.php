@@ -37,7 +37,7 @@ class FeedbackController extends AbstractBaseController
                 $data = $form->getData();
 
                 //  Inject extra details into the data before passing to the feedback service to send in an email
-                $data['agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $data['agent'] = htmlentities($_SERVER['HTTP_USER_AGENT']);
                 $data['fromPage'] = (
                     is_string($container->feedbackLinkClickedFromPage) ?
                         $container->feedbackLinkClickedFromPage : 'Unknown'
