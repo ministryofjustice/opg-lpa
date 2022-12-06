@@ -14,6 +14,7 @@ use Application\Model\DataAccess\Repository\User\UserInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
+use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
 use Laminas\Db\Sql\Expression as SqlExpression;
 use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Predicate\IsNotNull;
@@ -93,6 +94,29 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         } else {
             $this->assertInstanceOf($expected, $actual);
         }
+    }
+
+    public function testGetByUsernameDatabaseUnavailable(): void
+    {
+        $username = 'BShelley';
+
+        // mocks
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('select')
+            ->with(
+                UserData::USERS_TABLE,
+                ['identity' => $username],
+                ['limit' => 1]
+            )
+            ->andThrow(new LaminasDbAdapterRuntimeException('database connect failed'));
+
+        // test method
+        $userData = new UserData($dbWrapperMock);
+        $actual = $userData->getByUsername($username);
+
+        $this->assertEquals(null, $actual);
     }
 
     public function testMatchUsers(): void
