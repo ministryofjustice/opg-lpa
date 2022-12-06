@@ -108,9 +108,20 @@ jobs:
 
   run_preprodution_feedback_db_task:
     name: Run preproduction feedbackdb
-    uses: ./.github/workflows/workflow_feedbackdb.yml
+    uses: ./.github/workflows/workflow_start_task.yml
     with:
       account_id: "987830934591"
+      task_name: "feedbackdb"
+    needs:
+      - terraform_environment_preproduction
+    secrets: inherit
+
+  run_preproduction_seed_db_task:
+    name: Run development feedbackdb
+    uses: ./.github/workflows/workflow_start_task.yml
+    with:
+      account_id: "987830934591"
+      task_name: "seeding"
     needs:
       - terraform_environment_preproduction
     secrets: inherit
@@ -327,9 +338,10 @@ jobs:
 
   run_production_feedback_db_task:
     name: Run production feedbackdb
-    uses: ./.github/workflows/workflow_feedbackdb.yml
+    uses: ./.github/workflows/workflow_start_task.yml
     with:
       account_id: "980242665824"
+      task_name: "feedbackdb"
     needs:
       - terraform_environment_production
     secrets: inherit

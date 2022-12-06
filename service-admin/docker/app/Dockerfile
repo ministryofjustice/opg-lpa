@@ -27,7 +27,7 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 COPY --chown=root:root service-admin/composer.json /app/composer.json
 COPY --chown=root:root service-admin/composer.lock /app/composer.lock
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.4.1 \
-    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer
@@ -38,10 +38,6 @@ RUN apk del .build-dependencies
 COPY --chown=root:root service-admin/config /app/config
 COPY --chown=root:root service-admin/public /app/public
 COPY --chown=root:root service-admin/src /app/src
-
-# Need this to run unit tests in CI
-COPY --chown=root:root service-admin/phpunit.xml.dist /app/phpunit.xml.dist
-COPY --chown=root:root service-admin/test /app/test
 
 COPY --chown=root:root shared /shared
 

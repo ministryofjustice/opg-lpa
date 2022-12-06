@@ -6,7 +6,7 @@ import os
 
 class ECSMonitor:
     aws_account_id = ""
-    aws_iam_session = ""
+    aws_iam_session = {"Credentials": {}}
     aws_ecs_client = ""
     aws_ecs_cluster = ""
     aws_ec2_client = ""
@@ -20,7 +20,7 @@ class ECSMonitor:
     nextForwardToken = ""
     logStreamName = ""
     taskName = ""
-
+    
     def __init__(self, config_file, nameOfTask):
         self.taskName = nameOfTask
         self.read_parameters_from_file(config_file)
@@ -78,21 +78,38 @@ class ECSMonitor:
         print(self.task_definition)
 
     def set_iam_role_session(self):
+
+        current_role_arn = boto3.client("sts").get_caller_identity().get("Arn")
         if os.getenv("CI"):
             role_arn = f"arn:aws:iam::{self.aws_account_id}:role/opg-lpa-ci"
         else:
             role_arn = f"arn:aws:iam::{self.aws_account_id}:role/operator"
 
-        sts = boto3.client(
-            "sts",
-            region_name="eu-west-1",
-        )
-        session = sts.assume_role(
-            RoleArn=role_arn,
-            RoleSessionName=f"starting_{self.taskName}_ecs_task",
-            DurationSeconds=900,
-        )
-        self.aws_iam_session = session
+        # Extract the role name and account id from the ARNs
+        role_to_assume_name = role_arn.split("/")[1]
+        current_role_name = current_role_arn.split("/")[1]
+        role_to_assume_account = role_arn.split(":")[4]
+        current_role_account = current_role_arn.split(":")[4]
+
+        if (
+            role_to_assume_name == current_role_name
+            and role_to_assume_account == current_role_account
+        ):
+            print("Already in the correct role")
+            self.aws_iam_session["Credentials"]["AccessKeyId"] = os.getenv("AWS_ACCESS_KEY_ID")
+            self.aws_iam_session["Credentials"]["SecretAccessKey"] = os.getenv("AWS_SECRET_ACCESS_KEY")
+            self.aws_iam_session["Credentials"]["SessionToken"] = os.getenv("AWS_SESSION_TOKEN")
+        else:
+            sts = boto3.client(
+                "sts",
+                region_name="eu-west-1",
+            )
+            session = sts.assume_role(
+                RoleArn=role_arn,
+                RoleSessionName=f"starting_{self.taskName}_ecs_task",
+                DurationSeconds=900,
+            )
+            self.aws_iam_session = session
 
     def get_subnet_id(self):
         # get ids for private subnets

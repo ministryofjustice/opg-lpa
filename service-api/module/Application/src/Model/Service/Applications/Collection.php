@@ -4,6 +4,7 @@ namespace Application\Model\Service\Applications;
 
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Paginator\Paginator;
+use Traversable;
 
 class Collection extends Paginator
 {
@@ -12,7 +13,10 @@ class Collection extends Paginator
         //  Extract the applications data
         $applications = [];
 
-        $lpas = iterator_to_array($this->getItemsByPage($this->getCurrentPageNumber()));
+        /** @var Traversable */
+        $items = $this->getItemsByPage($this->getCurrentPageNumber());
+
+        $lpas = iterator_to_array($items);
 
         //  Get the full details of the LPA
         foreach ($lpas as $lpa) {

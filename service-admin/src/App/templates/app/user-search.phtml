@@ -81,7 +81,7 @@ $this->addErrorMap([
                 <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
                     <li>
                         <strong class="bold-small">Number of failed login attempts: </strong>
-                        <span><?= $user['failedLoginAttempts']; ?></span>
+                        <span><?= intval($user['failedLoginAttempts']); ?></span>
                     </li>
                 <?php } ?>
 
@@ -108,7 +108,7 @@ $this->addErrorMap([
                 <?php if (array_key_exists('numberOfLpas', $user) && !is_null($user['numberOfLpas'])) { ?>
                     <li>
                         <strong class="bold-small">Number of LPAs: </strong>
-                        <span><?= $user['numberOfLpas']; ?></span>
+                        <span><?= intval($user['numberOfLpas']); ?></span>
                     </li>
                 <?php } ?>
             </ul>
