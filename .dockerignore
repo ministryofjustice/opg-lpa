@@ -4,6 +4,7 @@
 */README.md
 */build
 */Makefile
+*/notify.*.txt
 .git
 .github
 .gitignore
@@ -18,3 +19,13 @@ metadata.json
 terraform
 tests/load
 tests/sirius-gateway-mock
+*/phpunit.xml
+*/phpunit.xml.dist
+*/psalm.xml
+service-api/tests
+service-api/testCoverage.sh
+service-front/module/Application/tests
+service-front/testCoverage.sh
+service-pdf/tests
+service-pdf/test-tools
+service-admin/test
