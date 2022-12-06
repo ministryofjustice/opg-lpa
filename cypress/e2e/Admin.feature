@@ -155,3 +155,25 @@ Feature: Admin
     And I click "submit-button"
 
     Then very long feedback details from user "longwindeduser@test.com" displays correctly in the page
+
+  # LPAL-1088: user-supplied data is escaped appropriately
+  Scenario: User-supplied data is escaped correctly in the feedback search page
+    Given I visit the admin sign-in page
+    And I log in to admin
+    And I click "feedback-link"
+    Then I am taken to the feedback page
+
+    # date fields for feedback range
+    When I force fill out "#id-day-start-date" element with "02"
+    And I force fill out "#id-month-start-date" element with "12"
+    And I force fill out "#id-year-start-date" element with "2022"
+    And I force fill out "#id-day-end-date" element with "02"
+    And I force fill out "#id-month-end-date" element with "12"
+    And I force fill out "#id-year-end-date" element with "2022"
+    And I click "submit-button"
+
+    Then I see "<script>alert(\"hello email\");</script>test@test.com" in the page text
+    And I see "<script>alert(\"hello phone\");</script>01234567891" in the page text
+    And I see "<script>alert(\"hello details\");</script>\"great service\" test" in the page text
+    And I see "<script>alert(\"hello fromPage\");</script>/feedback-thanks" in the page text
+    And I see "<script>alert(\"hello agent\");</script>" in the page text
