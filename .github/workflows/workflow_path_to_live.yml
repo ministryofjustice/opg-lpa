@@ -117,7 +117,7 @@ jobs:
     secrets: inherit
 
   run_preproduction_seed_db_task:
-    name: Run development feedbackdb
+    name: Run preproduction DB seeding
     uses: ./.github/workflows/workflow_start_task.yml
     with:
       account_id: "987830934591"
