@@ -235,7 +235,7 @@ jobs:
           channel-id: "C01BDM8T67J"
           payload: |
             {
-             "icon_emoji": ":thinking_face:",
+             "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
@@ -250,7 +250,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Status:*\nStarted"
+                      "text": "*Status:*\nStarted :hourglass_flowing_sand:"
                     },
                     {
                       "type": "mrkdwn",
@@ -401,7 +401,7 @@ jobs:
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
             {
-              "icon_emoji": ":sunglasses:",
+              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
@@ -416,7 +416,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Status:*\nComplete (Smoke tests passed!)"
+                      "text": "*Status:*\nComplete :white_check_mark:"
                     },
                     {
                       "type": "mrkdwn",
@@ -452,7 +452,7 @@ jobs:
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
             {
-              "icon_emoji": ":cry:",
+              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
@@ -467,7 +467,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Status:*\nFailed!"
+                      "text": "*Status:*\nFailed! :x:"
                     },
                     {
                       "type": "mrkdwn",
@@ -502,8 +502,16 @@ jobs:
         channel-id: "C01BDM8T67J"
         payload: |
             {
-              "text": "@here Production deployment failed!"
-              "thread_ts": "${{ needs.slack_msg_production_deploy_begin.outputs.thread_ts }}"
+              "icon_emoji": ":warning:",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Production deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. @here"
+                  }
+                }
+              ]
             }
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
