@@ -1,6 +1,6 @@
-variable "source_db_instance_arn" {
+variable "source_cluster_arn" {
   type        = string
-  description = "The arn for the source database"
+  description = "The arn for the source Aurora cluster"
 }
 
 variable "retention_period" {
@@ -17,4 +17,14 @@ variable "destination_region_name" {
 variable "key_alias" {
   type        = string
   description = "key alias"
+}
+
+variable "environment_name" {
+  type        = string
+  description = "environment name"
+}
+
+variable "account_name" {
+  type        = string
+  description = "account name"
 }
