@@ -161,6 +161,74 @@ jobs:
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
+  terraform_account_preproduction:
+    name: TF Preproduction Plan - Account
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    needs:
+      - workspace_name
+      - image_tag
+      - terraform_lint
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: development
+      is_ephemeral: false
+      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_iam_role: opg-lpa-ci
+      terraform_apply: false
+      terraform_directory: ./terraform/account
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_region_preproduction:
+    name: TF Preproduction Plan - Region
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    needs:
+      - workspace_name
+      - image_tag
+      - terraform_lint
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: development
+      is_ephemeral: false
+      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_iam_role: opg-lpa-ci
+      terraform_apply: false
+      terraform_directory: ./terraform/region
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_environment_preproduction:
+    name: TF Preproduction Plan - Environment
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    needs:
+      - workspace_name
+      - image_tag
+      - terraform_lint
+    with:
+      terraform_version: 1.1.2
+      use_ssh_private_key: true
+      terraform_workspace: ${{ needs.workspace_name.outputs.name }}
+      is_ephemeral: false
+      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_iam_role: opg-lpa-ci
+      terraform_apply: false
+      terraform_directory: ./terraform/environment
+      terraform_variables: "-var container_version=${{ needs.image_tag.outputs.short_sha }} -var lambda_container_version=latest"
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
   run_dev_feedback_db_task:
     name: Run development feedbackdb
     uses: ./.github/workflows/workflow_start_task.yml
