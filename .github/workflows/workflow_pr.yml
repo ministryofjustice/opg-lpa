@@ -322,7 +322,7 @@ jobs:
         channel-id: "C01BKBWGWTY"
         payload: |
             {
-              "icon_emoji": ":thinking_face:",
+              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
@@ -474,7 +474,7 @@ jobs:
         update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
         payload: |
             {
-              "icon_emoji": ":sunglasses:",
+              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
