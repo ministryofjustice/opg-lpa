@@ -38,7 +38,7 @@ resource "aws_cloudwatch_event_rule" "start_schedule" {
   count               = var.account.always_on_aurora ? 0 : 1
   name                = "${var.account_name}-aurora-start"
   description         = "Cron to start development Aurora clusters"
-  schedule_expression = "cron(0 06 ? * * *)" # 6am UTC, every day
+  schedule_expression = "cron(0 05 ? * * *)" # 5am UTC, every day
 }
 
 resource "aws_cloudwatch_event_rule" "stop_schedule" {

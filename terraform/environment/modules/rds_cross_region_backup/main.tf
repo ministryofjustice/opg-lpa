@@ -1,15 +1,47 @@
 data "aws_caller_identity" "current" {}
 
-resource "aws_db_instance_automated_backups_replication" "instance" {
-  source_db_instance_arn = var.source_db_instance_arn
-  retention_period       = var.retention_period
-  provider               = aws.destination
-  kms_key_id             = data.aws_kms_key.destination_rds_snapshot_key.arn
-}
+data "aws_region" "current" {}
 
-
-data "aws_kms_key" "destination_rds_snapshot_key" {
+data "aws_region" "secondary" {
   provider = aws.destination
-  key_id   = "arn:aws:kms:${var.destination_region_name}:${data.aws_caller_identity.current.account_id}:alias/${var.key_alias}"
 }
 
+resource "aws_backup_plan" "main" {
+  name = "${var.environment_name}_aurora_backup_plan"
+
+  rule {
+    rule_name         = "DailyBackups"
+    target_vault_name = aws_backup_vault.main.name
+    schedule          = "cron(0 06 * * ? *)" // Run at 6am UTC every day
+
+    lifecycle {
+      delete_after = var.retention_period
+    }
+
+    copy_action {
+      destination_vault_arn = aws_backup_vault.secondary.arn
+
+      lifecycle {
+        delete_after = var.retention_period
+      }
+    }
+  }
+}
+
+resource "aws_backup_vault" "main" {
+  name        = "${var.environment_name}_${data.aws_region.current.name}_aurora_backup_vault"
+  kms_key_arn = data.aws_kms_key.source_rds_snapshot_key.arn
+}
+
+resource "aws_backup_vault" "secondary" {
+  provider    = aws.destination
+  name        = "${var.environment_name}_${data.aws_region.secondary.name}_aurora_backup_vault"
+  kms_key_arn = data.aws_kms_key.destination_rds_snapshot_key.arn
+}
+
+resource "aws_backup_selection" "main" {
+  plan_id      = aws_backup_plan.main.id
+  name         = "${var.environment_name}_aurora_cluster_selection"
+  iam_role_arn = aws_iam_role.aurora_backup_role.arn
+  resources    = [var.source_cluster_arn]
+}
