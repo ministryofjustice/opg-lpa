@@ -2,7 +2,6 @@ name: "[Workflow] PR"
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: true
 
 defaults:
   run:
