@@ -2,7 +2,6 @@ name: "[Workflow] Path to Live"
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: true
 
 defaults:
   run:
@@ -497,7 +496,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: ${{ ( needs.run_smoke_tests.outputs.smoke_test_status == 'failed' ) || ( failure() ) || ( cancelled() ) }}
+      if: ${{ ( failure() ) || ( cancelled() ) }}
       with:
         channel-id: "C01BDM8T67J"
         payload: |
