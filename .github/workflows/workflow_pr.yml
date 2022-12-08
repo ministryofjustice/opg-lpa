@@ -170,9 +170,9 @@ jobs:
       - terraform_lint
     with:
       terraform_version: 1.1.2
-      terraform_workspace: development
+      terraform_workspace: preproduction
       is_ephemeral: false
-      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_account_id: "987830934591"
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/account
@@ -192,9 +192,9 @@ jobs:
       - terraform_lint
     with:
       terraform_version: 1.1.2
-      terraform_workspace: development
+      terraform_workspace: preproduction
       is_ephemeral: false
-      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_account_id: "987830934591"
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/region
@@ -215,9 +215,9 @@ jobs:
     with:
       terraform_version: 1.1.2
       use_ssh_private_key: true
-      terraform_workspace: ${{ needs.workspace_name.outputs.name }}
+      terraform_workspace: preproduction
       is_ephemeral: false
-      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_account_id: "987830934591"
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/environment
