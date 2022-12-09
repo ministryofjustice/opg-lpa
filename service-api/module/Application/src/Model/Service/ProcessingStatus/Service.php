@@ -175,7 +175,10 @@ class Service extends AbstractService
      */
     private function buildHeaders()
     {
-        return ['Accept' => 'application/json'];
+        return [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en'
+        ];
     }
 
     private function handleResponse(string $responseBodyString)
