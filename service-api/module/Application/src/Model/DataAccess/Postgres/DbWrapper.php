@@ -11,6 +11,7 @@ use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Sql;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * Long term plan is to move all subclasses of AbstractBase to instead
@@ -20,6 +21,7 @@ use Laminas\Db\Sql\Sql;
  */
 class DbWrapper
 {
+    use LoggerTrait;
     /**
      * Time format to use when converting DateTime to a string.
      */
@@ -141,8 +143,17 @@ class DbWrapper
         if (isset($options['columns'])) {
             $select->columns($options['columns']);
         }
-
+        
+        # time how long it takes to connect to run a SELECT statement
+        $start = microtime(true);
         /** @throws LaminasDbAdapterRuntimeException */
-        return $sql->prepareStatementForSqlObject($select)->execute();
+        $executed = $sql->prepareStatementForSqlObject($select)->execute();
+
+        $end = microtime(true);
+        $duration = $end - $start;
+
+        $this->getLogger()->info("SQL select statement took {$duration} seconds");
+
+        return $executed;
     }
 }
