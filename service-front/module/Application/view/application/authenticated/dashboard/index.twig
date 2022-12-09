@@ -132,7 +132,9 @@
                     url: "/user/dashboard/statuses/" + ids.join(),
                     dataType: "json",
                     headers: {
-                        'X-SessionReadOnly': 'true'
+                        'X-SessionReadOnly': 'true',
+                        'Accept': 'application/json',
+                        'Accept-Language': 'en'
                     },
                     success: function (results) {
                         // Loop through all the ids that were requested and update the text css style to the new status
