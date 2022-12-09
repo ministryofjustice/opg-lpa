@@ -15,3 +15,4 @@ Feature: Ping
         And the object "@ping" should have these properties:
           | body.dynamo.ok               | true |
           | body.api.details.database.ok | true |
+          | body.ordnanceSurvey.ok       | true |
