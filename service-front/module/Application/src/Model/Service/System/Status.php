@@ -3,6 +3,7 @@
 namespace Application\Model\Service\System;
 
 use Application\Model\Service\AbstractService;
+use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Aws\DynamoDb\DynamoDbClient;
@@ -22,6 +23,9 @@ class Status extends AbstractService implements ApiClientAwareInterface
     /** @var DynamoDbClient */
     private $dynamoDbClient;
 
+    /** @var OrdnanceSurveyClient */
+    private $ordnanceSurveyClient;
+
     /** @var SaveHandlerInterface */
     private $sessionSaveHandler;
 
@@ -30,6 +34,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
      * - DynamoDb (system message table)
      * - Session save handler
      * - API
+     * - Ordnance Survey
      */
     public function check()
     {
@@ -46,6 +51,9 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
             // Check session save handling
             $result['sessionSaveHandler'] = $this->session();
+
+            // Check ordnanceSurvey
+            $result['ordnanceSurvey'] = $this->ordnanceSurvey();
 
             $ok = true;
             foreach ($result as $service) {
@@ -118,6 +126,17 @@ class Status extends AbstractService implements ApiClientAwareInterface
         ];
     }
 
+    private function ordnanceSurvey()
+    {
+        try {
+            $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
+
+            return ['ok' => true, 'details' => $os];
+        } catch (Exception $e) {
+            return ['ok' => false];
+        }
+    }
+
     /**
      * @param DynamoDbClient $dynamoDbClient
      */
@@ -132,5 +151,13 @@ class Status extends AbstractService implements ApiClientAwareInterface
     public function setSessionSaveHandler(SaveHandlerInterface $saveHandler)
     {
         $this->sessionSaveHandler = $saveHandler;
+    }
+
+    /**
+     * @param OrdnanceSurveyClient $osClient
+     */
+    public function setOrdnanceSurveyClient(OrdnanceSurvey $ordnanceSurveyClient)
+    {
+        $this->ordnanceSurveyClient = $ordnanceSurveyClient;
     }
 }
