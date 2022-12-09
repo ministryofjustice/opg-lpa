@@ -7,12 +7,14 @@ use Application\Model\DataAccess\Repository\User\TokenInterface as Token;
 use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
 use Laminas\Math\BigInteger\BigInteger;
+use MakeShared\Logging\LoggerTrait;
 use DateTime;
 
 class Service extends AbstractService
 {
     use UserRepositoryTrait;
 
+    use LoggerTrait;
     /**
      * The maximum number of consecutive login attempts before an account is locked.
      */
@@ -40,6 +42,11 @@ class Service extends AbstractService
 
     public function withPassword($username, $password, $createToken)
     {
+
+        $start = microtime(true);
+
+        $this->getLogger()->info("User attempting to log in");
+
         if (empty($username) || empty($password)) {
             return 'missing-credentials';
         }
@@ -117,6 +124,11 @@ class Service extends AbstractService
                 'expiresAt' => $expires
             ];
         }
+        
+        $end = microtime(true);
+        $duration = $end - $start;
+
+        $this->getLogger()->info("Authentication took {$duration} seconds");
 
         return [
                 'userId' => $user->id(),
