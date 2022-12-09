@@ -26,10 +26,13 @@ use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use MakeShared\Logging\LoggerTrait;
 
 class Module
 {
     public const VERSION = '3.0.3-dev';
+
+    use LoggerTrait;
 
     public function onBootstrap(MvcEvent $e)
     {
@@ -91,7 +94,11 @@ class Module
                     $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};" .
                         "port={$dbconf['port']};dbname={$dbconf['dbname']}";
 
-                    return new ZendDbAdapter([
+
+                    # time how long it takes to connect to the database
+                    $start = microtime(true);
+
+                    $dbAdapter = new ZendDbAdapter([
                         'dsn' => $dsn,
                         'driver' => 'pdo',
                         'username' => $dbconf['username'],
@@ -102,6 +109,13 @@ class Module
                             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                         ],
                     ]);
+
+                    $end = microtime(true);
+                    $duration = $end - $start;
+
+                    $this->getLogger()->info("Database connection took {$duration} seconds");
+
+                    return $dbAdapter;
                 },
 
                 'Laminas\Authentication\AuthenticationService' => function ($sm) {
