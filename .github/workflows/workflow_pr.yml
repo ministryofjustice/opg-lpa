@@ -2,7 +2,6 @@ name: "[Workflow] PR"
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: true
 
 defaults:
   run:
@@ -45,7 +44,9 @@ jobs:
     steps:
       - name: Set output to short SHA
         id: short_sha
-        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+        env:
+          HEAD_GITHUB_SHA: ${{ github.event.pull_request.head.sha }}
+        run: echo "short_sha=${HEAD_GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
   terraform_lint:
     name: TF - Lint
@@ -170,9 +171,9 @@ jobs:
       - terraform_lint
     with:
       terraform_version: 1.1.2
-      terraform_workspace: development
+      terraform_workspace: preproduction
       is_ephemeral: false
-      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_account_id: "987830934591"
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/account
@@ -192,9 +193,9 @@ jobs:
       - terraform_lint
     with:
       terraform_version: 1.1.2
-      terraform_workspace: development
+      terraform_workspace: preproduction
       is_ephemeral: false
-      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_account_id: "987830934591"
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/region
@@ -215,9 +216,9 @@ jobs:
     with:
       terraform_version: 1.1.2
       use_ssh_private_key: true
-      terraform_workspace: ${{ needs.workspace_name.outputs.name }}
+      terraform_workspace: preproduction
       is_ephemeral: false
-      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_account_id: "987830934591"
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/environment
