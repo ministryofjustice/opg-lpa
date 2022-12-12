@@ -70,12 +70,12 @@ jobs:
             force_push_to_repo: false
 
     steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
-      - uses: unfor19/install-aws-cli-action@35a9630be0168293ad2afccbe06e8e9f47678d2c # pin@v1.0.3
+      - uses: unfor19/install-aws-cli-action@8a86d81a0f1393cff1f44c77010cb2707e8a1066 # pin@1.0.4
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1.7.0
+        uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16.7.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -92,15 +92,15 @@ jobs:
           if [ ${{ matrix.override_tag }} ]; then
             IMAGE_TAG=${{ matrix.override_tag }}
           fi
-          echo "::set-output name=image_tag::${IMAGE_TAG}"
+          echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
 
       - name: Check if image already exists
         id: image_exists
         run: |
           if aws ecr describe-images --repository-name=${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }} &> /dev/null; then
-            echo "::set-output name=image_exists::true"
+            echo "image_exists=true" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=image_exists::false"
+            echo "image_exists=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Use Node.js 16.x
@@ -177,7 +177,7 @@ jobs:
 
       - name: Setup Python
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
-        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4.2.0
+        uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # pin@4.3.1
         with:
           python-version: "3.9"
 

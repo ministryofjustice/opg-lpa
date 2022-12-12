@@ -138,7 +138,7 @@ jobs:
       - terraform_environment_preproduction
     steps:
     - name: Checkout
-      uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+      uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
     - name: Download Terraform Task definition
       uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
@@ -232,7 +232,7 @@ jobs:
       - image_tag
     steps:
       - id: slack
-        uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
+        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # pin@1.23.0
         with:
           channel-id: "C01BDM8T67J"
           payload: |
@@ -360,10 +360,10 @@ jobs:
       - terraform_account_production
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
+        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7 # pin@v3.0.1
         with:
           name: terraform-artifact
           path: /tmp/
@@ -397,7 +397,7 @@ jobs:
       - image_tag
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
+      if: success()
       with:
         channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
@@ -448,7 +448,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: ${{ ( needs.run_smoke_tests.outputs.smoke_test_status == 'failed' ) || ( failure() ) || ( cancelled() ) }}
+      if: failure()
       with:
         channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
