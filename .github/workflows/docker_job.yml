@@ -62,12 +62,12 @@ jobs:
           - image_name: online-lpa/cypress
             service_path: ./cypress/
             override_tag: latest
-            force_push_to_repo: true
+            force_push_to_repo: false
 
           - image_name: lambda-aurora_scheduler
             service_path: ./aurora-scheduler/docker
             override_tag: latest
-            force_push_to_repo: true
+            force_push_to_repo: false
 
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
