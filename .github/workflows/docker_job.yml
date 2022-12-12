@@ -104,7 +104,7 @@ jobs:
           fi
 
       - name: Use Node.js 16.x
-        uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93 # pin@v3
+        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # pin@v3.5.1
         if: ${{ (matrix.image_name == 'online-lpa/front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
         with:
           node-version: 16.x
@@ -120,12 +120,12 @@ jobs:
       - name: Setup Docker Buildx
         id: docker_buildx
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
-        uses: docker/setup-buildx-action@dc7b9719a96d48369863986a06765841d7ea23f6 # pin@v2
+        uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # pin@v2.2.1
         with:
           install: true
 
       - name: Setup Docker Layer Cache
-        uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # pin@v3
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # pin@v3.0.11
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         with:
           path: /tmp/.buildx-cache
@@ -134,7 +134,7 @@ jobs:
             ${{ runner.os }}-buildx-${{ matrix.image_name }}-
 
       - name: Build Image
-        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94 # pin@v3
+        uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v3.2.0
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         with:
           context: .
@@ -156,7 +156,7 @@ jobs:
       - name: ECR Login
         id: login_ecr
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
-        uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
+        uses: aws-actions/amazon-ecr-login@261a7de32bda11ba01f4d75c4ed6caf3739e54be # pin@v1.5.3
         with:
           registries: 311462405659
 
