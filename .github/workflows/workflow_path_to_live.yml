@@ -2,7 +2,6 @@ name: "[Workflow] Path to Live"
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: true
 
 defaults:
   run:
@@ -38,9 +37,12 @@ jobs:
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
     steps:
-      - name: Set output to short SHA
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+      - name: Set output to penultimate short SHA
         id: short_sha
-        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+        run: |
+          echo "short_sha=$(git rev-list --no-merges -n 1 HEAD | cut -c1-7)" >> $GITHUB_OUTPUT
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
@@ -497,7 +499,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: ${{ ( needs.run_smoke_tests.outputs.smoke_test_status == 'failed' ) || ( failure() ) || ( cancelled() ) }}
+      if: ${{ ( failure() ) || ( cancelled() ) }}
       with:
         channel-id: "C01BDM8T67J"
         payload: |

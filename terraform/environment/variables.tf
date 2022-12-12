@@ -39,6 +39,7 @@ variable "accounts" {
       aurora_enabled                         = bool
       aurora_serverless                      = bool
       aurora_instance_count                  = number
+      aurora_cross_region_backup_enabled     = bool
       deletion_protection                    = bool
       always_on                              = bool
       log_retention_in_days                  = number
