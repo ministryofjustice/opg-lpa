@@ -39,7 +39,6 @@ output "cluster_name" {
   value = aws_ecs_cluster.online-lpa.name
 }
 
-output "aws_db_instance_arn" {
-  value = var.account.always_on ? aws_db_instance.api[0].arn : null
+output "aws_aurora_cluster_arn" {
+  value = module.api_aurora[0].cluster.arn
 }
-
