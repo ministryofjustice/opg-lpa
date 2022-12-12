@@ -27,16 +27,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
+        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7 # pin@v3.0.1
         with:
           name: terraform-artifact
           path: /tmp/
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
+        uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -46,7 +46,7 @@ jobs:
           role-session-name: OPGLPABuildPipeline
 
       - name: Setup Python
-        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4.2.0
+        uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # pin@4.3.1
         with:
           python-version: "3.9"
 
