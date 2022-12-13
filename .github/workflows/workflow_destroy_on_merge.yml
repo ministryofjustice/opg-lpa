@@ -54,5 +54,6 @@ jobs:
           role-session-name: OPGLPABuildPipeline
 
       - name: Run workspace cleanup
+        working-directory: ./terraform/environment
         run: |
           scripts/pipeline/workspace_cleanup/destroy_workspace.sh ${{ needs.workspace_name.outputs.name }}
