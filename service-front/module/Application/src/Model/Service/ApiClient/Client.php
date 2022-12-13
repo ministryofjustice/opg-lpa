@@ -216,9 +216,10 @@ class Client
     private function buildHeaders($anonymous = false)
     {
         $headers = [
-            'Accept'        => 'application/json',
-            'Content-type'  => 'application/json',
-            'User-agent'    => 'LPA-FRONT'
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en',
+            'Content-Type' => 'application/json; charset=utf-8',
+            'User-Agent' => 'LPA-FRONT',
         ];
 
         foreach ($this->defaultHeaders as $name => $value) {
