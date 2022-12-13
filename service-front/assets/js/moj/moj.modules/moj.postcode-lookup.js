@@ -196,6 +196,10 @@
       $.ajax({
         url: this.settings.postcodeSearchUrl,
         data: { postcode: query },
+        headers: {
+          Accept: 'application/json',
+          'Accept-Language': 'en',
+        },
         dataType: 'json',
         timeout: 10000,
         cache: true,
