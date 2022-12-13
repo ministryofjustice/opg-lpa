@@ -5,6 +5,9 @@ namespace Opg\Lpa\Pdf\Config;
 use ArrayAccess;
 use Countable;
 
+/**
+ * @template-implements ArrayAccess<string,mixed>
+ */
 class Config implements Countable, ArrayAccess
 {
     private static $instance = null;

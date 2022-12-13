@@ -263,7 +263,6 @@ class Client
      * Unsuccessful response processing
      *
      * @param ResponseInterface $response
-     * @return null
      * @throws Exception\ApiException
      */
     private function handleErrorResponse(ResponseInterface $response)
