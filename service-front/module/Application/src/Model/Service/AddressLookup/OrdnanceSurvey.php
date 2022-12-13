@@ -78,7 +78,12 @@ class OrdnanceSurvey
         $url = URI::withQueryValue($url, 'postcode', $postcode);
         $url = URI::withQueryValue($url, 'lr', 'EN');
 
-        $request = new Request('GET', $url);
+        $headers = [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en',
+        ];
+
+        $request = new Request('GET', $url, $headers);
 
         $response = $this->httpClient->sendRequest($request);
 
