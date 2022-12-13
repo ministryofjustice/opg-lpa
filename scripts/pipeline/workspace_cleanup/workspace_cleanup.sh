@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 
-if [ $# -eq 0 ]
-  then
-    echo "Please provide workspaces to be removed."
+# A script to destroy all workspaces except for the ones passed in as arguments
+# Usage: ./workspace_cleanup.sh <workspace1> <workspace2> <workspace3> ...
+
+set -Eeuo pipefail
+
+print_usage() {
+  echo "Usage: `basename $0` [workspace1] [workspace2] [workspace3] ..."
+}
+
+if [ -z "$1" ]; then
+    print_usage
+    exit 1
 fi
 
 if [ "$1" == "-h" ]; then
-  echo "Usage: `basename $0` [workspaces separated by a space]"
+  print_usage
   exit 0
 fi
-
-function getWorkspaces {
-  terraform workspace list
-}
 
 in_use_workspaces="$@"
 reserved_workspaces="default production preproduction development demo ithc"
