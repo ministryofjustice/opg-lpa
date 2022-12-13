@@ -83,9 +83,8 @@ class StatusViewModelHelper
         // Return the rejected, invalid, withdrawn or dispatch date
         // (whichever is latest). NB dates are strings at this point.
         $processedDate = null;
-        $dateFields = ['rejected', 'withdrawn', 'invalid', 'dispatch'];
-        for ($i = 0; $i < count($dateFields); $i++) {
-            $metadataField = 'application-' . $dateFields[$i] . '-date';
+        foreach (['rejected', 'withdrawn', 'invalid', 'dispatch'] as $dateField) {
+            $metadataField = 'application-' . $dateField . '-date';
             if (isset($metadata[$metadataField])) {
                 $dateString = $metadata[$metadataField];
                 if (is_null($processedDate) || $dateString > $processedDate) {

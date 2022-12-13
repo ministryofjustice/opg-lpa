@@ -6,6 +6,9 @@ use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Paginator\Paginator;
 use Traversable;
 
+/**
+ * @template-extends Paginator<int,mixed>
+ */
 class Collection extends Paginator
 {
     public function toArray()
