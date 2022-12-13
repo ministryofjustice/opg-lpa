@@ -71,8 +71,9 @@ class ClientTest extends MockeryTestCase
                             $verb,
                             new Uri($url),
                             ['Accept' => 'application/json',
-                                'Content-type' => 'application/json',
-                                'User-agent' => 'LPA-FRONT',
+                                'Accept-Language' => 'en',
+                                'Content-Type' => 'application/json; charset=utf-8',
+                                'User-Agent' => 'LPA-FRONT',
                                 'Token' => $token]
                         )
                     )]
