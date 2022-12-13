@@ -55,4 +55,4 @@ jobs:
 
       - name: Run workspace cleanup
         run: |
-          scripts/pipeline/workspace_cleanup/workspace_cleanup.sh ${{ needs.workspace_name.outputs.name }}
+          scripts/pipeline/workspace_cleanup/destroy_workspace.sh ${{ needs.workspace_name.outputs.name }}
