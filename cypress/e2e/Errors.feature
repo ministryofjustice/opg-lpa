@@ -58,8 +58,8 @@ Feature: Errors
         And "error-heading" is a "level 2 heading" element
         And there is "one" "level 1 heading" element on the page
 
-    Scenario: 404 error is returned for potentially sensitive resources (LPAL-1108)
+    Scenario: 403 error is returned for potentially sensitive resources (LPAL-1108)
         Given the forbidden filename patterns
             |zip|gz|lzh|tar|rar|7z|swp|bak|git|ht|exe|dll|py|msi|bin|sh|bat|xml|apk|jar|log|sql|conf|cfg|ini|tmp|doc|xls|rtf|
         When I attempt to fetch a resource matching each forbidden filename pattern
-        Then I get a 404 response code for each resource
+        Then I get a 403 response code for each resource

@@ -21,10 +21,10 @@ Then(
   },
 );
 
-Then('I get a 404 response code for each resource', () => {
+Then('I get a 403 response code for each resource', () => {
   cy.get('@forbiddenFileResponses').each((forbiddenFileResponse) => {
     cy.get(forbiddenFileResponse).then((response) => {
-      expect(response.status).to.eql(404);
+      expect(response.status).to.eql(403);
     });
   });
 });
