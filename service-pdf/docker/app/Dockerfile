@@ -42,11 +42,9 @@ COPY --chown=root:root service-pdf/bin/pdftk /usr/local/bin/pdftk
 RUN curl -sS -o /usr/local/bin/pdftk-all.jar https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/build/libs/pdftk-all.jar \
     && chmod 755 /usr/local/bin/pdftk
 
-RUN mv shared/docker/app/php-fpm-logging.conf.service-pdf service-pdf/docker/app/php-fpm-logging.conf
-RUN mv shared/docker/app/app-php.ini.service-pdf service-pdf/docker/app/app-php.ini
 COPY --chown=root:root shared /shared
 COPY --chown=root:root service-pdf /app
-COPY --chown=root:root service-pdf/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root shared/docker/app/app-php.ini.service-pdf /usr/local/etc/php/conf.d/app-php.ini
 
 WORKDIR /app
 
