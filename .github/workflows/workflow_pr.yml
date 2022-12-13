@@ -44,7 +44,9 @@ jobs:
     steps:
       - name: Set output to short SHA
         id: short_sha
-        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+        env:
+          HEAD_GITHUB_SHA: ${{ github.event.pull_request.head.sha }}
+        run: echo "short_sha=${HEAD_GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
   terraform_lint:
     name: TF - Lint
