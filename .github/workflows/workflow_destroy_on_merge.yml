@@ -41,10 +41,10 @@ jobs:
       - workspace_name
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1
+        uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -53,7 +53,6 @@ jobs:
           role-duration-seconds: 900
           role-session-name: OPGLPABuildPipeline
 
-        # TODO: Remove echo to run this after confirming it evaluates correctly
       - name: Run workspace cleanup
         run: |
-          echo scripts/pipeline/workspace_cleanup/workspace_cleanup.sh ${{ needs.workspace_name.outputs.name }}
+          scripts/pipeline/workspace_cleanup/workspace_cleanup.sh ${{ needs.workspace_name.outputs.name }}

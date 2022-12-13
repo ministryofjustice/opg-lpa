@@ -70,12 +70,12 @@ jobs:
             force_push_to_repo: false
 
     steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
-      - uses: unfor19/install-aws-cli-action@35a9630be0168293ad2afccbe06e8e9f47678d2c # pin@v1.0.3
+      - uses: unfor19/install-aws-cli-action@8a86d81a0f1393cff1f44c77010cb2707e8a1066 # pin@1.0.4
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # pin@v1.7.0
+        uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16.7.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -92,19 +92,19 @@ jobs:
           if [ ${{ matrix.override_tag }} ]; then
             IMAGE_TAG=${{ matrix.override_tag }}
           fi
-          echo "::set-output name=image_tag::${IMAGE_TAG}"
+          echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
 
       - name: Check if image already exists
         id: image_exists
         run: |
           if aws ecr describe-images --repository-name=${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }} &> /dev/null; then
-            echo "::set-output name=image_exists::true"
+            echo "image_exists=true" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=image_exists::false"
+            echo "image_exists=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Use Node.js 16.x
-        uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93 # pin@v3
+        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # pin@v3.5.1
         if: ${{ (matrix.image_name == 'online-lpa/front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
         with:
           node-version: 16.x
@@ -120,12 +120,12 @@ jobs:
       - name: Setup Docker Buildx
         id: docker_buildx
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
-        uses: docker/setup-buildx-action@dc7b9719a96d48369863986a06765841d7ea23f6 # pin@v2
+        uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # pin@v2.2.1
         with:
           install: true
 
       - name: Setup Docker Layer Cache
-        uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # pin@v3
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # pin@v3.0.11
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         with:
           path: /tmp/.buildx-cache
@@ -134,7 +134,7 @@ jobs:
             ${{ runner.os }}-buildx-${{ matrix.image_name }}-
 
       - name: Build Image
-        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94 # pin@v3
+        uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v3.2.0
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         with:
           context: .
@@ -156,7 +156,7 @@ jobs:
       - name: ECR Login
         id: login_ecr
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
-        uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
+        uses: aws-actions/amazon-ecr-login@261a7de32bda11ba01f4d75c4ed6caf3739e54be # pin@v1.5.3
         with:
           registries: 311462405659
 
@@ -177,7 +177,7 @@ jobs:
 
       - name: Setup Python
         if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
-        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4.2.0
+        uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # pin@4.3.1
         with:
           python-version: "3.9"
 
