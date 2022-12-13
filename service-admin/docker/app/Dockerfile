@@ -41,10 +41,8 @@ COPY --chown=root:root service-admin/src /app/src
 
 COPY --chown=root:root shared /shared
 
-RUN mv shared/docker/app/app-php.ini service-admin/docker/app/app-php.ini
-RUN mv shared/docker/app/php-fpm-logging.conf service-admin/docker/app/php-fpm-logging.conf
-COPY --chown=root:root service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY --chown=root:root service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=root:root shared/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root shared/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 
