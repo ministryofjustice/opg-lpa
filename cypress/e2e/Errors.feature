@@ -6,7 +6,6 @@ Feature: Errors
     Background:
         Given I ignore application exceptions
 
-    @focus
     Scenario: Error message heading level and text / server-rendered (LPAL-247)
         Given I visit "/send-feedback"
         When I submit the feedback
@@ -15,7 +14,6 @@ Feature: Errors
         And "error-heading" is a "level 2 heading" element
         And there is "one" "level 1 heading" element on the page
 
-    @focus
     # requires additional scenarios as login page doesn't use the error macro;
     # this path attempts to log the user in and fails, but doesn't use
     # the same path through the code as invalid form fields (see below);
@@ -31,7 +29,6 @@ Feature: Errors
         And "error-heading" is a "level 2 heading" element
         And there is "one" "level 1 heading" element on the page
 
-    @focus
     Scenario: Fail to select type of LPA to create, error links to first radio (LPAL-248, LPAL-254)
         When I log in as appropriate test user
         And If I am on dashboard I click to create lpa
@@ -51,7 +48,6 @@ Feature: Errors
     # requires additional scenarios as login page doesn't use the error macro;
     # this scenario covers invalid email entered, which uses a different branch
     # of the code from a failed user login
-    @focus
     Scenario: Error message heading level and text / server-rendered auth - invalid email (LPAL-247)
         Given I visit "/login"
         And I type "foo" into "login-email"
@@ -61,3 +57,9 @@ Feature: Errors
         And I see "Error" in the title
         And "error-heading" is a "level 2 heading" element
         And there is "one" "level 1 heading" element on the page
+
+    Scenario: 403 error is returned for potentially sensitive resources (LPAL-1108)
+        Given the forbidden filename patterns
+            |zip|gz|lzh|tar|rar|7z|swp|bak|git|ht|exe|dll|py|msi|bin|sh|bat|xml|apk|jar|log|sql|conf|cfg|ini|tmp|doc|xls|rtf|
+        When I attempt to fetch a resource matching each forbidden filename pattern
+        Then I get a 403 response code for each resource
