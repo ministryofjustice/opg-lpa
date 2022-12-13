@@ -1,5 +1,24 @@
-resource "aws_lb_target_group" "front" {
-  name                 = "${var.environment_name}-front"
+resource "aws_lb_target_group" "front_blue" {
+  name                 = "${var.environment_name}-front-blue"
+  port                 = 80
+  protocol             = "HTTP"
+  target_type          = "ip"
+  vpc_id               = data.aws_vpc.default.id
+  deregistration_delay = 0
+  health_check {
+    enabled             = true
+    interval            = 30
+    path                = "/robots.txt"
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    matcher             = 200
+  }
+  depends_on = [aws_lb.front]
+  tags       = local.front_component_tag
+}
+
+resource "aws_lb_target_group" "front_green" {
+  name                 = "${var.environment_name}-front-green"
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
@@ -46,7 +65,7 @@ resource "aws_lb_listener" "front_loadbalancer" {
   certificate_arn = data.aws_acm_certificate.certificate_front.arn
 
   default_action {
-    target_group_arn = aws_lb_target_group.front.arn
+    target_group_arn = aws_lb_target_group.front_blue.arn
     type             = "forward"
   }
 }

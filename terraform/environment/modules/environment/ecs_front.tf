@@ -12,6 +12,9 @@ resource "aws_ecs_service" "front" {
   wait_for_steady_state              = true
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
+  deployment_controller {
+    type = "CODE_DEPLOY"
+  }
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
     subnets          = data.aws_subnets.private.ids
@@ -19,13 +22,27 @@ resource "aws_ecs_service" "front" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.front.arn
+    target_group_arn = aws_lb_target_group.front_blue.arn
     container_name   = "web"
     container_port   = 80
   }
 
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
   tags       = local.front_component_tag
+}
+
+module "front_codedeploy" {
+  source = "./modules/codedeploy"
+
+  name             = "front"
+  environment      = var.environment_name
+  ecs_cluster_name = aws_ecs_cluster.online-lpa.id
+  ecs_service_name = aws_ecs_service.front.name
+
+  alb_blue_target_group_name  = aws_lb_target_group.front_blue.name
+  alb_green_target_group_name = aws_lb_target_group.front_green.name
+
+  alb_listener_arn = aws_lb_listener.front_loadbalancer.arn
 }
 
 //----------------------------------
