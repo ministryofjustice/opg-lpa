@@ -28,6 +28,13 @@ resource "aws_ecs_service" "front" {
   }
 
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
+  ignore_changes = [
+    task_definition,
+    desired_count,
+    deployment_maximum_percent,
+    deployment_minimum_healthy_percent,
+    load_balancer
+  ]
   tags       = local.front_component_tag
 }
 
