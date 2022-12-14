@@ -9,7 +9,7 @@ resource "aws_ecs_service" "front" {
   launch_type                        = "FARGATE"
   platform_version                   = "1.3.0"
   propagate_tags                     = "TASK_DEFINITION"
-  wait_for_steady_state              = true
+  wait_for_steady_state              = false
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
   deployment_controller {
