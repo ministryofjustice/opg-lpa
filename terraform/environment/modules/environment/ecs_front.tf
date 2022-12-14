@@ -36,7 +36,7 @@ module "front_codedeploy" {
 
   name             = "front"
   environment      = var.environment_name
-  ecs_cluster_name = aws_ecs_cluster.online-lpa.id
+  ecs_cluster_name = aws_ecs_cluster.online-lpa.name
   ecs_service_name = aws_ecs_service.front.name
 
   alb_blue_target_group_name  = aws_lb_target_group.front_blue.name
