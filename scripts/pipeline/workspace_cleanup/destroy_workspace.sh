@@ -30,8 +30,8 @@ for workspace in $reserved_workspaces; do
 done
 
 echo "cleaning up workspace $workspace_name..."
+terraform init -input=false
 terraform workspace select $workspace_name
-terraform init 
 terraform destroy -auto-approve
 terraform workspace select default
 terraform workspace delete $workspace_name
