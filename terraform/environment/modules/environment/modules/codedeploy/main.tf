@@ -36,7 +36,7 @@ resource "aws_codedeploy_deployment_group" "main" {
   }
 
   dynamic "load_balancer_info" {
-    for_each = var.alb_listener_arn == null ? [] : var.alb_listener_arn
+    for_each = var.alb_listener_arn == null ? [] : [var.alb_listener_arn]
 
     content {
       target_group_pair_info {
