@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "pdf" {
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.pdf_app},  ${local.app_init_container}]"
+  container_definitions    = "[${local.pdf_app},  ${local.app_init_container}, ${local.aws_otel_collector}]"
   task_role_arn            = aws_iam_role.pdf_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.pdf_component_tag
