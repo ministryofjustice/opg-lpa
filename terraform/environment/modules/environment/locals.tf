@@ -100,4 +100,26 @@ locals {
     }
   )
 
+  aws_otel_collector = jsonencode(
+    {
+      cpu         = 0,
+      essential   = true,
+      image       = "public.ecr.aws/aws-observability/aws-otel-collector:v0.23.1",
+      mountPoints = [],
+      name        = "aws-otel-collector",
+      command = [
+        "--config=/etc/ecs/ecs-default-config.yaml"
+      ],
+      volumesFrom = [],
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
+          awslogs-region        = var.region_name,
+          awslogs-stream-prefix = "${var.environment_name}.otel.online-lpa"
+        }
+      }
+    }
+  )
+
 }
