@@ -79,7 +79,7 @@ resource "aws_ecs_task_definition" "front" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}, ${local.app_init_container}]"
+  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.front_component_tag

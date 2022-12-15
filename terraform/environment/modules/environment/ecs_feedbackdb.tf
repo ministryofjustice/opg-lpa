@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "feedbackdb" {
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.feedbackdb_app}, ${local.app_init_container}]"
+  container_definitions    = "[${local.feedbackdb_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
   task_role_arn            = aws_iam_role.feedbackdb_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.feedbackdb_component_tag
