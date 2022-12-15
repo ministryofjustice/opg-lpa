@@ -2,20 +2,13 @@
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
+use Application\Library\Telemetry\Tracer;
 use Laminas\Mvc\Application;
 use OpenTelemetry\SDK\Trace\SpanExporter\ConsoleSpanExporterFactory;
 use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
 use OpenTelemetry\SDK\Trace\TracerProvider;
 
-$tracerProvider = new TracerProvider(
-    new SimpleSpanProcessor(
-        (new ConsoleSpanExporterFactory())->create()
-    )
-);
-
-$tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
-$rootSpan = $tracer->spanBuilder('root')->startSpan();
-$rootScope = $rootSpan->activate();
+Tracer::start();
 
 try {
     // This makes our life easier when dealing with paths. Everything is relative
@@ -23,12 +16,9 @@ try {
     chdir(dirname(__DIR__));
 
     // Run the application!
-    $app = Application::init(require_once(__DIR__ . '/../config/application.config.php'));
-
-    $app->run();
+    Application::init(require_once(__DIR__ . '/../config/application.config.php'))->run();
 } finally {
-    $rootSpan->end();
-    $rootScope->detach();
+    Tracer::stop();
 }
 
 /*
