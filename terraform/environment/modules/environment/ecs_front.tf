@@ -150,9 +150,9 @@ data "aws_iam_policy_document" "front_permissions_role" {
     ]
   }
   statement {
-    effect    = "Allow"
-    sid       = "ApiXrayDaemon"
-     #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
+    effect = "Allow"
+    sid    = "ApiXrayDaemon"
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
     resources = ["*"]
 
     actions = [
