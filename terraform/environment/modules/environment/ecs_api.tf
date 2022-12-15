@@ -241,6 +241,20 @@ data "aws_iam_policy_document" "api_permissions_role" {
       data.aws_kms_key.lpa_pdf_sqs.arn,
     ]
   }
+  statement {
+    effect = "Allow"
+    sid    = "ApiXrayDaemon"
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
+    resources = ["*"]
+
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
+    ]
+  }
 }
 
 data "aws_ecr_repository" "lpa_api_web" {
