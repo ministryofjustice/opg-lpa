@@ -2,6 +2,7 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
+use Application\Library\Telemetry\Tracer;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
@@ -142,7 +143,14 @@ class DbWrapper
             $select->columns($options['columns']);
         }
 
+        $tracer = Tracer::getInstance();
+        $tracer->startChild('DbWrapper.select');
+
         /** @throws LaminasDbAdapterRuntimeException */
-        return $sql->prepareStatementForSqlObject($select)->execute();
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        $tracer->stopChild('DbWrapper.select');
+
+        return $result;
     }
 }
