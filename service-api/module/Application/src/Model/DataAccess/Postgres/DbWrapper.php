@@ -2,7 +2,6 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
-use Application\Library\Telemetry\Tracer;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
@@ -12,6 +11,7 @@ use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Sql;
+use MakeShared\Telemetry\Tracer;
 
 /**
  * Long term plan is to move all subclasses of AbstractBase to instead
