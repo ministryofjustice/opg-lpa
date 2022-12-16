@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Library\Telemetry;
+namespace MakeShared\Telemetry;
 
 use Laminas\Log\PsrLoggerAdapter;
 use MakeShared\Logging\SimpleLoggerTrait;
