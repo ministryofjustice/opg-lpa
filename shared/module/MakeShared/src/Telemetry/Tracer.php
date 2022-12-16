@@ -8,7 +8,9 @@ use MakeShared\Logging\SimpleLoggerTrait;
 use MakeShared\Logging\TraceIdProcessor;
 use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;
 use OpenTelemetry\Context\Context;
+use OpenTelemetry\SDK\Trace\ReadWriteSpanInterface;
 use OpenTelemetry\SDK\Trace\SpanExporter\LoggerExporter;
+use OpenTelemetry\SDK\Trace\SpanExporterInterface;
 use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
 use OpenTelemetry\SDK\Trace\Tracer as OTTracer;
 use OpenTelemetry\SDK\Trace\TracerProvider as OTTracerProvider;
@@ -34,12 +36,6 @@ use RuntimeException;
  * // ******* code to be traced goes here *******
  * $tracer->stopChild('my.span.name');
  *
- * (While the child spans could be started, returning a handle, then
- * stopped by calling method on the handle directly, the stopChild()
- * method means a caller doesn't need to know the OT Span API to be
- * able to start/stop spans. Where finer-grained control is required,
- * it's possible to interact directly with the Span.)
- *
  * This usually attaches a child span to the root span set up by start().
  * However, if you start a child span B while another child span A is
  * already running, the OT API will make B a child of A rather than root.
@@ -54,9 +50,10 @@ use RuntimeException;
  */
 class Tracer
 {
+    // this is to support logging to stdout in dev
     use SimpleLoggerTrait;
 
-    /** @var OTTraceProvider */
+    /** @var OTTracerProvider */
     private $tracerProvider = null;
 
     /** @var OTTracer */
@@ -84,7 +81,7 @@ class Tracer
     {
         $traceIdHeaderLine = $_SERVER[Constants::X_TRACE_ID_HEADER_NAME] ?? null;
 
-        // if no header is present, use the global current context
+        // if no header is present, use the current context
         if (is_null($traceIdHeaderLine)) {
             return Context::getCurrent();
         }
@@ -108,7 +105,7 @@ class Tracer
         // if Sampled=1, we use '01' as trace flags; otherwise, '00'
         $traceFlags = '0' . ($parsed['Sampled'] ?? '0');
 
-        // if traceId or parentId are invalid, we'll just get the default current context
+        // if traceId or parentId are invalid, we'll just get the default current context here
         $headers = [];
         $headers[TraceContextPropagator::TRACEPARENT] = "${version}-${traceId}-${parentId}-${traceFlags}";
 
@@ -133,21 +130,25 @@ class Tracer
         return self::$instance;
     }
 
-    public function start()
+    public function __construct(SpanExporterInterface $exporter = null)
+    {
+        if (is_null($exporter)) {
+            $logger = new PsrLoggerAdapter($this->getLogger());
+            $exporter = new LoggerExporter('service-api', $logger);
+        }
+
+        $this->tracerProvider = new OTTracerProvider(
+            new SimpleSpanProcessor($exporter)
+        );
+
+        $this->tracer = $this->tracerProvider->getTracer('io.opentelemetry.contrib.php');
+    }
+
+    public function start(): void
     {
         if ($this->started) {
             return;
         }
-
-        $logger = new PsrLoggerAdapter($this->getLogger());
-
-        $this->tracerProvider = new OTTracerProvider(
-            new SimpleSpanProcessor(
-                new LoggerExporter('service-api', $logger)
-            )
-        );
-
-        $this->tracer = $this->tracerProvider->getTracer('io.opentelemetry.contrib.php');
 
         $this->root = $this->tracer->spanBuilder('root')
             ->setParent($this->extractContext())
@@ -160,9 +161,9 @@ class Tracer
 
     /**
      * Add a child span to the currently-active span (usually root).
-     * This span can then have attributes set etc. as desired.
+     * The returned span can then have attributes set etc. as desired.
      */
-    public function startChild($name)
+    public function startChild($name): ReadWriteSpanInterface
     {
         if (!$this->started) {
             $this->start();
@@ -177,18 +178,26 @@ class Tracer
         return $span;
     }
 
-    public function stopChild($name)
+    public function stopChild($name): void
     {
         if (array_key_exists($name, $this->childSpans)) {
             $this->childSpans[$name]->end();
+            unset($this->childSpans[$name]);
         }
     }
 
-    public function stop()
+    public function stop(): void
     {
         if (!$this->started) {
             $this->start();
         }
+
+        // clean up any child spans which have been left running
+        foreach ($this->childSpans as $childSpan) {
+            $childSpan->end();
+        }
+
+        $this->childSpans = [];
 
         $this->rootScope->detach();
         $this->root->end();
