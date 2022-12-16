@@ -4,9 +4,6 @@ require_once(__DIR__ . '/../vendor/autoload.php');
 
 use Laminas\Mvc\Application;
 use MakeShared\Telemetry\Tracer;
-use OpenTelemetry\SDK\Trace\SpanExporter\ConsoleSpanExporterFactory;
-use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
-use OpenTelemetry\SDK\Trace\TracerProvider;
 
 $tracer = Tracer::getInstance();
 $tracer->start();
