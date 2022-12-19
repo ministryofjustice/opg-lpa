@@ -167,6 +167,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         env: 
           IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
+          IMAGE_NAME: ${{ matrix.image_name }}
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
         run: |
           docker buildx imagetools create $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG --tag $ECR_REGISTRY/$IMAGE_NAME:main-$IMAGE_TAG
     
