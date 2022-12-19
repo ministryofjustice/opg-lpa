@@ -148,8 +148,7 @@ return [
     'telemetry' => [
         // if host is null, a console exporter will be used
         'exporter' => [
-            'host' => getenv('OPG_LPA_TELEMETRY_EXPORTER_HOST') ?: null,
-            'port' => getenv('OPG_LPA_TELEMETRY_EXPORTER_PORT') ?: 4318,
+            'url' => getenv('OPG_LPA_TELEMETRY_EXPORTER_URL') ?: null,
         ],
     ],
 ];
