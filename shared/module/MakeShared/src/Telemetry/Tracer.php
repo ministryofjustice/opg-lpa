@@ -7,7 +7,7 @@ namespace MakeShared\Telemetry;
 use Laminas\Log\PsrLoggerAdapter;
 use MakeShared\Constants;
 use MakeShared\Logging\SimpleLogger;
-use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;
+use OpenTelemetry\Aws\Xray\Propagator;
 use OpenTelemetry\Context\Context;
 use OpenTelemetry\Contrib\Otlp\OtlpHttpTransportFactory;
 use OpenTelemetry\Contrib\Otlp\SpanExporter;
@@ -48,11 +48,11 @@ use RuntimeException;
  */
 class Tracer
 {
-    /** @var OTTracerProvider */
-    private $tracerProvider = null;
+    private OTTracerProvider $tracerProvider;
 
-    /** @var OTTracer */
-    private $tracer = null;
+    private OTTracer $tracer;
+
+    private Propagator $propagator;
 
     private $root = null;
     private $rootScope = null;
@@ -63,13 +63,14 @@ class Tracer
     // we track the child spans so we can clean them up
     private $childSpans = [];
 
-    public function __construct(SpanExporterInterface $exporter)
-    {
-        $this->tracerProvider = new OTTracerProvider(
-            new SimpleSpanProcessor($exporter)
-        );
-
-        $this->tracer = $this->tracerProvider->getTracer('io.opentelemetry.contrib.php');
+    public function __construct(
+        OTTracerProvider $tracerProvider,
+        OTTracer $tracer,
+        Propagator $propagator
+    ) {
+        $this->tracerProvider = $tracerProvider;
+        $this->tracer = $tracer;
+        $this->propagator = $propagator;
     }
 
     /**
@@ -92,51 +93,15 @@ class Tracer
             $exporter = new SpanExporter($transport);
         }
 
-        return new Tracer($exporter);
-    }
+        $tracerProvider = new OTTracerProvider(
+            new SimpleSpanProcessor($exporter)
+        );
 
-    // X-Amz-Trace-Id has format:
-    // Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1
-    // (Parent and Sampled may be omitted).
-    // This needs to be converted into the correct format for OpenTelemetry
-    // (see https://www.w3.org/TR/trace-context/#traceparent-header)
-    // which is what we're doing here.
-    // Note: validation of the content of the header is handed off to
-    // TraceContextPropagator, which ensures the characters fall within the
-    // range defined in the spec.
-    private function buildHeaders()
-    {
-        $traceIdHeaderLine = $_SERVER[Constants::X_TRACE_ID_HEADER_NAME] ?? null;
+        $tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
 
-        // if no header is present, use the current context
-        if (is_null($traceIdHeaderLine)) {
-            return Context::getCurrent();
-        }
+        $propagator = new Propagator();
 
-        $parsed = [];
-        parse_str(str_replace(';', '&', $traceIdHeaderLine), $parsed);
-
-        $version = '00';
-
-        // trace ID must be 32 characters long with no hyphens; if not set,
-        // provide an invalid trace ID as the default
-        $traceId = $parsed['Root'] ?? str_repeat('0', 32);
-
-        // strip the leading '1-' (presumably AWS's versioning?) and any hyphens
-        $traceId = substr($traceId, 2);
-        $traceId = str_replace('-', '', $traceId);
-
-        // if Parent is not set, create an invalid parent string
-        $parentId = $parsed['Parent'] ?? str_repeat('0', 16);
-
-        // if Sampled=1, we use '01' as trace flags; otherwise, '00'
-        $traceFlags = '0' . ($parsed['Sampled'] ?? '0');
-
-        // if traceId or parentId are invalid, we'll just get the default current context here
-        $headers = [];
-        $headers[TraceContextPropagator::TRACEPARENT] = "${version}-${traceId}-${parentId}-${traceFlags}";
-
-        return $headers;
+        return new Tracer($tracerProvider, $tracer, $propagator);
     }
 
     // Get a context object from the headers on the incoming
@@ -144,8 +109,9 @@ class Tracer
     // as the context is dependent on where we are embededded in the tree of spans.
     private function extractContext()
     {
-        $headers = $this->buildHeaders();
-        return TraceContextPropagator::getInstance()->extract($headers);
+        $headers = [];
+        $headers[Propagator::AWSXRAY_TRACE_ID_HEADER] = $_SERVER[Constants::X_TRACE_ID_HEADER_NAME];
+        return $this->propagator->extract($headers);
     }
 
     public function start(): void
