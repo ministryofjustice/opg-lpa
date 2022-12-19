@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b3ebabe736c896105f249324479c369",
+    "content-hash": "59b9d25facb0480d2f8a455786c63166",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -3877,6 +3877,68 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v4.15.3"
             },
             "time": "2023-01-16T22:05:37+00:00"
+        },
+        {
+            "name": "open-telemetry/contrib-aws",
+            "version": "0.0.17",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opentelemetry-php/contrib-aws.git",
+                "reference": "f8543aab9987a9513723af33b9d83d7ea999abc3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opentelemetry-php/contrib-aws/zipball/f8543aab9987a9513723af33b9d83d7ea999abc3",
+                "reference": "f8543aab9987a9513723af33b9d83d7ea999abc3",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.232",
+                "open-telemetry/sdk": "^0",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "dg/bypass-finals": "^v1.4.1",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "mikey179/vfsstream": "^1.6",
+                "open-telemetry/dev-tools": "dev-main",
+                "phan/phan": "^4.1 || ^5",
+                "php-http/mock-client": "*",
+                "phpstan/phpstan": "^1.4",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "~9",
+                "psalm/plugin-phpunit": "^0.17.0",
+                "vimeo/psalm": "^4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenTelemetry\\Aws\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "opentelemetry-php-contrib contributors",
+                    "homepage": "https://github.com/open-telemetry/opentelemetry-php-contrib/graphs/contributors"
+                }
+            ],
+            "description": "The Aws package for opentelemetry-php",
+            "keywords": [
+                "aws",
+                "detector",
+                "opentelemetry",
+                "otel",
+                "propagator",
+                "tracing"
+            ],
+            "support": {
+                "source": "https://github.com/opentelemetry-php/contrib-aws/tree/0.0.17"
+            },
+            "time": "2022-11-17T04:36:46+00:00"
         },
         {
             "name": "open-telemetry/opentelemetry",
