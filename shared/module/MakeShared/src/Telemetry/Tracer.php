@@ -32,9 +32,9 @@ use RuntimeException;
  *
  * To trace an individual piece of code, surround it like this:
  *
- * $tracer->startChild('my.span.name');
+ * ;
  * // ******* code to be traced goes here *******
- * $tracer->stopChild('my.span.name');
+ * ;
  *
  * This usually attaches a child span to the root span set up by start().
  * However, if you start a child span B while another child span A is
@@ -57,10 +57,9 @@ class Tracer
     private $root = null;
     private $rootScope = null;
 
-    /** @var bool */
-    private $started = false;
+    private bool $started = false;
 
-    // we track the child spans so we can clean them up
+    // we track the child spans so we can clean them up on stop()
     private $childSpans = [];
 
     public function __construct(
@@ -132,8 +131,13 @@ class Tracer
     /**
      * Add a child span to the currently-active span (usually root).
      * The returned span can then have attributes set etc. as desired.
+     *
+     * @param array $attributes Key/value pairs to set on the span, where each
+     * key is a string and each value a "non-null string, boolean, floating point value,
+     * integer, or an array of these values"
+     * (see https://opentelemetry.io/docs/concepts/signals/traces/#attributes)
      */
-    public function startChild(string $name): ReadWriteSpanInterface
+    public function startChild(string $name, array $attributes = []): ReadWriteSpanInterface
     {
         if (!$this->started) {
             $this->start();
@@ -142,6 +146,10 @@ class Tracer
         $span = $this->tracer->spanBuilder($name)
             ->setParent($this->extractContext())
             ->startSpan();
+
+        foreach ($attributes as $key => $value) {
+            $span->setAttribute($key, $value);
+        }
 
         $this->childSpans[$name] = $span;
 
@@ -159,7 +167,7 @@ class Tracer
     public function stop(): void
     {
         if (!$this->started) {
-            $this->start();
+            return;
         }
 
         // clean up any child spans which have been left running

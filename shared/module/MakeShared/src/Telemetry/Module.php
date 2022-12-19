@@ -16,9 +16,10 @@ class Module
 
     public function startChild(Event $e)
     {
-        $this->tracer->startChild($e->getSpanName());
+        $this->tracer->startChild($e->getSpanName(), $e->getAttributes());
     }
 
+    // when stopping a child, we ignore the event's attributes
     public function stopChild(Event $e)
     {
         $this->tracer->stopChild($e->getSpanName());
