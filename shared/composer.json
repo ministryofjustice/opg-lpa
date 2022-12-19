@@ -17,6 +17,7 @@
         "laminas/laminas-log": "^2.13",
         "laminas/laminas-mvc": "^3.5",
         "open-telemetry/opentelemetry": "0.0.17",
+        "open-telemetry/contrib-aws": "^0.0.17",
         "php-http/guzzle6-adapter": "^2.0",
         "symfony/validator": "^4.2"
     },
