@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakeShared\Telemetry;
 
 use Laminas\Log\PsrLoggerAdapter;
@@ -20,18 +22,15 @@ use RuntimeException;
  * Factory for constructing an OpenTelemetry tracer which writes
  * to the standard Laminas log stream.
  *
- * index.php should set up the initial scaffolding by calling start():
+ * Set up the initial scaffolding by calling start():
  *
- * $tracer = Tracer::getInstance();
+ * $tracer = new Tracer();
  * $tracer->start();
  *
- * This creates a single instance of the tracer per request, which
- * can then be used like a global throughout the code. It also creates
- * and attaches a root span which other traces can hang off.
+ * This creates and attaches a root span which other traces can hang off.
  *
  * To trace an individual piece of code, surround it like this:
  *
- * $tracer = Tracer::getInstance();
  * $tracer->startChild('my.span.name');
  * // ******* code to be traced goes here *******
  * $tracer->stopChild('my.span.name');
@@ -45,8 +44,6 @@ use RuntimeException;
  * main Laminas application run() method has completed:
  *
  * $tracer->stop();
- *
- * ($tracer should still be in scope in index.php)
  */
 class Tracer
 {
@@ -61,12 +58,26 @@ class Tracer
 
     private $root = null;
     private $rootScope = null;
+
+    /** @var bool */
     private $started = false;
 
     // we track the child spans so we can clean them up
     private $childSpans = [];
 
-    private static $instance = null;
+    public function __construct(SpanExporterInterface $exporter = null)
+    {
+        if (is_null($exporter)) {
+            $logger = new PsrLoggerAdapter($this->getLogger());
+            $exporter = new LoggerExporter('service-api', $logger);
+        }
+
+        $this->tracerProvider = new OTTracerProvider(
+            new SimpleSpanProcessor($exporter)
+        );
+
+        $this->tracer = $this->tracerProvider->getTracer('io.opentelemetry.contrib.php');
+    }
 
     // X-Amz-Trace-Id has format:
     // Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1
@@ -114,34 +125,11 @@ class Tracer
 
     // Get a context object from the headers on the incoming
     // request, if present; this has to be constructed every time we get a span,
-    // as the context is dependent on where we are embededded in the tree of spans
+    // as the context is dependent on where we are embededded in the tree of spans.
     private function extractContext()
     {
         $headers = $this->buildHeaders();
         return TraceContextPropagator::getInstance()->extract($headers);
-    }
-
-    public static function getInstance()
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new Tracer();
-        }
-
-        return self::$instance;
-    }
-
-    public function __construct(SpanExporterInterface $exporter = null)
-    {
-        if (is_null($exporter)) {
-            $logger = new PsrLoggerAdapter($this->getLogger());
-            $exporter = new LoggerExporter('service-api', $logger);
-        }
-
-        $this->tracerProvider = new OTTracerProvider(
-            new SimpleSpanProcessor($exporter)
-        );
-
-        $this->tracer = $this->tracerProvider->getTracer('io.opentelemetry.contrib.php');
     }
 
     public function start(): void
@@ -163,7 +151,7 @@ class Tracer
      * Add a child span to the currently-active span (usually root).
      * The returned span can then have attributes set etc. as desired.
      */
-    public function startChild($name): ReadWriteSpanInterface
+    public function startChild(string $name): ReadWriteSpanInterface
     {
         if (!$this->started) {
             $this->start();
@@ -178,7 +166,7 @@ class Tracer
         return $span;
     }
 
-    public function stopChild($name): void
+    public function stopChild(string $name): void
     {
         if (array_key_exists($name, $this->childSpans)) {
             $this->childSpans[$name]->end();
