@@ -143,5 +143,13 @@ return [
         // this is a temporary fix so that our code works with existing environment variable settings
         // without needing to be modified - just strip the specific path from the end of the URI
         'endpoint' => str_replace('/lpa-online-tool/lpas/', '', getenv('OPG_LPA_PROCESSING_STATUS_ENDPOINT')),
-    ]
+    ],
+
+    'telemetry' => [
+        // if host is null, a console exporter will be used
+        'exporter' => [
+            'host' => getenv('OPG_LPA_TELEMETRY_EXPORTER_HOST') ?: null,
+            'port' => getenv('OPG_LPA_TELEMETRY_EXPORTER_PORT') ?: 4318,
+        ],
+    ],
 ];
