@@ -58,5 +58,7 @@ jobs:
 
       - name: Run workspace cleanup
         working-directory: ./terraform/environment
+        env:
+          TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
         run: |
           ../../scripts/pipeline/workspace_cleanup/destroy_workspace.sh ${{ needs.workspace_name.outputs.name }}
