@@ -17,9 +17,9 @@ class TelemetryEventManager
         self::$eventManager = $eventManager;
     }
 
-    public static function triggerStart(string $spanName)
+    public static function triggerStart(string $spanName, array $attributes = [])
     {
-        $event = new Event(Constants::TELEMETRY_START_CHILD, $spanName);
+        $event = new Event(Constants::TELEMETRY_START_CHILD, $spanName, $attributes);
         self::$eventManager->triggerEvent($event);
     }
 
