@@ -98,9 +98,9 @@ locals {
         { "name" : "OPG_LPA_POSTGRES_FEEDBACK_PASSWORD", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.performance_platform_db_password.name}" }
       ],
       "environment" : [
-        { "name" : "OPG_LPA_POSTGRES_NAME", "value" : "${local.db.name}" },
-        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : "${local.db.endpoint}" },
-        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : "${tostring(local.db.port)}" },
+        { "name" : "OPG_LPA_POSTGRES_NAME", "value" : "${module.api_aurora[0].name}" },
+        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : "${module.api_aurora[0].endpoint}" },
+        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : "${tostring(module.api_aurora[0].port)}" },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : "${var.account_name}" }
       ]
   })
