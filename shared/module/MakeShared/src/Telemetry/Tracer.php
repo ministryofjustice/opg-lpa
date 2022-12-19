@@ -54,6 +54,8 @@ class Tracer
 
     private Propagator $propagator;
 
+    private SimpleLogger $logger;
+
     private $root = null;
     private $rootScope = null;
 
@@ -65,11 +67,13 @@ class Tracer
     public function __construct(
         OTTracerProvider $tracerProvider,
         OTTracer $tracer,
-        Propagator $propagator
+        Propagator $propagator,
+        SimpleLogger $logger
     ) {
         $this->tracerProvider = $tracerProvider;
         $this->tracer = $tracer;
         $this->propagator = $propagator;
+        $this->logger = $logger;
     }
 
     /**
@@ -80,12 +84,14 @@ class Tracer
      */
     public static function create(array $config)
     {
+        $logger = new SimpleLogger();
         $exporterUrl = $config['exporter']['url'];
 
         if (is_null($exporterUrl)) {
-            $logger = new PsrLoggerAdapter(new SimpleLogger());
-            $exporter = new LoggerExporter('service-api', $logger);
+            $wrappedLogger = new PsrLoggerAdapter($logger);
+            $exporter = new LoggerExporter('service-api', $wrappedLogger);
         } else {
+            $logger->info("Telemetry will be sent over HTTP to ${exporterUrl}");
             $transport = (new OtlpHttpTransportFactory())->create($exporterUrl, 'application/x-protobuf');
             $exporter = new SpanExporter($transport);
         }
@@ -98,7 +104,7 @@ class Tracer
 
         $propagator = new Propagator();
 
-        return new Tracer($tracerProvider, $tracer, $propagator);
+        return new Tracer($tracerProvider, $tracer, $propagator, $logger);
     }
 
     // Get a context object from the headers on the incoming
