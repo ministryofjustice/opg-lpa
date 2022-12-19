@@ -75,20 +75,18 @@ class Tracer
     /**
      * Factory method.
      *
-     * @param array $config Expects exporter.host and exporter.port properties. If host
-     * is null, a console exporter is used by default.
+     * @param array $config Expect a exporter.url property; if not set, a console
+     * exporter is used by default.
      */
     public static function create(array $config)
     {
-        $exporterConfig = $config['exporter'];
-        $exporterHost = $exporterConfig['host'];
+        $exporterUrl = $config['exporter']['url'];
 
-        if (is_null($exporterHost)) {
+        if (is_null($exporterUrl)) {
             $logger = new PsrLoggerAdapter(new SimpleLogger());
             $exporter = new LoggerExporter('service-api', $logger);
         } else {
-            $url = 'http://' . $exporterHost . ':' . $exporterConfig['port'] . '/v1/traces';
-            $transport = (new OtlpHttpTransportFactory())->create($url, 'application/x-protobuf');
+            $transport = (new OtlpHttpTransportFactory())->create($exporterUrl, 'application/x-protobuf');
             $exporter = new SpanExporter($transport);
         }
 
