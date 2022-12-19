@@ -26,7 +26,7 @@ class Module
 
     public function onBootstrap(MvcEvent $event): void
     {
-        $this->tracer = new Tracer();
+        $this->tracer = $event->getApplication()->getServiceManager()->get('TelemetryTracer');
         $this->tracer->start();
 
         $eventManager = $event->getApplication()->getEventManager();

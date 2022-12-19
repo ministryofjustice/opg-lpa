@@ -6,13 +6,14 @@ namespace MakeShared\Telemetry;
 
 use Laminas\Log\PsrLoggerAdapter;
 use MakeShared\Constants;
-use MakeShared\Logging\SimpleLoggerTrait;
-use MakeShared\Logging\TraceIdProcessor;
+use MakeShared\Logging\SimpleLogger;
 use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;
 use OpenTelemetry\Context\Context;
+use OpenTelemetry\Contrib\Otlp\OtlpHttpTransportFactory;
+use OpenTelemetry\Contrib\Otlp\SpanExporter;
 use OpenTelemetry\SDK\Trace\ReadWriteSpanInterface;
-use OpenTelemetry\SDK\Trace\SpanExporter\LoggerExporter;
 use OpenTelemetry\SDK\Trace\SpanExporterInterface;
+use OpenTelemetry\SDK\Trace\SpanExporter\LoggerExporter;
 use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
 use OpenTelemetry\SDK\Trace\Tracer as OTTracer;
 use OpenTelemetry\SDK\Trace\TracerProvider as OTTracerProvider;
@@ -47,9 +48,6 @@ use RuntimeException;
  */
 class Tracer
 {
-    // this is to support logging to stdout in dev
-    use SimpleLoggerTrait;
-
     /** @var OTTracerProvider */
     private $tracerProvider = null;
 
@@ -65,18 +63,36 @@ class Tracer
     // we track the child spans so we can clean them up
     private $childSpans = [];
 
-    public function __construct(SpanExporterInterface $exporter = null)
+    public function __construct(SpanExporterInterface $exporter)
     {
-        if (is_null($exporter)) {
-            $logger = new PsrLoggerAdapter($this->getLogger());
-            $exporter = new LoggerExporter('service-api', $logger);
-        }
-
         $this->tracerProvider = new OTTracerProvider(
             new SimpleSpanProcessor($exporter)
         );
 
         $this->tracer = $this->tracerProvider->getTracer('io.opentelemetry.contrib.php');
+    }
+
+    /**
+     * Factory method.
+     *
+     * @param array $config Expects exporter.host and exporter.port properties. If host
+     * is null, a console exporter is used by default.
+     */
+    public static function create(array $config)
+    {
+        $exporterConfig = $config['exporter'];
+        $exporterHost = $exporterConfig['host'];
+
+        if (is_null($exporterHost)) {
+            $logger = new PsrLoggerAdapter(new SimpleLogger());
+            $exporter = new LoggerExporter('service-api', $logger);
+        } else {
+            $url = 'http://' . $exporterHost . ':' . $exporterConfig['port'] . '/v1/traces';
+            $transport = (new OtlpHttpTransportFactory())->create($url, 'application/x-protobuf');
+            $exporter = new SpanExporter($transport);
+        }
+
+        return new Tracer($exporter);
     }
 
     // X-Amz-Trace-Id has format:
