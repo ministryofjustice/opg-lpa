@@ -17,6 +17,7 @@ return array(
         'Laminas\Cache\Storage\Adapter\Memory',
         'Laminas\ZendFrameworkBridge',
         'Application',
+        'Telemetry',
     ),
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(
@@ -27,6 +28,7 @@ return array(
         'module_paths' => array(
             './module',
             './vendor',
+            'Telemetry' => __DIR__ . '/../../shared/module/MakeShared/src/Telemetry',
         ),
         // An array of paths from which to glob configuration files after
         // modules are loaded. These effectively override configuration
