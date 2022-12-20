@@ -17,8 +17,9 @@ Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
     })
 });
 
-Cypress.Commands.add("visitWithChecks", (url) => {
-    cy.visit(url);
+Cypress.Commands.add("visitWithChecks", (url, options) => {
+    options = options || {};
+    cy.visit(url, options);
     cy.document().then(doc => {
         expect(doc.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected");
 

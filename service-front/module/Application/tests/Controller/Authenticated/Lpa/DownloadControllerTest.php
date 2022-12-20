@@ -23,8 +23,8 @@ class DownloadControllerTest extends AbstractControllerTest
 
         $this->setPdfType($controller, $this->lpa, 'lpa120');
         $this->logger->shouldReceive('info')->withArgs(['PDF not available', ['lpaId' => $this->lpa->id]])->once();
+        $this->routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found']);
 
-        /** @var ViewModel $result */
         $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
