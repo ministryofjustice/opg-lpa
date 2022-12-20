@@ -11,7 +11,7 @@ use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;
 use OpenTelemetry\Context\Context;
 use OpenTelemetry\Contrib\Otlp\OtlpHttpTransportFactory;
 use OpenTelemetry\Contrib\Otlp\SpanExporter;
-use OpenTelemetry\SDK\Trace\ReadWriteSpanInterface;
+use OpenTelemetry\SDK\Trace\SpanInterface;
 use OpenTelemetry\SDK\Trace\SpanExporterInterface;
 use OpenTelemetry\SDK\Trace\SpanExporter\LoggerExporter;
 use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
@@ -180,7 +180,7 @@ class Tracer
      * integer, or an array of these values"
      * (see https://opentelemetry.io/docs/concepts/signals/traces/#attributes)
      */
-    public function startChild(string $name, array $attributes = []): ReadWriteSpanInterface
+    public function startChild(string $name, array $attributes = []): SpanInterface
     {
         if (!$this->started) {
             $this->start();
