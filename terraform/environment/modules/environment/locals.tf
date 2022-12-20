@@ -1,12 +1,5 @@
 locals {
 
-  db = { #will be removed once we use aurora in pre and production.
-    endpoint = var.account.aurora_enabled ? module.api_aurora[0].endpoint : aws_db_instance.api[0].address
-    port     = var.account.aurora_enabled ? module.api_aurora[0].port : aws_db_instance.api[0].port
-    name     = var.account.aurora_enabled ? module.api_aurora[0].name : aws_db_instance.api[0].name
-    username = var.account.aurora_enabled ? module.api_aurora[0].master_username : aws_db_instance.api[0].username
-  }
-
   account_name_short = var.account.account_name_short
 
   cert_prefix_public_facing   = var.environment_name == "production" ? "www." : "*."
@@ -97,6 +90,28 @@ locals {
         }
       ],
       "essential" : false
+    }
+  )
+
+  aws_otel_collector = jsonencode(
+    {
+      cpu         = 0,
+      essential   = true,
+      image       = "public.ecr.aws/aws-observability/aws-otel-collector:v0.23.1",
+      mountPoints = [],
+      name        = "aws-otel-collector",
+      command = [
+        "--config=/etc/ecs/ecs-default-config.yaml"
+      ],
+      volumesFrom = [],
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
+          awslogs-region        = var.region_name,
+          awslogs-stream-prefix = "${var.environment_name}.otel.online-lpa"
+        }
+      }
     }
   )
 

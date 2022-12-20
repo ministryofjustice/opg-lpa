@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "pdf" {
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.pdf_app},  ${local.app_init_container}]"
+  container_definitions    = "[${local.pdf_app},  ${local.app_init_container}, ${local.aws_otel_collector}]"
   task_role_arn            = aws_iam_role.pdf_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.pdf_component_tag
@@ -151,6 +151,20 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
     ]
     resources = [
       data.aws_kms_key.lpa_pdf_sqs.arn,
+    ]
+  }
+  statement {
+    effect = "Allow"
+    sid    = "ApiXrayDaemon"
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
+    resources = ["*"]
+
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
     ]
   }
 }
