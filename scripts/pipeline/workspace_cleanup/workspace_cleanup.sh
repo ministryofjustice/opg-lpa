@@ -5,6 +5,8 @@
 
 set -Eeuo pipefail
 
+CI=${CI:-false} # set to true if running in CI
+
 print_usage() {
   echo "Usage: `basename $0` [workspace1] [workspace2] [workspace3] ..."
 }
