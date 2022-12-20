@@ -1,5 +1,8 @@
 name: "[Docker] Build and Push Images"
 
+# This workflow will build and push new container images to ECR on non-main branches
+# On main branch, it will retag the image with a main- prefix and push it to ECR
+
 defaults:
   run:
     shell: bash
@@ -11,10 +14,6 @@ on:
         description: "Tag for docker image"
         required: true
         type: string
-      branch_name:
-        description: "Name of the branch doing the build"
-        required: true
-        type: string
 
 jobs:
   docker_build_scan_push:
@@ -24,50 +23,50 @@ jobs:
       matrix:
         include:
           - image_name: online-lpa/front_app
-            service_path: ./service-front/docker/app
-            force_push_to_repo: false
+            dockerfile_path: ./service-front/docker/app
+            service_path: ./service-front
 
           - image_name: online-lpa/front_web
-            service_path: ./service-front/docker/web
-            force_push_to_repo: false
+            dockerfile_path: ./service-front/docker/web
+            service_path: ./service-front
 
           - image_name: online-lpa/front_v2_app
-            service_path: ./service-front-v2/docker/app
-            force_push_to_repo: false
+            dockerfile_path: ./service-front-v2/docker/app
+            service_path: ./service-front-v2
 
           - image_name: online-lpa/api_app
-            service_path: ./service-api/docker/app
-            force_push_to_repo: false
+            dockerfile_path: ./service-api/docker/app
+            service_path: ./service-api
 
           - image_name: online-lpa/api_web
-            service_path: ./service-api/docker/web
-            force_push_to_repo: false
+            dockerfile_path: ./service-api/docker/web
+            service_path: ./service-api
 
           - image_name: online-lpa/admin_app
-            service_path: ./service-admin/docker/app
-            force_push_to_repo: false
-
+            dockerfile_path: ./service-admin/docker/app
+            service_path: ./service-admin
+            
           - image_name: online-lpa/admin_web
-            service_path: ./service-admin/docker/web
-            force_push_to_repo: false
+            dockerfile_path: ./service-admin/docker/web
+            service_path: ./service-admin
 
           - image_name: online-lpa/pdf_app
-            service_path: ./service-pdf/docker/app
-            force_push_to_repo: false
+            dockerfile_path: ./service-pdf/docker/app
+            service_path: ./service-pdf
 
           - image_name: online-lpa/seeding_app
-            service_path: ./service-seeding/docker/app
-            force_push_to_repo: false
+            dockerfile_path: ./service-seeding/docker/app
+            service_path: ./service-seeding
 
           - image_name: online-lpa/cypress
+            dockerfile_path: ./cypress/
             service_path: ./cypress/
             override_tag: latest
-            force_push_to_repo: false
 
           - image_name: lambda-aurora_scheduler
-            service_path: ./aurora-scheduler/docker
+            dockerfile_path: ./aurora-scheduler/docker
+            service_path: ./aurora-scheduler
             override_tag: latest
-            force_push_to_repo: false
 
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
@@ -83,7 +82,7 @@ jobs:
           role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
           role-duration-seconds: 1800
           role-session-name: OPGMakeaLPAECRGithubAction
-
+      
       - name: Apply override tag
         id: set_image_tag
         env:
@@ -94,23 +93,29 @@ jobs:
           fi
           echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
 
-      - name: Check if image already exists
-        id: image_exists
-        run: |
-          if aws ecr describe-images --repository-name=${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }} &> /dev/null; then
-            echo "image_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "image_exists=false" >> $GITHUB_OUTPUT
-          fi
+      - name: Check if image needs to be built
+        id: check_if_image_needs_to_be_built
+        uses: ./.github/actions/detect_changes
+        with:
+          path: ${{ matrix.service_path }}
 
+      - name: Set boolean for whether to build image
+        id: build_image
+        run: |
+          if [[ "${{ github.ref }}" != "refs/heads/main" && "${{ steps.check_if_image_needs_to_be_built.outputs.changes_detected }}" == "true" ]]; then
+            echo "build=true" >> $GITHUB_OUTPUT
+          else
+            echo "build=false" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Use Node.js 16.x
         uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # pin@v3.5.1
-        if: ${{ (matrix.image_name == 'online-lpa/front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
+        if: ${{ (matrix.image_name == 'online-lpa/front_web') && steps.build_image.outputs.build == 'true' }}
         with:
           node-version: 16.x
 
       - name: Install Dependencies
-        if: ${{ (matrix.image_name == 'online-lpa/front_web') && (steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true) }}
+        if: ${{ (matrix.image_name == 'online-lpa/front_web') && steps.build_image.outputs.build == 'true' }}
         run: |
           pushd service-front/
           npm ci -y && npm install -g sass
@@ -119,14 +124,13 @@ jobs:
 
       - name: Setup Docker Buildx
         id: docker_buildx
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # pin@v2.2.1
         with:
           install: true
 
       - name: Setup Docker Layer Cache
         uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # pin@v3.0.11
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
+        if: ${{ steps.build_image.outputs.build == 'true' }}
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ matrix.image_name }}-${{ github.sha }}
@@ -135,60 +139,79 @@ jobs:
 
       - name: Build Image
         uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v3.2.0
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
+        if: steps.build_image.outputs.build == 'true'
         with:
           context: .
           load: true
           tags: ${{ matrix.image_name }}:latest
           push: false
-          file: ${{ matrix.service_path }}/Dockerfile
+          file: ${{ matrix.dockerfile_path }}/Dockerfile
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
           build-args: |
             OPG_LPA_COMMON_APP_VERSION=${{ github.sha }}
 
       - name: Move cache
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
+        if: steps.build_image.outputs.build == 'true'
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: ECR Login
         id: login_ecr
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
         uses: aws-actions/amazon-ecr-login@261a7de32bda11ba01f4d75c4ed6caf3739e54be # pin@v1.5.3
         with:
           registries: 311462405659
 
+      - name: Prefix production image tag with branch name
+        if: github.ref == 'refs/heads/main'
+        env: 
+          IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
+          IMAGE_NAME: ${{ matrix.image_name }}
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+        run: |
+          docker buildx imagetools create $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG --tag $ECR_REGISTRY/$IMAGE_NAME:main-$IMAGE_TAG
+    
+      - name: Reuse images being used by production
+        if: steps.check_if_image_needs_to_be_built.outputs.changes_detected == 'false' && github.ref != 'refs/heads/main'
+        env:
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          IMAGE_NAME: ${{ matrix.image_name }}
+          IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
+        run: |
+          git fetch origin main:main --depth 2
+          git checkout main
+          MAIN_IMAGE_TAG=$(git rev-list --no-merges -n 1 main | cut -c1-7)
+          if [[ "${{ matrix.override_tag }}X" != "X" ]]; then
+            MAIN_IMAGE_TAG=${{ matrix.override_tag }}
+          fi
+          docker buildx imagetools create $ECR_REGISTRY/$IMAGE_NAME:main-$MAIN_IMAGE_TAG --tag $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+          git checkout - # return to original branch
+
       - name: Tag and Push Container
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
+        if: steps.build_image.outputs.build == 'true'
         env:
           ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
           IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
           IMAGE_NAME: ${{ matrix.image_name }}
-          BRANCH_NAME: ${{ inputs.branch_name }}
         run: |
           docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-          if [ $BRANCH_NAME == "main" ]; then
-            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:main-$IMAGE_TAG
-            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:latest
-          fi
-            docker push --all-tags $ECR_REGISTRY/$IMAGE_NAME
+          docker push --all-tags $ECR_REGISTRY/$IMAGE_NAME
 
       - name: Setup Python
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
+        if: steps.build_image.outputs.build == 'true'
         uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # pin@4.3.1
         with:
           python-version: "3.9"
 
       - name: Install Python dependencies
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
+        if: steps.build_image.outputs.build == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
 
       - name: Scan Container
-        if: ${{ steps.image_exists.outputs.image_exists == 'false' || matrix.force_push_to_repo == true }}
+        if: steps.build_image.outputs.build == 'true'
         env:
           ECR_REGISTRY_ALIAS: online-lpa
           IMAGE_TAG: ${{ inputs.tag }}
