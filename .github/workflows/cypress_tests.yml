@@ -33,9 +33,6 @@ jobs:
   cypress_tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-
       - name: Configure AWS Credentials - Security Group & ECR
         uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16
         with:
@@ -65,26 +62,6 @@ jobs:
       - name: Add GitHub Actions runner Ingress Rule
         run: |
           python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
-
-      - name: Create screenshots directory
-        run: |
-          mkdir -p /tmp/screenshots
-
-      - name: ECR Login
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
-        with:
-          registries: 311462405659
-
-      - name: Pull Cypress Container Image
-        env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: online-lpa
-          IMAGE_TAG: latest
-          IMAGE_NAME: cypress
-        run: |
-          docker pull $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG
-          docker tag $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$IMAGE_TAG
 
       - name: Configure AWS Credentials - Cypress / S3Monitor
         uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16
@@ -127,7 +104,6 @@ jobs:
         run: |
           pip install boto3
           npm install . 
-          sudo mkdir -p /app/cypress/screenshots && sudo chmod -R 777 /app/cypress/screenshots
           ./cypress/cypress_start.sh
 
       - name: Upload Screenshot Artifact
@@ -135,7 +111,7 @@ jobs:
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
           name: cypress-screenshots
-          path: /app/cypress/screenshots
+          path: cypress/screenshots/
 
       - name: Configure AWS Credentials
         if: always()
