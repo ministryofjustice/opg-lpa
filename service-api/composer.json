@@ -30,8 +30,7 @@
         "symfony/validator": "^4.2",
         "egulias/email-validator": "~1.2",
         "laminas/laminas-diactoros": "^2.23",
-        "open-telemetry/opentelemetry": "0.0.17",
-        "open-telemetry/contrib-aws": "^0.0.17"
+        "open-telemetry/opentelemetry": "0.0.17"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
