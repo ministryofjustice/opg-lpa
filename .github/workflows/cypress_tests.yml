@@ -96,6 +96,10 @@ jobs:
           role-duration-seconds: 3600
           role-session-name: OPGLPACypressTestsCypressS3Monitor
 
+      - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # pin@v3.5.1
+        with:
+          node-version: 16
+
       - name: Run Cypress Tests - ${{ inputs.cypress_tags }}
         env:
           CYPRESS_adminUrl: ${{ inputs.admin_url }}
@@ -106,30 +110,21 @@ jobs:
           CYPRESS_RUNNER_TAGS: ${{ inputs.cypress_tags }}
           CYPRESS_RUNNER_BASE_URL: ${{ inputs.front_url }}
           CYPRESS_RUNNER_ADMIN_URL: ${{ inputs.admin_url }}
+          CYPRESS_VIDEO: false
+          CYPRESS_RUN_A11Y_TESTS: true
 
         run: |
-          docker run --pull never \
-                  -e AWS_ACCESS_KEY_ID \
-                  -e AWS_SECRET_ACCESS_KEY \
-                  -e AWS_SESSION_TOKEN \
-                  -e CYPRESS_NO_COMMAND_LOG \
-                  -e CYPRESS_numTestsKeptInMemory \
-                  -e CYPRESS_RUNNER_IN_CI \
-                  -e CYPRESS_RUNNER_TAGS \
-                  -e CYPRESS_RUNNER_BASE_URL \
-                  -e CYPRESS_RUNNER_ADMIN_URL \
-                  -e CYPRESS_baseUrl \
-                  -e CYPRESS_adminUrl \
-                  --mount type=bind,source="/tmp/screenshots",target="/app/cypress/screenshots" \
-                  --entrypoint ./cypress/cypress_start.sh \
-                  cypress:latest
+          pip install boto3
+          npm install . 
+          mkdir -p /app/cypress/screenshots
+          ./cypress/cypress_start.sh
 
       - name: Upload Screenshot Artifact
         if: failure()
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
           name: cypress-screenshots
-          path: /tmp/screenshots/
+          path: /app/cypress/screenshots
 
       - name: Configure AWS Credentials
         if: always()
