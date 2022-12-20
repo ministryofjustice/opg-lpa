@@ -9,9 +9,9 @@ print_usage() {
   echo "Usage: `basename $0` [workspace1] [workspace2] [workspace3] ..."
 }
 
-if [ -z "$1" ]; then
-    print_usage
-    exit 1
+if [ $# -eq 0 ]; then
+  print_usage
+  exit 1
 fi
 
 if [ "$1" == "-h" ]; then
