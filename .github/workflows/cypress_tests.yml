@@ -127,7 +127,7 @@ jobs:
         run: |
           pip install boto3
           npm install . 
-          mkdir -p /app/cypress/screenshots
+          sudo mkdir -p /app/cypress/screenshots && sudo chmod -R 777 /app/cypress/screenshots
           ./cypress/cypress_start.sh
 
       - name: Upload Screenshot Artifact
