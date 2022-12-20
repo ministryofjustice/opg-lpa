@@ -33,6 +33,9 @@ jobs:
   cypress_tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+
       - name: Configure AWS Credentials - Security Group & ECR
         uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16
         with:
@@ -50,8 +53,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pwd
-          ls -la
           python -m pip install --upgrade pip
           pip install -r scripts/pipeline/ci_ingress/requirements.txt
 
@@ -85,11 +86,6 @@ jobs:
         with:
           node-version: 16
 
-      - name: Cypress install
-        uses: cypress-io/github-action@v5.0.2
-        with:
-          runTests: false
-
       - name: Run Cypress Tests - ${{ inputs.cypress_tags }}
         env:
           CYPRESS_adminUrl: ${{ inputs.admin_url }}
@@ -102,7 +98,6 @@ jobs:
           CYPRESS_RUNNER_ADMIN_URL: ${{ inputs.admin_url }}
           CYPRESS_VIDEO: false
           CYPRESS_RUN_A11Y_TESTS: true
-
         run: |
           pip install boto3
           npm install . 
