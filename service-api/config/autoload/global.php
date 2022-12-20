@@ -147,7 +147,8 @@ return [
 
     'telemetry' => [
         'exporter' => [
-            // if this value is null, a console exporter will be used
+            // if this value is null, a console exporter will be used;
+            // for an HTTP exporter, use a URL like http://127.0.0.1:4318/v1/traces
             'url' => getenv('OPG_LPA_TELEMETRY_EXPORTER_URL') ?: null,
         ],
     ],
