@@ -28,10 +28,7 @@ class RegisterControllerTest extends AbstractControllerTest
      * @var MockInterface|MvcEvent
      */
     private $event;
-    /**
-     * @var MockInterface|RouteMatch
-     */
-    private $routeMatch;
+
     private $postData = [
         'email' => 'unit@test.com',
         'password' => 'password'

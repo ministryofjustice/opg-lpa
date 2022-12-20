@@ -20,10 +20,7 @@ class PostcodeControllerTest extends AbstractControllerTest
      * @var MockInterface|MvcEvent
      */
     private $event;
-    /**
-     * @var MockInterface|RouteMatch
-     */
-    private $routeMatch;
+
     /**
      * @var MockInterface|OrdnanceSurvey
      */
