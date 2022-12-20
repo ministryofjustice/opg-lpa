@@ -20,31 +20,12 @@ use OpenTelemetry\SDK\Trace\TracerProvider as OTTracerProvider;
 use RuntimeException;
 
 /**
- * Factory for constructing an OpenTelemetry tracer which writes
- * to the standard Laminas log stream.
+ * Wrapper around an OpenTelemetry tracer which exports telemetry
+ * data in a configurable way.
  *
- * Set up the initial scaffolding by calling start():
- *
- * $tracer = new Tracer();
- * $tracer->start();
- *
+ * The initial scaffolding is set up in MakeShared\Telemetry\Module.php.
  * This creates and attaches a root span which other traces can hang off.
- *
- * To trace an individual piece of code, surround it like this:
- *
- * ;
- * // ******* code to be traced goes here *******
- * ;
- *
- * This usually attaches a child span to the root span set up by start().
- * However, if you start a child span B while another child span A is
- * already running, the OT API will make B a child of A rather than root.
- * So, to attach children to the root span, stop any other child spans first.
- *
- * Tracing should then be stopped and cleaned up in index.php after the
- * main Laminas application run() method has completed:
- *
- * $tracer->stop();
+ * Most of the documentation is there.
  */
 class Tracer
 {
@@ -75,13 +56,13 @@ class Tracer
     /**
      * Factory method.
      *
-     * @param array $config Expect a exporter.url property; if not set, a console
+     * @param array $config Expects a exporter.url property; if not set, a console
      * exporter is used by default.
      */
-    public static function create(array $config)
+    public static function create(array $config = [])
     {
         $logger = new SimpleLogger();
-        $exporterUrl = $config['exporter']['url'];
+        $exporterUrl = $config['exporter']['url'] ?? null;
 
         if (is_null($exporterUrl)) {
             $wrappedLogger = new PsrLoggerAdapter($logger);
