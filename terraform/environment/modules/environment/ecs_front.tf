@@ -79,7 +79,7 @@ resource "aws_ecs_task_definition" "front" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}, ${local.app_init_container}]"
+  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.front_component_tag
@@ -147,6 +147,20 @@ data "aws_iam_policy_document" "front_permissions_role" {
     resources = [
       data.aws_s3_bucket.lpa_pdf_cache.arn,
       data.aws_kms_key.lpa_pdf_cache.arn,
+    ]
+  }
+  statement {
+    effect = "Allow"
+    sid    = "ApiXrayDaemon"
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
+    resources = ["*"]
+
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
     ]
   }
 }
