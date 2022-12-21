@@ -48,9 +48,7 @@ jobs:
       - image_tag
     with:
       tag: ${{ needs.image_tag.outputs.short_sha }}
-      branch_name: "main"
     secrets: inherit
-
 
   slack_msg_production_deploy_begin:
     name: Annouce Production Deployment
