@@ -14,6 +14,7 @@ class IngressManager:
     aws_account_id = ""
     aws_iam_session = ""
     aws_ec2_client = ""
+    aws_region = ""
     security_groups = []
 
     def __init__(self, config_file):
@@ -32,8 +33,6 @@ class IngressManager:
 
     def assume_role(self, service_name="ec2"):
         """Assume a role and create a new session if necessary, otherwise use the current session"""
-
-        assume_new_role = False
 
         current_role_arn = boto3.client("sts").get_caller_identity().get("Arn")
         if os.getenv("CI"):
@@ -56,10 +55,11 @@ class IngressManager:
             and role_to_assume_account == current_role_account
         ):
             logger.info("Already using necessary AWS role - will not reassume role")
-            self.aws_ec2_client = boto3.client(service_name)
+            self.aws_ec2_client = boto3.client(service_name, region_name=self.aws_region)
         else:
             self.set_iam_role_session()
-
+        
+    
     def set_iam_role_session(self):
         if os.getenv("CI"):
             role_arn = "arn:aws:iam::{}:role/opg-lpa-ci".format(self.aws_account_id)
@@ -68,7 +68,7 @@ class IngressManager:
 
         sts = boto3.client(
             "sts",
-            region_name="eu-west-1",
+            region_name=self.aws_region,
         )
         session = sts.assume_role(
             RoleArn=role_arn,

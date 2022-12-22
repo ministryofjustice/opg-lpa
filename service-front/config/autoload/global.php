@@ -3,7 +3,7 @@
 $DYNAMO_DB_CONFIG = [
     'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
     'version' => '2012-08-10',
-    'region' => 'eu-west-1',
+    'region' => getenv('AWS_REGION') ?: 'eu-west-1',
 ];
 
 return [
