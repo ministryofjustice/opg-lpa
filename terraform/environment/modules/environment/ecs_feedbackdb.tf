@@ -36,6 +36,16 @@ resource "aws_ecs_task_definition" "feedbackdb" {
   }
 }
 
+
+//----------------
+// Permissions
+
+resource "aws_iam_role" "feedbackdb_task_role" {
+  name               = "${var.environment_name}-feedbackdb-task-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
+  tags               = local.feedbackdb_component_tag
+}
+
 data "aws_ecr_repository" "lpa_feedbackdb_app" {
   provider = aws.management
   name     = "opg-feedback/feedbackdb"
