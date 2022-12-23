@@ -9,20 +9,20 @@ resource "aws_sqs_queue" "pdf_fifo_queue" {
   max_message_size                  = "262144"
   tags                              = local.pdf_component_tag
 
-  depends_on = [aws_ecs_service.api, aws_iam_role.api_task_role, aws_iam_role.pdf_task_role]
+  depends_on = [aws_ecs_service.api]
 }
 
 resource "aws_sqs_queue_policy" "queue_policy" {
   queue_url  = aws_sqs_queue.pdf_fifo_queue.id
   policy     = data.aws_iam_policy_document.queue_policy_document.json
-  depends_on = [aws_ecs_service.api, aws_iam_role.api_task_role, aws_iam_role.pdf_task_role]
+  depends_on = [aws_ecs_service.api]
 }
 
 data "aws_iam_policy_document" "queue_policy_document" {
   statement {
     principals {
       type        = "AWS"
-      identifiers = [aws_iam_role.api_task_role.arn]
+      identifiers = [var.ecs_iam_task_roles.api.arn]
     }
 
     effect    = "Allow"
@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "queue_policy_document" {
   statement {
     principals {
       type        = "AWS"
-      identifiers = [aws_iam_role.pdf_task_role.arn]
+      identifiers = [var.ecs_iam_task_roles.pdf.arn]
     }
 
     effect    = "Allow"

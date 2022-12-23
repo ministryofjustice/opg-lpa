@@ -24,7 +24,7 @@ resource "aws_ecs_service" "admin" {
     container_port   = 80
   }
 
-  depends_on = [aws_lb.admin, aws_iam_role.admin_task_role, aws_iam_role.execution_role]
+  depends_on = [aws_lb.admin]
   tags       = local.admin_component_tag
 }
 
@@ -69,75 +69,11 @@ resource "aws_ecs_task_definition" "admin" {
   cpu                      = 256
   memory                   = 512
   container_definitions    = "[${local.admin_web}, ${local.admin_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
-  task_role_arn            = aws_iam_role.admin_task_role.arn
-  execution_role_arn       = aws_iam_role.execution_role.arn
+  task_role_arn            = var.ecs_iam_task_roles.admin.arn
+  execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.admin_component_tag
   volume {
     name = "app_tmp"
-  }
-}
-
-//----------------
-// Permissions
-
-resource "aws_iam_role" "admin_task_role" {
-  name               = "${var.environment_name}-admin-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.admin_component_tag
-}
-
-resource "aws_iam_role_policy" "admin_permissions_role" {
-  name   = "${var.environment_name}-adminApplicationPermissions"
-  policy = data.aws_iam_policy_document.admin_permissions_role.json
-  role   = aws_iam_role.admin_task_role.id
-}
-
-/*
-  Defines permissions that the application running within the task has.
-*/
-data "aws_iam_policy_document" "admin_permissions_role" {
-  statement {
-    sid = "DynamoDBAccess"
-
-    effect = "Allow"
-
-    actions = [
-      "dynamodb:BatchGetItem",
-      "dynamodb:BatchWriteItem",
-      "dynamodb:DeleteItem",
-      "dynamodb:DescribeStream",
-      "dynamodb:DescribeTable",
-      "dynamodb:GetItem",
-      "dynamodb:GetRecords",
-      "dynamodb:GetShardIterator",
-      "dynamodb:ListStreams",
-      "dynamodb:ListTables",
-      "dynamodb:PutItem",
-      "dynamodb:Query",
-      "dynamodb:Scan",
-      "dynamodb:UpdateItem",
-      "dynamodb:UpdateTable",
-    ]
-
-    resources = [
-      aws_dynamodb_table.lpa-locks.arn,
-      aws_dynamodb_table.lpa-properties.arn,
-      aws_dynamodb_table.lpa-sessions.arn,
-    ]
-  }
-  statement {
-    effect = "Allow"
-    sid    = "ApiXrayDaemon"
-    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
-    resources = ["*"]
-
-    actions = [
-      "xray:PutTraceSegments",
-      "xray:PutTelemetryRecords",
-      "xray:GetSamplingRules",
-      "xray:GetSamplingTargets",
-      "xray:GetSamplingStatisticSummaries",
-    ]
   }
 }
 

@@ -1,3 +1,16 @@
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
+resource "aws_cloudwatch_log_group" "online-lpa" {
+  name              = "online-lpa"
+  retention_in_days = local.account.retention_in_days
+
+  tags = merge(
+    local.shared_component_tag,
+    {
+      "Name" = "online-lpa"
+    },
+  )
+}
+
 resource "aws_cloudwatch_metric_alarm" "elasticache_high_cpu_utilization" {
   count                     = local.cache_cluster_count
   actions_enabled           = true

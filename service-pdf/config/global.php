@@ -16,7 +16,7 @@ return [
                 'url' => getenv('OPG_LPA_COMMON_PDF_QUEUE_URL') ?: null,
             ],
             'client' => [
-                'region' => 'eu-west-1',
+                'region' => getenv('AWS_REGION') ?: 'eu-west-1',
                 'version' => '2012-11-05',
             ],
         ],
@@ -31,7 +31,7 @@ return [
                 'endpoint' => getenv('OPG_LPA_COMMON_S3_ENDPOINT') ?: null,
                 'use_path_style_endpoint' => true,
                 'version' => '2006-03-01',
-                'region' => 'eu-west-1',
+                'region' => getenv('AWS_REGION') ?: 'eu-west-1',
             ],
             'settings' => [
                 'ACL' => 'private',

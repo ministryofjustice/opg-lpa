@@ -28,14 +28,13 @@ resource "aws_ecs_task_definition" "feedbackdb" {
   cpu                      = 2048
   memory                   = 4096
   container_definitions    = "[${local.feedbackdb_app}, ${local.app_init_container}]"
-  task_role_arn            = aws_iam_role.feedbackdb_task_role.arn
-  execution_role_arn       = aws_iam_role.execution_role.arn
+  task_role_arn            = var.ecs_iam_task_roles.feedbackdb.arn
+  execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.feedbackdb_component_tag
   volume {
     name = "app_tmp"
   }
 }
-
 
 
 //----------------

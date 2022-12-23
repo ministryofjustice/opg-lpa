@@ -16,9 +16,7 @@ resource "aws_ecs_service" "pdf" {
     assign_public_ip = false
   }
 
-  depends_on = [aws_iam_role.pdf_task_role, aws_iam_role.execution_role]
-  tags       = local.pdf_component_tag
-
+  tags = local.pdf_component_tag
 }
 
 //----------------------------------
@@ -52,120 +50,11 @@ resource "aws_ecs_task_definition" "pdf" {
   cpu                      = 2048
   memory                   = 4096
   container_definitions    = "[${local.pdf_app},  ${local.app_init_container}, ${local.aws_otel_collector}]"
-  task_role_arn            = aws_iam_role.pdf_task_role.arn
-  execution_role_arn       = aws_iam_role.execution_role.arn
+  task_role_arn            = var.ecs_iam_task_roles.pdf.arn
+  execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.pdf_component_tag
   volume {
     name = "app_tmp"
-  }
-}
-
-//----------------
-// Permissions
-
-resource "aws_iam_role" "pdf_task_role" {
-  name               = "${var.environment_name}-pdf-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.pdf_component_tag
-}
-
-resource "aws_iam_role_policy" "pdf_permissions_role" {
-  name   = "${var.environment_name}-pdfApplicationPermissions"
-  policy = data.aws_iam_policy_document.pdf_permissions_role.json
-  role   = aws_iam_role.pdf_task_role.id
-}
-
-/*
-  Defines permissions that the application running within the task has.
-*/
-data "aws_iam_policy_document" "pdf_permissions_role" {
-  statement {
-    sid    = "DynamoDBAccess"
-    effect = "Allow"
-    actions = [
-      "dynamodb:BatchGetItem",
-      "dynamodb:BatchWriteItem",
-      "dynamodb:DeleteItem",
-      "dynamodb:DescribeStream",
-      "dynamodb:DescribeTable",
-      "dynamodb:GetItem",
-      "dynamodb:GetRecords",
-      "dynamodb:GetShardIterator",
-      "dynamodb:ListStreams",
-      "dynamodb:ListTables",
-      "dynamodb:PutItem",
-      "dynamodb:Query",
-      "dynamodb:Scan",
-      "dynamodb:UpdateItem",
-      "dynamodb:UpdateTable",
-    ]
-
-    resources = [
-      aws_dynamodb_table.lpa-locks.arn,
-    ]
-  }
-  statement {
-    sid = "S3AccessWrite"
-    actions = [
-      "s3:PutObject",
-      "s3:GetObject",
-      "s3:DeleteObject",
-      "s3:ListObject",
-    ]
-    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for PutObject
-    resources = [
-      "${data.aws_s3_bucket.lpa_pdf_cache.arn}*",
-    ]
-  }
-  statement {
-    sid = "s3AccessRead"
-    actions = [
-      "s3:ListObject",
-      "s3:ListBucket",
-      "s3:GetObject",
-    ]
-
-    resources = [
-      data.aws_s3_bucket.lpa_pdf_cache.arn,
-    ]
-  }
-
-  statement {
-    sid    = "lpaCacheDecrypt"
-    effect = "Allow"
-    actions = [
-      "kms:Decrypt",
-      "kms:GenerateDataKey",
-    ]
-    resources = [
-      data.aws_s3_bucket.lpa_pdf_cache.arn,
-      data.aws_kms_key.lpa_pdf_cache.arn,
-    ]
-  }
-  statement {
-    sid    = "lpaQueueDecrypt"
-    effect = "Allow"
-    actions = [
-      "kms:Decrypt",
-      "kms:GenerateDataKey",
-    ]
-    resources = [
-      data.aws_kms_key.lpa_pdf_sqs.arn,
-    ]
-  }
-  statement {
-    effect = "Allow"
-    sid    = "ApiXrayDaemon"
-    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
-    resources = ["*"]
-
-    actions = [
-      "xray:PutTraceSegments",
-      "xray:PutTelemetryRecords",
-      "xray:GetSamplingRules",
-      "xray:GetSamplingTargets",
-      "xray:GetSamplingStatisticSummaries",
-    ]
   }
 }
 
