@@ -128,11 +128,11 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     private function ordnanceSurvey()
     {
-        try {
-            $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
+        $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
 
+        if ($this->ordnanceSurveyClient->verify($os) == true) {
             return ['ok' => true, 'details' => $os];
-        } catch (Exception $e) {
+        } else {
             return ['ok' => false];
         }
     }
