@@ -173,6 +173,9 @@ abstract class AbstractControllerTest extends MockeryTestCase
      */
     protected $userDetails;
 
+    /** @var MockInterface|RouteMatch */
+    protected $routeMatch;
+
     /**
      * Set up the services in default configuration - these can be adapted
      * in the subclasses before getting the controller to test
@@ -281,6 +284,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
         $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
 
         $this->metadata = Mockery::mock(Metadata::class);
+
+        $this->routeMatch = Mockery::mock(RouteMatch::class);
     }
 
     /**
@@ -365,6 +370,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
         $controller->setPluginManager($this->pluginManager);
         $controller->setEventManager($this->eventManager);
 
+        $controller->setEvent(new MvcEvent());
+
         $controller->dispatch($this->request);
 
         return $controller;
@@ -376,11 +383,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
      */
     public function getRouteMatch($controller)
     {
-        $event = new MvcEvent();
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $event->setRouteMatch($routeMatch);
-        $controller->setEvent($event);
-        return $routeMatch;
+        $controller->getEvent()->setRouteMatch($this->routeMatch);
+        return $this->routeMatch;
     }
 
     /**
@@ -389,10 +393,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
      */
     public function getHttpRouteMatch($controller)
     {
-        $event = new MvcEvent();
         $routeMatch = Mockery::mock(HttpRouteMatch::class);
-        $event->setRouteMatch($routeMatch);
-        $controller->setEvent($event);
+        $controller->getEvent()->setRouteMatch($routeMatch);
         return $routeMatch;
     }
 
@@ -403,7 +405,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
      */
     public function setMatchedRouteName($controller, $routeName, $routeMatch = null)
     {
-        $routeMatch = $routeMatch ?: $this->getRouteMatch($controller);
+        $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
         return $routeMatch;
     }

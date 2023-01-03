@@ -5,13 +5,18 @@
 
 set -Eeuo pipefail
 
+CI=${CI:-false} # set to true if running in CI
+
 print_usage() {
   echo "Usage: `basename $0` [workspace1] [workspace2] [workspace3] ..."
 }
 
-if [ -z "$1" ]; then
-    print_usage
-    exit 1
+if [[ $# -eq 0 && ${CI} != true ]]; then
+  print_usage
+  exit 1
+elif [[ $# -eq 0 && ${CI} == true ]]; then
+  echo "Nothing to clean up - exiting!"
+  exit 0
 fi
 
 if [ "$1" == "-h" ]; then

@@ -9,9 +9,9 @@ print_usage() {
   echo "Usage: `basename $0` [workspace]"
 }
 
-if [ -z "$1" ]; then
-    print_usage
-    exit 1
+if [ $# -eq 0 ]; then
+  print_usage
+  exit 1
 fi
 
 if [ "$1" == "-h" ]; then
@@ -30,8 +30,8 @@ for workspace in $reserved_workspaces; do
 done
 
 echo "cleaning up workspace $workspace_name..."
+terraform init -input=false
 terraform workspace select $workspace_name
-terraform init 
 terraform destroy -auto-approve
 terraform workspace select default
 terraform workspace delete $workspace_name

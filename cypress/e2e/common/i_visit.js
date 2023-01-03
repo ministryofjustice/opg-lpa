@@ -97,8 +97,12 @@ Then(`I visit the certificate provider page for the test fixture lpa`, () => {
   visitPageForTestFixture('certificate-provider');
 });
 
-function visitPageForTestFixture(urlPart) {
+Then(`I visit the LP1 download page for the test fixture lpa`, () => {
+  visitPageForTestFixture('download/lp1', { failOnStatusCode: false });
+});
+
+function visitPageForTestFixture(urlPart, options) {
   cy.get('@lpaId').then((lpaId) => {
-    cy.visitWithChecks('/lpa/' + lpaId + '/' + urlPart);
+    cy.visitWithChecks('/lpa/' + lpaId + '/' + urlPart, options);
   });
 }
