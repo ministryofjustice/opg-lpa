@@ -123,7 +123,7 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.app_init_container}]"
+  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.api_component_tag
@@ -241,6 +241,20 @@ data "aws_iam_policy_document" "api_permissions_role" {
       data.aws_kms_key.lpa_pdf_sqs.arn,
     ]
   }
+  statement {
+    effect = "Allow"
+    sid    = "ApiXrayDaemon"
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
+    resources = ["*"]
+
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
+    ]
+  }
 }
 
 data "aws_ecr_repository" "lpa_api_web" {
@@ -340,9 +354,9 @@ locals {
       ],
       "environment" : [
         { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
-        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : local.db.endpoint },
-        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(local.db.port) },
-        { "name" : "OPG_LPA_POSTGRES_NAME", "value" : local.db.name },
+        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : module.api_aurora[0].endpoint },
+        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(module.api_aurora[0].port) },
+        { "name" : "OPG_LPA_POSTGRES_NAME", "value" : module.api_aurora[0].name },
         { "name" : "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value" : var.account.sirius_api_gateway_endpoint },
         { "name" : "OPG_LPA_API_TRACK_FROM_DATE", "value" : local.track_from_date },
         { "name" : "OPG_LPA_SEED_DATA", "value" : "true" },

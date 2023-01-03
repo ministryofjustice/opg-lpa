@@ -79,7 +79,7 @@ resource "aws_ecs_task_definition" "front" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}, ${local.app_init_container}]"
+  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.front_component_tag
@@ -147,6 +147,20 @@ data "aws_iam_policy_document" "front_permissions_role" {
     resources = [
       data.aws_s3_bucket.lpa_pdf_cache.arn,
       data.aws_kms_key.lpa_pdf_cache.arn,
+    ]
+  }
+  statement {
+    effect = "Allow"
+    sid    = "ApiXrayDaemon"
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
+    resources = ["*"]
+
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
     ]
   }
 }
@@ -254,8 +268,6 @@ locals {
       ],
       "secrets" : [
         { "name" : "OPG_LPA_FRONT_CSRF_SALT", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.name}" },
-        { "name" : "OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_webhook_token.name}" },
-        { "name" : "OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_api_key.name}" },
         { "name" : "OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
         { "name" : "OPG_LPA_FRONT_GOV_PAY_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.name}" },
         { "name" : "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },

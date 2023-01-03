@@ -63,3 +63,13 @@ Feature: Errors
             |zip|gz|lzh|tar|rar|7z|swp|bak|git|ht|exe|dll|py|msi|bin|sh|bat|xml|apk|jar|log|sql|conf|cfg|ini|tmp|doc|xls|rtf|
         When I attempt to fetch a resource matching each forbidden filename pattern
         Then I get a 403 response code for each resource
+
+    Scenario: 404 error is returned for PDF download before LPA is complete (LPAL-1105)
+        Given I log in as appropriate test user
+        And If I am on dashboard I visit the type page
+        When I choose Property and Finance
+        And I click "save"
+        Then I am taken to the donor page
+
+        When I visit the LP1 download page for the test fixture lpa
+        Then I see "Page not found (404 error)" in the page text

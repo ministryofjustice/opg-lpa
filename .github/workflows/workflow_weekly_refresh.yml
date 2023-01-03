@@ -32,9 +32,14 @@ jobs:
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
     steps:
-      - name: Set output to short SHA
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+        with:
+          fetch-depth: 2
+      - name: Set output to penultimate short SHA
         id: short_sha
-        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+        run: |
+          echo "short_sha=$(git rev-list --no-merges -n 1 HEAD | cut -c1-7)" >> $GITHUB_OUTPUT
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
@@ -43,9 +48,7 @@ jobs:
       - image_tag
     with:
       tag: ${{ needs.image_tag.outputs.short_sha }}
-      branch_name: "main"
     secrets: inherit
-
 
   slack_msg_production_deploy_begin:
     name: Annouce Production Deployment

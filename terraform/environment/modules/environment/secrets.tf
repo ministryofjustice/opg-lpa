@@ -22,14 +22,6 @@ data "aws_secretsmanager_secret" "opg_lpa_admin_jwt_secret" {
 }
 
 # front secrets
-data "aws_secretsmanager_secret" "opg_lpa_front_email_sendgrid_webhook_token" {
-  name = "${var.account_name}/opg_lpa_front_email_sendgrid_webhook_token"
-}
-
-data "aws_secretsmanager_secret" "opg_lpa_front_email_sendgrid_api_key" {
-  name = "${var.account_name}/opg_lpa_front_email_sendgrid_api_key"
-}
-
 data "aws_secretsmanager_secret" "opg_lpa_front_gov_pay_key" {
   name = "${var.account_name}/opg_lpa_front_gov_pay_key"
 }

@@ -28,7 +28,7 @@ class DownloadController extends AbstractLpaController
             'lpaId' => $lpa->getId()
         ]);
 
-        // check PDF availability. return a nice error if unavailable.
+        // check PDF availability. return a nice error if unavailable
         if (
             ($pdfType == 'lpa120' && !$lpa->canGenerateLPA120())
             || ($pdfType == 'lp3' && !$lpa->canGenerateLP3())
@@ -38,8 +38,7 @@ class DownloadController extends AbstractLpaController
                 'lpaId' => $lpa->getId()
             ]);
 
-            //  Just redirect to the index template - that contains the error message to display
-            return new ViewModel();
+            return $this->notFoundAction();
         }
 
         $this->layout('layout/download.twig');
