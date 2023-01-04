@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
 
       - name: Configure AWS Credentials - Security Group & ECR
         uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16
@@ -66,26 +66,6 @@ jobs:
         run: |
           python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
 
-      - name: Create screenshots directory
-        run: |
-          mkdir -p /tmp/screenshots
-
-      - name: ECR Login
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@9149ade017c57f86dea2f76a01f8b2d5bd06b10f # pin@v1.5.1
-        with:
-          registries: 311462405659
-
-      - name: Pull Cypress Container Image
-        env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: online-lpa
-          IMAGE_TAG: latest
-          IMAGE_NAME: cypress
-        run: |
-          docker pull $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG
-          docker tag $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$IMAGE_TAG
-
       - name: Configure AWS Credentials - Cypress / S3Monitor
         uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16
         with:
@@ -95,6 +75,17 @@ jobs:
           role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
           role-duration-seconds: 3600
           role-session-name: OPGLPACypressTestsCypressS3Monitor
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: node-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # pin@v3.5.1
+        with:
+          node-version: 16
 
       - name: Run Cypress Tests - ${{ inputs.cypress_tags }}
         env:
@@ -106,30 +97,19 @@ jobs:
           CYPRESS_RUNNER_TAGS: ${{ inputs.cypress_tags }}
           CYPRESS_RUNNER_BASE_URL: ${{ inputs.front_url }}
           CYPRESS_RUNNER_ADMIN_URL: ${{ inputs.admin_url }}
-
+          CYPRESS_VIDEO: false
+          CYPRESS_RUN_A11Y_TESTS: true
         run: |
-          docker run --pull never \
-                  -e AWS_ACCESS_KEY_ID \
-                  -e AWS_SECRET_ACCESS_KEY \
-                  -e AWS_SESSION_TOKEN \
-                  -e CYPRESS_NO_COMMAND_LOG \
-                  -e CYPRESS_numTestsKeptInMemory \
-                  -e CYPRESS_RUNNER_IN_CI \
-                  -e CYPRESS_RUNNER_TAGS \
-                  -e CYPRESS_RUNNER_BASE_URL \
-                  -e CYPRESS_RUNNER_ADMIN_URL \
-                  -e CYPRESS_baseUrl \
-                  -e CYPRESS_adminUrl \
-                  --mount type=bind,source="/tmp/screenshots",target="/app/cypress/screenshots" \
-                  --entrypoint ./cypress/cypress_start.sh \
-                  cypress:latest
+          pip install boto3
+          npm install . 
+          ./cypress/cypress_start.sh
 
       - name: Upload Screenshot Artifact
         if: failure()
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
           name: cypress-screenshots
-          path: /tmp/screenshots/
+          path: cypress/screenshots/
 
       - name: Configure AWS Credentials
         if: always()
