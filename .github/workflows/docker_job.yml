@@ -58,11 +58,6 @@ jobs:
             dockerfile_path: ./service-seeding/docker/app
             service_path: ./service-seeding
 
-          - image_name: online-lpa/cypress
-            dockerfile_path: ./cypress/
-            service_path: ./cypress/
-            override_tag: latest
-
           - image_name: lambda-aurora_scheduler
             dockerfile_path: ./aurora-scheduler/docker
             service_path: ./aurora-scheduler
