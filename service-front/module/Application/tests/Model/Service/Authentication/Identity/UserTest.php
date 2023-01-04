@@ -19,7 +19,7 @@ class UserTest extends TestCase
     /**
      * @throws Exception
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->user = new User('User ID', 'test token', 1, new DateTime('2019-01-02'), true);
     }
@@ -27,17 +27,16 @@ class UserTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testConstructorNeverLoggedIn() : void
+    public function testConstructorNeverLoggedIn(): void
     {
-        $user = new User('User ID', 'test token', 1, new DateTime('2010-01-01'), true);
-
-        ServiceTestHelper::assertTimeNear(new DateTime('now'), $user->lastLogin());
+        $user = new User('User ID', 'test token', 1, null, true);
+        ServiceTestHelper::assertTimeNear(new DateTime('now'), $user->lastLogin(), 5);
     }
 
     /**
      * @throws Exception
      */
-    public function testConstructorNotAdmin() : void
+    public function testConstructorNotAdmin(): void
     {
         $user = new User('User ID', 'test token', 1, new DateTime('2019-01-01'), false);
 
