@@ -19,20 +19,9 @@ permissions:
   statuses: none
 
 jobs:
-  tfsec:
-    name: TFSec Static analysis
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        terraform_path: ['terraform/account', 'terraform/region' ,'terraform/environment']
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-      - name: tfsec with pr comments
-        uses: tfsec/tfsec-pr-commenter-action@v1.3.1
-        with:
-          working_directory: ${{ matrix.terraform_path }}
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          soft_fail_commenter: true
+  tfsec_pr_commenter:
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/analysis-infrastructure-tfsec-to-github-security.yml@v1.14.0
+    with:
+      terraform_path: '["terraform/account", "terraform/region", "terraform/environment"]'
+    secrets:
+      source_github_token: ${{ secrets.GITHUB_TOKEN }}
