@@ -7,7 +7,7 @@ resource "aws_ecs_service" "api" {
   task_definition                    = aws_ecs_task_definition.api.arn
   desired_count                      = var.account.autoscaling.api.minimum
   launch_type                        = "FARGATE"
-  platform_version                   = "1.3.0"
+  platform_version                   = "1.4.0"
   propagate_tags                     = "TASK_DEFINITION"
   wait_for_steady_state              = true
   deployment_minimum_healthy_percent = 50
@@ -255,6 +255,19 @@ data "aws_iam_policy_document" "api_permissions_role" {
       "xray:GetSamplingStatisticSummaries",
     ]
   }
+  statement {
+    effect = "Allow"
+    sid    = "AllowExecTemporary"
+    #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
+    resources = ["*"]
+
+    actions = [
+      "ssmmessages:CreateControlChannel",
+      "ssmmessages:CreateDataChannel",
+      "ssmmessages:OpenControlChannel",
+      "ssmmessages:OpenDataChannel",
+    ]
+  }
 }
 
 data "aws_ecr_repository" "lpa_api_web" {
@@ -307,7 +320,9 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      "readonlyRootFilesystem" : true,
+      "linuxParameters" : {
+        "initProcessEnabled" : true
+      },
       "image" : "${data.aws_ecr_repository.lpa_api_app.repository_url}:${var.container_version}",
       "name" : "app",
       "mountPoints" : [
