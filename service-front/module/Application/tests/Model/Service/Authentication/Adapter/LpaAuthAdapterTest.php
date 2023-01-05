@@ -61,6 +61,33 @@ class LpaAuthAdapterTest extends MockeryTestCase
         $this->assertEquals([], $result->getMessages());
     }
 
+    public function testAuthenticateNoPreviousLogin(): void
+    {
+        $this->adapter->setEmail('test@email.com');
+        $this->adapter->setPassword('test-password');
+
+        $this->client->shouldReceive('httpPost')
+            ->withArgs(['/v2/authenticate', ['username' => 'test@email.com', 'password' => 'test-password']])
+            ->once()
+            ->andReturn([
+                'userId' => 'User ID',
+                'token' => 'test token'
+            ]);
+
+        $result = $this->adapter->authenticate();
+
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(1, $result->getCode());
+        $this->assertEquals([], $result->getMessages());
+
+        $expectedUser = new User('User ID', 'test token', null, null);
+        $actualUser = $result->getIdentity();
+
+        $this->assertEquals($expectedUser->id(), $actualUser->id());
+        $this->assertEquals($expectedUser->token(), $actualUser->token());
+        $this->assertInstanceOf(DateTime::class, $actualUser->lastLogin());
+    }
+
     /**
      * @throws Exception
      */
