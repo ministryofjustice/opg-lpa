@@ -35,19 +35,20 @@ class User
      * @param string $userId The user's internal ID.
      * @param string $token The user's authentication token.
      * @param int $expiresIn The number of seconds in which the token expires.
-     * @param DateTime $lastLogin The DateTime the user las logged in.
+     * @param ?DateTime $lastLogin The DateTime the user logged in, or null if they've never logged in
      * @param bool $isAdmin Whether of not the user is an admin.
      */
-    public function __construct($userId, $token, $expiresIn, DateTime $lastLogin, $isAdmin = false)
+    public function __construct($userId, $token, $expiresIn, ?DateTime $lastLogin, $isAdmin = false)
     {
         $this->id = $userId;
         $this->token = $token;
-        $this->lastLogin = $lastLogin;
 
-        // If $lastLogin's TS is zero, they have not logged in before, so last login is now.
-        if ($this->lastLogin < new DateTime("-5 years")) {
-            $this->lastLogin = new DateTime();
+        // If $lastLogin is null, they have not logged in before, so last login is now.
+        if (is_null($lastLogin)) {
+            $lastLogin = new DateTime();
         }
+
+        $this->lastLogin = $lastLogin;
 
         $this->tokenExpiresIn($expiresIn);
 
