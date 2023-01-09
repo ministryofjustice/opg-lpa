@@ -107,7 +107,7 @@ jobs:
       - name: Set boolean for whether to build image
         id: build_image
         run: |
-          if [[ ( "${{ github.ref }}" != "refs/heads/main" && "${{ steps.check_if_image_needs_to_be_built.outputs.changes_detected }}" == "true" ) || "${{ steps.check_if_image_exists.outputs.image_existsX }}" == "falseX" ]]; then
+          if [[ ( "${{ github.ref }}" != "refs/heads/main" && "${{ steps.check_if_image_needs_to_be_built.outputs.changes_detected }}" == "true" ) || "${{ steps.check_if_image_exists.outputs.image_exists }}" == "false" ]]; then
             echo "build=true" >> $GITHUB_OUTPUT
           else
             echo "build=false" >> $GITHUB_OUTPUT
