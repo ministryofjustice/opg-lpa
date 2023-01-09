@@ -96,6 +96,7 @@ jobs:
 
       - name: Check if image already exists
         id: check_if_image_exists
+        if: github.ref == 'refs/heads/main'
         run: |
           if aws ecr describe-images --repository-name=${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }} &> /dev/null; then
             echo "image_exists=true" >> $GITHUB_OUTPUT
@@ -106,7 +107,7 @@ jobs:
       - name: Set boolean for whether to build image
         id: build_image
         run: |
-          if [[ ( "${{ github.ref }}" != "refs/heads/main" && "${{ steps.check_if_image_needs_to_be_built.outputs.changes_detected }}" == "true" ) || "${{ steps.check_if_image_exists.outputs.image_exists }}" == "false" ]]; then
+          if [[ ( "${{ github.ref }}" != "refs/heads/main" && "${{ steps.check_if_image_needs_to_be_built.outputs.changes_detected }}" == "true" ) || "${{ steps.check_if_image_exists.outputs.image_existsX }}" == "falseX" ]]; then
             echo "build=true" >> $GITHUB_OUTPUT
           else
             echo "build=false" >> $GITHUB_OUTPUT
