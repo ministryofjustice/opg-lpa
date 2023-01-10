@@ -11,7 +11,7 @@ on:
       - "service-front/**"
       - "service-pdf/**"
 jobs:
-  psalm_all_php_8.2:
+  psalm_all_php_8_2:
     name: psalm-scan
     runs-on: ubuntu-latest
     strategy:

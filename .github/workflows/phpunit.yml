@@ -4,7 +4,7 @@ on:
   workflow_call
 
 jobs:
-  phpunit_all_services_8.2:
+  phpunit_all_services_php_8_2:
     name: phpunit
     runs-on: ubuntu-latest
     strategy:
