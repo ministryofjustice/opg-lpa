@@ -13,6 +13,8 @@ jobs:
         scan:
           - name: service-admin
             path: "./service-admin"
+          - name: service-front
+            path: "./service-front"
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
@@ -54,8 +56,6 @@ jobs:
       fail-fast: true
       matrix:
         scan:
-          - name: service-front
-            path: "./service-front"
           - name: service-api
             path: "./service-api"
           - name: service-pdf
