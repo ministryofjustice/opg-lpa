@@ -392,12 +392,9 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->lpa->payment->gatewayReference = 'unsuccessful';
 
-        $state = Mockery::mock(ArrayObject::class);
-        $state->shouldReceive('offsetGet')->with('code')->andReturn('P0030')->once();
-
         $payment = Mockery::mock(GovPayPayment::class);
         $payment->shouldReceive('isSuccess')->andReturn(false)->once();
-        $payment->shouldReceive('offsetGet')->with('state')->andReturn($state)->once();
+        $payment->shouldReceive('getStateCode')->andReturn('P0030')->once();
 
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
@@ -417,12 +414,9 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->lpa->payment->gatewayReference = 'unsuccessful';
 
-        $state = Mockery::mock(ArrayObject::class);
-        $state->shouldReceive('offsetGet')->with('code')->andReturn('OTHER')->once();
-
         $payment = Mockery::mock(GovPayPayment::class);
         $payment->shouldReceive('isSuccess')->andReturn(false)->once();
-        $payment->shouldReceive('offsetGet')->with('state')->andReturn($state)->once();
+        $payment->shouldReceive('getStateCode')->andReturn('OTHER')->once();
 
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
