@@ -89,7 +89,15 @@ locals {
           "sourceVolume" : "app_tmp"
         }
       ],
-      "essential" : false
+      "essential" : false,
+      "logConfiguration" : {
+        "logDriver" : "awslogs",
+        "options" : {
+          "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
+          "awslogs-region" : var.region_name,
+          "awslogs-stream-prefix" : "${var.environment_name}.init.online-lpa"
+        }
+      }
     }
   )
 
