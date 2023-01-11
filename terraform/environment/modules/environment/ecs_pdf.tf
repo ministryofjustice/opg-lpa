@@ -7,7 +7,7 @@ resource "aws_ecs_service" "pdf" {
   task_definition       = aws_ecs_task_definition.pdf.arn
   desired_count         = var.account.autoscaling.pdf.minimum
   launch_type           = "FARGATE"
-  platform_version      = "1.3.0"
+  platform_version      = "1.4.0"
   propagate_tags        = "TASK_DEFINITION"
   wait_for_steady_state = true
   network_configuration {

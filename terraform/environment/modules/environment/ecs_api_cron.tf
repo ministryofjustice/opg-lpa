@@ -102,7 +102,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
     task_count          = 1
     task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type         = "FARGATE"
-    platform_version    = "1.3.0"
+    platform_version    = "1.4.0"
 
     network_configuration {
       security_groups = [
@@ -139,7 +139,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
     task_count          = 1
     task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type         = "FARGATE"
-    platform_version    = "1.3.0"
+    platform_version    = "1.4.0"
 
     network_configuration {
       security_groups = [

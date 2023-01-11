@@ -7,7 +7,7 @@ resource "aws_ecs_service" "front" {
   task_definition                    = aws_ecs_task_definition.front.arn
   desired_count                      = var.account.autoscaling.front.minimum
   launch_type                        = "FARGATE"
-  platform_version                   = "1.3.0"
+  platform_version                   = "1.4.0"
   propagate_tags                     = "TASK_DEFINITION"
   wait_for_steady_state              = true
   deployment_minimum_healthy_percent = 50
