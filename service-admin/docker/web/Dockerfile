@@ -28,5 +28,6 @@ RUN apk --no-cache add libcap && \
     setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx && \
     apk del libcap
 
+USER nginx
 CMD confd -onetime -backend env \
   && nginx -g "daemon off;"
