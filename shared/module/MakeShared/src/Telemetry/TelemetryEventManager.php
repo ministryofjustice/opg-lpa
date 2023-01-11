@@ -17,23 +17,23 @@ class TelemetryEventManager
         self::$eventManager = $eventManager;
     }
 
-    public static function triggerStart(string $spanName, array $attributes = [])
+    public static function triggerStart(string $segmentName, array $attributes = [])
     {
         if (is_null(self::$eventManager)) {
             return;
         }
 
-        $event = new Event(Constants::TELEMETRY_START_CHILD, $spanName, $attributes);
+        $event = new Event(Constants::TELEMETRY_START_CHILD, $segmentName, $attributes);
         self::$eventManager->triggerEvent($event);
     }
 
-    public static function triggerStop(string $spanName)
+    public static function triggerStop(string $segmentName)
     {
         if (is_null(self::$eventManager)) {
             return;
         }
 
-        $event = new Event(Constants::TELEMETRY_STOP_CHILD, $spanName);
+        $event = new Event(Constants::TELEMETRY_STOP_CHILD, $segmentName);
         self::$eventManager->triggerEvent($event);
     }
 }

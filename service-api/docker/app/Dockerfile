@@ -10,7 +10,8 @@ RUN apk add --no-cache postgresql-libs icu fcgi \
     && docker-php-ext-install pgsql pdo_pgsql \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install opcache \
-    && docker-php-ext-install intl
+    && docker-php-ext-install intl \
+    && docker-php-ext-install sockets
 
 RUN pecl install protobuf && \
     docker-php-ext-enable protobuf

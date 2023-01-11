@@ -147,9 +147,12 @@ return [
 
     'telemetry' => [
         'exporter' => [
+            'serviceName' => 'service-api',
+
             // if this value is null, a console exporter will be used;
-            // for an HTTP exporter, use a URL like http://127.0.0.1:4318/v1/traces
-            'url' => getenv('OPG_LPA_TELEMETRY_EXPORTER_URL') ?: null,
+            // for a standard XRay (over UDP) exporter, use host='localhost' and port=2000
+            'host' => getenv('OPG_LPA_TELEMETRY_HOST') ?: null,
+            'port' => getenv('OPG_LPA_TELEMETRY_PORT') ?: null,
         ],
     ],
 ];
