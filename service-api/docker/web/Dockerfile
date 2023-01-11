@@ -22,5 +22,9 @@ RUN apk upgrade
 USER nginx
 COPY --chown=nginx:nginx service-api/docker/web/etc /etc
 
+RUN apk --no-cache add libcap && \
+    setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx && \
+    apk del libcap
+
 CMD confd -onetime -backend env  && \
     nginx -g "daemon off;"

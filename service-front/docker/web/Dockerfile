@@ -25,5 +25,9 @@ COPY --chown=nginx:nginx service-front/docker/web/etc /etc
 COPY --chown=nginx:nginx service-front/docker/web/nginx.conf /etc/nginx/nginx.conf
 COPY --chown=nginx:nginx service-front/docker/web/custom_50x.html /usr/share/nginx/html
 
+RUN apk --no-cache add libcap && \
+    setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx && \
+    apk del libcap
+
 CMD confd -onetime -backend env \
   && nginx -g "daemon off;"

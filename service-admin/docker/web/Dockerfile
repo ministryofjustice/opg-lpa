@@ -24,5 +24,9 @@ COPY --chown=nginx:nginx service-admin/public /web
 COPY --chown=nginx:nginx shared/docker/web/etc/confd/conf.d/nginx.toml.service-admin /etc/confd/conf.d/nginx.toml
 COPY --chown=nginx:nginx shared/docker/web/etc/confd/templates/nginx.conf.service-admin /etc/confd/templates/nginx.conf
 
+RUN apk --no-cache add libcap && \
+    setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx && \
+    apk del libcap
+
 CMD confd -onetime -backend env \
   && nginx -g "daemon off;"
