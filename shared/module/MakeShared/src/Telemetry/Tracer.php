@@ -7,10 +7,10 @@ namespace MakeShared\Telemetry;
 use Laminas\Log\PsrLoggerAdapter;
 use MakeShared\Constants;
 use MakeShared\Logging\SimpleLogger;
+use MakeShared\Telemetry\UdpTransport;
 use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;
 use OpenTelemetry\API\Trace\SpanInterface;
 use OpenTelemetry\Context\Context;
-use OpenTelemetry\Contrib\Otlp\OtlpHttpTransportFactory;
 use OpenTelemetry\Contrib\Otlp\SpanExporter;
 use OpenTelemetry\SDK\Trace\SpanExporterInterface;
 use OpenTelemetry\SDK\Trace\SpanExporter\LoggerExporter;
@@ -68,8 +68,8 @@ class Tracer
             $wrappedLogger = new PsrLoggerAdapter($logger);
             $exporter = new LoggerExporter('service-api', $wrappedLogger);
         } else {
-            $logger->info("Telemetry will be sent over HTTP to ${exporterUrl}");
-            $transport = (new OtlpHttpTransportFactory())->create($exporterUrl, 'application/x-protobuf');
+            $logger->info("Telemetry will be sent over UDP to ${exporterUrl}");
+            $transport = new UdpTransport($exporterUrl);
             $exporter = new SpanExporter($transport);
         }
 
