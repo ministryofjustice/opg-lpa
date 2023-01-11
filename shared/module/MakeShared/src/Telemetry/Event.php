@@ -6,25 +6,27 @@ use Laminas\EventManager\Event as LaminasEvent;
 
 class Event extends LaminasEvent
 {
-    private string $spanName;
+    private string $segmentName;
 
     private array $attributes = [];
 
-    public function __construct(string $name, string $spanName, array $attributes = [])
+    public function __construct(string $eventName, string $segmentName, array $attributes = [])
     {
-        $this->setName($name);
-        $this->setSpanName($spanName);
+        $this->setName($eventName);
+
+        $this->setSegmentName($segmentName);
+
         $this->setAttributes($attributes);
     }
 
-    public function setSpanName(string $spanName): void
+    public function setSegmentName(string $segmentName): void
     {
-        $this->spanName = $spanName;
+        $this->segmentName = $segmentName;
     }
 
-    public function getSpanName(): string
+    public function getSegmentName(): string
     {
-        return $this->spanName;
+        return $this->segmentName;
     }
 
     public function setAttributes(array $attributes): void

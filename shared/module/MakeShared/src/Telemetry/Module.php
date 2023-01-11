@@ -99,13 +99,13 @@ class Module
 
     public function startChild(Event $e)
     {
-        $this->tracer->startChild($e->getSpanName(), $e->getAttributes());
+        $this->tracer->startChild($e->getSegmentName(), $e->getAttributes());
     }
 
     // when stopping a child, we ignore the event's attributes
     public function stopChild(Event $e)
     {
-        $this->tracer->stopChild($e->getSpanName());
+        $this->tracer->stopChild($e->getSegmentName());
     }
 
     public function onBootstrap(MvcEvent $event): void
