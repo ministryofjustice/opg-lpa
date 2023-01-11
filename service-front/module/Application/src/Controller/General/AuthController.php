@@ -91,7 +91,7 @@ class AuthController extends AbstractBaseController
                             //  Redirect to next page which needs filling out
                             $lpaId = $pathArray[2];
                             $lpa = $this->lpaApplicationService->getApplication(
-                                (int)$lpaId,
+                                $lpaId,
                                 $result->getIdentity()->token()
                             );
 

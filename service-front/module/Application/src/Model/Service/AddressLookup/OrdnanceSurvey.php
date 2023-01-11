@@ -113,13 +113,13 @@ class OrdnanceSurvey
      *      'postcode' => string
      *  ]
      *
-     * @param array $address
+     * @param array $osAddress
      * @return array
      */
-    private function getAddressLines(array $address)
+    private function getAddressLines(array $osAddress)
     {
         // Remove unwanted commas from the address, before we split on the commas. Alternative: '/(\d+),/'
-        $reformattedAddress = preg_replace('/^([0-9-]+\w?),/', '$1', $address['ADDRESS']);
+        $reformattedAddress = preg_replace('/^([0-9-]+\w?),/', '$1', $osAddress['ADDRESS']);
         $reformattedAddress = preg_replace('/,\s([0-9-]+\w?),/', ', $1', $reformattedAddress);
 
 
@@ -133,7 +133,7 @@ class OrdnanceSurvey
         // We expect the last element to be the postcode which we don't want
         // We'll confirm that it is the postcode and then remove it from the array
         $postcodeFromComponents = strtolower(str_replace(' ', '', $components[count($components) - 1]));
-        $postcodeFromAddress = strtolower(str_replace(' ', '', $address['POSTCODE']));
+        $postcodeFromAddress = strtolower(str_replace(' ', '', $osAddress['POSTCODE']));
 
         if ($postcodeFromAddress == $postcodeFromComponents) {
             array_pop($components);
@@ -190,7 +190,7 @@ class OrdnanceSurvey
 
         //---
 
-        $result['postcode'] = $address['POSTCODE'];
+        $result['postcode'] = $osAddress['POSTCODE'];
 
         //---
 
@@ -200,14 +200,14 @@ class OrdnanceSurvey
     /**
      * Get a single line address description (without postcode)
      *
-     * @param array $address
+     * @param array $osAddress
      * @return string
      */
-    private function getDescription(array $address)
+    private function getDescription(array $osAddress)
     {
-        unset($address['postcode']);
-        $address = array_filter($address);
+        unset($osAddress['postcode']);
+        $osAddress = array_filter($osAddress);
 
-        return trim(implode(', ', $address));
+        return trim(implode(', ', $osAddress));
     }
 }

@@ -9,16 +9,16 @@ interface AdapterInterface extends LaminasAdapterInterface
     /**
      * Set the email address credential to attempt authentication with.
      *
-     * @param $email
+     * @param string $email
      * @return $this
      */
-    public function setEmail($email);
+    public function setEmail(#[\SensitiveParameter] string $email);
 
     /**
      * Set the password credential to attempt authentication with.
      *
-     * @param $password
+     * @param string $password
      * @return $this
      */
-    public function setPassword($password);
+    public function setPassword(#[\SensitiveParameter] string $password);
 }

@@ -1,8 +1,8 @@
 <?php
+
 namespace Application\Adapter;
 
 use Exception;
-
 use RuntimeException;
 use Aws\DynamoDb\DynamoDbClient;
 
@@ -11,7 +11,6 @@ use Aws\DynamoDb\DynamoDbClient;
  */
 class DynamoDbKeyValueStore
 {
-
     /**
      * The AWS client
      *
@@ -109,7 +108,7 @@ class DynamoDbKeyValueStore
     /* (non-PHPdoc)
      * @see \Laminas\Cache\Storage\StorageInterface::getItem()
      */
-    public function getItem($key, & $success = null, & $casToken = null)
+    public function getItem($key, &$success = null, #[\SensitiveParameter] &$casToken = null)
     {
         try {
             $result = $this->client->getItem(array(

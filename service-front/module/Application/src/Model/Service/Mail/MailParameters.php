@@ -44,7 +44,7 @@ class MailParameters
      * @param string|null $templateRef
      * @param array $data
      */
-    public function __construct($toAddresses, ?string $templateRef = null, array $data = [])
+    public function __construct(#[\SensitiveParameter] $toAddresses, ?string $templateRef = null, array $data = [])
     {
         if (!is_array($toAddresses)) {
             $toAddresses = [$toAddresses];

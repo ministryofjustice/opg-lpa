@@ -60,10 +60,10 @@ class AuthenticationService extends LaminasAuthenticationService
     /**
      * Proxy to set the email address in the adapter
      *
-     * @param $email
+     * @param string $email
      * @return $this
      */
-    public function setEmail($email)
+    public function setEmail(#[\SensitiveParameter] string $email)
     {
         /** @var LpaAdapterInterface $adapter */
         $adapter = $this->adapter;
@@ -75,10 +75,10 @@ class AuthenticationService extends LaminasAuthenticationService
     /**
      * Proxy to set the password in the adapter
      *
-     * @param $password
+     * @param string $password
      * @return $this
      */
-    public function setPassword($password)
+    public function setPassword(#[\SensitiveParameter] string $password)
     {
         /** @var LpaAdapterInterface $adapter */
         $adapter = $this->adapter;

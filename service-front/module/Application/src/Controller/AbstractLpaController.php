@@ -46,7 +46,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      * @param Metadata $metadata
      */
     public function __construct(
-        $lpaId,
+        ?string $lpaId,
         AbstractPluginManager $formElementManager,
         SessionManager $sessionManager,
         AuthenticationService $authenticationService,
@@ -69,7 +69,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
         // If there is no user identity the request will be bounced in the onDispatch function
         if ($authenticationService->hasIdentity()) {
-            $lpa = $lpaApplicationService->getApplication((int) $lpaId);
+            $lpa = $lpaApplicationService->getApplication($lpaId);
 
             $this->lpa = $lpa;
             $this->replacementAttorneyCleanup = $replacementAttorneyCleanup;

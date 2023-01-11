@@ -84,8 +84,11 @@ class Communication extends AbstractEmailService
         return true;
     }
 
-    public function setUpEmailFieldsForOnlinePayment(Lpa $lpa, string $userEmailAddress, array $to)
-    {
+    public function setUpEmailFieldsForOnlinePayment(
+        Lpa $lpa,
+        #[\SensitiveParameter] string $userEmailAddress,
+        array $to
+    ) {
         $this->emailTemplateRef = AbstractEmailService::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
 
         $amount = '';

@@ -43,9 +43,9 @@ class Client
      * necessary. Currently this is required during the change password and change email address flows, as those action
      * trigger a user authentication which updates the auth token in the backend
      *
-     * @param $token
+     * @param string $token
      */
-    public function updateToken($token)
+    public function updateToken(#[\SensitiveParameter] ?string $token)
     {
         $this->defaultHeaders['Token'] = $token;
     }

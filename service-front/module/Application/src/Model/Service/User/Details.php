@@ -89,8 +89,10 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      *
      * @psalm-suppress InvalidCatch
      */
-    public function requestEmailUpdate($email, $currentAddress)
-    {
+    public function requestEmailUpdate(
+        #[\SensitiveParameter] string $email,
+        #[\SensitiveParameter] string $currentAddress
+    ) {
         $identity = $this->getAuthenticationService()->getIdentity();
 
         $logger = $this->getLogger();
@@ -158,7 +160,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         return 'unknown-error';
     }
 
-    public function updateEmailUsingToken($emailUpdateToken)
+    public function updateEmailUsingToken(#[\SensitiveParameter] string $emailUpdateToken)
     {
         $logger = $this->getLogger();
 
@@ -186,8 +188,10 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      *
      * @psalm-suppress InvalidCatch
      */
-    public function updatePassword($currentPassword, $newPassword)
-    {
+    public function updatePassword(
+        #[\SensitiveParameter] string $currentPassword,
+        #[\SensitiveParameter] string $newPassword
+    ) {
         $logger = $this->getLogger();
 
         $identity = $this->getAuthenticationService()->getIdentity();
@@ -240,7 +244,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param $token
      * @return bool|mixed
      */
-    public function getTokenInfo($token)
+    public function getTokenInfo(#[\SensitiveParameter] string $token)
     {
         try {
             $response = $this->apiClient->httpPost('/v2/authenticate', [
@@ -297,7 +301,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      *
      * @psalm-suppress InvalidCatch
      */
-    public function requestPasswordResetEmail($email)
+    public function requestPasswordResetEmail(#[\SensitiveParameter] $email)
     {
         $logger = $this->getLogger();
 
@@ -373,7 +377,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      *
      * @psalm-suppress InvalidCatch
      */
-    private function sendAccountActivateEmail($email, $activationToken)
+    private function sendAccountActivateEmail(#[\SensitiveParameter] $email, #[\SensitiveParameter] $activationToken)
     {
         $activateAccountUrl = $this->url(
             'register/confirm',
@@ -402,7 +406,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param $password
      * @return bool|string
      */
-    public function setNewPassword($restToken, $password)
+    public function setNewPassword(#[\SensitiveParameter] $restToken, #[\SensitiveParameter] $password)
     {
         $logger = $this->getLogger();
 
@@ -441,7 +445,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      *
      * @psalm-suppress InvalidCatch
      */
-    public function registerAccount($email, $password)
+    public function registerAccount(#[\SensitiveParameter] $email, #[\SensitiveParameter] $password)
     {
         $logger = $this->getLogger();
 
@@ -503,7 +507,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param $email
      * @return bool|string
      */
-    public function resendActivateEmail($email)
+    public function resendActivateEmail(#[\SensitiveParameter] $email)
     {
         // Trigger a request to reset the password in the API - this will return the activation token or
         // throw an exception
@@ -531,7 +535,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param $token
      * @return bool
      */
-    public function activateAccount($token)
+    public function activateAccount(#[\SensitiveParameter] $token)
     {
         $logger = $this->getLogger();
 
