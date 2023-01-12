@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b3ebabe736c896105f249324479c369",
+    "content-hash": "8b6940eef651d0882895f3d4971c381c",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -111,16 +111,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.255.10",
+            "version": "3.256.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5d598491cc62da506082aec8661475d40af24b16"
+                "reference": "a72094f7d968bdc743839e309087d51f868ba26c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5d598491cc62da506082aec8661475d40af24b16",
-                "reference": "5d598491cc62da506082aec8661475d40af24b16",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a72094f7d968bdc743839e309087d51f868ba26c",
+                "reference": "a72094f7d968bdc743839e309087d51f868ba26c",
                 "shasum": ""
             },
             "require": {
@@ -199,9 +199,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.255.10"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.256.2"
             },
-            "time": "2023-01-05T19:20:51+00:00"
+            "time": "2023-01-11T20:12:50+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -481,64 +481,6 @@
                 "source": "https://github.com/cakephp/utility"
             },
             "time": "2022-11-06T06:40:44+00:00"
-        },
-        {
-            "name": "cloudevents/sdk-php",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cloudevents/sdk-php.git",
-                "reference": "602cd26557e5522060531b3103450b34b678be1c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cloudevents/sdk-php/zipball/602cd26557e5522060531b3103450b34b678be1c",
-                "reference": "602cd26557e5522060531b3103450b34b678be1c",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "ext-pcre": "*",
-                "php": "^7.4 || ^8.0",
-                "symfony/polyfill-php80": "^1.17"
-            },
-            "require-dev": {
-                "guzzlehttp/psr7": "^2.0",
-                "php-http/discovery": "^1.14",
-                "phpunit/phpunit": "^9.5 || ^10.0",
-                "psalm/phar": "4.15.0",
-                "psr/http-factory": "^1.0.1",
-                "psr/http-message": "^1.0.1",
-                "squizlabs/php_codesniffer": "3.6.0"
-            },
-            "suggest": {
-                "php-http/discovery": "Required for automatic discovery of HTTP message factories in the HTTP Marshaller.",
-                "psr/http-factory": "Required for use of the HTTP Marshaller.",
-                "psr/http-factory-implementation": "Required for use of the HTTP Marshaller.",
-                "psr/http-message": "Required for use of the HTTP Marshaller and Unmarshaller.",
-                "psr/http-message-implementation": "Required for use of the HTTP Marshaller and Unmarshaller."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CloudEvents\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "CloudEvents SDK",
-            "support": {
-                "issues": "https://github.com/cloudevents/sdk-php/issues",
-                "source": "https://github.com/cloudevents/sdk-php"
-            },
-            "time": "2021-12-15T21:41:40+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -1130,94 +1072,6 @@
             "time": "2022-12-19T17:10:46+00:00"
         },
         {
-            "name": "google/protobuf",
-            "version": "v3.21.12",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/protocolbuffers/protobuf-php.git",
-                "reference": "93019df2df0f8c5c01757ef79f3f077d2cb35b65"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/protocolbuffers/protobuf-php/zipball/93019df2df0f8c5c01757ef79f3f077d2cb35b65",
-                "reference": "93019df2df0f8c5c01757ef79f3f077d2cb35b65",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.0.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=5.0.0"
-            },
-            "suggest": {
-                "ext-bcmath": "Need to support JSON deserialization"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Google\\Protobuf\\": "src/Google/Protobuf",
-                    "GPBMetadata\\Google\\Protobuf\\": "src/GPBMetadata/Google/Protobuf"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "proto library for PHP",
-            "homepage": "https://developers.google.com/protocol-buffers/",
-            "keywords": [
-                "proto"
-            ],
-            "support": {
-                "source": "https://github.com/protocolbuffers/protobuf-php/tree/v3.21.12"
-            },
-            "time": "2022-12-14T14:50:49+00:00"
-        },
-        {
-            "name": "grpc/grpc",
-            "version": "1.42.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/grpc/grpc-php.git",
-                "reference": "9fa44f104cb92e924d4da547323a97f3d8aca6d4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/grpc/grpc-php/zipball/9fa44f104cb92e924d4da547323a97f3d8aca6d4",
-                "reference": "9fa44f104cb92e924d4da547323a97f3d8aca6d4",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.0.0"
-            },
-            "require-dev": {
-                "google/auth": "^v1.3.0"
-            },
-            "suggest": {
-                "ext-protobuf": "For better performance, install the protobuf C extension.",
-                "google/protobuf": "To get started using grpc quickly, install the native protobuf library."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Grpc\\": "src/lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "gRPC library for PHP",
-            "homepage": "https://grpc.io",
-            "keywords": [
-                "rpc"
-            ],
-            "support": {
-                "source": "https://github.com/grpc/grpc-php/tree/v1.42.0"
-            },
-            "time": "2021-11-19T08:13:51+00:00"
-        },
-        {
             "name": "guzzlehttp/guzzle",
             "version": "6.5.8",
             "source": {
@@ -1528,16 +1382,16 @@
         },
         {
             "name": "laminas-api-tools/api-tools-api-problem",
-            "version": "1.5.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas-api-tools/api-tools-api-problem.git",
-                "reference": "dc94f129a0c9981fc40e750bbbdfaea42699ab48"
+                "reference": "ae6c8d3b063fc8adc3db6d8e5b80ffec2b4614d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas-api-tools/api-tools-api-problem/zipball/dc94f129a0c9981fc40e750bbbdfaea42699ab48",
-                "reference": "dc94f129a0c9981fc40e750bbbdfaea42699ab48",
+                "url": "https://api.github.com/repos/laminas-api-tools/api-tools-api-problem/zipball/ae6c8d3b063fc8adc3db6d8e5b80ffec2b4614d5",
+                "reference": "ae6c8d3b063fc8adc3db6d8e5b80ffec2b4614d5",
                 "shasum": ""
             },
             "require": {
@@ -1548,7 +1402,7 @@
                 "laminas/laminas-mvc": "^2.7.15 || ^3.0.4",
                 "laminas/laminas-view": "^2.8.1",
                 "laminas/laminas-zendframework-bridge": "^1.0",
-                "php": "^7.3 || ~8.0.0 || ~8.1.0"
+                "php": "~8.0.0 || ~8.1.0 || ~8.2.0"
             },
             "replace": {
                 "zfcampus/zf-api-problem": "^1.3.0"
@@ -1556,9 +1410,9 @@
             "require-dev": {
                 "laminas/laminas-coding-standard": "~2.3.0",
                 "phpspec/prophecy-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.3",
-                "psalm/plugin-phpunit": "^0.16.0",
-                "vimeo/psalm": "^4.7"
+                "phpunit/phpunit": "^9.5.27",
+                "psalm/plugin-phpunit": "^0.16.1",
+                "vimeo/psalm": "^4.30"
             },
             "type": "library",
             "extra": {
@@ -1598,7 +1452,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-12-09T09:59:10+00:00"
+            "time": "2023-01-09T21:28:28+00:00"
         },
         {
             "name": "laminas/laminas-authentication",
@@ -1678,22 +1532,22 @@
         },
         {
             "name": "laminas/laminas-cache",
-            "version": "3.9.0",
+            "version": "3.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-cache.git",
-                "reference": "e3bdbd056da4ceb1a41d66a8f6aee4a7bcce9b47"
+                "reference": "5807c51b92fd256bbf58eda6df4c1d27148bbfb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/e3bdbd056da4ceb1a41d66a8f6aee4a7bcce9b47",
-                "reference": "e3bdbd056da4ceb1a41d66a8f6aee4a7bcce9b47",
+                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/5807c51b92fd256bbf58eda6df4c1d27148bbfb8",
+                "reference": "5807c51b92fd256bbf58eda6df4c1d27148bbfb8",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-cache-storage-implementation": "1.0",
                 "laminas/laminas-eventmanager": "^3.4",
-                "laminas/laminas-servicemanager": "^3.11.1",
+                "laminas/laminas-servicemanager": "^3.18.0",
                 "laminas/laminas-stdlib": "^3.6",
                 "php": "~8.0.0 || ~8.1.0 || ~8.2.0",
                 "psr/cache": "^1.0",
@@ -1709,20 +1563,20 @@
                 "psr/simple-cache-implementation": "1.0"
             },
             "require-dev": {
-                "laminas/laminas-cache-storage-adapter-apcu": "^2.0",
-                "laminas/laminas-cache-storage-adapter-blackhole": "^2.0",
-                "laminas/laminas-cache-storage-adapter-filesystem": "^2.0",
-                "laminas/laminas-cache-storage-adapter-memory": "^2.0",
-                "laminas/laminas-cache-storage-adapter-test": "^2.3",
-                "laminas/laminas-cli": "^1.0",
-                "laminas/laminas-coding-standard": "~2.4.0",
-                "laminas/laminas-config-aggregator": "^1.5",
-                "laminas/laminas-feed": "^2.14",
-                "laminas/laminas-serializer": "^2.6.1",
-                "phpbench/phpbench": "^1.0",
-                "phpunit/phpunit": "^9.5.23",
-                "psalm/plugin-phpunit": "^0.18.0",
-                "vimeo/psalm": "^5.0"
+                "laminas/laminas-cache-storage-adapter-apcu": "^2.4",
+                "laminas/laminas-cache-storage-adapter-blackhole": "^2.3",
+                "laminas/laminas-cache-storage-adapter-filesystem": "^2.3",
+                "laminas/laminas-cache-storage-adapter-memory": "^2.2",
+                "laminas/laminas-cache-storage-adapter-test": "^2.4",
+                "laminas/laminas-cli": "^1.7",
+                "laminas/laminas-coding-standard": "~2.5.0",
+                "laminas/laminas-config-aggregator": "^1.13",
+                "laminas/laminas-feed": "^2.20",
+                "laminas/laminas-serializer": "^2.14",
+                "phpbench/phpbench": "^1.2.7",
+                "phpunit/phpunit": "^9.5.27",
+                "psalm/plugin-phpunit": "^0.18.4",
+                "vimeo/psalm": "^5.4"
             },
             "suggest": {
                 "laminas/laminas-cache-storage-adapter-apcu": "APCu implementation",
@@ -1774,7 +1628,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-12-05T14:38:48+00:00"
+            "time": "2023-01-10T14:17:43+00:00"
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-memory",
@@ -2273,16 +2127,16 @@
         },
         {
             "name": "laminas/laminas-eventmanager",
-            "version": "3.9.2",
+            "version": "3.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-eventmanager.git",
-                "reference": "55f7c337f4e49baf6dca87220619d40d9518e6b6"
+                "reference": "5a5114ab2d3fa4424faa46a2fb0a4e49a61f6eba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-eventmanager/zipball/55f7c337f4e49baf6dca87220619d40d9518e6b6",
-                "reference": "55f7c337f4e49baf6dca87220619d40d9518e6b6",
+                "url": "https://api.github.com/repos/laminas/laminas-eventmanager/zipball/5a5114ab2d3fa4424faa46a2fb0a4e49a61f6eba",
+                "reference": "5a5114ab2d3fa4424faa46a2fb0a4e49a61f6eba",
                 "shasum": ""
             },
             "require": {
@@ -2293,7 +2147,7 @@
                 "zendframework/zend-eventmanager": "*"
             },
             "require-dev": {
-                "laminas/laminas-coding-standard": "~2.4.0",
+                "laminas/laminas-coding-standard": "~2.5.0",
                 "laminas/laminas-stdlib": "^3.15",
                 "phpbench/phpbench": "^1.2.7",
                 "phpunit/phpunit": "^9.5.26",
@@ -2337,20 +2191,20 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-12-20T19:45:38+00:00"
+            "time": "2023-01-11T19:52:45+00:00"
         },
         {
             "name": "laminas/laminas-filter",
-            "version": "2.30.0",
+            "version": "2.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-filter.git",
-                "reference": "97e3ce0fa868567aa433ed34d6f57ee703d70d3e"
+                "reference": "548a6597d357b0b0b139cc7bffea4dfbc50eb5a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-filter/zipball/97e3ce0fa868567aa433ed34d6f57ee703d70d3e",
-                "reference": "97e3ce0fa868567aa433ed34d6f57ee703d70d3e",
+                "url": "https://api.github.com/repos/laminas/laminas-filter/zipball/548a6597d357b0b0b139cc7bffea4dfbc50eb5a8",
+                "reference": "548a6597d357b0b0b139cc7bffea4dfbc50eb5a8",
                 "shasum": ""
             },
             "require": {
@@ -2364,7 +2218,7 @@
                 "zendframework/zend-filter": "*"
             },
             "require-dev": {
-                "laminas/laminas-coding-standard": "~2.4.0",
+                "laminas/laminas-coding-standard": "~2.5.0",
                 "laminas/laminas-crypt": "^3.9",
                 "laminas/laminas-uri": "^2.10",
                 "pear/archive_tar": "^1.4.14",
@@ -2415,7 +2269,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-12-19T17:34:24+00:00"
+            "time": "2023-01-12T06:17:48+00:00"
         },
         {
             "name": "laminas/laminas-http",
@@ -3880,243 +3734,6 @@
             "time": "2022-11-12T15:38:23+00:00"
         },
         {
-            "name": "open-telemetry/opentelemetry",
-            "version": "0.0.17",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/open-telemetry/opentelemetry-php.git",
-                "reference": "fd8ac30f07b744fb4adb91e044182443ba05b7e1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/open-telemetry/opentelemetry-php/zipball/fd8ac30f07b744fb4adb91e044182443ba05b7e1",
-                "reference": "fd8ac30f07b744fb4adb91e044182443ba05b7e1",
-                "shasum": ""
-            },
-            "require": {
-                "cloudevents/sdk-php": "^v1.0.1",
-                "ext-json": "*",
-                "google/protobuf": "^3.3.0",
-                "grpc/grpc": "^1.30",
-                "packaged/thrift": "^0.15.0",
-                "php": "^7.4 || ^8.0",
-                "php-http/async-client-implementation": "^1.0",
-                "php-http/discovery": "^1.14",
-                "promphp/prometheus_client_php": "^2.2.1",
-                "psr/http-factory-implementation": "^1.0",
-                "psr/log": "^1.1|^2.0|^3.0",
-                "symfony/polyfill-mbstring": "^1.23",
-                "symfony/polyfill-php80": "^1.26",
-                "symfony/polyfill-php81": "^1.26",
-                "symfony/polyfill-php82": "^1.26"
-            },
-            "replace": {
-                "open-telemetry/api": "self.version",
-                "open-telemetry/context": "self.version",
-                "open-telemetry/gen-jaeger-thrift": "self.version",
-                "open-telemetry/gen-otlp-protobuf": "self.version",
-                "open-telemetry/sdk": "self.version",
-                "open-telemetry/sdk-contrib": "self.version",
-                "open-telemetry/sem-conv": "self.version"
-            },
-            "require-dev": {
-                "assertwell/phpunit-global-state": "^0.2.1",
-                "composer/xdebug-handler": "^2.0",
-                "dg/bypass-finals": "^1.3",
-                "ext-grpc": "*",
-                "friendsofphp/php-cs-fixer": "^3.4",
-                "guzzlehttp/guzzle": "^7.4",
-                "guzzlehttp/psr7": "^2.1",
-                "mikey179/vfsstream": "^1.6",
-                "mockery/mockery": "^1.4",
-                "monolog/monolog": "^2.3",
-                "nyholm/psr7": "^1.4",
-                "open-telemetry/dev-tools": "dev-main",
-                "phan/phan": "^5.0",
-                "php-http/mock-client": "^1.5",
-                "phpbench/phpbench": "^1.2",
-                "phpmetrics/phpmetrics": "^2.7",
-                "phpspec/prophecy-phpunit": "^2.0",
-                "phpstan/phpstan": "^1.1",
-                "phpstan/phpstan-mockery": "^1.0",
-                "phpstan/phpstan-phpunit": "^1.0",
-                "phpunit/phpunit": "^9.3",
-                "psalm/plugin-mockery": "^0.9",
-                "psalm/plugin-phpunit": "^0.18",
-                "psalm/psalm": "^4.0",
-                "qossmic/deptrac-shim": "^0.24",
-                "rector/rector": "^0.13.7",
-                "symfony/http-client": "^5.2"
-            },
-            "suggest": {
-                "ext-gmp": "To support unlimited number of synchronous metric readers",
-                "ext-grpc": "To use the OTLP GRPC Exporter",
-                "ext-protobuf": "For more performant protobuf/grpc exporting",
-                "ext-sockets": "To use the Thrift UDP Exporter for the Jaeger Agent"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/Context/fiber/initialize_fiber_handler.php",
-                    "src/API/Trace/functions.php",
-                    "src/Contrib/Otlp/_register.php",
-                    "src/Contrib/Grpc/_register.php",
-                    "src/Contrib/Newrelic/_register.php",
-                    "src/Contrib/Zipkin/_register.php",
-                    "src/SDK/Metrics/MetricExporter/_register.php",
-                    "src/SDK/Trace/SpanExporter/_register.php",
-                    "src/SDK/Common/Dev/Compatibility/_load.php",
-                    "src/SDK/Common/Util/functions.php",
-                    "src/SDK/_autoload.php"
-                ],
-                "psr-4": {
-                    "Jaeger\\Thrift\\": "thrift/jaeger/",
-                    "OpenTelemetry\\": "src/",
-                    "Opentelemetry\\Proto\\": "proto/otel/Opentelemetry/Proto/",
-                    "GPBMetadata\\Opentelemetry\\": "proto/otel/GPBMetadata/Opentelemetry/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Bob Strecansky",
-                    "email": "bob.strecansky@gmail.com"
-                },
-                {
-                    "name": "Dmitry Krokhin",
-                    "email": "nekufa@gmail.com"
-                },
-                {
-                    "name": "Levi Morrison",
-                    "email": "levim@php.net"
-                }
-            ],
-            "description": "OpenTelemetry makes robust, portable telemetry a built-in feature of cloud-native software.",
-            "homepage": "https://opentelemetry.io/docs/php",
-            "keywords": [
-                "Metrics",
-                "logging",
-                "open-telemetry",
-                "opentelemetry",
-                "otel",
-                "tracing"
-            ],
-            "support": {
-                "issues": "https://github.com/open-telemetry/opentelemetry-php/issues",
-                "source": "https://github.com/open-telemetry/opentelemetry-php/tree/0.0.17"
-            },
-            "time": "2022-12-02T18:31:42+00:00"
-        },
-        {
-            "name": "packaged/thrift",
-            "version": "0.15.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/packaged/thrift.git",
-                "reference": "dbf4e5ff5c85d56ccae62265ed25424b366ce269"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/packaged/thrift/zipball/dbf4e5ff5c85d56ccae62265ed25424b366ce269",
-                "reference": "dbf4e5ff5c85d56ccae62265ed25424b366ce269",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.5 || ^7.0 || ^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Thrift\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "Apache Thrift",
-            "homepage": "http://thrift.apache.org/",
-            "keywords": [
-                "apache",
-                "thrift"
-            ],
-            "support": {
-                "issues": "https://github.com/packaged/thrift/issues",
-                "source": "https://github.com/packaged/thrift/tree/0.15.0"
-            },
-            "time": "2021-09-23T10:34:40+00:00"
-        },
-        {
-            "name": "php-http/discovery",
-            "version": "1.14.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-http/discovery.git",
-                "reference": "31d8ee46d0215108df16a8527c7438e96a4d7735"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-http/discovery/zipball/31d8ee46d0215108df16a8527c7438e96a4d7735",
-                "reference": "31d8ee46d0215108df16a8527c7438e96a4d7735",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1 || ^8.0"
-            },
-            "conflict": {
-                "nyholm/psr7": "<1.0"
-            },
-            "require-dev": {
-                "graham-campbell/phpspec-skip-example-extension": "^5.0",
-                "php-http/httplug": "^1.0 || ^2.0",
-                "php-http/message-factory": "^1.0",
-                "phpspec/phpspec": "^5.1 || ^6.1"
-            },
-            "suggest": {
-                "php-http/message": "Allow to use Guzzle, Diactoros or Slim Framework factories"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.9-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Http\\Discovery\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Márk Sági-Kazár",
-                    "email": "mark.sagikazar@gmail.com"
-                }
-            ],
-            "description": "Finds installed HTTPlug implementations and PSR-7 message factories",
-            "homepage": "http://php-http.org",
-            "keywords": [
-                "adapter",
-                "client",
-                "discovery",
-                "factory",
-                "http",
-                "message",
-                "psr7"
-            ],
-            "support": {
-                "issues": "https://github.com/php-http/discovery/issues",
-                "source": "https://github.com/php-http/discovery/tree/1.14.3"
-            },
-            "time": "2022-07-11T14:04:40+00:00"
-        },
-        {
             "name": "php-http/guzzle6-adapter",
             "version": "v2.0.2",
             "source": {
@@ -4301,73 +3918,6 @@
                 "source": "https://github.com/php-http/promise/tree/1.1.0"
             },
             "time": "2020-07-07T09:29:14+00:00"
-        },
-        {
-            "name": "promphp/prometheus_client_php",
-            "version": "v2.6.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PromPHP/prometheus_client_php.git",
-                "reference": "df77bbcc65bd173f2ffaf40ab4e1ca8716da8ce6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PromPHP/prometheus_client_php/zipball/df77bbcc65bd173f2ffaf40ab4e1ca8716da8ce6",
-                "reference": "df77bbcc65bd173f2ffaf40ab4e1ca8716da8ce6",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^7.2|^8.0"
-            },
-            "replace": {
-                "endclothing/prometheus_client_php": "*",
-                "jimdo/prometheus_client_php": "*",
-                "lkaemmerling/prometheus_client_php": "*"
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "^6.3|^7.0",
-                "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^1.5.4",
-                "phpstan/phpstan-phpunit": "^1.1.0",
-                "phpstan/phpstan-strict-rules": "^1.1.0",
-                "phpunit/phpunit": "^9.4",
-                "squizlabs/php_codesniffer": "^3.6",
-                "symfony/polyfill-apcu": "^1.6"
-            },
-            "suggest": {
-                "ext-apc": "Required if using APCu.",
-                "ext-redis": "Required if using Redis.",
-                "promphp/prometheus_push_gateway_php": "An easy client for using Prometheus PushGateway.",
-                "symfony/polyfill-apcu": "Required if you use APCu on PHP8.0+"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Prometheus\\": "src/Prometheus/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Lukas Kämmerling",
-                    "email": "kontakt@lukas-kaemmerling.de"
-                }
-            ],
-            "description": "Prometheus instrumentation library for PHP applications.",
-            "support": {
-                "issues": "https://github.com/PromPHP/prometheus_client_php/issues",
-                "source": "https://github.com/PromPHP/prometheus_client_php/tree/v2.6.2"
-            },
-            "time": "2022-06-30T03:46:23+00:00"
         },
         {
             "name": "psr/cache",
@@ -6042,164 +5592,6 @@
                 }
             ],
             "time": "2022-11-03T14:55:06+00:00"
-        },
-        {
-            "name": "symfony/polyfill-php81",
-            "version": "v1.27.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php81.git",
-                "reference": "707403074c8ea6e2edaf8794b0157a0bfa52157a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/707403074c8ea6e2edaf8794b0157a0bfa52157a",
-                "reference": "707403074c8ea6e2edaf8794b0157a0bfa52157a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "1.27-dev"
-                },
-                "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ],
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php81\\": ""
-                },
-                "classmap": [
-                    "Resources/stubs"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 8.1+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/polyfill-php81/tree/v1.27.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-11-03T14:55:06+00:00"
-        },
-        {
-            "name": "symfony/polyfill-php82",
-            "version": "v1.27.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php82.git",
-                "reference": "80ddf7bfa17ef7b06db4e6d007a95bf584e07b44"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php82/zipball/80ddf7bfa17ef7b06db4e6d007a95bf584e07b44",
-                "reference": "80ddf7bfa17ef7b06db4e6d007a95bf584e07b44",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "1.27-dev"
-                },
-                "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ],
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php82\\": ""
-                },
-                "classmap": [
-                    "Resources/stubs"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 8.2+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/polyfill-php82/tree/v1.27.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-11-10T10:10:54+00:00"
         },
         {
             "name": "symfony/service-contracts",
