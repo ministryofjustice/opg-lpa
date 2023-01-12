@@ -203,6 +203,15 @@ class Module implements FormElementProviderInterface
                     ]);
                 },
 
+                'OsSaveHandler' => function (ServiceLocatorInterface $sm) {
+                    $config = $sm->get('config');
+
+                    $redisUrl = $config['redis']['url'];
+                    $rate_limit_per_m = $config['redis']['ordnance_survey']['max_call_per_min'];
+
+                    return new FilteringSaveHandler($redisUrl, 3000, new Redis());
+                },
+
                 'SaveHandler' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
 
