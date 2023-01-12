@@ -97,15 +97,14 @@ class Module
 {
     private Tracer $tracer;
 
-    public function startChild(Event $e)
+    public function startSegment(Event $e)
     {
-        $this->tracer->startChild($e->getSegmentName(), $e->getAttributes());
+        $this->tracer->startSegment($e->getSegmentName(), $e->getAttributes());
     }
 
-    // when stopping a child, we ignore the event's attributes
-    public function stopChild(Event $e)
+    public function stopSegment(Event $e)
     {
-        $this->tracer->stopChild($e->getSegmentName());
+        $this->tracer->stopSegment();
     }
 
     public function onBootstrap(MvcEvent $event): void
@@ -114,12 +113,13 @@ class Module
 
         $this->tracer = $app->getServiceManager()->get('TelemetryTracer');
 
-        // Establish the root trace
-        $this->tracer->start();
+        // Establish the root segment
+        $this->tracer->startRootSegment();
 
+        // Hook up handlers to detect and respond to trace events in the application
         $eventManager = $app->getEventManager();
-        $eventManager->attach(Constants::TELEMETRY_START_CHILD, [$this, 'startChild']);
-        $eventManager->attach(Constants::TELEMETRY_STOP_CHILD, [$this, 'stopChild']);
+        $eventManager->attach(Constants::TELEMETRY_START_SEGMENT, [$this, 'startSegment']);
+        $eventManager->attach(Constants::TELEMETRY_STOP_SEGMENT, [$this, 'stopSegment']);
         $eventManager->attach(MvcEvent::EVENT_FINISH, [$this, 'onFinish']);
 
         // Gives us a globally-accessible Laminas event manager for triggering telemetry events
@@ -128,6 +128,6 @@ class Module
 
     public function onFinish(MvcEvent $event): void
     {
-        $this->tracer->stop();
+        $this->tracer->stopRootSegment();
     }
 }

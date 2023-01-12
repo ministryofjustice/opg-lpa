@@ -12,6 +12,6 @@ class Constants
     /*
      * Telemetry event identifiers
      */
-    const TELEMETRY_START_CHILD = 'telemetry-start-child';
-    const TELEMETRY_STOP_CHILD = 'telemetry-stop-child';
+    const TELEMETRY_START_SEGMENT = 'telemetry-start-segment';
+    const TELEMETRY_STOP_SEGMENT = 'telemetry-stop-segment';
 }

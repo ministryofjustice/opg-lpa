@@ -300,9 +300,8 @@ services:
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
 
-      OPG_LPA_TELEMETRY_HOST: 'aws-otel-collector'
-      #OPG_LPA_TELEMETRY_HOST: ''
-      OPG_LPA_TELEMETRY_PORT: 2000
+      OPG_LPA_TELEMETRY_HOST: ''
+      OPG_LPA_TELEMETRY_PORT: ''
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
@@ -530,12 +529,3 @@ services:
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
       OPG_LPA_POSTGRES_FEEDBACK_USERNAME: "feedbackuser"
       OPG_LPA_POSTGRES_FEEDBACK_PASSWORD: "feedbackpass"
-
-  aws-otel-collector:
-    container_name: lpa-aws-otel-collector
-    image: public.ecr.aws/aws-observability/aws-otel-collector:latest
-    volumes:
-      - ./shared/docker/aws:/config
-    command: ["--config=/config/aws-otel-collector-config.yaml"]
-    environment:
-      - AWS_REGION=eu-west-1

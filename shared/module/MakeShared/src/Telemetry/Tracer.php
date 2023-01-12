@@ -14,11 +14,10 @@ use MakeShared\Telemetry\TraceSegment;
 use MakeShared\Telemetry\XrayExporter;
 
 /**
- * Wrapper around an OpenTelemetry tracer which exports telemetry
- * data in a configurable way.
+ * Trace and export AWS X-Ray telemetry.
  *
  * The initial scaffolding is set up in MakeShared\Telemetry\Module.php.
- * This creates and attaches a root span which other traces can hang off.
+ * This creates a root segment which other segments can hang off.
  * Most of the documentation is there.
  */
 class Tracer
@@ -31,7 +30,9 @@ class Tracer
 
     private ?Segment $rootSegment = null;
 
-    private array $childSegments = [];
+    private ?Segment $currentSegment = null;
+
+    private array $segments = [];
 
     private bool $started = false;
 
@@ -63,31 +64,27 @@ class Tracer
         return new Tracer($serviceName, $exporter, new SimpleLogger());
     }
 
-    private function createTrace(string $name): void
-    {
-        $this->rootSegment = new TraceSegment($name);
-    }
-
-    public function start(): void
+    // create the root segment
+    public function startRootSegment(): void
     {
         if ($this->started) {
             return;
         }
 
-        $headerLine = $_SERVER[Constants::X_TRACE_ID_HEADER_NAME] ?? null;
+        // format is like:
+        // Root=1-63a17088-02b1471a787d91f21767c8f8;Parent=1234567891123456;Sampled=1
+        $headerLine = $_SERVER[Constants::X_TRACE_ID_HEADER_NAME] ?? '';
         parse_str(str_replace(';', '&', $headerLine), $traceHeader);
 
-        if (!isset($traceHeader['Root'])) {
-            $this->createTrace($this->serviceName);
-            return;
-        }
+        // get the Parent part of the header if present, to attach the segments
+        // from this tracer to segments which may have been created by other tracers
+        // outside of the current request (e.g. if we're dealing with a request which
+        // came from service-front to which we've attached a Parent segment ID)
+        $parentSegmentId = $traceHeader['Parent'] ?? null;
 
-        $segment = new Subsegment($this->serviceName);
-        $segment->isIndependent = true;
-        $segment->parentId = strval($traceHeader['Parent'] ?? null);
-        $segment->traceId = strval($traceHeader['Root'] ?? null);
-
-        $this->rootSegment = $segment;
+        $this->rootSegment = new Segment($this->serviceName, $traceHeader['Root'], $parentSegmentId);
+        $this->currentSegment = $this->rootSegment;
+        $this->segments[$this->rootSegment->getId()] = $this->rootSegment;
 
         $this->started = true;
     }
@@ -102,43 +99,24 @@ class Tracer
      * integer, or an array of these values"
      * (see https://opentelemetry.io/docs/concepts/signals/traces/#attributes)
      */
-    public function startChild(string $name, array $attributes = []): ?Segment
+    public function startSegment(string $name, array $attributes = []): void
     {
-        if (!$this->started) {
-            return null;
-        }
-
-        if (is_null($this->rootSegment)) {
-            $child = new Subsegment($name);
-        } else {
-            $child = $this->rootSegment->addChild($name);
-        }
-
-        $this->childSegments[$name] = $child;
-
-        return $child;
+        $child = $this->currentSegment->addChild($name);
+        $this->segments[$child->getId()] = $child;
+        $this->currentSegment = $child;
     }
 
-    public function stopChild(string $name): void
+    public function stopSegment(): void
     {
-        if (array_key_exists($name, $this->childSegments)) {
-            $this->childSegments[$name]->end();
-            unset($this->childSegments[$name]);
-        }
+        $this->currentSegment->end();
+        $this->currentSegment = $this->segments[$this->currentSegment->getParentSegmentId()];
     }
 
-    public function stop(): void
+    public function stopRootSegment(): void
     {
         if (!$this->started) {
             return;
         }
-
-        // clean up any child spans which have been left open
-        foreach ($this->childSegments as $childSpan) {
-            $childSpan->end();
-        }
-
-        $this->childSegments = [];
 
         $this->rootSegment->end();
 
