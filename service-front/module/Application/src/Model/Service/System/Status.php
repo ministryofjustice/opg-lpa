@@ -26,6 +26,9 @@ class Status extends AbstractService implements ApiClientAwareInterface
     /** @var OrdnanceSurveyClient */
     private $ordnanceSurveyClient;
 
+    /** @var OsSaveClient */
+    private $osSaveClient;
+
     /** @var SaveHandlerInterface */
     private $sessionSaveHandler;
 
@@ -35,6 +38,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
      * - Session save handler
      * - API
      * - Ordnance Survey
+     * - Ordnance Survey save handler
      */
     public function check()
     {
@@ -146,6 +150,14 @@ class Status extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
+     * @param OrdnanceSurveyClient $ordnanceSurveyClient
+     */
+    public function setOrdnanceSurveyClient(OrdnanceSurvey $ordnanceSurveyClient)
+    {
+        $this->ordnanceSurveyClient = $ordnanceSurveyClient;
+    }
+
+    /**
      * @param SaveHandlerInterface $saveHandler
      */
     public function setSessionSaveHandler(SaveHandlerInterface $saveHandler)
@@ -154,10 +166,10 @@ class Status extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
-     * @param OrdnanceSurveyClient $osClient
+     * @param OsSaveHandler $osSaveHandler
      */
-    public function setOrdnanceSurveyClient(OrdnanceSurvey $ordnanceSurveyClient)
+    public function setOsSaveHandler(SaveHandlerInterface $osSaveHandler)
     {
-        $this->ordnanceSurveyClient = $ordnanceSurveyClient;
+        $this->osSaveClient = $osSaveClient;
     }
 }

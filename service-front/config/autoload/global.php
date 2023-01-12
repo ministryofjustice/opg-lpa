@@ -67,6 +67,16 @@ return [
 
     ], // session
 
+    'redis' => [
+        'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL'),
+
+        // config for calls to ordnance survey in PingController
+        'ordnance_survey' => [
+            // Rate limit status check calls to OS
+            'max_call_per_min' => 2, // once every 30 secs
+        ],
+    ],
+
     'csrf' => [
         // Salt used for generating csrf tokens
         'salt' => getenv('OPG_LPA_FRONT_CSRF_SALT') ?: null,
