@@ -214,9 +214,10 @@ abstract class AbstractBaseController extends AbstractActionController
      */
     public function onDispatch(\Laminas\Mvc\MvcEvent $e)
     {
-        $retVal = parent::onDispatch($e);
+        //$retVal = parent::onDispatch($e);
+        parent::onDispatch($e);
         $this->getResponse()->getHeaders()->addHeaderLine('X-Content-Type-Options: nosniff');
         $this->getResponse()->getHeaders()->addHeaderLine('Referrer-Policy: strict-origin-when-cross-origin');
-        return $retVal;
+        //return $retVal;
     }
 }
