@@ -6,12 +6,10 @@ namespace MakeShared\Telemetry;
 
 use MakeShared\Constants;
 use MakeShared\Logging\SimpleLogger;
-use MakeShared\Telemetry\ExporterInterface;
-use MakeShared\Telemetry\LogExporter;
+use MakeShared\Telemetry\Exporter\ExporterInterface;
+use MakeShared\Telemetry\Exporter\LogExporter;
+use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
-use MakeShared\Telemetry\Subsegment;
-use MakeShared\Telemetry\TraceSegment;
-use MakeShared\Telemetry\XrayExporter;
 
 /**
  * Trace and export AWS X-Ray telemetry.

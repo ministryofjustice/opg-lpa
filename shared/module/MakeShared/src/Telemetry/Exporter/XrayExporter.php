@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakeShared\Telemetry;
+namespace MakeShared\Telemetry\Exporter;
 
 use Socket;
 use MakeShared\Telemetry\Segment;
