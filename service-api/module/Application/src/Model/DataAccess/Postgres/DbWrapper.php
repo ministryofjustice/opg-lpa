@@ -148,7 +148,7 @@ class DbWrapper
         /** @throws LaminasDbAdapterRuntimeException */
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
-        TelemetryEventManager::triggerStop('DbWrapper.select');
+        TelemetryEventManager::triggerStop();
 
         return $result;
     }
