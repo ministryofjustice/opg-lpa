@@ -62,7 +62,8 @@ class Tracer
         return new Tracer($serviceName, $exporter, new SimpleLogger());
     }
 
-    // create the root segment
+    // create the root segment; if we have no trace ID or trace ID without
+    // a "Root" key, don't do anything (we can't trace these requests)
     public function startRootSegment(): void
     {
         if ($this->started) {
@@ -73,6 +74,10 @@ class Tracer
         // Root=1-63a17088-02b1471a787d91f21767c8f8;Parent=1234567891123456;Sampled=1
         $headerLine = $_SERVER[Constants::X_TRACE_ID_HEADER_NAME] ?? '';
         parse_str(str_replace(';', '&', $headerLine), $traceHeader);
+
+        if (!isset($traceHeader['Root'])) {
+            return;
+        }
 
         // get the Parent part of the header if present, to attach the segments
         // from this tracer to segments which may have been created by other tracers
@@ -99,6 +104,10 @@ class Tracer
      */
     public function startSegment(string $name, array $attributes = []): void
     {
+        if (!$this->started) {
+            return;
+        }
+
         $child = $this->currentSegment->addChild($name);
         $this->segments[$child->getId()] = $child;
         $this->currentSegment = $child;
@@ -106,6 +115,10 @@ class Tracer
 
     public function stopSegment(): void
     {
+        if (!$this->started) {
+            return;
+        }
+
         $this->currentSegment->end();
         $this->currentSegment = $this->segments[$this->currentSegment->getParentSegmentId()];
     }
