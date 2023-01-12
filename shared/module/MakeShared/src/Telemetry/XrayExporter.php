@@ -42,36 +42,9 @@ class XrayExporter implements ExporterInterface
             return;
         }
 
-        $payload = $this->serialiseSegment($segment);
+        $payload = json_encode(['format' => 'json', 'version' => 1]) . "\n" . json_encode($segment);
 
-        $length = strlen($payload);
-
-        if ($length < $this::MAX_PAYLOAD_LEN || empty($segment->children)) {
-            $this->sendPayload($payload);
-
-            return;
-        }
-
-        $parentSegment = clone $segment;
-        $parentSegment->children = [];
-        $this->sendPayload($this->serialiseSegment($parentSegment));
-
-        foreach ($segment->children as $childSegment) {
-            $childSegment->isIndependent = true;
-            $childSegment->parentId = $segment->id;
-            $childSegment->traceId = $segment->traceId;
-            $this->export($childSegment);
-        }
-    }
-
-    private function serialiseSegment(Segment $segment): string
-    {
-        return json_encode(['format' => 'json', 'version' => 1]) . "\n" . json_encode($segment);
-    }
-
-    protected function sendPayload(string $payload): void
-    {
-        if (!$this->socket) {
+        if (strlen($payload) > $this::MAX_PAYLOAD_LEN) {
             return;
         }
 
