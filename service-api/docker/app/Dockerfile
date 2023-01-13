@@ -5,7 +5,7 @@ RUN adduser -D -g '' appuser
 RUN apk add --upgrade apk-tools
 RUN apk upgrade
 
-RUN apk add --no-cache postgresql-libs icu fcgi \
+RUN apk add --no-cache postgresql-libs icu fcgi strace \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev icu-dev \
     && docker-php-ext-install pgsql pdo_pgsql \
     && docker-php-ext-install bcmath \
@@ -67,4 +67,4 @@ WORKDIR /app
 
 USER appuser
 
-CMD  /app/db-migrations.sh && php-fpm
+CMD  /app/db-migrations.sh && strace -f -t -e trace=open,openat,close,read,write,connect,accept php-fpm
