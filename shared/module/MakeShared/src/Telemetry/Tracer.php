@@ -62,6 +62,18 @@ class Tracer
         return new Tracer($serviceName, $exporter, new SimpleLogger());
     }
 
+    /**
+     * This is useful for passing a Parent key in the x-amz-trace-id
+     * field when forwarding the trace ID to other components, e.g.
+     * making an HTTP request from service-front to service-api.
+     *
+     * @return string ID of the currently-active segment
+     */
+    public function getCurrentSegmentId(): string
+    {
+        return $this->currentSegment->getId();
+    }
+
     // create the root segment; if we have no trace ID or trace ID without
     // a "Root" key, don't do anything (we can't trace these requests)
     public function startRootSegment(): void
