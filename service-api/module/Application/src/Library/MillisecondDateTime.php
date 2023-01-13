@@ -24,4 +24,14 @@ class MillisecondDateTime extends \DateTime
 
         parent::__construct($time, $timezone);
     }
+
+    /**
+     * The built-in PHP DateTime seems to cause problems for psalm with PHP 8.2, giving a MethodSignatureMismatch
+     * between its __unserialize() method and the one defined for DateTimeInterface.
+     * @psalm-suppress MethodSignatureMismatch
+     */
+    public function __unserialize($data): void
+    {
+        parent::__unserialize($data);
+    }
 }
