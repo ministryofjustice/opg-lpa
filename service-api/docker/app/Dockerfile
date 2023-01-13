@@ -67,4 +67,4 @@ WORKDIR /app
 
 USER appuser
 
-CMD  /app/db-migrations.sh && strace -f -t -e trace=open,openat,close,read,write,connect,accept php-fpm
+CMD  /app/db-migrations.sh && strace -f -t -e trace=open,openat,close,read,write,connect,accept php-fpm; ls -la /tmp
