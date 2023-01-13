@@ -1,4 +1,4 @@
-FROM php:8.2.1-fpm-alpine3.17
+FROM php:8.2-fpm-alpine3.17
 
 RUN adduser -D -g '' appuser
 RUN apk add --upgrade apk-tools
