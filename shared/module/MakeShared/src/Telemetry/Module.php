@@ -14,8 +14,10 @@ use MakeShared\Telemetry\Tracer;
  * Set up event handlers for capturing trace events triggered in the code.
  * This approach was used rather than singletons so that the tracer
  * instance can be configured like any other Laminas service. To start a new
- * span in code, use the TelemetryEventManager to trigger start/stop child
+ * segment in code, use the TelemetryEventManager to trigger start/stop child
  * events.
+ *
+ * CONFIGURATION
  *
  * To incorporate telemetry into your Laminas application, you'll need to load
  * this module in application.config.php:
@@ -40,7 +42,7 @@ use MakeShared\Telemetry\Tracer;
  *      // ... other application config
  * );
  *
- * You will also need to add a telemetry tracer resource to your application module,
+ * You will also need to add a Tracer resource to your application module,
  * called TelemetryTracer:
  *
  *    class Module
@@ -60,14 +62,14 @@ use MakeShared\Telemetry\Tracer;
  *        }
  *    }
  *
- * Note that here we pass in some config which contains an exporter.url property
- * which points to an aws-otel-collector in prod and is empty in dev (resulting
- * in all telemetry being written to the console).
- * This is mainly used to configure the exporter used by the Tracer. If you need
- * more flexibility, it would be fairly easy to refactor the Tracer class into
- * an interface, then implement a tracer with different OpenTelemetry configuration.
+ * Note that here we pass in some config which contains exporter.host and
+ * export.port properties. These point to the UDP port of an aws-otel-collector
+ * sidecar, typically on port 2000.
  *
- * The $this->tracer->start() call in this module sets up the root span.
+ * HOW TRACING WORKS
+ *
+ * The $this->tracer->startRootSegment() call in the Module below sets up the
+ * root segment.
  *
  * Then, to trace an individual piece of code, surround it like this:
  *
@@ -77,21 +79,21 @@ use MakeShared\Telemetry\Tracer;
  *
  *     // ******* code to be traced goes here *******
  *
- *     TelemetryEventManager::triggerStop('DbWrapper.select');
+ *     TelemetryEventManager::triggerStop();
  *
  * triggerStart() and triggerStop() trigger start/stop events respectively,
- * which set up and tear down a trace span. The array passed to triggerStart()
+ * which set up and tear down a trace segment. The array passed to triggerStart()
  * consists of key/value pairs which set attributes on the trace.
  *
  * Usually, triggerStart() fires an event which in turn causes
- * a child span to be attached to the root span. However, if you start a
- * child span B while another child span A is already active, the
- * OT API will make B a child of A rather than root.
- * So, to attach children to the root span, stop any other child spans before starting
- * a new one.
+ * a child segment to be attached to the root segment. However, if you start a
+ * child segment B while another child segment A is already active, the
+ * segment B will be added as a child of A rather than root.
+ * So, to attach children to the root segment, stop any other child segments
+ * before starting a new one.
  *
  * Tracing is automatically stopped and cleaned up by this module via
- * $this->tracer->stop().
+ * $this->tracer->stopRootSegment() in the onFinish() event handler.
  */
 class Module
 {
