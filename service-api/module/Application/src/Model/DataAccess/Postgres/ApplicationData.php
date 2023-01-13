@@ -15,7 +15,7 @@ use Laminas\Db\Sql\Predicate\In as InPredicate;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
-use Application\Library\DateTime as MillisecondDateTime;
+use Application\Library\MillisecondDateTime;
 
 class ApplicationData extends AbstractBase implements ApplicationRepository\ApplicationRepositoryInterface
 {

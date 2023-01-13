@@ -12,7 +12,7 @@ use DateTimeZone;
  * Class DateTime
  * @package Application\Library
  */
-class DateTime extends \DateTime
+class MillisecondDateTime extends \DateTime
 {
     public function __construct($time = 'now', DateTimeZone $timezone = null)
     {

@@ -4,7 +4,7 @@ namespace Application\Model\Service\Users;
 
 use ArrayObject;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Library\DateTime;
+use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
@@ -189,8 +189,8 @@ class Service extends AbstractService
         if (is_null($user)) {
             $user = [
                 'id'        => $id,
-                'createdAt' => new DateTime(),
-                'updatedAt' => new DateTime(),
+                'createdAt' => new MillisecondDateTime(),
+                'updatedAt' => new MillisecondDateTime(),
             ];
 
             $new = true;
