@@ -81,7 +81,7 @@ locals {
         "-c"
       ],
       "command" : [
-        "chmod 766 /tmp/"
+        "chmod 766 /tmp"
       ],
       "mountPoints" : [
         {
