@@ -16,7 +16,7 @@
     "@cypress/browserify-preprocessor": "^3.0.2",
     "axe-core": "^4.1.4",
     "cli-table": "^0.3.9",
-    "cypress": "12.2.0",
+    "cypress": "12.3.0",
     "cypress-failed-log": "^2.9.2",
     "cypress-intellij-reporter": "^0.0.6",
     "cypress-plugin-tab": "^1.0.5",
