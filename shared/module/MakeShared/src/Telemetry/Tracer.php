@@ -62,33 +62,50 @@ class Tracer
         return new Tracer($serviceName, $exporter, new SimpleLogger());
     }
 
+    public function getExporter(): ExporterInterface
+    {
+        return $this->exporter;
+    }
+
     /**
      * This is useful for passing a Parent key in the x-amz-trace-id
      * field when forwarding the trace ID to other components, e.g.
      * making an HTTP request from service-front to service-api.
      *
-     * @return string ID of the currently-active segment
+     * @return ?string ID of the currently-active segment, or null if not available
      */
-    public function getCurrentSegmentId(): string
+    public function getCurrentSegmentId(): ?string
     {
+        if (is_null($this->currentSegment)) {
+            return null;
+        }
+
         return $this->currentSegment->getId();
     }
 
-    // create the root segment; if we have no trace ID or trace ID without
-    // a "Root" key, don't do anything (we can't trace these requests)
-    public function startRootSegment(): void
+    /**
+     * Create the root segment; if we have no trace ID or trace ID without
+     * a "Root" key, don't do anything (we can't trace these requests).
+     *
+     * @return ?Segment Root segment, or null if none was created
+     */
+    public function startRootSegment(?array $headers = null): ?Segment
     {
+        if (is_null($headers)) {
+            $headers = $_SERVER;
+        }
+
         if ($this->started) {
-            return;
+            return null;
         }
 
         // format is like:
         // Root=1-63a17088-02b1471a787d91f21767c8f8;Parent=1234567891123456;Sampled=1
-        $headerLine = $_SERVER[Constants::X_TRACE_ID_HEADER_NAME] ?? '';
+        $headerLine = $headers[Constants::X_TRACE_ID_HEADER_NAME] ?? '';
         parse_str(str_replace(';', '&', $headerLine), $traceHeader);
 
         if (!isset($traceHeader['Root'])) {
-            return;
+            return null;
         }
 
         // get the Parent part of the header if present, to attach the segments
@@ -102,6 +119,8 @@ class Tracer
         $this->segments[$this->rootSegment->getId()] = $this->rootSegment;
 
         $this->started = true;
+
+        return $this->rootSegment;
     }
 
     /**
@@ -113,16 +132,20 @@ class Tracer
      * key is a string and each value a "non-null string, boolean, floating point value,
      * integer, or an array of these values"
      * (see https://opentelemetry.io/docs/concepts/signals/traces/#attributes)
+     *
+     * @return ?Segment Created segment, or null if it could not be created
      */
-    public function startSegment(string $name, array $attributes = []): void
+    public function startSegment(string $name, array $attributes = []): ?Segment
     {
         if (!$this->started) {
-            return;
+            return null;
         }
 
         $child = $this->currentSegment->addChild($name);
         $this->segments[$child->getId()] = $child;
         $this->currentSegment = $child;
+
+        return $this->currentSegment;
     }
 
     public function stopSegment(): void
