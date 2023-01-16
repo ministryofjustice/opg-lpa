@@ -22,6 +22,7 @@ RUN apk upgrade
 USER nginx
 COPY --chown=nginx:nginx service-front/public /web
 COPY --chown=nginx:nginx service-front/docker/web/etc /etc
+COPY --chown=nginx:nginx service-front/docker/nginx.conf /etc/nginx.conf
 
 CMD confd -onetime -backend env \
   && nginx -g "daemon off;"
