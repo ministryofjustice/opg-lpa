@@ -42,7 +42,7 @@ class TracerTest extends TestCase
         $this->assertInstanceOf(XrayExporter::class, $tracer->getExporter());
     }
 
-    public function testStartRootSegmentFromServerEnv()
+    public function testStartStopRootSegmentFromServerEnv()
     {
         $tracer = Tracer::create($this->config);
 
@@ -54,6 +54,9 @@ class TracerTest extends TestCase
 
         $this->assertEquals($rootSegment->getId(), $tracer->getCurrentSegmentId());
         $this->assertEquals('1234567891123456', $rootSegment->getParentSegmentId());
+
+        // this exercises the console exporter
+        $tracer->stopRootSegment();
     }
 
     public function testStartRootSegmentAlreadyStarted()
