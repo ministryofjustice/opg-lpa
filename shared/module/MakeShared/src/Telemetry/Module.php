@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Telemetry;
+namespace MakeShared\Telemetry;
 
 use Laminas\Mvc\MvcEvent;
 use MakeShared\Constants;
