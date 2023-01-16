@@ -13,6 +13,13 @@ class TelemetryEventManagerTest extends TestCase
 {
     private EventManagerInterface $eventManager;
 
+    // because TelemetryEventManager manipulates static instance variables,
+    // we need to make sure it is reset after this test
+    public function tearDown(): void
+    {
+        TelemetryEventManager::setEventManager(null);
+    }
+
     public function testTriggerNoEventManager()
     {
         $this->assertNull(TelemetryEventManager::triggerStart('foo'));
