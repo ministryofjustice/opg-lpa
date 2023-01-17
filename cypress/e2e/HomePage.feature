@@ -50,3 +50,7 @@ Feature: Homepage
     # Then elements on the page should have sufficient contrast
     # When I wait for focus on "sign-in-button"
     # Then elements on the page should have sufficient contrast
+    #
+  @focus
+  Scenario: Check Response headers are present and correct
+    Given I verify that the homepage response contains all the required headers

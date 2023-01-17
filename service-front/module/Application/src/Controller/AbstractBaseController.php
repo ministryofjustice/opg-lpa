@@ -207,4 +207,21 @@ abstract class AbstractBaseController extends AbstractActionController
     {
         return $this->config;
     }
+
+    /**
+     * Set custom headers
+     * @return mixed
+     */
+    public function onDispatch(\Laminas\Mvc\MvcEvent $e)
+    {
+        /** @var HttpResponse */
+        $response = $this->getResponse();
+
+        $response->getHeaders()->addHeaders([
+            'X-Content-Type-Options' => 'nosniff',
+            'Referrer-Policy' => 'strict-origin-when-cross-origin'
+        ]);
+
+        return parent::onDispatch($e);
+    }
 }
