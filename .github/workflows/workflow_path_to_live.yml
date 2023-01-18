@@ -220,7 +220,7 @@ jobs:
     secrets: inherit
 
   slack_msg_production_deploy_begin:
-    name: Annouce Production Deployment
+    name: Announce Production Deployment
     runs-on: ubuntu-latest
     outputs:
       ts: ${{ steps.slack.outputs.ts }}
@@ -352,53 +352,23 @@ jobs:
     secrets: inherit
 
   run_smoke_tests:
-    runs-on: ubuntu-latest
-    outputs:
-      smoke_test_status: ${{ steps.smoke_tests.outputs.smoke_test_status }}
+    uses: ./.github/workflows/_smoke_tests.yml
     needs:
       - terraform_environment_production
       - terraform_region_production
       - terraform_account_production
-    steps:
-      - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-
-      - name: Download Terraform Task definition
-        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7 # pin@v3.0.1
-        with:
-          name: terraform-artifact
-          path: /tmp/
-
-      - name: Setup Python
-        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r scripts/pipeline/requirements.txt
-
-      - name: Run smoke tests
-        id: smoke_tests
-        run: |
-          if python scripts/pipeline/healthcheck_test/healthcheck_test.py; then
-            echo "smoke_test_status=passed" >> $GITHUB_OUTPUT
-          else
-            echo "smoke_test_status=failed" >> $GITHUB_OUTPUT
-          fi
 
   slack_msg_production_deployed:
-    name: Post-Deployment Slack message
+    name: Post-Deployment Slack message - Success
     runs-on: ubuntu-latest
-    if: always()
+    if: success()
     needs:
       - slack_msg_production_deploy_begin
       - run_smoke_tests
       - image_tag
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: success()
+      if: jobs.run_smoke_tests.result == 'success'
       with:
         channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
@@ -448,8 +418,16 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
+  slack_msg_production_failed:
+    name: Post-Deployment Slack message - Failure
+    runs-on: ubuntu-latest
+    if: failure()
+    needs:
+      - slack_msg_production_deploy_begin
+      - image_tag
+    steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: failure()
+      if: ${{ jobs.run_smoke_tests.result == 'failure' || jobs.run_smoke_tests.result == 'cancelled' || jobs.run_smoke_tests.result == 'skipped' }}
       with:
         channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
@@ -500,7 +478,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: ${{ ( failure() ) || ( cancelled() ) }}
+      if: ${{ jobs.run_smoke_tests.result == 'failure' || jobs.run_smoke_tests.result == 'cancelled' || jobs.run_smoke_tests.result == 'skipped' }}
       with:
         channel-id: "C01BDM8T67J"
         payload: |
@@ -518,4 +496,3 @@ jobs:
             }
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
