@@ -389,16 +389,16 @@ jobs:
           fi
 
   slack_msg_production_deployed:
-    name: Post-Deployment Slack message
+    name: Post-Deployment Slack message - Success
     runs-on: ubuntu-latest
-    if: always()
+    if: success()
     needs:
       - slack_msg_production_deploy_begin
       - run_smoke_tests
       - image_tag
     steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: success()
+      if: jobs.run_smoke_tests.result == 'success'
       with:
         channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
@@ -448,11 +448,16 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
+  slack_msg_production_failed:
+    name: Post-Deployment Slack message - Failure
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: failure()
+      if: ${{ jobs.run_smoke_tests.result == 'failure' || jobs.run_smoke_tests.result == 'cancelled' || jobs.run_smoke_tests.result == 'skipped' }}
       with:
         channel-id: "C01BDM8T67J"
-        update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
+        update-ts: ${{ jobs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
             {
               "icon_emoji": ":robot_face:",
@@ -483,7 +488,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ jobs.image_tag.outputs.short_sha }}>"
                     }
                   ]
                 },
@@ -500,7 +505,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
     - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
-      if: ${{ ( failure() ) || ( cancelled() ) }}
+      if: ${{ jobs.run_smoke_tests.result == 'failure' || jobs.run_smoke_tests.result == 'cancelled' || jobs.run_smoke_tests.result == 'skipped' }}
       with:
         channel-id: "C01BDM8T67J"
         payload: |
@@ -518,4 +523,3 @@ jobs:
             }
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
