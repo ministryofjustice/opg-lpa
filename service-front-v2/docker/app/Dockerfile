@@ -7,7 +7,7 @@ WORKDIR /makelpa
 
 COPY service-front-v2 .
 RUN pip install -r requirements.txt
-RUN ./build.sh && chmod 766 /tmp/
+RUN ./build.sh && chmod 1777 /tmp/
 VOLUME ["/tmp"]
 
 EXPOSE 8005

@@ -3,7 +3,7 @@ FROM alpine:latest
 RUN apk add --update --no-cache postgresql-client && \
     apk upgrade
 
-RUN rm -rf /var/cache/apk/* /tmp/* && chmod 766 /tmp/
+RUN rm -rf /var/cache/apk/* /tmp/* && chmod 1777 /tmp/
 VOLUME ["/tmp"]
 
 COPY scripts/non_live_seeding /app
