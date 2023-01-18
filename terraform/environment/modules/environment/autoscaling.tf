@@ -39,5 +39,5 @@ module "admin_ecs_autoscaling" {
   ecs_autoscaling_service_role_arn = data.aws_iam_role.ecs_autoscaling_service_role.arn
   ecs_task_autoscaling_minimum     = 1
   ecs_task_autoscaling_maximum     = 2
-  tags                             = local.pdf_component_tag
+  tags                             = local.admin_component_tag
 }
