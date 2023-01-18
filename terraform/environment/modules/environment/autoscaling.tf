@@ -38,6 +38,6 @@ module "admin_ecs_autoscaling" {
   aws_ecs_service_name             = aws_ecs_service.admin.name
   ecs_autoscaling_service_role_arn = data.aws_iam_role.ecs_autoscaling_service_role.arn
   ecs_task_autoscaling_minimum     = 1
-  ecs_task_autoscaling_maximum     = 1
+  ecs_task_autoscaling_maximum     = 2
   tags                             = local.pdf_component_tag
 }
