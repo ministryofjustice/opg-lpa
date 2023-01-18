@@ -61,7 +61,8 @@ COPY --chown=root:root service-api/docker/app/db-migrations.sh /app/db-migration
 COPY --chown=root:root service-api/phinx.php /app/phinx.php
 COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 
-RUN chmod +x /app/db-migrations.sh /usr/local/bin/health-check.sh
+RUN chmod +x /app/db-migrations.sh /usr/local/bin/health-check.sh && chmod 766 /tmp/
+VOLUME ["/tmp"]
 
 WORKDIR /app
 

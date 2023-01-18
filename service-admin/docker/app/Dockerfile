@@ -46,7 +46,8 @@ COPY --chown=root:root shared/docker/app/php-fpm-logging.conf /usr/local/etc/php
 
 COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 
-RUN chmod +x /usr/local/bin/health-check.sh
+RUN chmod +x /usr/local/bin/health-check.sh && chmod 766 /tmp/
+VOLUME ["/tmp"]
 
 WORKDIR /app
 

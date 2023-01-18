@@ -72,35 +72,6 @@ locals {
     component = "feedbackdb"
   }
 
-  app_init_container = jsonencode(
-    {
-      "name" : "permissions-init",
-      "image" : "public.ecr.aws/docker/library/busybox:stable",
-      "entryPoint" : [
-        "sh",
-        "-c"
-      ],
-      "command" : [
-        "chmod 766 /tmp"
-      ],
-      "mountPoints" : [
-        {
-          "containerPath" : "/tmp",
-          "sourceVolume" : "app_tmp"
-        }
-      ],
-      "essential" : false,
-      "logConfiguration" : {
-        "logDriver" : "awslogs",
-        "options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : var.region_name,
-          "awslogs-stream-prefix" : "${var.environment_name}.init.online-lpa"
-        }
-      }
-    }
-  )
-
   aws_otel_collector = jsonencode(
     {
       cpu         = 0,

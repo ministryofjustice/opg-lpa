@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "feedbackdb" {
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.feedbackdb_app}, ${local.app_init_container}]"
+  container_definitions    = "[${local.feedbackdb_app}]"
   task_role_arn            = aws_iam_role.feedbackdb_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.feedbackdb_component_tag
@@ -85,12 +85,6 @@ locals {
           "awslogs-stream-prefix" : "${var.environment_name}.feedbackdb.online-lpa"
         }
       },
-      "dependsOn" : [
-        {
-          "containerName" : "permissions-init",
-          "condition" : "SUCCESS"
-        }
-      ],
       "secrets" : [
         { "name" : "OPG_LPA_POSTGRES_USERNAME", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
         { "name" : "OPG_LPA_POSTGRES_PASSWORD", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },

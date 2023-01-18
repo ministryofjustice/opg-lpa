@@ -7,7 +7,8 @@ WORKDIR /makelpa
 
 COPY service-front-v2 .
 RUN pip install -r requirements.txt
-RUN ./build.sh
+RUN ./build.sh && chmod 766 /tmp/
+VOLUME ["/tmp"]
 
 EXPOSE 8005
 CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:8005", "--log-file", "-"]

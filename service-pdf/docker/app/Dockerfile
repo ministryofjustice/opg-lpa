@@ -40,7 +40,8 @@ RUN apk del .build-dependencies
 COPY --chown=root:root service-pdf/bin/pdftk /usr/local/bin/pdftk
 
 RUN curl -sS -o /usr/local/bin/pdftk-all.jar https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/build/libs/pdftk-all.jar \
-    && chmod 755 /usr/local/bin/pdftk
+    && chmod 755 /usr/local/bin/pdftk && chmod 766 /tmp/
+VOLUME ["/tmp"]
 
 COPY --chown=root:root shared /shared
 COPY --chown=root:root service-pdf /app

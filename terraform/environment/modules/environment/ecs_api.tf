@@ -123,7 +123,7 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
+  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}]"
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.api_component_tag
@@ -339,12 +339,6 @@ locals {
           "awslogs-stream-prefix" : "${var.environment_name}.api-app.online-lpa"
         }
       },
-      "dependsOn" : [
-        {
-          "containerName" : "permissions-init",
-          "condition" : "SUCCESS"
-        }
-      ],
       "secrets" : [
         { "name" : "OPG_LPA_API_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
         { "name" : "OPG_LPA_POSTGRES_USERNAME", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },

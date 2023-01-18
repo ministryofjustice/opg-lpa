@@ -79,7 +79,7 @@ resource "aws_ecs_task_definition" "front" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
+  container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.front_v2_app}, ${local.aws_otel_collector}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.front_component_tag
@@ -259,12 +259,6 @@ locals {
           "awslogs-stream-prefix" : "${var.environment_name}.front-app.online-lpa"
         }
       },
-      "dependsOn" : [
-        {
-          "containerName" : "permissions-init",
-          "condition" : "SUCCESS"
-        }
-      ],
       "secrets" : [
         { "name" : "OPG_LPA_FRONT_CSRF_SALT", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.name}" },
         { "name" : "OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
