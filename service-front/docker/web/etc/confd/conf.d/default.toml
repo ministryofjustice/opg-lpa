@@ -1,4 +1,4 @@
 [template]
-src  = "nginx.conf"
+src  = "default.conf"
 dest = "/etc/nginx/conf.d/default.conf"
 keys = ["/app/host", "/app/port", "/nginx/log/level", "/app/v2/host", "/app/v2/port"]
