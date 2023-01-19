@@ -222,7 +222,7 @@ class CheckoutController extends AbstractLpaController
         );
 
         // Store the gateway reference
-        $lpa->payment->gatewayReference = $payment['payment_id'];
+        $lpa->payment->gatewayReference = $payment->payment_id;
 
         $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
@@ -296,7 +296,7 @@ class CheckoutController extends AbstractLpaController
             ]);
 
             // If the user actively canceled it...
-            if ($paymentResponse->getStateCode() == 'P0030') {
+            if ($paymentResponse->state->code == 'P0030') {
                 $viewModel->setTemplate('application/authenticated/lpa/checkout/govpay-cancel.twig');
             } else {
                 // Else it failed for some other reason.
@@ -308,9 +308,9 @@ class CheckoutController extends AbstractLpaController
 
         // The payment is all good, so add the details
         $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
-        $lpa->payment->reference = $paymentResponse['reference'];
+        $lpa->payment->reference = $paymentResponse->reference;
         $lpa->payment->date = new \DateTime();
-        $lpa->payment->email = new EmailAddress(['address' => strtolower($paymentResponse['email'])]);
+        $lpa->payment->email = new EmailAddress(['address' => strtolower($paymentResponse->email)]);
 
         $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
