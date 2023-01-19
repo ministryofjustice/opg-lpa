@@ -70,6 +70,9 @@ return [
     'redis' => [
         'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL'),
 
+        // TTL for Redis keys in milliseconds
+        'ttlMs' => (1000 * 60 * 60 * 3), // 3 hours,
+
         // config for calls to ordnance survey in PingController
         'ordnance_survey' => [
             // Rate limit status check calls to OS
