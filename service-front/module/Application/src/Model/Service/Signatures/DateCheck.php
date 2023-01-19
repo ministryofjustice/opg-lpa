@@ -66,7 +66,7 @@ class DateCheck
 
         // Donor must sign before certificate provider
         if ($donor > $certificateProvider) {
-            $message = "$donorText must be the first person to sign the LPA. ";
+            $message = "${donorText} must be the first person to sign the LPA. ";
             if ($isDraft) {
                 $message .= 'You need to print and re-sign sections 10 and 11';
             } else {
@@ -86,7 +86,7 @@ class DateCheck
             $allTimestamps['sign-date-donor-life-sustaining'] = $donorLifeSustaining;
 
             if ($donor < $donorLifeSustaining) {
-                $message = "$donorText must sign Section 5 on the same day or before " .
+                $message = "${donorText} must sign Section 5 on the same day or before " .
                     'they sign continuation sheet 3. ';
 
                 if ($isDraft) {
@@ -116,7 +116,7 @@ class DateCheck
 
             // Donor must be first
             if ($donor > $timestamp) {
-                $message = "$donorText must be the first person to sign the LPA. ";
+                $message = "${donorText} must be the first person to sign the LPA. ";
                 if ($isDraft) {
                     $message .= 'You need to print and re-sign sections 10 and 11';
                 } else {
@@ -146,7 +146,7 @@ class DateCheck
 
                 // Donor must be first
                 if ($donor > $timestamp) {
-                    $errors[$applicantKey][] = "$donorText must be the first person to sign the LPA. " .
+                    $errors[$applicantKey][] = "${donorText} must be the first person to sign the LPA. " .
                         'You need to print and re-sign sections 10, 11 and 15';
                 }
 
