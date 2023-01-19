@@ -98,7 +98,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         $layout = $this->layout();
 
         // inject lpa into layout
-        $layout->lpa = $this->lpa;
+        $layout->setVariable('lpa', $this->lpa);
 
         // check the requested route and redirect user to the correct one if the requested route is not available.
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
