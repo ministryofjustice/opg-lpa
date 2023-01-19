@@ -46,7 +46,6 @@ RUN apk del .build-dependencies
 COPY --chown=root:root service-front/assets /app/assets
 COPY --chown=root:root service-front/config /app/config
 COPY --chown=root:root service-front/content /app/content
-COPY --chown=root:root service-front/data /app/data
 COPY --chown=root:root service-front/module /app/module
 COPY --chown=root:root service-front/public /app/public
 
