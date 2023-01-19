@@ -60,6 +60,8 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $event = Mockery::mock(MvcEvent::class);
 
         $this->layout->shouldReceive('__invoke')->andReturn($this->layout)->once();
+        $this->layout->shouldReceive('setVariable')->with('lpa', $controller->getLpa());
+
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->shouldReceive('getRouteMatch')->andReturn($routeMatch)->twice();
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/unknown')->once();
@@ -82,6 +84,8 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $event = Mockery::mock(MvcEvent::class);
 
         $this->layout->shouldReceive('__invoke')->andReturn($this->layout)->once();
+        $this->layout->shouldReceive('setVariable')->with('lpa', $controller->getLpa());
+
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->shouldReceive('getRouteMatch')->andReturn($routeMatch)->twice();
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/donor')->once();
@@ -106,6 +110,8 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $event = Mockery::mock(MvcEvent::class);
 
         $this->layout->shouldReceive('__invoke')->andReturn($this->layout)->once();
+        $this->layout->shouldReceive('setVariable')->with('lpa', $controller->getLpa());
+
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->shouldReceive('getRouteMatch')->andReturn($routeMatch)->times(3);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/download')->once();
