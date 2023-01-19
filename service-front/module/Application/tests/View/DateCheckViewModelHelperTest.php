@@ -640,7 +640,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
             $this->assertEquals(
                 $expectedText,
                 $matchesArray,
-                "Test case $index - Unable to find text: " . print_r($expectedText, true),
+                "Test case ${index} - Unable to find text: " . print_r($expectedText, true),
             );
         }
     }

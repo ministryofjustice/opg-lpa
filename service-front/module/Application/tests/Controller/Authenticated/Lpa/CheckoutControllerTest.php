@@ -235,15 +235,13 @@ class CheckoutControllerTest extends AbstractControllerTest
         $responseUrl = "lpa/{$this->lpa->id}/checkout/pay/response";
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/checkout/pay/response', ['lpa-id' => $this->lpa->id]])->andReturn($responseUrl)->once();
-
         $payment = Mockery::mock(GovPayPayment::class);
-        $payment->shouldReceive('offsetGet')->with('payment_id')->andReturn('PAYMENT COMPLETE')->once();
-        $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
 
         $this->govPayClient->shouldReceive('createPayment')->andReturn($payment)->once();
 
+        $payment->payment_id = 'PAYMENT COMPLETE';
         $this->lpaApplicationService->shouldReceive('updateApplication')->andReturn(true)->once();
-
+        $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
         $this->redirect->shouldReceive('toUrl')->withArgs([$responseUrl])->andReturn($response)->once();
 
         $result = $controller->payAction();
@@ -288,15 +286,12 @@ class CheckoutControllerTest extends AbstractControllerTest
             ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
             ->andReturn($this->blankMainFlowForm)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-
         $payment = Mockery::mock(GovPayPayment::class);
-        $payment->shouldReceive('isSuccess')->andReturn(true)->twice();
-        $payment->shouldReceive('offsetGet')->with('reference')->andReturn('existing')->once();
-        $payment->shouldReceive('offsetGet')->with('email')->andReturn('unit@TEST.com')->once();
-
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->twice();
-
+        $payment->shouldReceive('isSuccess')->andReturn(true)->twice();
+        $payment->reference = 'existing';
+        $payment->email = 'unit@TEST.com';
         $this->lpaApplicationService->shouldReceive('updateApplication')->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->andReturn(true)->once();
         $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
@@ -358,15 +353,11 @@ class CheckoutControllerTest extends AbstractControllerTest
         $responseUrl = "lpa/{$this->lpa->id}/checkout/pay/response";
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/checkout/pay/response', ['lpa-id' => $this->lpa->id]])->andReturn($responseUrl)->once();
-
         $payment = Mockery::mock(GovPayPayment::class);
-        $payment->shouldReceive('offsetGet')->with('payment_id')->andReturn('PAYMENT COMPLETE')->once();
-        $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
-
         $this->govPayClient->shouldReceive('createPayment')->andReturn($payment)->once();
-
+        $payment->payment_id = 'PAYMENT COMPLETE';
         $this->lpaApplicationService->shouldReceive('updateApplication')->andReturn(true)->once();
-
+        $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
         $this->redirect->shouldReceive('toUrl')->withArgs([$responseUrl])->andReturn($response)->once();
 
         $result = $controller->payAction();
@@ -391,14 +382,12 @@ class CheckoutControllerTest extends AbstractControllerTest
         $controller = $this->getController(CheckoutController::class);
 
         $this->lpa->payment->gatewayReference = 'unsuccessful';
-
         $payment = Mockery::mock(GovPayPayment::class);
-        $payment->shouldReceive('isSuccess')->andReturn(false)->once();
-        $payment->shouldReceive('getStateCode')->andReturn('P0030')->once();
-
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
-
+        $payment->shouldReceive('isSuccess')->andReturn(false)->once();
+        $payment->state = new ArrayObject();
+        $payment->state->code = 'P0030';
         $this->setPayByCardExpectations('Retry online payment');
 
         /** @var ViewModel $result */
@@ -413,14 +402,12 @@ class CheckoutControllerTest extends AbstractControllerTest
         $controller = $this->getController(CheckoutController::class);
 
         $this->lpa->payment->gatewayReference = 'unsuccessful';
-
         $payment = Mockery::mock(GovPayPayment::class);
-        $payment->shouldReceive('isSuccess')->andReturn(false)->once();
-        $payment->shouldReceive('getStateCode')->andReturn('OTHER')->once();
-
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
-
+        $payment->shouldReceive('isSuccess')->andReturn(false)->once();
+        $payment->state = new ArrayObject();
+        $payment->state->code = 'OTHER';
         $this->setPayByCardExpectations('Retry online payment');
 
         /** @var ViewModel $result */
