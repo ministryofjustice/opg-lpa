@@ -14,6 +14,12 @@ use Application\Model\Service\Mail\Transport\NotifyMailTransport;
 
 class NotifyMailTransportTest extends MockeryTestCase
 {
+    /** @var NotifyClient */
+    private $notifyClient;
+
+    /** @var NotifyMailTransport */
+    private $transport;
+
     public function setUp(): void
     {
         $this->notifyClient = Mockery::mock(NotifyClient::class);

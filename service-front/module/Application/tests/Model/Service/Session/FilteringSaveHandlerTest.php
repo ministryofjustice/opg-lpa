@@ -12,6 +12,9 @@ use ReflectionProperty;
 
 class FilteringSaveHandlerTest extends MockeryTestCase
 {
+    /** @var FilteringSaveHandler */
+    private $saveHandler;
+
     // returns the mock for setting expectations
     private function makeSaveHandlerWithMock(string $redisUrl): Redis
     {
