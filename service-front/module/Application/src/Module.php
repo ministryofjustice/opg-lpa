@@ -8,6 +8,7 @@ use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Model\Service\Redis\RedisHandler;
 use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManager;
@@ -207,9 +208,9 @@ class Module implements FormElementProviderInterface
                     $config = $sm->get('config');
 
                     $redisUrl = $config['redis']['url'];
-                    $rate_limit_per_m = $config['redis']['ordnance_survey']['max_call_per_min'];
+                    $ttlMs = $config['redis']['ttlMs'];
 
-                    return new FilteringSaveHandler($redisUrl, 3000, new Redis());
+                    return new RedisHandler($redisUrl, $ttlMs, new Redis());
                 },
 
                 'SaveHandler' => function (ServiceLocatorInterface $sm) {
