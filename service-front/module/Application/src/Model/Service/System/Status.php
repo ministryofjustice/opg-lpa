@@ -7,6 +7,7 @@ use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Aws\DynamoDb\DynamoDbClient;
+use DateTime;
 use Exception;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 
@@ -132,13 +133,59 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     private function ordnanceSurvey()
     {
+        $config = $this->getConfig()['redis']['ordnance_survey'];
+
+        $this->osSaveClient->open('', '');
+
+        // TODO rename osSaveClient
+        $lastOsCall = $this->osSaveClient->read('os_last_call');
+
+        $currentTime = new DateTime('now');
+        $currentUnixTime = $currentTime->getTimestamp();
+
+        // Rate limit calls to os
+        // If no record of calling os then call os directly
+        if ($lastOsCall === '') {
+            return $this->callOrdnanceSurvey($currentUnixTime);
+        // Decide whether to call os based on max_call_per_min rate limit
+        } else {
+            $timeDiff = $currentUnixTime - intval($lastOsCall);
+            $rateLimit = 60 / $config['max_call_per_min'];
+
+            // Not rate limited
+            if ($timeDiff > $rateLimit) {
+                return $this->callOrdnanceSurvey($currentUnixTime);
+            // Rate limited - os is not called and cached response returned
+            } else {
+                $os_status = $this->osSaveClient->read('os_last_status');
+                $os_details = $this->osSaveClient->read('os_last_details');
+
+                return ['ok' => boolval($os_status), 'details' => json_decode($os_details)];
+                // TODO display ui message to say the status is cached
+            }
+        }
+    }
+
+    private function callOrdnanceSurvey(int $currentUnixTime)
+    {
         $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
 
+        // Update redis with timestamp of the call to os
+        $this->osSaveClient->write('os_last_call', $currentUnixTime);
+
+        // Cache response in redis
         if ($this->ordnanceSurveyClient->verify($os) == true) {
-            return ['ok' => true, 'details' => $os];
+            $alive = true;
+            $details = $os;
         } else {
-            return ['ok' => false];
+            $alive = false;
+            $details = '';
         }
+
+        $this->osSaveClient->write('os_last_status', $alive);
+        $this->osSaveClient->write('os_last_details', json_encode($details));
+
+        return ['ok' => $alive, 'details' => $os];
     }
 
     /**
@@ -170,6 +217,6 @@ class Status extends AbstractService implements ApiClientAwareInterface
      */
     public function setOsSaveHandler(SaveHandlerInterface $osSaveHandler)
     {
-        $this->osSaveClient = $osSaveClient;
+        $this->osSaveClient = $osSaveHandler;
     }
 }
