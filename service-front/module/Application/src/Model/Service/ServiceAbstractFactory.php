@@ -48,7 +48,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setDynamoDbClient' => 'DynamoDbSystemMessageClient',
             'setSessionSaveHandler' => 'SaveHandler',
             'setOrdnanceSurveyClient' => 'OrdnanceSurvey',
-            'setOsSaveHandler' => 'OsSaveHandler',
+            'setOsRedisHandler' => 'OsRedisHandler',
         ],
     ];
 
