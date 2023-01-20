@@ -27,8 +27,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
     /** @var OrdnanceSurveyClient */
     private $ordnanceSurveyClient;
 
-    /** @var OsSaveClient */
-    private $osSaveClient;
+    /** @var OsRedisClient */
+    private $osRedisClient;
 
     /** @var SaveHandlerInterface */
     private $sessionSaveHandler;
@@ -135,10 +135,9 @@ class Status extends AbstractService implements ApiClientAwareInterface
     {
         $config = $this->getConfig()['redis']['ordnance_survey'];
 
-        $this->osSaveClient->open('', '');
+        $this->osRedisClient->open('', '');
 
-        // TODO rename osSaveClient
-        $lastOsCall = $this->osSaveClient->read('os_last_call');
+        $lastOsCall = $this->osRedisClient->read('os_last_call');
 
         $currentTime = new DateTime('now');
         $currentUnixTime = $currentTime->getTimestamp();
@@ -157,8 +156,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
                 return $this->callOrdnanceSurvey($currentUnixTime);
             // Rate limited - os is not called and cached response returned
             } else {
-                $os_status = $this->osSaveClient->read('os_last_status');
-                $os_details = $this->osSaveClient->read('os_last_details');
+                $os_status = $this->osRedisClient->read('os_last_status');
+                $os_details = $this->osRedisClient->read('os_last_details');
 
                 return ['ok' => boolval($os_status), 'details' => json_decode($os_details)];
                 // TODO display ui message to say the status is cached
@@ -171,7 +170,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
 
         // Update redis with timestamp of the call to os
-        $this->osSaveClient->write('os_last_call', $currentUnixTime);
+        $this->osRedisClient->write('os_last_call', $currentUnixTime);
 
         // Cache response in redis
         if ($this->ordnanceSurveyClient->verify($os) == true) {
@@ -182,8 +181,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $details = '';
         }
 
-        $this->osSaveClient->write('os_last_status', $alive);
-        $this->osSaveClient->write('os_last_details', json_encode($details));
+        $this->osRedisClient->write('os_last_status', $alive);
+        $this->osRedisClient->write('os_last_details', json_encode($details));
 
         return ['ok' => $alive, 'details' => $os];
     }
@@ -213,10 +212,10 @@ class Status extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
-     * @param OsSaveHandler $osSaveHandler
+     * @param OsRedisHandler $osRedisHandler
      */
-    public function setOsSaveHandler(SaveHandlerInterface $osSaveHandler)
+    public function setOsRedisHandler(SaveHandlerInterface $osRedisHandler)
     {
-        $this->osSaveClient = $osSaveHandler;
+        $this->osRedisClient = $osRedisHandler;
     }
 }

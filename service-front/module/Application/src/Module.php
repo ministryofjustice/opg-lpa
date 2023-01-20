@@ -204,7 +204,7 @@ class Module implements FormElementProviderInterface
                     ]);
                 },
 
-                'OsSaveHandler' => function (ServiceLocatorInterface $sm) {
+                'OsRedisHandler' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
 
                     $redisUrl = $config['redis']['url'];
