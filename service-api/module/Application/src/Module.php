@@ -2,26 +2,31 @@
 
 namespace Application;
 
-use Application\Model\DataAccess\Repository;
-use Application\Model\DataAccess\Postgres;
+
+use ArrayIterator;
+use GuzzleHttp\Client;
+use Alphagov\Notifications\Client as NotifyClient;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
+use Application\Model\DataAccess\Postgres;
+use Application\Model\DataAccess\Repository;
 use Application\Model\Service\Authentication\Service as AppAuthenticationService;
 use Application\Model\Service\Feedback\FeedbackValidator;
-use Alphagov\Notifications\Client as NotifyClient;
 use Aws\Credentials\CredentialProvider;
 use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
-use GuzzleHttp\Client;
 use Http\Adapter\Guzzle6\Client as Guzzle6Client;
 use Http\Client\HttpClient;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
+use Laminas\Http\Header\Accept as AcceptHeader;
+use Laminas\Http\Request as LaminasRequest;
+use Laminas\Http\Response as LaminasResponse;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -37,6 +42,8 @@ class Module
         $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+        $eventManager->attach(MvcEvent::EVENT_FINISH, [$this, 'negotiateContent'], 1000);
 
         // Setup authentication listener...
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener(), 'authenticate'], 500);
@@ -191,5 +198,40 @@ class Module
         }
 
         return $response;
+    }
+
+    // if the client's Accept header doesn't match the content type on
+    // the response, send a `406 Not acceptable` response
+    public function negotiateContent(MvcEvent $e)
+    {
+        /** @var LaminasRequest */
+        $request = $e->getRequest();
+
+        /** @var LaminasResponse */
+        $response = $e->getResponse();
+
+        /** @var AcceptHeader */
+        $requestAcceptHeader = $request->getHeader('accept');
+
+        // typically a response will only have one content-type header,
+        // but just in case something weird happens we'll loop over the values
+        $responseContentTypes = $response->getHeaders()->get('content-type');
+        if (!is_a($responseContentTypes, ArrayIterator::class)) {
+            $responseContentTypes = new ArrayIterator([$responseContentTypes]);
+        }
+
+        $ok = false;
+        foreach (iterator_to_array($responseContentTypes) as $responseContentType) {
+            if ($requestAcceptHeader->match($responseContentType)) {
+                $ok = true;
+                break;
+            }
+        }
+
+        if (!$ok) {
+            $e->setResponse(new ApiProblemResponse(
+                new ApiProblem(406, 'Response has a content type which is not acceptable to the client')
+            ));
+        }
     }
 }
