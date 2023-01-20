@@ -156,11 +156,14 @@ class Status extends AbstractService implements ApiClientAwareInterface
                 return $this->callOrdnanceSurvey($currentUnixTime);
             // Rate limited - os is not called and cached response returned
             } else {
-                $os_status = $this->osRedisClient->read('os_last_status');
-                $os_details = $this->osRedisClient->read('os_last_details');
+                $osStatus = $this->osRedisClient->read('os_last_status');
+                $osDetails = $this->osRedisClient->read('os_last_details');
 
-                return ['ok' => boolval($os_status), 'details' => json_decode($os_details)];
-                // TODO display ui message to say the status is cached
+                return [
+                    'ok' => boolval($osStatus),
+                    'cached' => true,
+                    'details' => json_decode($osDetails, true)
+                ];
             }
         }
     }
@@ -175,7 +178,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
         // Cache response in redis
         if ($this->ordnanceSurveyClient->verify($os) == true) {
             $alive = true;
-            $details = $os;
+            $details = $os[0];
         } else {
             $alive = false;
             $details = '';
@@ -184,7 +187,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $this->osRedisClient->write('os_last_status', $alive);
         $this->osRedisClient->write('os_last_details', json_encode($details));
 
-        return ['ok' => $alive, 'details' => $os];
+        return ['ok' => $alive, 'cached' => false, 'details' => $details];
     }
 
     /**
