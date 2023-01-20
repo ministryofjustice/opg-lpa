@@ -13,9 +13,6 @@ RUN apk add --no-cache postgresql-libs icu fcgi \
     && docker-php-ext-install intl \
     && docker-php-ext-install sockets
 
-RUN pecl install protobuf && \
-    docker-php-ext-enable protobuf
-
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
