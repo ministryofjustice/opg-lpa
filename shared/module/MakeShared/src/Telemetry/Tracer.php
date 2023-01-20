@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MakeShared\Telemetry;
 
 use MakeShared\Constants;
-use MakeShared\Logging\SimpleLogger;
+use MakeShared\Logging\SimpleLoggerTrait;
 use MakeShared\Telemetry\Exporter\ExporterInterface;
 use MakeShared\Telemetry\Exporter\LogExporter;
 use MakeShared\Telemetry\Exporter\XrayExporter;
@@ -20,11 +20,11 @@ use MakeShared\Telemetry\Segment;
  */
 class Tracer
 {
+    use SimpleLoggerTrait;
+
     private string $serviceName;
 
     private ExporterInterface $exporter;
-
-    private SimpleLogger $logger;
 
     private ?Segment $rootSegment = null;
 
@@ -34,11 +34,10 @@ class Tracer
 
     private bool $started = false;
 
-    public function __construct(string $serviceName, ExporterInterface $exporter, SimpleLogger $logger)
+    public function __construct(string $serviceName, ExporterInterface $exporter)
     {
         $this->serviceName = $serviceName;
         $this->exporter = $exporter;
-        $this->logger = $logger;
     }
 
     /**
@@ -59,7 +58,7 @@ class Tracer
             $exporter = new XrayExporter($exporterHost, intval($exporterPort));
         }
 
-        return new Tracer($serviceName, $exporter, new SimpleLogger());
+        return new Tracer($serviceName, $exporter);
     }
 
     public function getExporter(): ExporterInterface
