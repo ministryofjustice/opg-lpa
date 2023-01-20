@@ -57,6 +57,13 @@
                     <p class="flush--bottom">Ordinance Survey postcode lookup is down</p>
                 </li>
             {% endif %}
+            {% if status.ordnanceSurvey.cached == true %}
+                <li>
+                    <div class="bold-xsmall" style="margin-left: 32px">
+                        <p class="flush--bottom">(This Ordnance Survey status is a cached response due to rate limiting)</p>
+                    </div>
+                </li>
+            {% endif %}
 		</ul>
 	</div>
 </div>
