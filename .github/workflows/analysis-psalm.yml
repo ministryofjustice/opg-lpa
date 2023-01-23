@@ -11,6 +11,43 @@ on:
       - "service-front/**"
       - "service-pdf/**"
 jobs:
+  psalm_all_php_8_2:
+    name: psalm-scan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        scan:
+          - name: service-admin
+            path: "./service-admin"
+    defaults:
+      run:
+        working-directory: ${{ matrix.scan.path }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: path filters
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            check: '${{ matrix.scan.path }}/**'
+      - name: Setup PHP
+        if: steps.filter.outputs.check == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+      - name: Composer install
+        if: steps.filter.outputs.check == 'true'
+        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
+      - name: Run psalm
+        if: steps.filter.outputs.check == 'true'
+        run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif
+      - name: Upload Security Analysis results to GitHub
+        if: steps.filter.outputs.check == 'true'
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
   psalm_all_php:
     name: psalm-scan
     runs-on: ubuntu-latest
@@ -22,8 +59,6 @@ jobs:
             path: "./service-front"
           - name: service-api
             path: "./service-api"
-          - name: service-admin
-            path: "./service-admin"
           - name: service-pdf
             path: "./service-pdf"
           - name: shared
