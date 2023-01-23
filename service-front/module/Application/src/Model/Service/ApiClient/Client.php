@@ -57,7 +57,7 @@ class Client
      * @param array $query
      * @param bool $jsonResponse
      * @param bool $anonymous
-     * @param array|null $additionalHeaders
+     * @param array $additionalHeaders
      * @return array|null|string
      * @throws \Http\Client\Exception
      */
@@ -66,7 +66,7 @@ class Client
         array $query = [],
         $jsonResponse = true,
         $anonymous = false,
-        $additionalHeaders = null
+        $additionalHeaders = []
     ) {
         $url = new Uri($this->apiBaseUri . $path);
 
@@ -74,7 +74,7 @@ class Client
             $url = Uri::withQueryValue($url, $name, $value);
         }
 
-        $headers = $this->buildHeaders($anonymous, $additionalHeaders);
+        $headers = $this->buildHeaders($additionalHeaders, $anonymous);
 
         $request = new Request('GET', $url, $headers);
 
@@ -99,9 +99,7 @@ class Client
      *
      * @param string $path
      * @param array $payload
-     * @param array $additionalHeaders - extra headers to add to request; note that
-     * if any of the keys match what is returned by buildHeaders(), the value
-     * in $additionalHeaders is used
+     * @param array $additionalHeaders
      * @return array|null|string
      * @throws Exception\ApiException
      * @throws \Http\Client\Exception
@@ -208,11 +206,13 @@ class Client
     /**
      * Generates the standard set of HTTP headers expected by the API.
      *
+     * @param array $additionalHeaders Extra headers to add to request; note that
+     * if any of the keys match what is in the default headers, the value
+     * in $additionalHeaders overrides the existing value
      * @param bool $anonymous If true, don't include a "Token" header
-     * @param array $additionalHeaders
      * @return array
      */
-    private function buildHeaders($anonymous = false, $additionalHeaders = [])
+    private function buildHeaders($additionalHeaders = [], $anonymous = false)
     {
         $headers = [
             'Accept' => 'application/json',
