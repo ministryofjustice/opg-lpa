@@ -16,7 +16,7 @@ class ModuleTest extends TestCase
 {
     private function makeEvent(
         string $accept = 'application/json',
-        string $contentType = 'application/json'
+        ?string $contentType = null,
     ) {
         $requestAcceptHeader = AcceptHeader::fromString("Accept: $accept");
 
@@ -80,6 +80,38 @@ class ModuleTest extends TestCase
         $actualResponse = $event->getResponse();
         $this->assertNotEquals(get_class($originalResponse), get_class($actualResponse));
         $this->assertEquals(ApiProblemResponse::class, get_class($actualResponse));
+        $this->assertEquals(406, $actualResponse->getStatusCode());
+    }
+
+    public function testNegotiateNoContentTypeHeaderOnResponse()
+    {
+        $event = $this->makeEvent('application/pdf', null);
+
+        $originalResponse = $event->getResponse();
+
+        $module = new Module();
+
+        // the existing response should be left alone
+        $module->negotiateContent($event);
+
+        // check that the response is replaced with an API problem response
+        $actualResponse = $event->getResponse();
+        $this->assertEquals(406, $actualResponse->getStatusCode());
+    }
+
+    public function testNegotiateBadContentTypeHeaderOnResponse()
+    {
+        $event = $this->makeEvent('application/pdf', null);
+
+        $originalResponse = $event->getResponse();
+
+        $module = new Module();
+
+        // the existing response should be left alone
+        $module->negotiateContent($event);
+
+        // check that the response is replaced with an API problem response
+        $actualResponse = $event->getResponse();
         $this->assertEquals(406, $actualResponse->getStatusCode());
     }
 }

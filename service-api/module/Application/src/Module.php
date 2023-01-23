@@ -218,13 +218,22 @@ class Module
         // NB might also return false, which is OK because AcceptHeader->match()
         // will count that as a failed match
         $responseContentTypes = $response->getHeaders()->get('content-type');
-        if (!is_a($responseContentTypes, ArrayIterator::class)) {
+        if ($responseContentTypes === false) {
+            // no content type in the response; this will give a 406 as
+            // the client's Accept header can't be matched to nothing
+            $responseContentTypes = [];
+        } elseif (!is_a($responseContentTypes, ArrayIterator::class)) {
             $responseContentTypes = new ArrayIterator([$responseContentTypes]);
         }
 
         $ok = false;
         foreach (iterator_to_array($responseContentTypes) as $responseContentType) {
-            if ($requestAcceptHeader->match($responseContentType->getFieldValue())) {
+            $responseContentTypeValue = $responseContentType->getFieldValue();
+
+            if (
+                !empty($responseContentTypeValue) &&
+                $requestAcceptHeader->match($responseContentTypeValue)
+            ) {
                 $ok = true;
                 break;
             }
