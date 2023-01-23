@@ -44,7 +44,7 @@ class DownloadController extends AbstractLpaController
         $this->layout('layout/download.twig');
 
         if ($this->pdfIsReady($lpa->getId(), $pdfType)) {
-            //  Redirect to download action
+            // Redirect to download action
             return $this->redirect()->toRoute('lpa/download/check', [
                 'lpa-id'       => $lpa->getId(),
                 'pdf-type'     => $pdfType,
