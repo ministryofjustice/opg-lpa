@@ -214,7 +214,9 @@ class Module
         $requestAcceptHeader = $request->getHeader('accept');
 
         // typically a response will only have one content-type header,
-        // but just in case something weird happens we'll loop over the values
+        // but just in case something weird happens we'll loop over the values;
+        // NB might also return false, which is OK because AcceptHeader->match()
+        // will count that as a failed match
         $responseContentTypes = $response->getHeaders()->get('content-type');
         if (!is_a($responseContentTypes, ArrayIterator::class)) {
             $responseContentTypes = new ArrayIterator([$responseContentTypes]);
