@@ -76,7 +76,7 @@ class ModuleTest extends TestCase
         // the existing response should be left alone
         $module->negotiateContent($event);
 
-        // check that the response is not an API problem and remains untouched
+        // check that the response is replaced with an API problem response
         $actualResponse = $event->getResponse();
         $this->assertNotEquals(get_class($originalResponse), get_class($actualResponse));
         $this->assertEquals(ApiProblemResponse::class, get_class($actualResponse));
