@@ -53,7 +53,7 @@ jobs:
           #- name: Run phpunit
           #run: ./vendor/bin/phpunit
       - name: PHPUnit tests
-        uses: php-actions/phpunit@3
+        uses: php-actions/phpunit@v3
         env:
           XDEBUG_MODE: coverage
         with:
