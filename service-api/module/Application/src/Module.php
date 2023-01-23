@@ -224,7 +224,7 @@ class Module
 
         $ok = false;
         foreach (iterator_to_array($responseContentTypes) as $responseContentType) {
-            if ($requestAcceptHeader->match($responseContentType)) {
+            if ($requestAcceptHeader->match($responseContentType->getFieldValue())) {
                 $ok = true;
                 break;
             }
