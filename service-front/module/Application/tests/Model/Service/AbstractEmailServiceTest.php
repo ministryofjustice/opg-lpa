@@ -17,14 +17,10 @@ use Mockery\MockInterface;
 
 class AbstractEmailServiceTest extends AbstractServiceTest
 {
-    /** @var $mailTransport MailTransportInterface */
+    /**
+     * @var $mailTransport MailTransportInterface
+     */
     protected $mailTransport;
-
-    /** @var array */
-    protected $config;
-
-    /** @var HelperPluginManager */
-    protected $helperPluginManager;
 
     public function setUp(): void
     {

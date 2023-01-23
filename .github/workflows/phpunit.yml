@@ -11,8 +11,6 @@ jobs:
       fail-fast: true
       matrix:
         scan:
-          - name: service-front
-            path: "./service-front"
           - name: service-admin
             path: "./service-admin"
     defaults:
@@ -51,6 +49,8 @@ jobs:
       fail-fast: true
       matrix:
         scan:
+          - name: service-front
+            path: "./service-front"
           - name: service-api
             path: "./service-api"
           - name: service-pdf
