@@ -53,4 +53,4 @@ jobs:
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
           name: coverage-html
-          path: coverage-html/
+          path: ${{ matrix.scan.path }}/coverage-html/
