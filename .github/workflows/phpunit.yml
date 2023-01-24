@@ -37,27 +37,12 @@ jobs:
           role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
           role-duration-seconds: 1800
           role-session-name: OPGMakeaLPAECRGithubAction
-      - name: Install composer and deps
-        uses: php-actions/composer@v6
-          #- name: Setup PHP
-          #uses: shivammathur/setup-php@v2
-          #with:
-          #php-version: "8.1"
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |
           sudo apt-get update
           sudo apt-get install pdftk-java
-          #- name: Composer install
-          #run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
-          #- name: Run phpunit
-          #run: ./vendor/bin/phpunit
-      - name: PHPUnit tests
-        uses: php-actions/phpunit@v3
-        env:
-          XDEBUG_MODE: coverage
-        with:
-          bootstrap: vendor/autoload.php
-          configuration: phpunit.xml
-          php_extensions: xdebug
-          args: --coverage-html ./html
+      - name: Composer install
+        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
+      - name: Run phpunit
+        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./html
