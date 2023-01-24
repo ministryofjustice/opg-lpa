@@ -41,7 +41,12 @@ jobs:
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
-        run: ./vendor/bin/phpunit
+        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html
+      - name: Upload Coverage Artifacts
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
+        with:
+          name: coverage-html
+          path: ${{ matrix.scan.path }}/coverage-html/
   phpunit_all_services:
     name: phpunit
     runs-on: ubuntu-latest
@@ -73,6 +78,10 @@ jobs:
           role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
           role-duration-seconds: 1800
           role-session-name: OPGMakeaLPAECRGithubAction
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |
