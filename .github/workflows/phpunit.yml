@@ -46,7 +46,7 @@ jobs:
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
         #run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html
-        run |
+        run: |
           XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html
           ls -R coverage-html
       - name: Upload Coverage Artifacts
