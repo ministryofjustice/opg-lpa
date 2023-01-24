@@ -214,7 +214,7 @@ final class JwtMiddleware implements MiddlewareInterface
      *
      * @param string|string[] $secret
      */
-    private function secret(#[\SensitiveParameter] $secret): void
+    private function secret(#[\SensitiveParameter] string $secret): void
     {
         if (false === is_array($secret) && false === is_string($secret) && ! $secret instanceof \ArrayAccess) {
             throw new InvalidArgumentException(
