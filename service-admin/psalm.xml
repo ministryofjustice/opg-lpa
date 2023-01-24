@@ -12,4 +12,13 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+
+    <plugins>
+        <pluginClass class="\MakeShared\Psalm\SensitiveParameterAnnotationHook">
+            <patterns>
+                <pattern>address</pattern>
+                <pattern>cookie</pattern>
+            </patterns>
+        </pluginClass>
+    </plugins>
 </psalm>
