@@ -12,4 +12,15 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+
+    <plugins>
+        <pluginClass class="\MakeShared\Psalm\SensitiveParameterAnnotationHook">
+            <ignore>
+                <name>emailTemplatesConfig</name>
+                <name>addressLookup</name>
+                <name>updateToken</name>
+                <name>osAddress</name>
+            </ignore>
+        </pluginClass>
+    </plugins>
 </psalm>
