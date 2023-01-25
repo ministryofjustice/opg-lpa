@@ -7,6 +7,11 @@ namespace MakeShared\Telemetry\Exporter;
 use MakeShared\Logging\SimpleLoggerTrait;
 use MakeShared\Telemetry\Segment;
 
+/**
+ * Export segments to a logger.
+ * NB this ignores the Sampled flag on segments
+ * and exports everything by default.
+ */
 class LogExporter implements ExporterInterface
 {
     use SimpleLoggerTrait;

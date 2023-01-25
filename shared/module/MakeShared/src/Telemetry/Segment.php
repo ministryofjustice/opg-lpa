@@ -25,15 +25,22 @@ class Segment implements JsonSerializable
     /** @var Segment[] $children */
     private array $children = [];
 
+    private bool $sampled = true;
+
     // parent segment ID; set for subsegments, and on the root segment
     // if a Parent was specified in the x-amz-trace-id header
     private ?string $parentSegmentId = null;
 
-    public function __construct(string $segmentName, string $traceId, ?string $parentSegmentId = null)
-    {
+    public function __construct(
+        string $segmentName,
+        string $traceId,
+        ?string $parentSegmentId = null,
+        bool $sampled = true,
+    ) {
         $this->segmentName = $segmentName;
         $this->traceId = $traceId;
         $this->parentSegmentId = $parentSegmentId;
+        $this->sampled = $sampled;
 
         $this->id = bin2hex(random_bytes(16 / 2));
         $this->start = microtime(true);
@@ -41,7 +48,7 @@ class Segment implements JsonSerializable
 
     public function addChild(string $segmentName): Segment
     {
-        $child = new Segment($segmentName, $this->traceId, $this->id);
+        $child = new Segment($segmentName, $this->traceId, $this->id, $this->sampled);
         $this->children[] = $child;
         return $child;
     }
@@ -69,6 +76,11 @@ class Segment implements JsonSerializable
     public function getParentSegmentId(): ?string
     {
         return $this->parentSegmentId;
+    }
+
+    public function shouldBeExported(): bool
+    {
+        return $this->sampled;
     }
 
     public function hasEnded(): bool

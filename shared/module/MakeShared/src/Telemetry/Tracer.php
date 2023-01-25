@@ -113,7 +113,16 @@ class Tracer
         // came from service-front to which we've attached a Parent segment ID)
         $parentSegmentId = $traceHeader['Parent'] ?? null;
 
-        $this->rootSegment = new Segment($this->serviceName, $traceHeader['Root'], $parentSegmentId);
+        // set whether this segment should be sampled; if false, the XrayExporter
+        // ignores the segment
+        $sampled = isset($traceHeader['Sampled']) && $traceHeader['Sampled'] === '1';
+
+        $this->rootSegment = new Segment(
+            $this->serviceName,
+            $traceHeader['Root'],
+            $parentSegmentId,
+            $sampled,
+        );
         $this->currentSegment = $this->rootSegment;
         $this->segments[$this->rootSegment->getId()] = $this->rootSegment;
 

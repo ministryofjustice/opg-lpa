@@ -38,7 +38,7 @@ class XrayExporter implements ExporterInterface
 
     public function export(Segment $segment): void
     {
-        if (!$this->socket) {
+        if (!$this->socket || !$segment->shouldBeExported()) {
             return;
         }
 
