@@ -13,6 +13,15 @@ class SegmentTest extends TestCase
         return json_decode(json_encode($segment), true)['end_time'];
     }
 
+    public function testSampled()
+    {
+        $segment = new Segment('makeSharedUnitTest1', '1-581cf771-a006649127e371903a2de979', null, true);
+        $this->assertTrue($segment->shouldBeExported(), 'segment->sampled should be true');
+
+        $segment = new Segment('makeSharedUnitTest1', '1-581cf771-a006649127e371903a2de979', null, false);
+        $this->assertFalse($segment->shouldBeExported(), 'segment->sampled should be false');
+    }
+
     public function testEnd()
     {
         $segment = new Segment('makeSharedUnitTest1', '1-581cf771-a006649127e371903a2de979');
