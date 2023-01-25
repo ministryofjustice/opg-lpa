@@ -54,7 +54,7 @@ class TracerTest extends TestCase
 
         $this->assertEquals($rootSegment->getId(), $tracer->getCurrentSegmentId());
         $this->assertEquals('1234567891123456', $rootSegment->getParentSegmentId());
-        $this->assertTrue($rootSegment->shouldBeExported());
+        $this->assertTrue($rootSegment->sampled);
 
         // this exercises the console exporter
         $tracer->stopRootSegment();
@@ -101,8 +101,8 @@ class TracerTest extends TestCase
         $nextSegment = $tracer->startSegment('foo');
 
         $this->assertEquals($rootSegment->getId(), $nextSegment->getParentSegmentId());
-        $this->assertTrue($rootSegment->shouldBeExported());
-        $this->assertTrue($nextSegment->shouldBeExported());
+        $this->assertTrue($rootSegment->sampled);
+        $this->assertTrue($nextSegment->sampled);
     }
 
     public function testStartSegmentRootNotStarted()

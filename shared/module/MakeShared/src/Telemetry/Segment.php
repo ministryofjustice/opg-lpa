@@ -25,7 +25,7 @@ class Segment implements JsonSerializable
     /** @var Segment[] $children */
     private array $children = [];
 
-    private bool $sampled = true;
+    public bool $sampled = true;
 
     // parent segment ID; set for subsegments, and on the root segment
     // if a Parent was specified in the x-amz-trace-id header
@@ -76,11 +76,6 @@ class Segment implements JsonSerializable
     public function getParentSegmentId(): ?string
     {
         return $this->parentSegmentId;
-    }
-
-    public function shouldBeExported(): bool
-    {
-        return $this->sampled;
     }
 
     public function hasEnded(): bool

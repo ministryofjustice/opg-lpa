@@ -16,10 +16,10 @@ class SegmentTest extends TestCase
     public function testSampled()
     {
         $segment = new Segment('makeSharedUnitTest1', '1-581cf771-a006649127e371903a2de979', null, true);
-        $this->assertTrue($segment->shouldBeExported(), 'segment->sampled should be true');
+        $this->assertTrue($segment->sampled, 'segment->sampled should be true');
 
         $segment = new Segment('makeSharedUnitTest1', '1-581cf771-a006649127e371903a2de979', null, false);
-        $this->assertFalse($segment->shouldBeExported(), 'segment->sampled should be false');
+        $this->assertFalse($segment->sampled, 'segment->sampled should be false');
     }
 
     public function testEnd()
