@@ -217,9 +217,18 @@ abstract class AbstractBaseController extends AbstractActionController
         /** @var HttpResponse */
         $response = $this->getResponse();
 
+        $securityPolicy = "default-src 'self'";
+
         $response->getHeaders()->addHeaders([
             'X-Content-Type-Options' => 'nosniff',
-            'Referrer-Policy' => 'strict-origin-when-cross-origin'
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
+        ]);
+
+        $response->getHeaders()->addHeaders([
+            'Content-Security-Policy' => $securityPolicy
+        ]);
+        $response->getHeaders()->addHeaders([
+            'X-Content-Security-Policy' => $securityPolicy
         ]);
 
         return parent::onDispatch($e);
