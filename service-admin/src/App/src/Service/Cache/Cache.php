@@ -117,7 +117,7 @@ class Cache implements StorageInterface
     /* (non-PHPdoc)
      * @see \Laminas\Cache\Storage\StorageInterface::getItem()
      */
-    public function getItem($key, &$success = null, &$casToken = null)
+    public function getItem($key, &$success = null, #[\SensitiveParameter] &$casToken = null)
     {
         try {
             $result = $this->client->getItem([
@@ -162,7 +162,7 @@ class Cache implements StorageInterface
     /* (non-PHPdoc)
     * @see \Laminas\Cache\Storage\StorageInterface::checkAndSetItem()
     */
-    public function checkAndSetItem($token, $key, $value)
+    public function checkAndSetItem(#[\SensitiveParameter] $token, $key, $value)
     {
         throw new UnsupportedMethodCallException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }

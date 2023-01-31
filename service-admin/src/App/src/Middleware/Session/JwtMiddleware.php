@@ -187,7 +187,7 @@ final class JwtMiddleware implements MiddlewareInterface
      *
      * @return mixed[]
      */
-    private function decodeToken(string $token): array
+    private function decodeToken(#[\SensitiveParameter] string $token): array
     {
         try {
             $decoded = JWT::decode(
@@ -204,7 +204,7 @@ final class JwtMiddleware implements MiddlewareInterface
     /**
      * Set the cookie name where to search the token from.
      */
-    private function cookie(string $cookie): void
+    private function cookie(#[\SensitiveParameter] string $cookie): void
     {
         $this->options["cookie"] = $cookie;
     }
@@ -214,7 +214,7 @@ final class JwtMiddleware implements MiddlewareInterface
      *
      * @param string|string[] $secret
      */
-    private function secret($secret): void
+    private function secret(#[\SensitiveParameter] $secret): void
     {
         if (false === is_array($secret) && false === is_string($secret) && ! $secret instanceof \ArrayAccess) {
             throw new InvalidArgumentException(
