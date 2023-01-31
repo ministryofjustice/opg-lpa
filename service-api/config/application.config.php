@@ -17,7 +17,7 @@ return array(
         'Laminas\Cache\Storage\Adapter\Memory',
         'Laminas\ZendFrameworkBridge',
         'Application',
-        'Telemetry',
+        'MakeShared\Telemetry',
     ),
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(
