@@ -12,12 +12,12 @@ use Laminas\Stratigility\Middleware\ErrorHandler;
 class LoggingErrorListenerDelegatorFactory
 {
     /**
-     * @param ContainerInterface $container
-     * @param string $name
+     * @param ContainerInterface $container (unused)
+     * @param string $name (unused)
      * @param callable $callback
      * @return ErrorHandler
      */
-    public function __invoke(ContainerInterface $container, string $name, callable $callback): ErrorHandler
+    public function __invoke(ContainerInterface $_1, string $_2, callable $callback): ErrorHandler
     {
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $callback();

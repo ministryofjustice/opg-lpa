@@ -100,7 +100,6 @@ class UserFindHandler extends AbstractHandler
             }
 
             if ($numResults === 0) {
-                /** @var array */
                 $formMessages = $form->getMessages();
 
                 // Set error message

@@ -15,9 +15,6 @@ trait JwtTrait
      * @param object|string $value
      * @return void
      */
-    // phpstan wants a typehint for $value, but PHP 7 won't accept union typehints;
-    // consquently, we just tell phpstan to ignore this method signature
-    /* @phpstan-ignore-next-line */
     private function addTokenData(string $name, $value): void
     {
         $this->verifyTokenDataExists();
@@ -29,9 +26,6 @@ trait JwtTrait
      * @param string $name
      * @return string|null|object
      */
-    // phpstan wants a return type, but PHP 7 won't accept union typehints;
-    // consquently, we just tell phpstan to ignore this method signature
-    /* @phpstan-ignore-next-line */
     private function getTokenData(string $name = null)
     {
         $this->verifyTokenDataExists();
@@ -41,17 +35,6 @@ trait JwtTrait
         }
 
         return null;
-    }
-
-    /**
-     * @param string $name
-     * @return void
-     */
-    private function removeTokenData(string $name): void
-    {
-        $this->verifyTokenDataExists();
-
-        unset($_SESSION['jwt-payload'][$name]);
     }
 
     /**

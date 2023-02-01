@@ -26,13 +26,6 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
     use TemplatingSupportTrait;
     use UrlHelperTrait;
 
-    //
-    /** @var TemplateRendererInterface */
-    protected $renderer;
-
-    /** @var UrlHelper */
-    protected $urlHelper;
-
     /**
      * Handles a request and produces a response
      *

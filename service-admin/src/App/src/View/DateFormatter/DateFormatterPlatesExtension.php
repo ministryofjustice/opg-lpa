@@ -26,6 +26,9 @@ class DateFormatterPlatesExtension implements ExtensionInterface
      * @param mixed $default Default value to return if $var is not a DateTime;
      * defaults to $var itself
      * @return string|null
+     *
+     * This is used as a template function, so psalm warning is bogus
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function dateFormat($var, $default = null)
     {
