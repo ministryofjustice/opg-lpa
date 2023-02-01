@@ -76,7 +76,7 @@ class Identity
      * @param string $token
      * @return void
      */
-    public function setToken($token)
+    public function setToken(#[\SensitiveParameter] string $token)
     {
         $this->token = $token;
     }
