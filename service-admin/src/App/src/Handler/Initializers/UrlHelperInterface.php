@@ -14,7 +14,6 @@ interface UrlHelperInterface
 {
     /**
      * @param UrlHelper $template
-     * @return mixed
      */
     public function setUrlHelper(UrlHelper $template);
 

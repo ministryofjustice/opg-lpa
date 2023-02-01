@@ -40,31 +40,6 @@ class ApiException extends RuntimeException
     }
 
     /**
-     * @return mixed|null
-     */
-    public function getTitle()
-    {
-        return $this->getBodyData('title');
-    }
-
-    /**
-     * Returns additional data from the API error response
-     *
-     * @param string|null $key
-     * @return array|mixed
-     */
-    public function getData(string $key = null)
-    {
-        $data = $this->getBodyData('data');
-
-        if (!is_null($key) && is_array($data) && isset($data[$key])) {
-            $data = $data[$key];
-        }
-
-        return $data;
-    }
-
-    /**
      * Get data from the body if it exists
      *
      * @param string $key
