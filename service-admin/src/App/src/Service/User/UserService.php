@@ -74,7 +74,7 @@ class UserService
      * @param string $email
      * @return array<string, mixed>|bool
      */
-    public function search(string $email)
+    public function search(#[\SensitiveParameter] string $email)
     {
         $userData = $this->client->httpGet('/v2/users/search', [
             'email' => $email

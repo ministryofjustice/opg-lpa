@@ -33,8 +33,10 @@ class AuthenticationService
      * @param string $password
      * @return Result
      */
-    public function authenticate($email, $password)
-    {
+    public function authenticate(
+        #[\SensitiveParameter] string $email,
+        #[\SensitiveParameter] string $password
+    ) {
         try {
             $userData = $this->client->httpPost('/v2/authenticate', [
                 'username' => strtolower($email),
@@ -67,7 +69,7 @@ class AuthenticationService
      * @param string $token
      * @return Result
      */
-    public function verify($token)
+    public function verify(#[\SensitiveParameter] string $token)
     {
         try {
             $userData = $this->client->httpPost('/v2/authenticate', [
