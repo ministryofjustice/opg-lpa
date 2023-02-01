@@ -64,30 +64,6 @@ resource "aws_secretsmanager_secret" "opg_lpa_admin_jwt_secret" {
 }
 
 # front secrets
-resource "aws_secretsmanager_secret" "opg_lpa_front_email_sendgrid_webhook_token" {
-  name                           = "${local.account_name}/opg_lpa_front_email_sendgrid_webhook_token"
-  tags                           = local.front_component_tag
-  kms_key_id                     = aws_kms_key.multi_region_secrets_encryption_key.key_id
-  force_overwrite_replica_secret = true
-
-  replica {
-    region     = "eu-west-2"
-    kms_key_id = aws_kms_key.multi_region_secrets_encryption_key.key_id
-  }
-}
-
-resource "aws_secretsmanager_secret" "opg_lpa_front_email_sendgrid_api_key" {
-  name                           = "${local.account_name}/opg_lpa_front_email_sendgrid_api_key"
-  tags                           = local.front_component_tag
-  kms_key_id                     = aws_kms_key.multi_region_secrets_encryption_key.key_id
-  force_overwrite_replica_secret = true
-
-  replica {
-    region     = "eu-west-2"
-    kms_key_id = aws_kms_key.multi_region_secrets_encryption_key.key_id
-  }
-}
-
 resource "aws_secretsmanager_secret" "opg_lpa_front_gov_pay_key" {
   name                           = "${local.account_name}/opg_lpa_front_gov_pay_key"
   tags                           = local.front_component_tag

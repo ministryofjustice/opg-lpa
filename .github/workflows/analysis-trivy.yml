@@ -11,7 +11,7 @@ on:
       - "service-pdf/**"
       - "tests/**"
       - "cypress/**"
-      # - terraform/environment - to be fixed when this issue addressed: https://github.com/aquasecurity/trivy/issues/1126
+      - "terraform/environment/**"
       - "terraform/account/**"
       - "local-ssl/**"
       - "node-build-assets/**"
@@ -44,9 +44,9 @@ jobs:
           - name: terraform/account
             path: "./terraform/account"
             code-scan: false
-          # - name: terraform-environment - https://github.com/aquasecurity/trivy/issues/1126 will address this.
-          #   path: './terraform/environment/**'
-          #   code-scan: false
+          - name: terraform/environment
+            path: './terraform/environment'
+            code-scan: false
           - name: local-ssl
             path: "./local-ssl"
             code-scan: false

@@ -12,6 +12,10 @@ use Laminas\Stratigility\Middleware\ErrorHandler;
  * The configuration provider for the App module
  *
  * @see https://docs.zendframework.com/zend-component-installer/
+ *
+ * As this class is magically used by Laminas, psalm doesn't think it's
+ * used. Suppress this misunderstanding.
+ * @psalm-suppress UnusedClass
  */
 class ConfigProvider
 {

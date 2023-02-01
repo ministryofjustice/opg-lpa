@@ -33,7 +33,7 @@ fi
 # Install composer dependencies
 COPY --chown=root:root service-front/composer.json /app/composer.json
 COPY --chown=root:root service-front/composer.lock /app/composer.lock
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.4.1 \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.5.1 \
     && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
     && rm /app/composer.json \
@@ -46,7 +46,6 @@ RUN apk del .build-dependencies
 COPY --chown=root:root service-front/assets /app/assets
 COPY --chown=root:root service-front/config /app/config
 COPY --chown=root:root service-front/content /app/content
-COPY --chown=root:root service-front/data /app/data
 COPY --chown=root:root service-front/module /app/module
 COPY --chown=root:root service-front/public /app/public
 

@@ -115,7 +115,7 @@ class Date extends Fieldset
      */
     private function getValidDateValidator(): ValidatorInterface
     {
-        $validator = new Callback(function ($value, $context) {
+        $validator = new Callback(function ($_, $context) {
             if (count(array_filter($context)) != 3) {
                 return true;
             }
@@ -133,7 +133,7 @@ class Date extends Fieldset
      */
     private function getFutureDateValidator(): ValidatorInterface
     {
-        $validator = new Callback(function ($value, $context) {
+        $validator = new Callback(function ($_, $context) {
             $context = array_filter($context);
             if (count($context) != 3) {
                 // Don't validate unless all fields present.
