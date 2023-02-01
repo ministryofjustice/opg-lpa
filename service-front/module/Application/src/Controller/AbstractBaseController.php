@@ -224,9 +224,9 @@ abstract class AbstractBaseController extends AbstractActionController
             'Referrer-Policy' => 'strict-origin-when-cross-origin',
         ]);
 
-        $response->getHeaders()->addHeaders([
+/*        $response->getHeaders()->addHeaders([
             'Content-Security-Policy' => $securityPolicy
-        ]);
+]); */
         $response->getHeaders()->addHeaders([
             'X-Content-Security-Policy' => $securityPolicy
         ]);
