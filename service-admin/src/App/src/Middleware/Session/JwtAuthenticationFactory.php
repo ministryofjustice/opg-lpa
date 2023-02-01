@@ -12,6 +12,10 @@ use DateTime;
 /**
  * Class JwtAuthenticationFactory
  * @package App\Middleware\Session
+ *
+ * We are maintaining this here until such time as we can reinstate
+ * the Tuupola JWT middleware, but commented out.
+ * @psalm-suppress UnusedClass
  */
 class JwtAuthenticationFactory
 {

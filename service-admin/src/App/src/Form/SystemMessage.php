@@ -15,6 +15,9 @@ class SystemMessage extends AbstractForm
 {
     /**
      * @var int
+     *
+     * This is used in the constructor
+     * @psalm-suppress UnusedProperty
      */
     private $maxMessageLength = 8000;
 

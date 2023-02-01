@@ -3,8 +3,10 @@ Feature: Admin
 
   I want to be able to visit the admin page and carry out admin functions
 
-  Scenario: Log in to admin, find users, search for deleted user
+  Background:
     Given I log in to admin
+
+  Scenario: Find users, search for deleted user
     When I click "find-users-link"
     Then I am taken to the find users page
 
@@ -27,7 +29,6 @@ Feature: Admin
 
   Scenario: Set a system message
     Given I visit the admin sign-in page
-    And I log in to admin
     And I click "system-message-link"
     Then I am taken to the system message page
     # set message to display on front end
@@ -46,7 +47,6 @@ Feature: Admin
 
   Scenario: Remove system message
     Given I visit the admin sign-in page
-    And I log in to admin
     And I click "system-message-link"
     # remove message to display on front end
     When I clear the value in "message"
@@ -67,7 +67,6 @@ Feature: Admin
 
   Scenario: Set and remove a system message consecutively i:e having previously set and removed it, we do this again to ensure it still works
     Given I visit the admin sign-in page
-    And I log in to admin
     And I click "system-message-link"
     # set message to display on front end
     When I type "Your pizza is burning" into "message"
@@ -85,7 +84,6 @@ Feature: Admin
 
   Scenario: Remove second system message
     Given I visit the admin sign-in page
-    And I log in to admin
     And I click "system-message-link"
     # remove message to display on front end
     When I clear the value in "message"
@@ -103,7 +101,6 @@ Feature: Admin
 
   Scenario: Try to set empty message on system message
     Given I visit the admin sign-in page
-    And I log in to admin
     And I click "system-message-link"
     Then I am taken to the system message page
 
@@ -114,7 +111,6 @@ Feature: Admin
 
   Scenario: View feedback sent to the service
     Given I visit the admin sign-in page
-    And I log in to admin
     And I click "feedback-link"
     Then I am taken to the feedback page
 
@@ -141,7 +137,6 @@ Feature: Admin
   # LPAL-1049: long feedback wraps correctly and is visible
   Scenario: View feedback with long details
     Given I visit the admin sign-in page
-    And I log in to admin
     And I click "feedback-link"
     Then I am taken to the feedback page
 
@@ -159,7 +154,6 @@ Feature: Admin
   # LPAL-1088: user-supplied data is escaped appropriately
   Scenario: User-supplied data is escaped correctly in the feedback search page
     Given I visit the admin sign-in page
-    And I log in to admin
     And I click "feedback-link"
     Then I am taken to the feedback page
 

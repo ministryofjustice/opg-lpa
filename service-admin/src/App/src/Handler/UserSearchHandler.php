@@ -55,7 +55,6 @@ class UserSearchHandler extends AbstractHandler
             $result = $this->userService->search($email);
 
             if ($result === false) {
-                /** @var array */
                 $formMessages = $form->getMessages();
 
                 // Set error message

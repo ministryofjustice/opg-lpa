@@ -130,7 +130,6 @@ final class JwtMiddleware implements MiddlewareInterface
 
         /* Modify $request before calling next middleware. */
         if (is_callable($this->options["before"])) {
-            $response = (new ResponseFactory())->createResponse(200);
             $beforeRequest = $this->options["before"]($request, $params);
             if ($beforeRequest instanceof ServerRequestInterface) {
                 $request = $beforeRequest;
@@ -203,6 +202,7 @@ final class JwtMiddleware implements MiddlewareInterface
 
     /**
      * Set the cookie name where to search the token from.
+     * @psalm-suppress UnusedMethod
      */
     private function cookie(#[\SensitiveParameter] string $cookie): void
     {
@@ -213,6 +213,7 @@ final class JwtMiddleware implements MiddlewareInterface
      * Set the secret key.
      *
      * @param string|string[] $secret
+     * @psalm-suppress UnusedMethod
      */
     private function secret(#[\SensitiveParameter] $secret): void
     {
@@ -226,6 +227,7 @@ final class JwtMiddleware implements MiddlewareInterface
 
     /**
      * Set the attribute name used to attach decoded token to request.
+     * @psalm-suppress UnusedMethod
      */
     private function attribute(string $attribute): void
     {
@@ -234,6 +236,7 @@ final class JwtMiddleware implements MiddlewareInterface
 
     /**
      * Set the header where token is searched from.
+     * @psalm-suppress UnusedMethod
      */
     private function header(string $header): void
     {
@@ -242,6 +245,7 @@ final class JwtMiddleware implements MiddlewareInterface
 
     /**
      * Set the regexp used to extract token from header or environment.
+     * @psalm-suppress UnusedMethod
      */
     private function regexp(string $regexp): void
     {
@@ -252,6 +256,7 @@ final class JwtMiddleware implements MiddlewareInterface
      * Set the allowed algorithms
      *
      * @param string|string[] $algorithm
+     * @psalm-suppress UnusedMethod
      */
     private function algorithm($algorithm): void
     {
@@ -260,6 +265,7 @@ final class JwtMiddleware implements MiddlewareInterface
 
     /**
      * Set the before handler.
+     * @psalm-suppress UnusedMethod
      */
 
     private function before(callable $before): void
@@ -273,6 +279,7 @@ final class JwtMiddleware implements MiddlewareInterface
 
     /**
      * Set the after handler.
+     * @psalm-suppress UnusedMethod
      */
     private function after(callable $after): void
     {

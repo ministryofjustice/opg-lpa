@@ -25,11 +25,11 @@ class JwtMiddlewareFactory
         $jwtConfig = $container->get('config')['jwt'];
 
         $options = [
-            "before" => function (ServerRequestInterface $request, $params): void {
+            "before" => function (ServerRequestInterface $request, $_): void {
                 // Move the existing JWT data to the session so we can get it after processing
                 $_SESSION['jwt-payload'] = $request->getAttribute('token');
             },
-            "after" => function (ResponseInterface $response, $params) use ($jwtConfig): void {
+            "after" => function (ResponseInterface $_1, $_2) use ($jwtConfig): void {
                 // Re-set the JWT cookie using the updated data and a new timestamp
                 $ttl = new DateTimeImmutable(sprintf('+%s seconds', $jwtConfig['ttl']));
 

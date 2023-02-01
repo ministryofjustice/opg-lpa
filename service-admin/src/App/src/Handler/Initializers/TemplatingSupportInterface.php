@@ -14,12 +14,11 @@ interface TemplatingSupportInterface
 {
     /**
      * @param TemplateRendererInterface $template
-     * @return mixed
      */
     public function setTemplateRenderer(TemplateRendererInterface $template);
 
     /**
-     * @return TemplateRendererInterface
+     * @return ?TemplateRendererInterface
      */
-    public function getTemplateRenderer(): TemplateRendererInterface;
+    public function getTemplateRenderer(): ?TemplateRendererInterface;
 }

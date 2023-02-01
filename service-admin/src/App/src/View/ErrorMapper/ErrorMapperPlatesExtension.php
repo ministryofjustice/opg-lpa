@@ -40,6 +40,9 @@ class ErrorMapperPlatesExtension implements ExtensionInterface
      * @param string[] $map
      * @param string $locale
      * @return void
+     *
+     * This is used as a template function, so psalm warning is bogus
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function addErrorMap(array $map, $locale = 'en-GB'): void
     {
@@ -56,6 +59,9 @@ class ErrorMapperPlatesExtension implements ExtensionInterface
      * @param string $slug
      * @param string $locale
      * @return mixed
+     *
+     * This is used as a template function, so psalm warning is bogus
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function getSummaryError($field, $slug, $locale = 'en-GB')
     {
@@ -68,6 +74,9 @@ class ErrorMapperPlatesExtension implements ExtensionInterface
      * @param string $slug
      * @param string $locale
      * @return mixed
+     *
+     * This is used as a template function, so psalm warning is bogus
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function getFieldError($field, $slug, $locale = 'en-GB')
     {
