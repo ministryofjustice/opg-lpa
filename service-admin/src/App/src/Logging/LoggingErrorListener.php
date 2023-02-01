@@ -17,11 +17,11 @@ class LoggingErrorListener
 
     /**
      * @param Throwable $error
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
+     * @param ServerRequestInterface $request (unused)
+     * @param ResponseInterface $response (unused)
      * @return void
      */
-    public function __invoke(Throwable $error, ServerRequestInterface $request, ResponseInterface $response)
+    public function __invoke(Throwable $error, ServerRequestInterface $_1, ResponseInterface $_2)
     {
         $this->getLogger()->err(sprintf(
             '%s in %s on line %s - %s',
