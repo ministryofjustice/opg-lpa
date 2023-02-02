@@ -131,4 +131,15 @@ return [
         // to be received by the user
         'expected-working-days-before-receipt' => 15,
     ],
+
+    'telemetry' => [
+        'exporter' => [
+            'serviceName' => 'service-front',
+
+            // if this value is null, a console exporter will be used;
+            // for a standard XRay (over UDP) exporter, use host='localhost' and port=2000
+            'host' => getenv('OPG_LPA_TELEMETRY_HOST') ?: null,
+            'port' => getenv('OPG_LPA_TELEMETRY_PORT') ?: null,
+        ],
+    ],
 ];
