@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace MakeShared\Telemetry\Exporter;
 
 use Socket;
+use MakeShared\Logging\SimpleLoggerTrait;
 use MakeShared\Telemetry\Segment;
 
 class XrayExporter implements ExporterInterface
 {
+    use SimpleLoggerTrait;
+
     protected const MAX_PAYLOAD_LEN = 64000;
 
     public Socket|false $socket;
@@ -48,6 +51,10 @@ class XrayExporter implements ExporterInterface
             return;
         }
 
-        socket_sendto($this->socket, $payload, strlen($payload), 0, $this->host, $this->port);
+        $result = socket_sendto($this->socket, $payload, strlen($payload), 0, $this->host, $this->port);
+
+        if ($result === false) {
+            $this->getLogger()->err("Unable to send telemetry to {$this->host}:{$this->port}");
+        }
     }
 }
