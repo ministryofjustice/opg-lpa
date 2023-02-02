@@ -1,8 +1,8 @@
 FROM php:8.1-fpm-alpine3.15
 
 RUN adduser -D -g '' appuser
-RUN apk add --upgrade apk-tools
-RUN apk upgrade
+RUN apk add --upgrade --no-cache apk-tools
+RUN apk upgrade --no-cache
 
 # The --virtual flag puts build dependencies into their own
 # directory to make them easier to remove en masse
