@@ -250,7 +250,9 @@ locals {
         { "name" : "OPG_NGINX_SSL_FORCE_REDIRECT", "value" : "TRUE" },
         { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
         { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
-        { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : "https://sqs.${var.region_name}.amazonaws.com/${var.account.account_id}/lpa-pdf-queue-${var.environment_name}.fifo" }
+        { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : "https://sqs.${var.region_name}.amazonaws.com/${var.account.account_id}/lpa-pdf-queue-${var.environment_name}.fifo" },
+        { "name" : "OPG_LPA_TELEMETRY_HOST", "value" : "127.0.0.1" },
+        { "name" : "OPG_LPA_TELEMETRY_PORT", "value" : "2000" }
       ]
     }
   )
