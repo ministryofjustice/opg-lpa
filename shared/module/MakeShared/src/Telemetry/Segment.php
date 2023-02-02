@@ -20,7 +20,7 @@ class Segment implements JsonSerializable
 
     // from the x-amz-trace-id header on the initiating request
     // e.g. 1-581cf771-a006649127e371903a2de979
-    private string $traceId;
+    public string $traceId;
 
     /** @var Segment[] $children */
     private array $children = [];

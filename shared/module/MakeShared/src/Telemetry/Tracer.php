@@ -61,25 +61,23 @@ class Tracer
         return new Tracer($serviceName, $exporter);
     }
 
-    public function getExporter(): ExporterInterface
-    {
-        return $this->exporter;
-    }
-
-    /**
-     * This is useful for passing a Parent key in the x-amz-trace-id
-     * field when forwarding the trace ID to other components, e.g.
-     * making an HTTP request from service-front to service-api.
-     *
-     * @return ?string ID of the currently-active segment, or null if not available
-     */
-    public function getCurrentSegmentId(): ?string
+    public function getTraceHeaderToForward(): ?string
     {
         if (is_null($this->currentSegment)) {
             return null;
         }
 
-        return $this->currentSegment->getId();
+        return sprintf(
+            'Root=%s;Parent={};Sampled=%s',
+            $this->currentSegment->traceId,
+            $this->currentSegment->getId(),
+            ($this->currentSegment->sampled ? '1' : '0'),
+        );
+    }
+
+    public function getExporter(): ExporterInterface
+    {
+        return $this->exporter;
     }
 
     /**
