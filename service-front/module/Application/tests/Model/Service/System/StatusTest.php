@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\System;
 
+use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\System\Status;
 use ApplicationTest\Model\Service\AbstractServiceTest;
@@ -34,6 +35,18 @@ class StatusTest extends AbstractServiceTest
     private $sessionSaveHandler;
 
     /**
+     * @var RedisClient|MockInterface
+     */
+    private $redisClient;
+
+
+    /**
+     * @var OrdnanceSurvey|MockInterface
+     */
+    private $ordnanceSurveyClient;
+
+
+    /**
      * @var $service Status
      */
     private $service;
@@ -49,6 +62,13 @@ class StatusTest extends AbstractServiceTest
                         'table_name' => 'admin-test-table',
                     ]
                 ]
+            ],
+            'redis' => [
+                'url' => 'test-url',
+                //'ttlMs' => (1000 * 60 * 60 * 3),
+                'ordnance_survey' => [
+                    'max_call_per_min' => 2,
+                ],
             ]
         ];
 
@@ -60,8 +80,14 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient = Mockery::mock(DynamoDbClient::class);
         $this->service->setDynamoDbClient($this->dynamoDbClient);
 
+        $this->redisClient = Mockery::mock(SaveHandlerInterface::class);
+        $this->service->setOsRedisHandler($this->redisClient);
+
         $this->sessionSaveHandler = Mockery::mock(SaveHandlerInterface::class);
         $this->service->setSessionSaveHandler($this->sessionSaveHandler);
+
+        $this->ordnanceSurveyClient = Mockery::mock(OrdnanceSurvey::class);
+        $this->service->setOrdnanceSurveyClient($this->ordnanceSurveyClient);
     }
 
     public function testCheckAllOk(): void
@@ -82,6 +108,19 @@ class StatusTest extends AbstractServiceTest
 
         $this->sessionSaveHandler->shouldReceive('open')->times(6)->andReturn(true);
 
+        $expectedOsResponse = [[
+                'line1' => 'SOME PALACE',
+                'line2' => 'SOME CITY',
+                'line3' => '',
+                'postcode' => 'SOME POSTCODE',
+        ]];
+        $this->redisClient->shouldReceive('open')->andReturn(true);
+        $this->redisClient->shouldReceive('read')->andReturn('');
+        $this->redisClient->shouldReceive('write')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -96,6 +135,16 @@ class StatusTest extends AbstractServiceTest
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => true,
+                'cached' => false,
+                'details' => [
+                    'line1' => 'SOME PALACE',
+                    'line2' => 'SOME CITY',
+                    'line3' => '',
+                    'postcode' => 'SOME POSTCODE',
+                ]
             ],
             'ok' => true,
             'iterations' => 6,
@@ -120,6 +169,19 @@ class StatusTest extends AbstractServiceTest
 
         $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
 
+        $expectedOsResponse = [[
+                'line1' => 'SOME PALACE',
+                'line2' => 'SOME CITY',
+                'line3' => '',
+                'postcode' => 'SOME POSTCODE',
+        ]];
+        $this->redisClient->shouldReceive('open')->andReturn(true);
+        $this->redisClient->shouldReceive('read')->andReturn('');
+        $this->redisClient->shouldReceive('write')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -134,6 +196,16 @@ class StatusTest extends AbstractServiceTest
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => true,
+                'cached' => false,
+                'details' => [
+                    'line1' => 'SOME PALACE',
+                    'line2' => 'SOME CITY',
+                    'line3' => '',
+                    'postcode' => 'SOME POSTCODE',
+                ]
             ],
             'ok' => false,
             'iterations' => 1,
@@ -158,6 +230,19 @@ class StatusTest extends AbstractServiceTest
 
         $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
 
+        $expectedOsResponse = [[
+                'line1' => 'SOME PALACE',
+                'line2' => 'SOME CITY',
+                'line3' => '',
+                'postcode' => 'SOME POSTCODE',
+        ]];
+        $this->redisClient->shouldReceive('open')->andReturn(true);
+        $this->redisClient->shouldReceive('read')->andReturn('');
+        $this->redisClient->shouldReceive('write')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -172,6 +257,16 @@ class StatusTest extends AbstractServiceTest
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => true,
+                'cached' => false,
+                'details' => [
+                    'line1' => 'SOME PALACE',
+                    'line2' => 'SOME CITY',
+                    'line3' => '',
+                    'postcode' => 'SOME POSTCODE',
+                ]
             ],
             'ok' => false,
             'iterations' => 1,
@@ -196,6 +291,19 @@ class StatusTest extends AbstractServiceTest
 
         $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(false);
 
+        $expectedOsResponse = [[
+                'line1' => 'SOME PALACE',
+                'line2' => 'SOME CITY',
+                'line3' => '',
+                'postcode' => 'SOME POSTCODE',
+        ]];
+        $this->redisClient->shouldReceive('open')->andReturn(true);
+        $this->redisClient->shouldReceive('read')->andReturn('');
+        $this->redisClient->shouldReceive('write')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -210,6 +318,71 @@ class StatusTest extends AbstractServiceTest
             ],
             'sessionSaveHandler' => [
                 'ok' => false,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => true,
+                'cached' => false,
+                'details' => [
+                    'line1' => 'SOME PALACE',
+                    'line2' => 'SOME CITY',
+                    'line3' => '',
+                    'postcode' => 'SOME POSTCODE',
+                ]
+            ],
+            'ok' => false,
+            'iterations' => 1,
+        ], $result);
+    }
+
+    public function testCheckOrdnanceSurveyInvalid(): void
+    {
+        $this->apiClient
+            ->shouldReceive('httpGet')
+            ->withArgs(['/ping'])
+            ->once()
+            ->andReturn([
+                'ok' => true,
+            ]);
+
+        $this->dynamoDbClient
+            ->shouldReceive('describeTable')
+            ->withArgs([['TableName' => 'admin-test-table']])
+            ->once()
+            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
+
+        $expectedOsResponse = [[
+                'line1' => 'SOME PALACE',
+                'line3' => '',
+                'postcode' => 'SOME POSTCODE',
+        ]];
+        $this->redisClient->shouldReceive('open')->andReturn(true);
+        $this->redisClient->shouldReceive('read')->andReturn('');
+        $this->redisClient->shouldReceive('write')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn(false);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+
+        $result = $this->service->check();
+
+        $this->assertEquals([
+            'dynamo' => [
+                'ok' => true,
+            ],
+            'api' => [
+                'ok' => true,
+                'details' => [
+                    'status' => '200',
+                ]
+            ],
+            'sessionSaveHandler' => [
+                'ok' => true,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => false,
+                'cached' => false,
+                'details' => ''
             ],
             'ok' => false,
             'iterations' => 1,
