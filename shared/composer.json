@@ -11,13 +11,15 @@
     },
     "require": {
         "php": "^8.1",
-        "laminas/laminas-log": "^2.13",
+        "egulias/email-validator": "~1.2",
+        "laminas/laminas-diactoros": "^2.23",
         "laminas/laminas-eventmanager": "^3.5",
+        "laminas/laminas-log": "^2.13",
         "laminas/laminas-mvc": "^3.5",
-        "symfony/validator": "^4.2",
-        "egulias/email-validator": "~1.2"
+        "symfony/validator": "^4.2"
     },
     "require-dev": {
+        "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^9.5.10",
         "vimeo/psalm": "^4.23"
     },

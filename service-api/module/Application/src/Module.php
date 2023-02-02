@@ -2,9 +2,6 @@
 
 namespace Application;
 
-use GuzzleHttp\Client;
-use PDO;
-use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Model\DataAccess\Repository;
 use Application\Model\DataAccess\Postgres;
 use Application\Library\ApiProblem\ApiProblem;
@@ -18,14 +15,18 @@ use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
+use GuzzleHttp\Client;
 use Http\Adapter\Guzzle6\Client as Guzzle6Client;
 use Http\Client\HttpClient;
+use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
+use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use MakeShared\Telemetry\Tracer;
+use PDO;
 
 class Module
 {
@@ -150,6 +151,11 @@ class Module
 
                 'FeedbackValidator' => function () {
                     return new FeedbackValidator();
+                },
+
+                'TelemetryTracer' => function ($sm) {
+                    $telemetryConfig = $sm->get('config')['telemetry'];
+                    return Tracer::create($telemetryConfig);
                 },
 
             ], // factories
