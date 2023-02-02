@@ -26,7 +26,7 @@ use MakeShared\Telemetry\Tracer;
  *     'modules' => array(
  *         // ... other modules here ...
  *
- *         'Telemetry',
+ *         'MakeShared\Telemetry',
  *     ),
  *     'module_listener_options' => array(
  *         'module_paths' => array(
