@@ -28,16 +28,6 @@ use MakeShared\Telemetry\Tracer;
  *
  *         'MakeShared\Telemetry',
  *     ),
- *     'module_listener_options' => array(
- *         'module_paths' => array(
- *              './module',
- *              './vendor',
- *
- *              // or whatever the path is to the directory; I ended up doing this
- *              // because the autloader refused to find this directory
- *              'Telemetry' => __DIR__ . '/../../shared/module/MakeShared/src/Telemetry',
- *          ),
- *      ),
  *
  *      // ... other application config
  * );
@@ -62,14 +52,32 @@ use MakeShared\Telemetry\Tracer;
  *        }
  *    }
  *
+ * Finally, you'll need to add a "telemetry" key to the array in config/autoload/global.php:
+ *
+ * 'telemetry' => [
+ *     'exporter' => [
+ *         // or service-front, service-pdf etc.
+ *         'serviceName' => 'service-api',
+ *
+ *         // if this value is null, a console exporter will be used;
+ *         // for a standard XRay (over UDP) exporter, use host='localhost' and port=2000
+ *         'host' => getenv('OPG_LPA_TELEMETRY_HOST') ?: null,
+ *         'port' => getenv('OPG_LPA_TELEMETRY_PORT') ?: null,
+ *      ],
+ *  ],
+ *
  * Note that here we pass in some config which contains exporter.host and
  * export.port properties. These point to the UDP port of an aws-otel-collector
  * sidecar, typically on port 2000.
  *
+ * In non-dev environments, values for these env vars are set by terraform in the
+ * terraform/environment/modules/environment/ecs_*.tf files, in the *-app
+ * environment entry.
+ *
  * HOW TRACING WORKS
  *
- * The $this->tracer->startRootSegment() call in the Module below sets up the
- * root segment.
+ * The $this->tracer->startRootSegment() call in the code below (i.e. for the Module class)
+ * sets up the root segment.
  *
  * Then, to trace an individual piece of code, surround it like this:
  *
