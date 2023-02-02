@@ -136,25 +136,22 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $config = $this->getConfig()['redis']['ordnance_survey'];
 
         $this->osRedisClient->open('', '');
-
         $lastOsCall = $this->osRedisClient->read('os_last_call');
 
         $currentTime = new DateTime('now');
         $currentUnixTime = $currentTime->getTimestamp();
 
-        // Rate limit calls to os
-        // If no record of calling os then call os directly
-        if ($lastOsCall === '') {
+        // Check if redis cached a timestamp for last call to OS, and call OS if no timestamp or not rate limited
+        if (!is_numeric($lastOsCall)) {
             return $this->callOrdnanceSurvey($currentUnixTime);
-        // Decide whether to call os based on max_call_per_min rate limit
-        } else {
+        } elseif (is_numeric($lastOsCall) && intval($lastOsCall) > 0) {
             $timeDiff = $currentUnixTime - intval($lastOsCall);
             $rateLimit = 60 / $config['max_call_per_min'];
 
-            // Not rate limited
+            // Not rate limited - call OS
             if ($timeDiff > $rateLimit) {
                 return $this->callOrdnanceSurvey($currentUnixTime);
-            // Rate limited - os is not called and cached response returned
+            // Rate limited - return cached response
             } else {
                 $osStatus = $this->osRedisClient->read('os_last_status');
                 $osDetails = $this->osRedisClient->read('os_last_details');
