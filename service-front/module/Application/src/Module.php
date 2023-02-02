@@ -216,8 +216,8 @@ class Module implements FormElementProviderInterface
                 'SaveHandler' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
 
-                    $redisUrl = $config['session']['redis']['url'];
-                    $ttlMs = $config['session']['redis']['ttlMs'];
+                    $redisUrl = $config['redis']['url'];
+                    $ttlMs = $config['redis']['ttlMs'];
 
                     $request = $sm->get('Request');
 
