@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service\Redis;
 
-use Application\Model\Service\Redis\RedisHandler;
+use Application\Model\Service\Redis\RedisClient;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -10,13 +10,13 @@ use Redis;
 use RedisException;
 use ReflectionProperty;
 
-class RedisHandlerTest extends MockeryTestCase
+class RedisClientTest extends MockeryTestCase
 {
     // returns the mock for setting expectations
-    private function makeRedisHandlerWithMock(string $redisUrl): Redis
+    private function makeRedisClientWithMock(string $redisUrl): Redis
     {
         $redisMock = Mockery::Mock(Redis::class);
-        $this->redisHandler = new RedisHandler($redisUrl, 1000, $redisMock);
+        $this->redisHandler = new RedisClient($redisUrl, 1000, $redisMock);
         return $redisMock;
     }
 
@@ -29,7 +29,7 @@ class RedisHandlerTest extends MockeryTestCase
     public function testConstructorErrorInvalidUrl(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $client = new RedisHandler('foohost', 100);
+        $client = new RedisClient('foohost', 100);
     }
 
     public function testConstructorInstantiatesRedis(): void
@@ -37,10 +37,10 @@ class RedisHandlerTest extends MockeryTestCase
         // use reflection to check that the save handler has a Redis
         // instance instantiated where one is not explicitly passed to
         // the constructor
-        $redisClientProperty = new ReflectionProperty(RedisHandler::class, 'redisClient');
+        $redisClientProperty = new ReflectionProperty(RedisClient::class, 'redisClient');
         $redisClientProperty->setAccessible(true);
 
-        $redisHandler = new RedisHandler('tcp://localhost', 100);
+        $redisHandler = new RedisClient('tcp://localhost', 100);
 
         $this->assertInstanceOf(Redis::class, $redisClientProperty->getValue($redisHandler));
     }
@@ -49,10 +49,10 @@ class RedisHandlerTest extends MockeryTestCase
     {
         // use reflection to check that the host extracted for a TLS
         // hostname includes the tls scheme
-        $redisHostProperty = new ReflectionProperty(RedisHandler::class, 'redisHost');
+        $redisHostProperty = new ReflectionProperty(RedisClient::class, 'redisHost');
         $redisHostProperty->setAccessible(true);
 
-        $redisHandler = new RedisHandler('tls://localhost', 100);
+        $redisHandler = new RedisClient('tls://localhost', 100);
 
         $this->assertSame('tls://localhost', $redisHostProperty->getValue($redisHandler));
     }
@@ -61,12 +61,12 @@ class RedisHandlerTest extends MockeryTestCase
     {
         $expected = false;
 
-        $redisMock = $this->makeRedisHandlerWithMock('tcp://foohost');
+        $redisMock = $this->makeRedisClientWithMock('tcp://foohost');
         $redisMock->shouldReceive('connect')
             ->with('foohost', 6379)
             ->andThrow(new RedisException());
 
-        $actual = $this->redisHandler->open('ignoredSavePath', 'ignoredSessionName');
+        $actual = $this->redisHandler->open();
 
         $this->assertSame($expected, $actual);
     }
@@ -75,12 +75,12 @@ class RedisHandlerTest extends MockeryTestCase
     {
         $expected = true;
 
-        $redisMock = $this->makeRedisHandlerWithMock('tcp://foohost');
+        $redisMock = $this->makeRedisClientWithMock('tcp://foohost');
         $redisMock->shouldReceive('connect')
             ->with('foohost', 6379)
             ->andReturn(true);
 
-        $actual = $this->redisHandler->open('ignoredSavePath', 'ignoredSessionName');
+        $actual = $this->redisHandler->open();
 
         $this->assertSame($expected, $actual);
     }
@@ -89,9 +89,9 @@ class RedisHandlerTest extends MockeryTestCase
     {
         $expected = false;
 
-        $redisMock = $this->makeRedisHandlerWithMock('tcp://foohost');
+        $redisMock = $this->makeRedisClientWithMock('tcp://foohost');
         $redisMock->shouldReceive('setEx')
-            ->with(RedisHandler::SESSION_PREFIX . 'foo', 1000, 'bar')
+            ->with('foo', 1000, 'bar')
             ->andReturn(false);
 
         $actual = $this->redisHandler->write('foo', 'bar');
@@ -101,9 +101,9 @@ class RedisHandlerTest extends MockeryTestCase
 
     public function testWriteSuccess(): void
     {
-        $redisMock = $this->makeRedisHandlerWithMock('tcp://foohost');
+        $redisMock = $this->makeRedisClientWithMock('tcp://foohost');
         $redisMock->shouldReceive('setEx')
-            ->with(RedisHandler::SESSION_PREFIX . 'foo', 1000, 'bar')
+            ->with('foo', 1000, 'bar')
             ->andReturn(true);
 
         $actual = $this->redisHandler->write('foo', 'bar');
@@ -115,9 +115,9 @@ class RedisHandlerTest extends MockeryTestCase
     {
         $expected = '';
 
-        $redisMock = $this->makeRedisHandlerWithMock('tcp://foohost');
+        $redisMock = $this->makeRedisClientWithMock('tcp://foohost');
         $redisMock->shouldReceive('get')
-            ->with(RedisHandler::SESSION_PREFIX . 'baz')
+            ->with('baz')
             ->andReturn(false);
 
         $actual = $this->redisHandler->read('baz');
@@ -129,9 +129,9 @@ class RedisHandlerTest extends MockeryTestCase
     {
         $expected = 'bar';
 
-        $redisMock = $this->makeRedisHandlerWithMock('tcp://barhost:6737');
+        $redisMock = $this->makeRedisClientWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('get')
-            ->with(RedisHandler::SESSION_PREFIX . 'baf')
+            ->with('baf')
             ->andReturn($expected);
 
         $actual = $this->redisHandler->read('baf');
@@ -141,7 +141,7 @@ class RedisHandlerTest extends MockeryTestCase
 
     public function testClose()
     {
-        $redisMock = $this->makeRedisHandlerWithMock('tcp://barhost:6737');
+        $redisMock = $this->makeRedisClientWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('close')
             ->andReturn(true);
         $this->assertSame(true, $this->redisHandler->close());
@@ -149,16 +149,10 @@ class RedisHandlerTest extends MockeryTestCase
 
     public function testDestroy()
     {
-        $redisMock = $this->makeRedisHandlerWithMock('tcp://barhost:6737');
+        $redisMock = $this->makeRedisClientWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('del')
-            ->with(RedisHandler::SESSION_PREFIX . 'boo')
+            ->with('boo')
             ->andReturn(true);
         $this->assertSame(true, $this->redisHandler->destroy('boo'));
-    }
-
-    public function testGc()
-    {
-        $redisMock = $this->makeRedisHandlerWithMock('tcp://barhost:6737');
-        $this->assertSame(1, $this->redisHandler->gc(1));
     }
 }
