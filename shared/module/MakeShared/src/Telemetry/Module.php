@@ -20,6 +20,11 @@ use MakeShared\Telemetry\Tracer;
  *
  * CONFIGURATION
  *
+ * The PHP image will need to have the sockets extension; add this to the
+ * Dockerfile:
+ *
+ *      RUN docker-php-ext-install sockets
+ *
  * To incorporate telemetry into your Laminas application, you'll need to load
  * this module in application.config.php:
  *
