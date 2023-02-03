@@ -2,13 +2,14 @@
 
 namespace ApplicationTest\Model\Service\ApiClient;
 
-use MakeShared\Logging\Logger;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Hamcrest\Matchers;
 use Http\Client\HttpClient;
+use MakeShared\Logging\Logger;
+use MakeShared\Telemetry\Tracer;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -52,7 +53,8 @@ class ClientTest extends MockeryTestCase
         $verb = 'GET',
         $url = 'base_url/path',
         $requestData = null,
-        $token = 'test token'
+        $token = 'test token',
+        $additionalHeaders = [],
     ) {
         $this->response = Mockery::mock(ResponseInterface::class);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
@@ -63,6 +65,14 @@ class ClientTest extends MockeryTestCase
             $this->response->shouldReceive('getBody')->once()->andReturn($mockBody);
         }
 
+        $expectedHeaders = [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en',
+            'Content-Type' => 'application/json; charset=utf-8',
+            'User-Agent' => 'LPA-FRONT',
+            'Token' => $token,
+        ] + $additionalHeaders;
+
         if ($requestData == null) {
             $this->httpClient->shouldReceive('sendRequest')
                 ->withArgs(
@@ -70,13 +80,7 @@ class ClientTest extends MockeryTestCase
                         new Request(
                             $verb,
                             new Uri($url),
-                            [
-                                'Accept' => 'application/json, application/problem+json',
-                                'Accept-Language' => 'en',
-                                'Content-Type' => 'application/json; charset=utf-8',
-                                'User-Agent' => 'LPA-FRONT',
-                                'Token' => $token
-                            ]
+                            $expectedHeaders,
                         )
                     )]
                 )
@@ -353,5 +357,32 @@ class ClientTest extends MockeryTestCase
         $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
 
         $this->client->httpPut('path');
+    }
+
+    public function testXTraceIdHeaderIsSet(): void
+    {
+        $mockTracer = Mockery::mock(Tracer::class);
+        $mockTracer->shouldReceive('getTraceHeaderToForward')->andReturn('Root=X;Parent=Y;Sampled=1');
+
+        $client = new Client(
+            $this->httpClient,
+            'base_url/',
+            ['Token' => 'test token'],
+            $mockTracer,
+        );
+
+        $this->setUpRequest(
+            200,
+            '{"test": "value"}',
+            'GET',
+            'base_url/path',
+            null,
+            'test token',
+            ['X-Trace-Id' => 'Root=X;Parent=Y;Sampled=1'],
+        );
+
+        $result = $client->httpGet('path');
+
+        $this->assertEquals(['test' => 'value'], $result);
     }
 }

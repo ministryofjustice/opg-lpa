@@ -6,6 +6,7 @@ namespace MakeShared\Telemetry;
 
 use Laminas\Mvc\MvcEvent;
 use MakeShared\Constants;
+use MakeShared\Telemetry\Attribute\Http;
 use MakeShared\Telemetry\Event;
 use MakeShared\Telemetry\TelemetryEventManager;
 use MakeShared\Telemetry\Tracer;
@@ -138,6 +139,13 @@ class Module
 
     public function onFinish(MvcEvent $event): void
     {
-        $this->tracer->stopRootSegment();
+        $rootSegment = $this->tracer->getRootSegment();
+
+        if (!is_null($rootSegment)) {
+            $httpAttribute = new Http($event->getRequest(), $event->getResponse());
+            $rootSegment->setAttribute('http', $httpAttribute);
+
+            $this->tracer->stopRootSegment();
+        }
     }
 }

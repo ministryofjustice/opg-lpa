@@ -35,6 +35,7 @@ class ModuleTest extends TestCase
         $tracer->shouldReceive('startSegment');
         $tracer->shouldReceive('stopSegment');
         $tracer->shouldReceive('stopRootSegment');
+        $tracer->shouldReceive('getRootSegment');
 
         $serviceManager = Mockery::mock(ServiceManager::class);
         $serviceManager->shouldReceive('get')

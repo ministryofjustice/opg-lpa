@@ -61,6 +61,15 @@ class Tracer
         return new Tracer($serviceName, $exporter);
     }
 
+    public function getCurrentSegmentId(): ?string
+    {
+        if (is_null($this->currentSegment)) {
+            return null;
+        }
+
+        return $this->currentSegment->getId();
+    }
+
     public function getTraceHeaderToForward(): ?string
     {
         if (is_null($this->currentSegment)) {
@@ -68,7 +77,7 @@ class Tracer
         }
 
         return sprintf(
-            'Root=%s;Parent={};Sampled=%s',
+            'Root=%s;Parent=%s;Sampled=%s',
             $this->currentSegment->traceId,
             $this->currentSegment->getId(),
             ($this->currentSegment->sampled ? '1' : '0'),
@@ -84,9 +93,12 @@ class Tracer
      * Create the root segment; if we have no trace ID or trace ID without
      * a "Root" key, don't do anything (we can't trace these requests).
      *
+     * @param ?array $headers Set to $_SERVER if not supplied
+     * @param array $attributes Key/value pairs to append to segment
+     *
      * @return ?Segment Root segment, or null if none was created
      */
-    public function startRootSegment(?array $headers = null): ?Segment
+    public function startRootSegment(?array $headers = null, array $attributes = []): ?Segment
     {
         if (is_null($headers)) {
             $headers = $_SERVER;
@@ -120,7 +132,9 @@ class Tracer
             $traceHeader['Root'],
             $parentSegmentId,
             $sampled,
+            $attributes,
         );
+
         $this->currentSegment = $this->rootSegment;
         $this->segments[$this->rootSegment->getId()] = $this->rootSegment;
 
@@ -133,7 +147,6 @@ class Tracer
      * Add a child span to the currently-active span (usually root).
      * The returned span can then have attributes set etc. as desired.
      *
-     * TODO attributes
      * @param array $attributes Key/value pairs to set on the span, where each
      * key is a string and each value a "non-null string, boolean, floating point value,
      * integer, or an array of these values"
@@ -147,7 +160,7 @@ class Tracer
             return null;
         }
 
-        $child = $this->currentSegment->addChild($name);
+        $child = $this->currentSegment->addChild($name, $attributes);
         $this->segments[$child->getId()] = $child;
         $this->currentSegment = $child;
 
@@ -162,6 +175,11 @@ class Tracer
 
         $this->currentSegment->end();
         $this->currentSegment = $this->segments[$this->currentSegment->getParentSegmentId()];
+    }
+
+    public function getRootSegment(): ?Segment
+    {
+        return $this->rootSegment;
     }
 
     public function stopRootSegment(): void

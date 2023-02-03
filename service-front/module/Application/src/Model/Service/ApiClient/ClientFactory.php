@@ -7,6 +7,7 @@ use Http\Client\HttpClient as HttpClientInterface;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Session\Container;
+use MakeShared\Telemetry\Tracer;
 
 class ClientFactory implements FactoryInterface
 {
@@ -23,10 +24,10 @@ class ClientFactory implements FactoryInterface
 
         $baseApiUri = $container->get('config')['api_client']['api_uri'];
 
-        $defaultHeaders = [];
-
-        /** @var MakeShared\Telemetry\Tracer */
+        /** @var Tracer */
         $tracer = $container->get('TelemetryTracer');
+
+        $defaultHeaders = [];
 
         /** @var Container $userDetailsSession */
         $userDetailsSession = $container->get('UserDetailsSession');
