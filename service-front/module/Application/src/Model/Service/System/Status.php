@@ -142,9 +142,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $currentUnixTime = $currentTime->getTimestamp();
 
         // Check if redis cached a timestamp for last call to OS, and call OS if no timestamp or not rate limited
-        if (!is_numeric($lastOsCall)) {
-            return $this->callOrdnanceSurvey($currentUnixTime);
-        } elseif (is_numeric($lastOsCall) && intval($lastOsCall) > 0) {
+        if (intval($lastOsCall) > 0) {
             $timeDiff = $currentUnixTime - intval($lastOsCall);
             $rateLimit = 60 / $config['max_call_per_min'];
 
@@ -162,6 +160,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
                     'details' => json_decode($osDetails, true)
                 ];
             }
+        } else {
+            return $this->callOrdnanceSurvey($currentUnixTime);
         }
     }
 
