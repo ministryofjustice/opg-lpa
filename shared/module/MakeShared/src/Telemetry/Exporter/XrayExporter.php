@@ -4,9 +4,18 @@ declare(strict_types=1);
 
 namespace MakeShared\Telemetry\Exporter;
 
-use Socket;
 use MakeShared\Logging\SimpleLoggerTrait;
 use MakeShared\Telemetry\Segment;
+use json_encode;
+use Socket;
+use socket_create;
+use socket_close;
+use socket_last_error;
+use socket_sendto;
+use socket_strerror;
+use sprintf;
+use strlen;
+use trigger_error;
 
 class XrayExporter implements ExporterInterface
 {
