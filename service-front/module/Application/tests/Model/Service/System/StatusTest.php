@@ -82,7 +82,7 @@ class StatusTest extends AbstractServiceTest
         $this->service->setDynamoDbClient($this->dynamoDbClient);
 
         $this->redisClient = Mockery::mock(RedisClient::class);
-        $this->service->setOsRedisClient($this->redisClient);
+        $this->service->setRedisClient($this->redisClient);
 
         $this->sessionSaveHandler = Mockery::mock(SaveHandlerInterface::class);
         $this->service->setSessionSaveHandler($this->sessionSaveHandler);
