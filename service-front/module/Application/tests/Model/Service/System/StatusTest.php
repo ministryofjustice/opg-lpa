@@ -114,12 +114,11 @@ class StatusTest extends AbstractServiceTest
                 'line3' => '',
                 'postcode' => 'SOME POSTCODE',
         ]];
-        $this->redisClient->shouldReceive('open')->andReturn(true);
-        $this->redisClient->shouldReceive('read')->andReturn('');
-        $this->redisClient->shouldReceive('write')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
-        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+        $this->redisClient->shouldReceive('open')->times(6)->andReturn(true);
+        $this->redisClient->shouldReceive('read')->times(6)->andReturn('');
+        $this->redisClient->shouldReceive('write')->times(18)->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->times(6)->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->times(6)->andReturn($expectedOsResponse);
 
         $result = $this->service->check();
 
@@ -175,13 +174,11 @@ class StatusTest extends AbstractServiceTest
                 'line3' => '',
                 'postcode' => 'SOME POSTCODE',
         ]];
-        $this->redisClient->shouldReceive('open')->andReturn(true);
-        $this->redisClient->shouldReceive('read')->andReturn('');
-        $this->redisClient->shouldReceive('write')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
-        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
-
+        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
+        $this->redisClient->shouldReceive('read')->once()->andReturn('');
+        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -236,12 +233,11 @@ class StatusTest extends AbstractServiceTest
                 'line3' => '',
                 'postcode' => 'SOME POSTCODE',
         ]];
-        $this->redisClient->shouldReceive('open')->andReturn(true);
-        $this->redisClient->shouldReceive('read')->andReturn('');
-        $this->redisClient->shouldReceive('write')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
-        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
+        $this->redisClient->shouldReceive('read')->once()->andReturn('');
+        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
         $result = $this->service->check();
 
@@ -297,12 +293,11 @@ class StatusTest extends AbstractServiceTest
                 'line3' => '',
                 'postcode' => 'SOME POSTCODE',
         ]];
-        $this->redisClient->shouldReceive('open')->andReturn(true);
-        $this->redisClient->shouldReceive('read')->andReturn('');
-        $this->redisClient->shouldReceive('write')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
-        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
+        $this->redisClient->shouldReceive('read')->once()->andReturn('');
+        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
         $result = $this->service->check();
 
@@ -357,12 +352,11 @@ class StatusTest extends AbstractServiceTest
                 'line3' => '',
                 'postcode' => 'SOME POSTCODE',
         ]];
-        $this->redisClient->shouldReceive('open')->andReturn(true);
-        $this->redisClient->shouldReceive('read')->andReturn('');
-        $this->redisClient->shouldReceive('write')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('open')->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn(false);
-        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
+        $this->redisClient->shouldReceive('read')->once()->andReturn('');
+        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn(false);
 
         $result = $this->service->check();
 
