@@ -4,6 +4,7 @@ namespace ApplicationTest\Model\Service\System;
 
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\ApiClient\Client;
+use Application\Model\Service\Redis\RedisClient;
 use Application\Model\Service\System\Status;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Aws\DynamoDb\DynamoDbClient;
@@ -80,8 +81,8 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient = Mockery::mock(DynamoDbClient::class);
         $this->service->setDynamoDbClient($this->dynamoDbClient);
 
-        $this->redisClient = Mockery::mock(SaveHandlerInterface::class);
-        $this->service->setOsRedisHandler($this->redisClient);
+        $this->redisClient = Mockery::mock(RedisClient::class);
+        $this->service->setOsRedisClient($this->redisClient);
 
         $this->sessionSaveHandler = Mockery::mock(SaveHandlerInterface::class);
         $this->service->setSessionSaveHandler($this->sessionSaveHandler);
