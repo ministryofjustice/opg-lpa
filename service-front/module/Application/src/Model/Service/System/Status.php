@@ -40,7 +40,6 @@ class Status extends AbstractService implements ApiClientAwareInterface
      * - Session save handler
      * - API
      * - Ordnance Survey
-     * - Ordnance Survey save handler
      */
     public function check()
     {

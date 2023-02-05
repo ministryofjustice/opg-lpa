@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service;
 
-use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\Client as ApiClient;
