@@ -1,10 +1,22 @@
 # This workflow automates theprocess of updating and creating a PR for
-# Dependabot updates.
+# NPM and and composer updates.
 
 # currently this runs against Composer and NPM.
 # please add any updates to this if you create new package files for PHP or Node based projects.
 
-name: Dependabot updates
+name: Update dependencies
+
+permissions:
+  contents: write
+  security-events: read
+  pull-requests: write
+  actions: none
+  checks: none
+  deployments: none
+  issues: none
+  packages: none
+  repository-projects: none
+  statuses: none
 
 on:
 # In case we need to change, uncomment out and change name to branch you are fixing on.
@@ -12,7 +24,7 @@ on:
 # Remember to comment out after work done.
 # push:
 #     branches:
-#      - dependabot-issue-npm
+#      - dependency-issue-npm
  schedule:
   - cron: '0 8 * * 1' # runs on a monday morning
  workflow_dispatch:
@@ -26,7 +38,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       # set up php
       - uses: shivammathur/setup-php@v2
         with:
@@ -64,21 +76,20 @@ jobs:
       - name:  Check value of branch name
         run: echo "branch name to be created $BRANCH_NAME"
         env:
-         BRANCH_NAME: "weekly-dependabot-updates-${{ steps.current-time.outputs.formattedTime }}"
+         BRANCH_NAME: "weekly-dependency-updates-${{ steps.current-time.outputs.formattedTime }}"
       # create PR
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         with:
-          commit-message: Update dependabot for composer and npm
+          commit-message: Update dependencies for composer and npm
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: weekly-dependabot-updates-${{ steps.current-time.outputs.formattedTime }}
-          labels: dependabot-update
-          title: Weekly dependabot update ${{ steps.current-time.outputs.formattedTime }}
+          branch: weekly-dependency-updates-${{ steps.current-time.outputs.formattedTime }}
+          labels: dependency-update
+          title: Weekly dependencies update ${{ steps.current-time.outputs.formattedTime }}
           body:  |
-            **WEEKLY DEPENDABOT UPDATES (${{ steps.current-time.outputs.formattedTime }})**
+            **WEEKLY DEPENDENCIES UPDATES (${{ steps.current-time.outputs.formattedTime }})**
 
             This automated PR covers:
             - PHP `Composer`
             - `NPM`
-          draft: true
