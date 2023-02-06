@@ -27,8 +27,18 @@ class Segment implements JsonSerializable
 
     public bool $sampled = true;
 
-    /** @var array $attributes */
     // array of name => value pairs, where value implements JsonSerializable
+    // Note that the http attribute is privileged, and can be set at the
+    // top level of the segment; however, if you need to add metadata
+    // or annotations, these can be set by using the respective key
+    // and a value which represents the annotation/metadata, e.g.
+    //   $segment->setAttribute('annotations', ['table' => 'users'])
+    // or via an event:
+    //   TelemetryEventManager::triggerStart(
+    //       'DbWrapper.select',
+    //       ['annotations' => ['table' => $tableName]]
+    //   );
+    /** @var array $attributes */
     private array $attributes = [];
 
     // parent segment ID; set for subsegments, and on the root segment
@@ -99,12 +109,17 @@ class Segment implements JsonSerializable
 
     /**
      * Set an attribute on the segment.
-     * This is used to set the "http" attribute once the
+     * This is mostly used to set the "http" attribute once the
      * request/response cycle is finished.
      */
     public function setAttribute(string $name, mixed $value): void
     {
         $this->attributes[$name] = $value;
+    }
+
+    public function getAttribute(string $name): mixed
+    {
+        return $this->attributes[$name] ?? null;
     }
 
     public function jsonSerialize(): mixed
@@ -117,8 +132,8 @@ class Segment implements JsonSerializable
             'trace_id' => $this->traceId,
         ];
 
-        foreach ($this->attributes as $key => $value) {
-            $serialized[$key] = $value;
+        if (count($this->attributes) > 0) {
+            $serialized = array_merge($serialized, $this->attributes);
         }
 
         if (!is_null($this->parentSegmentId)) {
