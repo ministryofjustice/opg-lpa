@@ -144,7 +144,7 @@ class DbWrapper
         }
 
         TelemetryEventManager::triggerStart(
-            'DbWrapper.select',
+            'sql.select.' . $tableName,
             ['annotations' => ['table' => $tableName]]
         );
 
