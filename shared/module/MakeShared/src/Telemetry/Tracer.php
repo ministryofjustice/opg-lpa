@@ -12,6 +12,7 @@ use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
 use mt_rand;
 use mt_getrandmax;
+use RuntimeException;
 
 /**
  * Trace and export AWS X-Ray telemetry.
@@ -24,11 +25,11 @@ class Tracer
 {
     use SimpleLoggerTrait;
 
+    private string $serviceName;
+
     // fraction of requests we will sample; if a random number 0-1
     // is <= this value, we sample that request
-    const REQUESTS_SAMPLED_FRACTION = 0.05;
-
-    private string $serviceName;
+    private float $requestsSampledFraction = 0.05;
 
     private ExporterInterface $exporter;
 
@@ -40,10 +41,20 @@ class Tracer
 
     private bool $started = false;
 
-    public function __construct(string $serviceName, ExporterInterface $exporter)
-    {
+    public function __construct(
+        string $serviceName,
+        ExporterInterface $exporter,
+        ?float $requestsSampledFraction,
+    ) {
         $this->serviceName = $serviceName;
         $this->exporter = $exporter;
+
+        if (!is_null($requestsSampledFraction)) {
+            if ($requestsSampledFraction < 0.0 || $requestsSampledFraction > 1.0) {
+                throw new RuntimeException('$requestsSampledFraction is outside range 0-1');
+            }
+            $this->requestsSampledFraction = $requestsSampledFraction;
+        }
     }
 
     /**
@@ -51,9 +62,16 @@ class Tracer
      *
      * @param array $config Expects exporter.host and exporter.url properties; if not set,
      * a console exporter is used by default.
+     * If requestsSampledFraction (a float from 0-1) is present in $config, it is used
+     * to set the fraction of requests which will be sampled; otherwise, the default is used.
      */
     public static function create(array $config = [])
     {
+        $requestsSampledFraction = $config['requestsSampledFraction'] ?? null;
+        if (!is_null($requestsSampledFraction)) {
+            $requestsSampledFraction = floatval($requestsSampledFraction);
+        }
+
         $serviceName = $config['exporter']['serviceName'];
         $exporterHost = $config['exporter']['host'] ?? null;
         $exporterPort = $config['exporter']['port'] ?? null;
@@ -64,7 +82,11 @@ class Tracer
             $exporter = new XrayExporter($exporterHost, intval($exporterPort));
         }
 
-        return new Tracer($serviceName, $exporter);
+        return new Tracer(
+            $serviceName,
+            $exporter,
+            $requestsSampledFraction,
+        );
     }
 
     public function getCurrentSegmentId(): ?string
@@ -134,7 +156,7 @@ class Tracer
         // randomly select whether the request should be sampled (which will be the
         // case when the request first comes in from the AWS load balancer)
         if (!isset($traceHeader['Sampled'])) {
-            $sampled = (mt_rand() / mt_getrandmax()) <= self::REQUESTS_SAMPLED_FRACTION;
+            $sampled = (mt_rand() / mt_getrandmax()) <= $this->requestsSampledFraction;
         } else {
             $sampled = isset($traceHeader['Sampled']) && $traceHeader['Sampled'] === '1';
         }

@@ -61,6 +61,9 @@ use MakeShared\Telemetry\Tracer;
  * Finally, you'll need to add a "telemetry" key to the array in config/autoload/global.php:
  *
  * 'telemetry' => [
+ *     // fraction of requests which will be sampled, e.g. 0.05
+ *     'requestsSampledFraction' => getenv('OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION') ?: null,
+ *
  *     'exporter' => [
  *         // or service-front, service-pdf etc.
  *         'serviceName' => 'service-api',
