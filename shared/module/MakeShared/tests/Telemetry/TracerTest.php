@@ -150,7 +150,7 @@ class TracerTest extends TestCase
     public function testSegmentNesting()
     {
         $exporter = Mockery::mock(XrayExporter::class);
-        $tracer = new Tracer('makeSharedUnitTest', $exporter, new SimpleLogger());
+        $tracer = new Tracer('makeSharedUnitTest', $exporter);
 
         $headers = [];
         $headers[Constants::X_TRACE_ID_HEADER_NAME] =

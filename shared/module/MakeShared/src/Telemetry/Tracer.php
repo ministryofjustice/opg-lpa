@@ -44,7 +44,7 @@ class Tracer
     public function __construct(
         string $serviceName,
         ExporterInterface $exporter,
-        ?float $requestsSampledFraction,
+        ?float $requestsSampledFraction = null,
     ) {
         $this->serviceName = $serviceName;
         $this->exporter = $exporter;
