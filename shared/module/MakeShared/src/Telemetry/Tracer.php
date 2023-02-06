@@ -10,6 +10,8 @@ use MakeShared\Telemetry\Exporter\ExporterInterface;
 use MakeShared\Telemetry\Exporter\LogExporter;
 use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
+use mt_rand;
+use mt_getrandmax;
 
 /**
  * Trace and export AWS X-Ray telemetry.
@@ -21,6 +23,10 @@ use MakeShared\Telemetry\Segment;
 class Tracer
 {
     use SimpleLoggerTrait;
+
+    // fraction of requests we will sample; if a random number 0-1
+    // is <= this value, we sample that request
+    const REQUESTS_SAMPLED_FRACTION = 0.05;
 
     private string $serviceName;
 
@@ -124,8 +130,14 @@ class Tracer
         $parentSegmentId = $traceHeader['Parent'] ?? null;
 
         // set whether this segment should be sampled; if false, the XrayExporter
-        // ignores the segment
-        $sampled = isset($traceHeader['Sampled']) && $traceHeader['Sampled'] === '1';
+        // ignores the segment; if there is no Sampled flag in the header, we
+        // randomly select whether the request should be sampled (which will be the
+        // case when the request first comes in from the AWS load balancer)
+        if (!isset($traceHeader['Sampled'])) {
+            $sampled = (mt_rand() / mt_getrandmax()) <= self::REQUESTS_SAMPLED_FRACTION;
+        } else {
+            $sampled = isset($traceHeader['Sampled']) && $traceHeader['Sampled'] === '1';
+        }
 
         $this->rootSegment = new Segment(
             $this->serviceName,
