@@ -300,7 +300,8 @@ locals {
         { "name" : "AWS_ACCOUNT_TYPE", "value" : var.account_name },
         { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" },
         { "name" : "OPG_LPA_TELEMETRY_HOST", "value" : "127.0.0.1" },
-        { "name" : "OPG_LPA_TELEMETRY_PORT", "value" : "2000" }
+        { "name" : "OPG_LPA_TELEMETRY_PORT", "value" : "2000" },
+        { "name" : "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", "value" : "${var.account.telemetry_requests_sampled_fraction}" }
       ]
     }
   )
