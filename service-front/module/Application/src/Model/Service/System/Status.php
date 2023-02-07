@@ -25,7 +25,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
     /** @var DynamoDbClient */
     private $dynamoDbClient;
 
-    /** @var OrdnanceSurveyClient */
+    /** @var OrdnanceSurvey */
     private $ordnanceSurveyClient;
 
     /** @var RedisClient */
@@ -135,7 +135,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
     {
         $config = $this->getConfig()['redis']['ordnance_survey'];
 
-        $this->redisClient->open('', '');
+        $this->redisClient->open();
         $lastOsCall = $this->redisClient->read('os_last_call');
 
         $currentTime = new DateTime('now');
@@ -170,7 +170,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
 
         // Update redis with timestamp of the call to os
-        $this->redisClient->write('os_last_call', $currentUnixTime);
+        $this->redisClient->write('os_last_call', strval($currentUnixTime));
 
         // Cache response in redis
         if ($this->ordnanceSurveyClient->verify($os) == true) {
@@ -181,7 +181,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $details = '';
         }
 
-        $this->redisClient->write('os_last_status', $alive);
+        $this->redisClient->write('os_last_status', strval($alive));
         $this->redisClient->write('os_last_details', json_encode($details));
 
         return ['ok' => $alive, 'cached' => false, 'details' => $details];
@@ -196,7 +196,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
-     * @param OrdnanceSurveyClient $ordnanceSurveyClient
+     * @param OrdnanceSurvey $ordnanceSurveyClient
      */
     public function setOrdnanceSurveyClient(OrdnanceSurvey $ordnanceSurveyClient)
     {
