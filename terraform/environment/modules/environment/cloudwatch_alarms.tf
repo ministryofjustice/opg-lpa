@@ -100,3 +100,54 @@ resource "aws_cloudwatch_metric_alarm" "admin_ddos_attack_external" {
     ResourceArn = aws_lb.admin.arn
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
+  actions_enabled           = true
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_description         = "Applications are logging 500 errors for ${var.environment_name}"
+  alarm_name                = "${var.environment_name} application 5XX errors"
+  comparison_operator       = "GreaterThanThreshold"
+  datapoints_to_alarm       = 2
+  metric_name               = "${var.environment_name}-5xx-errors"
+  evaluation_periods        = 2
+  insufficient_data_actions = []
+  namespace                 = "Make/Monitoring"
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  period                    = 60
+  statistic                 = "Sum"
+  threshold                 = 2
+  treat_missing_data        = "notBreaching"
+}
+
+resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
+  actions_enabled           = true
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_description         = "Applications are logging 40x authentication errors for ${var.environment_name}"
+  alarm_name                = "${var.environment_name} application 40x errors"
+  comparison_operator       = "GreaterThanUpperThreshold"
+  datapoints_to_alarm       = 2
+  evaluation_periods        = 2
+  threshold_metric_id       = "e1"
+  insufficient_data_actions = []
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  treat_missing_data        = "notBreaching"
+
+  metric_query {
+    id          = "e1"
+    expression  = "ANOMALY_DETECTION_BAND(m1)"
+    label       = "Authentication Errors (Expected)"
+    return_data = "true"
+  }
+
+  metric_query {
+    id          = "m1"
+    return_data = "true"
+    metric {
+      metric_name = "${var.environment_name}-40x-errors"
+      namespace   = "Make/Monitoring"
+      period      = "120"
+      stat        = "Average"
+      unit        = "Count"
+    }
+  }
+}
