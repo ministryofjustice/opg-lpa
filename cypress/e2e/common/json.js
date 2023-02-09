@@ -3,6 +3,7 @@ import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
 When(
   'I visit the {string} JSON endpoint and save the response as {string}',
   (path, key) => {
+    cy.task('deleteValue', key);
     cy.request(path).then((response) => {
       cy.task('putValue', { name: key, value: response });
     });

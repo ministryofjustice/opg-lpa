@@ -23,6 +23,10 @@ async function setupNodeEvents(on, config) {
       testStore[name] = value;
       return true;
     },
+    deleteValue(key) {
+      delete(testStore[key]);
+      return true;
+    },
     getValue(name) {
       return testStore[name];
     },
