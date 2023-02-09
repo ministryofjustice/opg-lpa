@@ -16,3 +16,8 @@ Feature: Ping
           | body.dynamo.ok               | true |
           | body.api.details.database.ok | true |
           | body.ordnanceSurvey.ok       | true |
+
+    @focus
+    Scenario: Healthcheck LPA service, XML/Pingdom version
+        When I visit the "/ping/pingdom" XML endpoint and save the response as "@pingXml"
+        Then I should have a valid XML response saved as "@pingXml"
