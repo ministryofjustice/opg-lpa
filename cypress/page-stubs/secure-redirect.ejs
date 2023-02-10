@@ -1,0 +1,21 @@
+// send 303 from /secure/<uuid> page to /card_details/<payment ID> page
+(config) => {
+    config.logger.info('paymentCreatedResponsesByUuid', config.state.paymentCreatedResponsesByUuid)
+
+    if (config.state.paymentCreatedResponsesByUuid !== undefined) {
+        // extract UUID from /secure/<uuid> path and redirect to
+        // the corresponding /card_details/<payment_id> URL
+        let pathParts = config.request.path.split('/')
+        let uuid = pathParts[pathParts.length - 1]
+
+        config.logger.info('UUID', uuid)
+
+        let createdResponse = config.state.paymentCreatedResponsesByUuid[uuid]
+
+        config.logger.info('createdResponse', createdResponse)
+
+        let hostAndPort = config.request.headers.Host.split(':')
+        config.response.headers.Location = 'http://' + hostAndPort[0] + ':' + hostAndPort[1] +
+            '/card_details/' + createdResponse.payment_id
+    }
+}

@@ -1,0 +1,103 @@
+{
+    "imposters": [
+        {
+            "port": 4545,
+            "protocol": "http",
+            "recordRequests": false,
+            "stubs": [
+                {
+                    "predicates": [
+                        {
+                            "and":[
+                                { "equals": { "method": "GET" } },
+                                { "startsWith": { "path": "/v1/payments" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 200,
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "body": <%- include api-payment-response-stub.json %>
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('api-payment-munge-response.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "equals": {
+                                "method": "POST",
+                                "path": "/v1/payments"
+                            }
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 201,
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "body": <%- include api-payment-response-stub.json %>
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('api-payment-munge-response.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "GET" } },
+                                { "startsWith": { "path": "/secure" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 303,
+                                "headers": {
+                                    "Location": null
+                                }
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('secure-redirect.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "GET" } },
+                                { "startsWith": { "path": "/card_details" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 200,
+                                "headers": {
+                                    "Content-Type": "text/html"
+                                },
+                                "body": "<%- stringify('payment-form.html') %>"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+   "amount":"<amount from request body>",
+   "description":"<description from request body>",
+   "reference":"<reference from request body>",
+   "language":"en",
+   "state":{
+      "status":"<started for GET or created for POST>",
+      "finished":false
+   },
+   "payment_id":"${payment_id}",
+   "payment_provider":"sandbox",
+   "created_date":"<date when payment was created in format 2023-02-09T17:19:00.590Z>",
+   "refund_summary":{
+      "status":"pending",
+      "amount_available":"<amount from request body>",
+      "amount_submitted":0
+   },
+   "settlement_summary":{
+
+   },
+   "delayed_capture":false,
+   "moto":false,
+   "return_url":"<return_url from request body>",
+   "authorisation_mode":"web",
+   "_links":{
+      "self":{
+         "href":"http://${host}:${port}/v1/payments/${payment_id}",
+         "method":"GET"
+      },
+      "next_url":{
+         "href":"http://${host}:${port}/secure/${uuid}",
+         "method":"GET"
+      },
+      "next_url_post":{
+         "type":"application/x-www-form-urlencoded",
+         "params":{
+            "chargeTokenId":"<uuid like 0ed1c8fd-5890-412f-9a29-3a61ca54b8fe>"
+         },
+         "href":"http://${host}:${port}/secure",
+         "method":"POST"
+      },
+      "events":{
+         "href":"http://${host}:${port}/v1/payments/${payment_id}/events",
+         "method":"GET"
+      },
+      "refunds":{
+         "href":"http://${host}:${port}/v1/payments/${payment_id}/refunds",
+         "method":"GET"
+      },
+      "cancel":{
+         "href":"http://${host}:${port}/v1/payments/${payment_id}/cancel",
+         "method":"POST"
+      }
+   }
+}
