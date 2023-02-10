@@ -21,6 +21,16 @@ resource "aws_ecs_service" "api" {
     assign_public_ip = false
   }
 
+  alarms {
+    enable   = true
+    rollback = true
+    alarm_names = [
+      aws_cloudwatch_metric_alarm.front_5xx_errors.alarm_name,
+      aws_cloudwatch_metric_alarm.front_high_response_latency.alarm_name,
+      aws_cloudwatch_metric_alarm.application_5xx_errors.alarm_name,
+    ]
+  }
+
   service_registries {
     registry_arn = aws_service_discovery_service.api_canonical.arn
   }

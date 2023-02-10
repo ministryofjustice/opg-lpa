@@ -24,6 +24,16 @@ resource "aws_ecs_service" "front" {
     container_port   = 80
   }
 
+  alarms {
+    enable   = true
+    rollback = true
+    alarm_names = [
+      aws_cloudwatch_metric_alarm.front_5xx_errors.alarm_name,
+      aws_cloudwatch_metric_alarm.front_high_response_latency.alarm_name,
+      aws_cloudwatch_metric_alarm.application_5xx_errors.alarm_name,
+    ]
+  }
+
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
   tags       = local.front_component_tag
 }

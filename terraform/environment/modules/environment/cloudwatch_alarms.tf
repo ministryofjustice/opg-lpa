@@ -21,6 +21,27 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   treat_missing_data        = "notBreaching"
 }
 
+resource "aws_cloudwatch_metric_alarm" "front_high_response_latency" {
+  actions_enabled     = true
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_description   = "High average latency (above 2 seconds) for front users in ${var.environment_name}"
+  alarm_name          = "${var.environment_name} public front high response times"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  dimensions = {
+    "LoadBalancer" = trimprefix(split(":", aws_lb.front.arn)[5], "loadbalancer/")
+  }
+  evaluation_periods        = 2
+  insufficient_data_actions = []
+  metric_name               = "TargetResponseTime"
+  namespace                 = "AWS/ApplicationELB"
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  period                    = 10
+  statistic                 = "Average"
+  tags                      = local.front_component_tag
+  threshold                 = 1.5
+  treat_missing_data        = "notBreaching"
+}
+
 
 resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   actions_enabled     = true
@@ -40,6 +61,27 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   period                    = 60
   statistic                 = "Sum"
   tags                      = local.admin_component_tag
+  threshold                 = 2
+  treat_missing_data        = "notBreaching"
+}
+
+resource "aws_cloudwatch_metric_alarm" "admin_high_response_latency" {
+  actions_enabled     = true
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_description   = "High average latency (above 2 seconds) for admin users in ${var.environment_name}"
+  alarm_name          = "${var.environment_name} admin high response times"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  dimensions = {
+    "LoadBalancer" = trimprefix(split(":", aws_lb.admin.arn)[5], "loadbalancer/")
+  }
+  evaluation_periods        = 2
+  insufficient_data_actions = []
+  metric_name               = "TargetResponseTime"
+  namespace                 = "AWS/ApplicationELB"
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  period                    = 10
+  statistic                 = "Average"
+  tags                      = local.front_component_tag
   threshold                 = 2
   treat_missing_data        = "notBreaching"
 }
@@ -115,7 +157,7 @@ resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   period                    = 60
   statistic                 = "Sum"
-  threshold                 = 2
+  threshold                 = 15
   treat_missing_data        = "notBreaching"
 }
 
