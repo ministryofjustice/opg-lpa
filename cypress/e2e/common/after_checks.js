@@ -7,7 +7,7 @@ const { After } = require('@badeball/cypress-cucumber-preprocessor');
 // have rel="noreferrer noopener"; this is to prevent reverse tabnapping and
 // is recommended by the GOV.UK design system guidelines
 // https://design-system.service.gov.uk/styles/typography/#links
-After(() => {
+After({ tags: '@LinkCheckAfter' }, () => {
   cy.log('Checking link targets, noreferrer and noopener');
 
   cy.document().then((doc) => {
@@ -22,18 +22,18 @@ After(() => {
 
 // Find all elements which are error summary headings.
 // For each, ensure that it is an h2.
-After(() => {
+After({ tags: '@ErrorSummaryCheckAfter' }, () => {
   cy.log('Checking error summary headings are at the correct level');
 
   cy.document().then((doc) => {
     doc.querySelectorAll('.error-summary-heading').forEach((node) => {
-      assert(node.tagName == 'H2');
+      assert(node.tagName == 'H2', 'error summary headings should be <h2>');
     });
   });
 });
 
 // Test encoding of page after loading it
-After(() => {
+After({ tags: '@EncodingCheckAfter' }, () => {
   cy.log('Checking encoding of page');
 
   cy.document().then((doc) => {
