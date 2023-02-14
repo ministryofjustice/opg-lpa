@@ -14,7 +14,11 @@
 
         config.logger.info('createdResponse', createdResponse)
 
-        let hostAndPort = config.request.headers.Host.split(':')
+        config.logger.info('host', config.request.headers)
+
+
+        let hostAndPortHeader = config.request.headers.host || config.request.headers.Host
+        let hostAndPort = hostAndPortHeader.split(':')
         config.response.headers.Location = 'http://' + hostAndPort[0] + ':' + hostAndPort[1] +
             '/card_details/' + createdResponse.payment_id
     }
