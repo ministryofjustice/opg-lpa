@@ -24,7 +24,7 @@
                                 "body": <%- include api-payment-response-stub.json %>
                             },
                             "behaviors": [
-                                { "decorate": "<%- stringify('api-payment-munge-response.ejs') %>" }
+                                { "decorate": "<%- stringify('api-payment-response.ejs') %>" }
                             ]
                         }
                     ]
@@ -48,7 +48,7 @@
                                 "body": <%- include api-payment-response-stub.json %>
                             },
                             "behaviors": [
-                                { "decorate": "<%- stringify('api-payment-munge-response.ejs') %>" }
+                                { "decorate": "<%- stringify('api-payment-response.ejs') %>" }
                             ]
                         }
                     ]
@@ -71,7 +71,7 @@
                                 }
                             },
                             "behaviors": [
-                                { "decorate": "<%- stringify('secure-redirect.ejs') %>" }
+                                { "decorate": "<%- stringify('web-secure-redirect.ejs') %>" }
                             ]
                         }
                     ]
@@ -81,7 +81,7 @@
                         {
                             "and": [
                                 { "equals": { "method": "GET" } },
-                                { "startsWith": { "path": "/card_details" } }
+                                { "matches": { "path": "/card_details/[^/]+$" } }
                             ]
                         }
                     ],
@@ -93,10 +93,60 @@
                                     "Content-Type": "text/html"
                                 },
                                 "body": "<%- stringify('payment-form.html') %>"
-                            }
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('web-payment-form-urls.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "POST" } },
+                                { "matches": { "path": "/card_details/[^/]+$" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 303,
+                                "headers": {
+                                    "Location": null
+                                }
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('web-payment-form-redirect.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "GET" } },
+                                { "matches": { "path": "/card_details/[^/]+/confirm$" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 200,
+                                "headers": {
+                                    "Content-Type": "text/html"
+                                },
+                                "body": "confirm form"
+                            },
+                            "behaviors": [
+                            ]
                         }
                     ]
                 }
+
             ]
         }
     ]

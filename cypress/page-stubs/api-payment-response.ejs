@@ -1,4 +1,12 @@
-// deal with calls to the API to create and retrieve a payment
+/**
+ * Handle calls to the API to create and retrieve a payment
+ *
+ * Sets up two variables which can be used for future request handling:
+ * - config.state.paymentCreatedResponses: responses created to reply
+ *   to initial payment creation, keyed by payment ID
+ * - config.state.paymentCreatedResponsesByUuid: same, but keyed by
+ *   the UUID assigned to the payment
+ */
 (config) => {
     // host and port of the mountebank server which are accessible
     // to the browser; we will be redirecting to these URLs once

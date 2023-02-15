@@ -75,7 +75,7 @@
 
               </div>
 
-              <form id="card-details" name="cardDetails" method="POST" action="${SUBMIT_URL_https://www.payments.service.gov.uk/card_details/krbv4hp5ir2tq7ijmul0epsa31}" novalidate="">
+              <form id="card-details" name="cardDetails" method="POST" action="./card_details/${payment_id}" novalidate="">
                 <input id="charge-id" name="chargeId" type="hidden" value="krbv4hp5ir2tq7ijmul0epsa31">
                 <input id="csrf" name="csrfToken" type="hidden" value="NXnLslw5-slWH9F8KD9Nwbt9x1IOw9Ckf2cM">
 
@@ -507,10 +507,9 @@
 </button>
                 </div>
               </form>
-              <form id="cancel" name="cancel" method="POST" action="${CANCEL_URL_https://www.payments.service.gov.uk/card_details/krbv4hp5ir2tq7ijmul0epsa31/cancel}" class="form">
+              <form id="cancel" name="cancel" method="POST" action="./card_details/${payment_id}/cancel" class="form">
                 <div>
                   <input id="cancel-payment" type="submit" class="button-reset" value="Cancel payment" name="cancel">
-                  <input id="csrf2" name="csrfToken" type="hidden" value="NXnLslw5-slWH9F8KD9Nwbt9x1IOw9Ckf2cM">
                 </div>
               </form>
             </div>
