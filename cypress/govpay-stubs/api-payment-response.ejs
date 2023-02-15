@@ -22,7 +22,7 @@
     // modify response JSON depending on whether we are creating
     // or retrieving a payment
     if (config.request.method === 'POST') {
-        let requestBody = JSON.parse(config.request.body)
+        const requestBody = JSON.parse(config.request.body)
 
         response.state.status = "created"
         response.amount = requestBody.amount

@@ -48,7 +48,7 @@ services:
       - 2527:2525
       - 4547:4545
     volumes:
-      - ./cypress/page-stubs:/app
+      - ./cypress/govpay-stubs:/app
     command: --allowInjection --configfile /app/mountebank-config.ejs
 
   localstack:

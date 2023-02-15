@@ -1,3 +1,5 @@
+Some notes on the flow between Make and govpay, used to write the stubs.
+
 # If LPA doesn't have an associated payment yet
 
 CheckoutController->payAction()
