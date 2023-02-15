@@ -4,7 +4,7 @@ Feature: Checkout through payment gateway for a Property and Finance LPA
         Given I ignore application exceptions
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction
 
-    @CleanupFixtures @IgnoreEncodingAfterCheck @IgnoreLinkAfterChecks
+    @CheckoutPaymentGateway @CleanupFixtures @IgnoreEncodingAfterCheck @IgnoreLinkAfterChecks
     Scenario: Checkout through payment gateway
         Given I log in as appropriate test user
         And I visit the checkout page for the test fixture lpa
