@@ -13,7 +13,7 @@ http {
     # containers in dev
     map $http_x_amzn_trace_id $trace_id {
         "~*Root=" $http_x_amzn_trace_id;
-        default "Root=1-$msec-$connection$connection_requests-fromssl";
+        default "Root=1-22222222-333333333333333333333333;Parent=4444444444444444;Sampled=1";
     }
 
     map $http_upgrade $connection_upgrade {

@@ -11,6 +11,7 @@ use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Sql;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 /**
  * Long term plan is to move all subclasses of AbstractBase to instead
@@ -142,7 +143,13 @@ class DbWrapper
             $select->columns($options['columns']);
         }
 
+        TelemetryEventManager::triggerStart('DbWrapper.select', ['table' => $tableName]);
+
         /** @throws LaminasDbAdapterRuntimeException */
-        return $sql->prepareStatementForSqlObject($select)->execute();
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        TelemetryEventManager::triggerStop();
+
+        return $result;
     }
 }

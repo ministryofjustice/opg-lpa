@@ -10,6 +10,7 @@ use Application\Model\Service\User\Register;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use Laminas\Http\Headers;
 use Laminas\Http\Header\Referer;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
@@ -126,6 +127,35 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
 
         $referer = $this->makeMockReferer('https://localhost/home');
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
+
+        $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+
+        /** @var ViewModel $result */
+        $result = $controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals(false, $result->getVariable('strictVars'));
+    }
+
+    // this mirrors the case where the referer is not a valid URI, e.g.
+    // if it is set to android-app://com.google.android.gm/ when clicking
+    // a link in GMail; see LPAL-1151
+    public function testIndexActionBadReferer()
+    {
+        $this->setIdentity(null);
+        $controller = $this->getController(RegisterController::class);
+
+        $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
+
+        // this is how Laminas constructs headers from the incoming request;
+        // in cases where the header cannot be generated correctly (e.g. a Referer header
+        // with non-valid scheme), we end up with a GenericHeader instance instead
+        $referer = Headers::fromString('Referer: android-app://com.google.android.gm/')->get('Referer');
+
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
 
         $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
