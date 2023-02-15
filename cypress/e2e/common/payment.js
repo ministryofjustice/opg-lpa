@@ -34,3 +34,9 @@ Then(`I complete the payment with card number {string}`, (cardNumber) => {
     cy.get('#submit-card-details').click();
   });
 });
+
+Then(`I confirm the payment`, () => {
+  cy.origin('http://localhost:4547', () => {
+    cy.get('#confirm').click();
+  });
+});

@@ -1,7 +1,5 @@
 // send 303 from /secure/<uuid> page to /card_details/<payment ID> page
 (config) => {
-    config.logger.info('paymentCreatedResponsesByUuid', config.state.paymentCreatedResponsesByUuid)
-
     if (config.state.paymentCreatedResponsesByUuid !== undefined) {
         // extract UUID from /secure/<uuid> path and redirect to
         // the corresponding /card_details/<payment_id> URL

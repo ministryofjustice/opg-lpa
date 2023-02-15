@@ -12,3 +12,5 @@ Feature: Checkout through payment gateway for a Property and Finance LPA
 
         When I click "confirm-and-pay-by-card"
         And I complete the payment with card number "9999-9999-9999-9999"
+        And I confirm the payment
+        Then I see "Thank you for your payment of £20.50" in the page text

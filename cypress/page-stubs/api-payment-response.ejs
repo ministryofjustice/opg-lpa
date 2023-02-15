@@ -26,6 +26,7 @@
 
         response.state.status = "created"
         response.amount = requestBody.amount
+
         response.refund_summary.amount_available = requestBody.amount
         response.reference = requestBody.reference
         response.description = requestBody.description
@@ -73,18 +74,22 @@
         config.state.paymentCreatedResponsesByUuid[uuid] = response
     }
     else if (config.request.method === 'GET') {
-        response.state.status = "started"
-
         // retrieve the payment ID from the request path (it's the last segment)
         // so we can find the response which we stored in state when
         // the payment was created
-        let pathParts = config.request.path.split('/')
-        let paymentId = pathParts[pathParts.length - 1]
-        let createdResponse = config.state.paymentCreatedResponses[paymentId]
+        const pathParts = config.request.path.split('/')
+        const paymentId = pathParts[pathParts.length - 1]
+        const createdResponse = config.state.paymentCreatedResponses[paymentId]
 
         // if retrieving the payment, we use the response which was
-        // saved when the payment was created
+        // saved when the payment was created; we also bump it along to the
+        // next stage in its progress
         if (createdResponse !== undefined) {
+            if (createdResponse.state.status === undefined) {
+                createdResponse.state.status = "started"
+            }
+
+            response.state.status = createdResponse.state.status
             response.amount = createdResponse.amount
             response.refund_summary.amount_available = createdResponse.amount
             response.reference = createdResponse.reference

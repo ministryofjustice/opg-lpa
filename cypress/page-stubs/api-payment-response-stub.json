@@ -3,6 +3,7 @@
    "description":"<description from request body>",
    "reference":"<reference from request body>",
    "language":"en",
+   "email": "mrnotimportant@madeup.email",
    "state":{
       "status":"<started for GET or created for POST>",
       "finished":false
@@ -16,7 +17,6 @@
       "amount_submitted":0
    },
    "settlement_summary":{
-
    },
    "delayed_capture":false,
    "moto":false,
