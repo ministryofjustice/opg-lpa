@@ -38,10 +38,15 @@ class RegisterController extends AbstractBaseController
         /** @var Referer */
         $referer = $request->getHeader('Referer');
 
-        if ($referer !== false) {
-            if (stripos($referer->uri()->getHost(), 'www.gov.uk') !== false) {
-                return $this->redirect()->toRoute('home', ['action' => 'index'], ['query' => ['_ga' => $ga]]);
-            }
+        // despite the implicit cast above, $referer might be a GenericHeader
+        // if the URI has an invalid scheme like android-app://, hence the is_a() check;
+        // otherwise $referer->uri() might throw a "method does not exist exception";
+        // see LPAL-1151
+        if (
+            is_a($referer, Referer::class) &&
+            (stripos($referer->uri()->getHost(), 'www.gov.uk') !== false)
+        ) {
+            return $this->redirect()->toRoute('home', ['action' => 'index'], ['query' => ['_ga' => $ga]]);
         }
 
         $response = $this->preventAuthenticatedUser();
