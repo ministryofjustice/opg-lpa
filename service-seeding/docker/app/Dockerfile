@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 RUN apk add --update --no-cache postgresql-client && \
-    apk upgrade
+    apk upgrade --no-cache
 
 RUN rm -rf /var/cache/apk/* /tmp/*
 

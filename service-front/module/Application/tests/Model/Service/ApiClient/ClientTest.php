@@ -70,11 +70,13 @@ class ClientTest extends MockeryTestCase
                         new Request(
                             $verb,
                             new Uri($url),
-                            ['Accept' => 'application/json',
+                            [
+                                'Accept' => 'application/json, application/problem+json',
                                 'Accept-Language' => 'en',
                                 'Content-Type' => 'application/json; charset=utf-8',
                                 'User-Agent' => 'LPA-FRONT',
-                                'Token' => $token]
+                                'Token' => $token
+                            ]
                         )
                     )]
                 )
