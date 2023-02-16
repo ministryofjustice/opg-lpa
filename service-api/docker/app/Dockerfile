@@ -2,8 +2,8 @@ FROM php:8.1-fpm-alpine3.15
 
 RUN adduser -D -g '' appuser
 
-RUN apk add --upgrade apk-tools
-RUN apk upgrade
+RUN apk add --upgrade --no-cache apk-tools
+RUN apk upgrade --no-cache
 
 RUN apk add --no-cache postgresql-libs icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev icu-dev \

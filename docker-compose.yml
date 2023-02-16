@@ -152,6 +152,9 @@ services:
       - ./service-front/node_modules:/app/node_modules
       - ./service-front/assets:/app/assets
       - ./service-front/vendor:/app/vendor
+      - ./service-front/public:/app/public
+      - ./service-front/build:/app/build
+      - ./tests:/app/tests
       - ./shared:/shared
     depends_on:
       dynamodb:

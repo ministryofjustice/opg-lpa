@@ -289,7 +289,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
     {
         try {
             return $this->apiClient->httpGet(
-                sprintf('/v2/user/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfType)
+                sprintf('/v2/user/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfType),
             );
         } catch (ApiException $ex) {
             $this->getLogger()->err('Error connecting to API while fetching PDF: ' . $ex->getMessage());
@@ -309,10 +309,14 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function getPdfContents($lpaId, $pdfType)
     {
-        $target = sprintf('/v2/user/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType);
-
         try {
-            $result = $this->apiClient->httpGet($target, [], false);
+            $result = $this->apiClient->httpGet(
+                sprintf('/v2/user/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType),
+                [], // $query,
+                false, // $jsonResponse
+                false, // $anonymous,
+                ['Accept' => 'application/pdf'], // $additionalHeaders
+            );
         } catch (ApiException $ex) {
             $result = false;
         }
