@@ -109,7 +109,7 @@ class Client
     private function buildHeaders()
     {
         $headerLines = [
-            'Accept'        => 'application/json',
+            'Accept'        => 'application/json, application/problem+json',
             'Content-Type'  => 'application/json',
             'User-agent'    => 'LPA-ADMIN'
         ];
