@@ -72,6 +72,36 @@ Example of how to get an authentication token for username + password in dev:
 curl -i -L -X POST -H "Content-Type: application/json" -d '{"username": "seeded_test_user@digital.justice.gov.uk", "password": "Pass1234"}' "http://localhost:7001/v2/authenticate"
 ```
 
+Which returns something like (slightly reformatted to fit the page):
+
+```
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 20 Jan 2023 15:54:36 GMT
+Content-Type: application/json; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Vary: Accept-Encoding
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+Strict-Transport-Security: max-age=3600; includeSubDomains
+
+{"userId":"082347fe0f7da026fa6187fc00b05c55",
+ "username":"seeded_test_user@digital.justice.gov.uk",
+ "last_login":"2023-01-20T15:49:27+0000",
+ "inactivityFlagsCleared":false,
+ "token":"<token>",
+ "expiresIn":"4500",
+ "expiresAt":"2023-01-20T17:09:36+0000"}
+```
+
+Once you have that, you can make requests using the token; note that here, I'm also making use of the userId as part of the URL path:
+
+```
+curl -i -L -H "Token: <token>" "http://localhost:7001/v2/user/082347fe0f7da026fa6187fc00b05c55"
+```
+
 ## License
 
 The Lasting Power of Attorney Attorney API Service is released under the MIT license, a copy of which can be found in [LICENSE](LICENSE).
