@@ -115,11 +115,11 @@ class StatusTest extends AbstractServiceTest
                 'line3' => '',
                 'postcode' => 'SOME POSTCODE',
         ]];
-        $this->redisClient->shouldReceive('open')->times(6)->andReturn(true);
-        $this->redisClient->shouldReceive('read')->times(6)->andReturn('');
-        $this->redisClient->shouldReceive('write')->times(18)->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->times(6)->andReturn($expectedOsResponse);
-        $this->ordnanceSurveyClient->shouldReceive('verify')->times(6)->andReturn($expectedOsResponse);
+        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
+        $this->redisClient->shouldReceive('read')->once()->andReturn('');
+        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
         $result = $this->service->check();
 
@@ -335,7 +335,7 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->once()
+            ->times(6)
             ->andReturn([
                 'ok' => true,
             ]);
@@ -343,10 +343,10 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->once()
+            ->times(6)
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
-        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
+        $this->sessionSaveHandler->shouldReceive('open')->times(6)->andReturn(true);
 
         $expectedOsResponse = [[
                 'line1' => 'SOME PALACE',
@@ -379,8 +379,10 @@ class StatusTest extends AbstractServiceTest
                 'cached' => false,
                 'details' => ''
             ],
-            'ok' => false,
-            'iterations' => 1,
+            // Unlike the other tests, when os fails it doesn't fail the overall health check as it's not vital to the service
+            'ok' => true,
+            // It's not part of the retry loop, so it's failure doesn't end the loop like the rest
+            'iterations' => 6,
         ], $result);
     }
 }
