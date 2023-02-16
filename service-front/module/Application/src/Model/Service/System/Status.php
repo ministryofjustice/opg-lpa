@@ -59,9 +59,6 @@ class Status extends AbstractService implements ApiClientAwareInterface
             // Check session save handling
             $result['sessionSaveHandler'] = $this->session();
 
-            // Check ordnanceSurvey
-            $result['ordnanceSurvey'] = $this->ordnanceSurvey();
-
             $ok = true;
             foreach ($result as $service) {
                 $ok = $ok && $service['ok'];
@@ -71,9 +68,12 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $result['iterations'] = $i;
 
             if (!$result['ok']) {
-                return $result;
+                break;
             }
         }
+
+        // Check ordnanceSurvey - we rate limit this so we don't want it in the above retry loop
+        $result['ordnanceSurvey'] = $this->ordnanceSurvey();
 
         return $result;
     }
