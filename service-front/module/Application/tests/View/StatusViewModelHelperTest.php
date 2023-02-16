@@ -235,7 +235,7 @@ class StatusViewModelHelperTest extends MockeryTestCase
                     "the donor and attorneys will be able to use it",
                     "by creating an account on",
                     "Use an LPA",
-                    "and adding the LPA details provided in the letter",
+                    "and adding the details provided in the letter",
                 ],
             ],
         ],
