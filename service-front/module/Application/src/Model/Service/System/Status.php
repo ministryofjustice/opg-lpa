@@ -136,35 +136,23 @@ class Status extends AbstractService implements ApiClientAwareInterface
     private function ordnanceSurvey()
     {
         $config = $this->getConfig()['redis']['ordnance_survey'];
-        $this->getLogger()->info('+++++CONFIG_OBJ: ' . print_r($config, true));
 
         $redisOpen = $this->redisClient->open();
-        $this->getLogger()->info('+++++REDIS_OPEN: ' . print_r($redisOpen, true));
         $lastOsCall = $this->redisClient->read('os_last_call');
-        $this->getLogger()->info('+++++REDIS_LAST_OS_CALL: ' . print_r($lastOsCall, true));
 
         $currentTime = new DateTime('now');
         $currentUnixTime = $currentTime->getTimestamp();
-        $this->getLogger()->info('+++++UNIX_TIME_NOW: ' . print_r($currentUnixTime, true));
-
-        $this->getLogger()->info('+++++IS_NUMERIC($lastOsCall): ' . print_r(is_numeric($lastOsCall), true));
-        $this->getLogger()->info('+++++INTVAL($lastOsCall) > 0: ' . print_r(is_numeric(intval($lastOsCall) > 0), true));
 
         // Check if redis cached a timestamp for last call to OS, and call OS if no timestamp or not rate limited
         if (is_numeric($lastOsCall) && intval($lastOsCall) > 0) {
             $timeDiff = $currentUnixTime - intval($lastOsCall);
             $rateLimit = 60 / $config['max_call_per_min'];
 
-            $this->getLogger()->info('+++++CONFIG_RATE_LIMIT: ' . print_r($rateLimit, true));
-            $this->getLogger()->info('+++++TIMEDIFF: ' . print_r($timeDiff, true));
-
             // Not rate limited - call OS
             if ($timeDiff > $rateLimit) {
-                $this->getLogger()->info('+++++ Time diff > rate limit');
                 return $this->callOrdnanceSurvey($currentUnixTime);
             // Rate limited - return cached response
             } else {
-                $this->getLogger()->info('+++++ Time diff < rate limit');
                 $osStatus = $this->redisClient->read('os_last_status');
                 $osDetails = $this->redisClient->read('os_last_details');
 
@@ -175,7 +163,6 @@ class Status extends AbstractService implements ApiClientAwareInterface
                 ];
             }
         } else {
-            $this->getLogger()->info('+++++ $lastOsCall not numeric && > 0');
             return $this->callOrdnanceSurvey($currentUnixTime);
         }
     }
