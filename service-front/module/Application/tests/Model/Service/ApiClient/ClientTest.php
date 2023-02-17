@@ -66,7 +66,7 @@ class ClientTest extends MockeryTestCase
         }
 
         $expectedHeaders = [
-            'Accept' => 'application/json',
+            'Accept' => 'application/json, application/problem+json',
             'Accept-Language' => 'en',
             'Content-Type' => 'application/json; charset=utf-8',
             'User-Agent' => 'LPA-FRONT',
