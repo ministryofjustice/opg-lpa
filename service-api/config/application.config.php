@@ -28,7 +28,6 @@ return array(
         'module_paths' => array(
             './module',
             './vendor',
-            'Telemetry' => __DIR__ . '/../../shared/module/MakeShared/src/Telemetry',
         ),
         // An array of paths from which to glob configuration files after
         // modules are loaded. These effectively override configuration
