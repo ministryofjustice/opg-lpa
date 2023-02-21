@@ -131,4 +131,18 @@ return [
         // to be received by the user
         'expected-working-days-before-receipt' => 15,
     ],
+
+    'telemetry' => [
+        // fraction of requests which will be sampled, e.g. 0.05
+        'requestsSampledFraction' => getenv('OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION') ?: null,
+
+        'exporter' => [
+            'serviceName' => 'service-front',
+
+            // if this value is null, a console exporter will be used;
+            // for a standard XRay (over UDP) exporter, use host='localhost' and port=2000
+            'host' => getenv('OPG_LPA_TELEMETRY_HOST') ?: null,
+            'port' => getenv('OPG_LPA_TELEMETRY_PORT') ?: null,
+        ],
+    ],
 ];
