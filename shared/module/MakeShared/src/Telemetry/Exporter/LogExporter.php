@@ -18,6 +18,6 @@ class LogExporter implements ExporterInterface
 
     public function export(Segment $segment): void
     {
-        $this->getLogger()->debug(json_encode($segment));
+        $this->getLogger()->debug('EXPORTING SEGMENT: ' . json_encode($segment));
     }
 }

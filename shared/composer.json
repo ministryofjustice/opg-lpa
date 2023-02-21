@@ -19,6 +19,7 @@
         "symfony/validator": "^4.2"
     },
     "require-dev": {
+        "hamcrest/hamcrest-php": "^2.0",
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^9.5.10",
         "vimeo/psalm": "^4.23"

@@ -52,6 +52,7 @@ class TracerTest extends TestCase
 
         $rootSegment = $tracer->startRootSegment();
 
+        $this->assertEquals($rootSegment, $tracer->getRootSegment());
         $this->assertEquals($rootSegment->getId(), $tracer->getCurrentSegmentId());
         $this->assertEquals('1234567891123456', $rootSegment->getParentSegmentId());
         $this->assertTrue($rootSegment->sampled);
@@ -149,7 +150,7 @@ class TracerTest extends TestCase
     public function testSegmentNesting()
     {
         $exporter = Mockery::mock(XrayExporter::class);
-        $tracer = new Tracer('makeSharedUnitTest', $exporter, new SimpleLogger());
+        $tracer = new Tracer('makeSharedUnitTest', $exporter);
 
         $headers = [];
         $headers[Constants::X_TRACE_ID_HEADER_NAME] =
@@ -184,5 +185,27 @@ class TracerTest extends TestCase
 
         // stop root segment
         $tracer->stopRootSegment();
+    }
+
+    public function testXTraceIdHeaderWithCurrentSegment()
+    {
+        $tracer = Tracer::create($this->config);
+
+        // before we have a segment started in the tracer, the X-Trace-Id header
+        // is null
+        $this->assertEquals(null, $tracer->getTraceHeaderToForward());
+
+        $headers = [];
+        $headers[Constants::X_TRACE_ID_HEADER_NAME] =
+            'Root=1-63a17088-02b1471a787d91f21767c8f8;Sampled=1';
+
+        $rootSegment = $tracer->startRootSegment($headers);
+
+        // current segment is $rootSegment, so the expected X-Trace-Id
+        // header should include the root segment's ID as the Parent flag
+        $parentId = $rootSegment->getId();
+        $expectedHeader = "Root=1-63a17088-02b1471a787d91f21767c8f8;Parent=$parentId;Sampled=1";
+
+        $this->assertEquals($expectedHeader, $tracer->getTraceHeaderToForward());
     }
 }

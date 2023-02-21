@@ -5,6 +5,7 @@ namespace Application;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use MakeShared\Logging\LoggerTrait;
+use MakeShared\Telemetry\Tracer;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
@@ -221,7 +222,12 @@ class Module implements FormElementProviderInterface
                 'TwigViewRenderer' => function (ServiceLocatorInterface $sm) {
                     $loader = new FilesystemLoader('module/Application/view/application');
                     return new Environment($loader);
-                }
+                },
+
+                'TelemetryTracer' => function ($sm) {
+                    $telemetryConfig = $sm->get('config')['telemetry'];
+                    return Tracer::create($telemetryConfig);
+                },
             ], // factories
         ];
     }

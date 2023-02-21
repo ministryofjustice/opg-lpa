@@ -6,6 +6,7 @@ use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient as HttpClientInterface;
 use MakeShared\Logging\LoggerTrait;
+use MakeShared\Telemetry\Tracer;
 use Psr\Http\Message\ResponseInterface;
 
 class Client
@@ -21,21 +22,29 @@ class Client
     /** @var array */
     private $defaultHeaders;
 
+    /** @var Tracer */
+    private $tracer;
+
     /**
      * Client constructor
      *
      * @param HttpClientInterface $httpClient
-     * @param $apiBaseUri
-     * @param $defaultHeaders Array of name => value pairs; headers which are
-     *     set on every request; usually this will consist of
-     *     'X-Trace-Id'Token => <trace ID> as a minimum; for authenticated
-     *     requests, will also contain 'Token' => <token>
+     * @param string $apiBaseUri
+     * @param array $defaultHeaders Array of name => value pairs; headers which are
+     *     set on every request; for authenticated requests, this will
+     *     contain 'Token' => <token>
+     * @param Tracer $tracer
      */
-    public function __construct(HttpClientInterface $httpClient, $apiBaseUri, $defaultHeaders = [])
-    {
+    public function __construct(
+        HttpClientInterface $httpClient,
+        string $apiBaseUri,
+        array $defaultHeaders = [],
+        Tracer $tracer = null,
+    ) {
         $this->httpClient = $httpClient;
         $this->apiBaseUri = $apiBaseUri;
         $this->defaultHeaders = $defaultHeaders;
+        $this->tracer = $tracer;
     }
 
     /**
@@ -231,7 +240,25 @@ class Client
             }
         }
 
-        return array_merge($headers, $additionalHeaders);
+        $headers = array_merge($headers, $additionalHeaders);
+
+        // Construct an X-Trace-Id header based on the current state of the tracer.
+        // We use the tracer as this is tracking the current segment ID,
+        // used to set the Parent flag in any forwarded X-Trace-Id header.
+        // Note that this is the header originally
+        // sent to the front-app, with the Parent flag added;
+        // we are forwarding it in our requests to
+        // back-end services, such as api-web (and from there, api-app).
+        $xTraceIdHeader = null;
+        if (!is_null($this->tracer)) {
+            $xTraceIdHeader = $this->tracer->getTraceHeaderToForward();
+        }
+
+        if (!is_null($xTraceIdHeader)) {
+            $headers['X-Trace-Id'] = $xTraceIdHeader;
+        }
+
+        return $headers;
     }
 
     /**

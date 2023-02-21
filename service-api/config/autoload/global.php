@@ -146,6 +146,9 @@ return [
     ],
 
     'telemetry' => [
+        // fraction of requests which will be sampled, e.g. 0.05
+        'requestsSampledFraction' => getenv('OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION') ?: null,
+
         'exporter' => [
             'serviceName' => 'service-api',
 
