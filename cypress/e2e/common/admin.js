@@ -19,6 +19,23 @@ Then('the first user email address is {string}', (dateString) => {
   expect(firstEmailAddress.innerHTML.trim()).to.eql(dateString);
 });
 
+Then('the first user account status is {string}', (status) => {
+  const firstStatus = Cypress.$('[data-role=user-account-status]').get(0);
+  expect(firstStatus.innerText).to.eql(status);
+});
+
+Then('the first activation date is {string}', (dateString) => {
+  const dates = findActivationDates();
+  const firstDate = dates.get(0);
+  expect(firstDate.innerHTML).to.eql(dateString);
+});
+
+Then('the second last login time is {string}', (timeString) => {
+  const times = findLoginTimes();
+  const secondLoginTime = times.get(1);
+  expect(secondLoginTime.innerHTML).to.eql(timeString);
+});
+
 Then(
   'deleted user is displayed with deletion date of {string}',
   (dateString) => {
