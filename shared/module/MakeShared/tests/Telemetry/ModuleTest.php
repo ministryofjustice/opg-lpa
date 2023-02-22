@@ -3,16 +3,22 @@
 namespace MakeSharedTest\Telemetry;
 
 use Laminas\EventManager\EventManager;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
 use Laminas\Mvc\Application;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceManager;
 use MakeShared\Constants;
+use MakeShared\Telemetry\Attribute\Http;
 use MakeShared\Telemetry\Event;
 use MakeShared\Telemetry\Module;
+use MakeShared\Telemetry\Segment;
 use MakeShared\Telemetry\TelemetryEventManager;
 use MakeShared\Telemetry\Tracer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+
+\Hamcrest\Util::registerGlobalFunctions();
 
 class ModuleTest extends TestCase
 {
@@ -22,6 +28,7 @@ class ModuleTest extends TestCase
     public function tearDown(): void
     {
         TelemetryEventManager::setEventManager(null);
+        Mockery::close();
     }
 
     // test onBootstrap() and onFinish(), to ensure handlers are
@@ -30,11 +37,16 @@ class ModuleTest extends TestCase
     {
         $module = new Module();
 
+        $rootSegment = Mockery::mock(Segment::class);
+        $rootSegment->shouldReceive('setAttribute')
+            ->with('http', anInstanceOf(Http::class));
+
         $tracer = Mockery::mock(Tracer::class);
-        $tracer->shouldReceive('startRootSegment');
-        $tracer->shouldReceive('startSegment');
-        $tracer->shouldReceive('stopSegment');
-        $tracer->shouldReceive('stopRootSegment');
+        $tracer->shouldReceive('startRootSegment')->once();
+        $tracer->shouldReceive('startSegment')->once();
+        $tracer->shouldReceive('stopSegment')->once();
+        $tracer->shouldReceive('stopRootSegment')->once();
+        $tracer->shouldReceive('getRootSegment')->andReturn($rootSegment);
 
         $serviceManager = Mockery::mock(ServiceManager::class);
         $serviceManager->shouldReceive('get')
@@ -59,6 +71,9 @@ class ModuleTest extends TestCase
         $app->shouldReceive('getServiceManager')->andReturn($serviceManager);
         $app->shouldReceive('getEventManager')->andReturn($eventManager);
 
+        $request = Mockery::mock(Request::class);
+        $response = Mockery::mock(Response::class);
+
         $bootstrapEvent = Mockery::mock(MvcEvent::class);
         $bootstrapEvent->shouldReceive('getApplication')->andReturn($app);
 
@@ -69,6 +84,8 @@ class ModuleTest extends TestCase
         $telemetryStopEvent = Mockery::mock(Event::class);
 
         $finishEvent = Mockery::mock(MvcEvent::class);
+        $finishEvent->shouldReceive('getRequest')->andReturn($request);
+        $finishEvent->shouldReceive('getResponse')->andReturn($response);
 
         $module->onBootstrap($bootstrapEvent);
         $module->startSegment($telemetryStartEvent);

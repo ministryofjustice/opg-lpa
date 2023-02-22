@@ -9,6 +9,7 @@ use Http\Client\HttpClient;
 use Interop\Container\ContainerInterface;
 use Laminas\Http\Header\HeaderInterface;
 use Laminas\Http\Request;
+use MakeShared\Telemetry\Tracer;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -25,12 +26,14 @@ class ClientFactoryTest extends MockeryTestCase
      */
     protected $factory;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $httpClient = Mockery::mock(HttpClient::class);
+        $tracer = Mockery::mock(Tracer::class);
 
         $this->container = Mockery::mock(ContainerInterface::class);
         $this->container->expects('get')->withArgs(['HttpClient'])->once()->andReturn($httpClient);
+        $this->container->expects('get')->withArgs(['TelemetryTracer'])->once()->andReturn($tracer);
 
         $this->container
             ->expects('get')
@@ -41,24 +44,10 @@ class ClientFactoryTest extends MockeryTestCase
         $this->factory = new ClientFactory();
     }
 
-    private function makeMockRequest()
-    {
-        $mockTraceIdHeader = Mockery::mock(HeaderInterface::class);
-        $mockTraceIdHeader->shouldReceive('getFieldValue')->once()->andReturn('traceid');
-
-        $mockRequest = Mockery::mock(Request::class);
-        $mockRequest->shouldReceive('getHeader')->once()->andReturn($mockTraceIdHeader);
-
-        return $mockRequest;
-    }
-
-    public function testInstantiate() : void
+    public function testInstantiate(): void
     {
         $userIdentity = Mockery::mock(UserIdentity::class);
         $userIdentity->shouldReceive('token')->once()->andReturn('Test Token');
-
-        $request = $this->makeMockRequest();
-        $this->container->expects('get')->withArgs(['Request'])->once()->andReturn($request);
 
         $userDetailsSession = new MockUserDetailsSession();
         $userDetailsSession->identity = $userIdentity;
@@ -71,13 +60,10 @@ class ClientFactoryTest extends MockeryTestCase
         $this->assertInstanceOf(Client::class, $result);
     }
 
-    public function testInstantiateNoIdentity() : void
+    public function testInstantiateNoIdentity(): void
     {
         $userDetailsSession = new MockUserDetailsSession();
         $userDetailsSession->identity = null;
-
-        $request = $this->makeMockRequest();
-        $this->container->expects('get')->withArgs(['Request'])->once()->andReturn($request);
 
         $this->container->expects('get')->withArgs(['UserDetailsSession'])->once()->andReturn($userDetailsSession);
 
@@ -87,30 +73,10 @@ class ClientFactoryTest extends MockeryTestCase
         $this->assertInstanceOf(Client::class, $result);
     }
 
-    public function testInstantiateNoRequest() : void
+    public function testInstantiateRequestHasNoTraceIdHeader(): void
     {
         $userDetailsSession = new MockUserDetailsSession();
         $userDetailsSession->identity = null;
-
-        $this->container->expects('get')->withArgs(['Request'])->once()->andReturn(null);
-
-        $this->container->expects('get')->withArgs(['UserDetailsSession'])->once()->andReturn($userDetailsSession);
-
-        /* @var $result Client */
-        $result = ($this->factory)($this->container, [], null);
-
-        $this->assertInstanceOf(Client::class, $result);
-    }
-
-    public function testInstantiateRequestHasNoTraceIdHeader() : void
-    {
-        $userDetailsSession = new MockUserDetailsSession();
-        $userDetailsSession->identity = null;
-
-        $mockRequest = Mockery::mock(Request::class);
-        $mockRequest->expects('getHeader')->once()->andReturn(FALSE);
-
-        $this->container->expects('get')->withArgs(['Request'])->once()->andReturn($mockRequest);
 
         $this->container->expects('get')->withArgs(['UserDetailsSession'])->once()->andReturn($userDetailsSession);
 

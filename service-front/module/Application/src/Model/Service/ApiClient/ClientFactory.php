@@ -7,6 +7,7 @@ use Http\Client\HttpClient as HttpClientInterface;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Session\Container;
+use MakeShared\Telemetry\Tracer;
 
 class ClientFactory implements FactoryInterface
 {
@@ -23,19 +24,10 @@ class ClientFactory implements FactoryInterface
 
         $baseApiUri = $container->get('config')['api_client']['api_uri'];
 
-        $defaultHeaders = [];
+        /** @var Tracer */
+        $tracer = $container->get('TelemetryTracer');
 
-        // Get the X-Trace-Id header value from the request incoming to the
-        // container, if it exists. Note that this is the header originally
-        // sent to the front-app; we are forwarding it in our requests to
-        // back-end services, such as api-web.
-        $req = $container->get('Request');
-        if ($req) {
-            $traceIdHeader = $req->getHeader('X-Trace-Id');
-            if ($traceIdHeader) {
-                $defaultHeaders['X-Trace-Id'] = $traceIdHeader->getFieldValue();
-            }
-        }
+        $defaultHeaders = [];
 
         /** @var Container $userDetailsSession */
         $userDetailsSession = $container->get('UserDetailsSession');
@@ -45,6 +37,11 @@ class ClientFactory implements FactoryInterface
             $defaultHeaders['Token'] = $identity->token();
         }
 
-        return new Client($httpClient, $baseApiUri, $defaultHeaders);
+        return new Client(
+            $httpClient,
+            $baseApiUri,
+            $defaultHeaders,
+            $tracer,
+        );
     }
 }

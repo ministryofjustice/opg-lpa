@@ -6,6 +6,7 @@ use DateTime;
 use Application\Model\Service\AbstractService;
 use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use MakeShared\Telemetry\TelemetryEventManager;
 use RuntimeException;
 
 class AuthenticateController extends AbstractAuthController
@@ -23,17 +24,29 @@ class AuthenticateController extends AbstractAuthController
      */
     public function authenticateAction()
     {
+        TelemetryEventManager::triggerStart(
+            'AuthenticateController.authenticateAction',
+        );
+
         $data = $this->getBodyContent();
 
         $updateToken = (isset($data['Update']) && $data['Update'] === 'false' ? false : true);
 
+        $response = null;
+
         if (isset($data['authToken'])) {
-            return $this->withToken(trim($data['authToken']), $updateToken);
+            $response = $this->withToken(trim($data['authToken']), $updateToken);
         } elseif (isset($data['username']) && isset($data['password'])) {
-            return $this->withPassword(trim($data['username']), $data['password'], $updateToken);
+            $response = $this->withPassword(trim($data['username']), $data['password'], $updateToken);
         }
 
-        return new ApiProblem(400, 'Either token or username & password must be passed');
+        if (is_null($response)) {
+            $response = new ApiProblem(400, 'Either token or username & password must be passed');
+        }
+
+        TelemetryEventManager::triggerStop();
+
+        return $response;
     }
 
     /**
