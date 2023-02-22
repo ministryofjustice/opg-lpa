@@ -205,6 +205,7 @@ class StatusViewModelHelperTest extends MockeryTestCase
 
         // registered and dispatched LPA displays as "Processed"
         // with dispatch date + 15 working days as expected receipt date
+        // and text with a link to Use an LPA
         [
             'lpaId' => '32004638272',
             'lpaMetadata' => [
@@ -228,7 +229,13 @@ class StatusViewModelHelperTest extends MockeryTestCase
                     "processed the LPA",
 
                     // should get this text for all processed LPAs where returnUnpaid is not true
-                    "The donor and all attorneys on the LPA will get a letter telling them the outcome"
+                    "The donor and all attorneys on the LPA will get a letter telling them the outcome",
+
+                    // link to Use an LPA
+                    "the donor and attorneys will be able to use it",
+                    "by creating an account on",
+                    "Use an LPA",
+                    "and adding the details provided in the letter",
                 ],
             ],
         ],
@@ -463,10 +470,11 @@ class StatusViewModelHelperTest extends MockeryTestCase
 
         // check for text specific to current status
         foreach ($expectedTextFragments as $textFragment) {
-            $matches = $xpath->query("//*[contains(text(), \"$textFragment\")]");
-            $this->assertGreaterThan(
-                0,
-                $matches->length,
+            $textFragment = '/' . preg_quote($textFragment) . '/';
+            $match = preg_match($textFragment, $html);
+            $this->assertEquals(
+                1,
+                $match,
                 "Unable to find \"$textFragment\" (test case $index / lpa ID $lpaId)"
             );
         }

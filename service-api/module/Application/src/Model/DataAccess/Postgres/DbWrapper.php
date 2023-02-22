@@ -143,7 +143,10 @@ class DbWrapper
             $select->columns($options['columns']);
         }
 
-        TelemetryEventManager::triggerStart('DbWrapper.select', ['table' => $tableName]);
+        TelemetryEventManager::triggerStart(
+            'sql.select.' . $tableName,
+            ['annotations' => ['table' => $tableName]]
+        );
 
         /** @throws LaminasDbAdapterRuntimeException */
         $result = $sql->prepareStatementForSqlObject($select)->execute();

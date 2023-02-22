@@ -10,6 +10,9 @@ use MakeShared\Telemetry\Exporter\ExporterInterface;
 use MakeShared\Telemetry\Exporter\LogExporter;
 use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
+use mt_rand;
+use mt_getrandmax;
+use RuntimeException;
 
 /**
  * Trace and export AWS X-Ray telemetry.
@@ -24,6 +27,10 @@ class Tracer
 
     private string $serviceName;
 
+    // fraction of requests we will sample; if a random number 0-1
+    // is <= this value, we sample that request
+    private float $requestsSampledFraction = 0.05;
+
     private ExporterInterface $exporter;
 
     private ?Segment $rootSegment = null;
@@ -34,10 +41,20 @@ class Tracer
 
     private bool $started = false;
 
-    public function __construct(string $serviceName, ExporterInterface $exporter)
-    {
+    public function __construct(
+        string $serviceName,
+        ExporterInterface $exporter,
+        ?float $requestsSampledFraction = null,
+    ) {
         $this->serviceName = $serviceName;
         $this->exporter = $exporter;
+
+        if (!is_null($requestsSampledFraction)) {
+            if ($requestsSampledFraction < 0.0 || $requestsSampledFraction > 1.0) {
+                throw new RuntimeException('$requestsSampledFraction is outside range 0-1');
+            }
+            $this->requestsSampledFraction = $requestsSampledFraction;
+        }
     }
 
     /**
@@ -45,9 +62,16 @@ class Tracer
      *
      * @param array $config Expects exporter.host and exporter.url properties; if not set,
      * a console exporter is used by default.
+     * If requestsSampledFraction (a float from 0-1) is present in $config, it is used
+     * to set the fraction of requests which will be sampled; otherwise, the default is used.
      */
     public static function create(array $config = [])
     {
+        $requestsSampledFraction = $config['requestsSampledFraction'] ?? null;
+        if (!is_null($requestsSampledFraction)) {
+            $requestsSampledFraction = floatval($requestsSampledFraction);
+        }
+
         $serviceName = $config['exporter']['serviceName'];
         $exporterHost = $config['exporter']['host'] ?? null;
         $exporterPort = $config['exporter']['port'] ?? null;
@@ -58,21 +82,13 @@ class Tracer
             $exporter = new XrayExporter($exporterHost, intval($exporterPort));
         }
 
-        return new Tracer($serviceName, $exporter);
+        return new Tracer(
+            $serviceName,
+            $exporter,
+            $requestsSampledFraction,
+        );
     }
 
-    public function getExporter(): ExporterInterface
-    {
-        return $this->exporter;
-    }
-
-    /**
-     * This is useful for passing a Parent key in the x-amz-trace-id
-     * field when forwarding the trace ID to other components, e.g.
-     * making an HTTP request from service-front to service-api.
-     *
-     * @return ?string ID of the currently-active segment, or null if not available
-     */
     public function getCurrentSegmentId(): ?string
     {
         if (is_null($this->currentSegment)) {
@@ -82,13 +98,35 @@ class Tracer
         return $this->currentSegment->getId();
     }
 
+    public function getTraceHeaderToForward(): ?string
+    {
+        if (is_null($this->currentSegment)) {
+            return null;
+        }
+
+        return sprintf(
+            'Root=%s;Parent=%s;Sampled=%s',
+            $this->currentSegment->traceId,
+            $this->currentSegment->getId(),
+            ($this->currentSegment->sampled ? '1' : '0'),
+        );
+    }
+
+    public function getExporter(): ExporterInterface
+    {
+        return $this->exporter;
+    }
+
     /**
      * Create the root segment; if we have no trace ID or trace ID without
      * a "Root" key, don't do anything (we can't trace these requests).
      *
+     * @param ?array $headers Set to $_SERVER if not supplied
+     * @param array $attributes Key/value pairs to append to segment
+     *
      * @return ?Segment Root segment, or null if none was created
      */
-    public function startRootSegment(?array $headers = null): ?Segment
+    public function startRootSegment(?array $headers = null, array $attributes = []): ?Segment
     {
         if (is_null($headers)) {
             $headers = $_SERVER;
@@ -114,15 +152,23 @@ class Tracer
         $parentSegmentId = $traceHeader['Parent'] ?? null;
 
         // set whether this segment should be sampled; if false, the XrayExporter
-        // ignores the segment
-        $sampled = isset($traceHeader['Sampled']) && $traceHeader['Sampled'] === '1';
+        // ignores the segment; if there is no Sampled flag in the header, we
+        // randomly select whether the request should be sampled (which will be the
+        // case when the request first comes in from the AWS load balancer)
+        if (!isset($traceHeader['Sampled'])) {
+            $sampled = (mt_rand() / mt_getrandmax()) <= $this->requestsSampledFraction;
+        } else {
+            $sampled = isset($traceHeader['Sampled']) && $traceHeader['Sampled'] === '1';
+        }
 
         $this->rootSegment = new Segment(
             $this->serviceName,
             $traceHeader['Root'],
             $parentSegmentId,
             $sampled,
+            $attributes,
         );
+
         $this->currentSegment = $this->rootSegment;
         $this->segments[$this->rootSegment->getId()] = $this->rootSegment;
 
@@ -135,7 +181,6 @@ class Tracer
      * Add a child span to the currently-active span (usually root).
      * The returned span can then have attributes set etc. as desired.
      *
-     * TODO attributes
      * @param array $attributes Key/value pairs to set on the span, where each
      * key is a string and each value a "non-null string, boolean, floating point value,
      * integer, or an array of these values"
@@ -149,7 +194,7 @@ class Tracer
             return null;
         }
 
-        $child = $this->currentSegment->addChild($name);
+        $child = $this->currentSegment->addChild($name, $attributes);
         $this->segments[$child->getId()] = $child;
         $this->currentSegment = $child;
 
@@ -164,6 +209,11 @@ class Tracer
 
         $this->currentSegment->end();
         $this->currentSegment = $this->segments[$this->currentSegment->getParentSegmentId()];
+    }
+
+    public function getRootSegment(): ?Segment
+    {
+        return $this->rootSegment;
     }
 
     public function stopRootSegment(): void
