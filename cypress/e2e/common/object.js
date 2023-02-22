@@ -25,10 +25,7 @@ Then('the object {string} should have these properties:', (key, dataTable) => {
       let name = row[0];
       let value = row[1];
 
-      // we do some basic type conversion here so we can cope with booleans,
-      // numbers and strings
-      value = value === 'true' ? true : value;
-      value = value === 'false' ? false : value;
+      value = convertIfBool(value);
 
       let potentialFloat = parseFloat(value);
       if (!isNaN(potentialFloat)) {
@@ -39,3 +36,29 @@ Then('the object {string} should have these properties:', (key, dataTable) => {
     }
   });
 });
+
+Then('the object {string} should have these values:', (key, dataTable) => {
+  // this can only run after setting a key in the testStore
+  cy.task('getValue', key).then((obj) => {
+    let rows = dataTable.rawTable;
+
+    for (let index in rows) {
+      let row = rows[index];
+      let name = row[0];
+      let value = row[1];
+
+      value = convertIfBool(value);
+
+      expect(obj).to.have.nested.property(name, value);
+    }
+  });
+});
+
+function convertIfBool(value) {
+  // we do some basic type conversion here so we can cope with booleans,
+  // numbers and strings
+  value = value === 'true' ? true : value;
+  value = value === 'false' ? false : value;
+
+  return value;
+}

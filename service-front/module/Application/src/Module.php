@@ -9,6 +9,7 @@ use MakeShared\Telemetry\Tracer;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Model\Service\Redis\RedisClient;
 use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManager;
@@ -204,19 +205,24 @@ class Module implements FormElementProviderInterface
                     ]);
                 },
 
-                'SaveHandler' => function (ServiceLocatorInterface $sm) {
+                'RedisClient' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
 
-                    $redisUrl = $config['session']['redis']['url'];
-                    $ttlMs = $config['session']['redis']['ttlMs'];
+                    $redisUrl = $config['redis']['url'];
+                    $ttlMs = $config['redis']['ttlMs'];
 
+                    return new RedisClient($redisUrl, $ttlMs, new Redis());
+                },
+
+                'SaveHandler' => function (ServiceLocatorInterface $sm) {
+                    $redisClient = $sm->get('RedisClient');
                     $request = $sm->get('Request');
 
                     $filter = function () use ($request) {
                         return !$request->getHeaders()->has('X-SessionReadOnly');
                     };
 
-                    return new FilteringSaveHandler($redisUrl, $ttlMs, [$filter], new Redis());
+                    return new FilteringSaveHandler($redisClient, [$filter]);
                 },
 
                 'TwigViewRenderer' => function (ServiceLocatorInterface $sm) {

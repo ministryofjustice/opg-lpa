@@ -66,6 +66,17 @@ class OrdnanceSurvey
         return $addresses;
     }
 
+    public function verify($response)
+    {
+        $addr = $response[0];
+        // Checks the fields that we display in UI are present in response
+        if (isset($addr['line1']) && isset($addr['line2']) && isset($addr['line3']) && isset($addr['postcode'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @param $postcode
      * @return mixed
