@@ -46,6 +46,8 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         Status::class => [
             'setDynamoDbClient' => 'DynamoDbSystemMessageClient',
             'setSessionSaveHandler' => 'SaveHandler',
+            'setOrdnanceSurveyClient' => 'OrdnanceSurvey',
+            'setRedisClient' => 'RedisClient',
         ],
     ];
 

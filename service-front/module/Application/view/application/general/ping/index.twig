@@ -46,6 +46,24 @@
 					<p class="flush--bottom">Session storage is down</p>
 				</li>
 			{% endif %}
+            {% if status.ordnanceSurvey.ok == true %}
+                <li>
+                    <i class="icon icon-tick"></i>
+                    <p class="flush--bottom">Ordnance Survey postcode lookup is up and running</p>
+                </li>
+            {% else %}
+                <li>
+                    <i class="icon icon-cross"></i>
+                    <p class="flush--bottom">Ordnance Survey postcode lookup is down</p>
+                </li>
+            {% endif %}
+            {% if status.ordnanceSurvey.cached == true %}
+                <li>
+                    <div class="bold-xsmall" style="margin-left: 32px">
+                        <p class="flush--bottom">(The Ordnance Survey status is a cached response due to rate limiting)</p>
+                    </div>
+                </li>
+            {% endif %}
 		</ul>
 	</div>
 </div>

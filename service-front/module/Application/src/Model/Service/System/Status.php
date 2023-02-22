@@ -3,11 +3,15 @@
 namespace Application\Model\Service\System;
 
 use Application\Model\Service\AbstractService;
+use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
+use Application\Model\Service\Redis\RedisClient;
 use Aws\DynamoDb\DynamoDbClient;
+use DateTime;
 use Exception;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * Goes through all required services and checks they're operating.
@@ -18,9 +22,16 @@ use Laminas\Session\SaveHandler\SaveHandlerInterface;
 class Status extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
+    use LoggerTrait;
 
     /** @var DynamoDbClient */
     private $dynamoDbClient;
+
+    /** @var OrdnanceSurvey */
+    private $ordnanceSurveyClient;
+
+    /** @var RedisClient */
+    private $redisClient;
 
     /** @var SaveHandlerInterface */
     private $sessionSaveHandler;
@@ -30,6 +41,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
      * - DynamoDb (system message table)
      * - Session save handler
      * - API
+     * - Ordnance Survey
      */
     public function check()
     {
@@ -56,9 +68,12 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $result['iterations'] = $i;
 
             if (!$result['ok']) {
-                return $result;
+                break;
             }
         }
+
+        // Check ordnanceSurvey - we rate limit this so we don't want it in the above retry loop
+        $result['ordnanceSurvey'] = $this->ordnanceSurvey();
 
         return $result;
     }
@@ -118,6 +133,62 @@ class Status extends AbstractService implements ApiClientAwareInterface
         ];
     }
 
+    private function ordnanceSurvey()
+    {
+        $config = $this->getConfig()['redis']['ordnance_survey'];
+
+        $redisOpen = $this->redisClient->open();
+        $lastOsCall = $this->redisClient->read('os_last_call');
+
+        $currentTime = new DateTime('now');
+        $currentUnixTime = $currentTime->getTimestamp();
+
+        // Check if redis cached a timestamp for last call to OS, and call OS if no timestamp or not rate limited
+        if (is_numeric($lastOsCall) && intval($lastOsCall) > 0) {
+            $timeDiff = $currentUnixTime - intval($lastOsCall);
+            $rateLimit = 60 / $config['max_call_per_min'];
+
+            // Not rate limited - call OS
+            if ($timeDiff > $rateLimit) {
+                return $this->callOrdnanceSurvey($currentUnixTime);
+            // Rate limited - return cached response
+            } else {
+                $osStatus = $this->redisClient->read('os_last_status');
+                $osDetails = $this->redisClient->read('os_last_details');
+
+                return [
+                    'ok' => boolval($osStatus),
+                    'cached' => true,
+                    'details' => json_decode($osDetails, true)
+                ];
+            }
+        } else {
+            return $this->callOrdnanceSurvey($currentUnixTime);
+        }
+    }
+
+    private function callOrdnanceSurvey(int $currentUnixTime)
+    {
+        $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
+
+        // Update redis with timestamp of the call to os
+        $this->redisClient->write('os_last_call', strval($currentUnixTime));
+
+        // Cache response in redis
+        if ($this->ordnanceSurveyClient->verify($os) == true) {
+            $alive = true;
+            $details = $os[0];
+        } else {
+            $alive = false;
+            $details = '';
+        }
+
+        $this->redisClient->write('os_last_status', strval($alive));
+        $this->redisClient->write('os_last_details', json_encode($details));
+
+        return ['ok' => $alive, 'cached' => false, 'details' => $details];
+    }
+
     /**
      * @param DynamoDbClient $dynamoDbClient
      */
@@ -127,10 +198,26 @@ class Status extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
+     * @param OrdnanceSurvey $ordnanceSurveyClient
+     */
+    public function setOrdnanceSurveyClient(OrdnanceSurvey $ordnanceSurveyClient)
+    {
+        $this->ordnanceSurveyClient = $ordnanceSurveyClient;
+    }
+
+    /**
      * @param SaveHandlerInterface $saveHandler
      */
     public function setSessionSaveHandler(SaveHandlerInterface $saveHandler)
     {
         $this->sessionSaveHandler = $saveHandler;
+    }
+
+    /**
+     * @param RedisClient $redisClient
+     */
+    public function setRedisClient(RedisClient $redisClient)
+    {
+        $this->redisClient = $redisClient;
     }
 }

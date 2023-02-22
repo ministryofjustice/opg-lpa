@@ -57,15 +57,20 @@ return [
             // The probability of GC running is gc_probability/gc_divisor
             'gc_probability' => 0,
         ],
-
-        'redis' => [
-            'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL'),
-
-            // TTL for Redis keys in milliseconds
-            'ttlMs' => (1000 * 60 * 60 * 3), // 3 hours,
-        ],
-
     ], // session
+
+    'redis' => [
+        'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL'),
+
+        // TTL for Redis keys in milliseconds
+        'ttlMs' => (1000 * 60 * 60 * 3), // 3 hours,
+
+        // config for calls to ordnance survey in PingController
+        'ordnance_survey' => [
+            // Rate limit status check calls to OS
+            'max_call_per_min' => 2, // once every 30 secs
+        ],
+    ],
 
     'csrf' => [
         // Salt used for generating csrf tokens
