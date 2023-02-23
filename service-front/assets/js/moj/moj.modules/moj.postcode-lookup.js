@@ -6,8 +6,12 @@
   const moj = window.moj;
   const lpa = window.lpa;
 
-  // Define the class
-  const PostcodeLookup = function (el) {
+  // Define the class;
+  // to change the error message position, add data-errorafterlabel="true"
+  // e.g. <div class=".js-PostcodeLookup" data-errorafterlabel="true">
+  const PostcodeLookup = function (el, data) {
+    this.errorAfterLabel = !!data.errorafterlabel;
+
     _.bindAll(
       this,
       'searchClicked',
@@ -137,20 +141,26 @@
       this.query = this.$wrap.find('.js-PostcodeLookup__query').val();
 
       if (!$el.hasClass('disabled')) {
+        $searchContainer.children('.error-message').remove();
+
         if (this.query !== '') {
+          $searchContainer.removeClass('error');
           $el.spinner();
           this.findPostcode(this.query);
-          $searchContainer.removeClass('error');
-          $searchContainer.children('.error-message').remove();
         } else {
           $searchContainer.addClass('error');
-          $searchContainer.children('.error-message').remove();
 
-          $(
+          var $errorElt = $(
             this.errorMessageTpl({
               errorMessage: 'Enter a postcode',
             }),
-          ).insertBefore($postcodeLabel);
+          );
+
+          if (this.errorAfterLabel) {
+            $errorElt.insertAfter($postcodeLabel);
+          } else {
+            $errorElt.insertBefore($postcodeLabel);
+          }
         }
       }
       return false;
@@ -240,7 +250,11 @@
             }),
           );
 
-          $errorElt.insertBefore($postcodeLabel);
+          if (this.errorAfterLabel) {
+            $errorElt.insertAfter($postcodeLabel);
+          } else {
+            $errorElt.insertBefore($postcodeLabel);
+          }
 
           // set width to that of the search container - offset from left
           var errorPosLeft = $errorElt.position().left;
