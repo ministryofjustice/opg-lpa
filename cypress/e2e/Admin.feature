@@ -15,7 +15,18 @@ Feature: Admin
     And I click "submit-button"
     Then there are "ten" ".user-find-result" elements on the page
     And the first activation date is "22nd Jan 2020 at 10:11:53 am"
-    And the second last login time is "Never logged in"
+    And the second "last login time" is "Never logged in"
+
+    # test previous and next links
+    When I click element marked "Next"
+    Then there are "ten" ".user-find-result" elements on the page
+    And the first activation date is "22nd Jan 2022 at 12:10:09 pm"
+    And the third "last login time" is "22nd Feb 2023 at 4:12:00 pm"
+
+    When I click element marked "Previous"
+    Then there are "ten" ".user-find-result" elements on the page
+    And the first activation date is "22nd Jan 2020 at 10:11:53 am"
+    And the second "last login time" is "Never logged in"
 
     When I click element marked "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
     Then the email address input contains "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
