@@ -1,7 +1,7 @@
 FROM python:3.9-alpine
 
-RUN apk add build-base curl && \
-    apk upgrade
+RUN apk add --no-cache build-base curl && \
+    apk upgrade --no-cache
 
 WORKDIR /makelpa
 

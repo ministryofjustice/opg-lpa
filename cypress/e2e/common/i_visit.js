@@ -101,6 +101,11 @@ Then(`I visit the LP1 download page for the test fixture lpa`, () => {
   visitPageForTestFixture('download/lp1', { failOnStatusCode: false });
 });
 
+Then(`I reload the page`, () => {
+  // note that cy.visitWithChecks will follow redirects, and require the status code to be 2xx after that
+  cy.reload(true);
+});
+
 function visitPageForTestFixture(urlPart, options) {
   cy.get('@lpaId').then((lpaId) => {
     cy.visitWithChecks('/lpa/' + lpaId + '/' + urlPart, options);

@@ -2,11 +2,9 @@
 
 namespace Application\Model\Service\Session;
 
+use Application\Model\Service\Redis\RedisClient;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
-use InvalidArgumentException;
-use Redis;
-use RedisException;
 
 /**
  * Custom save handler to which write filters can be applied.
@@ -30,20 +28,8 @@ class FilteringSaveHandler implements SaveHandlerInterface
     /** @var string */
     public const SESSION_PREFIX = 'PHPREDIS_SESSION:';
 
-    /** @var Redis */
+    /** @var RedisClient */
     private $redisClient;
-
-    /** @var string */
-    private $redisHost;
-
-    /** @var int */
-    private $redisPort = 6379;
-
-    /**
-     * TTL for Redis keys, in milliseconds
-     */
-    /** @var int */
-    private $ttl;
 
     /**
      * Array of closures, called in order to determine
@@ -61,38 +47,13 @@ class FilteringSaveHandler implements SaveHandlerInterface
     /**
      * Constructor
      *
-     * @param string $redisUrl In format tcp://host:port or tls://host:port
-     * @param int $ttlMs TTL for Redis keys, in milliseconds
+     * @param RedisClient $redisClient Client for Redis access
      * @param array $filters Filters to assign
-     * @param Redis $client Client for Redis access
      */
-    public function __construct(string $redisUrl, int $ttlMs, $filters = [], $redis = null)
+    public function __construct($redisClient, $filters = [])
     {
-        $urlParts = parse_url($redisUrl);
-
-        if (!isset($urlParts['host'])) {
-            throw new InvalidArgumentException('Redis hostname could not be parsed from provided URL');
-        }
-        $this->redisHost = $urlParts['host'];
-
-        if ($urlParts['scheme'] === 'tls') {
-            $this->redisHost = 'tls://' . $this->redisHost;
-        }
-
-        if (isset($urlParts['port'])) {
-            $this->redisPort = intval($urlParts['port']);
-        }
-
-        $this->ttl = $ttlMs;
-
-        if (!empty($filters)) {
-            $this->filters = $filters;
-        }
-
-        if (is_null($redis)) {
-            $redis = new Redis();
-        }
-        $this->redisClient = $redis;
+        $this->filters = $filters;
+        $this->redisClient = $redisClient;
     }
 
     /**
@@ -109,27 +70,10 @@ class FilteringSaveHandler implements SaveHandlerInterface
         return $this;
     }
 
-    // $savePath and $sessionName are ignored
-    public function open(string $savePath, string $sessionName): bool
+    // $_savePath and $_sessionName are ignored
+    public function open(string $_savePath, string $_sessionName): bool
     {
-        $result = false;
-
-        try {
-            // this will throw a RedisException if the Redis server is unavailable;
-            // the '@' suppresses PHP warning messages, e.g. if the Redis server's
-            // domain name cannot be resolved (in this case, an exception is still thrown)
-            $result = @$this->redisClient->connect($this->redisHost, $this->redisPort);
-        } catch (RedisException $e) {
-            $this->getLogger()->err(sprintf(
-                'Unable to connect to Redis server at %s:%s',
-                $this->redisHost,
-                $this->redisPort
-            ));
-            $this->getLogger()->err($e->getMessage());
-            $result = false;
-        }
-
-        return $result;
+        return $this->redisClient->open();
     }
 
     public function close(): bool
@@ -140,15 +84,7 @@ class FilteringSaveHandler implements SaveHandlerInterface
     public function read(string $id): string|false
     {
         $key = $this->getKey($id);
-        $data = $this->redisClient->get($key);
-
-        // Redis returns FALSE if a key doesn't exist, but
-        // PHP expects an empty string to be returned in that situation
-        if ($data === false || !is_string($data)) {
-            $data = '';
-        }
-
-        return $data;
+        return $this->redisClient->read($key);
     }
 
     /**
@@ -167,26 +103,17 @@ class FilteringSaveHandler implements SaveHandlerInterface
             }
         }
 
-        $key = $this->getKey($id);
-
         if ($doWrite) {
-            // This appears to return a Redis instance, not a boolean; so we
-            // check that here so we always get a boolean.
-            $success = $this->redisClient->setEx($key, $this->ttl, $data);
-            if ($success !== false) {
-                $success = true;
-            }
-
-            return $success;
-        } else {
-            return true;
+            $key = $this->getKey($id);
+            return $this->redisClient->write($key, $data);
         }
+
+        return true;
     }
 
     public function destroy(string $id): bool
     {
-        $this->redisClient->del($this->getKey($id));
-        return true;
+        return $this->redisClient->destroy($this->getKey($id));
     }
 
     // no-op, as we let Redis clean up expired keys and rely on TTL

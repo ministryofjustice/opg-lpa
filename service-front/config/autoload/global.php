@@ -57,15 +57,20 @@ return [
             // The probability of GC running is gc_probability/gc_divisor
             'gc_probability' => 0,
         ],
-
-        'redis' => [
-            'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL'),
-
-            // TTL for Redis keys in milliseconds
-            'ttlMs' => (1000 * 60 * 60 * 3), // 3 hours,
-        ],
-
     ], // session
+
+    'redis' => [
+        'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL'),
+
+        // TTL for Redis keys in milliseconds
+        'ttlMs' => (1000 * 60 * 60 * 3), // 3 hours,
+
+        // config for calls to ordnance survey in PingController
+        'ordnance_survey' => [
+            // Rate limit status check calls to OS
+            'max_call_per_min' => 2, // once every 30 secs
+        ],
+    ],
 
     'csrf' => [
         // Salt used for generating csrf tokens
@@ -130,5 +135,19 @@ return [
         // Number of working days after an LPA is processed before we expect it
         // to be received by the user
         'expected-working-days-before-receipt' => 15,
+    ],
+
+    'telemetry' => [
+        // fraction of requests which will be sampled, e.g. 0.05
+        'requestsSampledFraction' => getenv('OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION') ?: null,
+
+        'exporter' => [
+            'serviceName' => 'service-front',
+
+            // if this value is null, a console exporter will be used;
+            // for a standard XRay (over UDP) exporter, use host='localhost' and port=2000
+            'host' => getenv('OPG_LPA_TELEMETRY_HOST') ?: null,
+            'port' => getenv('OPG_LPA_TELEMETRY_PORT') ?: null,
+        ],
     ],
 ];

@@ -20,7 +20,8 @@ return array(
         'Application',
         //ZfcTwig MUST be the last module!
         //note that at this time that ZfcTwig has not been given a new Laminas namespace
-        'ZfcTwig'
+        'ZfcTwig',
+        'MakeShared\Telemetry',
     ),
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(
