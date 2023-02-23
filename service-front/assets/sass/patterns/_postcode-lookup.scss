@@ -5,13 +5,14 @@
     @include media($min-width: 641px) {
         width: 27%;
     }
-    
+
     @include media($min-width: 800px) {
         width: 32%;
     }
 }
 
 .postcode-button {
+    padding-bottom: 3px;
     @include media(mobile) {
         margin-top: $gutter-half;
         text-align: center;
