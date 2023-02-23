@@ -1,6 +1,23 @@
 const path = require('path');
 import { Then } from '@badeball/cypress-cucumber-preprocessor';
 
+const findActivationDates = () => {
+  return Cypress.$('[data-role=user-activation-date]');
+};
+
+const findLoginTimes = () => {
+  return Cypress.$('[data-role=user-last-login-time]');
+};
+
+Then('I find {string} on the admin site', (name) => {
+  let user = Cypress.env(name + '-user');
+  cy.origin('https://localhost:7003/', { args: { user: user } }, ({ user }) => {
+    cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
+    cy.get('[data-cy=email-address-input]').clear({ force: true }).type(user);
+    cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
+  });
+});
+
 // cypress steps specific to the admin UI
 Then('I am taken to the find users page', () => {
   cy.url().should('eq', Cypress.env('adminUrl') + '/user-find');
@@ -22,6 +39,11 @@ Then('the first user email address is {string}', (dateString) => {
 Then('the first user account status is {string}', (status) => {
   const firstStatus = Cypress.$('[data-role=user-account-status]').get(0);
   expect(firstStatus.innerText).to.eql(status);
+});
+
+Then('the first deletion reason is {string}', (reason) => {
+  const firstReason = Cypress.$('[data-role=deletion-reason]').get(0);
+  expect(firstReason.innerText).to.eql(reason);
 });
 
 Then('the first activation date is {string}', (dateString) => {
