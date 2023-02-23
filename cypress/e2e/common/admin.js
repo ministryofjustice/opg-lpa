@@ -28,9 +28,15 @@ Then('the first activation date is {string}', (dateString) => {
   expect(firstDate.innerHTML).to.eql(dateString);
 });
 
-Then('the second last login time is {string}', (timeString) => {
+Then('the second "last login time" is {string}', (timeString) => {
   const times = findLoginTimes();
   const secondLoginTime = times.get(1);
+  expect(secondLoginTime.innerHTML).to.eql(timeString);
+});
+
+Then('the third "last login time" is {string}', (timeString) => {
+  const times = findLoginTimes();
+  const secondLoginTime = times.get(2);
   expect(secondLoginTime.innerHTML).to.eql(timeString);
 });
 
