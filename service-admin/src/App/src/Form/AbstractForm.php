@@ -15,7 +15,6 @@ use Laminas\InputFilter\Input;
 abstract class AbstractForm extends LaminasForm
 {
     /**
-     * @param InputFilter $inputFilter
      * @return void
      */
     protected function addCsrfElement(): void

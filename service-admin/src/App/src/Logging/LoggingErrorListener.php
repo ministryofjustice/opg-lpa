@@ -17,8 +17,8 @@ class LoggingErrorListener
 
     /**
      * @param Throwable $error
-     * @param ServerRequestInterface $request (unused)
-     * @param ResponseInterface $response (unused)
+     * @param ServerRequestInterface $_1 (unused)
+     * @param ResponseInterface $_2 (unused)
      * @return void
      */
     public function __invoke(Throwable $error, ServerRequestInterface $_1, ResponseInterface $_2)
