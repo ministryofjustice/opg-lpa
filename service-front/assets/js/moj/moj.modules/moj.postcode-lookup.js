@@ -141,17 +141,16 @@
           $el.spinner();
           this.findPostcode(this.query);
           $searchContainer.removeClass('error');
-          $postcodeLabel.children('.error-message').remove();
+          $searchContainer.children('.error-message').remove();
         } else {
           $searchContainer.addClass('error');
-          $postcodeLabel.children('.error-message').remove();
-          $postcodeLabel.append(
-            $(
-              this.errorMessageTpl({
-                errorMessage: 'Enter a postcode',
-              }),
-            ),
-          );
+          $searchContainer.children('.error-message').remove();
+
+          $(
+            this.errorMessageTpl({
+              errorMessage: 'Enter a postcode',
+            }),
+          ).insertBefore($postcodeLabel);
         }
       }
       return false;
@@ -223,22 +222,30 @@
     },
 
     postcodeSuccess: function (response) {
+      var $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
+
       // not successful
       if (!response.success || response.addresses === null) {
-        const $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
-        const $postcodeLabel = $('label[for="postcode-lookup"]');
+        var $postcodeLabel = $('label[for="postcode-lookup"]');
 
         if (response.isPostcodeValid) {
           $searchContainer.addClass('error');
           $postcodeLabel.children('.error-message').remove();
-          $postcodeLabel.append(
-            $(
-              this.errorMessageTpl({
-                errorMessage:
-                  'Enter a real postcode. If you live overseas, enter your address manually instead of using the postcode lookup',
-              }),
-            ),
+
+          var $errorElt = $(
+            this.errorMessageTpl({
+              errorMessage:
+                'Could not find postcode. ' +
+                'Enter your address manually instead of using the postcode lookup.',
+            }),
           );
+
+          $errorElt.insertBefore($postcodeLabel);
+
+          // set width to that of the search container - offset from left
+          var errorPosLeft = $errorElt.position().left;
+          var containerWidth = $searchContainer.width();
+          $errorElt.width(containerWidth - errorPosLeft);
         } else {
           alert('Enter a valid UK postcode');
         }
@@ -250,9 +257,9 @@
             .parent()
             .replaceWith(this.resultTpl({ results: response.addresses }));
         } else {
-          this.$wrap
-            .find('.js-PostcodeLookup__search')
-            .after(this.resultTpl({ results: response.addresses }));
+          $searchContainer.after(
+            this.resultTpl({ results: response.addresses }),
+          );
         }
         this.$wrap.find('.js-PostcodeLookup__search-results').trigger('focus');
       }
