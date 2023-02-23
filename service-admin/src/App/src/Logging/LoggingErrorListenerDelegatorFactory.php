@@ -12,8 +12,7 @@ use Laminas\Stratigility\Middleware\ErrorHandler;
 class LoggingErrorListenerDelegatorFactory
 {
     /**
-     * @param ContainerInterface $container (unused)
-     * @param string $name (unused)
+     * @param ContainerInterface $_1 (unused)
      * @param callable $callback
      * @return ErrorHandler
      */
