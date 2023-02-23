@@ -248,9 +248,13 @@ module.exports = function (grunt) {
       options: {
         sourceMap: false
       },
-      build: {
+      build1: {
         src: 'public/assets/v2/js/application.js',
         dest: 'public/assets/v2/js/application.min.js'
+      },
+      build2: {
+        src: 'public/assets/v2/js/opg/session-timeout-init.js',
+        dest: 'public/assets/v2/js/opg/session-timeout-init.min.js'
       }
     },
 
