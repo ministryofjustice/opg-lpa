@@ -7,10 +7,15 @@
   const lpa = window.lpa;
 
   // Define the class;
-  // to change the error message position, add data-errorafterlabel="true"
-  // e.g. <div class=".js-PostcodeLookup" data-errorafterlabel="true">
+  // - To change the error message position to after the label,
+  //   add data-errorafterlabel="true", e.g.
+  //     <div class=".js-PostcodeLookup" data-errorafterlabel="true">
+  // - To change whether a red bar is displayed next to the error,
+  //   set data-showerrorbar="true", e.g.
+  //     <div class=".js-PostcodeLookup" data-showerrorbar="true">
   const PostcodeLookup = function (el, data) {
     this.errorAfterLabel = !!data.errorafterlabel;
+    this.showErrorBar = !!data.showerrorbar;
 
     _.bindAll(
       this,
@@ -145,10 +150,15 @@
 
         if (this.query !== '') {
           $searchContainer.removeClass('error');
+          $searchContainer.removeClass('form-group-error');
           $el.spinner();
           this.findPostcode(this.query);
         } else {
           $searchContainer.addClass('error');
+
+          if (this.showErrorBar) {
+            $searchContainer.addClass('form-group-error');
+          }
 
           var $errorElt = $(
             this.errorMessageTpl({
@@ -240,6 +250,11 @@
 
         if (response.isPostcodeValid) {
           $searchContainer.addClass('error');
+
+          if (this.showErrorBar) {
+            $searchContainer.addClass('form-group-error');
+          }
+
           $postcodeLabel.children('.error-message').remove();
 
           var $errorElt = $(
