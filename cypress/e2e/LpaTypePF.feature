@@ -22,7 +22,7 @@ Feature: Property and Finance LPA starting from the Type page
         When I click "add-donor"
         Then I can find "form-donor"
 
-    @CleanupFixtures @EncodingCheckAfter @LinkCheckAfter
+    @CleanupFixtures @RunEncodingCheckAfterStep @RunLinkCheckAfterStep
     Scenario: Choose Property and Finance as Lpa Type
         When I choose Property and Finance
         And I click "save"
