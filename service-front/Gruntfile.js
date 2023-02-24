@@ -62,11 +62,11 @@ module.exports = function (grunt) {
     watch: {
       scss: {
         files: 'assets/sass/**/*.scss',
-        tasks: ['sass', 'replace:image_url', 'cssmin']
+        tasks: ['build_css']
       },
       js: {
         files: 'assets/js/**/*.js',
-        tasks: ['concat', 'copy:jsdev']
+        tasks: ['build_js_dev']
       },
       templates: {
         files: ['<%= handlebars.compile.src %>'],
