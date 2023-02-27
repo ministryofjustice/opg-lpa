@@ -19,7 +19,7 @@ trait UrlHelperTrait
     private $helper;
 
     /**
-     * @param UrlHelper $helper
+     * @param UrlHelper $template
      */
     public function setUrlHelper(UrlHelper $template)
     {
