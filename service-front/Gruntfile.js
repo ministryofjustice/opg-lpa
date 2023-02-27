@@ -66,7 +66,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: 'assets/js/**/*.js',
-        tasks: ['concat', 'copy:jsdev']
+        tasks: ['concat', 'copy:jsdev', 'copy:jsdevdashboardstatuses', 'copy:jsdevsessiontimeout', 'copy:jsdevgoogleanalytics']
       },
       templates: {
         files: ['<%= handlebars.compile.src %>'],
@@ -152,16 +152,16 @@ module.exports = function (grunt) {
       },
 
       jsdevdashboardstatuses: {
-        src: 'public/assets/js/opg/dashboard-statuses.js',
+        src: 'assets/js/opg/dashboard-statuses.js',
         dest: 'public/assets/v2/js/js-dashboard-statuses.min.js'
       },
 
       jsdevsessiontimeout: {
-        src: 'public/assets/js/opg/session-timeout-init.js',
+        src: 'assets/js/opg/session-timeout-init.js',
         dest: 'public/assets/v2/js/session-timeout-init.min.js'
       },
       jsdevgoogleanalytics: {
-        src: 'public/assets/js/opg/google-analytics.js',
+        src: 'assets/js/opg/google-analytics.js',
         dest: 'public/assets/v2/js/google-analytics.min.js'
       },
     },
@@ -268,15 +268,15 @@ module.exports = function (grunt) {
         dest: 'public/assets/v2/js/application.min.js'
       },
       build2: {
-        src: 'public/assets/js/opg/session-timeout-init.js',
+        src: 'assets/js/opg/session-timeout-init.js',
         dest: 'public/assets/js/opg/session-timeout-init.min.js'
       },
       build3: {
-        src: 'public/assets/js/opg/google-analytics.js',
+        src: 'assets/js/opg/google-analytics.js',
         dest: 'public/assets/js/opg/google-analytics.min.js'
       },
       build4: {
-        src: 'public/assets/js/opg/dashboard-statuses.js',
+        src: 'assets/js/opg/dashboard-statuses.js',
         dest: 'public/assets/js/opg/dashboard-statuses.min.js'
       },
     },
