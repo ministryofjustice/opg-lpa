@@ -153,16 +153,16 @@ module.exports = function (grunt) {
 
       jsdevdashboardstatuses: {
         src: 'assets/js/opg/dashboard-statuses.js',
-        dest: 'public/assets/v2/js/js-dashboard-statuses.min.js'
+        dest: 'public/assets/v2/js/opg/dashboard-statuses.min.js'
       },
 
       jsdevsessiontimeout: {
         src: 'assets/js/opg/session-timeout-init.js',
-        dest: 'public/assets/v2/js/session-timeout-init.min.js'
+        dest: 'public/assets/v2/js/opg/session-timeout-init.min.js'
       },
       jsdevgoogleanalytics: {
         src: 'assets/js/opg/google-analytics.js',
-        dest: 'public/assets/v2/js/google-analytics.min.js'
+        dest: 'public/assets/v2/js/opg/google-analytics.min.js'
       },
     },
 
@@ -269,15 +269,15 @@ module.exports = function (grunt) {
       },
       build2: {
         src: 'assets/js/opg/session-timeout-init.js',
-        dest: 'public/assets/js/opg/session-timeout-init.min.js'
+        dest: 'public/assets/v2/js/opg/session-timeout-init.min.js'
       },
       build3: {
         src: 'assets/js/opg/google-analytics.js',
-        dest: 'public/assets/js/opg/google-analytics.min.js'
+        dest: 'public/assets/v2/js/opg/google-analytics.min.js'
       },
       build4: {
         src: 'assets/js/opg/dashboard-statuses.js',
-        dest: 'public/assets/js/opg/dashboard-statuses.min.js'
+        dest: 'public/assets/v2/js/opg/dashboard-statuses.min.js'
       },
     },
 
