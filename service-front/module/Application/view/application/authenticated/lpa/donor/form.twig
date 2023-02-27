@@ -1,7 +1,5 @@
 {% extends isPopup ? 'layout/popup.twig' : 'layout/layout.twig' %}
 
-<span data-google-analytics="true"></span>
-
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
@@ -293,9 +291,7 @@
 
 {{ form().closeTag|raw }}
 
-    <script>
-        window.GOVUK.performance.stageprompt.setupForGoogleAnalytics();
-        moj.Modules.DetailsPolyfill.init();
-    </script>
+    <script src="{{ StaticAssetPath( '/assets/v2/js/opg/google-analytics.js', { 'minify':true } ) }}"></script>
+    <script src="{{ StaticAssetPath( '/assets/v2/js/opg/init-polyfill.js', { 'minify':true } ) }}"></script>
 
 {% endblock %}

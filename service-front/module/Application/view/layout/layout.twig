@@ -174,19 +174,11 @@
         </div>
     </footer>
 
-    <script>
-        // config for the GOVUK analytics module
-        var gaConfig = { universalId: 'UA-33184303-1', govId: 'UA-145652997-1' }
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', gaConfig.universalId]);
-        _gaq.push(['_trackPageview']);
-    </script>
+    <script src="{{ StaticAssetPath( '/assets/v2/js/opg/configure-google-analytics.js', { 'minify':true } ) }}"></script>
 
     <script src="/assets/v2/js/libs/jquery.min.js"></script>
     <script src="{{ StaticAssetPath( '/assets/v2/js/application.js', { 'minify':true } ) }}"></script>
-    <script>
-        GOVUK.performance.stageprompt.setupForGoogleAnalytics();
-    </script>
+    <script src="{{ StaticAssetPath( '/assets/v2/js/opg/google-analytics.js', { 'minify':true } ) }}"></script>
 
     {% include 'layout/partials/timeout.twig' %}
 
