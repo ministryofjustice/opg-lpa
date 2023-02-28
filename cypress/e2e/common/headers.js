@@ -28,14 +28,14 @@ Then(
         'strict-transport-security',
         'max-age=3600; includeSubDomains',
       );
-      // TODO uncomment when headers back on
-      /* var csp = "default-src 'self';"; // a semi-colon at the end is normal for content-security-policy
+      var csp =
+        "font-src 'self' data:; script-src 'self' google.com; default-src 'self';";
       expect(response.headers).to.have.property('content-security-policy', csp);
       var xcsp = "default-src 'self'";
       expect(response.headers).to.have.property(
         'x-content-security-policy',
         xcsp,
-      );*/
+      );
     });
   },
 );
