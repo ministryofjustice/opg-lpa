@@ -222,13 +222,8 @@ abstract class AbstractBaseController extends AbstractActionController
         $response->getHeaders()->addHeaders([
             'X-Content-Type-Options' => 'nosniff',
             'Referrer-Policy' => 'strict-origin-when-cross-origin',
-        ]);
-
-/*        $response->getHeaders()->addHeaders([
-            'Content-Security-Policy' => $securityPolicy
-]); */
-        $response->getHeaders()->addHeaders([
-            'X-Content-Security-Policy' => $securityPolicy
+            'Content-Security-Policy' => $securityPolicy,
+            'X-Content-Security-Policy' => $securityPolicy,
         ]);
 
         return parent::onDispatch($e);
