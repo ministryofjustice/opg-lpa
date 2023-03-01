@@ -184,14 +184,22 @@ jobs:
           IMAGE_NAME: ${{ matrix.image_name }}
           IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
         run: |
-          git fetch origin main:main --depth 2
-          git checkout main
-          MAIN_IMAGE_TAG=$(git rev-list --no-merges -n 1 main | cut -c1-7)
           if [[ "${{ matrix.override_tag }}X" != "X" ]]; then
-            MAIN_IMAGE_TAG=${{ matrix.override_tag }}
+            MAIN_IMAGE_TAG=main-${{ matrix.override_tag }}
+          else
+            MAIN_IMAGE_TAG=`aws ecr describe-images --repository-name=$IMAGE_NAME | \
+              jq '.imageDetails | map(select(.imageTags[] | test("main"))) | sort_by(.imagePushedAt) | .[-1].imageTags | map(select(test("main")))[0]' | \
+              sed -e 's/"//g'`
           fi
-          docker buildx imagetools create $ECR_REGISTRY/$IMAGE_NAME:main-$MAIN_IMAGE_TAG --tag $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-          git checkout - # return to original branch
+
+          if [ "$MAIN_IMAGE_TAG" = "null" ]; then
+            echo "ERROR: image does not need to be built, but no main-* tagged image available instead"
+            exit 1
+          fi
+
+          echo "Using prod image $ECR_REGISTRY/$IMAGE_NAME:$MAIN_IMAGE_TAG to create $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG"
+
+          docker buildx imagetools create $ECR_REGISTRY/$IMAGE_NAME:$MAIN_IMAGE_TAG --tag $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
 
       - name: Tag and Push Container
         if: steps.build_image.outputs.build == 'true'
