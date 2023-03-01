@@ -16,18 +16,11 @@ showHideContent.init();
 // Remove the no-js class
 $('body').removeClass('no-js');
 
-var dashboard = function () {
-  if ($('span[data-page=dashboard]').length === 0) {
-    return;
-  }
-};
-
 var jsEnabled = function () {
   document.body.className = document.body.className + ' js-enabled';
 };
 
 var inline = function () {
-  dashboard();
   jsEnabled();
 };
 
