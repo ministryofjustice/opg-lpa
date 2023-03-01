@@ -88,10 +88,14 @@ Acquiring state lock. This may take a few moments...
 
 The build fails as terraform (running in the pipeline) can't get a state lock (see above) to enable it to deploy the new dev infrastructure.
 
-The state lock can be removed via your local opg-lpa checkout as follows:
+**Important: try not to start a new AWS session inside an existing one. Open a new console before following the instructions below.**
 
-1. Make sure there are no other running builds in CircleCI; if there are, wait for them to fail or finish.
-2. `cd opg-lpa/terraform/region`
+#### Region state lock
+
+The state lock for a region can be removed via your local opg-lpa checkout as follows:
+
+1. Make sure there are no running builds for your PR; if there are, wait for them to fail or finish, or cancel them.
+2. `cd terraform/region`
 3. `source .envrc` (you're supposed to be able to use direnv to do this, but I can't get it to work properly; source works just as well)
 4. `aws-vault exec identity -- terraform init`; this downloads plugins/dependencies needed to run terraform
 5. Get the lock ID from the error message in CircleCI; in the above log example, it is `ef61c6bd-4030-3098-25d3-28f971e18376`
@@ -118,3 +122,19 @@ Terraform state has been successfully unlocked!
 The state has been unlocked, and Terraform commands should now be able to
 obtain a new lock on the remote state.
 ```
+
+#### Environment state lock
+
+The state lock for an environment can be removed via your local opg-lpa checkout with instructions similar to those for a region state lock:
+
+1. Make sure there are no running builds for your PR; if there are, wait for them to fail or finish, or cancel them.
+2. `cd terraform/environment`
+3. `source .envrc`
+4. `aws-vault exec identity -- terraform init`
+5. Get the lock ID from the error message in CircleCI; in the above log example, it is `ef61c6bd-4030-3098-25d3-28f971e18376`
+6. An extra step is required to get into the correct terraform workspace. To do this, you need to know the identifier for the PR, which is shown after the title of the PR in github.
+7. List the workspaces for the environment with `aws-vault exec identity -- terraform workspace list | grep <PR ID>`. This will give you a workspace something like `1350lpal115`.
+8. `export TF_WORKSPACE=1350lpal115`, replacing `1350lpal115` with your workspace ID.
+9. `aws-vault exec identity -- terraform force-unlock <lock ID>`, where `<lock ID>` is the lock ID derived in step 4
+
+This should show you the force-unlock prompts as appear for the region state unlock.
