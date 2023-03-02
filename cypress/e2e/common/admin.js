@@ -11,12 +11,10 @@ const findLoginTimes = () => {
 
 Then('I find {string} on the admin site', (name) => {
   let user = Cypress.env(name + '-user');
-  let adminUrl = Cypress.env('adminUrl');
-  cy.origin(adminUrl, { args: { user: user } }, ({ user }) => {
-    cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
-    cy.get('[data-cy=email-address-input]').clear({ force: true }).type(user);
-    cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
-  });
+  cy.visit(Cypress.env('adminUrl'));
+  cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
+  cy.get('[data-cy=email-address-input]').clear({ force: true }).type(user);
+  cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
 });
 
 // cypress steps specific to the admin UI
