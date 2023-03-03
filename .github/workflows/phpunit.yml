@@ -59,12 +59,17 @@ jobs:
         scan:
           - name: service-front
             path: "./service-front"
+            minCoverage: 85.97
           - name: service-api
             path: "./service-api"
+            minCoverage: 74.41
           - name: service-pdf
             path: "./service-pdf"
+            minCoverage: 85.1
           - name: shared
             path: "./shared"
+            minCoverage: 100
+            #minCoverage: 91.13
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
@@ -93,7 +98,9 @@ jobs:
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
-        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html
+        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
+      - name: Check coverage
+        run: php ../scripts/pipeline/php_coverage/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
       - name: Upload Coverage Artifacts
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
