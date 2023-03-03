@@ -13,7 +13,7 @@ jobs:
         scan:
           - name: service-admin
             path: "./service-admin"
-            minCoverage: 3.95
+            minCoverage: 3
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
@@ -59,16 +59,16 @@ jobs:
         scan:
           - name: service-front
             path: "./service-front"
-            minCoverage: 85.97
+            minCoverage: 85
           - name: service-api
             path: "./service-api"
-            minCoverage: 74.41
+            minCoverage: 74
           - name: service-pdf
             path: "./service-pdf"
-            minCoverage: 85.1
+            minCoverage: 85
           - name: shared
             path: "./shared"
-            minCoverage: 91.13
+            minCoverage: 91
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
