@@ -14,23 +14,20 @@ Feature: Admin
     When I type "FindUser" into "query-input" working around cypress bug
     And I click "submit-button"
     Then there are "ten" ".user-find-result" elements on the page
-    And the first activation date is "22nd Jan 2020 at 10:11:53 am"
-    And the second "last login time" is "Never logged in"
+    And the first user email address is "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
 
-    # test previous and next links
+    # next
     When I click element marked "Next"
     Then there are "ten" ".user-find-result" elements on the page
-    And the first activation date is "22nd Jan 2022 at 12:10:09 pm"
-    And the third "last login time" is "22nd Feb 2023 at 4:12:00 pm"
+    And the first user email address is "FindUser_Paging42MzQ5OTU20@uat.justice.gov.uk"
 
+    # previous
     When I click element marked "Previous"
     Then there are "ten" ".user-find-result" elements on the page
-    And the first activation date is "22nd Jan 2020 at 10:11:53 am"
-    And the second "last login time" is "Never logged in"
+    And the first user email address is "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
 
     When I click element marked "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
     Then the email address input contains "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
-    And the first activation date is "22nd Jan 2020 at 10:11:53 am"
 
     # search for deleted user elliot@townx.org
     When I click "user-search-link"

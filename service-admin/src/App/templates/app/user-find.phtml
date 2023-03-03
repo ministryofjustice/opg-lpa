@@ -50,7 +50,7 @@
                         <ul>
                             <li>
                                 <strong class="bold-small">Name: </strong>
-                                <a href="<?= $this->url('user.search', [], ['email' => htmlspecialchars($user['username'])]) ?>">
+                                <a data-role="user-email" href="<?= $this->url('user.search', [], ['email' => htmlspecialchars($user['username'])]) ?>">
                                     <?= htmlspecialchars($user['username']); ?>
                                 </a>
                             </li>
