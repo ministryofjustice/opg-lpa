@@ -27,7 +27,7 @@ if ($coveragePercent < $minPercent) {
 
 echo(
     "SUCCESS: Test coverage percentage {$coveragePercent}% " .
-    "is >= required minimum {$minPercent}\n"
+    "is >= required minimum {$minPercent}%\n"
 );
 
 exit(0);
