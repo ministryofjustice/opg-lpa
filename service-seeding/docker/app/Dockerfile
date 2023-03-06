@@ -9,4 +9,4 @@ COPY scripts/non_live_seeding /app
 
 WORKDIR /app
 
-CMD chmod +x seed_environment.sh && ./seed_environment.sh
+CMD sh /app/seed_environment.sh

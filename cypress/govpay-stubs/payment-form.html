@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<!-- saved from url=(0075)https://www.payments.service.gov.uk/card_details/krbv4hp5ir2tq7ijmul0epsa31 -->
+<html lang="en" class="govuk-template "><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>    Enter card details
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="noindex, nofollow">
+  </head>
+  <body class="govuk-template__body  js-enabled" data-accept-header="text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9">
+
+      <a href="/card_details/krbv4hp5ir2tq7ijmul0epsa31#main-content" class="govuk-skip-link">Skip to main content</a>
+
+
+    <header class="govuk-header" role="banner" data-module="govuk-header">
+      <div class="govuk-header__container govuk-width-container">
+        <div class="govuk-header__logo">
+          <a href="https://www.gov.uk/" class="govuk-header__link govuk-header__link--homepage">
+            <span class="govuk-header__logotype">
+              <span class="govuk-header__logotype-text">
+                GOV.UK
+              </span>
+            </span>
+          </a>
+        </div>
+        <div class="govuk-header__content">
+          <span class="govuk-header__link--service-name">
+            Make a lasting power of attorney
+          </span>
+        </div>
+      </div>
+    </header>
+
+  <div class="govuk-width-container govuk-main-wrapper">
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+      <main class="charge-new govuk-grid-column-two-thirds" id="main-content" role="main">
+          <div class="charge-new__content">
+            <div id="error-summary" class="govuk-error-summary hidden" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+              <h2 class="govuk-error-summary__title" id="error-summary-title">
+                The following fields are missing or contain errors
+              </h2>
+              <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                </ul>
+              </div>
+            </div>
+            <div id="spinner" class="hidden"><img alt="waiting"></div>
+
+            <div id="card-details-wrap">
+              <div class="non-web-payment-button-section govuk-!-margin-bottom-5">
+                <h1 class="govuk-heading-l ">Enter card details</h1>
+                  <div class="payment-summary-wrap">
+    <div class="payment-summary">
+        <h2 class="govuk-heading-m">Payment summary</h2>
+        <p id="payment-description" class="govuk-body">
+        Property and financial affairs LPA for Mr Not Important
+        </p>
+        <p class="govuk-body hidden" id="payment-summary-breakdown">
+        Amount
+        <span class="govuk-!-font-weight-bold" id="payment-summary-breakdown-amount"></span><br>
+        Corporate card fee:
+        <span class="govuk-!-font-weight-bold" id="payment-summary-corporate-card-fee"></span>
+        </p>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+        Total amount:
+        <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£00.00</span>
+        </p>
+    </div>
+  </div>
+
+              </div>
+
+              <form id="card-details" name="cardDetails" method="POST" action="/card_details/${payment_id}" novalidate="">
+                <input id="charge-id" name="chargeId" type="hidden" value="krbv4hp5ir2tq7ijmul0epsa31">
+                <input id="csrf" name="csrfToken" type="hidden" value="NXnLslw5-slWH9F8KD9Nwbt9x1IOw9Ckf2cM">
+
+                <div class="govuk-form-group card-no-group" data-validation="cardNo">
+                  <label id="card-no-lbl" for="card-no" class="govuk-label govuk-label--s govuk-!-width-three-quarters">
+                    <span class="card-no-label" data-label-replace="cardNo" data-original-label="Card number">
+                      Card number
+                    </span>
+                  </label>
+
+
+
+                  <p class="govuk-body accepted-cards-hint withdrawal-text govuk-!-margin-bottom-0">
+                      Accepted credit and debit card types
+                  </p>
+
+                  <ul class="accepted-cards field-empty">
+                        <li class="visa" data-key="visa" data-credit="true" data-debit="true">
+                          <img alt="Visa">
+                        </li>
+                        <li class="master-card" data-key="master-card" data-credit="true" data-debit="true">
+                          <img alt="Master Card">
+                        </li>
+                        <li class="american-express" data-key="american-express" data-credit="true" data-debit="false">
+                          <img alt="American Express">
+                        </li>
+                        <li class="diners-club" data-key="diners-club" data-credit="true" data-debit="false">
+                          <img alt="Diners Club">
+                        </li>
+                        <li class="discover" data-key="discover" data-credit="true" data-debit="false">
+                          <img alt="Discover">
+                        </li>
+                        <li class="jcb" data-key="jcb" data-credit="true" data-debit="false">
+                          <img alt="Jcb">
+                        </li>
+                        <li class="unionpay" data-key="unionpay" data-credit="true" data-debit="false">
+                          <img alt="Unionpay">
+                        </li>
+                  </ul>
+
+                  <div class="govuk-inset-text hidden" id="corporate-card-surcharge-message"></div>
+
+                  <input id="card-no" type="text" inputmode="numeric" pattern="[0-9]*" name="cardNo" maxlength="26" class="govuk-input govuk-!-width-three-quarters" autocomplete="cc-number" value="">
+                </div>
+
+                <div class="govuk-form-group govuk-clearfix govuk-!-margin-bottom-7  expiry-date" data-validation="expiryMonth">
+                  <fieldset class="govuk-fieldset" role="group" aria-describedby="expiry-date-hint">
+                    <legend>
+                      <div class="govuk-label govuk-label--s" id="expiry-date-lbl" for="expiry-month">
+                        <span class="expiry-date-label" data-label-replace="expiryMonth" data-original-label="Expiry date">
+                          Expiry date
+                        </span>
+                      </div>
+                    </legend>
+                    <span class="govuk-hint govuk-!-margin-bottom-2" id="expiry-date-hint">
+                      For example, 10/25</span>
+                    <div class="govuk-date-input__item govuk-date-input__item--month govuk-date-input__item--with-separator">
+                      <label class="govuk-label govuk-date-input__label" for="expiry-month">Month</label>
+                      <input id="expiry-month" type="text" inputmode="numeric" pattern="[0-9]*" name="expiryMonth" value="" class="govuk-input govuk-date-input__input govuk-input--width-3" minlength="1" maxlength="2" autocomplete="cc-exp-month">
+                    </div>
+                    <div class="govuk-date-input__item govuk-date-input__item--year">
+                      <label for="expiry-year" class="govuk-label govuk-date-input__label">Year</label>
+                      <input id="expiry-year" type="text" inputmode="numeric" pattern="[0-9]*" name="expiryYear" value="" minlength="2" maxlength="4" class="govuk-input govuk-date-input__input govuk-input--width-3" autocomplete="cc-exp-year" data-required="">
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="govuk-form-group" data-validation="cardholderName">
+                  <label id="cardholder-name-lbl" for="cardholder-name" class="govuk-label govuk-label--s">
+                    <span data-label-replace="cardholderName" data-original-label="Name on card" class="card-holder-name-label">
+                      Name on card
+                    </span>
+                  </label>
+
+
+                  <input id="cardholder-name" type="text" name="cardholderName" maxlength="200" class="govuk-input govuk-!-width-three-quarters" value="" autocomplete="cc-name">
+                </div>
+                <div class="govuk-form-group cvc govuk-clearfix" data-validation="cvc">
+                  <label id="cvc-lbl" for="cvc" class="govuk-label govuk-label--s">
+                    <span class="cvc-label" data-label-replace="cvc" data-original-label="Card security code">
+                      Card security code
+                    </span>
+                    <span class="govuk-hint govuk-!-margin-bottom-2">
+                      <span class="generic-cvc">
+                        The last 3 digits on the back of the card
+                      </span>
+                      <span class="amex-cvc hidden">
+                        <span class="hidden">
+                          For American Express,
+                        </span>
+                        <span class="no-js-lowercase">
+                          The last 4 digits after the card number on the front
+                        </span>
+                      </span>
+                    </span>
+                  </label>
+
+                  <input id="cvc" type="text" inputmode="numeric" pattern="[0-9]*" value="" name="cvc" class="govuk-input govuk-input--width-3 cvc" maxlength="4" autocomplete="cc-csc">
+                  <img class="generic-cvc" alt="The last 3 digits on the back of the card">
+                  <span class="either hidden">
+                    or
+                  </span>
+                  <img class="amex-cvc hidden" alt="The last 4 digits after the card number on the front">
+                 </div>
+                  <div class="govuk-!-width-three-quarters govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
+                      <fieldset class="govuk-fieldset" aria-describedby="address-hint">
+                        <legend>
+                          <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-section">Billing address</h2>
+                        </legend>
+
+                        <div id="address-hint" class="govuk-hint govuk-!-margin-bottom-6">This is the address associated with the card</div>
+
+                        <div class="govuk-form-group " data-validation="addressCountry">
+                          <label id="address-country-lbl" for="address-country" class="govuk-label">
+                            <span class="address-country-label" data-label-replace="addressCountry" data-original-label="Country or territory">
+                              Country or territory
+                            </span>
+                          </label>
+
+
+                          <div><div class="autocomplete__wrapper"><div style="border: 0px; clip: rect(0px, 0px, 0px, 0px); height: 1px; margin-bottom: -1px; margin-right: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 1px;"><div id="address-country__status--A" role="status" aria-atomic="true" aria-live="polite"></div><div id="address-country__status--B" role="status" aria-atomic="true" aria-live="polite"></div></div><input aria-expanded="false" aria-owns="address-country__listbox" aria-autocomplete="both" aria-describedby="address-country__assistiveHint" autocomplete="country-disabled-autocomplete" class="autocomplete__input autocomplete__input--default" id="address-country" name="" placeholder="" type="text" role="combobox"><ul class="autocomplete__menu autocomplete__menu--overlay autocomplete__menu--hidden" id="address-country__listbox" role="listbox"><li aria-selected="false" class="autocomplete__option" id="address-country__option--0" role="option" tabindex="-1" aria-posinset="1" aria-setsize="1"><strong>United Kingdom</strong></li></ul><span id="address-country__assistiveHint" style="display: none;">When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.</span></div></div><select name="addressCountry" class="govuk-select" id="address-country-select" autocomplete="billing country-name" style="display: none;">
+                              <option value="GB" selected="selected">United Kingdom</option>
+                          </select>
+                        </div>
+                        <div class="govuk-form-group address" data-validation="addressLine1">
+                          <label id="address-line-1-lbl" for="address-line-1" class="govuk-label">
+                            <span class="address-line-1-label" data-label-replace="addressLine1" data-original-label="Building number or name and street">
+                                  Building number or name and street
+                            </span>
+                          </label>
+
+
+                          <input id="address-line-1" type="text" name="addressLine1" maxlength="100" class="govuk-input" value="" autocomplete="billing address-line1">
+                              <input id="address-line-2" type="text" name="addressLine2" maxlength="100" class="govuk-input govuk-!-margin-top-2" data-last-of-form-group="" value="" aria-label="Enter address line 2" autocomplete="billing address-line2">
+                        </div>
+                        <div class="govuk-form-group govuk-!-width-three-quarters" data-validation="addressCity">
+                          <label id="address-city-lbl" for="address-city" class="govuk-label">
+                            <span class="address-city-label" data-label-replace="addressCity" data-original-label="Town or city">
+                              Town or city
+                            </span>
+                          </label>
+
+
+                          <input id="address-city" type="text" name="addressCity" maxlength="100" class="govuk-input govuk-!-width-three-quarters" value="" autocomplete="billing address-level2">
+                        </div>
+                        <div class="govuk-form-group govuk-!-margin-bottom-0" data-validation="addressPostcode">
+                          <label id="address-postcode-lbl" for="address-postcode" class="govuk-label">
+                            <span class="address-postcode-label" data-label-replace="addressPostcode" data-original-label="Postcode">
+                              Postcode
+                            </span>
+                          </label>
+
+
+                          <input id="address-postcode" type="text" name="addressPostcode" maxlength="10" class="govuk-input govuk-!-width-one-quarter" value="" autocomplete="billing postal-code">
+                        </div>
+                    </fieldset>
+                  </div>
+                  <div class="govuk-!-width-three-quarters email-container govuk-!-padding-top-4 govuk-!-margin-top-8 pay-!-border-top">
+                    <fieldset class="govuk-fieldset" aria-describedby="email-hint">
+                      <div>
+                        <legend for="email" class="govuk-!-margin-bottom-6">
+                          <h2 class="govuk-heading-m govuk-!-margin-bottom-1 non-web-payment-button-section">Contact details</h2>
+                        </legend>
+                        <div id="email-hint" class="govuk-hint govuk-!-margin-bottom-2">We’ll send your payment confirmation here</div>
+
+                        <div class="govuk-form-group " data-validation="email">
+                          <label id="email-lbl" for="email" class="govuk-label">
+                            <span class="email-label" data-label-replace="email" data-original-label="Email">
+                                Email
+                            </span>
+                          </label>
+
+
+                          <input id="email" type="email" name="email" maxlength="254" class="govuk-input govuk-!-width-full" value="" autocomplete="email" data-confirmation="true" data-confirmation-label="An email will be sent to: ">
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                <div>
+                    <button data-prevent-double-click="true" class="govuk-button" data-module="govuk-button" id="submit-card-details">
+                      Continue
+                    </button>
+                </div>
+              </form>
+              <form id="cancel" name="cancel" method="POST" action="/card_details/${payment_id}/cancel" class="form">
+                <div>
+                  <input id="cancel-payment" type="submit" class="button-reset" value="Cancel payment" name="cancel">
+                </div>
+              </form>
+            </div>
+          </div>
+      </main>
+    </div>
+  </div>
+
+  <footer class="govuk-footer" role="contentinfo">
+    <div class="govuk-width-container">
+      <div class="govuk-footer__meta">
+        <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+          <h2 class="govuk-visually-hidden">Support links</h2>
+          <ul class="govuk-footer__inline-list govuk-!-margin-bottom-6">
+            <li class="govuk-footer__inline-list-item">
+              Read our updated
+              <a class="govuk-footer__link" href="https://www.payments.service.gov.uk/privacy">
+                privacy notice
+              </a>
+            </li>
+            <li class="govuk-footer__inline-list-item">
+              <a class="govuk-footer__link" href="https://www.payments.service.gov.uk/accessibility-statement">
+                Accessibility Statement
+              </a>
+            </li>
+          </ul>
+            <ul class="govuk-footer__inline-list merchant-details">
+              <li class="govuk-footer__inline-list-item merchant-details-line-1">Service provided by Office of the Public Guardian</li>
+              <li class="govuk-footer__inline-list-item merchant-details-line-2">Office of the Public Guardian 7th Floor Axis, 10 Holiday Street, Birmingham B1 1TF United Kingdom</li>
+            </ul>
+          <svg role="presentation" focusable="false" class="govuk-footer__licence-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 483.2 195.7" height="17" width="41">
+            <path fill="currentColor" d="M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145"></path>
+          </svg>
+          <span class="govuk-footer__licence-description">
+            All content is available under the
+            <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated
+          </span>
+        </div>
+        <div class="govuk-footer__meta-item">
+          <a class="govuk-footer__link govuk-footer__copyright-logo" href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/">© Crown copyright</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+</body></html>
