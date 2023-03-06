@@ -1,0 +1,14 @@
+// redirect to /return/<payment_id> URL after POST is received on /card_details/<payment_id>/confirm
+(config) => {
+    // extract payment ID from /card_details/<payment_id>/confirm URL
+    const pathParts = config.request.path.split('/')
+    const paymentId = pathParts[pathParts.length - 2]
+
+    // record that the payment was successful
+    config.state.paymentCreatedResponses[paymentId].state.status = 'success'
+
+    const hostAndPortHeader = config.request.headers.host || config.request.headers.Host
+    const hostAndPort = hostAndPortHeader.split(':')
+    config.response.headers.Location = 'http://' + hostAndPort[0] + ':' + hostAndPort[1] +
+        '/return/' + paymentId
+}

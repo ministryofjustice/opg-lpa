@@ -1,0 +1,199 @@
+{
+    "imposters": [
+        {
+            "port": 4545,
+            "protocol": "http",
+            "recordRequests": false,
+            "stubs": [
+                {
+                    "predicates": [
+                        {
+                            "and":[
+                                { "equals": { "method": "GET" } },
+                                { "startsWith": { "path": "/v1/payments" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 200,
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "body": <%- include api-payment-response-stub.json %>
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('api-payment-response.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "equals": {
+                                "method": "POST",
+                                "path": "/v1/payments"
+                            }
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 201,
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "body": <%- include api-payment-response-stub.json %>
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('api-payment-response.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "GET" } },
+                                { "startsWith": { "path": "/secure" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 303,
+                                "headers": {
+                                    "Location": null
+                                }
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('web-secure-redirect.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "GET" } },
+                                { "matches": { "path": "/card_details/[^/]+$" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 200,
+                                "headers": {
+                                    "Content-Type": "text/html"
+                                },
+                                "body": "<%- stringify('payment-form.html') %>"
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('web-payment-form-urls.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "POST" } },
+                                { "matches": { "path": "/card_details/[^/]+$" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 303,
+                                "headers": {
+                                    "Location": null
+                                }
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('web-payment-form-redirect.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "GET" } },
+                                { "matches": { "path": "/card_details/[^/]+/confirm$" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 200,
+                                "headers": {
+                                    "Content-Type": "text/html"
+                                },
+                                "body": "<%- stringify('confirm-form.html') %>"
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('web-confirm-form-urls.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "POST" } },
+                                { "matches": { "path": "/card_details/[^/]+/confirm$" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 303,
+                                "headers": {
+                                    "Location": null
+                                }
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('web-confirm-form-redirect.ejs') %>" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "and": [
+                                { "equals": { "method": "GET" } },
+                                { "matches": { "path": "/return/[^/]+$" } }
+                            ]
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "statusCode": 302,
+                                "headers": {
+                                    "Location": null
+                                }
+                            },
+                            "behaviors": [
+                                { "decorate": "<%- stringify('web-return-redirect.ejs') %>" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

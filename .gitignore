@@ -1,3 +1,5 @@
+mb.pid
+mb*.log
 .DS_Store
 **/.terraform/
 **/terraform.tfstate.d/
