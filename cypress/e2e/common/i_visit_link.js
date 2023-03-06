@@ -32,3 +32,11 @@ Then(`I visit in new tab link named {string}`, (linkName) => {
     .click();
   cy.OPGCheckA11y();
 });
+
+Then(`I visit link with text {string} in a new tab`, (text) => {
+  cy.contains(text)
+    .should('have.attr', 'target', '_blank')
+    .invoke('removeAttr', 'target')
+    .click();
+  cy.OPGCheckA11y();
+});

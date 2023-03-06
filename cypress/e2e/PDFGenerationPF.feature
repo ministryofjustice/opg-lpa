@@ -5,7 +5,7 @@ Feature: PDF Generation for Property and Finance LPA
     Background:
         Given I ignore application exceptions
 
-    @focus
+    @RunLinkCheckAfterStep
     Scenario: Generate PDF
         When I log in as seeded user
         And I visit "/lpa/91155453023"

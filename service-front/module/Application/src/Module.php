@@ -200,8 +200,9 @@ class Module implements FormElementProviderInterface
                     $config = $sm->get('config')['alphagov']['pay'];
 
                     return new GovPayClient([
-                        'apiKey'        => $config['key'],
-                        'httpClient'    => $sm->get('HttpClient'),
+                        'apiKey' => $config['key'],
+                        'httpClient' => $sm->get('HttpClient'),
+                        'baseUrl'  => $config['url'],
                     ]);
                 },
 
