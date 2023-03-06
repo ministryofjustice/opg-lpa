@@ -1,6 +1,6 @@
 # minCoverage sets the minimum coverage level for unit tests; if coverage is less than this,
 # the build fails. The values for these parameters were set on 2023-03-03 from the coverage
-# levels of the phpunit tests at that time, rounded down.
+# levels of the phpunit tests at that time, rounded down. See LPAL-1143 for more details.
 name: phpunit tests
 
 on:
