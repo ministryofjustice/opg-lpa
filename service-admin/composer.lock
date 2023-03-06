@@ -58,16 +58,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.260.1",
+            "version": "3.260.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "964653acda337343e64344426fa609cf1df930e1"
+                "reference": "547b8047b2f9a551a7100b22e1abe1a3cc1b0ff0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/964653acda337343e64344426fa609cf1df930e1",
-                "reference": "964653acda337343e64344426fa609cf1df930e1",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/547b8047b2f9a551a7100b22e1abe1a3cc1b0ff0",
+                "reference": "547b8047b2f9a551a7100b22e1abe1a3cc1b0ff0",
                 "shasum": ""
             },
             "require": {
@@ -146,9 +146,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.260.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.260.3"
             },
-            "time": "2023-02-22T19:23:27+00:00"
+            "time": "2023-02-24T19:25:34+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -2535,16 +2535,16 @@
         },
         {
             "name": "mezzio/mezzio",
-            "version": "3.15.0",
+            "version": "3.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mezzio/mezzio.git",
-                "reference": "f1c473acd715d804075cd128b91846db74ca3d14"
+                "reference": "7d2efe760f62d5c43df3a3a86a470fccb00cf5a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mezzio/mezzio/zipball/f1c473acd715d804075cd128b91846db74ca3d14",
-                "reference": "f1c473acd715d804075cd128b91846db74ca3d14",
+                "url": "https://api.github.com/repos/mezzio/mezzio/zipball/7d2efe760f62d5c43df3a3a86a470fccb00cf5a3",
+                "reference": "7d2efe760f62d5c43df3a3a86a470fccb00cf5a3",
                 "shasum": ""
             },
             "require": {
@@ -2553,7 +2553,7 @@
                 "laminas/laminas-stratigility": "^3.5",
                 "mezzio/mezzio-router": "^3.7",
                 "mezzio/mezzio-template": "^2.2",
-                "php": "~8.0.0 || ~8.1.0 || ~8.2.0",
+                "php": "~8.1.0 || ~8.2.0",
                 "psr/container": "^1.0||^2.0",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0.1",
@@ -2577,9 +2577,9 @@
                 "mezzio/mezzio-aurarouter": "^3.6",
                 "mezzio/mezzio-fastroute": "^3.8",
                 "mezzio/mezzio-laminasrouter": "^3.7",
-                "phpunit/phpunit": "^9.5.27",
+                "phpunit/phpunit": "^10.0.11",
                 "psalm/plugin-phpunit": "^0.18.4",
-                "vimeo/psalm": "^5.4"
+                "vimeo/psalm": "^5.7.7"
             },
             "suggest": {
                 "filp/whoops": "^2.1 to use the Whoops error handler",
@@ -2638,7 +2638,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2023-01-15T08:32:54+00:00"
+            "time": "2023-02-26T22:42:46+00:00"
         },
         {
             "name": "mezzio/mezzio-fastroute",
@@ -6904,23 +6904,23 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.2.24",
+            "version": "9.2.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2cf940ebc6355a9d430462811b5aaa308b174bed"
+                "reference": "0e2b40518197a8c0d4b08bc34dfff1c99c508954"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2cf940ebc6355a9d430462811b5aaa308b174bed",
-                "reference": "2cf940ebc6355a9d430462811b5aaa308b174bed",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/0e2b40518197a8c0d4b08bc34dfff1c99c508954",
+                "reference": "0e2b40518197a8c0d4b08bc34dfff1c99c508954",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-xmlwriter": "*",
-                "nikic/php-parser": "^4.14",
+                "nikic/php-parser": "^4.15",
                 "php": ">=7.3",
                 "phpunit/php-file-iterator": "^3.0.3",
                 "phpunit/php-text-template": "^2.0.2",
@@ -6969,7 +6969,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.24"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.25"
             },
             "funding": [
                 {
@@ -6977,7 +6977,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-01-26T08:26:55+00:00"
+            "time": "2023-02-25T05:32:00+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -7328,12 +7328,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "778a428cd06a290d890e6bc1111b4e651b8a9da8"
+                "reference": "6bd8aa4cc5a5871008d89e503ac4ae7b69b5ac33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/778a428cd06a290d890e6bc1111b4e651b8a9da8",
-                "reference": "778a428cd06a290d890e6bc1111b4e651b8a9da8",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6bd8aa4cc5a5871008d89e503ac4ae7b69b5ac33",
+                "reference": "6bd8aa4cc5a5871008d89e503ac4ae7b69b5ac33",
                 "shasum": ""
             },
             "conflict": {
@@ -7477,7 +7477,7 @@
                 "fooman/tcpdf": "<6.2.22",
                 "forkcms/forkcms": "<5.11.1",
                 "fossar/tcpdf-parser": "<6.2.22",
-                "francoisjacquet/rosariosis": "<10.1",
+                "francoisjacquet/rosariosis": "<10.8.2",
                 "friendsofsymfony/oauth2-php": "<1.3",
                 "friendsofsymfony/rest-bundle": ">=1.2,<1.2.2",
                 "friendsofsymfony/user-bundle": ">=1.2,<1.3.5",
@@ -7570,6 +7570,7 @@
                 "magento/magento1ee": ">=1,<1.14.4.3",
                 "magento/product-community-edition": ">=2,<2.2.10|>=2.3,<2.3.2-p.2",
                 "maikuolan/phpmussel": ">=1,<1.6",
+                "mantisbt/mantisbt": "<=2.25.5",
                 "marcwillmann/turn": "<0.3.3",
                 "matyhtf/framework": "<3.0.6",
                 "mautic/core": "<4.3|= 2.13.1",
@@ -7825,6 +7826,7 @@
                 "wp-cli/wp-cli": "<2.5",
                 "wp-graphql/wp-graphql": "<0.3.5",
                 "wpanel/wpanel4-cms": "<=4.3.1",
+                "wpcloud/wp-stateless": "<3.2",
                 "wwbn/avideo": "<12.4",
                 "xataface/xataface": "<3",
                 "xpressengine/xpressengine": "<3.0.15",
@@ -7903,7 +7905,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-22T00:14:39+00:00"
+            "time": "2023-02-24T17:04:25+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -9104,16 +9106,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "5.7.5",
+            "version": "5.7.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "5390c212bab06ee230c8720c2e9c54b823db00c8"
+                "reference": "e028ba46ba0d7f9a78bc3201c251e137383e145f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/5390c212bab06ee230c8720c2e9c54b823db00c8",
-                "reference": "5390c212bab06ee230c8720c2e9c54b823db00c8",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/e028ba46ba0d7f9a78bc3201c251e137383e145f",
+                "reference": "e028ba46ba0d7f9a78bc3201c251e137383e145f",
                 "shasum": ""
             },
             "require": {
@@ -9203,9 +9205,9 @@
             ],
             "support": {
                 "issues": "https://github.com/vimeo/psalm/issues",
-                "source": "https://github.com/vimeo/psalm/tree/5.7.5"
+                "source": "https://github.com/vimeo/psalm/tree/5.7.7"
             },
-            "time": "2023-02-21T16:02:51+00:00"
+            "time": "2023-02-25T01:05:07+00:00"
         }
     ],
     "aliases": [],
