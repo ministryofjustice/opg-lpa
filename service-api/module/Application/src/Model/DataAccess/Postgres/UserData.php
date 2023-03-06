@@ -140,15 +140,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
             ->group(['user']);
 
-        // LIKE statements for WHERE clause
-        $likes = new PredicateSet();
-        $likeString = sprintf('%%%s%%', $query);
-        $likes->orPredicate(new Like('u.identity', $likeString));
-
-        $lcaseLikeString = strtolower($likeString);
-        if ($lcaseLikeString !== $likeString) {
-            $likes->orPredicate(new Like('u.identity', $lcaseLikeString));
-        }
+        // case-insensitive match on user email
+        $queryQuoted = $this->dbWrapper->quoteValue(sprintf('%%%s%%', $query));
+        $like = new Expression('u.identity ILIKE ' . $queryQuoted);
 
         // main query
         // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
@@ -160,7 +154,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
                 ['numberOfLpas'],
                 'FULL'
             )
-            ->where($likes)
+            ->where($like)
             ->order('identity ASC')
             ->offset($offset)
             ->limit($limit);
