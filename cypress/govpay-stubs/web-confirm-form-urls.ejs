@@ -1,0 +1,8 @@
+(config) => {
+    // extract payment ID from /card_details/<payment_id>/confirm URL
+    const pathParts = config.request.path.split('/')
+    const paymentId = pathParts[pathParts.length - 2]
+
+    // insert correct payment ID into HTML form URLs
+    config.response.body = config.response.body.replace('${payment_id}', paymentId)
+}
