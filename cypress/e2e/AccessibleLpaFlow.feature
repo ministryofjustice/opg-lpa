@@ -3,7 +3,6 @@ Feature: Accessible headings and information elements in the LPA workflow
     Background:
         Given I ignore application exceptions
 
-    @focus
     Scenario: Viewing instructions while navigating LPA creation screens
         Given I log in as appropriate test user
         And If I am on dashboard I click to create lpa

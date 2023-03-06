@@ -113,13 +113,10 @@ return [
     ], // address
 
     'alphagov' => [
-
         'pay' => [
-
             'key' => getenv('OPG_LPA_FRONT_GOV_PAY_KEY') ?: null,
-
+            'url' => getenv('OPG_LPA_FRONT_GOV_PAY_URL') ?: null,
         ],
-
     ],
 
     'log' => [
