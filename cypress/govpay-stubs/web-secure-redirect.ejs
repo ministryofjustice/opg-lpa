@@ -1,0 +1,16 @@
+// send 303 from /secure/<uuid> page to /card_details/<payment ID> page
+(config) => {
+    if (config.state.paymentCreatedResponsesByUuid !== undefined) {
+        // extract UUID from /secure/<uuid> path and redirect to
+        // the corresponding /card_details/<payment_id> URL
+        const pathParts = config.request.path.split('/')
+        const uuid = pathParts[pathParts.length - 1]
+
+        const createdResponse = config.state.paymentCreatedResponsesByUuid[uuid]
+
+        const hostAndPortHeader = config.request.headers.host || config.request.headers.Host
+        const hostAndPort = hostAndPortHeader.split(':')
+        config.response.headers.Location = 'http://' + hostAndPort[0] + ':' + hostAndPort[1] +
+            '/card_details/' + createdResponse.payment_id
+    }
+}

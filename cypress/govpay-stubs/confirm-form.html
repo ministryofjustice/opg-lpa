@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- saved from url=(0075)https://www.payments.service.gov.uk/card_details/krbv4hp5ir2tq7ijmul0epsa31 -->
+<html lang="en" class="govuk-template ">
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Confirm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="noindex, nofollow">
+  </head>
+  <body>
+    <div class="confirm-page__content">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Confirm your payment</h1>
+
+      <div class="payment-summary-wrap govuk-!-margin-bottom-2">
+        <div class="payment-summary">
+          <h2 class="govuk-heading-m">Payment summary</h2>
+          <p id="payment-description" class="govuk-body">
+            Property and financial affairs LPA for Mr Not Important
+          </p>
+          <p class="govuk-body govuk-!-margin-bottom-0">
+            Total amount:
+            <span id="amount" class="amount govuk-!-font-size-36 govuk-!-font-weight-bold">£00.00</span>
+          </p>
+        </div>
+      </div>
+
+      <table class="govuk-table">
+        <tbody class="govuk-table__body">
+              <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Card number</th>
+                <td class="govuk-table__cell govuk-!-width-two-thirds" id="card-number">●●●●●●●●●●●●1111</td>
+              </tr>
+              <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Expiry date</th>
+                <td class="govuk-table__cell govuk-!-width-two-thirds" id="expiry-date">10/25</td>
+              </tr>
+              <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Name on card</th>
+                <td class="govuk-table__cell govuk-!-width-two-thirds" id="cardholder-name">Mr Not Important</td>
+              </tr>
+              <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Billing address</th>
+                <td class="govuk-table__cell govuk-!-width-two-thirds" id="address">999 Blinky Promenade, Made Up Town</td>
+              </tr>
+              <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Confirmation email</th>
+                <td class="govuk-table__cell govuk-!-width-two-thirds" id="email">mrnotimportant@madeup.email</td>
+              </tr>
+        </tbody>
+      </table>
+
+      <form id="confirmation" method="POST" action="/card_details/${payment_id}/confirm" class="form">
+        <input id="csrf" name="csrfToken" type="hidden" value="xK2vLoXX-RjaAvQq9O95VztUecaxHSzkWIMg">
+        <input id="chargeId" name="chargeId" type="hidden" value="${payment_id}">
+        <button data-prevent-double-click="true" class="govuk-button" data-module="govuk-button" id="confirm">
+          Confirm payment
+        </button>
+      </form>
+
+      <form id="cancel" name="cancel" method="POST" action="/card_details/${payment_id}/cancel" class="form">
+        <div>
+          <input id="cancel-payment" type="submit" class="button-reset" value="Cancel payment" name="cancel">
+          <input id="csrf2" name="csrfToken" type="hidden" value="xK2vLoXX-RjaAvQq9O95VztUecaxHSzkWIMg">
+        </div>
+      </form>
+
+    </div>
+  </body>
+</html>

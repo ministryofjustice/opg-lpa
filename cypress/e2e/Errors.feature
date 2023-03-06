@@ -19,6 +19,7 @@ Feature: Errors
     # the same path through the code as invalid form fields (see below);
     # a failed login (but valid email input) produces a different type of error
     # from invalid form fields
+    @RunErrorSummaryCheckAfterStep
     Scenario: Error message heading level and text / server-rendered auth - valid email (LPAL-247)
         Given I visit "/login"
         And I type "foo@example.com" into "login-email"
@@ -29,6 +30,7 @@ Feature: Errors
         And "error-heading" is a "level 2 heading" element
         And there is "one" "level 1 heading" element on the page
 
+    @RunErrorSummaryCheckAfterStep
     Scenario: Fail to select type of LPA to create, error links to first radio (LPAL-248, LPAL-254)
         When I log in as appropriate test user
         And If I am on dashboard I click to create lpa
@@ -48,6 +50,7 @@ Feature: Errors
     # requires additional scenarios as login page doesn't use the error macro;
     # this scenario covers invalid email entered, which uses a different branch
     # of the code from a failed user login
+    @RunErrorSummaryCheckAfterStep
     Scenario: Error message heading level and text / server-rendered auth - invalid email (LPAL-247)
         Given I visit "/login"
         And I type "foo" into "login-email"

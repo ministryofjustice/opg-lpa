@@ -1,0 +1,8 @@
+// redirect to Make after GET is received at /return/<payment_id>
+(config) => {
+    // extract payment ID from /return/<payment_id> URL
+    const pathParts = config.request.path.split('/')
+    const paymentId = pathParts[pathParts.length - 1]
+    const createdResponse = config.state.paymentCreatedResponses[paymentId]
+    config.response.headers.Location = createdResponse.return_url
+}
