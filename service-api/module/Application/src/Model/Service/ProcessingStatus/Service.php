@@ -114,10 +114,12 @@ class Service extends AbstractService
         ]);
         TelemetryEventManager::triggerStop();
 
-        TelemetryEventManager::triggerStart('api.processingservice.fillpool', ['lpaid' => $id]);
+        TelemetryEventManager::triggerStart('api.processingservice.createpromise', ['lpaid' => $id]);
         // Initiate transfers and create a promise
         $promise = $pool->promise();
+        TelemetryEventManager::triggerStop();
 
+        TelemetryEventManager::triggerStart('api.processingservice.waitpromise', ['lpaid' => $id]);
         // Force the pool of requests to complete
         $promise->wait();
         TelemetryEventManager::triggerStop();
