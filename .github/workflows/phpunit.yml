@@ -1,3 +1,6 @@
+# minCoverage sets the minimum coverage level for unit tests; if coverage is less than this,
+# the build fails. The values for these parameters were set on 2023-03-03 from the coverage
+# levels of the phpunit tests at that time, rounded down. See LPAL-1143 for more details.
 name: phpunit tests
 
 on:
@@ -13,6 +16,7 @@ jobs:
         scan:
           - name: service-admin
             path: "./service-admin"
+            minCoverage: 3
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
@@ -41,7 +45,9 @@ jobs:
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
-        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html
+        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
+      - name: Check coverage
+        run: php ../scripts/pipeline/php_coverage/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
       - name: Upload Coverage Artifacts
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
@@ -56,12 +62,16 @@ jobs:
         scan:
           - name: service-front
             path: "./service-front"
+            minCoverage: 85
           - name: service-api
             path: "./service-api"
+            minCoverage: 74
           - name: service-pdf
             path: "./service-pdf"
+            minCoverage: 85
           - name: shared
             path: "./shared"
+            minCoverage: 91
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
@@ -90,7 +100,9 @@ jobs:
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
-        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html
+        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
+      - name: Check coverage
+        run: php ../scripts/pipeline/php_coverage/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
       - name: Upload Coverage Artifacts
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
