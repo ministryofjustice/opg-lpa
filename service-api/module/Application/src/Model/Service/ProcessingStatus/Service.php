@@ -103,7 +103,7 @@ class Service extends AbstractService
 
         TelemetryEventManager::triggerStart('api.processingservice.newpool', ['lpaid' => $id]);
         $pool = new Pool($this->httpClient, $requests, [
-            'concurrency' => 2,
+            'concurrency' => 10,
             'options' => [
                 'http_errors' => false,
             ],
