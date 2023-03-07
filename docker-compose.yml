@@ -41,6 +41,16 @@ services:
     ports:
       - 8000:8000
 
+  govpaystub:
+    container_name: lpa-govpaystub
+    image: bbyars/mountebank
+    ports:
+      - 2527:2525
+      - 4547:4545
+    volumes:
+      - ./cypress/govpay-stubs:/app
+    command: --allowInjection --configfile /app/mountebank-config.ejs
+
   localstack:
     container_name: lpa-localstack
     image: localstack/localstack:0.12.18
@@ -165,6 +175,8 @@ services:
         condition: service_started
       node-build-assets:
         condition: service_started
+      govpaystub:
+        condition: service_started
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -189,6 +201,7 @@ services:
       OPG_LPA_FRONT_EMAIL_TRANSPORT: notify
       OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY: "${OPG_LPA_API_NOTIFY_API_KEY}"
       OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
+      OPG_LPA_FRONT_GOV_PAY_URL: "http://govpaystub:4545"
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
