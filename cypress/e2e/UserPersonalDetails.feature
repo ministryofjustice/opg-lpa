@@ -51,7 +51,7 @@ Feature: Change User Personal Details
         And I type "blah" into "postcode-lookup" working around cypress bug
         And I see "postcode-lookup" prepopulated within timeout with "blah"
         And I click element marked "Find UK address"
-        Then I see "Enter a real postcode. If you live overseas, enter your address manually instead of using the postcode lookup" in the page text
+        Then I see "Could not find postcode. Enter your address manually instead of using the postcode lookup." in the page text
 
         # valid postcode, save changes
         When I type "NG2 1AR" into "postcode-lookup" working around cypress bug

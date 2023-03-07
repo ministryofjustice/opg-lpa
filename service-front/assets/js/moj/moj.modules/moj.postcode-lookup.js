@@ -6,8 +6,17 @@
   const moj = window.moj;
   const lpa = window.lpa;
 
-  // Define the class
-  const PostcodeLookup = function (el) {
+  // Define the class;
+  // - To change the error message position to after the label,
+  //   add data-errorafterlabel="true", e.g.
+  //     <div class=".js-PostcodeLookup" data-errorafterlabel="true">
+  // - To change whether a red bar is displayed next to the error,
+  //   set data-showerrorbar="true", e.g.
+  //     <div class=".js-PostcodeLookup" data-showerrorbar="true">
+  const PostcodeLookup = function (el, data) {
+    this.errorAfterLabel = !!data.errorafterlabel;
+    this.showErrorBar = !!data.showerrorbar;
+
     _.bindAll(
       this,
       'searchClicked',
@@ -137,21 +146,31 @@
       this.query = this.$wrap.find('.js-PostcodeLookup__query').val();
 
       if (!$el.hasClass('disabled')) {
+        $searchContainer.children('.error-message').remove();
+
         if (this.query !== '') {
+          $searchContainer.removeClass('error');
+          $searchContainer.removeClass('form-group-error');
           $el.spinner();
           this.findPostcode(this.query);
-          $searchContainer.removeClass('error');
-          $postcodeLabel.children('.error-message').remove();
         } else {
           $searchContainer.addClass('error');
-          $postcodeLabel.children('.error-message').remove();
-          $postcodeLabel.append(
-            $(
-              this.errorMessageTpl({
-                errorMessage: 'Enter a postcode',
-              }),
-            ),
+
+          if (this.showErrorBar) {
+            $searchContainer.addClass('form-group-error');
+          }
+
+          var $errorElt = $(
+            this.errorMessageTpl({
+              errorMessage: 'Enter a postcode',
+            }),
           );
+
+          if (this.errorAfterLabel) {
+            $errorElt.insertAfter($postcodeLabel);
+          } else {
+            $errorElt.insertBefore($postcodeLabel);
+          }
         }
       }
       return false;
@@ -223,22 +242,39 @@
     },
 
     postcodeSuccess: function (response) {
+      var $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
+
       // not successful
       if (!response.success || response.addresses === null) {
-        const $searchContainer = this.$wrap.find('.js-PostcodeLookup__search');
-        const $postcodeLabel = $('label[for="postcode-lookup"]');
+        var $postcodeLabel = $('label[for="postcode-lookup"]');
 
         if (response.isPostcodeValid) {
           $searchContainer.addClass('error');
+
+          if (this.showErrorBar) {
+            $searchContainer.addClass('form-group-error');
+          }
+
           $postcodeLabel.children('.error-message').remove();
-          $postcodeLabel.append(
-            $(
-              this.errorMessageTpl({
-                errorMessage:
-                  'Enter a real postcode. If you live overseas, enter your address manually instead of using the postcode lookup',
-              }),
-            ),
+
+          var $errorElt = $(
+            this.errorMessageTpl({
+              errorMessage:
+                'Could not find postcode. ' +
+                'Enter your address manually instead of using the postcode lookup.',
+            }),
           );
+
+          if (this.errorAfterLabel) {
+            $errorElt.insertAfter($postcodeLabel);
+          } else {
+            $errorElt.insertBefore($postcodeLabel);
+          }
+
+          // set width to that of the search container - offset from left
+          var errorPosLeft = $errorElt.position().left;
+          var containerWidth = $searchContainer.width();
+          $errorElt.width(containerWidth - errorPosLeft);
         } else {
           alert('Enter a valid UK postcode');
         }
@@ -250,9 +286,9 @@
             .parent()
             .replaceWith(this.resultTpl({ results: response.addresses }));
         } else {
-          this.$wrap
-            .find('.js-PostcodeLookup__search')
-            .after(this.resultTpl({ results: response.addresses }));
+          $searchContainer.after(
+            this.resultTpl({ results: response.addresses }),
+          );
         }
         this.$wrap.find('.js-PostcodeLookup__search-results').trigger('focus');
       }
