@@ -5,6 +5,7 @@ namespace Application\Model\DataAccess\Repository\Application;
 use RuntimeException;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\Logger;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 trait ApplicationRepositoryTrait
 {
@@ -57,7 +58,9 @@ trait ApplicationRepositoryTrait
             throw new RuntimeException('LPA object is invalid');
         }
 
+        TelemetryEventManager::triggerStart('api.applcationrepo.update', ['lpaid' => $lpa->id]);
         $result = $this->getApplicationRepository()->update($lpa);
+        TelemetryEventManager::triggerStop();
 
         $logger->info('LPA updated successfully', [
             'lpaid' => $lpa->id,

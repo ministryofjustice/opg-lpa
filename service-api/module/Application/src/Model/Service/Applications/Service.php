@@ -13,6 +13,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Paginator\Adapter\Callback as PaginatorCallback;
 use Laminas\Paginator\Adapter\NullFill as PaginatorNull;
 use RuntimeException;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 class Service extends AbstractService
 {
@@ -88,7 +89,9 @@ class Service extends AbstractService
     {
 
         /** @var Lpa $lpa */
+        TelemetryEventManager::triggerStart('api.applcationservice.fetch', ['lpaid' => $id]);
         $lpa = $this->fetch($id, $userId)->getData();
+        TelemetryEventManager::triggerStop();
 
         $data = $this->filterIncomingData($data);
 
@@ -102,7 +105,9 @@ class Service extends AbstractService
             return new ValidationApiProblem($validation);
         }
 
+        TelemetryEventManager::triggerStart('api.applcationservice.update', ['lpaid' => $id]);
         $this->updateLpa($lpa);
+        TelemetryEventManager::triggerStop();
 
         return new DataModelEntity($lpa);
     }
