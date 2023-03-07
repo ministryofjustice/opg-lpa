@@ -14,6 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client as HttpClient;
 use RuntimeException;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 class Service extends AbstractService
 {
@@ -96,6 +97,7 @@ class Service extends AbstractService
         // build pool
         $results = [];
 
+        TelemetryEventManager::triggerStart('api.processingservice.newpool', ['lpaid' => $id]);
         $pool = new Pool($this->httpClient, $requests, [
             'concurrency' => 50,
             'options' => [
@@ -110,6 +112,7 @@ class Service extends AbstractService
                 $this->getLogger()->debug('Failed to get status for LPA application ' . $id . ': ' . $reason);
             },
         ]);
+        TelemetryEventManager::triggerStop();
 
         // Initiate transfers and create a promise
         $promise = $pool->promise();
