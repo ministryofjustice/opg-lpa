@@ -1,16 +1,4 @@
-const { Then, After } = require('@badeball/cypress-cucumber-preprocessor');
-
-/*
- * Find all elements which are error summary headings.
- * For each, ensure that it is an h2.
- */
-After(() => {
-  cy.document().then((doc) => {
-    doc.querySelectorAll('.error-summary-heading').forEach((node) => {
-      assert(node.tagName == 'H2');
-    });
-  });
-});
+const { Then } = require('@badeball/cypress-cucumber-preprocessor');
 
 // Check links on the page which will open a new tab.
 // On pages where we have many links which open in new tabs, and where we

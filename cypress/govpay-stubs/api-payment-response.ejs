@@ -1,0 +1,114 @@
+/**
+ * Handle calls to the API to create and retrieve a payment
+ *
+ * Sets up two variables which can be used for future request handling:
+ * - config.state.paymentCreatedResponses: responses created to reply
+ *   to initial payment creation, keyed by payment ID
+ * - config.state.paymentCreatedResponsesByUuid: same, but keyed by
+ *   the UUID assigned to the payment
+ */
+(config) => {
+    // host and port of the mountebank server which are accessible
+    // to the browser; we will be redirecting to these URLs once
+    // the API response is received by the client;
+    // PORT needs to match the exposed port for govpaystub in docker-compose.yml
+    const HOST = 'localhost'
+    const PORT = '4547'
+
+    let response = config.response.body
+
+    let uuid
+
+    // modify response JSON depending on whether we are creating
+    // or retrieving a payment
+    if (config.request.method === 'POST') {
+        const requestBody = JSON.parse(config.request.body)
+
+        response.state.status = "created"
+        response.amount = requestBody.amount
+
+        response.refund_summary.amount_available = requestBody.amount
+        response.reference = requestBody.reference
+        response.description = requestBody.description
+        response.return_url = requestBody.return_url
+
+        // generate date
+        response.created_date = (new Date()).toISOString()
+
+        // generate payment_id
+        response.payment_id = (() => {
+            let id = ''
+            for (let i = 0; i < 26; i++) {
+                id += (Math.random() * 32|0).toString(32)
+            }
+            return id
+        })()
+
+        // generate UUID
+        // algorithm adapted from
+        // https://stackoverflow.com/questions/105034/how-do-i-create-a-guid-uuid/2117523
+        uuid = 'xxxxxxxx-xxxx-4xxx-Nxxx-xxxxxxxxxxxx'.replace(/[xN]/g, (match) => {
+            const r = Math.random() * 16|0
+            return (match === 'x' ? r : (r&0x3|0x8)).toString(16)
+        })
+        response._links.next_url_post.params.chargeTokenId = uuid
+
+        // this persists between requests; we're storing the
+        // state of the response to the initial create POST request,
+        // so that we can reference created_date, payment_id, amount etc.
+        if (config.state.paymentCreatedResponses === undefined) {
+            config.state.paymentCreatedResponses = {}
+        }
+
+        config.state.paymentCreatedResponses[response.payment_id] = response
+
+        // also index by UUID so we can look them up the correct payment_id
+        // to redirect the browser to when the /secure/ next_url is requested;
+        // this is not used here, but in the munger for forwarding the
+        // use from /secure/<uuid> to /card_details/<payment_id>
+        if (config.state.paymentCreatedResponsesByUuid === undefined) {
+            config.state.paymentCreatedResponsesByUuid = {}
+        }
+
+        config.state.paymentCreatedResponsesByUuid[uuid] = response
+    }
+    else if (config.request.method === 'GET') {
+        // retrieve the payment ID from the request path (it's the last segment)
+        // so we can find the response which we stored in state when
+        // the payment was created
+        const pathParts = config.request.path.split('/')
+        const paymentId = pathParts[pathParts.length - 1]
+        const createdResponse = config.state.paymentCreatedResponses[paymentId]
+
+        // if retrieving the payment, we use the response which was
+        // saved when the payment was created; we also bump it along to the
+        // next stage in its progress
+        if (createdResponse !== undefined) {
+            if (createdResponse.state.status === undefined) {
+                createdResponse.state.status = "started"
+            }
+
+            response.state.status = createdResponse.state.status
+            response.amount = createdResponse.amount
+            response.refund_summary.amount_available = createdResponse.amount
+            response.reference = createdResponse.reference
+            response.description = createdResponse.description
+            response.return_url = createdResponse.return_url
+            response.payment_id = createdResponse.payment_id
+            response.created_date = createdResponse.created_date
+
+            uuid = createdResponse._links.next_url_post.params.chargeTokenId
+            response._links.next_url_post.params.chargeTokenId = uuid
+        }
+    }
+
+    // fix URLs in response JSON
+    for (const name in response._links) {
+        let href = response._links[name].href
+        href = href.replace('${host}', HOST)
+        href = href.replace('${port}', PORT)
+        href = href.replace('${payment_id}', response.payment_id)
+        href = href.replace('${uuid}', uuid)
+        response._links[name].href = href
+    }
+}

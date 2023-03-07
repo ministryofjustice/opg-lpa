@@ -188,7 +188,7 @@ jobs:
             MAIN_IMAGE_TAG=main-${{ matrix.override_tag }}
           else
             MAIN_IMAGE_TAG=`aws ecr describe-images --repository-name=$IMAGE_NAME | \
-              jq '.imageDetails | map(select(.imageTags[] | test("main"))) | sort_by(.imagePushedAt) | .[-1].imageTags | map(select(test("main")))[0]' | \
+              jq '.imageDetails | map(select(.imageTags)) | map(select(.imageTags[] | test("main"))) | sort_by(.imagePushedAt) | .[-1].imageTags | map(select(test("main")))[0]' | \
               sed -e 's/"//g'`
           fi
 
