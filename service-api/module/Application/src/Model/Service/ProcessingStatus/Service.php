@@ -94,12 +94,16 @@ class Service extends AbstractService
             $requests[$id] = $this->awsSignature->signRequest($requests[$id], $this->credentials);
         }
 
+        $this->getLogger()->info('HELLO');
+        $this->getLogger()->debug('HI');
+        $this->getLogger()->debug('********** SIZE of requests is' . sizeof($requests));
+
         // build pool
         $results = [];
 
         TelemetryEventManager::triggerStart('api.processingservice.newpool', ['lpaid' => $id]);
         $pool = new Pool($this->httpClient, $requests, [
-            'concurrency' => 50,
+            'concurrency' => 2,
             'options' => [
                 'http_errors' => false,
             ],
@@ -113,6 +117,8 @@ class Service extends AbstractService
             },
         ]);
         TelemetryEventManager::triggerStop();
+
+        //$this->getLogger()->debug('Pool contains ' . $pool);
 
         TelemetryEventManager::triggerStart('api.processingservice.createpromise', ['lpaid' => $id]);
         // Initiate transfers and create a promise
