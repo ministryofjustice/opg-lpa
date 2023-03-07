@@ -16,6 +16,7 @@ use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use LmcRbacMvc\Service\AuthorizationService;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 class StatusController extends AbstractRestfulController
 {
@@ -111,7 +112,9 @@ class StatusController extends AbstractRestfulController
 
         if ($this->hasDifference($newMeta, $metaData)) {
             $metaData = array_merge($metaData, $newMeta);
+            TelemetryEventManager::triggerStart('api.patch', ['lpaid' => $lpaId]);
             $this->getService()->patch(['metadata' => $metaData], $lpaId, $this->routeUserId);
+            TelemetryEventManager::triggerStop();
             $this->getLogger()->debug('Updated metadata for: ' . $lpaId . var_export($metaData, true));
         }
     }
