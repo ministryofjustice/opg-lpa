@@ -3,7 +3,9 @@
   <coverage processUncoveredFiles="true" includeUncoveredFiles="true">
     <include>
       <directory suffix=".php">./module/Application/src</directory>
-      <directory suffix=".php">./build/twig-cache</directory>
+
+      <!-- next line only required if you want coverage reports for twig templates -->
+      <!--directory suffix=".php">./build/twig-cache</directory-->
     </include>
     <report>
       <html outputDirectory="./build/coverage"/>
