@@ -114,12 +114,15 @@ class Service extends AbstractService
         ]);
         TelemetryEventManager::triggerStop();
 
+        TelemetryEventManager::triggerStart('api.processingservice.fillpool', ['lpaid' => $id]);
         // Initiate transfers and create a promise
         $promise = $pool->promise();
 
         // Force the pool of requests to complete
         $promise->wait();
+        TelemetryEventManager::triggerStop();
 
+        TelemetryEventManager::triggerStart('api.processingservice.handleresponses', ['lpaid' => $id]);
         // Handle all request response now
         foreach ($results as $lpaId => $result) {
             $statusCode = $result->getStatusCode();
@@ -167,6 +170,7 @@ class Service extends AbstractService
                     break;
             }
         }
+        TelemetryEventManager::triggerStop();
 
         return $siriusResponseArray;
     }
