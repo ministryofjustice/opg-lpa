@@ -41,8 +41,6 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
             return false;
         }
 
-        error_log('+++++++++++++++++++++' . $details['identity_hash']);
-
         return true;
     }
 
@@ -63,10 +61,7 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
-        error_log('+++++++++++++++++++++' . print_r($result, true));
-
         if (!$result->isQueryResult() || $result->count() != 1) {
-            error_log('+++++++++++++++++++++ 0 or >1 results');
             return null;
         }
 
