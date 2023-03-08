@@ -34,14 +34,15 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
-        error_log('%%%%%%%%%%%TEST');
+        $this->getLogger()->debug('%%%%%%%%%%% addLog IDENTITY HASH:' . $details['identity_hash']);
 
         try {
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
-            error_log('++++++++++ identity hash' . $details['identity_hash']);
-            error_log('++++++++++ failed to addLog, exception:');
-            error_log($e->toString);
+            $this->getLogger()->debug('%%%%%%%%%% failed to addLog, EXCEPTION:');
+            $this->getLogger()->debug('%%%%%%%%%% EXCEPTION: ');
+            $this->getLogger()->debug($e->toString);
+            $this->getLogger()->debug($e);
             return false;
         }
 
@@ -63,12 +64,12 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         $select->order('loggedAt DESC');
         $select->limit(1);
 
-        error_log('%%%%%%%%%%%TEST2');
+        $this->getLogger()->debug('%%%%%%%%%% getLogByIdentityHash IDENTITY HASH: ' . print_r($identityHash, true));
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
         if (!$result->isQueryResult() || $result->count() != 1) {
-            error_log('++++++++++ bad query result OR result count not 1');
-            error_log('++++++++++' . print_r($identityHash, true));
+            $this->getLogger()->debug('%%%%%%%%%% getLogByIdentityHash bad query result OR result count not 1');
+            $this->getLogger()->debug('%%%%%%%%%%' . print_r($identityHash, true));
             return null;
         }
 
