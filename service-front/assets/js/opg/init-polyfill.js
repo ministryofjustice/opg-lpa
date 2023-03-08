@@ -1,0 +1,1 @@
+moj.Modules.DetailsPolyfill.init();
