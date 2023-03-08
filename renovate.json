@@ -2,5 +2,37 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
-  ]
+  ],
+  "branchPrefix": "renovate-",
+  "commitMessageAction": "Renovate Update",
+  "labels": [
+    "Dependencies",
+    "Renovate"
+  ],
+  "prConcurrentLimit": 0,
+  "branchConcurrentLimit": 0,
+  "lockFileMaintenance": { "enabled": true },
+  "major": {
+    "labels": [
+        "Dependencies",
+        "Renovate"
+    ],
+    "prCreation": "not-pending",
+    "prPriority": 0
+  },
+  "vulnerabilityAlerts": {
+    "groupName": "Security Alerts",
+    "labels": [
+      "Dependencies",
+      "Renovate",
+      "SecurityAlert"
+    ],
+    "dependencyDashboardApproval": false,
+    "stabilityDays": 0,
+    "rangeStrategy": "update-lockfile",
+    "commitMessagePrefix": "[SECURITY]",
+    "branchTopic": "{{{datasource}}}-{{{depName}}}-vulnerability",
+    "prCreation": "immediate",
+    "prPriority": 5
+  }
 }
