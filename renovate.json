@@ -92,7 +92,7 @@
     },
     {
       "description": [
-        "Minor and Patch updates",
+        "composer and npm Minor and Patch updates",
         "Make PRs after updated package has been stable for 3 days",
         "These might be automerged once we're comfortable with Renovate"
       ],
@@ -105,6 +105,10 @@
       ],
       "matchPackagePatterns": [
         "*"
+      ],
+      "matchPaths": [
+        "**/composer.json",
+        "**/package.json"
       ],
       "matchUpdateTypes": [
         "minor",
