@@ -76,6 +76,25 @@
     },
     {
       "description": [
+        "Composer Major Dependency Exclusions",
+        "guzzlehttp/guzzle - Stay at v6 until notify client upgraded (LPAL-1166)"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchFiles": [
+        "service-front/composer.json"
+      ],
+      "matchDatasources": [
+        "composer"
+      ],
+      "matchPackageNames": [
+        "guzzlehttp/guzzle"
+      ],
+      "enabled": false
+    },
+    {
+      "description": [
         "Minor and Patch updates",
         "Make PRs after updated package has been stable for 3 days",
         "These might be automerged once we're comfortable with Renovate"
