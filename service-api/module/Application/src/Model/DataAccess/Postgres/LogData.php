@@ -1,11 +1,11 @@
 <?php
+
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
 use Laminas\Db\Sql\Sql;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\User as UserRepository;
-
 
 class LogData extends AbstractBase implements UserRepository\LogRepositoryInterface
 {
@@ -17,7 +17,7 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
      * @param array $details
      * @return bool
      */
-    public function addLog(array $details) : bool
+    public function addLog(array $details): bool
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::DELETION_LOG_TABLE);
@@ -37,10 +37,11 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
 
         try {
             $statement->execute();
-        }
-        catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
+        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             return false;
         }
+
+        error_log('+++++++++++++++++++++' . $details['identity_hash']);
 
         return true;
     }
@@ -51,7 +52,7 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
      * @param string $identityHash
      * @return array
      */
-    public function getLogByIdentityHash(string $identityHash) : ?array
+    public function getLogByIdentityHash(string $identityHash): ?array
     {
         $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::DELETION_LOG_TABLE);
@@ -62,7 +63,10 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
+        error_log('+++++++++++++++++++++' . print_r($result, true));
+
         if (!$result->isQueryResult() || $result->count() != 1) {
+            error_log('+++++++++++++++++++++ 0 or >1 results');
             return null;
         }
 
