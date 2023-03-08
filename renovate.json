@@ -46,9 +46,6 @@
       "matchUpdateTypes": [
         "major"
       ],
-      "matchFiles": [
-        "docker-compose.yml"
-      ],
       "matchDatasources": [
         "docker"
       ],
