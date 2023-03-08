@@ -8,7 +8,7 @@ services:
     container_name: lpa-node-build-assets
     image: lpa-node-build-assets
     volumes:
-      - ./service-front:/service-front:rw,delegated
+      - ./service-front:/service-front
     build:
       context: ./
       dockerfile: node-build-assets/docker/Dockerfile
