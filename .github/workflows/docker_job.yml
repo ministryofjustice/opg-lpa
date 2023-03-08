@@ -134,7 +134,7 @@ jobs:
           install: true
 
       - name: Setup Docker Layer Cache
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # pin@v3.0.11
+        uses: actions/cache@e0d62270e20d6eeecf2fd6397a1b8871b6269e38 # pin@v3.0.11
         if: ${{ steps.build_image.outputs.build == 'true' }}
         with:
           path: /tmp/.buildx-cache
