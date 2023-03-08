@@ -38,6 +38,9 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         try {
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
+            error_log('++++++++++ identity hash' . $details['identity_hash']);
+            error_log('++++++++++ failed to addLog, exception:');
+            error_log($e);
             return false;
         }
 
@@ -62,6 +65,8 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
         if (!$result->isQueryResult() || $result->count() != 1) {
+            error_log('++++++++++ bad query result OR result count not 1');
+            error_log('++++++++++' . print_r($identityHash, true));
             return null;
         }
 
