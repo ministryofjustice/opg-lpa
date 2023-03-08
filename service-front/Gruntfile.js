@@ -66,7 +66,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: 'assets/js/**/*.js',
-        tasks: ['concat', 'copy:jsdev', 'copy:jsdevdashboardstatuses', 'copy:jsdevsessiontimeout', 'copy:jsdevgoogleanalytics', 'copy:jsdevconfiguregoogleanalytics', 'copy:initpolyfill']
+        tasks: ['build_js_dev']
       },
       templates: {
         files: ['<%= handlebars.compile.src %>'],
