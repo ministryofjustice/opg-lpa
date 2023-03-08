@@ -39,7 +39,8 @@
     {
       "description": [
         "Docker Major Dependency Exclusions",
-        "postgres - Excluded from updates to allow us to match major versions to the deployed version in AWS"
+        "postgres - Excluded from updates to allow us to match major versions to the deployed version in AWS",
+        "php - No migration to PHP 9 until we've got 8.2 deployed"
       ],
       "matchUpdateTypes": [
         "major"
@@ -48,9 +49,50 @@
         "docker"
       ],
       "matchPackageNames": [
-        "postgres"
+        "postgres",
+        "php"
       ],
       "enabled": false
+    },
+    {
+      "description": [
+        "Docker Minor Dependency Exclusions",
+        "php - Excluded to allow us to phase migration from PHP 8.1 to 8.2"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "php"
+      ],
+      "enabled": false
+    },
+    {
+      "description": [
+        "Minor and Patch updates",
+        "Make PRs after updated package has been stable for 3 days",
+        "These might be automerged once we're comfortable with Renovate"
+      ],
+      "automerge": false,
+      "groupName": "Patch & Minor Updates (3 day stability)",
+      "groupSlug": "all-minor-patch-updates",
+      "labels": [
+        "Dependencies",
+        "Renovate"
+      ],
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "stabilityDays": 3
     }
   ]
 }
