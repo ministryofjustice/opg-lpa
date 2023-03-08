@@ -6,6 +6,7 @@
 
 <div class="session-timeout-underlay">
 </div>
+<!-- <span data-warningPeriodInMinutes="{{ warningPeriodInMinutes }}"></span> -->
 <div id="timeoutPopup" data-role="timeout-popup" class="session-timeout js-session-timeout" role="alert">
     <div class="session-timeout-dialog">
         <h1 class="heading-large push-half--top">Session timeout</h1>
@@ -23,14 +24,5 @@
     </div>
 </div>
 
-<script>
-    if(typeof window.timeoutWarningDialog === 'undefined') {
-        // instantiate object and attach events on page load ready event
-        $(window.timeoutWarningDialog = new window.SessionTimeoutDialog({
-            element: $('#timeoutPopup'),
-            warningPeriodMs: {{ warningPeriodInMinutes * 60000 }}
-        }));
-    }
-</script>
-
+<script src="{{ StaticAssetPath( '/assets/v2/js/opg/session-timeout-init.js', { 'minify':true } ) }}"></script>
 {% endif %}
