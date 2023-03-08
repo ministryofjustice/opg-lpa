@@ -35,6 +35,7 @@
     "prCreation": "immediate",
     "prPriority": 5
   },
+  "prHourlyLimit": 1,
   "packageRules": [
     {
       "description": [
