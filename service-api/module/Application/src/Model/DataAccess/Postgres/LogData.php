@@ -34,13 +34,14 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
+        error_log('%%%%%%%%%%%TEST');
 
         try {
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             error_log('++++++++++ identity hash' . $details['identity_hash']);
             error_log('++++++++++ failed to addLog, exception:');
-            error_log($e);
+            error_log($e->toString);
             return false;
         }
 
@@ -62,6 +63,7 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         $select->order('loggedAt DESC');
         $select->limit(1);
 
+        error_log('%%%%%%%%%%%TEST2');
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
         if (!$result->isQueryResult() || $result->count() != 1) {
