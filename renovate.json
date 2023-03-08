@@ -34,5 +34,23 @@
     "branchTopic": "{{{datasource}}}-{{{depName}}}-vulnerability",
     "prCreation": "immediate",
     "prPriority": 5
-  }
+  },
+  "packageRules": [
+    {
+      "description": [
+        "Docker Major Dependency Exclusions",
+        "postgres - Excluded from updates to allow us to match major versions to the deployed version in AWS"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "postgres"
+      ],
+      "enabled": false
+    }
+  ]
 }
