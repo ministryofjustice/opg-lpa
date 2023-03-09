@@ -20,6 +20,9 @@ class PingControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        /** @var CredentialsInterface $awsCredentials */
+        $awsCredentials = $container->get('AwsCredentials');
+
         /** @var ZendDbAdapter $database */
         $database = $container->get('ZendDbAdapter');
 
@@ -35,9 +38,6 @@ class PingControllerFactory implements FactoryInterface
         if (!isset($config['processing-status']['endpoint'])) {
             throw new \RuntimeException('Missing config: Track my LPA endpoint');
         }
-
-        /* $awsCredentials = CredentialProvider; */
-        $awsCredentials = CredentialProvider::defaultProvider();
 
         return new PingController(
             $awsCredentials,
