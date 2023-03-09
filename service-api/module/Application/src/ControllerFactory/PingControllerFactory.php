@@ -6,7 +6,8 @@ use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Controller\PingController;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Aws\Credentials\CredentialProvider as CredentialProvider;
+use Aws\Credentials\CredentialsInterface;
+use Aws\Signature\SignatureV4;
 use Aws\Sqs\SqsClient;
 use Http\Client\HttpClient;
 
@@ -22,6 +23,9 @@ class PingControllerFactory implements FactoryInterface
     {
         /** @var CredentialsInterface $awsCredentials */
         $awsCredentials = $container->get('AwsCredentials');
+
+        /** @var SignatureV4 $awsSigner */
+        $awsSigner = $container->get('AwsApiGatewaySignature');
 
         /** @var ZendDbAdapter $database */
         $database = $container->get('ZendDbAdapter');
@@ -41,6 +45,7 @@ class PingControllerFactory implements FactoryInterface
 
         return new PingController(
             $awsCredentials,
+            $awsSigner,
             $database,
             $sqs,
             $config['pdf']['queue']['sqs']['settings']['url'],
