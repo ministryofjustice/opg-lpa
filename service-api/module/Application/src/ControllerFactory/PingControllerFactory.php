@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Controller\PingController;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Aws\Credentials\CredentialProvider;
 use Aws\Sqs\SqsClient;
 use Http\Client\HttpClient;
 
@@ -35,7 +36,10 @@ class PingControllerFactory implements FactoryInterface
             throw new \RuntimeException('Missing config: Track my LPA endpoint');
         }
 
+        $awsCredential = CredentialProvider::defaultProvider();
+
         return new PingController(
+            $awsCredential,
             $database,
             $sqs,
             $config['pdf']['queue']['sqs']['settings']['url'],

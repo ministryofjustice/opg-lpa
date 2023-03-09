@@ -21,6 +21,11 @@ class PingControllerTest extends MockeryTestCase
     private $controller;
 
     /**
+     * @var CredentialProvider
+     */
+    private $credentialProvider;
+
+    /**
      * @var ZendDbAdapter|MockInterface
      */
     private $database;
@@ -43,7 +48,10 @@ class PingControllerTest extends MockeryTestCase
 
         $this->httpClient = Mockery::mock(HttpClient::class);
 
+        $this->credentialProvider = Mockery::mock(CredentialProvider::class);
+
         $this->controller = new PingController(
+            $this->credentialProvider,
             $this->database,
             $this->sqsClient,
             'http://test',
@@ -70,6 +78,9 @@ class PingControllerTest extends MockeryTestCase
 
         $this->httpClient->shouldReceive('sendRequest')
             ->andReturn($mockResponse);
+
+        /* $x = Mockery::mock(CredentialProvider::class); */
+        $this->credentialProvider->shouldReceive('defaultProvider');
 
         $pingResult = [
             'database' => [
