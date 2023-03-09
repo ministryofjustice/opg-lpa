@@ -72,8 +72,8 @@
       "matchUpdateTypes": [
         "major"
       ],
-      "matchFiles": [
-        "service-front/composer.json"
+      "matchPaths": [
+        "**/composer.json"
       ],
       "matchDatasources": [
         "composer"
