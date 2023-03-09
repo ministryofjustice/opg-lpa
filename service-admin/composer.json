@@ -16,7 +16,7 @@
         "php": "8.2.*",
         "aws/aws-sdk-php": "^3.81",
         "firebase/php-jwt": "^6.0",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^7.0",
         "laminas/laminas-authentication": "^2.8",
         "laminas/laminas-cache": "^3.9",
         "laminas/laminas-cache-storage-adapter-memory": "^2.2",
