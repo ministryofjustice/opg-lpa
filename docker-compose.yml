@@ -15,7 +15,7 @@ services:
 
   postgres:
     container_name: lpa-postgres
-    image: postgres:13.7
+    image: postgres:13.10
     ports:
       - 5434:5432
     environment:
