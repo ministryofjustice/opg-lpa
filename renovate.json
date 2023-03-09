@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:base", ":dependencyDashboard"
   ],
   "branchPrefix": "renovate-",
   "commitMessageAction": "Renovate Update",
@@ -12,14 +12,6 @@
   "prConcurrentLimit": 0,
   "branchConcurrentLimit": 0,
   "lockFileMaintenance": { "enabled": true },
-  "major": {
-    "labels": [
-        "Dependencies",
-        "Renovate"
-    ],
-    "prCreation": "not-pending",
-    "prPriority": 0
-  },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
     "labels": [
@@ -35,8 +27,42 @@
     "prCreation": "immediate",
     "prPriority": 5
   },
+  "major": {
+    "labels": [
+        "Dependencies",
+        "Renovate"
+    ],
+    "prCreation": "not-pending",
+    "prPriority": 0
+  },
   "prHourlyLimit": 1,
   "packageRules": [
+    {
+      "description": [
+        "composer and npm Minor and Patch updates",
+        "Make PRs after updated package has been stable for 3 days.",
+        "These might be automerged once we're comfortable with Renovate."
+      ],
+      "automerge": false,
+      "groupName": "Patch & Minor Updates (3 day stability)",
+      "groupSlug": "all-minor-patch-updates",
+      "labels": [
+        "Dependencies",
+        "Renovate"
+      ],
+      "matchDatasources": [
+        "composer",
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "rangeStrategy": "update-lockfile",
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "stabilityDays": 3
+    },
     {
       "description": [
         "Docker Major Dependency Exclusions",
@@ -74,49 +100,40 @@
     {
       "description": [
         "Composer Major Dependency Exclusions",
-        "guzzlehttp/guzzle - Stay at v6 until notify client upgraded (LPAL-1166)"
+        "alphagov/notifications-php-client - Requires manual upgrade (LPAL-1166)",
+        "guzzlehttp/guzzle - Stay at v6 until Notify client upgraded (LPAL-1166)"
       ],
       "matchUpdateTypes": [
         "major"
-      ],
-      "matchFiles": [
-        "service-front/composer.json"
       ],
       "matchDatasources": [
         "composer"
       ],
       "matchPackageNames": [
-        "guzzlehttp/guzzle"
+        "guzzlehttp/guzzle",
+        "guzzlehttp/psr7",
+        "alphagov/notifications-php-client"
       ],
       "enabled": false
     },
     {
       "description": [
-        "composer and npm Minor and Patch updates",
-        "Make PRs after updated package has been stable for 3 days",
-        "These might be automerged once we're comfortable with Renovate"
-      ],
-      "automerge": false,
-      "groupName": "Patch & Minor Updates (3 day stability)",
-      "groupSlug": "all-minor-patch-updates",
-      "labels": [
-        "Dependencies",
-        "Renovate"
-      ],
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "matchPaths": [
-        "**/composer.json",
-        "**/package.json"
+        "Composer All Version Dependency Exclusions",
+        "Exclude PDF library updates - they're high risk and should be done manually, even for minor/patch versions."
       ],
       "matchUpdateTypes": [
+        "major",
         "minor",
         "patch"
       ],
-      "prCreation": "immediate",
-      "prPriority": 4,
-      "stabilityDays": 3
+      "matchDatasources": [
+        "composer"
+      ],
+      "matchPackageNames": [
+        "mikehaertl/php-pdftk",
+        "tecnickcom/tcpdf"
+      ],
+      "enabled": false
     }
   ]
 }
