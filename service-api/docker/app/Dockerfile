@@ -1,5 +1,6 @@
 FROM php:8.1-fpm-alpine3.15
 
+# just a comment to trigger new container build
 RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade --no-cache apk-tools

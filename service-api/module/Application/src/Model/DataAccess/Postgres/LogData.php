@@ -42,6 +42,8 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             $this->getLogger()->err('%%%%%%%%%% failed to addLog, EXCEPTION:');
             $this->getLogger()->err(print_r($e, true));
+            $this->getLogger()->err($e->getMessage());
+            $this->getLogger()->err($e->getTraceAsString());
             return false;
         }
 
