@@ -24,10 +24,13 @@ class PingControllerFactoryTest extends MockeryTestCase
      */
     private $container;
 
-    public function setUp() : void
+    private $credentialProvider;
+
+    public function setUp(): void
     {
         $this->factory = new PingControllerFactory();
         $this->container = Mockery::mock(ContainerInterface::class);
+        $this->credentialProvider = Mockery::mock(CredentialProvider::class);
     }
 
     public function testInvoke()
@@ -47,9 +50,12 @@ class PingControllerFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')
             ->with('config')
             ->andReturn([
-                'pdf'=>['queue'=>['sqs'=>['settings'=>['url'=>'http://test']]]],
-                'processing-status'=>['endpoint'=>'http://test']
+                'pdf' => ['queue' => ['sqs' => ['settings' => ['url' => 'http://test']]]],
+                'processing-status' => ['endpoint' => 'http://test']
             ])
+            ->once();
+
+        $this->credentialProvider->shouldReceive('defaultProvider')
             ->once();
 
         $controller = $this->factory->__invoke($this->container, PingController::class);

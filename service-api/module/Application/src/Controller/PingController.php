@@ -23,6 +23,11 @@ class PingController extends AbstractRestfulController
     use LoggerTrait;
 
     /**
+     * @var CredentialProvider
+     */
+    private $credentialProvider;
+
+    /**
      * @var ZendDbAdapter
      */
     private $database;
@@ -49,6 +54,7 @@ class PingController extends AbstractRestfulController
 
     /**
      * PingController constructor.
+     * @param CredentialProvider $credentialProvider
      * @param ZendDbAdapter $database
      * @param SqsClient $sqsClient
      * @param string $queueUrl
@@ -56,12 +62,14 @@ class PingController extends AbstractRestfulController
      * @param HttpClient $httpClient
      */
     public function __construct(
+        CredentialProvider $credentialProvider,
         ZendDbAdapter $database,
         SqsClient $sqsClient,
         string $queueUrl,
         string $trackMyLpaEndpoint,
         HttpClient $httpClient
     ) {
+        $this->credentialProvider = $credentialProvider;
         $this->database = $database;
         $this->sqsClient = $sqsClient;
         $this->sqsQueueUrl = $queueUrl;
@@ -154,7 +162,7 @@ class PingController extends AbstractRestfulController
                 'Content-type'  => 'application/json',
             ]);
 
-            $provider = CredentialProvider::defaultProvider();
+            $provider = this->credentialProvider::defaultProvider();
 
             $signer = new SignatureV4('execute-api', 'eu-west-1');
 
