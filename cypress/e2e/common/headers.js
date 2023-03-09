@@ -28,6 +28,14 @@ Then(
         'strict-transport-security',
         'max-age=3600; includeSubDomains',
       );
+      var csp =
+        "font-src 'self' data:; script-src 'self' google.com; default-src 'self';";
+      expect(response.headers).to.have.property('content-security-policy', csp);
+      var xcsp = "default-src 'self'";
+      expect(response.headers).to.have.property(
+        'x-content-security-policy',
+        xcsp,
+      );
     });
   },
 );

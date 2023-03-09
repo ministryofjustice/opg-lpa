@@ -151,8 +151,6 @@
 
 {{ form().closeTag|raw }}
 
-    <script>
-        window.GOVUK.performance.stageprompt.setupForGoogleAnalytics();
-    </script>
+    <script src="{{ StaticAssetPath( '/assets/v2/js/opg/google-analytics.js', { 'minify':true } ) }}"></script>
 
 {% endblock %}

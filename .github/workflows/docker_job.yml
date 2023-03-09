@@ -64,12 +64,12 @@ jobs:
             override_tag: latest
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
 
-      - uses: unfor19/install-aws-cli-action@8a86d81a0f1393cff1f44c77010cb2707e8a1066 # pin@1.0.4
+      - uses: unfor19/install-aws-cli-action@8a86d81a0f1393cff1f44c77010cb2707e8a1066 # tag=1.0.4
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16.7.0
+        uses: aws-actions/configure-aws-credentials@e1e17a757e536f70e52b5a12b2e8d1d1c60e04ef # tag=v2.0.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -114,7 +114,7 @@ jobs:
           fi
 
       - name: Use Node.js 16.x
-        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # pin@v3.5.1
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # tag=v3.6.0
         if: ${{ (matrix.image_name == 'online-lpa/front_web') && steps.build_image.outputs.build == 'true' }}
         with:
           node-version: 16.x
@@ -129,12 +129,12 @@ jobs:
 
       - name: Setup Docker Buildx
         id: docker_buildx
-        uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # pin@v2.2.1
+        uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # tag=v2.2.1
         with:
           install: true
 
       - name: Setup Docker Layer Cache
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # pin@v3.0.11
+        uses: actions/cache@69d9d449aced6a2ede0bc19182fadc3a0a42d2b0 # tag=v3.2.6
         if: ${{ steps.build_image.outputs.build == 'true' }}
         with:
           path: /tmp/.buildx-cache
@@ -143,7 +143,7 @@ jobs:
             ${{ runner.os }}-buildx-${{ matrix.image_name }}-
 
       - name: Build Image
-        uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v3.2.0
+        uses: docker/build-push-action@1104d471370f9806843c095c1db02b5a90c5f8b6 # tag=v3.3.1
         if: steps.build_image.outputs.build == 'true'
         with:
           context: .
@@ -164,7 +164,7 @@ jobs:
 
       - name: ECR Login
         id: login_ecr
-        uses: aws-actions/amazon-ecr-login@261a7de32bda11ba01f4d75c4ed6caf3739e54be # pin@v1.5.3
+        uses: aws-actions/amazon-ecr-login@261a7de32bda11ba01f4d75c4ed6caf3739e54be # tag=v1.5.3
         with:
           registries: 311462405659
 
@@ -216,7 +216,7 @@ jobs:
 
       - name: Setup Python
         if: steps.build_image.outputs.build == 'true'
-        uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # pin@4.3.1
+        uses: actions/setup-python@d27e3f3d7c64b4bbf8e4abfb9b63b83e846e0435 # tag=v4.5.0
         with:
           python-version: "3.9"
 
