@@ -33,7 +33,7 @@ jobs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # tag=v3.3.0
         with:
           fetch-depth: 2
       - name: Set output to penultimate short SHA
@@ -59,7 +59,7 @@ jobs:
       - image_tag
     steps:
       - id: slack
-        uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
+        uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
         with:
           channel-id: "C01BDM8T67J"
           payload: |
@@ -109,8 +109,8 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
-    needs: 
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    needs:
       - slack_msg_production_deploy_begin
     with:
       terraform_version: 1.1.2
@@ -127,8 +127,8 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
-    needs: 
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    needs:
       - slack_msg_production_deploy_begin
     with:
       terraform_version: 1.1.2
@@ -142,10 +142,10 @@ jobs:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  
+
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: production
@@ -177,16 +177,16 @@ jobs:
       - terraform_account_production
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # tag=v3.3.0
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2
         with:
           name: terraform-artifact
           path: /tmp/
 
       - name: Setup Python
-        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4
+        uses: actions/setup-python@d27e3f3d7c64b4bbf8e4abfb9b63b83e846e0435 # tag=v4.5.0
         with:
           python-version: '3.9'
 
@@ -208,12 +208,12 @@ jobs:
     name: Post-Deployment Slack message
     runs-on: ubuntu-latest
     if: always()
-    needs: 
+    needs:
       - slack_msg_production_deploy_begin
       - run_smoke_tests
       - image_tag
     steps:
-    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
+    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
       if: needs.run_smoke_tests.smoke_test_status == 'passed'
       with:
         channel-id: "C01BDM8T67J"
@@ -263,7 +263,7 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
+    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
       if: needs.run_smoke_tests.smoke_test_status == 'failed'
       with:
         channel-id: "C01BDM8T67J"
