@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Aws\Credentials\CredentialProvider;
 use Aws\Signature\SignatureV4;
+use Closure;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
@@ -23,7 +24,7 @@ class PingController extends AbstractRestfulController
     use LoggerTrait;
 
     /**
-     * @var CredentialProvider
+     * @var Closure
      */
     private $credentialProvider;
 
@@ -54,7 +55,7 @@ class PingController extends AbstractRestfulController
 
     /**
      * PingController constructor.
-     * @param CredentialProvider $credentialProvider
+     * @param Closure $credentialProvider
      * @param ZendDbAdapter $database
      * @param SqsClient $sqsClient
      * @param string $queueUrl
@@ -62,7 +63,7 @@ class PingController extends AbstractRestfulController
      * @param HttpClient $httpClient
      */
     public function __construct(
-        CredentialProvider $credentialProvider,
+        Closure $credentialProvider,
         ZendDbAdapter $database,
         SqsClient $sqsClient,
         string $queueUrl,
@@ -162,12 +163,10 @@ class PingController extends AbstractRestfulController
                 'Content-type'  => 'application/json',
             ]);
 
-            $provider = $this->credentialProvider;
-
             $signer = new SignatureV4('execute-api', 'eu-west-1');
 
             // Sign the request with an AWS Authorization header.
-            $signedRequest = $signer->signRequest($request, $provider());
+            $signedRequest = $signer->signRequest($request, $this->credentialProvider()->wait());
 
             $response = $this->httpClient->sendRequest($signedRequest);
 
