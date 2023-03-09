@@ -162,12 +162,12 @@ class PingController extends AbstractRestfulController
                 'Content-type'  => 'application/json',
             ]);
 
-            $provider = this->credentialProvider::defaultProvider();
+            $provider = $this->credentialProvider;
 
             $signer = new SignatureV4('execute-api', 'eu-west-1');
 
             // Sign the request with an AWS Authorization header.
-            $signedRequest = $signer->signRequest($request, $provider()->wait());
+            $signedRequest = $signer->signRequest($request, $provider());
 
             $response = $this->httpClient->sendRequest($signedRequest);
 
