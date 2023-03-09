@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
 
   image_tag:
     name: Generate image tags
@@ -42,7 +42,7 @@ jobs:
 
   terraform_lint:
     name: TF - Lint
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
     with:
       terraform_version: 1.1.2
 
@@ -62,7 +62,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -83,7 +83,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -104,7 +104,7 @@ jobs:
 
   terraform_email_development:
     name: TF Development - Email
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -125,7 +125,7 @@ jobs:
 
   terraform_environment_development:
     name: TF Development - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
     needs:
       - docker_build_scan_push
       - phpunit_tests
@@ -154,7 +154,7 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction Plan - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
     needs:
       - workspace_name
       - image_tag
@@ -176,7 +176,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction Plan - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
     needs:
       - workspace_name
       - image_tag
@@ -198,7 +198,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction Plan - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # pin@v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
     needs:
       - workspace_name
       - image_tag
@@ -252,10 +252,10 @@ jobs:
       front_fqdn: ${{ steps.front_fqdn.outputs.value }}
     steps:
       - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@9782bd6a9848b53b110e712e20e42d89988822b7 # pin@v3.0.1
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2
         with:
           name: terraform-artifact
           path: /tmp/
@@ -270,7 +270,7 @@ jobs:
           echo "configJson=${content}" >> $GITHUB_OUTPUT
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@abcf4fe216d7ea3638573156b36c79de8439257a # pin@v1-node16
+        uses: aws-actions/configure-aws-credentials@e1e17a757e536f70e52b5a12b2e8d1d1c60e04ef # tag=v2.0.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -304,7 +304,7 @@ jobs:
       ADMIN_URL: ${{ needs.terraform_outputs.outputs.admin_fqdn }}
     steps:
     - name: Login to Jira
-      uses: atlassian/gajira-login@45fd029b9f1d6d8926c6f04175aa80c0e42c9026 # pin@3.0.1
+      uses: atlassian/gajira-login@45fd029b9f1d6d8926c6f04175aa80c0e42c9026 # tag=3.0.1
       continue-on-error: true
       env:
         JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
@@ -312,13 +312,13 @@ jobs:
         JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
     - name: Find in commit messages
-      uses: atlassian/gajira-find-issue-key@7d11fdc500b3b69d3edd797e9f1d619b89f8dafc # pin@3.0.1
+      uses: atlassian/gajira-find-issue-key@7d11fdc500b3b69d3edd797e9f1d619b89f8dafc # tag=3.0.1
       continue-on-error: true
       id: jira_ticket
       with:
         string: ${{ github.event.pull_request.title }}
 
-    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
+    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
       id: slack
       with:
         channel-id: "C01BKBWGWTY"
@@ -456,7 +456,7 @@ jobs:
       ADMIN_URL: ${{ needs.terraform_outputs.outputs.admin_fqdn }}
     steps:
     - name: Login to Jira
-      uses: atlassian/gajira-login@master
+      uses: atlassian/gajira-login@45fd029b9f1d6d8926c6f04175aa80c0e42c9026 # tag=3.0.1
       continue-on-error: true
       env:
         JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
@@ -470,7 +470,7 @@ jobs:
       with:
         string: ${{ github.event.pull_request.title }}
 
-    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # pin@v1.21.0
+    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
       with:
         channel-id: "C01BKBWGWTY"
         update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
