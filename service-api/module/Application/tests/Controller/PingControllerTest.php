@@ -3,6 +3,8 @@
 namespace ApplicationTest\Controller;
 
 use Application\Controller\PingController;
+use Aws\Credentials\CredentialsInterface;
+use Aws\Signature\SignatureV4;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -11,6 +13,7 @@ use MakeShared\Logging\Logger;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Laminas\View\Model\JsonModel;
 use Http\Client\HttpClient;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 
 class PingControllerTest extends MockeryTestCase
@@ -24,6 +27,11 @@ class PingControllerTest extends MockeryTestCase
      * @var CredentialProvider
      */
     private $credentialProvider;
+
+    /**
+     * @var SignatureV4
+     */
+    private $signer;
 
     /**
      * @var ZendDbAdapter|MockInterface
@@ -48,10 +56,13 @@ class PingControllerTest extends MockeryTestCase
 
         $this->httpClient = Mockery::mock(HttpClient::class);
 
-        $this->credentialProvider = Mockery::mock(CredentialProvider::class);
+        $this->credentialProvider = Mockery::mock(CredentialsInterface::class);
+
+        $this->signer = Mockery::mock(SignatureV4::class);
 
         $this->controller = new PingController(
             $this->credentialProvider,
+            $this->signer,
             $this->database,
             $this->sqsClient,
             'http://test',
@@ -76,11 +87,11 @@ class PingControllerTest extends MockeryTestCase
         $mockResponse = Mockery::mock(Response::class);
         $mockResponse->shouldReceive('getStatusCode')->andReturn(500);
 
+        $mockRequest = Mockery::mock(Request::class);
+        $this->signer->shouldReceive('signRequest')->andReturn($mockRequest);
+
         $this->httpClient->shouldReceive('sendRequest')
             ->andReturn($mockResponse);
-
-        /* $x = Mockery::mock(CredentialProvider::class); */
-        $this->credentialProvider->shouldReceive('defaultProvider');
 
         $pingResult = [
             'database' => [
