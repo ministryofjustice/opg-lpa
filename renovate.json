@@ -66,7 +66,8 @@
     {
       "description": [
         "Composer Major Dependency Exclusions",
-        "guzzlehttp/guzzle - Stay at v6 until notify client upgraded (LPAL-1166)"
+        "alphagov/notifications-php-client - Requires manual upgrade (LPAL-1166)",
+        "guzzlehttp/guzzle - Stay at v6 until Notify client upgraded (LPAL-1166)"
       ],
       "matchUpdateTypes": [
         "major"
@@ -78,7 +79,9 @@
         "composer"
       ],
       "matchPackageNames": [
-        "guzzlehttp/guzzle"
+        "guzzlehttp/guzzle",
+        "guzzlehttp/psr7",
+        "alphagov/notifications-php-client"
       ],
       "enabled": false
     },
