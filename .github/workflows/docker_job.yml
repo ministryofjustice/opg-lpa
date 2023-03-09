@@ -216,7 +216,7 @@ jobs:
 
       - name: Setup Python
         if: steps.build_image.outputs.build == 'true'
-        uses: actions/setup-python@2c3dd9e7e29afd70cc0950079bde6c979d1f69f9 # pin@4.3.1
+        uses: actions/setup-python@7b9ef6fc5a7a74dfb7c0924eb42615d7af1e4de5 # pin@4.3.1
         with:
           python-version: "3.9"
 

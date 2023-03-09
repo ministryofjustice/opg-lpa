@@ -370,7 +370,7 @@ jobs:
           path: /tmp/
 
       - name: Setup Python
-        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4
+        uses: actions/setup-python@7b9ef6fc5a7a74dfb7c0924eb42615d7af1e4de5 # pin@v4
         with:
           python-version: '3.9'
 
