@@ -22,7 +22,7 @@
         "lm-commons/lmc-rbac-mvc":"^3.0.2",
         "laminas-api-tools/api-tools-api-problem": "^1.4",
         "php-http/guzzle6-adapter": "^2.0.2",
-        "alphagov/notifications-php-client": "^4.0.1",
+        "alphagov/notifications-php-client": "^5.0.0",
         "robmorgan/phinx": "^0.12.9",
         "laminas/laminas-db": "^2.13.4",
         "symfony/console": "^6.1",

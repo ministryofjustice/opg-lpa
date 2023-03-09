@@ -28,7 +28,7 @@
         "theiconic/php-ga-measurement-protocol": "^2.9",
         "laminas/laminas-log": "^2.13",
         "guzzlehttp/psr7": "^1.8.4",
-        "alphagov/notifications-php-client": "^4.0.1",
+        "alphagov/notifications-php-client": "^5.0.0",
         "symfony/validator": "^4.2",
         "egulias/email-validator": "~1.2"
     },
