@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
 
   image_tag:
     name: Generate image tags
@@ -42,7 +42,7 @@ jobs:
 
   terraform_lint:
     name: TF - Lint
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
     with:
       terraform_version: 1.1.2
 
@@ -62,7 +62,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -83,7 +83,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -104,7 +104,7 @@ jobs:
 
   terraform_email_development:
     name: TF Development - Email
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
     needs:
       - workspace_name
       - terraform_lint
@@ -125,7 +125,7 @@ jobs:
 
   terraform_environment_development:
     name: TF Development - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
     needs:
       - docker_build_scan_push
       - phpunit_tests
@@ -154,7 +154,7 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction Plan - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
     needs:
       - workspace_name
       - image_tag
@@ -176,7 +176,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction Plan - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
     needs:
       - workspace_name
       - image_tag
@@ -198,7 +198,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction Plan - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@13329175a5ceaf65ba4507d087f54a1c3b82c574 # tag=v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
     needs:
       - workspace_name
       - image_tag
