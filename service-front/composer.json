@@ -27,7 +27,7 @@
         "laminas/laminas-mail": "^2.15.1",
         "theiconic/php-ga-measurement-protocol": "^2.9",
         "laminas/laminas-log": "^2.13",
-        "guzzlehttp/psr7": "^1.8.4",
+        "guzzlehttp/psr7": "^2.0.0",
         "alphagov/notifications-php-client": "^4.0.1",
         "symfony/validator": "^4.2",
         "egulias/email-validator": "~1.2"
