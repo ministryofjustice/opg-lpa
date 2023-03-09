@@ -12,14 +12,6 @@
   "prConcurrentLimit": 0,
   "branchConcurrentLimit": 0,
   "lockFileMaintenance": { "enabled": true },
-  "major": {
-    "labels": [
-        "Dependencies",
-        "Renovate"
-    ],
-    "prCreation": "not-pending",
-    "prPriority": 0
-  },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
     "labels": [
@@ -93,8 +85,9 @@
     {
       "description": [
         "composer and npm Minor and Patch updates",
-        "Make PRs after updated package has been stable for 3 days",
-        "These might be automerged once we're comfortable with Renovate"
+        "Make PRs after updated package has been stable for 3 days.",
+        "These might be automerged once we're comfortable with Renovate.",
+        "Exclude PDF library updates - they're high risk and better done manually, even for minor/patch versions."
       ],
       "automerge": false,
       "groupName": "Patch & Minor Updates (3 day stability)",
@@ -114,9 +107,21 @@
         "minor",
         "patch"
       ],
+      "excludePackageNames": [
+        "mikehaertl/php-pdftk",
+        "tecnickcom/tcpdf"
+      ],
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
     }
-  ]
+  ],
+  "major": {
+    "labels": [
+        "Dependencies",
+        "Renovate"
+    ],
+    "prCreation": "not-pending",
+    "prPriority": 0
+  }
 }
