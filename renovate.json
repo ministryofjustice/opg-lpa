@@ -72,9 +72,6 @@
       "matchUpdateTypes": [
         "major"
       ],
-      "matchPaths": [
-        "**/composer.json"
-      ],
       "matchDatasources": [
         "composer"
       ],
@@ -87,10 +84,28 @@
     },
     {
       "description": [
+        "Composer All Version Dependency Exclusions",
+        "Exclude PDF library updates - they're high risk and should be done manually, even for minor/patch versions."
+      ],
+      "matchUpdateTypes": [
+        "major",
+        "minor",
+        "patch"
+      ],
+      "matchDatasources": [
+        "composer"
+      ],
+      "matchPackageNames": [
+        "mikehaertl/php-pdftk",
+        "tecnickcom/tcpdf"
+      ],
+      "enabled": false
+    },
+    {
+      "description": [
         "composer and npm Minor and Patch updates",
         "Make PRs after updated package has been stable for 3 days.",
-        "These might be automerged once we're comfortable with Renovate.",
-        "Exclude PDF library updates - they're high risk and better done manually, even for minor/patch versions."
+        "These might be automerged once we're comfortable with Renovate."
       ],
       "automerge": false,
       "groupName": "Patch & Minor Updates (3 day stability)",
@@ -99,20 +114,13 @@
         "Dependencies",
         "Renovate"
       ],
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "matchPaths": [
-        "**/composer.json",
-        "**/package.json"
+      "matchDatasources": [
+        "composer",
+        "npm"
       ],
       "matchUpdateTypes": [
         "minor",
         "patch"
-      ],
-      "excludePackageNames": [
-        "mikehaertl/php-pdftk",
-        "tecnickcom/tcpdf"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
