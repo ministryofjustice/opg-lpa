@@ -180,7 +180,7 @@ jobs:
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741 # pin@v3
+        uses: actions/download-artifact@e9ef242655d12993efdcda9058dee2db83a2cb9b # pin@v3
         with:
           name: terraform-artifact
           path: /tmp/
