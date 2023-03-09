@@ -29,6 +29,11 @@ class PingController extends AbstractRestfulController
     private $awsCredentials;
 
     /**
+     * @var SignatureV4
+     */
+    private $signer;
+
+    /**
      * @var ZendDbAdapter
      */
     private $database;
@@ -56,6 +61,7 @@ class PingController extends AbstractRestfulController
     /**
      * PingController constructor.
      * @param CredentialsInterface $awsCredentials
+     * @param SignatureV4 $signer
      * @param ZendDbAdapter $database
      * @param SqsClient $sqsClient
      * @param string $queueUrl
@@ -64,6 +70,7 @@ class PingController extends AbstractRestfulController
      */
     public function __construct(
         CredentialsInterface $awsCredentials,
+        SignatureV4 $signer,
         ZendDbAdapter $database,
         SqsClient $sqsClient,
         string $queueUrl,
@@ -71,6 +78,7 @@ class PingController extends AbstractRestfulController
         HttpClient $httpClient
     ) {
         $this->awsCredentials = $awsCredentials;
+        $this->signer = $signer;
         $this->database = $database;
         $this->sqsClient = $sqsClient;
         $this->sqsQueueUrl = $queueUrl;
@@ -163,10 +171,8 @@ class PingController extends AbstractRestfulController
                 'Content-type'  => 'application/json',
             ]);
 
-            $signer = new SignatureV4('execute-api', 'eu-west-1');
-
             // Sign the request with an AWS Authorization header.
-            $signedRequest = $signer->signRequest($request, $this->awsCredentials);
+            $signedRequest = $this->signer->signRequest($request, $this->awsCredentials);
 
             $response = $this->httpClient->sendRequest($signedRequest);
 
