@@ -36,10 +36,10 @@ class PingControllerFactory implements FactoryInterface
             throw new \RuntimeException('Missing config: Track my LPA endpoint');
         }
 
-        $awsCredential = CredentialProvider::defaultProvider();
+        $awsCredentials = $container->get('AwsCredentials');
 
         return new PingController(
-            $awsCredential,
+            $awsCredentials,
             $database,
             $sqs,
             $config['pdf']['queue']['sqs']['settings']['url'],
