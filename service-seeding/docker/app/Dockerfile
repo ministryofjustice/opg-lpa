@@ -1,5 +1,6 @@
 FROM alpine:latest
 
+# just a comment to trigger new container build
 RUN apk add --update --no-cache postgresql-client && \
     apk upgrade --no-cache
 
