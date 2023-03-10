@@ -1,4 +1,4 @@
-aws_xray_sdk==2.8.0
+aws_xray_sdk==2.11.0
 brotli==1.0.9
 click==7.1.2
 flask==2.0.0
