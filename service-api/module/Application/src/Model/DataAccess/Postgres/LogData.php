@@ -34,16 +34,10 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
-        $this->getLogger()->err('%%%%%%%%%%%%%%%%%%% addLog');
-        $this->getLogger()->err('%%%%%%%%%%% addLog IDENTITY HASH:' . $details['identity_hash']);
 
         try {
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
-            $this->getLogger()->err('%%%%%%%%%% failed to addLog, EXCEPTION:');
-            $this->getLogger()->err(print_r($e, true));
-            $this->getLogger()->err($e->getMessage());
-            $this->getLogger()->err($e->getTraceAsString());
             return false;
         }
 
@@ -65,13 +59,9 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         $select->order('loggedAt DESC');
         $select->limit(1);
 
-        $this->getLogger()->err('%%%%%%%%%%%%%%%%%%%%%% getLogByIdentityHash');
-        $this->getLogger()->err('%%%%%%%%%% getLogByIdentityHash IDENTITY HASH: ' . print_r($identityHash, true));
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
         if (!$result->isQueryResult() || $result->count() != 1) {
-            $this->getLogger()->err('%%%%%%%%%% getLogByIdentityHash bad query result OR result count not 1');
-            $this->getLogger()->err('%%%%%%%%%%' . $identityHash);
             return null;
         }
 
