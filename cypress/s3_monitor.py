@@ -174,7 +174,17 @@ class S3Monitor:
 
             args = {
                 "Bucket": S3Monitor.MAILBOX_BUCKET,
+                "MaxKeys": 1000,
             }
+
+            if marker is None:
+                self.logger.debug("Fetching from start of bucket")
+            else:
+                self.logger.debug(
+                    "USING MARKER: last result set was truncated; starting this fetch from"
+                )
+                self.logger.debug(f"  {marker}")
+                args["Marker"] = marker
 
             bucketContents = self.s3Client.list_objects(**args)
 
@@ -203,6 +213,14 @@ class S3Monitor:
 
                     self.logger.info(f"✔ PROCESSING {key}")
                     self.process_bucket_object(key)
+
+            # cope with situations where we have more than 1000 emails in the bucket:
+            # fetch the next batch, then the next etc. until we get a full
+            # result set; at that point, the marker will be reset and we'll start
+            # fetching MaxKeys objects in the list from the start again
+            marker = None
+            if bucketContents["IsTruncated"]:
+                marker = key
 
             time.sleep(2)
 
