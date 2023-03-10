@@ -1,9 +1,11 @@
 import argparse
 import json
+import logging
 import quopri
 import re
 import time
 
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import boto3
@@ -18,7 +20,19 @@ class S3Monitor:
         """
         :param options: dict with v (verbose) and c (is in CI) boolean properties
         """
-        self.verbose = options["v"]
+        self.logger = logging.getLogger("s3-monitor")
+
+        logLevel = logging.INFO
+        if options["v"]:
+            logLevel = logging.DEBUG
+
+        self.logger.setLevel(logLevel)
+
+        ch = logging.StreamHandler()
+        ch.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s: %(message)s"))
+
+        self.logger.addHandler(ch)
+
         self.in_ci = options["c"]
         self.s3Client = self.assume_role_and_get_client()
 
@@ -29,10 +43,10 @@ class S3Monitor:
         )
 
         if self.in_ci:
-            print("S3Monitor starting, Assuming CI role")
+            self.logger.info("S3Monitor starting, Assuming CI role")
             role_arn = "arn:aws:iam::050256574573:role/opg-lpa-ci"
         else:
-            print("S3Monitor starting, Assuming operator role")
+            self.logger.info("S3Monitor starting, Assuming operator role")
             role_arn = "arn:aws:iam::050256574573:role/operator"
 
         result = sts.assume_role(
@@ -64,7 +78,7 @@ class S3Monitor:
             s = match.start()
             e = match.end()
             activationLink = bodyContent[s:e]
-            self.printIfVerbose(f"{ thetype } link { activationLink }")
+            self.logger.debug(f"  - { thetype } link { activationLink }")
 
             emailRegex = "To: (.+\\+.+)\\n"
 
@@ -73,7 +87,7 @@ class S3Monitor:
                 toEmail = emailMatch.group(1)
 
                 userId = self.getPlusPartFromEmailAddress(toEmail)
-                self.printIfVerbose(f"userId {userId}")
+                self.logger.debug(f"  - userId '{userId}'")
 
                 if userId != "":
                     contents = f"{toEmail[:-1]},{activationLink}"
@@ -83,65 +97,58 @@ class S3Monitor:
                     emailFile = open(filePath, "w")
                     emailFile.write(contents)
                     emailFile.close()
-                    self.printIfVerbose(f"wrote file for {thetype} email to {filePath}")
+                    self.logger.debug(f"  - wrote {thetype} email to {filePath}")
                 else:
-                    self.printIfVerbose(
-                        f"could not get valid user ID from email address {toEmail}"
+                    self.logger.error(
+                        f"  - ERROR: could not get valid user ID from email address '{toEmail}'"
                     )
             else:
-                self.printIfVerbose(
-                    "unable to find email regex to derive the To: field"
+                self.logger.error(
+                    "  - ERROR: unable to find email regex to derive the To: field"
                 )
         else:
-            self.printIfVerbose(f"Message: {subject} does not match regex {regex}")
+            self.logger.error(f"ERROR: '{subject}' does not match regex '{regex}'")
 
     def parse_email(self, bodyContent, s3Key):
-        self.printIfVerbose("\n-------- START PARSE EMAIL")
-
         activate_subject = "Subject: Activate your lasting power of attorney account"
         reset_password_subject = "Subject: Password reset request"
         reset_password_no_account_subject = "Subject: Request to reset password"
 
         if re.search(activate_subject, bodyContent, re.IGNORECASE) is not None:
+            self.logger.info(f"  FOUND activation email {s3Key}")
             return self.parseBody(
                 bodyContent, activate_subject, "activation", "signup\/confirm"
             )
-        else:
-            self.printIfVerbose("email is not an activation email")
 
         if re.search(reset_password_subject, bodyContent, re.IGNORECASE) is not None:
+            self.logger.info(f"  FOUND password reset email {s3Key}")
             return self.parseBody(
                 bodyContent,
                 reset_password_subject,
                 "passwordreset",
                 "forgot-password\/reset",
             )
-        else:
-            self.printIfVerbose("email is not a forgotten password email")
 
         # handle password resets where the account doesn't exist yet. We may need to test this too ultimately
         if (
             re.search(reset_password_no_account_subject, bodyContent, re.IGNORECASE)
             is not None
         ):
-            self.printIfVerbose(
-                "Found Password reset for a non-existent account. This shouldn't happen during tests, one explanation can be running password reset test before test that signs user up"
+            self.logger.error(f"  ERROR: Password reset email for non-existent account")
+            self.logger.error(
+                "    - it's possible that the user has not been activated yet"
             )
-            return self.write_unrecognized_file(
+            return self.write_unrecognised_file(
                 s3Key, bodyContent, "noaccountpasswordreset"
             )
-        else:
-            self.printIfVerbose("email is not to reset password for non-active account")
 
         # handle other emails. Ultimately, we should be testing these other emails as well
-        self.printIfVerbose(
-            "Found an email that is not an Activate or Password reset. Don't know what to do with it"
+        self.logger.error(
+            "  ERROR: Found an email that is NOT for activation or password reset; counting as unrecognised"
         )
-        self.write_unrecognized_file(s3Key, bodyContent, "unrecognized")
+        self.write_unrecognised_file(s3Key, bodyContent, "unrecognised")
 
-        self.printIfVerbose("-------- END PARSE EMAIL\n")
-
-    def write_unrecognized_file(self, s3Key, bodyContent, filePrefix):
+    def write_unrecognised_file(self, s3Key, bodyContent, filePrefix):
         fileSuffix = s3Key[s3Key.rfind("/") + 1 :]
         filePath = Path(S3Monitor.ACTIVATION_EMAILS_PATH) / f"{filePrefix}.{fileSuffix}"
         emailFile = open(filePath, "w")
@@ -153,24 +160,51 @@ class S3Monitor:
         bodyContent = quopri.decodestring(result["Body"].read()).decode("latin-1")
         self.parse_email(bodyContent, s3Key)
 
-    def printIfVerbose(self, logOutput):
-        if self.verbose:
-            print(logOutput)
-
     def run(self):
-        seenkeys = []
+        seenkeys = set()
+
+        marker = None
 
         while True:
-            bucketContents = self.s3Client.list_objects(Bucket=S3Monitor.MAILBOX_BUCKET)
+            polledAt = datetime.now(timezone.utc)
+
+            self.logger.info(
+                f"+++++++ POLLING S3 email bucket {S3Monitor.MAILBOX_BUCKET} at {polledAt}"
+            )
+
+            args = {
+                "Bucket": S3Monitor.MAILBOX_BUCKET,
+            }
+
+            bucketContents = self.s3Client.list_objects(**args)
+
             if "Contents" in bucketContents:  # handle bucket being empty
-                for s3obj in self.s3Client.list_objects(
-                    Bucket=S3Monitor.MAILBOX_BUCKET
-                )["Contents"]:
-                    s3Key = s3obj["Key"]
-                    if not s3Key in seenkeys:
-                        self.process_bucket_object(s3Key)
-                        seenkeys.append(s3Key)
-            time.sleep(5)
+                for s3obj in bucketContents["Contents"]:
+                    key = s3obj["Key"]
+
+                    if key in seenkeys:
+                        self.logger.debug(f"✘ IGNORING {key} - already seen")
+                        continue
+
+                    seenkeys.add(key)
+
+                    # emails delivered up to 5 minutes ago might be of interest;
+                    # we include these in case there's some delay between the test
+                    # start time and the poller start time, e.g. test delivers an
+                    # email to the mailbox before the poller is up
+                    onlyLastModifiedAfter = polledAt - timedelta(minutes=5)
+                    if s3obj["LastModified"] < onlyLastModifiedAfter:
+                        self.logger.debug(f"✘ IGNORING {key}")
+                        self.logger.debug(
+                            f"  - last modified date '{s3obj['LastModified']}' "
+                            + "more than 5 minutes ago"
+                        )
+                        continue
+
+                    self.logger.info(f"✔ PROCESSING {key}")
+                    self.process_bucket_object(key)
+
+            time.sleep(2)
 
 
 if __name__ == "__main__":
