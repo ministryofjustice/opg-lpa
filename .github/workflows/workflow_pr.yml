@@ -318,7 +318,7 @@ jobs:
       with:
         string: ${{ github.event.pull_request.title }}
 
-    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
+    - uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
       id: slack
       with:
         channel-id: "C01BKBWGWTY"
@@ -470,7 +470,7 @@ jobs:
       with:
         string: ${{ github.event.pull_request.title }}
 
-    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
+    - uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
       with:
         channel-id: "C01BKBWGWTY"
         update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
