@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
-use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
+use Http\Adapter\Guzzle7\Client as GuzzleAdapter;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;

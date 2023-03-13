@@ -177,7 +177,7 @@ class Module implements FormElementProviderInterface
 
                 // PSR-7 HTTP Client
                 'HttpClient' => function () {
-                    return new \Http\Adapter\Guzzle6\Client();
+                    return new \Http\Adapter\Guzzle7\Client();
                 },
 
                 // required for the system message, set in admin UI
