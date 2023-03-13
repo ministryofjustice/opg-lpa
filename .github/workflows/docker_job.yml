@@ -30,10 +30,6 @@ jobs:
             dockerfile_path: ./service-front/docker/web
             service_path: ./service-front
 
-          - image_name: online-lpa/front_v2_app
-            dockerfile_path: ./service-front-v2/docker/app
-            service_path: ./service-front-v2
-
           - image_name: online-lpa/api_app
             dockerfile_path: ./service-api/docker/app
             service_path: ./service-api
