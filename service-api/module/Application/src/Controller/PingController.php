@@ -2,8 +2,9 @@
 
 namespace Application\Controller;
 
-use Aws\Credentials\CredentialProvider;
+use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
+use Closure;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
@@ -21,6 +22,16 @@ use Aws\Sqs\SqsClient;
 class PingController extends AbstractRestfulController
 {
     use LoggerTrait;
+
+    /**
+     * @var CredentialsInterface
+     */
+    private $awsCredentials;
+
+    /**
+     * @var SignatureV4
+     */
+    private $signer;
 
     /**
      * @var ZendDbAdapter
@@ -49,6 +60,8 @@ class PingController extends AbstractRestfulController
 
     /**
      * PingController constructor.
+     * @param CredentialsInterface $awsCredentials
+     * @param SignatureV4 $signer
      * @param ZendDbAdapter $database
      * @param SqsClient $sqsClient
      * @param string $queueUrl
@@ -56,12 +69,16 @@ class PingController extends AbstractRestfulController
      * @param HttpClient $httpClient
      */
     public function __construct(
+        CredentialsInterface $awsCredentials,
+        SignatureV4 $signer,
         ZendDbAdapter $database,
         SqsClient $sqsClient,
         string $queueUrl,
         string $trackMyLpaEndpoint,
         HttpClient $httpClient
     ) {
+        $this->awsCredentials = $awsCredentials;
+        $this->signer = $signer;
         $this->database = $database;
         $this->sqsClient = $sqsClient;
         $this->sqsQueueUrl = $queueUrl;
@@ -154,12 +171,8 @@ class PingController extends AbstractRestfulController
                 'Content-type'  => 'application/json',
             ]);
 
-            $provider = CredentialProvider::defaultProvider();
-
-            $signer = new SignatureV4('execute-api', 'eu-west-1');
-
             // Sign the request with an AWS Authorization header.
-            $signedRequest = $signer->signRequest($request, $provider()->wait());
+            $signedRequest = $this->signer->signRequest($request, $this->awsCredentials);
 
             $response = $this->httpClient->sendRequest($signedRequest);
 
