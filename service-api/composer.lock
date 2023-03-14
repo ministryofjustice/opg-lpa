@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7900fe177a6a87cb60149cfbf9a4cfa2",
+    "content-hash": "425a6476782b9e8522326b20d17392a5",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -1633,31 +1633,33 @@
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-memory",
-            "version": "2.0.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-cache-storage-adapter-memory.git",
-                "reference": "f47aed9d5f6f3eac5970693ea5898d67d3f33dcf"
+                "reference": "e002c7d3fa0d4723589b550d7ab4586befa72366"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-cache-storage-adapter-memory/zipball/f47aed9d5f6f3eac5970693ea5898d67d3f33dcf",
-                "reference": "f47aed9d5f6f3eac5970693ea5898d67d3f33dcf",
+                "url": "https://api.github.com/repos/laminas/laminas-cache-storage-adapter-memory/zipball/e002c7d3fa0d4723589b550d7ab4586befa72366",
+                "reference": "e002c7d3fa0d4723589b550d7ab4586befa72366",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-cache": "^3.0",
-                "php": "^7.3 || ~8.0.0 || ~8.1.0"
+                "php": "~8.0.0 || ~8.1.0  || ~8.2.0"
+            },
+            "conflict": {
+                "laminas/laminas-servicemanager": "<3.11"
             },
             "provide": {
                 "laminas/laminas-cache-storage-implementation": "1.0"
             },
             "require-dev": {
-                "laminas/laminas-cache": "3.0.x-dev",
                 "laminas/laminas-cache-storage-adapter-benchmark": "^1.0",
-                "laminas/laminas-cache-storage-adapter-test": "2.0.x-dev",
-                "laminas/laminas-coding-standard": "~2.3.0",
-                "psalm/plugin-phpunit": "^0.16.1",
+                "laminas/laminas-cache-storage-adapter-test": "^2.0",
+                "laminas/laminas-coding-standard": "~2.4.0",
+                "psalm/plugin-phpunit": "^0.17.0",
                 "vimeo/psalm": "^4.9"
             },
             "type": "library",
@@ -1694,7 +1696,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-11-08T22:17:24+00:00"
+            "time": "2022-10-22T14:38:52+00:00"
         },
         {
             "name": "laminas/laminas-cli",
