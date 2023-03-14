@@ -1,7 +1,7 @@
 aws_xray_sdk==2.8.0
 brotli==1.0.9
 click==7.1.2
-flask==2.0.0
+flask==2.2.3
 flask-assets==2.0
 flask-compress==1.9.0
 flask-talisman==0.7.0
