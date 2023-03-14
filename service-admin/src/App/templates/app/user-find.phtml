@@ -50,7 +50,7 @@
                         <ul>
                             <li>
                                 <strong class="bold-small">Name: </strong>
-                                <a href="<?= $this->url('user.search', [], ['email' => htmlspecialchars($user['username'])]) ?>">
+                                <a data-role="user-email" href="<?= $this->url('user.search', [], ['email' => htmlspecialchars($user['username'])]) ?>">
                                     <?= htmlspecialchars($user['username']); ?>
                                 </a>
                             </li>
@@ -101,7 +101,8 @@
             <?php
             $options = [
                 'offset' => $previousOffset,
-                'query' => $query
+                'query' => $query,
+                'secret' => $secret,
             ];
             $previousHref = $this->url('user.find', [], $options);
             ?>
@@ -115,7 +116,8 @@
             <?php
             $options = [
                 'offset' => $nextOffset,
-                'query' => $query
+                'query' => $query,
+                'secret' => $secret,
             ];
             $nextHref = $this->url('user.find', [], $options);
             ?>
