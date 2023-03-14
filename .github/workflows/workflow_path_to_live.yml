@@ -57,7 +57,7 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: preproduction
@@ -73,7 +73,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: preproduction
@@ -89,7 +89,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: preproduction
@@ -139,7 +139,7 @@ jobs:
       - terraform_environment_preproduction
     steps:
     - name: Checkout
-      uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
     - name: Download Terraform Task definition
       uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2
@@ -284,7 +284,7 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
     needs:
       - slack_msg_production_deploy_begin
     with:
@@ -302,7 +302,7 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
     needs:
       - slack_msg_production_deploy_begin
     with:
@@ -320,7 +320,7 @@ jobs:
 
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@b8d5977df4078f2e6047dcd6de1c675d57d1b656 # v1.11.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
     with:
       terraform_version: 1.1.2
       terraform_workspace: production
@@ -361,7 +361,7 @@ jobs:
       - terraform_account_production
     steps:
       - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - name: Download Terraform Task definition
         uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2
@@ -397,7 +397,7 @@ jobs:
       - run_smoke_tests
       - image_tag
     steps:
-    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
+    - uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
       if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
       with:
         channel-id: "C01BDM8T67J"
@@ -448,7 +448,7 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
+    - uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
       if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
       with:
         channel-id: "C01BDM8T67J"
@@ -499,7 +499,7 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    - uses: slackapi/slack-github-action@936158bbe252e9a6062e793ea4609642c966e302 # tag=v1.21.0
+    - uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
       if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
       with:
         channel-id: "C01BDM8T67J"
