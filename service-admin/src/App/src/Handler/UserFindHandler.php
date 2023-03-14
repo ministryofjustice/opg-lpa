@@ -122,6 +122,7 @@ class UserFindHandler extends AbstractHandler
             'form'  => $form,
             'users' => $users,
             'query' => $form->get('query')->getValue(),
+            'secret' => $form->get('secret')->getValue(),
             'nextOffset' => $nextOffset,
             'previousOffset' => $previousOffset,
         ]));
