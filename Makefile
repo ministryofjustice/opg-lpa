@@ -205,6 +205,7 @@ cypress-local:
 # this requires a globally-installed cypress
 .PHONY: cypress-open
 cypress-open:
+	npm install &
 	aws-vault exec moj-lpa-dev -- python3 cypress/s3_monitor.py &
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
