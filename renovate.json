@@ -58,7 +58,6 @@
         "minor",
         "patch"
       ],
-      "rangeStrategy": "update-lockfile",
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
