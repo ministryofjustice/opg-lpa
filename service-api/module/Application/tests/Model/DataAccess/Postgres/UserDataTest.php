@@ -137,6 +137,10 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $dbWrapperMock->shouldReceive('createSql')
             ->andReturn($sqlMock);
 
+        $dbWrapperMock->shouldReceive('quoteValue')
+            ->with("%{$query}%")
+            ->andReturn("%{$query}%");
+
         $sqlMock->shouldReceive('select')
             ->andReturn($sqlMock);
 
@@ -174,32 +178,10 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
             )
             ->andReturn($selectMock);
 
-        // key test: is the LIKE statement case insensitive?
+        // key test: is the ILIKE statement case insensitive?
         $selectMock->shouldReceive('where')
-            ->with(Mockery::on(function ($likes) use ($query) {
-                // check that lowercase and uppercase versions of $query
-                // are covered by the predicates
-                $expected = ["%${query}%", '%' . strtolower($query) . '%'];
-
-                foreach ($likes->getPredicates() as $predicate) {
-                    // check both predicates have an OR
-                    if ($predicate[0] !== 'OR') {
-                        return false;
-                    }
-
-                    if ($predicate[1]->getIdentifier() !== 'u.identity') {
-                        return false;
-                    }
-
-                    // remove the LIKE clause for this predicate;
-                    // we expect $expected to be empty by the end of this loop
-                    $key = array_search($predicate[1]->getLike(), $expected);
-                    if ($key !== false) {
-                        unset($expected[$key]);
-                    }
-                }
-
-                return empty($expected);
+            ->with(Mockery::on(function ($expression) use ($query) {
+                return $expression->getExpression() == "u.identity ILIKE %{$query}%";
             }))
             ->andReturn($selectMock);
 
