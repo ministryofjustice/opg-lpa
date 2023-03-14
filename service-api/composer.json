@@ -28,7 +28,7 @@
         "symfony/console": "^6.1",
         "laminas/laminas-cli": "^1.5",
         "symfony/validator": "^4.2",
-        "egulias/email-validator": "~1.2"
+        "egulias/email-validator": "~4.0"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
