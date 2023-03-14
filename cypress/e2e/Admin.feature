@@ -29,6 +29,13 @@ Feature: Admin
     When I click element marked "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
     Then the email address input contains "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
 
+    # LPAL-1164: case-insensitive search on find users page
+    When I click "find-users-link"
+    And I type "finduser" into "query-input" working around cypress bug
+    And I click "submit-button"
+    Then there are "ten" ".user-find-result" elements on the page
+    And the first activation date is "22nd Jan 2020 at 10:11:53 am"
+
     # search for deleted user elliot@townx.org
     When I click "user-search-link"
     And I type "elliot@townx.org" into "email-address-input" working around cypress bug
