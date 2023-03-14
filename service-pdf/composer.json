@@ -17,7 +17,7 @@
         "setasign/fpdi-tcpdf": "^2.0",
         "laminas/laminas-zendframework-bridge": "^1.1.1",
         "laminas/laminas-log": "^2.13",
-        "symfony/validator": "^4.2",
+        "symfony/validator": "^6.0",
         "egulias/email-validator": "~1.2"
     },
     "require-dev": {

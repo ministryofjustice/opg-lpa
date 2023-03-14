@@ -27,7 +27,7 @@
         "laminas/laminas-db": "^2.13.4",
         "symfony/console": "^6.1",
         "laminas/laminas-cli": "^1.5",
-        "symfony/validator": "^4.2",
+        "symfony/validator": "^6.0",
         "egulias/email-validator": "~1.2"
     },
     "replace": {
