@@ -17,7 +17,7 @@
         "php-http/guzzle6-adapter": "^2.0.2",
         "laminas/laminas-mvc": "^3.2",
         "laminas/laminas-authentication": "^2.8",
-        "laminas/laminas-cache": "3.1.2",
+        "laminas/laminas-cache": "3.10.0",
         "laminas/laminas-cache-storage-adapter-memory": "2.0",
         "laminas/laminas-form": "^3.0.2",
         "laminas/laminas-session": "^2.12.0",
