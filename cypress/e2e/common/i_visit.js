@@ -41,6 +41,10 @@ Then(`I visit the admin system-message page`, () => {
   cy.visit(Cypress.env('adminUrl') + '/system-message');
 });
 
+Then(`I visit the admin user-search page`, () => {
+  cy.visit(Cypress.env('adminUrl') + 'user-search');
+});
+
 Then(`I visit the donor page for the test fixture lpa`, () => {
   visitPageForTestFixture('donor');
 });

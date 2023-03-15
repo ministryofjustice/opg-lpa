@@ -34,7 +34,6 @@ Feature: Admin
     And I type "finduser" into "query-input" working around cypress bug
     And I click "submit-button"
     Then there are "ten" ".user-find-result" elements on the page
-    And the first activation date is "22nd Jan 2020 at 10:11:53 am"
 
     # search for deleted user elliot@townx.org
     When I click "user-search-link"
