@@ -3,6 +3,7 @@
   "extends": ["config:base"],
   "branchPrefix": "renovate-",
   "includeForks": true,
+  "labels": ["Renovate", "Dependencies"],
   "commitMessageAction": "Renovate update",
   "lockFileMaintenance": {
     "enabled": true,
@@ -51,10 +52,28 @@
         "cypress: bundle updates to package.json and dockerfile"
       ],
       "labels": ["devDependencies", "Renovate", "Cypress"],
-      "groupName": "Cypress updates",
+      "groupName": "Cypress",
       "matchUpdateTypes": ["major", "minor", "patch"],
       "matchManagers": ["dockerfile", "npm"],
       "matchPackagePatterns": ["cypress"]
+    },
+    {
+      "description": [
+        "Github Actions: bundle all updates together"
+      ],
+      "labels": ["devDependencies", "Renovate", "GithubActions"],
+      "groupName": "Github Actions",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "matchManagers": ["github-actions"]
+    },
+    {
+      "description": [
+        "Terraform: bundle all updates together"
+      ],
+      "labels": ["devDependencies", "Renovate", "Terraform"],
+      "groupName": "Terraform",
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": ["terraform"]
     },
     {
       "description": [
