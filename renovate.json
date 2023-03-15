@@ -1,24 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base", ":dependencyDashboard"
-  ],
+  "extends": ["config:base"],
   "branchPrefix": "renovate-",
-  "commitMessageAction": "Renovate Update",
-  "labels": [
-    "Dependencies",
-    "Renovate"
-  ],
-  "prConcurrentLimit": 0,
-  "branchConcurrentLimit": 0,
-  "lockFileMaintenance": { "enabled": true },
+  "includeForks": true,
+  "labels": ["Renovate", "Dependencies"],
+  "commitMessageAction": "Renovate update",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": "before 5am on monday"
+  },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
-    "labels": [
-      "Dependencies",
-      "Renovate",
-      "SecurityAlert"
-    ],
+    "labels": ["Dependencies", "Renovate", "SecurityAlert"],
     "dependencyDashboardApproval": false,
     "stabilityDays": 0,
     "rangeStrategy": "update-lockfile",
@@ -27,112 +20,104 @@
     "prCreation": "immediate",
     "prPriority": 5
   },
-  "major": {
-    "labels": [
-        "Dependencies",
-        "Renovate"
-    ],
-    "prCreation": "not-pending",
-    "prPriority": 0
-  },
+  "prConcurrentLimit": 1,
   "prHourlyLimit": 1,
+  "branchConcurrentLimit": 1,
+  "enabledManagers": [
+    "dockerfile",
+    "docker-compose",
+    "npm",
+    "composer",
+    "github-actions",
+    "gomod",
+    "terraform"
+  ],
   "packageRules": [
     {
       "description": [
-        "composer and npm Minor and Patch updates",
-        "Make PRs after updated package has been stable for 3 days.",
-        "These might be automerged once we're comfortable with Renovate."
+        "cypress: bundle updates to package.json and dockerfile",
+        "allow major version updates"
+      ],
+      "labels": ["devDependencies", "Renovate", "Cypress"],
+      "groupName": "Cypress",
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchManagers": ["dockerfile", "npm"],
+      "matchPackagePatterns": ["cypress"]
+    },
+    {
+      "description": [
+        "dev tools: allow major updates only for dev tools",
+        "note: this may fail if other packages depend on existing versions"
+      ],
+      "labels": ["devDependencies", "Renovate", "DevTools"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchManagers": ["composer"],
+      "matchPackageNames": ["vimeo/psalm", "phpunit/phpunit"]
+    },
+    {
+      "description": [
+        "Github Actions: bundle all updates together"
+      ],
+      "labels": ["devDependencies", "Renovate", "GithubActions"],
+      "groupName": "Github Actions",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "matchManagers": ["github-actions"]
+    },
+    {
+      "description": [
+        "Terraform: bundle all updates together"
+      ],
+      "labels": ["devDependencies", "Renovate", "Terraform"],
+      "groupName": "Terraform",
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": ["terraform"]
+    },
+    {
+      "description": [
+        "No updates to postgres, redis, php or python docker images",
+        "postgres: keep in sync with live",
+        "redis: keep in sync with live",
+        "php: 8.2 upgrade needs to be managed manually",
+        "python: to be removed"
+      ],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "matchPackageNames": ["postgres", "redis", "php", "python"],
+      "enabled": false
+    },
+    {
+      "description": [
+        "No updates to PHP PDF libraries (too sensitive and risky)"
+      ],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchManagers": ["composer"],
+      "matchPackageNames": ["tecnickcom/tcpdf", "mikehaertl/php-pdftk"],
+      "enabled": false
+    },
+    {
+      "description": [
+        "No major version updates except for dev tools"
+      ],
+      "matchUpdateTypes": ["major"],
+      "excludePackageNames": ["vimeo/psalm", "phpunit/phpunit"],
+      "excludePackagePatterns": ["cypress"],
+      "enabled": false
+    },
+    {
+      "description": [
+        "composer and npm Minor and Patch updates (stable for 3 days)",
+        "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "Patch & Minor Updates (3 day stability)",
+      "groupName": "minor and patch updates",
       "groupSlug": "all-minor-patch-updates",
-      "labels": [
-        "Dependencies",
-        "Renovate"
-      ],
-      "matchDatasources": [
-        "composer",
-        "npm"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
+      "labels": ["Dependencies", "Renovate"],
+      "matchManagers": ["composer", "npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "excludePackagePatterns": ["cypress"],
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
-    },
-    {
-      "description": [
-        "Docker Major Dependency Exclusions",
-        "postgres - Excluded from updates to allow us to match major versions to the deployed version in AWS",
-        "php - No migration to PHP 9 until we've got 8.2 deployed"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "postgres",
-        "php"
-      ],
-      "enabled": false
-    },
-    {
-      "description": [
-        "Docker Minor Dependency Exclusions",
-        "php - Excluded to allow us to phase migration from PHP 8.1 to 8.2"
-      ],
-      "matchUpdateTypes": [
-        "minor"
-      ],
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "php"
-      ],
-      "enabled": false
-    },
-    {
-      "description": [
-        "Composer Major Dependency Exclusions",
-        "alphagov/notifications-php-client - Requires manual upgrade (LPAL-1166)",
-        "guzzlehttp/guzzle - Stay at v6 until Notify client upgraded (LPAL-1166)"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "matchDatasources": [
-        "composer"
-      ],
-      "matchPackageNames": [
-        "guzzlehttp/guzzle",
-        "guzzlehttp/psr7",
-        "alphagov/notifications-php-client"
-      ],
-      "enabled": false
-    },
-    {
-      "description": [
-        "Composer All Version Dependency Exclusions",
-        "Exclude PDF library updates - they're high risk and should be done manually, even for minor/patch versions."
-      ],
-      "matchUpdateTypes": [
-        "major",
-        "minor",
-        "patch"
-      ],
-      "matchDatasources": [
-        "composer"
-      ],
-      "matchPackageNames": [
-        "mikehaertl/php-pdftk",
-        "tecnickcom/tcpdf"
-      ],
-      "enabled": false
     }
   ]
 }
