@@ -56,6 +56,16 @@
     },
     {
       "description": [
+        "cypress: bundle updates to package.json and dockerfile"
+      ],
+      "labels": ["devDependencies", "Renovate", "Cypress"],
+      "groupName": "Cypress updates",
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchManagers": ["dockerfile", "npm"],
+      "matchPackagePatterns": ["cypress"]
+    },
+    {
+      "description": [
         "composer and npm Minor and Patch updates (stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
@@ -68,16 +78,6 @@
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
-    },
-    {
-      "description": [
-        "cypress: bundle updates to package.json and dockerfile"
-      ],
-      "labels": ["devDependencies", "Renovate", "Cypress"],
-      "groupName": "Cypress updates",
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "matchManagers": ["dockerfile", "npm"],
-      "matchPackagePatterns": ["cypress"]
     }
   ]
 }
