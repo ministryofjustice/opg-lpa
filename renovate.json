@@ -1,12 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base", ":dependencyDashboard"],
+  "extends": ["config:base"],
   "branchPrefix": "renovate-",
   "includeForks": true,
   "commitMessageAction": "Renovate update",
-  "labels": ["Dependencies", "Renovate"],
-  "prConcurrentLimit": 0,
-  "branchConcurrentLimit": 0,
   "lockFileMaintenance": {
     "enabled": true,
     "schedule": "before 5am on monday"
@@ -22,25 +19,11 @@
     "prCreation": "immediate",
     "prPriority": 5
   },
-  "prHourlyLimit": 10,
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 500,
+  "branchConcurrentLimit": 10,
   "enabledManagers": ["dockerfile", "docker-compose", "npm", "composer", "github-actions", "gomod", "terraform"],
   "packageRules": [
-    {
-      "description": [
-        "No major version updates"
-      ],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
-    },
-    {
-      "description": [
-        "No updates to PHP PDF libraries (too sensitive and risky)"
-      ],
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "matchManagers": ["composer"],
-      "matchPackageNames": ["tecnickcom/tcpdf", "mikehaertl/php-pdftk"],
-      "enabled": false
-    },
     {
       "description": [
         "No updates to postgres, redis, php or python docker images",
@@ -56,6 +39,15 @@
     },
     {
       "description": [
+        "No updates to PHP PDF libraries (too sensitive and risky)"
+      ],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchManagers": ["composer"],
+      "matchPackageNames": ["tecnickcom/tcpdf", "mikehaertl/php-pdftk"],
+      "enabled": false
+    },
+    {
+      "description": [
         "cypress: bundle updates to package.json and dockerfile"
       ],
       "labels": ["devDependencies", "Renovate", "Cypress"],
@@ -63,6 +55,13 @@
       "matchUpdateTypes": ["major", "minor", "patch"],
       "matchManagers": ["dockerfile", "npm"],
       "matchPackagePatterns": ["cypress"]
+    },
+    {
+      "description": [
+        "No major version updates"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     },
     {
       "description": [
@@ -75,6 +74,7 @@
       "labels": ["Dependencies", "Renovate"],
       "matchManagers": ["composer", "npm"],
       "matchUpdateTypes": ["minor", "patch"],
+      "excludePackagePatterns": ["cypress"],
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
