@@ -7,7 +7,10 @@
   "labels": ["Dependencies", "Renovate"],
   "prConcurrentLimit": 0,
   "branchConcurrentLimit": 0,
-  "lockFileMaintenance": { "enabled": true },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": "before 5am on monday"
+  },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
     "labels": ["Dependencies", "Renovate", "SecurityAlert"],
