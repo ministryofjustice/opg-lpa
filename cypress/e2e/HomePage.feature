@@ -2,9 +2,6 @@ Feature: Homepage
 
   I want to be able to visit the homepage and follow the links
 
-  Background:
-    Given I ignore application exceptions
-
   Scenario: Visit home page links
     Given I visit "/home"
     Then I see that included assets such as js and css are ok
