@@ -53,65 +53,69 @@ $this->addErrorMap([
 
             <h2 class="heading-medium">User details</h2>
 
-            <ul>
-                <li>
-                    <strong class="bold-small">Account status: </strong>
-
-                    <?php if (array_key_exists('isActive', $user)) { ?>
-                        <span><?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?></span>
-                    <?php } elseif (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
-                        <span>Deleted</span>
-                    <?php } ?>
-                </li>
-
-                <?php if (isset($user['activatedAt'])) { ?>
+            <div class="user-search-result">
+                <ul>
                     <li>
-                        <strong class="bold-small">Date activated: </strong>
-                        <span data-role="user-activation-date"><?= $this->dateFormat($user['activatedAt']) ?></span>
-                    </li>
-                <?php } ?>
+                        <strong class="bold-small">Account status: </strong>
 
-                <?php if (array_key_exists('lastLoginAt', $user)) { ?>
-                    <li>
-                        <strong class="bold-small">Last login time: </strong>
-                        <span><?= $this->dateFormat($user['lastLoginAt'], 'Never logged in') ?></span>
-                    </li>
-                <?php } ?>
-
-                <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
-                    <li>
-                        <strong class="bold-small">Number of failed login attempts: </strong>
-                        <span><?= intval($user['failedLoginAttempts']); ?></span>
-                    </li>
-                <?php } ?>
-
-                <?php if (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
-                    <li>
-                        <strong class="bold-small">Deleted on: </strong>
-                        <span data-role="deletion-date"><?= $this->dateFormat($user['deletedAt'], 'Unknown') ?></span>
-                    </li>
-                    <li>
-                        <strong class="bold-small">Due to: </strong>
-
-                        <span data-role="deletion-reason">
-                        <?php if ($user['reason'] == 'expired') { ?>
-                            Account expired
-                        <?php } elseif ($user['reason'] == 'unactivated') { ?>
-                            User did not activate account
-                        <?php } elseif ($user['reason'] == 'user-initiated') { ?>
-                            User manually deleted their account
-                        <?php } ?>
+                        <span data-role="user-account-status">
+                            <?php if (array_key_exists('isActive', $user)) { ?>
+                                <?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?>
+                            <?php } elseif (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                                Deleted
+                            <?php } ?>
                         </span>
                     </li>
-                <?php } ?>
 
-                <?php if (array_key_exists('numberOfLpas', $user) && !is_null($user['numberOfLpas'])) { ?>
-                    <li>
-                        <strong class="bold-small">Number of LPAs: </strong>
-                        <span><?= intval($user['numberOfLpas']); ?></span>
-                    </li>
-                <?php } ?>
-            </ul>
+                    <?php if (isset($user['activatedAt'])) { ?>
+                        <li>
+                            <strong class="bold-small">Date activated: </strong>
+                            <span data-role="user-activation-date"><?= $this->dateFormat($user['activatedAt']) ?></span>
+                        </li>
+                    <?php } ?>
+
+                    <?php if (array_key_exists('lastLoginAt', $user)) { ?>
+                        <li>
+                            <strong class="bold-small">Last login time: </strong>
+                            <span><?= $this->dateFormat($user['lastLoginAt'], 'Never logged in') ?></span>
+                        </li>
+                    <?php } ?>
+
+                    <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
+                        <li>
+                            <strong class="bold-small">Number of failed login attempts: </strong>
+                            <span><?= intval($user['failedLoginAttempts']); ?></span>
+                        </li>
+                    <?php } ?>
+
+                    <?php if (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                        <li>
+                            <strong class="bold-small">Deleted on: </strong>
+                            <span data-role="deletion-date"><?= $this->dateFormat($user['deletedAt'], 'Unknown') ?></span>
+                        </li>
+                        <li>
+                            <strong class="bold-small">Due to: </strong>
+
+                            <span data-role="deletion-reason">
+                            <?php if ($user['reason'] == 'expired') { ?>
+                                Account expired
+                            <?php } elseif ($user['reason'] == 'unactivated') { ?>
+                                User did not activate account
+                            <?php } elseif ($user['reason'] == 'user-initiated') { ?>
+                                User manually deleted their account
+                            <?php } ?>
+                            </span>
+                        </li>
+                    <?php } ?>
+
+                    <?php if (array_key_exists('numberOfLpas', $user) && !is_null($user['numberOfLpas'])) { ?>
+                        <li>
+                            <strong class="bold-small">Number of LPAs: </strong>
+                            <span><?= intval($user['numberOfLpas']); ?></span>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </div>
 
         <?php } ?>
 
