@@ -217,7 +217,9 @@ abstract class AbstractBaseController extends AbstractActionController
         /** @var HttpResponse */
         $response = $this->getResponse();
 
-        $securityPolicy = "font-src 'self' data:; script-src 'self' google.com ; default-src 'self'";
+        $securityPolicy = "font-src 'self' data:; " .
+            "script-src 'self' *.google.com *.google-analytics.com; default-src 'self'; " .
+            "img-src 'self' *.google-analytics.com;";
         $xsecurityPolicy = "default-src 'self'";
 
         $response->getHeaders()->addHeaders([
