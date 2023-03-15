@@ -2,6 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:base"],
   "branchPrefix": "renovate-",
+  "includeForks": true,
   "labels": ["Renovate", "Dependencies"],
   "commitMessageAction": "Renovate update",
   "lockFileMaintenance": {
@@ -34,6 +35,45 @@
   "packageRules": [
     {
       "description": [
+        "cypress: bundle updates to package.json and dockerfile",
+        "allow major version updates"
+      ],
+      "labels": ["devDependencies", "Renovate", "Cypress"],
+      "groupName": "Cypress",
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchManagers": ["dockerfile", "npm"],
+      "matchPackagePatterns": ["cypress"]
+    },
+    {
+      "description": [
+        "dev tools: allow major updates only for dev tools",
+        "note: this may fail if other packages depend on existing versions"
+      ],
+      "labels": ["devDependencies", "Renovate", "DevTools"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchManagers": ["composer"],
+      "matchPackageNames": ["vimeo/psalm", "phpunit/phpunit"]
+    },
+    {
+      "description": [
+        "Github Actions: bundle all updates together"
+      ],
+      "labels": ["devDependencies", "Renovate", "GithubActions"],
+      "groupName": "Github Actions",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "matchManagers": ["github-actions"]
+    },
+    {
+      "description": [
+        "Terraform: bundle all updates together"
+      ],
+      "labels": ["devDependencies", "Renovate", "Terraform"],
+      "groupName": "Terraform",
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": ["terraform"]
+    },
+    {
+      "description": [
         "No updates to postgres, redis, php or python docker images",
         "postgres: keep in sync with live",
         "redis: keep in sync with live",
@@ -56,37 +96,11 @@
     },
     {
       "description": [
-        "cypress: bundle updates to package.json and dockerfile"
-      ],
-      "labels": ["devDependencies", "Renovate", "Cypress"],
-      "groupName": "Cypress",
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "matchManagers": ["dockerfile", "npm"],
-      "matchPackagePatterns": ["cypress"]
-    },
-    {
-      "description": [
-        "Github Actions: bundle all updates together"
-      ],
-      "labels": ["devDependencies", "Renovate", "GithubActions"],
-      "groupName": "Github Actions",
-      "matchUpdateTypes": ["minor", "patch", "digest"],
-      "matchManagers": ["github-actions"]
-    },
-    {
-      "description": [
-        "Terraform: bundle all updates together"
-      ],
-      "labels": ["devDependencies", "Renovate", "Terraform"],
-      "groupName": "Terraform",
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchManagers": ["terraform"]
-    },
-    {
-      "description": [
-        "No major version updates"
+        "No major version updates except for dev tools"
       ],
       "matchUpdateTypes": ["major"],
+      "excludePackageNames": ["vimeo/psalm", "phpunit/phpunit"],
+      "excludePackagePatterns": ["cypress"],
       "enabled": false
     },
     {
