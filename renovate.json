@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:base"],
   "branchPrefix": "renovate-",
-  "includeForks": true,
   "labels": ["Renovate", "Dependencies"],
   "commitMessageAction": "Renovate update",
   "lockFileMaintenance": {
@@ -20,9 +19,9 @@
     "prCreation": "immediate",
     "prPriority": 5
   },
-  "prConcurrentLimit": 10,
-  "prHourlyLimit": 500,
-  "branchConcurrentLimit": 10,
+  "prConcurrentLimit": 1,
+  "prHourlyLimit": 1,
+  "branchConcurrentLimit": 1,
   "enabledManagers": ["dockerfile", "docker-compose", "npm", "composer", "github-actions", "gomod", "terraform"],
   "packageRules": [
     {
