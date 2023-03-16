@@ -33,7 +33,7 @@ class EmailAddress extends AbstractData
     /**
      * @return string The email address.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->address;
     }
