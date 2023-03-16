@@ -201,12 +201,17 @@ cypress-local:
 		-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests \
 		--entrypoint ./cypress/cypress_start.sh cypress:local
 
-# Start S3 Monitor and call "cypress open";
-# this requires a globally-installed cypress
-.PHONY: cypress-open
-cypress-open:
-	npm install &
-	aws-vault exec moj-lpa-dev -- python3 cypress/s3_monitor.py &
+.PHONY: s3-monitor
+s3-monitor:
+	aws-vault exec moj-lpa-dev -- python3 cypress/s3_monitor.py -v
+
+.PHONY: cypress-gui
+cypress-gui:
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
+
+# Start S3 Monitor and start cypress GUI
+.PHONY: cypress-open
+cypress-open:
+	${MAKE} -j s3-monitor cypress-gui

@@ -113,11 +113,11 @@ jobs:
             echo "build=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Use Node.js 16.x
+      - name: Setup Node.js
         uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # tag=v3.6.0
         if: ${{ (matrix.image_name == 'online-lpa/front_web') && steps.build_image.outputs.build == 'true' }}
         with:
-          node-version: 16.x
+          node-version-file: '.nvmrc'
 
       - name: Install Dependencies
         if: ${{ (matrix.image_name == 'online-lpa/front_web') && steps.build_image.outputs.build == 'true' }}

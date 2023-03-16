@@ -18,7 +18,7 @@ runs:
         run: |
           # Fetch the git history for the branch. Do not error if we already have the history
           git fetch --unshallow || true
-  
+
       - name: Detect changes in ${{ inputs.path }} to main using git diff
         id: detect_changes
         if: github.ref != 'refs/heads/main'
@@ -37,11 +37,20 @@ runs:
           echo "changes=false" >> $GITHUB_OUTPUT || \
           echo "changes=true" >> $GITHUB_OUTPUT
 
+      - name: Detect changes in seeding compared to main using git diff
+        id: detect_seeding_changes
+        if: github.ref != 'refs/heads/main'
+        shell: bash
+        run: |
+          git diff --quiet HEAD origin/main -- scripts/non_live_seeding && \
+          echo "changes=false" >> $GITHUB_OUTPUT || \
+          echo "changes=true" >> $GITHUB_OUTPUT
+
       - name: Determine if changes were detected
         id: determine_changes
         shell: bash
         run: |
-          if [[ "${{ steps.detect_changes.outputs.changes }}" == "true"  || "${{ steps.detect_shared_changes.outputs.changes }}" == "true" ]]; then
+          if [[ "${{ steps.detect_changes.outputs.changes }}" == "true"  || "${{ steps.detect_shared_changes.outputs.changes }}" == "true" || "${{ steps.detect_seeding_changes.outputs.changes }}" == "true" ]]; then
             echo "changes=true" >> $GITHUB_OUTPUT
           else
             echo "changes=false" >> $GITHUB_OUTPUT
