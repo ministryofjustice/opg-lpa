@@ -8,6 +8,10 @@
     "axios": "0.21.1",
     "socket.io": "2.4.0"
   },
+  "engines": {
+    "npm": ">=9.0.0 <10.0.0",
+    "node": ">=19.0.0 <20.0.0"
+  },
   "scripts": {
     "preinstall": "npx npm-force-resolutions"
   },
