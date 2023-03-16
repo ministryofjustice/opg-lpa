@@ -104,7 +104,7 @@ class Client
     /**
      * Generates the standard set of HTTP headers expected by the API
      *
-     * @return array<string, string|object>
+     * @return array<string, string>
      */
     private function buildHeaders()
     {
@@ -114,7 +114,7 @@ class Client
             'User-agent'    => 'LPA-ADMIN'
         ];
 
-        $apiToken = $this->getTokenData('token');
+        $apiToken = $this->getTokenData('token')->toString();
 
         //  If the logged in user has an auth token already then set that in the header
         if (!is_null($apiToken)) {
