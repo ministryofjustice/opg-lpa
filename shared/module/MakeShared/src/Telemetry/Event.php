@@ -3,14 +3,16 @@
 namespace MakeShared\Telemetry;
 
 use Laminas\EventManager\Event as LaminasEvent;
+use Laminas\EventManager\EventInterface as LaminasEventInterface;
 
+/** @psalm-suppress MissingTemplateParam */
 class Event extends LaminasEvent
 {
     private ?string $segmentName;
 
     private array $attributes = [];
 
-    public function __construct(string $eventName, ?string $segmentName = null, array $attributes = [])
+    public function __construct($eventName, $segmentName = null, $attributes = [])
     {
         $this->setName($eventName);
 
