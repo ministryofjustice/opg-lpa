@@ -117,8 +117,8 @@ class Client
         $apiToken = $this->getTokenData('token');
 
         //  If the logged in user has an auth token already then set that in the header
-        if (!is_null($apiToken)) {
-            $headerLines['token'] = $apiToken->toString();
+        if (is_string($apiToken)) {
+            $headerLines['token'] = $apiToken;
         }
 
         return $headerLines;
