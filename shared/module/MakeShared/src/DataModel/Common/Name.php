@@ -76,7 +76,7 @@ class Name extends AbstractData
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $name  = (!empty($this->title) ? "{$this->title} " : '');
         $name .= (!empty($this->first) ? "{$this->first} " : '');
