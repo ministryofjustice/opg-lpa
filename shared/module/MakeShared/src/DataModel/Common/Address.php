@@ -97,7 +97,7 @@ class Address extends AbstractData
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $address  = "{$this->address1}, ";
         $address .= (!empty($this->address2) ? "{$this->address2}, " : '');
