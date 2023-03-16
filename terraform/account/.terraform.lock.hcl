@@ -2,45 +2,42 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.terraform.io/hashicorp/aws" {
-  version     = "4.57.1"
+  version     = "4.58.0"
   constraints = "~> 4.0"
   hashes = [
-    "h1:Qfq7Q9aCQqdl7w439mCMm89126n8DsDAmg6H8gXhnLI=",
-    "zh:44200c213ddb138df80d2a5ad86c2ebadbb5fd1d08cd7e4fc56ec6dca927659b",
-    "zh:469e6fe6a9e99e60cb168d32f05e2e9a83cf161f39160d075ff96f7674c510e1",
-    "zh:6110ba2c15a2268652ec9ea3797dd0216de84ece428055c49eaf9caa2be1ed62",
-    "zh:62ed7348acca44f64fc087e879e01cfa4e084c7600cc91e8bb7683f8065a9c79",
-    "zh:7a80e6fa9b35be178bb566093f7984dd6ffb7ad9d40b9dd5d5907f054f0c3e60",
-    "zh:8793043c8575a598c1a7cbefcb65ee1776b0061eba719098e552a3adc88f3090",
-    "zh:9b12af85486a96aedd8d7984b0ff811a4b42e3d88dad1a3fb4c0b580d04fa425",
-    "zh:a777a0082114e273b7b3eb14095a3f6f6e703c1aff61ffb1f0846bb869e6dfc7",
-    "zh:b060c3b2973097f2087a98ac6aad7c9c89fe80f7cf3027019049feafc3f8305b",
-    "zh:e7035e74563f4486848ea1feb60852175353790bc374e0e97e241a88dc0908f7",
-    "zh:eaaa8e9eba09ada41e13116d53d4baece04fead8fcf3eab68cca3a67ed738e18",
-    "zh:ec52d8f95a84fad8fe1aae169c89d0c54d5401f75caae0869ad8182c6b6db65b",
-    "zh:f0e33174025b1b57ecfbdd09f2a59c2559ee94d7681e5ae09079e2822ec54ecf",
-    "zh:f69790a21380e5aab9303a252564737333e1e95b5d25567681630e49b17e3ec7",
-    "zh:ff6053942c40a99904bd407f3c082c1fa8f927ecce0374566eb7e8ee8145e582",
+    "h1:0fkGgCaXohXNpeJ1jbqDKwhUVZOw55LR/NMHbkXj3qc=",
+    "h1:1zx+5nzhGM7ZXGGPLaQoJAiR4nbRpdDs7QAxSMUSfiE=",
+    "h1:591YuIx/0Gs0+c7QENpcXeV8xhPOFLmI/bpZGzy0uk4=",
+    "h1:SDVY8mPEcvvSyDKBcnbhOm0vGOSEJUaTi8eecBb6low=",
+    "h1:VeiyK9c3vK0nEOf+c08Fk62DdStGuLoH6pheb9QyISQ=",
+    "h1:YIRXIr1ji0HLWLU0ae+UbUNOHc9MJaLrMHxH3LIQ/Vk=",
+    "h1:YpFo20dwE/8+d2fNHo2E80CL9pKBLxDCm7R0o2JI9qU=",
+    "h1:bqorXfxEP7AK4CMUcL0xMro+6VeQVY/y/aEqpUfXPnQ=",
+    "h1:fUHDxUnXyjHeFI9RHXwbouClqHXDYPa87EEFj5vQpnI=",
+    "h1:ioRwJxIJVJuZMFB2Wk+Ay44MphO/LFfltmsb7sNO3VI=",
+    "h1:tnrumptCzPT3+tGufNzifAnpVSLmJZOxqkrHvdEqK1k=",
+    "h1:xXjZy36R+YOFyLjuF+rgi0NDLwnkFwrJ2t9NfsjRM/E=",
+    "h1:yXnxXUoCiE2s0oKDcIzzfDtkLqoNA/jT6jSS1fc4WBU=",
+    "h1:znLROwEAINbYzAG5X7Ep04whM7KxkQGrvhFdhSvNKEk=",
   ]
 }
 
 provider "registry.terraform.io/pagerduty/pagerduty" {
-  version     = "2.11.0"
+  version     = "2.11.2"
   constraints = "~> 2.0"
   hashes = [
-    "h1:hcTLHhhd2EBJXWdBsqxiOf4PI1hSQiNW4MRW9iFlSxs=",
-    "zh:19ba875a693a4c8dcaf49061b008b95a0209d55911e3625e85c524ec1e908539",
-    "zh:29dcafcee0d7401671ec40198e2178335af25ac1742fb8b55d172f4c62a4129d",
-    "zh:63e950a7f54fbc271d277ac1c2956ccb9aac7e3275c95a76ddf3a77319b4be78",
-    "zh:6feab4916373fd989d9f72df21281d814abae50c96b7eb2433bad0fdf305d49f",
-    "zh:757819c794077e0839f49de5de6698de10dd066cc6a4460b16c3ff30c50f5214",
-    "zh:7991fb6a204ce29a5721752c73cda8ba5e98142858923de38674b6802f93c0fe",
-    "zh:819733cd82664c2119bd50a7dc77586a6176cd22cddb1d5cf3883228987d2612",
-    "zh:887c29730f97efa7af257d631e19d42dc53b66223f6294e705789fb996e64b3c",
-    "zh:95d8f98937341aaa91dcec899b223073315081e7129f807a3634fc6c7965ce3e",
-    "zh:966b492c220faad93c29ae1e8f33b195cb68085e37f289345d82f3e170f2c400",
-    "zh:a161e63a75c9a15b6f661443c5f37ea45c80deeb4a6f6ad3250c902a2244b4d1",
-    "zh:b27c4ae15facf5a222ba853234ca363eb28818f022f1e06c594b86be80db2dad",
-    "zh:da0730268b8c435b116ee306fb88d5bf3ce6a04b168e61ece7ef369dda48523e",
+    "h1:2HMsblFkxWOkNPOy0BrMFAIX9nH4Rmy4P8v+02KlYZw=",
+    "h1:4lL+ceHjfMJj1eD9tQzeW4hObQ/Uc5wt0vuxDiJSSkg=",
+    "h1:Eu6yvxrsxYtkMraBuX4vZGzOp1ji1HbS8CcUalegh9E=",
+    "h1:PUxPee4S5yXMXshM75ssf/q8GWCAULApoKxKIKISmrw=",
+    "h1:QCr1mRTGxCV6FeBNhF1+v9Z/UO9/PpcNh30G4fElxbg=",
+    "h1:Qf25m/r9vec4VyBrVVCUNMnwxSVArdMv8Q8ge/fQyUo=",
+    "h1:RryC/pJ4PgoOENfC46rX3w0CcP/2KOR/ERHXEnaBRB4=",
+    "h1:f9kC6ugqEzjK2yCocpbkuRcL2wbYfyWEM6pN+LkmdjE=",
+    "h1:hTMtkVTu3d9jAQclaZhZSN4pDfoAbnzNcDGEeq6tc/g=",
+    "h1:nLkF6K601do90cQ19hJwfC1DJ32qlB1oIANsAFv0CwY=",
+    "h1:pVOdC+R8SXRmQE9+5oUDK6+VHrIBfyoT/y2hTxqICsI=",
+    "h1:uKVnzyvGI2nWFoWzj8WJAwhDDbGV5nDdUIOYJaDO1Q4=",
+    "h1:um+X4kNI+3NpTUn8RaQbSdet0escRjV/jl/ER5ekE28=",
   ]
 }
