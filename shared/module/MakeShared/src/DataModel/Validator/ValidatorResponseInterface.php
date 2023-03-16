@@ -7,6 +7,7 @@ use ArrayAccess;
 use Serializable;
 use Countable;
 
+/** @psalm-suppress MissingTemplateParam */
 interface ValidatorResponseInterface extends IteratorAggregate, ArrayAccess, Serializable, Countable
 {
     /**
