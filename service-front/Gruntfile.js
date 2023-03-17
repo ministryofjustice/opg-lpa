@@ -166,6 +166,11 @@ module.exports = function (grunt) {
         src: 'assets/js/opg/init-polyfill.js',
         dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
       },
+
+      jsdevstartgoogleanalytics: {
+        src: 'assets/js/opg/start-google-analytics.js',
+        dest: 'public/assets/v2/js/opg/start-google-analytics.min.js'
+      },
     },
 
     // minifying the css
@@ -268,13 +273,17 @@ module.exports = function (grunt) {
         src: 'assets/js/opg/session-timeout-init.js',
         dest: 'public/assets/v2/js/opg/session-timeout-init.min.js'
       },
-      build4: {
+      build3: {
         src: 'assets/js/opg/dashboard-statuses.js',
         dest: 'public/assets/v2/js/opg/dashboard-statuses.min.js'
       },
-      build5: {
+      build4: {
         src: 'assets/js/opg/init-polyfill.js',
         dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
+      },
+      build5: {
+        src: 'assets/js/opg/start-google-analytics.js',
+        dest: 'public/assets/v2/js/opg/start-google-analytics.min.js'
       },
     },
 
@@ -311,7 +320,16 @@ module.exports = function (grunt) {
   // define tasks
   grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify']);
-  grunt.registerTask('build_js_dev', ['copy:jsenv', 'handlebars', 'concat', 'copy:jsdev', 'copy:jsdevdashboardstatuses', 'copy:jsdevsessiontimeout', 'copy:jsdevinitpolyfill']);
+  grunt.registerTask('build_js_dev', [
+    'copy:jsenv',
+    'handlebars',
+    'concat',
+    'copy:jsdev',
+    'copy:jsdevdashboardstatuses',
+    'copy:jsdevsessiontimeout',
+    'copy:jsdevinitpolyfill',
+    'copy:jsdevstartgoogleanalytics',
+  ]);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };
