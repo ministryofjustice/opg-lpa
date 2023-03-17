@@ -162,16 +162,6 @@ module.exports = function (grunt) {
         dest: 'public/assets/v2/js/opg/session-timeout-init.min.js'
       },
 
-      jsdevgoogleanalytics: {
-        src: 'assets/js/opg/google-analytics.js',
-        dest: 'public/assets/v2/js/opg/google-analytics.min.js'
-      },
-
-      jsdevconfiguregoogleanalytics: {
-        src: 'assets/js/opg/configure-google-analytics.js',
-        dest: 'public/assets/v2/js/opg/configure-google-analytics.min.js'
-      },
-
       jsdevinitpolyfill: {
         src: 'assets/js/opg/init-polyfill.js',
         dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
@@ -206,11 +196,7 @@ module.exports = function (grunt) {
           'node_modules/handlebars/dist/handlebars.js',
           'node_modules/lodash/lodash.js',
           'node_modules/urijs/src/URI.min.js',
-          'assets/js/govuk/stageprompt.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
-          'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
-          'assets/js/moj/moj.ga-tracker.js',
-          'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/analytics.js',
 
           // OPG Scripts
           'assets/js/opg/jquery-plugin-opg-spinner.js',
@@ -283,19 +269,11 @@ module.exports = function (grunt) {
         src: 'assets/js/opg/session-timeout-init.js',
         dest: 'public/assets/v2/js/opg/session-timeout-init.min.js'
       },
-      build3: {
-        src: 'assets/js/opg/google-analytics.js',
-        dest: 'public/assets/v2/js/opg/google-analytics.min.js'
-      },
       build4: {
-        src: 'assets/js/opg/configure-google-analytics.js',
-        dest: 'public/assets/v2/js/opg/configure-google-analytics.min.js'
-      },
-      build5: {
         src: 'assets/js/opg/dashboard-statuses.js',
         dest: 'public/assets/v2/js/opg/dashboard-statuses.min.js'
       },
-      build6: {
+      build5: {
         src: 'assets/js/opg/init-polyfill.js',
         dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
       },
@@ -334,7 +312,7 @@ module.exports = function (grunt) {
   // define tasks
   grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify']);
-  grunt.registerTask('build_js_dev', ['copy:jsenv', 'handlebars', 'concat', 'copy:jsdev', 'copy:jsdevdashboardstatuses', 'copy:jsdevsessiontimeout', 'copy:jsdevgoogleanalytics', 'copy:jsdevconfiguregoogleanalytics', 'copy:jsdevinitpolyfill']);
+  grunt.registerTask('build_js_dev', ['copy:jsenv', 'handlebars', 'concat', 'copy:jsdev', 'copy:jsdevdashboardstatuses', 'copy:jsdevsessiontimeout', 'copy:jsdevinitpolyfill']);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };
