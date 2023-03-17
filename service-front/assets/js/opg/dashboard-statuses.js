@@ -42,7 +42,7 @@ $(document).ready(function () {
             var link = $('a[id=status-description-link-' + lpaId + ']');
             link.attr('href', '/lpa/' + lpaId + '/status');
             link.attr(
-              'data-journey-click',
+              'data-analytics-click',
               'page:link:View ' + newStatus + ' message',
             );
             link.text('View ' + newStatus + ' message');
