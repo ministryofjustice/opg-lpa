@@ -229,7 +229,6 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.polyfill.js',
           'assets/js/moj/moj.modules/moj.single-use.js',
           'assets/js/moj/moj.modules/moj.analytics.js',
-          'assets/js/moj/moj.modules/moj.form-error-tracker.js',
           'assets/js/moj/moj.modules/moj.cookie-consent.js',
 
           // Init Script
