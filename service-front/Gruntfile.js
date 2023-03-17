@@ -294,6 +294,10 @@ module.exports = function (grunt) {
         src: 'assets/js/opg/dashboard-statuses.js',
         dest: 'public/assets/v2/js/opg/dashboard-statuses.min.js'
       },
+      build6: {
+        src: 'assets/js/opg/init-polyfill.js',
+        dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
+      },
     },
 
     // compile handlebars templates
