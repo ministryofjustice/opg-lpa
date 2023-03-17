@@ -16,21 +16,7 @@ class CompleteController extends AbstractLpaController
 
         $lpa = $this->getLpa();
 
-        $analyticsDimensions = [];
-
-        if (property_exists($lpa, 'metadata')) {
-            if ($lpa->startedAt && $lpa->startedAt instanceof \DateTime) {
-                $analyticsDimensions['dimension2'] = $lpa->startedAt->format('Y-m-d');
-            }
-
-            if (isset($lpa->metadata['analyticsReturnCount'])) {
-                $analyticsDimensions['dimension3'] = $lpa->metadata['analyticsReturnCount'];
-            }
-        }
-
         $viewParams = $this->getViewParams();
-        $viewParams['analyticsDimensions'] = $analyticsDimensions;
-
         $viewModel = new ViewModel($viewParams);
         $viewModel->setTemplate('application/authenticated/lpa/complete/complete.twig');
 

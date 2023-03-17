@@ -25,7 +25,6 @@
         "kokspflanze/zfc-twig": "^4.0.1",
         "laminas/laminas-mvc-i18n": "^2.0",
         "laminas/laminas-mail": "^2.15.1",
-        "theiconic/php-ga-measurement-protocol": "^2.9",
         "laminas/laminas-log": "^2.13",
         "guzzlehttp/psr7": "^2.4",
         "alphagov/notifications-php-client": "^5.0.0",
