@@ -42,11 +42,6 @@ window.SessionTimeoutDialog = function (options) {
   continueButton.on('click', function (e) {
     e.preventDefault();
     that.hidePopupAndRestartCountdown();
-
-    GOVUK.performance.sendGoogleAnalyticsEvent(
-      'timeout warning',
-      'continue clicked',
-    );
   });
 
   this.showWarning = function () {
@@ -63,11 +58,6 @@ window.SessionTimeoutDialog = function (options) {
     setTimeout(function () {
       that.trapNavigation([continueButton[0], logoutButton[0]]);
     }, 1);
-
-    GOVUK.performance.sendGoogleAnalyticsEvent(
-      'timeout warning',
-      'warning popup',
-    );
   };
 
   this.hideWarning = function () {
