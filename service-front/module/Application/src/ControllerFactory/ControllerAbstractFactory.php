@@ -51,9 +51,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setCommunicationService' => 'Communication',
             'setPaymentClient'        => 'GovPayClient'
         ],
-        DownloadController::class => [
-            'setAnalyticsService' => 'AnalyticsService'
-        ],
         FeedbackController::class => [
             'setFeedbackService' => 'Feedback'
         ],
