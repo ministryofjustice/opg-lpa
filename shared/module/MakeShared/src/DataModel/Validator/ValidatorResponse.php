@@ -9,6 +9,8 @@ use ArrayObject;
  *
  * Class ValidatorResponse
  * @package MakeShared\DataModel\Validator
+ *
+ * @psalm-suppress MissingTemplateParam
  */
 class ValidatorResponse extends ArrayObject implements ValidatorResponseInterface
 {
