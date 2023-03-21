@@ -86,7 +86,7 @@ module.exports = function (grunt) {
         },
         files: {
           'public/assets/v2/css/application.css': 'assets/sass/application.scss',
-          'public/assets/v2/css/download.css': 'assets/sass/download.scss',
+          'public/assets/v2/css/download-message.css': 'assets/sass/download-message.scss',
           'public/assets/v2/css/print.css': 'assets/sass/print.scss'
         }
       }
