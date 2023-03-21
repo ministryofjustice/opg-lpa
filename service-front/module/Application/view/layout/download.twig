@@ -5,14 +5,16 @@
     <meta http-equiv="refresh" content="2">
     <title>Generating your document | GOV.UK</title>
 
-    <link href="{{ StaticAssetPath( '/assets/v2/css/download.css', { 'minify':true } ) }}" media="all" rel="stylesheet" type="text/css" />
+    <link href="{{ StaticAssetPath( '/assets/v2/css/download-message.css', { 'minify':true } ) }}" media="all" rel="stylesheet" type="text/css" />
 
     <link href="{{ StaticAssetPath( '/assets/v2/css/fonts.css', { 'minify':true } ) }}" media="all" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
 
-    <h2 class="download-message">Please wait while we generate your document. It will appear here in a few seconds.</h2>
+    <div class="download-message">
+        <h2>Please wait while we generate your document. It will appear here in a few seconds.</h2>
+    </div>
 
     <script src="/assets/v2/js/libs/jquery.min.js"></script>
     <script src="{{ StaticAssetPath( '/assets/v2/js/application.js', { 'minify':true } ) }}"></script>
