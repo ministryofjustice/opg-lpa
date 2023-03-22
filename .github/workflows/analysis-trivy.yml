@@ -9,6 +9,7 @@ on:
       - "service-admin/**"
       - "service-front/**"
       - "service-pdf/**"
+      - "shared/**"
       - "tests/**"
       - "cypress/**"
       - "terraform/environment/**"
@@ -34,6 +35,9 @@ jobs:
             code-scan: true
           - name: service-pdf
             path: "./service-pdf"
+            code-scan: true
+          - name: shared
+            path: "./shared"
             code-scan: true
           - name: tests
             path: "./tests"
