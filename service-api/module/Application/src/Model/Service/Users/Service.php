@@ -56,7 +56,15 @@ class Service extends AbstractService
         do {
             // Create a 32 character user id and activation token.
             $userId = bin2hex(random_bytes(16));
-            $activationToken = bin2hex(random_bytes(16));
+
+            // Create a random activation token if OPG_USE_INSECURE_ACTIVATION_TOKEN is not set. Otherwise use a hex representation of the email address.
+            // This is to allow us to use a predictable token for all users in the test environment.
+            // !!! THIS MUST NOT BE MERGED INTO MAIN !!!
+            if (getenv('OPG_USE_INSECURE_ACTIVATION_TOKEN')) {
+                $activationToken = bin2hex($username);
+            } else {
+                $activationToken = bin2hex(random_bytes(16));
+            }
 
             // Use base62 for shorter tokens
             $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
