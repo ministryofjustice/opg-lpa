@@ -34,10 +34,8 @@ cypress/logs/
 /cypress/screenshots/
 /cypress/fixtures/
 /cypress/downloads/
-service-front/public/assets/v2/css/application.css.map
-service-front/public/assets/v2/css/print.css.map
-service-front/public/assets/v2/css/application.css
-service-front/public/assets/v2/css/print.css
+service-front/public/assets/v2/css/*.css.map
+service-front/public/assets/v2/css/*.css
 service-front/assets/js/lpa/lpa.templates.js
 service-front/public/assets/v2/js/*.js
 service-front/public/assets/v2/js/opg/*.js
