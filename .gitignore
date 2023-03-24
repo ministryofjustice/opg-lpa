@@ -26,7 +26,7 @@ tests/functional/summary.png
 cypress/activation_emails/*.activation
 cypress/activation_emails/*.passwordreset
 cypress/activation_emails/noaccountpasswordreset.*
-cypress/activation_emails/unrecognized.*
+cypress/activation_emails/unrecogni*ed.*
 cypress/e2e/Stitched*
 cypress/e2e/examples/
 cypress/logs/
@@ -34,15 +34,6 @@ cypress/logs/
 /cypress/screenshots/
 /cypress/fixtures/
 /cypress/downloads/
-service-front/public/assets/v2/css/*.css.map
-service-front/public/assets/v2/css/*.css
-service-front/assets/js/lpa/lpa.templates.js
-service-front/public/assets/v2/js/*.js
-service-front/public/assets/v2/js/opg/*.js
-service-front/public/assets/v2/js/*.js.map
-service-front/public/assets/v2/css/fonts.css
-service-front/public/assets/v2/css/govuk-template-print.css
-service-front/public/assets/v2/css/govuk-template.css
 service-front-v2/app/static
 service-front-v2/govuk_components
 .phpunit.result.cache
