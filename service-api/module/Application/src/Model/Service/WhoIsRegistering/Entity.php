@@ -14,6 +14,11 @@ class Entity implements EntityInterface
         $this->who = $who;
     }
 
+    /**
+     * @return ((array|mixed)[]|string)[]
+     *
+     * @psalm-return array{whoIsRegistering?: array<array|mixed>|string}
+     */
     public function toArray()
     {
         $who = [];

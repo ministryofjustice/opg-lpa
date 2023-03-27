@@ -16,7 +16,12 @@ class Service extends AbstractService
 
     //-------------
 
-    public function generateToken($userId, $newEmail)
+    /**
+     * @return (DateTime|int|string)[]|string
+     *
+     * @psalm-return array{token: string, expiresIn: 86400, expiresAt: DateTime}|string
+     */
+    public function generateToken($userId, $newEmail): array|string
     {
 
         $validator = new \Laminas\Validator\EmailAddress();

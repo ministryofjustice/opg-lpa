@@ -29,9 +29,12 @@ class Service extends AbstractService
     /**
      * @param $username
      * @param $password
-     * @return array|string
+     *
+     * @return string|string[]
+     *
+     * @psalm-return 'invalid-password'|'invalid-username'|'username-already-exists'|array{userId: string, activation_token: string}
      */
-    public function create($username, $password)
+    public function create($username, $password): array|string
     {
         $emailValidator = new EmailAddressValidator();
 
@@ -80,9 +83,12 @@ class Service extends AbstractService
 
     /**
      * @param $token
-     * @return bool|string
+     *
+     * @return string|true
+     *
+     * @psalm-return 'account-not-found'|true
      */
-    public function activate($token)
+    public function activate($token): string|bool
     {
         $result = $this->getUserRepository()->activate($token);
 
@@ -134,9 +140,10 @@ class Service extends AbstractService
     /**
      * @param $id
      * @param string $reason
-     * @return bool
+     *
+     * @return true
      */
-    public function delete($id, $reason = 'user-initiated')
+    public function delete($id, $reason = 'user-initiated'): bool
     {
         //  First delete all applications for the user
         $this->applicationsService->deleteAll($id);
@@ -164,10 +171,11 @@ class Service extends AbstractService
     /**
      * Hashes the passed identity, ensuring it's trimmed and lowercase.
      *
-     * @param $identity
+     * @param null|string $identity
+     *
      * @return string
      */
-    private function hashIdentity($identity)
+    private function hashIdentity(string|null $identity): string
     {
         return hash('sha512', strtolower(trim($identity)));
     }
@@ -175,9 +183,8 @@ class Service extends AbstractService
     /**
      * @param $id
      * @param array $data
-     * @return ValidationApiProblem|array|null|object|User
      */
-    private function save($id, array $data = [])
+    private function save($id, array $data = []): User|ValidationApiProblem
     {
         // Protect these values from the client setting them manually.
         unset($data['id'], $data['email'], $data['createdAt'], $data['updatedAt']);
@@ -222,9 +229,8 @@ class Service extends AbstractService
 
     /**
      * @param string $username
-     * @return array|bool
      */
-    public function searchByUsername(string $username)
+    public function searchByUsername(string $username): array|false
     {
         $user = $this->getUserRepository()->getByUsername($username);
 
@@ -269,7 +275,7 @@ class Service extends AbstractService
     /**
      * @param ApplicationService $applicationsService
      */
-    public function setApplicationsService(ApplicationService $applicationsService)
+    public function setApplicationsService(ApplicationService $applicationsService): void
     {
         $this->applicationsService = $applicationsService;
     }

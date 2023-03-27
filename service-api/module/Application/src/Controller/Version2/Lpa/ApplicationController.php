@@ -49,7 +49,7 @@ class ApplicationController extends AbstractLpaController
     }
 
     /**
-     * @return JsonResponse|NoContentResponse|Paginator|ApiProblem
+     * @return JsonResponse
      */
     public function getList()
     {

@@ -28,9 +28,8 @@ class LockCommand extends Command
      * Factory method
      *
      * @param ServiceManager $sm
-     * @return LockCommand
      */
-    public function __invoke(ServiceManager $sm)
+    public function __invoke(ServiceManager $sm): static
     {
         return $this;
     }
@@ -85,6 +84,10 @@ class LockCommand extends Command
 
     /**
      * Acquire lock in dynamodb table
+     *
+     * @return int
+     *
+     * @psalm-return 0|1
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

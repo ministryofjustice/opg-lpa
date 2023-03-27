@@ -13,6 +13,11 @@ class Entity implements EntityInterface
         $this->instruction = $instruction;
     }
 
+    /**
+     * @return (false|string)[]
+     *
+     * @psalm-return array{instruction?: false|string}
+     */
     public function toArray()
     {
         if (is_string($this->instruction) || $this->instruction === false) {

@@ -43,16 +43,19 @@ class Service extends AbstractService
     /* @var $awsSignature SignatureV4 */
     private $awsSignature;
 
-    public function setClient(HttpClient $httpClient)
+    public function setClient(HttpClient $httpClient): void
     {
         $this->httpClient = $httpClient;
     }
 
-    public function setCredentials(CredentialsInterface $credentials)
+    public function setCredentials(CredentialsInterface $credentials): void
     {
         $this->credentials = $credentials;
     }
 
+    /**
+     * @return void
+     */
     public function setConfig(array $config)
     {
         if (!isset($config['processing-status']['endpoint'])) {
@@ -63,18 +66,22 @@ class Service extends AbstractService
         $this->processingStatusServiceUri .= '/lpa-online-tool/lpas/';
     }
 
-    public function setAwsSignatureV4(SignatureV4 $awsSignature)
+    public function setAwsSignatureV4(SignatureV4 $awsSignature): void
     {
         $this->awsSignature = $awsSignature;
     }
 
     /**
-     * @param $ids
+     * @param string[] $ids
+     *
      * @return mixed
+     *
      * @throws ApiProblemException
      * @throws HttpException
+     *
+     * @psalm-param non-empty-list<string> $ids
      */
-    public function getStatuses($ids)
+    public function getStatuses(array $ids)
     {
         // build request loop
         $requests = [];
@@ -171,9 +178,11 @@ class Service extends AbstractService
     /**
      * Generates the standard set of HTTP headers expected by the API.
      *
-     * @return array
+     * @return string[]
+     *
+     * @psalm-return array{Accept: 'application/json', 'Accept-Language': 'en'}
      */
-    private function buildHeaders()
+    private function buildHeaders(): array
     {
         return [
             'Accept' => 'application/json',
@@ -181,7 +190,12 @@ class Service extends AbstractService
         ];
     }
 
-    private function handleResponse(string $responseBodyString)
+    /**
+     * @return (mixed|null|string|true)[]|null
+     *
+     * @psalm-return array{registrationDate?: mixed, receiptDate?: mixed, rejectedDate?: mixed, invalidDate?: mixed, withdrawnDate?: mixed, dispatchDate?: mixed|null, returnUnpaid?: true, status?: 'Checking'|'Processed'|'Received'}|null
+     */
+    private function handleResponse(string $responseBodyString): array|null
     {
         $responseBody = json_decode($responseBodyString, true);
 

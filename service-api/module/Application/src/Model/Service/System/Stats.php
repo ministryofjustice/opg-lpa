@@ -30,7 +30,7 @@ class Stats extends AbstractService
     use WhoRepositoryTrait;
 
     /**
-     * @return bool
+     * @return true
      */
     public function generate(): bool
     {
@@ -115,9 +115,11 @@ class Stats extends AbstractService
      * Some of this could be done using aggregate queries, however I'd rather keep the queries simple.
      * Stats are not looked at very often, so performance when done like this should be "good enough".
      *
-     * @return array
+     * @return ((int|int[])[]|float|string)[]
+     *
+     * @psalm-return array{generated: string, generationTimeInMs: float, all: array{started: int, created: int, waiting: int, checking: int, received: int, processed: int, completed: int, deleted: int}, 'health-and-welfare': array{started: int, created: int, waiting: int, checking: int, received: int, processed: int, completed: int}, 'property-and-finance': array{started: int, created: int, waiting: int, checking: int, received: int, processed: int, completed: int}, 'by-month': array<string, array{started: int, created: int, completed: int, waiting: int, received: int, checking: int, processed: int}>}
      */
-    private function getLpaStats()
+    private function getLpaStats(): array
     {
         $startGeneration = microtime(true);
 
@@ -243,9 +245,11 @@ class Stats extends AbstractService
     /**
      * Return a breakdown of the Who Are You stats.
      *
-     * @return array
+     * @return ((array|mixed)[]|float|string)[]
+     *
+     * @psalm-return array{'by-month': array<string, array>, all: array, generated: string, generationTimeInMs: float}
      */
-    private function getWhoAreYou()
+    private function getWhoAreYou(): array
     {
         $startGeneration = microtime(true);
 
@@ -279,9 +283,11 @@ class Stats extends AbstractService
     }
 
     /**
-     * @return array
+     * @return (float|int[][]|string)[]
+     *
+     * @psalm-return array{generated: string, generationTimeInMs: float, 'by-month': array<string, array{completed: int, contactByEmail: int, contactByPhone: int, contactByPost: int, contactInEnglish: int, contactInWelsh: int}>}
      */
-    private function getCorrespondenceStats()
+    private function getCorrespondenceStats(): array
     {
         $startGeneration = microtime(true);
 
@@ -330,9 +336,11 @@ class Stats extends AbstractService
     }
 
     /**
-     * @return array
+     * @return (float|int[][]|string)[]
+     *
+     * @psalm-return array{generated: string, generationTimeInMs: float, 'by-month': array<string, array{completed: int, preferencesStated: int, instructionsStated: int}>}
      */
-    private function getPreferencesInstructionsStats()
+    private function getPreferencesInstructionsStats(): array
     {
         $startGeneration = microtime(true);
 
@@ -372,9 +380,11 @@ class Stats extends AbstractService
     }
 
     /**
-     * @return array
+     * @return (((int|int[])[]|int)[][]|float|string)[]
+     *
+     * @psalm-return array{generated: string, generationTimeInMs: float, 'by-month': array<string, array{completed: int, type: array{'health-and-welfare': int, 'property-and-financial': int}, canSign: array{true: int, false: int}, replacementAttorneys: array{yes: int, no: int, multiple: int}, peopleToNotify: array{yes: int, no: int, multiple: int}, whoIsRegistering: array{donor: int, attorneys: int}, repeatCaseNumber: array{yes: int, no: int}, payment: array{reducedFeeReceivesBenefits: int, reducedFeeUniversalCredit: int, reducedFeeLowIncome: int, notApply: int, card: int, cheque: int}, primaryAttorneys: array{multiple: int}, primaryAttorneyDecisions: array{when: array{now: int, 'no-capacity': int}, how: array{'jointly-attorney-severally': int, jointly: int, depends: int}, canSustainLife: array{true: int, false: int}}, replacementAttorneyDecisions: array{when: array{first: int, last: int, depends: int}, how: array{'jointly-attorney-severally': int, jointly: int, depends: int}}, trust: array{primaryAttorneys: int, replacementAttorneys: int}, certificateProviderSkipped: array{yes: int, no: int}}>}
      */
-    private function getOptionsStats()
+    private function getOptionsStats(): array
     {
         $startGeneration = microtime(true);
 

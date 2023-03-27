@@ -1,8 +1,9 @@
 <?php
+
 namespace Application\Model\DataAccess\Repository\Feedback;
 
-trait FeedbackRepositoryTrait {
-
+trait FeedbackRepositoryTrait
+{
     /**
      * @var FeedbackRepositoryInterface
      */
@@ -11,7 +12,7 @@ trait FeedbackRepositoryTrait {
     /**
      * @param FeedbackRepositoryInterface $repo
      */
-    public function setFeedbackRepository(FeedbackRepositoryInterface $repo)
+    public function setFeedbackRepository(FeedbackRepositoryInterface $repo): void
     {
         $this->feedbackRepository = $repo;
     }
@@ -19,7 +20,7 @@ trait FeedbackRepositoryTrait {
     /**
      * @return FeedbackRepositoryInterface
      */
-    private function getFeedbackRepository() : FeedbackRepositoryInterface
+    private function getFeedbackRepository(): FeedbackRepositoryInterface
     {
         if (!($this->feedbackRepository instanceof FeedbackRepositoryInterface)) {
             throw new \RuntimeException("Instance of FeedbackRepository not set");
@@ -27,5 +28,4 @@ trait FeedbackRepositoryTrait {
 
         return $this->feedbackRepository;
     }
-
 }

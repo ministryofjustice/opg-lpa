@@ -66,6 +66,8 @@ class Service extends AbstractService
 
     /**
      * Execute the account cleanup
+     *
+     * @psalm-return 0|1
      */
     public function cleanup(): int
     {
@@ -117,10 +119,16 @@ class Service extends AbstractService
      * warning when their account will be deleted.
      *
      * @param $warningType
+     *
      * @return int The number of users notified
+     *
      * @throws Exception
+     *
+     * @psalm-param '1-month-notice'|'1-week-notice' $warningType
+     *
+     * @psalm-return int<0, max>
      */
-    private function sendWarningEmails($warningType)
+    private function sendWarningEmails(string $warningType): int
     {
         if (!array_key_exists($warningType, $this->warningEmailConfig)) {
             throw new Exception('Invalid warning type: ' . $warningType);
@@ -179,8 +187,10 @@ class Service extends AbstractService
      * Delete all accounts that have expired.
      *
      * @return int The number of accounts deleted
+     *
+     * @psalm-return int<0, max>
      */
-    private function deleteExpiredAccounts()
+    private function deleteExpiredAccounts(): int
     {
         $lastLoginBefore = new DateTime('-9 months');
 
@@ -209,8 +219,10 @@ class Service extends AbstractService
      * Delete all accounts created before time x that have not yet been activated.
      *
      * @return int The number of accounts deleted
+     *
+     * @psalm-return int<0, max>
      */
-    private function deleteUnactivatedAccounts()
+    private function deleteUnactivatedAccounts(): int
     {
         $unactivatedSince = new DateTime('-24 hours');
 
@@ -238,7 +250,7 @@ class Service extends AbstractService
     /**
      * @param array $config
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): void
     {
         $this->config = $config;
     }
@@ -246,7 +258,7 @@ class Service extends AbstractService
     /**
      * @param NotifyClient $notifyClient
      */
-    public function setNotifyClient(NotifyClient $notifyClient)
+    public function setNotifyClient(NotifyClient $notifyClient): void
     {
         $this->notifyClient = $notifyClient;
     }
@@ -254,7 +266,7 @@ class Service extends AbstractService
     /**
      * @param UsersService $usersService
      */
-    public function setUsersService(UsersService $usersService)
+    public function setUsersService(UsersService $usersService): void
     {
         $this->usersService = $usersService;
     }

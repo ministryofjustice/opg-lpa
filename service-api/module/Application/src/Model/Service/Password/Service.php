@@ -55,9 +55,12 @@ class Service extends AbstractService
 
     /**
      * @param $username
-     * @return array|string
+     *
+     * @return (DateTime|int|null|string)[]|string
+     *
+     * @psalm-return 'user-not-found'|array{token?: string, expiresIn?: 86400, expiresAt?: DateTime, activation_token?: null|string}
      */
-    public function generateToken($username)
+    public function generateToken($username): array|string
     {
         $user = $this->getUserRepository()->getByUsername($username);
 
@@ -128,7 +131,7 @@ class Service extends AbstractService
     /**
      * @param AuthenticationService $authenticationService
      */
-    public function setAuthenticationService(AuthenticationService $authenticationService)
+    public function setAuthenticationService(AuthenticationService $authenticationService): void
     {
         $this->authenticationService = $authenticationService;
     }

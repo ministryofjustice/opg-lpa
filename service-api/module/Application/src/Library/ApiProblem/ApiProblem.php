@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Library\ApiProblem;
 
 use Laminas\ApiTools\ApiProblem\ApiProblem as LaminasApiProblem;
@@ -21,7 +22,7 @@ class ApiProblem extends LaminasApiProblem
     /**
      * @return int
      */
-    public function getStatus() : int
+    public function getStatus(): int
     {
         return parent::getStatus();
     }
@@ -34,10 +35,7 @@ class ApiProblem extends LaminasApiProblem
         return parent::getDetail();
     }
 
-    /**
-     * @return null|string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
