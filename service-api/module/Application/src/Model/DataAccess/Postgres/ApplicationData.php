@@ -31,10 +31,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * Maps LPA object fields to Postgres' fields.
      *
      * @param Lpa $lpa
-     *
-     * @return (false|mixed|null|string)[]
-     *
-     * @psalm-return array{document: false|null|string, payment: false|null|string, metadata: false|null|string,...}
+     * @return array
      */
     private function mapLpaToPostgres(Lpa $lpa): array
     {
@@ -53,10 +50,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * Maps data from Postgres back into an array format that the LPA DataModel can consume.
      *
      * @param array $data
-     *
-     * @return (mixed|null)[]
-     *
-     * @psalm-return array{document: mixed|null, payment: mixed|null, metadata: mixed|null,...}
+     * @return array
      */
     private function mapPostgresToLpaCompatible(array $data): array
     {
@@ -70,10 +64,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     /**
      * @param array $criteria
      * @param array $options
-     *
-     * @return \Generator
-     *
-     * @psalm-return \Generator<int, array, mixed, void>
+     * @return Traversable
      */
     public function fetch(array $criteria, array $options = []): Traversable
     {

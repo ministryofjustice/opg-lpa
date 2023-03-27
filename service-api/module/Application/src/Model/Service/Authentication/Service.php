@@ -38,15 +38,7 @@ class Service extends AbstractService
         $this->tokenTtl = $tokenTtl;
     }
 
-    /**
-     * @param null|string $username
-     * @param true $createToken
-     *
-     * @return (DateTime|bool|mixed|null|string)[]|string
-     *
-     * @psalm-return array{userId: null|string, username: null|string, last_login: DateTime|null, inactivityFlagsCleared: bool, token?: string, expiresIn?: mixed, expiresAt?: DateTime}|string
-     */
-    public function withPassword(string|null $username, $password, bool $createToken): array|string
+    public function withPassword($username, $password, $createToken)
     {
         if (empty($username) || empty($password)) {
             return 'missing-credentials';
@@ -134,7 +126,7 @@ class Service extends AbstractService
             ] + $tokenDetails;
     }
 
-    public function withToken(string $tokenStr, bool $extendToken)
+    public function withToken($tokenStr, $extendToken)
     {
         // limit token updates to once every 5 seconds
         $throttle = true;
@@ -155,14 +147,8 @@ class Service extends AbstractService
      *     token is more than 5 seconds ago
      * $expiresAt: DateTime|null; if null, defaults to the current time +
      *     the tokenTtl on this service
-     *
-     * @param true $needsUpdate
-     *
-     * @return (DateTime|false|int|mixed|null|string)[]|string
-     *
-     * @psalm-return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null}
      */
-    public function updateToken(string $tokenStr, bool $needsUpdate = true, bool $throttle = true, DateTime|false|null $expiresAt = null): array|string
+    public function updateToken($tokenStr, $needsUpdate = true, $throttle = true, $expiresAt = null)
     {
         $user = $this->getUserRepository()->getByAuthToken($tokenStr);
 

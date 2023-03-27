@@ -1,5 +1,4 @@
 <?php
-
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
@@ -7,6 +6,7 @@ use Application\Model\DataAccess\Repository\User as UserRepository;
 
 class UserModel implements UserRepository\UserInterface
 {
+
     /**
      * The user's data.
      *
@@ -33,7 +33,7 @@ class UserModel implements UserRepository\UserInterface
      * @param $key
      * @return DateTime|null
      */
-    private function returnDateField(string $key)
+    private function returnDateField($key)
     {
         if (!isset($this->data[$key])) {
             return null;
@@ -51,11 +51,9 @@ class UserModel implements UserRepository\UserInterface
     /**
      * Returns an array representation of the user's basic info.
      *
-     * @return (DateTime|bool|int|null|string)[]
-     *
-     * @psalm-return array{userId: null|string, username: null|string, isActive: bool, lastLoginAt: DateTime|null, updatedAt: DateTime|null, createdAt: DateTime|null, activatedAt: DateTime|null, lastFailedLoginAttemptAt: DateTime|null, failedLoginAttempts: int, numberOfLpas: int|null}
+     * @return array
      */
-    public function toArray(): array
+    public function toArray() : array
     {
         return [
             'userId' => $this->id(),
@@ -78,7 +76,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return string
      */
-    public function id(): ?string
+    public function id() : ?string
     {
         return (isset($this->data['id'])) ? $this->data['id'] : null;
     }
@@ -88,7 +86,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return string
      */
-    public function username(): ?string
+    public function username() : ?string
     {
         return (isset($this->data['identity'])) ? $this->data['identity'] : null;
     }
@@ -98,7 +96,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return bool
      */
-    public function isActive(): bool
+    public function isActive() : bool
     {
         if (!isset($this->data['active'])) {
             return false;
@@ -111,7 +109,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return string
      */
-    public function password(): ?string
+    public function password() : ?string
     {
         return (isset($this->data['password_hash'])) ? $this->data['password_hash'] : null;
     }
@@ -121,7 +119,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return DateTime
      */
-    public function createdAt(): ?DateTime
+    public function createdAt() : ?DateTime
     {
         return $this->returnDateField('created');
     }
@@ -131,7 +129,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return DateTime
      */
-    public function updatedAt(): ?DateTime
+    public function updatedAt() : ?DateTime
     {
         return $this->returnDateField('updated');
     }
@@ -141,7 +139,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return DateTime
      */
-    public function deleteAt(): ?DateTime
+    public function deleteAt() : ?DateTime
     {
         return $this->returnDateField('deleted');
     }
@@ -151,7 +149,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return DateTime
      */
-    public function lastLoginAt(): ?DateTime
+    public function lastLoginAt() : ?DateTime
     {
         return $this->returnDateField('last_login');
     }
@@ -161,7 +159,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return DateTime
      */
-    public function activatedAt(): ?DateTime
+    public function activatedAt() : ?DateTime
     {
         return $this->returnDateField('activated');
     }
@@ -171,7 +169,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return DateTime
      */
-    public function lastFailedLoginAttemptAt(): ?DateTime
+    public function lastFailedLoginAttemptAt() : ?DateTime
     {
         return $this->returnDateField('last_failed_login');
     }
@@ -181,7 +179,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return int
      */
-    public function failedLoginAttempts(): int
+    public function failedLoginAttempts() : int
     {
         return (isset($this->data['failed_login_attempts'])) ? (int)$this->data['failed_login_attempts'] : 0;
     }
@@ -191,7 +189,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return string
      */
-    public function activationToken(): ?string
+    public function activationToken() : ?string
     {
         return (isset($this->data['activation_token'])) ? $this->data['activation_token'] : null;
     }
@@ -199,9 +197,9 @@ class UserModel implements UserRepository\UserInterface
     /**
      * Returns the user's current authentication token (if present).
      *
-     * @return TokenModel|null
+     * @return UserRepository\TokenInterface|null
      */
-    public function authToken(): ?UserRepository\TokenInterface
+    public function authToken() : ?UserRepository\TokenInterface
     {
         if (!isset($this->data['auth_token'])) {
             return null;
@@ -215,7 +213,7 @@ class UserModel implements UserRepository\UserInterface
      *
      * @return array|null
      */
-    public function inactivityFlags(): ?array
+    public function inactivityFlags() : ?array
     {
         if (!isset($this->data['inactivity_flags'])) {
             return null;
@@ -227,8 +225,6 @@ class UserModel implements UserRepository\UserInterface
     /**
      * Sets the failed login attempts to zero in this instance.
      * NOTE - this does not change the value in the database!
-     *
-     * @return void
      */
     public function resetFailedLoginAttempts()
     {

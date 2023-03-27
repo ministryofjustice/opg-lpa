@@ -31,7 +31,7 @@ class AbstractBase
         $this->config = $config;
     }
 
-    public function config(): array
+    public function config()
     {
         return $this->config;
     }

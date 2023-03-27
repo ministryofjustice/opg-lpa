@@ -16,7 +16,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|Entity
      */
-    public function update(string $lpaId, $data)
+    public function update($lpaId, $data)
     {
         $preference = (isset($data['preference']) ? $data['preference'] : null);
 

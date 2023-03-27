@@ -98,8 +98,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * Returns a single user by username (email address).
      *
      * @param $username
-     *
-     * @return UserModel|null
+     * @return UserRepository\UserInterface|null
      */
     public function getByUsername(string $username): ?UserRepository\UserInterface
     {
@@ -119,10 +118,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param $query
      * @param $options - array of optional parameters, including
      * 'offset' (int, default 0) and 'limit' (int, default 10)
-     *
-     * @return \Generator UserModel instances
-     *
-     * @psalm-return \Generator<int, UserModel, mixed, void>
+     * @return iterable UserModel instances
      */
     public function matchUsers(string $query, array $options = []): iterable
     {
@@ -172,8 +168,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
     /**
      * @param $id
-     *
-     * @return UserModel|null
+     * @return UserRepository\UserInterface|null
      */
     public function getById(string $id): ?UserRepository\UserInterface
     {
@@ -188,8 +183,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
     /**
      * @param $token
-     *
-     * @return UserModel|null
+     * @return UserRepository\UserInterface|null
      */
     public function getByAuthToken(string $token): ?UserRepository\UserInterface
     {
@@ -204,8 +198,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
     /**
      * @param $token
-     *
-     * @return UserModel|null
+     * @return UserRepository\UserInterface|null
      */
     public function getByResetToken(string $token): ?UserRepository\UserInterface
     {
@@ -560,10 +553,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      *
      * @param DateTime $since
      * @param string $excludeFlag
-     *
-     * @return \Generator
-     *
-     * @psalm-return \Generator<int, UserModel, mixed, void>
+     * @return iterable
      */
     public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null): iterable
     {
@@ -608,10 +598,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * Returns all accounts create before date $olderThan and that have not been activated.
      *
      * @param DateTime $olderThan
-     *
-     * @return \Generator
-     *
-     * @psalm-return \Generator<int, UserModel, mixed, void>
+     * @return iterable
      */
     public function getAccountsUnactivatedOlderThan(DateTime $olderThan): iterable
     {

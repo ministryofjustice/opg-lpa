@@ -59,10 +59,7 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      *
      * @param DateTime $from
      * @param DateTime $to
-     *
-     * @return \Generator
-     *
-     * @psalm-return \Generator<int, array{received: string,...}|mixed, mixed, void>
+     * @return Traversable
      */
     public function getForDateRange(DateTime $from, DateTime $to): Traversable
     {
@@ -94,8 +91,7 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      * Delete all feedback received before the passed date.
      *
      * @param DateTime $before
-     *
-     * @return true
+     * @return bool
      */
     public function prune(DateTime $before): bool
     {

@@ -18,7 +18,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function update(string $lpaId, $data)
+    public function update($lpaId, $data)
     {
         $certificateProvider = new CertificateProvider($data);
 
@@ -42,10 +42,9 @@ class Service extends AbstractService
 
     /**
      * @param $lpaId
-     *
-     * @return ValidationApiProblem|true
+     * @return ValidationApiProblem|bool
      */
-    public function delete(string $lpaId): bool|ValidationApiProblem
+    public function delete($lpaId)
     {
         $lpa = $this->getLpa($lpaId);
 

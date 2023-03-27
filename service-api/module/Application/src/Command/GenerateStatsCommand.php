@@ -28,24 +28,21 @@ class GenerateStatsCommand extends Command
      * Factory method
      *
      * @param ServiceManager $sm
+     * @return GenerateStatsCommand
      */
-    public function __invoke(ServiceManager $sm): static
+    public function __invoke(ServiceManager $sm)
     {
         $this->setStatsService($sm->get(StatsService::class));
         return $this;
     }
 
-    public function setStatsService(StatsService $statsService): void
+    public function setStatsService(StatsService $statsService)
     {
         $this->statsService = $statsService;
     }
 
     /**
      * Required method implementation
-     *
-     * @return int
-     *
-     * @psalm-return 0|1
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {

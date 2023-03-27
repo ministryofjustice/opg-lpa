@@ -22,7 +22,7 @@ class User extends AbstractIdentity
     /**
      * Flags this user as an admin
      */
-    public function setAsAdmin(): void
+    public function setAsAdmin()
     {
         if (!in_array('admin', $this->roles)) {
             $this->roles[] = 'admin';

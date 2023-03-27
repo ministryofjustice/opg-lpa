@@ -23,7 +23,7 @@ class Service extends AbstractService
      * @param $userId
      * @return DataModelEntity
      */
-    public function create($data, string $userId)
+    public function create($data, $userId)
     {
         // If no data was passed, represent with an empty array.
         if (is_null($data)) {
@@ -79,15 +79,12 @@ class Service extends AbstractService
     }
 
     /**
-     * @param array[] $data
+     * @param $data
      * @param $id
      * @param $userId
-     *
      * @return ValidationApiProblem|DataModelEntity
-     *
-     * @psalm-param array{metadata: array} $data
      */
-    public function patch(array $data, $id, string $userId)
+    public function patch($data, $id, $userId)
     {
 
         /** @var Lpa $lpa */
@@ -115,7 +112,7 @@ class Service extends AbstractService
      * @param $userId
      * @return ApiProblem|DataModelEntity
      */
-    public function fetch($id, string $userId)
+    public function fetch($id, $userId)
     {
         // Note: user has to match
         $result = $this->getApplicationRepository()->getById((int) $id, $userId);
@@ -136,10 +133,7 @@ class Service extends AbstractService
      *
      * @param array $lpaIds : IDs of LPAs to fetch
      * @param string $userId : restrict results to this user ID
-     *
      * @return Lpa[]
-     *
-     * @psalm-return list{0?: Lpa,...}
      */
     public function filterByIdsAndUser(array $lpaIds, string $userId): array
     {
@@ -156,7 +150,7 @@ class Service extends AbstractService
      * @param array $params
      * @return Collection
      */
-    public function fetchAll(string $userId, $params = [])
+    public function fetchAll($userId, $params = [])
     {
         $filter = [
             'user' => $userId
@@ -229,10 +223,9 @@ class Service extends AbstractService
     /**
      * @param $id
      * @param $userId
-     *
-     * @return ApiProblem|true
+     * @return ApiProblem|bool
      */
-    public function delete($id, string $userId): bool|ApiProblem
+    public function delete($id, $userId)
     {
         $result = $this->getApplicationRepository()->getById((int) $id, $userId);
 
@@ -247,10 +240,9 @@ class Service extends AbstractService
 
     /**
      * @param $userId
-     *
-     * @return true
+     * @return bool
      */
-    public function deleteAll($userId): bool
+    public function deleteAll($userId)
     {
         $lpas = $this->getApplicationRepository()->fetchByUserId($userId);
 

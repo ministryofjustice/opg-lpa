@@ -12,7 +12,7 @@ use RuntimeException;
 class AuthenticateController extends AbstractAuthController
 {
     /**
-     * @return never
+     * @return AbstractService
      */
     protected function getService()
     {
@@ -56,7 +56,7 @@ class AuthenticateController extends AbstractAuthController
      * @param $updateToken
      * @return JsonModel|ApiProblem
      */
-    private function withToken(string $authToken, bool $updateToken)
+    private function withToken($authToken, $updateToken)
     {
         $result = $this->authenticationService->withToken($authToken, $updateToken);
 
@@ -90,7 +90,7 @@ class AuthenticateController extends AbstractAuthController
      * @param $updateToken
      * @return JsonModel|ApiProblem
      */
-    private function withPassword(string $username, $password, bool $updateToken)
+    private function withPassword($username, $password, $updateToken)
     {
         $result = $this->authenticationService->withPassword($username, $password, $updateToken);
 
@@ -153,10 +153,8 @@ class AuthenticateController extends AbstractAuthController
      * - CheckedToken header, containing the user's auth token
      * - JSON body with these properties:
      *   - "expiresInSeconds": <int>
-     *
-     * @return ApiProblem|JsonModel
      */
-    public function setSessionExpiryAction(): JsonModel|ApiProblem
+    public function setSessionExpiryAction()
     {
         // Suppress psalm errors caused by bug in laminas-mvc;
         // see https://github.com/laminas/laminas-mvc/issues/77

@@ -1,10 +1,10 @@
 <?php
-
 namespace Application\Model\DataAccess\Postgres;
 
 use Laminas\Db\Sql\Sql;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Stats as StatsRepository;
+
 
 class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryInterface
 {
@@ -16,7 +16,7 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
      * @param array $stats
      * @return bool
      */
-    public function insert(array $stats): bool
+    public function insert(array $stats) : bool
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::STATS_TABLE);
@@ -40,7 +40,7 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
      *
      * @return array|null
      */
-    public function getStats(): ?array
+    public function getStats() : ?array
     {
         $sql = $this->dbWrapper->createSql();
         $select = $sql->select(self::STATS_TABLE);
@@ -61,9 +61,8 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
      *
      * i.e. truncate table
      *
-     * @return true
      */
-    public function delete(): bool
+    public function delete() : bool
     {
         $this->dbWrapper->rawQuery('TRUNCATE TABLE ' . self::STATS_TABLE);
         return true;

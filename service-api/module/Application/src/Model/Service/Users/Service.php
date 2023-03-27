@@ -29,12 +29,9 @@ class Service extends AbstractService
     /**
      * @param $username
      * @param $password
-     *
-     * @return string|string[]
-     *
-     * @psalm-return 'invalid-password'|'invalid-username'|'username-already-exists'|array{userId: string, activation_token: string}
+     * @return array|string
      */
-    public function create($username, $password): array|string
+    public function create($username, $password)
     {
         $emailValidator = new EmailAddressValidator();
 
@@ -83,12 +80,9 @@ class Service extends AbstractService
 
     /**
      * @param $token
-     *
-     * @return string|true
-     *
-     * @psalm-return 'account-not-found'|true
+     * @return bool|string
      */
-    public function activate($token): string|bool
+    public function activate($token)
     {
         $result = $this->getUserRepository()->activate($token);
 
@@ -140,10 +134,9 @@ class Service extends AbstractService
     /**
      * @param $id
      * @param string $reason
-     *
-     * @return true
+     * @return bool
      */
-    public function delete($id, $reason = 'user-initiated'): bool
+    public function delete($id, $reason = 'user-initiated')
     {
         //  First delete all applications for the user
         $this->applicationsService->deleteAll($id);
@@ -171,11 +164,10 @@ class Service extends AbstractService
     /**
      * Hashes the passed identity, ensuring it's trimmed and lowercase.
      *
-     * @param null|string $identity
-     *
+     * @param $identity
      * @return string
      */
-    private function hashIdentity(string|null $identity): string
+    private function hashIdentity($identity)
     {
         return hash('sha512', strtolower(trim($identity)));
     }
@@ -183,8 +175,9 @@ class Service extends AbstractService
     /**
      * @param $id
      * @param array $data
+     * @return ValidationApiProblem|array|null|object|User
      */
-    private function save($id, array $data = []): User|ValidationApiProblem
+    private function save($id, array $data = [])
     {
         // Protect these values from the client setting them manually.
         unset($data['id'], $data['email'], $data['createdAt'], $data['updatedAt']);
@@ -229,8 +222,9 @@ class Service extends AbstractService
 
     /**
      * @param string $username
+     * @return array|bool
      */
-    public function searchByUsername(string $username): array|false
+    public function searchByUsername(string $username)
     {
         $user = $this->getUserRepository()->getByUsername($username);
 
@@ -275,7 +269,7 @@ class Service extends AbstractService
     /**
      * @param ApplicationService $applicationsService
      */
-    public function setApplicationsService(ApplicationService $applicationsService): void
+    public function setApplicationsService(ApplicationService $applicationsService)
     {
         $this->applicationsService = $applicationsService;
     }

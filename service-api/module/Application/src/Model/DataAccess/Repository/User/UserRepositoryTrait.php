@@ -1,9 +1,9 @@
 <?php
-
 namespace Application\Model\DataAccess\Repository\User;
 
 trait UserRepositoryTrait
 {
+
     /**
      * @var UserRepositoryInterface
      */
@@ -12,7 +12,7 @@ trait UserRepositoryTrait
     /**
      * @param UserRepositoryInterface $repo
      */
-    public function setUserRepository(UserRepositoryInterface $repo): void
+    public function setUserRepository(UserRepositoryInterface $repo)
     {
         $this->userRepository = $repo;
     }
@@ -20,7 +20,7 @@ trait UserRepositoryTrait
     /**
      * @return UserRepositoryInterface
      */
-    private function getUserRepository(): UserRepositoryInterface
+    private function getUserRepository() : UserRepositoryInterface
     {
         if (!($this->userRepository instanceof UserRepositoryInterface)) {
             throw new \RuntimeException("Instance of UserRepository not set");
@@ -28,4 +28,5 @@ trait UserRepositoryTrait
 
         return $this->userRepository;
     }
+
 }

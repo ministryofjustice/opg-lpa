@@ -101,11 +101,10 @@ abstract class AbstractAuthController extends AbstractRestfulController
     /**
      * Get data from the body content of the request
      *
-     * @param null|string $varName
-     *
+     * @param $varName
      * @return mixed|null
      */
-    protected function getBodyContent(string|null $varName = null)
+    protected function getBodyContent($varName = null)
     {
         $data = $this->processBodyContent($this->getRequest());
 

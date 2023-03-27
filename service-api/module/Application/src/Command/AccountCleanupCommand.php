@@ -29,14 +29,15 @@ class AccountCleanupCommand extends Command
      * Factory method
      *
      * @param ServiceManager $sm
+     * @return AccountCleanupCommand
      */
-    public function __invoke(ServiceManager $sm): static
+    public function __invoke(ServiceManager $sm)
     {
         $this->setAccountCleanupService($sm->get(AccountCleanupService::class));
         return $this;
     }
 
-    public function setAccountCleanupService(AccountCleanupService $accountCleanupService): void
+    public function setAccountCleanupService(AccountCleanupService $accountCleanupService)
     {
         $this->accountCleanupService = $accountCleanupService;
     }

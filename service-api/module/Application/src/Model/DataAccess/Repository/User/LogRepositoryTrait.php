@@ -1,9 +1,9 @@
 <?php
-
 namespace Application\Model\DataAccess\Repository\User;
 
 trait LogRepositoryTrait
 {
+
     /**
      * @var LogRepositoryInterface
      */
@@ -12,7 +12,7 @@ trait LogRepositoryTrait
     /**
      * @param LogRepositoryInterface $repo
      */
-    public function setLogRepository(LogRepositoryInterface $repo): void
+    public function setLogRepository(LogRepositoryInterface $repo)
     {
         $this->logRepository = $repo;
     }
@@ -20,7 +20,7 @@ trait LogRepositoryTrait
     /**
      * @return LogRepositoryInterface
      */
-    private function getLogRepository(): LogRepositoryInterface
+    private function getLogRepository() : LogRepositoryInterface
     {
         if (!($this->logRepository instanceof LogRepositoryInterface)) {
             throw new \RuntimeException("Instance of LogRepository not set");
@@ -28,4 +28,5 @@ trait LogRepositoryTrait
 
         return $this->logRepository;
     }
+
 }

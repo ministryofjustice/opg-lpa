@@ -28,7 +28,7 @@ class Json extends Response
     /**
      * Get the body of the response in a JSON string
      *
-     * @return false|string
+     * @return string
      */
     public function getContent()
     {
