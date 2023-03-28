@@ -11,6 +11,7 @@ use Aws\DynamoDb\DynamoDbClient;
 use DateTime;
 use Exception;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
+use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
 
 /**
@@ -24,10 +25,13 @@ class Status extends AbstractService implements ApiClientAwareInterface
     use ApiClientTrait;
     use LoggerTrait;
 
-    const STATUS_UNKNOWN = 'unknown';
-    const STATUS_PASS = 'pass';
-    const STATUS_FAIL = 'fail';
-    const STATUS_WARN = 'warn';
+    // if any of these have a status of 'fail' or 'warn', the service
+    // is considered down
+    const SERVICES_REQUIRED = ['api', 'sessionSaveHandler'];
+
+    // if any of these have a status of 'fail' or 'warn', the service
+    // is considered up, but running at a degraded level
+    const SERVICES_OPTIONAL = ['dynamo', 'ordnanceSurvey'];
 
     /** @var DynamoDbClient */
     private $dynamoDbClient;
@@ -50,10 +54,13 @@ class Status extends AbstractService implements ApiClientAwareInterface
      */
     public function check()
     {
-        $result = ['ok' => false];
+        $result = [];
+        $ok = false;
+        $iterations = 0;
 
-        for ($i = 1; $i <= 6; $i++) {
-            $result = array();
+        while ($iterations < 6 && !$ok) {
+            $iterations++;
+            $result = [];
 
             // Check DynamoDB
             $result['dynamo'] = $this->dynamo();
@@ -65,27 +72,48 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $result['sessionSaveHandler'] = $this->session();
 
             $ok = true;
-            foreach ($result as $service) {
-                $ok = $ok && $service['ok'];
+            foreach (self::SERVICES_REQUIRED as $serviceRequired) {
+                if (!$result[$serviceRequired]['ok']) {
+                    $ok = false;
+                    break;
+                }
             }
+        }
 
-            $result['ok'] = $ok;
-            $result['iterations'] = $i;
+        $result['ok'] = $ok;
+        $result['iterations'] = $iterations;
 
-            if (!$result['ok']) {
+        // Check ordnanceSurvey - we rate limit this so we don't want it in the above retry loop
+        $result['ordnanceSurvey'] = $this->ordnanceSurvey();
+
+        // Determine overall status of service by looking at the statuses
+        // of each dependency
+        $status = Constants::STATUS_PASS;
+
+        foreach (self::SERVICES_REQUIRED as $serviceRequired) {
+            if ($result[$serviceRequired]['status'] !== Constants::STATUS_PASS) {
+                $status = Constants::STATUS_FAIL;
                 break;
             }
         }
 
-        // Check ordnanceSurvey - we rate limit this so we don't want it in the above retry loop
-        $result['ordnanceSurvey'] = $this->ordnanceSurvey();
+        if ($status !== Constants::STATUS_FAIL) {
+            foreach (self::SERVICES_OPTIONAL as $serviceOptional) {
+                if ($result[$serviceOptional]['status'] !== Constants::STATUS_PASS) {
+                    $status = Constants::STATUS_WARN;
+                    break;
+                }
+            }
+        }
+
+        $result['status'] = $status;
 
         return $result;
     }
 
     private function dynamo()
     {
-        $result = ['ok' => false, 'status' => self::STATUS_FAIL];
+        $result = ['ok' => false, 'status' => Constants::STATUS_FAIL];
 
         // DynamoDb (system message table)
         try {
@@ -100,13 +128,13 @@ class Status extends AbstractService implements ApiClientAwareInterface
                 // Table is okay
                 $result = [
                     'ok' => true,
-                    'status' => self::STATUS_PASS,
+                    'status' => Constants::STATUS_PASS,
                 ];
             }
         } catch (Exception $e) {
             $result = [
                 'ok' => false,
-                'status' => self::STATUS_FAIL,
+                'status' => Constants::STATUS_FAIL,
             ];
         }
 
@@ -117,7 +145,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
     {
         $result = [
             'ok' => false,
-            'status' => self::STATUS_FAIL,
+            'status' => Constants::STATUS_FAIL,
             'details' => [],
         ];
 
@@ -125,14 +153,14 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $api = $this->apiClient->httpGet('/ping');
 
             $result['ok'] = $api['ok'];
-            $result['status'] = ($api['ok'] ? self::STATUS_PASS : self::STATUS_FAIL);
+            $result['status'] = ($api['ok'] ? Constants::STATUS_PASS : Constants::STATUS_FAIL);
             unset($api['ok']);
 
             $result['details']['response_code'] = 200;
             $result['details'] = $result['details'] + $api;
         } catch (Exception $e) {
             $result['ok'] = false;
-            $result['status'] = self::STATUS_FAIL;
+            $result['status'] = Constants::STATUS_FAIL;
         }
 
         return $result;
@@ -144,7 +172,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
         return [
             'ok' => $ok,
-            'status' => ($ok ? self::STATUS_PASS : self::STATUS_FAIL),
+            'status' => ($ok ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
         ];
     }
 
@@ -169,7 +197,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
                 return [
                     'ok' => $osLastStatus,
-                    'status' => ($osLastStatus ? self::STATUS_PASS : self::STATUS_FAIL),
+                    'status' => ($osLastStatus ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
                     'cached' => true,
                     'details' => json_decode($osLastDetails, true)
                 ];
@@ -202,7 +230,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
         return [
             'ok' => $alive,
-            'status' => ($alive ? self::STATUS_PASS : self::STATUS_FAIL),
+            'status' => ($alive ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
             'cached' => false,
             'details' => $details,
         ];
