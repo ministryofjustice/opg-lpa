@@ -101,6 +101,7 @@ class StatusTest extends AbstractServiceTest
             ->times(1)
             ->andReturn([
                 'ok' => true,
+                'status' => Constants::STATUS_PASS,
             ]);
 
         $this->dynamoDbClient
@@ -137,12 +138,10 @@ class StatusTest extends AbstractServiceTest
                 'details' => [
                     'response_code' => 200,
                 ],
-                'status' => 'pass',
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
-                'status' => 'pass',
             ],
             'ordnanceSurvey' => [
                 'ok' => true,
@@ -169,6 +168,7 @@ class StatusTest extends AbstractServiceTest
             ->once()
             ->andReturn([
                 'ok' => true,
+                'status' => Constants::STATUS_PASS,
             ]);
 
         $this->dynamoDbClient
@@ -234,6 +234,7 @@ class StatusTest extends AbstractServiceTest
             ->times(6)
             ->andReturn([
                 'ok' => false,
+                'status' => Constants::STATUS_FAIL,
             ]);
 
         $this->dynamoDbClient
@@ -299,6 +300,7 @@ class StatusTest extends AbstractServiceTest
             ->withArgs(['/ping'])
             ->andReturn([
                 'ok' => true,
+                'status' => Constants::STATUS_PASS,
             ]);
 
         $this->dynamoDbClient
@@ -364,6 +366,7 @@ class StatusTest extends AbstractServiceTest
             ->times(1)
             ->andReturn([
                 'ok' => true,
+                'status' => Constants::STATUS_PASS,
             ]);
 
         $this->dynamoDbClient
@@ -426,6 +429,7 @@ class StatusTest extends AbstractServiceTest
             ->times(1)
             ->andReturn([
                 'ok' => true,
+                'status' => Constants::STATUS_PASS,
             ]);
 
         $this->dynamoDbClient
