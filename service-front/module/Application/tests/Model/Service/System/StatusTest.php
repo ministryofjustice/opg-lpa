@@ -118,6 +118,7 @@ class StatusTest extends AbstractServiceTest
         $this->redisClient->shouldReceive('open')->once()->andReturn(true);
         $this->redisClient->shouldReceive('read')->once()->andReturn('');
         $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
@@ -178,6 +179,7 @@ class StatusTest extends AbstractServiceTest
         $this->redisClient->shouldReceive('open')->once()->andReturn(true);
         $this->redisClient->shouldReceive('read')->once()->andReturn('');
         $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
         $result = $this->service->check();
@@ -237,6 +239,7 @@ class StatusTest extends AbstractServiceTest
         $this->redisClient->shouldReceive('open')->once()->andReturn(true);
         $this->redisClient->shouldReceive('read')->once()->andReturn('');
         $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
@@ -297,6 +300,7 @@ class StatusTest extends AbstractServiceTest
         $this->redisClient->shouldReceive('open')->once()->andReturn(true);
         $this->redisClient->shouldReceive('read')->once()->andReturn('');
         $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
@@ -356,6 +360,7 @@ class StatusTest extends AbstractServiceTest
         $this->redisClient->shouldReceive('open')->once()->andReturn(true);
         $this->redisClient->shouldReceive('read')->once()->andReturn('');
         $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn(false);
 
