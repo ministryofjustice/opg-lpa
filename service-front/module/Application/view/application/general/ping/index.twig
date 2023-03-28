@@ -26,9 +26,20 @@
 			{% endif %}
 			{% if status.api.ok == true %}
 				<li>
-					<i class="icon icon-tick"></i>
+					{% if status.api.status == 'warn' %}
+						<strong class="icon">⚠</strong>
+					{% else %}
+						<i class="icon icon-tick"></i>
+					{% endif %}
 					<p class="flush--bottom">API service is up and running</p>
 				</li>
+				{% if status.api.status == 'warn' %}
+	                <li>
+	                    <div class="bold-xsmall" style="margin-left: 32px">
+	                        <p class="flush--bottom">(The API service is running in a degraded state)</p>
+	                    </div>
+	                </li>
+            	{% endif %}
 			{% else %}
 				<li>
 					<i class="icon icon-cross"></i>
