@@ -91,7 +91,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $status = Constants::STATUS_PASS;
 
         foreach (self::SERVICES_REQUIRED as $serviceRequired) {
-            if ($result[$serviceRequired]['status'] !== Constants::STATUS_PASS) {
+            if ($result[$serviceRequired]['status'] === Constants::STATUS_FAIL) {
                 $status = Constants::STATUS_FAIL;
                 break;
             }
