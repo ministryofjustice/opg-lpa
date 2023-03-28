@@ -85,7 +85,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     private function dynamo()
     {
-        $result = ['ok' => false];
+        $result = ['ok' => false, 'status' => self::STATUS_FAIL];
 
         // DynamoDb (system message table)
         try {
@@ -98,10 +98,16 @@ class Status extends AbstractService implements ApiClientAwareInterface
                 in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])
             ) {
                 // Table is okay
-                $result['ok'] = true;
+                $result = [
+                    'ok' => true,
+                    'status' => self::STATUS_PASS,
+                ];
             }
         } catch (Exception $e) {
-            $result['ok'] = false;
+            $result = [
+                'ok' => false,
+                'status' => self::STATUS_FAIL,
+            ];
         }
 
         return $result;
@@ -111,6 +117,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
     {
         $result = [
             'ok' => false,
+            'status' => self::STATUS_FAIL,
             'details' => [],
         ];
 
@@ -118,12 +125,14 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $api = $this->apiClient->httpGet('/ping');
 
             $result['ok'] = $api['ok'];
+            $result['status'] = ($api['ok'] ? self::STATUS_PASS : self::STATUS_FAIL);
             unset($api['ok']);
 
-            $result['details']['status'] = 200;
+            $result['details']['response_code'] = 200;
             $result['details'] = $result['details'] + $api;
         } catch (Exception $e) {
             $result['ok'] = false;
+            $result['status'] = self::STATUS_FAIL;
         }
 
         return $result;
@@ -131,8 +140,11 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     private function session()
     {
+        $ok = $this->sessionSaveHandler->open('', '');
+
         return [
-            'ok' => $this->sessionSaveHandler->open('', ''),
+            'ok' => $ok,
+            'status' => ($ok ? self::STATUS_PASS : self::STATUS_FAIL),
         ];
     }
 
@@ -150,13 +162,14 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
             // Use Redis cache
             if ($timeDiff <= $rateLimit) {
-                $osLastStatus = $this->redisClient->read('os_last_status');
+                $osLastStatus = boolval($this->redisClient->read('os_last_status'));
                 $osLastDetails = $this->redisClient->read('os_last_details');
 
                 $this->redisClient->close();
 
                 return [
-                    'ok' => boolval($osLastStatus),
+                    'ok' => $osLastStatus,
+                    'status' => ($osLastStatus ? self::STATUS_PASS : self::STATUS_FAIL),
                     'cached' => true,
                     'details' => json_decode($osLastDetails, true)
                 ];
@@ -187,7 +200,12 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $this->redisClient->write('os_last_status', strval($alive));
         $this->redisClient->write('os_last_details', json_encode($details));
 
-        return ['ok' => $alive, 'cached' => false, 'details' => $details];
+        return [
+            'ok' => $alive,
+            'status' => ($alive ? self::STATUS_PASS : self::STATUS_FAIL),
+            'cached' => false,
+            'details' => $details,
+        ];
     }
 
     /**

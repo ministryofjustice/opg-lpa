@@ -56,7 +56,7 @@ class PingController extends AbstractActionController
 
         $result = $this->statusService->check();
 
-        if ($result['ok'] == true) {
+        if (in_array($result['status'], [Status::STATUS_PASS, Status::STATUS_WARN])) {
             $xml->status = 'OK';
         } else {
             $response->setStatusCode(500);

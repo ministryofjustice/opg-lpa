@@ -128,18 +128,24 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
             ],
             'api' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'details' => [
-                    'status' => 200,
-                ]
+                    'response_code' => 200,
+                ],
+                'status' => 'pass',
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
+                'status' => 'pass',
             ],
             'ordnanceSurvey' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'cached' => false,
                 'details' => [
                     'line1' => 'SOME PALACE',
@@ -149,6 +155,7 @@ class StatusTest extends AbstractServiceTest
                 ]
             ],
             'ok' => true,
+            'status' => Status::STATUS_PASS,
             'iterations' => 6,
         ], $result);
     }
@@ -188,18 +195,22 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => false,
+                'status' => Status::STATUS_PASS,
             ],
             'api' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'details' => [
-                    'status' => '200',
+                    'response_code' => '200',
                 ]
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
             ],
             'ordnanceSurvey' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'cached' => false,
                 'details' => [
                     'line1' => 'SOME PALACE',
@@ -208,7 +219,8 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
-            'ok' => false,
+            'ok' => true,
+            'status' => Status::STATUS_WARN,
             'iterations' => 1,
         ], $result);
     }
@@ -249,18 +261,22 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
             ],
             'api' => [
                 'ok' => false,
+                'status' => Status::STATUS_FAIL,
                 'details' => [
-                    'status' => 200,
+                    'response_code' => 200,
                 ]
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
             ],
             'ordnanceSurvey' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'cached' => false,
                 'details' => [
                     'line1' => 'SOME PALACE',
@@ -270,6 +286,7 @@ class StatusTest extends AbstractServiceTest
                 ]
             ],
             'ok' => false,
+            'status' => Status::STATUS_FAIL,
             'iterations' => 1,
         ], $result);
     }
@@ -310,18 +327,22 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
             ],
             'api' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'details' => [
-                    'status' => 200,
+                    'response_code' => 200,
                 ]
             ],
             'sessionSaveHandler' => [
                 'ok' => false,
+                'status' => Status::STATUS_FAIL,
             ],
             'ordnanceSurvey' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'cached' => false,
                 'details' => [
                     'line1' => 'SOME PALACE',
@@ -331,6 +352,7 @@ class StatusTest extends AbstractServiceTest
                 ]
             ],
             'ok' => false,
+            'status' => Status::STATUS_FAIL,
             'iterations' => 1,
         ], $result);
     }
@@ -370,23 +392,29 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
             ],
             'api' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'details' => [
-                    'status' => '200',
+                    'response_code' => '200',
                 ]
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
             ],
             'ordnanceSurvey' => [
                 'ok' => false,
+                'status' => Status::STATUS_FAIL,
                 'cached' => false,
                 'details' => ''
             ],
             // Unlike the other tests, when os fails it doesn't fail the overall health check as it's not vital to the service
             'ok' => true,
+            'status' => Status::STATUS_WARN,
+
             // It's not part of the retry loop, so it's failure doesn't end the loop like the rest
             'iterations' => 6,
         ], $result);
@@ -425,23 +453,28 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
             ],
             'api' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'details' => [
-                    'status' => '200',
+                    'response_code' => '200',
                 ]
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
             ],
             'ordnanceSurvey' => [
                 'ok' => true,
+                'status' => Status::STATUS_PASS,
                 'cached' => true,
                 'details' => ['foo' => 'bar'],
             ],
 
             'ok' => true,
+            'status' => Status::STATUS_PASS,
 
             // It's not part of the retry loop, so it's failure doesn't end the loop like the rest
             'iterations' => 6,
