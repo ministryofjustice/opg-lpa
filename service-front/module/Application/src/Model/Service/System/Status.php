@@ -24,6 +24,11 @@ class Status extends AbstractService implements ApiClientAwareInterface
     use ApiClientTrait;
     use LoggerTrait;
 
+    const STATUS_UNKNOWN = 'unknown';
+    const STATUS_PASS = 'pass';
+    const STATUS_FAIL = 'fail';
+    const STATUS_WARN = 'warn';
+
     /** @var DynamoDbClient */
     private $dynamoDbClient;
 
@@ -80,9 +85,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     private function dynamo()
     {
-        $result = array(
-            'ok' => false,
-        );
+        $result = ['ok' => false];
 
         // DynamoDb (system message table)
         try {
@@ -135,36 +138,30 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     private function ordnanceSurvey()
     {
-        $config = $this->getConfig()['redis']['ordnance_survey'];
-
-        $redisOpen = $this->redisClient->open();
+        $this->redisClient->open();
         $lastOsCall = $this->redisClient->read('os_last_call');
 
-        $currentTime = new DateTime('now');
-        $currentUnixTime = $currentTime->getTimestamp();
+        $currentUnixTime = (new DateTime('now'))->getTimestamp();
 
         // Check if redis cached a timestamp for last call to OS, and call OS if no timestamp or not rate limited
         if (is_numeric($lastOsCall) && intval($lastOsCall) > 0) {
             $timeDiff = $currentUnixTime - intval($lastOsCall);
-            $rateLimit = 60 / $config['max_call_per_min'];
+            $rateLimit = 60 / ($this->getConfig()['redis']['ordnance_survey']['max_call_per_min']);
 
-            // Not rate limited - call OS
-            if ($timeDiff > $rateLimit) {
-                return $this->callOrdnanceSurvey($currentUnixTime);
-            // Rate limited - return cached response
-            } else {
-                $osStatus = $this->redisClient->read('os_last_status');
-                $osDetails = $this->redisClient->read('os_last_details');
-
+            // Use cache
+            if ($timeDiff <= $rateLimit) {
                 return [
-                    'ok' => boolval($osStatus),
+                    'ok' => boolval($this->redisClient->read('os_last_status')),
                     'cached' => true,
-                    'details' => json_decode($osDetails, true)
+                    'details' => json_decode(
+                        $this->redisClient->read('os_last_details'),
+                        true,
+                    )
                 ];
             }
-        } else {
-            return $this->callOrdnanceSurvey($currentUnixTime);
         }
+
+        return $this->callOrdnanceSurvey($currentUnixTime);
     }
 
     private function callOrdnanceSurvey(int $currentUnixTime)
