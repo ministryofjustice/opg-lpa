@@ -11,6 +11,7 @@ use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result as AwsResult;
 use DateTime;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
+use MakeShared\Constants;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -97,7 +98,7 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->times(6)
+            ->times(1)
             ->andReturn([
                 'ok' => true,
             ]);
@@ -105,10 +106,10 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->times(6)
+            ->times(1)
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
-        $this->sessionSaveHandler->shouldReceive('open')->times(6)->andReturn(true);
+        $this->sessionSaveHandler->shouldReceive('open')->times(1)->andReturn(true);
 
         $expectedOsResponse = [[
                 'line1' => 'SOME PALACE',
@@ -128,11 +129,11 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
             ],
             'api' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
                 'details' => [
                     'response_code' => 200,
                 ],
@@ -140,12 +141,12 @@ class StatusTest extends AbstractServiceTest
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
                 'status' => 'pass',
             ],
             'ordnanceSurvey' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
                 'cached' => false,
                 'details' => [
                     'line1' => 'SOME PALACE',
@@ -155,8 +156,8 @@ class StatusTest extends AbstractServiceTest
                 ]
             ],
             'ok' => true,
-            'status' => Status::STATUS_PASS,
-            'iterations' => 6,
+            'status' => Constants::STATUS_PASS,
+            'iterations' => 1,
         ], $result);
     }
 
@@ -195,22 +196,22 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => false,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_FAIL,
             ],
             'api' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
                 'details' => [
                     'response_code' => '200',
                 ]
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
             ],
             'ordnanceSurvey' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
                 'cached' => false,
                 'details' => [
                     'line1' => 'SOME PALACE',
@@ -220,7 +221,7 @@ class StatusTest extends AbstractServiceTest
                 ]
             ],
             'ok' => true,
-            'status' => Status::STATUS_WARN,
+            'status' => Constants::STATUS_WARN,
             'iterations' => 1,
         ], $result);
     }
@@ -230,141 +231,9 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->once()
-            ->andReturn([
-                'ok' => false,
-            ]);
-
-        $this->dynamoDbClient
-            ->shouldReceive('describeTable')
-            ->withArgs([['TableName' => 'admin-test-table']])
-            ->once()
-            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
-
-        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
-
-        $expectedOsResponse = [[
-                'line1' => 'SOME PALACE',
-                'line2' => 'SOME CITY',
-                'line3' => '',
-                'postcode' => 'SOME POSTCODE',
-        ]];
-        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
-        $this->redisClient->shouldReceive('read')->once()->andReturn('');
-        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
-        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
-        $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
-
-        $result = $this->service->check();
-
-        $this->assertEquals([
-            'dynamo' => [
-                'ok' => true,
-                'status' => Status::STATUS_PASS,
-            ],
-            'api' => [
-                'ok' => false,
-                'status' => Status::STATUS_FAIL,
-                'details' => [
-                    'response_code' => 200,
-                ]
-            ],
-            'sessionSaveHandler' => [
-                'ok' => true,
-                'status' => Status::STATUS_PASS,
-            ],
-            'ordnanceSurvey' => [
-                'ok' => true,
-                'status' => Status::STATUS_PASS,
-                'cached' => false,
-                'details' => [
-                    'line1' => 'SOME PALACE',
-                    'line2' => 'SOME CITY',
-                    'line3' => '',
-                    'postcode' => 'SOME POSTCODE',
-                ]
-            ],
-            'ok' => false,
-            'status' => Status::STATUS_FAIL,
-            'iterations' => 1,
-        ], $result);
-    }
-
-    public function testCheckSessionSaveHandlerInvalid(): void
-    {
-        $this->apiClient
-            ->shouldReceive('httpGet')
-            ->withArgs(['/ping'])
-            ->once()
-            ->andReturn([
-                'ok' => true,
-            ]);
-
-        $this->dynamoDbClient
-            ->shouldReceive('describeTable')
-            ->withArgs([['TableName' => 'admin-test-table']])
-            ->once()
-            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
-
-        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(false);
-
-        $expectedOsResponse = [[
-                'line1' => 'SOME PALACE',
-                'line2' => 'SOME CITY',
-                'line3' => '',
-                'postcode' => 'SOME POSTCODE',
-        ]];
-        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
-        $this->redisClient->shouldReceive('read')->once()->andReturn('');
-        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
-        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
-        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
-        $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
-
-        $result = $this->service->check();
-
-        $this->assertEquals([
-            'dynamo' => [
-                'ok' => true,
-                'status' => Status::STATUS_PASS,
-            ],
-            'api' => [
-                'ok' => true,
-                'status' => Status::STATUS_PASS,
-                'details' => [
-                    'response_code' => 200,
-                ]
-            ],
-            'sessionSaveHandler' => [
-                'ok' => false,
-                'status' => Status::STATUS_FAIL,
-            ],
-            'ordnanceSurvey' => [
-                'ok' => true,
-                'status' => Status::STATUS_PASS,
-                'cached' => false,
-                'details' => [
-                    'line1' => 'SOME PALACE',
-                    'line2' => 'SOME CITY',
-                    'line3' => '',
-                    'postcode' => 'SOME POSTCODE',
-                ]
-            ],
-            'ok' => false,
-            'status' => Status::STATUS_FAIL,
-            'iterations' => 1,
-        ], $result);
-    }
-
-    public function testCheckOrdnanceSurveyInvalid(): void
-    {
-        $this->apiClient
-            ->shouldReceive('httpGet')
-            ->withArgs(['/ping'])
             ->times(6)
             ->andReturn([
-                'ok' => true,
+                'ok' => false,
             ]);
 
         $this->dynamoDbClient
@@ -374,6 +243,136 @@ class StatusTest extends AbstractServiceTest
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
         $this->sessionSaveHandler->shouldReceive('open')->times(6)->andReturn(true);
+
+        $expectedOsResponse = [[
+                'line1' => 'SOME PALACE',
+                'line2' => 'SOME CITY',
+                'line3' => '',
+                'postcode' => 'SOME POSTCODE',
+        ]];
+        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
+        $this->redisClient->shouldReceive('read')->once()->andReturn('');
+        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
+
+        $result = $this->service->check();
+
+        $this->assertEquals([
+            'dynamo' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
+            'api' => [
+                'ok' => false,
+                'status' => Constants::STATUS_FAIL,
+                'details' => [
+                    'response_code' => 200,
+                ]
+            ],
+            'sessionSaveHandler' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+                'cached' => false,
+                'details' => [
+                    'line1' => 'SOME PALACE',
+                    'line2' => 'SOME CITY',
+                    'line3' => '',
+                    'postcode' => 'SOME POSTCODE',
+                ]
+            ],
+            'ok' => false,
+            'status' => Constants::STATUS_FAIL,
+            'iterations' => 6,
+        ], $result);
+    }
+
+    public function testCheckSessionSaveHandlerInvalid(): void
+    {
+        $this->apiClient
+            ->shouldReceive('httpGet')
+            ->withArgs(['/ping'])
+            ->andReturn([
+                'ok' => true,
+            ]);
+
+        $this->dynamoDbClient
+            ->shouldReceive('describeTable')
+            ->withArgs([['TableName' => 'admin-test-table']])
+            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->andReturn(false);
+
+        $expectedOsResponse = [[
+                'line1' => 'SOME PALACE',
+                'line2' => 'SOME CITY',
+                'line3' => '',
+                'postcode' => 'SOME POSTCODE',
+        ]];
+        $this->redisClient->shouldReceive('open')->andReturn(true);
+        $this->redisClient->shouldReceive('read')->andReturn('');
+        $this->redisClient->shouldReceive('write')->andReturn(true);
+        $this->redisClient->shouldReceive('close')->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
+
+        $result = $this->service->check();
+
+        $this->assertEquals([
+            'dynamo' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
+            'api' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+                'details' => [
+                    'response_code' => 200,
+                ]
+            ],
+            'sessionSaveHandler' => [
+                'ok' => false,
+                'status' => Constants::STATUS_FAIL,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+                'cached' => false,
+                'details' => [
+                    'line1' => 'SOME PALACE',
+                    'line2' => 'SOME CITY',
+                    'line3' => '',
+                    'postcode' => 'SOME POSTCODE',
+                ]
+            ],
+            'ok' => false,
+            'status' => Constants::STATUS_FAIL,
+            'iterations' => 6,
+        ], $result);
+    }
+
+    public function testCheckOrdnanceSurveyInvalid(): void
+    {
+        $this->apiClient
+            ->shouldReceive('httpGet')
+            ->withArgs(['/ping'])
+            ->times(1)
+            ->andReturn([
+                'ok' => true,
+            ]);
+
+        $this->dynamoDbClient
+            ->shouldReceive('describeTable')
+            ->withArgs([['TableName' => 'admin-test-table']])
+            ->times(1)
+            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->times(1)->andReturn(true);
 
         $expectedOsResponse = [[
                 'line1' => 'SOME PALACE',
@@ -392,31 +391,30 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
             ],
             'api' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
                 'details' => [
                     'response_code' => '200',
                 ]
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
             ],
             'ordnanceSurvey' => [
                 'ok' => false,
-                'status' => Status::STATUS_FAIL,
+                'status' => Constants::STATUS_FAIL,
                 'cached' => false,
                 'details' => ''
             ],
             // Unlike the other tests, when os fails it doesn't fail the overall health check as it's not vital to the service
             'ok' => true,
-            'status' => Status::STATUS_WARN,
+            'status' => Constants::STATUS_WARN,
 
-            // It's not part of the retry loop, so it's failure doesn't end the loop like the rest
-            'iterations' => 6,
+            'iterations' => 1,
         ], $result);
     }
 
@@ -425,7 +423,7 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->times(6)
+            ->times(1)
             ->andReturn([
                 'ok' => true,
             ]);
@@ -433,10 +431,10 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->times(6)
+            ->times(1)
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
-        $this->sessionSaveHandler->shouldReceive('open')->times(6)->andReturn(true);
+        $this->sessionSaveHandler->shouldReceive('open')->times(1)->andReturn(true);
 
         // mock os_last_call to within the last second
         $currentTimestamp = (new DateTime('now'))->getTimestamp();
@@ -453,31 +451,30 @@ class StatusTest extends AbstractServiceTest
         $this->assertEquals([
             'dynamo' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
             ],
             'api' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
                 'details' => [
                     'response_code' => '200',
                 ]
             ],
             'sessionSaveHandler' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
             ],
             'ordnanceSurvey' => [
                 'ok' => true,
-                'status' => Status::STATUS_PASS,
+                'status' => Constants::STATUS_PASS,
                 'cached' => true,
                 'details' => ['foo' => 'bar'],
             ],
 
             'ok' => true,
-            'status' => Status::STATUS_PASS,
+            'status' => Constants::STATUS_PASS,
 
-            // It's not part of the retry loop, so it's failure doesn't end the loop like the rest
-            'iterations' => 6,
+            'iterations' => 1,
         ], $result, 'OS call within 1 second of previous call should return cached details');
     }
 }

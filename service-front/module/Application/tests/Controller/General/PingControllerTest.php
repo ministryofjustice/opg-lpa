@@ -11,6 +11,7 @@ use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Constants;
 
 class PingControllerTest extends MockeryTestCase
 {
@@ -19,7 +20,7 @@ class PingControllerTest extends MockeryTestCase
      */
     private $status;
     private $checkResultOk = [
-        'status' => Status::STATUS_PASS,
+        'status' => Constants::STATUS_PASS,
     ];
 
     protected function getController()
@@ -81,7 +82,7 @@ class PingControllerTest extends MockeryTestCase
         $controller = $this->getController();
 
         $checkResultError = $this->checkResultOk;
-        $checkResultError['status'] = Status::STATUS_FAIL;
+        $checkResultError['status'] = Constants::STATUS_FAIL;
         $this->status->shouldReceive('check')->andReturn($checkResultError)->once();
 
         /** @var Response $result */

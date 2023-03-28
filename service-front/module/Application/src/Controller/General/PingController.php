@@ -6,6 +6,7 @@ use Application\Model\Service\System\Status;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Laminas\Mvc\Controller\AbstractActionController;
+use MakeShared\Constants;
 
 class PingController extends AbstractActionController
 {
@@ -56,7 +57,7 @@ class PingController extends AbstractActionController
 
         $result = $this->statusService->check();
 
-        if (in_array($result['status'], [Status::STATUS_PASS, Status::STATUS_WARN])) {
+        if (in_array($result['status'], [Constants::STATUS_PASS, Constants::STATUS_WARN])) {
             $xml->status = 'OK';
         } else {
             $response->setStatusCode(500);
