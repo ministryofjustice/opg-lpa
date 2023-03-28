@@ -125,7 +125,8 @@
       "labels": ["Dependencies", "Renovate", "PHP"],
       "matchManagers": ["dockerfile", "docker-compose", "composer"],
       "matchUpdateTypes": ["patch"],
-      "includePackagePatterns": ["php"],
+      "matchPackageNames": ["php"],
+      "rangeStrategy": "in-range-only",
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
@@ -141,7 +142,8 @@
       "labels": ["Dependencies", "Renovate"],
       "matchManagers": ["composer", "npm"],
       "matchUpdateTypes": ["minor", "patch"],
-      "excludePackagePatterns": ["cypress", "php"],
+      "excludePackagePatterns": ["cypress"],
+      "excludePackageNames": ["php"],
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
