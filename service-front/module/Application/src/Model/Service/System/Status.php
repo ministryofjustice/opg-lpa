@@ -153,8 +153,9 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $api = $this->apiClient->httpGet('/ping');
 
             $result['ok'] = $api['ok'];
-            $result['status'] = ($api['ok'] ? Constants::STATUS_PASS : Constants::STATUS_FAIL);
+            $result['status'] = $api['status'];
             unset($api['ok']);
+            unset($api['status']);
 
             $result['details']['response_code'] = 200;
             $result['details'] = $result['details'] + $api;
