@@ -25,8 +25,9 @@ class Status extends AbstractService implements ApiClientAwareInterface
     use ApiClientTrait;
     use LoggerTrait;
 
-    // if any of these have a status of 'fail' or 'warn', the service
-    // is considered down
+    // if any of these have a status of 'fail', the service
+    // is considered down; if either is 'warn', the service
+    // is degraded
     const SERVICES_REQUIRED = ['api', 'sessionSaveHandler'];
 
     // if any of these have a status of 'fail' or 'warn', the service
@@ -91,7 +92,12 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $status = Constants::STATUS_PASS;
 
         foreach (self::SERVICES_REQUIRED as $serviceRequired) {
-            if ($result[$serviceRequired]['status'] === Constants::STATUS_FAIL) {
+            $serviceStatus = $result[$serviceRequired]['status'];
+
+            if ($serviceStatus === Constants::STATUS_WARN) {
+                $status = Constants::STATUS_WARN;
+            } elseif ($serviceStatus === Constants::STATUS_FAIL) {
+                // fail the whole status immediately if a required service failed
                 $status = Constants::STATUS_FAIL;
                 break;
             }
