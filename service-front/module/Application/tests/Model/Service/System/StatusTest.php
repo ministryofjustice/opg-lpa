@@ -9,6 +9,7 @@ use Application\Model\Service\System\Status;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result as AwsResult;
+use DateTime;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use Mockery;
 use Mockery\MockInterface;
@@ -389,5 +390,61 @@ class StatusTest extends AbstractServiceTest
             // It's not part of the retry loop, so it's failure doesn't end the loop like the rest
             'iterations' => 6,
         ], $result);
+    }
+
+    public function testCheckOrdnanceSurveyusesCache(): void
+    {
+        $this->apiClient
+            ->shouldReceive('httpGet')
+            ->withArgs(['/ping'])
+            ->times(6)
+            ->andReturn([
+                'ok' => true,
+            ]);
+
+        $this->dynamoDbClient
+            ->shouldReceive('describeTable')
+            ->withArgs([['TableName' => 'admin-test-table']])
+            ->times(6)
+            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->times(6)->andReturn(true);
+
+        // mock os_last_call to within the last second
+        $currentTimestamp = (new DateTime('now'))->getTimestamp();
+        $osLastCall = $currentTimestamp - 1;
+
+        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
+        $this->redisClient->shouldReceive('read')->with('os_last_call')->once()->andReturn($osLastCall);
+        $this->redisClient->shouldReceive('read')->with('os_last_status')->once()->andReturn('true');
+        $this->redisClient->shouldReceive('read')->with('os_last_details')->once()->andReturn('{"foo": "bar"}');
+        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
+
+        $result = $this->service->check();
+
+        $this->assertEquals([
+            'dynamo' => [
+                'ok' => true,
+            ],
+            'api' => [
+                'ok' => true,
+                'details' => [
+                    'status' => '200',
+                ]
+            ],
+            'sessionSaveHandler' => [
+                'ok' => true,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => true,
+                'cached' => true,
+                'details' => ['foo' => 'bar'],
+            ],
+
+            'ok' => true,
+
+            // It's not part of the retry loop, so it's failure doesn't end the loop like the rest
+            'iterations' => 6,
+        ], $result, 'OS call within 1 second of previous call should return cached details');
     }
 }
