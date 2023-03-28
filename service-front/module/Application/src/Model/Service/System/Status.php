@@ -139,27 +139,31 @@ class Status extends AbstractService implements ApiClientAwareInterface
     private function ordnanceSurvey()
     {
         $this->redisClient->open();
-        $lastOsCall = $this->redisClient->read('os_last_call');
+        $osLastCall = $this->redisClient->read('os_last_call');
 
         $currentUnixTime = (new DateTime('now'))->getTimestamp();
 
         // Check if redis cached a timestamp for last call to OS, and call OS if no timestamp or not rate limited
-        if (is_numeric($lastOsCall) && intval($lastOsCall) > 0) {
-            $timeDiff = $currentUnixTime - intval($lastOsCall);
+        if (is_numeric($osLastCall) && intval($osLastCall) > 0) {
+            $timeDiff = $currentUnixTime - intval($osLastCall);
             $rateLimit = 60 / ($this->getConfig()['redis']['ordnance_survey']['max_call_per_min']);
 
-            // Use cache
+            // Use Redis cache
             if ($timeDiff <= $rateLimit) {
+                $osLastStatus = $this->redisClient->read('os_last_status');
+                $osLastDetails = $this->redisClient->read('os_last_details');
+
+                $this->redisClient->close();
+
                 return [
-                    'ok' => boolval($this->redisClient->read('os_last_status')),
+                    'ok' => boolval($osLastStatus),
                     'cached' => true,
-                    'details' => json_decode(
-                        $this->redisClient->read('os_last_details'),
-                        true,
-                    )
+                    'details' => json_decode($osLastDetails, true)
                 ];
             }
         }
+
+        $this->redisClient->close();
 
         return $this->callOrdnanceSurvey($currentUnixTime);
     }
