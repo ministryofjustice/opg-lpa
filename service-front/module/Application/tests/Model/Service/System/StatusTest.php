@@ -293,6 +293,73 @@ class StatusTest extends AbstractServiceTest
         ], $result);
     }
 
+    public function testCheckApiWarn(): void
+    {
+        $this->apiClient
+            ->shouldReceive('httpGet')
+            ->withArgs(['/ping'])
+            ->times(1)
+            ->andReturn([
+                'ok' => true,
+                'status' => Constants::STATUS_WARN,
+            ]);
+
+        $this->dynamoDbClient
+            ->shouldReceive('describeTable')
+            ->withArgs([['TableName' => 'admin-test-table']])
+            ->times(1)
+            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->times(1)->andReturn(true);
+
+        $expectedOsResponse = [[
+                'line1' => 'SOME PALACE',
+                'line2' => 'SOME CITY',
+                'line3' => '',
+                'postcode' => 'SOME POSTCODE',
+        ]];
+        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
+        $this->redisClient->shouldReceive('read')->once()->andReturn('');
+        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
+
+        $result = $this->service->check();
+
+        $this->assertEquals([
+            'dynamo' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
+            'api' => [
+                'ok' => true,
+                'status' => Constants::STATUS_WARN,
+                'details' => [
+                    'response_code' => 200,
+                ]
+            ],
+            'sessionSaveHandler' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+                'cached' => false,
+                'details' => [
+                    'line1' => 'SOME PALACE',
+                    'line2' => 'SOME CITY',
+                    'line3' => '',
+                    'postcode' => 'SOME POSTCODE',
+                ]
+            ],
+            'ok' => true,
+            'status' => Constants::STATUS_WARN,
+            'iterations' => 1,
+        ], $result);
+    }
+
     public function testCheckSessionSaveHandlerInvalid(): void
     {
         $this->apiClient
