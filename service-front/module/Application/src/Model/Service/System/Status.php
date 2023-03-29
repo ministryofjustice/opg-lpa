@@ -59,6 +59,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $ok = false;
         $iterations = 0;
 
+        // this loop terminates when we have tried 6 times,
+        // or when all required services return ok
         while ($iterations < 6 && !$ok) {
             $iterations++;
             $result = [];
@@ -164,10 +166,11 @@ class Status extends AbstractService implements ApiClientAwareInterface
             unset($api['status']);
 
             $result['details']['response_code'] = 200;
-            $result['details'] = $result['details'] + $api;
+            $result['details'] += $api;
         } catch (Exception $e) {
             $result['ok'] = false;
             $result['status'] = Constants::STATUS_FAIL;
+            $result['details']['response_code'] = 500;
         }
 
         return $result;
