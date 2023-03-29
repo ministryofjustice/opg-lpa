@@ -10,10 +10,11 @@ use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
 use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
+use Laminas\Log\Logger as LaminasLogger;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
 use Exception;
-use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
+use Laminas\Db\Adapter\Adapter as DbAdapter;
 use Aws\Sqs\SqsClient;
 
 /**
@@ -35,7 +36,7 @@ class PingController extends AbstractRestfulController
     private $signer;
 
     /**
-     * @var ZendDbAdapter
+     * @var DbAdapter
      */
     private $database;
 
@@ -63,7 +64,7 @@ class PingController extends AbstractRestfulController
      * PingController constructor.
      * @param CredentialsInterface $awsCredentials
      * @param SignatureV4 $signer
-     * @param ZendDbAdapter $database
+     * @param DbAdapter $database
      * @param SqsClient $sqsClient
      * @param string $queueUrl
      * @param string $trackMyLpaEndpoint
@@ -72,7 +73,7 @@ class PingController extends AbstractRestfulController
     public function __construct(
         CredentialsInterface $awsCredentials,
         SignatureV4 $signer,
-        ZendDbAdapter $database,
+        DbAdapter $database,
         SqsClient $sqsClient,
         string $queueUrl,
         string $trackMyLpaEndpoint,
@@ -108,7 +109,7 @@ class PingController extends AbstractRestfulController
     {
         // Initialise the states as false
         $queueOk = false;
-        $zendDbOk = false;
+        $dbOk = false;
         $opgGatewayOk = false;
 
         // Check DynamoDB - initialise the status as false
@@ -149,7 +150,7 @@ class PingController extends AbstractRestfulController
         // Main database
         try {
             $this->database->getDriver()->getConnection()->connect();
-            $zendDbOk = true;
+            $dbOk = true;
         } catch (Exception $e) {
             $this->getLogger()->err('Database is not available to API: ' . $e->getMessage());
         }
@@ -180,7 +181,7 @@ class PingController extends AbstractRestfulController
 
         $status = Constants::STATUS_FAIL;
 
-        $ok = ($queueOk && $zendDbOk);
+        $ok = ($queueOk && $dbOk);
         if ($ok) {
             $status = Constants::STATUS_WARN;
 
@@ -191,7 +192,7 @@ class PingController extends AbstractRestfulController
 
         $result = [
             'database' => [
-                'ok' => $zendDbOk,
+                'ok' => $dbOk,
             ],
             'gateway' => [
                 'ok' => $opgGatewayOk,
