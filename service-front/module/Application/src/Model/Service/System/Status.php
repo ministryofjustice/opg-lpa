@@ -211,8 +211,6 @@ class Status extends AbstractService implements ApiClientAwareInterface
             }
         }
 
-        $this->redisClient->close();
-
         return $this->callOrdnanceSurvey($currentUnixTime);
     }
 
@@ -224,16 +222,18 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $this->redisClient->write('os_last_call', strval($currentUnixTime));
 
         // Cache response in redis
-        if ($this->ordnanceSurveyClient->verify($os) == true) {
+        $alive = false;
+        $details = '';
+
+        if ($this->ordnanceSurveyClient->verify($os)) {
             $alive = true;
             $details = $os[0];
-        } else {
-            $alive = false;
-            $details = '';
         }
 
         $this->redisClient->write('os_last_status', strval($alive));
         $this->redisClient->write('os_last_details', json_encode($details));
+
+        $this->redisClient->close();
 
         return [
             'ok' => $alive,
