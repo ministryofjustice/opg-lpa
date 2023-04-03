@@ -6,8 +6,7 @@
   "commitMessageAction": "Renovate update",
   "renovateFork": true,
   "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": "before 5am on monday"
+    "enabled": false
   },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
