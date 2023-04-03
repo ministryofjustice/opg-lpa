@@ -112,7 +112,6 @@ services:
     image: lpa-front-web
     depends_on:
       - front-app
-      - front-v2-app
     volumes:
       - ./service-front/public:/web
     build:
@@ -122,19 +121,6 @@ services:
       APP_HOST: front-app
       APP_PORT: 9000
       NGINX_LOG_LEVEL: warn
-      APP_V2_HOST: front-v2-app
-      APP_V2_PORT: 8005
-
-  front-v2-app:
-    container_name: lpa-front-v2-app
-    image: lpa-front-v2-app
-    build:
-      context: ./
-      dockerfile: service-front-v2/docker/app/Dockerfile
-    environment:
-      AWS_XRAY_SDK_ENABLED: "false"
-    ports:
-      - 8005:8005
 
   feedback-app:
     container_name: lpa-feedback-app

@@ -10,8 +10,10 @@
 
     init: function () {
       for (var x in moj.Modules) {
-        if (typeof moj.Modules[x].init === 'function') {
-          moj.Modules[x].init();
+        if (x != 'formErrorTracker') {
+          if (typeof moj.Modules[x].init === 'function') {
+            moj.Modules[x].init();
+          }
         }
       }
       // trigger initial render event
