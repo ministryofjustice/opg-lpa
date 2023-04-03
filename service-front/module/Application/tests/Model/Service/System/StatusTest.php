@@ -737,7 +737,7 @@ class StatusTest extends AbstractServiceTest
         ], $result, 'OS call within 1 second of previous call should return cached details');
     }
 
-    public function testCheckMailOK(): void
+    public function testCheckMailStatusPass(): void
     {
         $this->apiClient
             ->shouldReceive('httpGet')
@@ -766,5 +766,40 @@ class StatusTest extends AbstractServiceTest
         $result = $this->service->check();
 
         $this->assertEquals(['ok' => true, 'status' => Constants::STATUS_PASS], $result['mail']);
+        $this->assertTrue($result['ok']);
+    }
+
+    public function testCheckMailStatusFail(): void
+    {
+        $this->apiClient
+            ->shouldReceive('httpGet')
+            ->andReturn([
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ]);
+
+        $this->dynamoDbClient
+            ->shouldReceive('describeTable')
+            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->andReturn(true);
+
+        $this->redisClient->shouldReceive('open')->andReturn(true);
+        $this->redisClient->shouldReceive('read')->andReturn('');
+        $this->redisClient->shouldReceive('write')->andReturn(true);
+        $this->redisClient->shouldReceive('close')->andReturn(true);
+
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn([[]]);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn(true);
+
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => false, 'status' => Constants::STATUS_FAIL]);
+
+        $result = $this->service->check();
+
+        $this->assertEquals(['ok' => false, 'status' => Constants::STATUS_FAIL], $result['mail']);
+
+        // Failing mail service causes the whole status to be 'fail'
+        $this->assertFalse($result['ok']);
     }
 }
