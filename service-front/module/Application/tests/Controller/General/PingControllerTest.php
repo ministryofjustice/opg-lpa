@@ -11,6 +11,7 @@ use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Constants;
 
 class PingControllerTest extends MockeryTestCase
 {
@@ -18,62 +19,9 @@ class PingControllerTest extends MockeryTestCase
      * @var MockInterface|Status
      */
     private $status;
-    private $checkResultOk = array (
-        'dynamo' =>
-            array (
-                'ok' => true,
-                'details' =>
-                    array (
-                        'sessions' => true,
-                        'locks' => true,
-                    ),
-            ),
-        'api' =>
-            array (
-                'ok' => true,
-                'details' =>
-                    array (
-                        200 => true,
-                        'database' =>
-                            array (
-                                'ok' => true,
-                            ),
-                        'auth' =>
-                            array (
-                                'ok' => true,
-                                'details' =>
-                                    array (
-                                        200 => true,
-                                        'ok' => true,
-                                        'database' => true,
-                                    ),
-                            ),
-                        'queue' =>
-                            array (
-                                'ok' => true,
-                                'details' =>
-                                    array (
-                                        'available' => true,
-                                        'length' => 0,
-                                        'lengthAcceptable' => true,
-                                    ),
-                            ),
-                        'ok' => true,
-                    ),
-            ),
-        'auth' =>
-            array (
-                'ok' => true,
-                'details' =>
-                    array (
-                        200 => true,
-                        'ok' => true,
-                        'database' => true,
-                    ),
-            ),
-        'ok' => true,
-        'iterations' => 6,
-    );
+    private $checkResultOk = [
+        'status' => Constants::STATUS_PASS,
+    ];
 
     protected function getController()
     {
@@ -134,7 +82,7 @@ class PingControllerTest extends MockeryTestCase
         $controller = $this->getController();
 
         $checkResultError = $this->checkResultOk;
-        $checkResultError['ok'] = false;
+        $checkResultError['status'] = Constants::STATUS_FAIL;
         $this->status->shouldReceive('check')->andReturn($checkResultError)->once();
 
         /** @var Response $result */
