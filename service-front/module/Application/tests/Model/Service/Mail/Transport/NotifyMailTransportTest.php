@@ -6,6 +6,7 @@ use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
 use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Mail\Exception\InvalidArgumentException;
+use MakeShared\Constants;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Application\Model\Service\AbstractEmailService;
@@ -67,5 +68,13 @@ class NotifyMailTransportTest extends MockeryTestCase
 
         $this->expectException(ExceptionInterface::class);
         $this->transport->send($mailParams);
+    }
+
+    public function testHealthcheck(): void
+    {
+        $this->assertEquals(
+            ['ok' => true, 'status' => Constants::STATUS_PASS],
+            $this->transport->healthcheck()
+        );
     }
 }
