@@ -79,14 +79,14 @@
     },
     {
       "description": [
-        "No updates to postgres, redis, or php docker images",
+        "No updates to postgres, redis, php or python docker images",
         "postgres: keep in sync with live",
         "redis: keep in sync with live",
         "php: 8.2 upgrade needs to be managed manually"
       ],
       "matchUpdateTypes": ["major", "minor", "patch"],
       "matchManagers": ["dockerfile", "docker-compose"],
-      "matchPackageNames": ["postgres", "redis", "php"],
+      "matchPackageNames": ["postgres", "redis", "php", "python"],
       "enabled": false
     },
     {
@@ -119,6 +119,7 @@
       "matchManagers": ["composer", "npm", "pip-requirements", "pip-compile", "pipenv", "pyenv", "setup-cfg", "pip-setup"],
       "matchUpdateTypes": ["minor", "patch"],
       "excludePackagePatterns": ["cypress"],
+      "excludePackageNames": ["php"],
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
