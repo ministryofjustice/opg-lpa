@@ -48,6 +48,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setSessionSaveHandler' => 'SaveHandler',
             'setOrdnanceSurveyClient' => 'OrdnanceSurvey',
             'setRedisClient' => 'RedisClient',
+            'setMailTransport' => 'MailTransport',
         ],
     ];
 
