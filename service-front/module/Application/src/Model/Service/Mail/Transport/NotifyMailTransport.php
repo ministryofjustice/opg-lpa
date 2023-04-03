@@ -4,6 +4,7 @@ namespace Application\Model\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
+use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
@@ -104,5 +105,18 @@ class NotifyMailTransport implements MailTransportInterface
                 throw new TransportInvalidArgumentException($ex->getMessage());
             }
         }
+    }
+
+    /**
+     * Check whether the mail transport is functioning correctly.
+     *
+     * @return array
+     */
+    public function healthcheck(): array
+    {
+        return [
+            'ok' => true,
+            'status' => Constants::STATUS_PASS,
+        ];
     }
 }

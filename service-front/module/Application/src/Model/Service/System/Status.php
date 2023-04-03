@@ -6,6 +6,7 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
+use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use Application\Model\Service\Redis\RedisClient;
 use Aws\DynamoDb\DynamoDbClient;
 use DateTime;
@@ -26,9 +27,9 @@ class Status extends AbstractService implements ApiClientAwareInterface
     use LoggerTrait;
 
     // if any of these have a status of 'fail', the service
-    // is considered down; if either is 'warn', the service
+    // is considered down; if any is 'warn', the service
     // is degraded
-    const SERVICES_REQUIRED = ['api', 'sessionSaveHandler', 'notify'];
+    const SERVICES_REQUIRED = ['api', 'sessionSaveHandler', 'mail'];
 
     // if any of these have a status of 'fail' or 'warn', the service
     // is considered up, but running at a degraded level
@@ -46,6 +47,9 @@ class Status extends AbstractService implements ApiClientAwareInterface
     /** @var SaveHandlerInterface */
     private $sessionSaveHandler;
 
+    /** @var MailTransportInterface */
+    private $mailTransport;
+
     /**
      * Services:
      * - DynamoDb (system message table)
@@ -62,6 +66,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
         // Check session save handling (required)
         $result['sessionSaveHandler'] = $this->session();
+
+        $result['mail'] = $this->mailTransport->healthcheck();
 
         // Service reports as OK if all required services are OK;
         // note that OK is different from status - status can
@@ -187,14 +193,6 @@ class Status extends AbstractService implements ApiClientAwareInterface
         ];
     }
 
-    private function notify()
-    {
-        return [
-            'ok' => true,
-            'status' => Constants::STATUS_PASS,
-        ];
-    }
-
     private function ordnanceSurvey()
     {
         $this->redisClient->open();
@@ -285,5 +283,13 @@ class Status extends AbstractService implements ApiClientAwareInterface
     public function setRedisClient(RedisClient $redisClient)
     {
         $this->redisClient = $redisClient;
+    }
+
+    /**
+     * @param MailTransportInterface $mailTransport
+     */
+    public function setMailTransport(MailTransportInterface $mailTransport)
+    {
+        $this->mailTransport = $mailTransport;
     }
 }

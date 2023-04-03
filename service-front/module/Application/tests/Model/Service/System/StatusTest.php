@@ -4,6 +4,7 @@ namespace ApplicationTest\Model\Service\System;
 
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\ApiClient\Client;
+use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use Application\Model\Service\Redis\RedisClient;
 use Application\Model\Service\System\Status;
 use ApplicationTest\Model\Service\AbstractServiceTest;
@@ -49,6 +50,11 @@ class StatusTest extends AbstractServiceTest
      */
     private $ordnanceSurveyClient;
 
+    /**
+     * @var MailTransportInterface|MockInterface
+     */
+    private $mailTransport;
+
 
     /**
      * @var $service Status
@@ -92,6 +98,9 @@ class StatusTest extends AbstractServiceTest
 
         $this->ordnanceSurveyClient = Mockery::mock(OrdnanceSurvey::class);
         $this->service->setOrdnanceSurveyClient($this->ordnanceSurveyClient);
+
+        $this->mailTransport = Mockery::mock(MailTransportInterface::class);
+        $this->service->setMailTransport($this->mailTransport);
     }
 
     public function testCheckAllOk(): void
@@ -126,6 +135,9 @@ class StatusTest extends AbstractServiceTest
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -155,7 +167,7 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
-            'notify' => [
+            'mail' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
             ],
@@ -195,6 +207,10 @@ class StatusTest extends AbstractServiceTest
         $this->redisClient->shouldReceive('close')->once()->andReturn(true);
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
+
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -224,7 +240,7 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
-            'notify' => [
+            'mail' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
             ],
@@ -262,6 +278,9 @@ class StatusTest extends AbstractServiceTest
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
 
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -291,7 +310,7 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
-            'notify' => [
+            'mail' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
             ],
@@ -332,6 +351,9 @@ class StatusTest extends AbstractServiceTest
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -361,7 +383,7 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
-            'notify' => [
+            'mail' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
             ],
@@ -402,6 +424,9 @@ class StatusTest extends AbstractServiceTest
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -431,7 +456,7 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
-            'notify' => [
+            'mail' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
             ],
@@ -466,6 +491,9 @@ class StatusTest extends AbstractServiceTest
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn($expectedOsResponse);
 
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -495,7 +523,7 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
-            'notify' => [
+            'mail' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
             ],
@@ -534,6 +562,9 @@ class StatusTest extends AbstractServiceTest
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn($expectedOsResponse);
 
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -563,7 +594,7 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
-            'notify' => [
+            'mail' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
             ],
@@ -603,6 +634,9 @@ class StatusTest extends AbstractServiceTest
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andReturn($expectedOsResponse);
         $this->ordnanceSurveyClient->shouldReceive('verify')->once()->andReturn(false);
 
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -627,7 +661,7 @@ class StatusTest extends AbstractServiceTest
                 'cached' => false,
                 'details' => ''
             ],
-            'notify' => [
+            'mail' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
             ],
@@ -666,6 +700,9 @@ class StatusTest extends AbstractServiceTest
         $this->redisClient->shouldReceive('read')->with('os_last_details')->once()->andReturn('{"foo": "bar"}');
         $this->redisClient->shouldReceive('close')->once()->andReturn(true);
 
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
         $this->assertEquals([
@@ -690,7 +727,7 @@ class StatusTest extends AbstractServiceTest
                 'cached' => true,
                 'details' => ['foo' => 'bar'],
             ],
-            'notify' => [
+            'mail' => [
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
             ],
@@ -700,7 +737,7 @@ class StatusTest extends AbstractServiceTest
         ], $result, 'OS call within 1 second of previous call should return cached details');
     }
 
-    public function testCheckNotify(): void
+    public function testCheckMailOK(): void
     {
         $this->apiClient
             ->shouldReceive('httpGet')
@@ -723,8 +760,11 @@ class StatusTest extends AbstractServiceTest
         $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn([[]]);
         $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn(true);
 
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
         $result = $this->service->check();
 
-        $this->assertEquals(['ok' => true, 'status' => Constants::STATUS_PASS], $result['notify']);
+        $this->assertEquals(['ok' => true, 'status' => Constants::STATUS_PASS], $result['mail']);
     }
 }
