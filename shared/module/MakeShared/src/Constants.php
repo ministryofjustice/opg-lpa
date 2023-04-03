@@ -14,4 +14,12 @@ class Constants
      */
     const TELEMETRY_START_SEGMENT = 'telemetry-start-segment';
     const TELEMETRY_STOP_SEGMENT = 'telemetry-stop-segment';
+
+    /*
+     * Status codes for /ping endpoints
+     */
+    const STATUS_UNKNOWN = 'unknown';
+    const STATUS_PASS = 'pass';
+    const STATUS_FAIL = 'fail';
+    const STATUS_WARN = 'warn';
 }

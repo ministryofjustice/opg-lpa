@@ -8,6 +8,7 @@ use Closure;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
+use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
@@ -105,12 +106,10 @@ class PingController extends AbstractRestfulController
      */
     public function indexAction()
     {
-        //  Initialise the states as false
-        $queueOk    = false;
-        $zendDbOk   = false;
-        $opgGateway   = false;
-
-        //---
+        // Initialise the states as false
+        $queueOk = false;
+        $zendDbOk = false;
+        $opgGatewayOk = false;
 
         // Check DynamoDB - initialise the status as false
         $queueDetails = [
@@ -119,9 +118,7 @@ class PingController extends AbstractRestfulController
             'lengthAcceptable' => false,
         ];
 
-        //---------------------------------------------
         // PDF Queue / SQS
-
         try {
             $result = $this->sqsClient->getQueueAttributes([
                 'QueueUrl' => $this->sqsQueueUrl,
@@ -135,10 +132,8 @@ class PingController extends AbstractRestfulController
                 throw new Exception('Invalid count returned');
             }
 
-
             $count = (int)$result['Attributes']['ApproximateNumberOfMessages']
                         + (int)$result['Attributes']['ApproximateNumberOfMessagesNotVisible'];
-
 
             $queueDetails = [
                 'available' => true,
@@ -147,28 +142,25 @@ class PingController extends AbstractRestfulController
             ];
 
             $queueOk = ($count < 50);
-        } catch (Exception $ignore) {
+        } catch (Exception $e) {
+            $this->getLogger()->err('SQS queue is not available to API: ' . $e->getMessage());
         }
 
-        //---------------------------------------------
         // Main database
-
         try {
             $this->database->getDriver()->getConnection()->connect();
-
             $zendDbOk = true;
-        } catch (Exception $ignore) {
+        } catch (Exception $e) {
+            $this->getLogger()->err('Database is not available to API: ' . $e->getMessage());
         }
 
-        //---------------------------------------------
         // OPG Gateway
-
         try {
             $url = new Uri(rtrim($this->trackMyLpaEndpoint, '/') . '/healthcheck');
 
             $request = new Request('GET', $url, $headers = [
                 'Accept' => 'application/json',
-                'Content-type'  => 'application/json',
+                'Content-type' => 'application/json',
             ]);
 
             // Sign the request with an AWS Authorization header.
@@ -178,24 +170,34 @@ class PingController extends AbstractRestfulController
 
             // Healthcheck should return a 200 code if Sirius gateway is OK
             if ($response->getStatusCode() === 200) {
-                $opgGateway = true;
+                $opgGatewayOk = true;
             }
-        } catch (Exception $ignore) {
-            $this->getLogger()->info(
-                "Error returned by Sirius gateway healthcheck at $url: " . $ignore->getMessage()
+        } catch (Exception $e) {
+            $this->getLogger()->err(
+                "Sirius gateway not available to API at $url: " . $e->getMessage()
             );
         }
 
-        //---------------------------------------------
+        $status = Constants::STATUS_FAIL;
+
+        $ok = ($queueOk && $zendDbOk);
+        if ($ok) {
+            $status = Constants::STATUS_WARN;
+
+            if ($opgGatewayOk) {
+                $status = Constants::STATUS_PASS;
+            }
+        }
 
         $result = [
             'database' => [
                 'ok' => $zendDbOk,
             ],
             'gateway' => [
-                'ok' => $opgGateway,
+                'ok' => $opgGatewayOk,
             ],
-            'ok' => ($queueOk && $zendDbOk && $opgGateway),
+            'ok' => $ok,
+            'status' => $status,
             'queue' => [
                 'details' => $queueDetails,
                 'ok' => $queueOk,
