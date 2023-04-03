@@ -194,10 +194,6 @@ class DownloadControllerTest extends AbstractControllerTest
 
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
 
-        $uri = Mockery::mock(Uri::class);
-        $uri->shouldReceive('getHost')->andReturn('Test Host')->once();
-        $uri->shouldReceive('getPath')->andReturn('/test-path')->once();
-
         $result = $controller->downloadAction();
 
         $this->assertEquals($response, $result);
