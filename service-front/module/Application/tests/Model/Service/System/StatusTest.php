@@ -155,6 +155,10 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
+            'notify' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
             'ok' => true,
             'status' => Constants::STATUS_PASS,
         ], $result);
@@ -220,6 +224,10 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
+            'notify' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
             'ok' => true,
             'status' => Constants::STATUS_WARN,
         ], $result);
@@ -282,6 +290,10 @@ class StatusTest extends AbstractServiceTest
                     'line3' => '',
                     'postcode' => 'SOME POSTCODE',
                 ]
+            ],
+            'notify' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
             ],
             'ok' => true,
             'status' => Constants::STATUS_WARN,
@@ -349,6 +361,10 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
+            'notify' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
             'ok' => false,
             'status' => Constants::STATUS_FAIL,
         ], $result);
@@ -415,6 +431,10 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
+            'notify' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
             'ok' => true,
             'status' => Constants::STATUS_WARN,
         ], $result);
@@ -474,6 +494,10 @@ class StatusTest extends AbstractServiceTest
                     'line3' => '',
                     'postcode' => 'SOME POSTCODE',
                 ]
+            ],
+            'notify' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
             ],
             'ok' => false,
             'status' => Constants::STATUS_FAIL,
@@ -539,6 +563,10 @@ class StatusTest extends AbstractServiceTest
                     'postcode' => 'SOME POSTCODE',
                 ]
             ],
+            'notify' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
             'ok' => false,
             'status' => Constants::STATUS_FAIL,
         ], $result);
@@ -599,6 +627,10 @@ class StatusTest extends AbstractServiceTest
                 'cached' => false,
                 'details' => ''
             ],
+            'notify' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
             // Unlike the other tests, when os fails it doesn't fail the overall health check as it's not vital to the service
             'ok' => true,
             'status' => Constants::STATUS_WARN,
@@ -658,9 +690,41 @@ class StatusTest extends AbstractServiceTest
                 'cached' => true,
                 'details' => ['foo' => 'bar'],
             ],
+            'notify' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
 
             'ok' => true,
             'status' => Constants::STATUS_PASS,
         ], $result, 'OS call within 1 second of previous call should return cached details');
+    }
+
+    public function testCheckNotify(): void
+    {
+        $this->apiClient
+            ->shouldReceive('httpGet')
+            ->andReturn([
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ]);
+
+        $this->dynamoDbClient
+            ->shouldReceive('describeTable')
+            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->andReturn(true);
+
+        $this->redisClient->shouldReceive('open')->andReturn(true);
+        $this->redisClient->shouldReceive('read')->andReturn('');
+        $this->redisClient->shouldReceive('write')->andReturn(true);
+        $this->redisClient->shouldReceive('close')->andReturn(true);
+
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->andReturn([[]]);
+        $this->ordnanceSurveyClient->shouldReceive('verify')->andReturn(true);
+
+        $result = $this->service->check();
+
+        $this->assertEquals(['ok' => true, 'status' => Constants::STATUS_PASS], $result['notify']);
     }
 }
