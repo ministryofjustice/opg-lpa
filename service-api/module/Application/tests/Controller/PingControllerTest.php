@@ -9,6 +9,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Aws\Sqs\SqsClient;
+use MakeShared\Constants;
 use MakeShared\Logging\Logger;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Laminas\View\Model\JsonModel;
@@ -93,7 +94,7 @@ class PingControllerTest extends MockeryTestCase
         $this->httpClient->shouldReceive('sendRequest')
             ->andReturn($mockResponse);
 
-        $pingResult = [
+        $expectedResult = [
             'database' => [
                 'ok' => false,
             ],
@@ -101,6 +102,7 @@ class PingControllerTest extends MockeryTestCase
                 'ok' => false,
             ],
             'ok' => false,
+            'status' => Constants::STATUS_FAIL,
             'queue' => [
                 'details' => [
                     'available' => true,
@@ -111,13 +113,16 @@ class PingControllerTest extends MockeryTestCase
             ],
         ];
 
+        $this->logger->shouldReceive('err')
+            ->once();
+
         $this->logger->shouldReceive('info')
-            ->with('PingController results', $pingResult)
+            ->with('PingController results', $expectedResult)
             ->once();
 
         /** @var JsonModel $result */
         $result = $this->controller->indexAction();
 
-        $this->assertEquals($pingResult, $result->getVariables());
+        $this->assertEquals($expectedResult, $result->getVariables());
     }
 }
