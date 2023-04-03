@@ -28,7 +28,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
     // if any of these have a status of 'fail', the service
     // is considered down; if either is 'warn', the service
     // is degraded
-    const SERVICES_REQUIRED = ['api', 'sessionSaveHandler'];
+    const SERVICES_REQUIRED = ['api', 'sessionSaveHandler', 'notify'];
 
     // if any of these have a status of 'fail' or 'warn', the service
     // is considered up, but running at a degraded level
@@ -184,6 +184,14 @@ class Status extends AbstractService implements ApiClientAwareInterface
         return [
             'ok' => $ok,
             'status' => ($ok ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
+        ];
+    }
+
+    private function notify()
+    {
+        return [
+            'ok' => true,
+            'status' => Constants::STATUS_PASS,
         ];
     }
 
