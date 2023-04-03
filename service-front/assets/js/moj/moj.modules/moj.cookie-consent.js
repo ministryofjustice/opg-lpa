@@ -21,24 +21,30 @@
       var acceptButton = document.querySelector(
         '.global-cookie-message__button_accept',
       );
-      acceptButton.addEventListener('click', function () {
-        return saveCookieConsent(true);
-      });
+      if (acceptButton) {
+        acceptButton.addEventListener('click', function () {
+          return saveCookieConsent(true);
+        });
+      }
 
       var rejectButton = document.querySelector(
         '.global-cookie-message__button_reject',
       );
-      rejectButton.addEventListener('click', function () {
-        return saveCookieConsent(false);
-      });
+      if (rejectButton) {
+        rejectButton.addEventListener('click', function () {
+          return saveCookieConsent(false);
+        });
+      }
 
       var hideConfirmationButton = document.querySelector(
         '.global-cookie-message__button_hide',
       );
-      hideConfirmationButton.addEventListener(
-        'click',
-        this.closeSaveConfirmation.bind(this),
-      );
+      if (hideConfirmationButton) {
+        hideConfirmationButton.addEventListener(
+          'click',
+          this.closeSaveConfirmation.bind(this),
+        );
+      }
 
       if (this.isInCookiesPage()) {
         var noJsMessage = document.querySelector('#js-warning');
