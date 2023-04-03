@@ -16,7 +16,7 @@ interface MailTransportInterface
     /**
      * Health check the mail transport
      *
-     * @return array in format
+     * @return array with at least these keys:
      * ['ok' => bool, 'status' => Constants::STATUS_*]
      */
     public function healthcheck(): array;
