@@ -11,6 +11,7 @@ use Aws\DynamoDb\DynamoDbClient;
 use DateTime;
 use Exception;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
+use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
 
 /**
@@ -23,6 +24,15 @@ class Status extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
     use LoggerTrait;
+
+    // if any of these have a status of 'fail', the service
+    // is considered down; if either is 'warn', the service
+    // is degraded
+    const SERVICES_REQUIRED = ['api', 'sessionSaveHandler'];
+
+    // if any of these have a status of 'fail' or 'warn', the service
+    // is considered up, but running at a degraded level
+    const SERVICES_OPTIONAL = ['dynamo', 'ordnanceSurvey'];
 
     /** @var DynamoDbClient */
     private $dynamoDbClient;
@@ -45,10 +55,15 @@ class Status extends AbstractService implements ApiClientAwareInterface
      */
     public function check()
     {
-        $result = ['ok' => false];
+        $result = [];
+        $ok = false;
+        $iterations = 0;
 
-        for ($i = 1; $i <= 6; $i++) {
-            $result = array();
+        // this loop terminates when we have tried 6 times,
+        // or when all required services return ok
+        while ($iterations < 6 && !$ok) {
+            $iterations++;
+            $result = [];
 
             // Check DynamoDB
             $result['dynamo'] = $this->dynamo();
@@ -60,29 +75,53 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $result['sessionSaveHandler'] = $this->session();
 
             $ok = true;
-            foreach ($result as $service) {
-                $ok = $ok && $service['ok'];
+            foreach (self::SERVICES_REQUIRED as $serviceRequired) {
+                if (!$result[$serviceRequired]['ok']) {
+                    $ok = false;
+                    break;
+                }
             }
+        }
 
-            $result['ok'] = $ok;
-            $result['iterations'] = $i;
+        $result['ok'] = $ok;
+        $result['iterations'] = $iterations;
 
-            if (!$result['ok']) {
+        // Check ordnanceSurvey - we rate limit this so we don't want it in the above retry loop
+        $result['ordnanceSurvey'] = $this->ordnanceSurvey();
+
+        // Determine overall status of service by looking at the statuses
+        // of each dependency
+        $status = Constants::STATUS_PASS;
+
+        foreach (self::SERVICES_REQUIRED as $serviceRequired) {
+            $serviceStatus = $result[$serviceRequired]['status'];
+
+            if ($serviceStatus === Constants::STATUS_WARN) {
+                $status = Constants::STATUS_WARN;
+            } elseif ($serviceStatus === Constants::STATUS_FAIL) {
+                // fail the whole status immediately if a required service failed
+                $status = Constants::STATUS_FAIL;
                 break;
             }
         }
 
-        // Check ordnanceSurvey - we rate limit this so we don't want it in the above retry loop
-        $result['ordnanceSurvey'] = $this->ordnanceSurvey();
+        if ($status !== Constants::STATUS_FAIL) {
+            foreach (self::SERVICES_OPTIONAL as $serviceOptional) {
+                if ($result[$serviceOptional]['status'] !== Constants::STATUS_PASS) {
+                    $status = Constants::STATUS_WARN;
+                    break;
+                }
+            }
+        }
+
+        $result['status'] = $status;
 
         return $result;
     }
 
     private function dynamo()
     {
-        $result = array(
-            'ok' => false,
-        );
+        $result = ['ok' => false, 'status' => Constants::STATUS_FAIL];
 
         // DynamoDb (system message table)
         try {
@@ -95,10 +134,16 @@ class Status extends AbstractService implements ApiClientAwareInterface
                 in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])
             ) {
                 // Table is okay
-                $result['ok'] = true;
+                $result = [
+                    'ok' => true,
+                    'status' => Constants::STATUS_PASS,
+                ];
             }
         } catch (Exception $e) {
-            $result['ok'] = false;
+            $result = [
+                'ok' => false,
+                'status' => Constants::STATUS_FAIL,
+            ];
         }
 
         return $result;
@@ -108,6 +153,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
     {
         $result = [
             'ok' => false,
+            'status' => Constants::STATUS_FAIL,
             'details' => [],
         ];
 
@@ -115,12 +161,16 @@ class Status extends AbstractService implements ApiClientAwareInterface
             $api = $this->apiClient->httpGet('/ping');
 
             $result['ok'] = $api['ok'];
+            $result['status'] = $api['status'];
             unset($api['ok']);
+            unset($api['status']);
 
-            $result['details']['status'] = 200;
-            $result['details'] = $result['details'] + $api;
+            $result['details']['response_code'] = 200;
+            $result['details'] += $api;
         } catch (Exception $e) {
             $result['ok'] = false;
+            $result['status'] = Constants::STATUS_FAIL;
+            $result['details']['response_code'] = 500;
         }
 
         return $result;
@@ -128,43 +178,43 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     private function session()
     {
+        $ok = $this->sessionSaveHandler->open('', '');
+
         return [
-            'ok' => $this->sessionSaveHandler->open('', ''),
+            'ok' => $ok,
+            'status' => ($ok ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
         ];
     }
 
     private function ordnanceSurvey()
     {
-        $config = $this->getConfig()['redis']['ordnance_survey'];
+        $this->redisClient->open();
+        $osLastCall = $this->redisClient->read('os_last_call');
 
-        $redisOpen = $this->redisClient->open();
-        $lastOsCall = $this->redisClient->read('os_last_call');
-
-        $currentTime = new DateTime('now');
-        $currentUnixTime = $currentTime->getTimestamp();
+        $currentUnixTime = (new DateTime('now'))->getTimestamp();
 
         // Check if redis cached a timestamp for last call to OS, and call OS if no timestamp or not rate limited
-        if (is_numeric($lastOsCall) && intval($lastOsCall) > 0) {
-            $timeDiff = $currentUnixTime - intval($lastOsCall);
-            $rateLimit = 60 / $config['max_call_per_min'];
+        if (is_numeric($osLastCall) && intval($osLastCall) > 0) {
+            $timeDiff = $currentUnixTime - intval($osLastCall);
+            $rateLimit = 60 / ($this->getConfig()['redis']['ordnance_survey']['max_call_per_min']);
 
-            // Not rate limited - call OS
-            if ($timeDiff > $rateLimit) {
-                return $this->callOrdnanceSurvey($currentUnixTime);
-            // Rate limited - return cached response
-            } else {
-                $osStatus = $this->redisClient->read('os_last_status');
-                $osDetails = $this->redisClient->read('os_last_details');
+            // Use Redis cache
+            if ($timeDiff <= $rateLimit) {
+                $osLastStatus = boolval($this->redisClient->read('os_last_status'));
+                $osLastDetails = $this->redisClient->read('os_last_details');
+
+                $this->redisClient->close();
 
                 return [
-                    'ok' => boolval($osStatus),
+                    'ok' => $osLastStatus,
+                    'status' => ($osLastStatus ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
                     'cached' => true,
-                    'details' => json_decode($osDetails, true)
+                    'details' => json_decode($osLastDetails, true)
                 ];
             }
-        } else {
-            return $this->callOrdnanceSurvey($currentUnixTime);
         }
+
+        return $this->callOrdnanceSurvey($currentUnixTime);
     }
 
     private function callOrdnanceSurvey(int $currentUnixTime)
@@ -175,18 +225,25 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $this->redisClient->write('os_last_call', strval($currentUnixTime));
 
         // Cache response in redis
-        if ($this->ordnanceSurveyClient->verify($os) == true) {
+        $alive = false;
+        $details = '';
+
+        if ($this->ordnanceSurveyClient->verify($os)) {
             $alive = true;
             $details = $os[0];
-        } else {
-            $alive = false;
-            $details = '';
         }
 
         $this->redisClient->write('os_last_status', strval($alive));
         $this->redisClient->write('os_last_details', json_encode($details));
 
-        return ['ok' => $alive, 'cached' => false, 'details' => $details];
+        $this->redisClient->close();
+
+        return [
+            'ok' => $alive,
+            'status' => ($alive ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
+            'cached' => false,
+            'details' => $details,
+        ];
     }
 
     /**

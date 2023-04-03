@@ -6,8 +6,10 @@
 
 <div class="service-status">
 	<div class="text">
-		{% if status.ok == true %}
+		{% if status.status == 'pass' %}
 			<h2 class="heading-medium"><i class="icon icon-tick"></i> Service is up and running</h2>
+		{% elseif status.status == 'warn' %}
+			<h2 class="heading-medium"><strong class="icon">⚠</strong> Service is running in a degraded state</h2>
 		{% else %}
 			<h2 class="heading-medium"><i class="icon icon-cross"></i> Service is down</h2>
 		{% endif %}
@@ -26,9 +28,20 @@
 			{% endif %}
 			{% if status.api.ok == true %}
 				<li>
-					<i class="icon icon-tick"></i>
+					{% if status.api.status == 'warn' %}
+						<strong class="icon">⚠</strong>
+					{% else %}
+						<i class="icon icon-tick"></i>
+					{% endif %}
 					<p class="flush--bottom">API service is up and running</p>
 				</li>
+				{% if status.api.status == 'warn' %}
+	                <li>
+	                    <div class="bold-xsmall" style="margin-left: 32px">
+	                        <p class="flush--bottom">(...but is in a degraded state)</p>
+	                    </div>
+	                </li>
+            	{% endif %}
 			{% else %}
 				<li>
 					<i class="icon icon-cross"></i>
