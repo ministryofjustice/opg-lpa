@@ -5,6 +5,7 @@
   "labels": ["Renovate", "Dependencies"],
   "commitMessageAction": "Renovate update",
   "renovateFork": true,
+  "includeForks": true,
   "lockFileMaintenance": {
     "enabled": false
   },
