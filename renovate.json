@@ -85,7 +85,7 @@
         "php: 8.2 upgrade needs to be managed manually"
       ],
       "matchUpdateTypes": ["major", "minor", "patch"],
-      "matchManagers": ["dockerfile", "docker-compose"],
+      "matchManagers": ["dockerfile", "docker-compose", "composer"],
       "matchPackageNames": ["postgres", "redis", "php", "python"],
       "enabled": false
     },
