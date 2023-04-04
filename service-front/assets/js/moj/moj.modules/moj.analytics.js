@@ -11,7 +11,7 @@
       // only send analytics data from the main website
       if (
         window.location.hostname.indexOf(
-          'lastingpowerofattorney.service.gov.uk',
+          '1469lpal118.development.front.lpa.opg.service.justice.gov.uk',
         ) == -1
       ) {
         return;
@@ -26,7 +26,7 @@
       }
 
       this.gtag('js', new Date());
-      this.gtag('config', 'G-DY4BCL021L');
+      this.gtag('config', 'G-1DVC295G9L');
     },
 
     gtag: function () {
