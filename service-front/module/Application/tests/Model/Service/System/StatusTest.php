@@ -99,7 +99,7 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->times(1)
+            ->once()
             ->andReturn([
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
@@ -108,10 +108,10 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->times(1)
+            ->once()
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
-        $this->sessionSaveHandler->shouldReceive('open')->times(1)->andReturn(true);
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
 
         $expectedOsResponse = [[
                 'line1' => 'SOME PALACE',
@@ -157,7 +157,6 @@ class StatusTest extends AbstractServiceTest
             ],
             'ok' => true,
             'status' => Constants::STATUS_PASS,
-            'iterations' => 1,
         ], $result);
     }
 
@@ -223,7 +222,6 @@ class StatusTest extends AbstractServiceTest
             ],
             'ok' => true,
             'status' => Constants::STATUS_WARN,
-            'iterations' => 1,
         ], $result);
     }
 
@@ -287,7 +285,6 @@ class StatusTest extends AbstractServiceTest
             ],
             'ok' => true,
             'status' => Constants::STATUS_WARN,
-            'iterations' => 1,
         ], $result);
     }
 
@@ -296,7 +293,7 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->times(6)
+            ->once()
             ->andReturn([
                 'ok' => false,
                 'status' => Constants::STATUS_FAIL,
@@ -305,10 +302,10 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->times(6)
+            ->once()
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
-        $this->sessionSaveHandler->shouldReceive('open')->times(6)->andReturn(true);
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
 
         $expectedOsResponse = [[
                 'line1' => 'SOME PALACE',
@@ -354,7 +351,6 @@ class StatusTest extends AbstractServiceTest
             ],
             'ok' => false,
             'status' => Constants::STATUS_FAIL,
-            'iterations' => 6,
         ], $result);
     }
 
@@ -363,7 +359,7 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->times(1)
+            ->once()
             ->andReturn([
                 'ok' => true,
                 'status' => Constants::STATUS_WARN,
@@ -372,10 +368,10 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->times(1)
+            ->once()
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
-        $this->sessionSaveHandler->shouldReceive('open')->times(1)->andReturn(true);
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
 
         $expectedOsResponse = [[
                 'line1' => 'SOME PALACE',
@@ -421,7 +417,6 @@ class StatusTest extends AbstractServiceTest
             ],
             'ok' => true,
             'status' => Constants::STATUS_WARN,
-            'iterations' => 1,
         ], $result);
     }
 
@@ -482,7 +477,6 @@ class StatusTest extends AbstractServiceTest
             ],
             'ok' => false,
             'status' => Constants::STATUS_FAIL,
-            'iterations' => 6,
         ], $result);
     }
 
@@ -547,7 +541,6 @@ class StatusTest extends AbstractServiceTest
             ],
             'ok' => false,
             'status' => Constants::STATUS_FAIL,
-            'iterations' => 6,
         ], $result);
     }
 
@@ -556,7 +549,7 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->times(1)
+            ->once()
             ->andReturn([
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
@@ -565,10 +558,10 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->times(1)
+            ->once()
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
-        $this->sessionSaveHandler->shouldReceive('open')->times(1)->andReturn(true);
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
 
         $expectedOsResponse = [[
                 'line1' => 'SOME PALACE',
@@ -609,8 +602,6 @@ class StatusTest extends AbstractServiceTest
             // Unlike the other tests, when os fails it doesn't fail the overall health check as it's not vital to the service
             'ok' => true,
             'status' => Constants::STATUS_WARN,
-
-            'iterations' => 1,
         ], $result);
     }
 
@@ -619,7 +610,7 @@ class StatusTest extends AbstractServiceTest
         $this->apiClient
             ->shouldReceive('httpGet')
             ->withArgs(['/ping'])
-            ->times(1)
+            ->once()
             ->andReturn([
                 'ok' => true,
                 'status' => Constants::STATUS_PASS,
@@ -628,10 +619,10 @@ class StatusTest extends AbstractServiceTest
         $this->dynamoDbClient
             ->shouldReceive('describeTable')
             ->withArgs([['TableName' => 'admin-test-table']])
-            ->times(1)
+            ->once()
             ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
 
-        $this->sessionSaveHandler->shouldReceive('open')->times(1)->andReturn(true);
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
 
         // mock os_last_call to within the last second
         $currentTimestamp = (new DateTime('now'))->getTimestamp();
@@ -670,8 +661,6 @@ class StatusTest extends AbstractServiceTest
 
             'ok' => true,
             'status' => Constants::STATUS_PASS,
-
-            'iterations' => 1,
         ], $result, 'OS call within 1 second of previous call should return cached details');
     }
 }
