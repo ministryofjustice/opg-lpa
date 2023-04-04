@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-alpine3.15
+FROM php:8.1.16-fpm-alpine3.17
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -23,7 +23,7 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 # Install composer dependencies
 COPY --chown=root:root service-front/composer.json /app/composer.json
 COPY --chown=root:root service-front/composer.lock /app/composer.lock
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.5.1 \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.5.5 \
     && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app
 
 # Core files for the application
