@@ -31,12 +31,12 @@
     "github-actions",
     "gomod",
     "terraform",
-    "pip-requirements",
+    "pip_requirements",
     "pip-compile",
     "pipenv",
     "pyenv",
     "setup-cfg",
-    "pip-setup"
+    "pip_setup"
   ],
   "packageRules": [
     {
@@ -140,6 +140,20 @@
       "excludePackagePatterns": ["cypress"],
       "excludePackageNames": ["php"],
       "ignorePaths": ["**/service-admin/**"],
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "stabilityDays": 3
+    },
+    {
+      "description": [
+        "python minor and patch updates (stable for 3 days)"
+      ],
+      "automerge": false,
+      "groupName": "minor and patch updates (Python)",
+      "groupSlug": "all-minor-patch-updates-python",
+      "labels": ["Dependencies", "Renovate"],
+      "matchManagers": ["pip_requirements", "pip-compile", "pipenv", "pyenv", "setup-cfg", "pip_setup"],
+      "matchUpdateTypes": ["minor", "patch"],
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
