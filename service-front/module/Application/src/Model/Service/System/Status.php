@@ -56,55 +56,56 @@ class Status extends AbstractService implements ApiClientAwareInterface
     public function check()
     {
         $result = [];
-        $ok = false;
-        $iterations = 0;
 
-        // this loop terminates when we have tried 6 times,
-        // or when all required services return ok
-        while ($iterations < 6 && !$ok) {
-            $iterations++;
-            $result = [];
+        // Check API (required)
+        $result['api'] = $this->api();
 
-            // Check DynamoDB
-            $result['dynamo'] = $this->dynamo();
+        // Check session save handling (required)
+        $result['sessionSaveHandler'] = $this->session();
 
-            // Check API
-            $result['api'] = $this->api();
-
-            // Check session save handling
-            $result['sessionSaveHandler'] = $this->session();
-
-            $ok = true;
-            foreach (self::SERVICES_REQUIRED as $serviceRequired) {
-                if (!$result[$serviceRequired]['ok']) {
-                    $ok = false;
-                    break;
-                }
+        // Service reports as OK if all required services are OK;
+        // note that OK is different from status - status can
+        // be "warn" or "pass" and OK will be true; if status is
+        // "fail", then OK will be false
+        $result['ok'] = true;
+        foreach (self::SERVICES_REQUIRED as $serviceRequired) {
+            if (!$result[$serviceRequired]['ok']) {
+                $result['ok'] = false;
+                break;
             }
         }
 
-        $result['ok'] = $ok;
-        $result['iterations'] = $iterations;
+        // Check DynamoDB
+        $result['dynamo'] = $this->dynamo();
 
-        // Check ordnanceSurvey - we rate limit this so we don't want it in the above retry loop
+        // Check Ordnance Survey - rate limited: response might be cached
         $result['ordnanceSurvey'] = $this->ordnanceSurvey();
 
         // Determine overall status of service by looking at the statuses
         // of each dependency
         $status = Constants::STATUS_PASS;
 
+        // If any required service is "fail", overall status is "fail";
+        // if one or more required services are "warn", and none "fail",
+        // overall status is "warn";
+        // if all required services are "pass", overall status is "pass"
         foreach (self::SERVICES_REQUIRED as $serviceRequired) {
-            $serviceStatus = $result[$serviceRequired]['status'];
+            $requiredStatus = $result[$serviceRequired]['status'];
 
-            if ($serviceStatus === Constants::STATUS_WARN) {
-                $status = Constants::STATUS_WARN;
-            } elseif ($serviceStatus === Constants::STATUS_FAIL) {
-                // fail the whole status immediately if a required service failed
-                $status = Constants::STATUS_FAIL;
+            if ($requiredStatus === Constants::STATUS_PASS) {
+                continue;
+            }
+
+            $status = $requiredStatus;
+
+            if ($status === Constants::STATUS_FAIL) {
                 break;
             }
         }
 
+        // If no required services are "fail", but one or more optional services are "pass" or "warn",
+        // overall status is "warn"; note that an optional service can be "fail", but
+        // we still report an overall "warn" status (rather than "fail")
         if ($status !== Constants::STATUS_FAIL) {
             foreach (self::SERVICES_OPTIONAL as $serviceOptional) {
                 if ($result[$serviceOptional]['status'] !== Constants::STATUS_PASS) {
