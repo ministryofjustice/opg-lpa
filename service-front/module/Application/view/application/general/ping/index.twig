@@ -59,6 +59,17 @@
 					<p class="flush--bottom">Session storage is down</p>
 				</li>
 			{% endif %}
+			{% if status.mail.ok == true %}
+				<li>
+					<i class="icon icon-tick"></i>
+					<p class="flush--bottom">Mail transport is up and running</p>
+				</li>
+			{% else %}
+				<li>
+					<i class="icon icon-cross"></i>
+					<p class="flush--bottom">Mail transport is down</p>
+				</li>
+			{% endif %}
             {% if status.ordnanceSurvey.ok == true %}
                 <li>
                     <i class="icon icon-tick"></i>
