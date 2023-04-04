@@ -3,6 +3,9 @@
     "description": "Worker service for creating Lasting Power of Attorney PDF documents",
     "minimum-stability": "stable",
     "license": "MIT",
+    "config": {
+        "platform": {"php": "8.1.16"}
+    },
     "repositories": [
     ],
     "require": {
