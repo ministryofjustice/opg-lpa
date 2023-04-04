@@ -30,28 +30,27 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run -v `pwd`/service-front/:/app/ -t composer_${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
-	@docker run -v `pwd`/service-pdf/:/app/ -t composer_${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-api-composer
 run-api-composer:
-	@docker run -v `pwd`/service-api/:/app/ -t composer_${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run -v `pwd`/service-admin/:/app/ -t composer_${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-shared-composer
 run-shared-composer:
-	@docker run -v `pwd`/shared/:/app/ composer_${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run -v `pwd`/shared/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-composers
 run-composers:
 	@docker pull composer:${COMPOSER_VERSION}; \
-	docker tag composer:${COMPOSER_VERSION} composer_${COMPOSER_VERSION}; \
 	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer run-shared-composer
 
 .PHONY: dc-up
