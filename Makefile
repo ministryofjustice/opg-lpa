@@ -207,6 +207,7 @@ s3-monitor:
 
 .PHONY: cypress-gui
 cypress-gui:
+	npm install;
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"

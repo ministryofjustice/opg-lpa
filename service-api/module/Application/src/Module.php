@@ -2,7 +2,6 @@
 
 namespace Application;
 
-
 use ArrayIterator;
 use GuzzleHttp\Client;
 use Alphagov\Notifications\Client as NotifyClient;
@@ -18,7 +17,7 @@ use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
-use Http\Adapter\Guzzle6\Client as Guzzle6Client;
+use Http\Adapter\Guzzle7\Client as Guzzle7Client;
 use Http\Client\HttpClient;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use Laminas\Authentication\AuthenticationService;
@@ -70,7 +69,7 @@ class Module
                 Repository\Feedback\FeedbackRepositoryInterface::class => Postgres\FeedbackData::class,
             ],
             'invokables' => [
-                HttpClient::class => Guzzle6Client::class,
+                HttpClient::class => Guzzle7Client::class,
                 Client::class => Client::class,
             ],
             'factories' => [

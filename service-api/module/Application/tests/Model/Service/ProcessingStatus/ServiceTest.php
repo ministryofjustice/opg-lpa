@@ -5,6 +5,8 @@ namespace Application\Model\Service\ProcessingStatus;
 use Application\Library\ApiProblem\ApiProblemException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\RejectedPromise;
+use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Promise\Promise;
 use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
 use Http\Client\Exception;
@@ -72,10 +74,12 @@ class ServiceTest extends MockeryTestCase
             $mockBody->shouldReceive('getContents')->andReturn($returnBody);
             $this->response->shouldReceive('getBody')->andReturn($mockBody);
         }
+        $this->promise = new Promise();
+        $this->promise->resolve($this->response);
 
         $this->httpClient->shouldReceive('sendAsync')
             ->once()
-            ->andReturn($this->response);
+            ->andReturn($this->promise);
     }
 
     public function testSetConfigBadConfig()
