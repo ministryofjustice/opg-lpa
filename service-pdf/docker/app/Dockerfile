@@ -1,4 +1,4 @@
-FROM php:8.1-cli-alpine3.15
+FROM php:8.1.16-cli-alpine3.17
 
 RUN adduser -D -g '' appuser
 
@@ -26,7 +26,7 @@ RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
 # Install composer dependencies
 COPY --chown=root:root service-pdf/composer.json /app/composer.json
 COPY --chown=root:root service-pdf/composer.lock /app/composer.lock
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.5.1 \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.5.5 \
     && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
     && rm /app/composer.json \
