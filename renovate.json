@@ -4,7 +4,6 @@
   "branchPrefix": "renovate-",
   "labels": ["Renovate", "Dependencies"],
   "commitMessageAction": "Renovate update",
-  "renovateFork": true,
   "includeForks": true,
   "lockFileMaintenance": {
     "enabled": false
@@ -20,9 +19,9 @@
     "prCreation": "immediate",
     "prPriority": 5
   },
-  "prConcurrentLimit": 10,
-  "prHourlyLimit": 10,
-  "branchConcurrentLimit": 10,
+  "prConcurrentLimit": 1,
+  "prHourlyLimit": 1,
+  "branchConcurrentLimit": 1,
   "enabledManagers": [
     "dockerfile",
     "docker-compose",
