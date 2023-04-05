@@ -1,12 +1,11 @@
 from locust import HttpUser, task, between
 import random
-import logging
+import time
 from common.user import User
 from common.lpa import LastingPowerAttorney
 from common.config import logger
 
 # TODO: Add more users to the seeded users list
-# TODO: Activate the user after they have signed up
 # TODO: Get statistics from the production environment and use them to set the weights for the random choices so that the user journey and produced data is more realistic
 # TODO: Add people to notify. Currently nobody is added to notify
 # TODO: Handle being logged out during the user journey
@@ -20,17 +19,38 @@ class MakeAnLPAUser(HttpUser):
     def on_start(self):
         self.client.verify = False
         if random.randint(1, 1) == 1:
+            random_number = str(random.getrandbits(32))
             email_address = (
-                "caspertests+"
-                + str(random.getrandbits(32))
-                + "@lpa.opg.service.justice.gov.uk"
+                "caspertests+" + random_number + "@lpa.opg.service.justice.gov.uk"
             )
             self.user = User(self.client, email_address)
             self.user.create()
+
+            # Look for the activation email in /cypress/activation-emails and activate the user with the link in the email.
+            email_received = False
+            while not email_received:
+                logger.debug("Looking for email")
+                try:
+                    with open(
+                        "../cypress/activation_emails/" + random_number + ".activation"
+                    ) as f:
+                        email = f.read()
+                        # Extract the activation link from the email
+                        activation_link = email.split(",")[1]
+                        # Activate the user
+                        logger.debug(activation_link)
+                        self.client.get(activation_link)
+                        email_received = True
+                except FileNotFoundError:
+                    logger.debug("Email not received yet")
+                    time.sleep(5)
+                    pass
+
+            self.user.login()
+            self.user.update_profile()
         else:
             self.user = User(self.client, random.choice(SEEDED_USERS))
-
-        self.user.login()
+            self.user.login()
 
     @task(8)
     def CompleteFullLPA(self):
