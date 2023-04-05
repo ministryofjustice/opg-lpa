@@ -9,10 +9,12 @@ The Office of the Public Guardian Lasting Power of Attorney online service: Mana
 
 Set up software on your machine required to run the application locally:
 
-* Install `make` using the native package manager (assuming you are on Mac or Linux)
+* Install `git`
+* Install `make`
 * Install [docker](https://docs.docker.com/get-docker/)
 * Install [docker-compose](https://docs.docker.com/compose/install/)
 * Install [homebrew](https://docs.brew.sh/) (mac only)
+* Install python3
 
 ### Clone repo
 
@@ -25,31 +27,35 @@ cd opg-lpa
 
 ### Install pre-commit hooks (mac)
 
-Install the precommit hooks as follows in the root of the repo directory (Mac only):
+Install the precommit hooks and dependencies in the root of the repo directory:
 
 ```bash
 brew install golang
-brew install php-code-sniffer
+
+# python code linting
+brew install black
+
+# javascript code linting
+brew install eslint
+
+# PHP code linting
 brew install php-cs-fixer
-brew install phpstan
+
 brew install pre-commit
+
 pre-commit install
 ```
 
-This will install the pre-commit hooks for the repo. This covers:
+Pre-commit hooks run any time you add a commit. They covers:
 
-* PHP code fixers
+* PHP code formatting and fixing
+* Python code linting
+* JavaScript code linting
 * Terraform
 * Secrets commit detection (AWS, general secrets)
 * Whitespace and end of file fixers
 
 Add more as needed to the `.pre-commit-config.yaml`.
-
-For Linux users, revert to the instructions for installing phpcs, phpstan and pre-commit hooks:
-
-* <https://github.com/squizlabs/PHP_CodeSniffer>
-* <https://phpstan.org/user-guide/getting-started>
-* <https://pre-commit.com/index.html#install>
 
 ### Access to Amazon secrets
 
@@ -67,6 +73,9 @@ Add a default profile which references your account to `~/.aws/config`:
 [default]
 region = eu-west-1
 mfa_serial=arn:aws:iam::111111111111:mfa/your.name
+
+[profile identity]
+source_profile=''
 ```
 
 The value for `mfa_serial` is visible in the AWS console under *My security credentials* after you've configured MFA.
@@ -76,7 +85,7 @@ Add a `moj-lpa-dev` profile to `~/.aws/config` which references the default prof
 ```ini
 [profile moj-lpa-dev]
 role_arn=arn:aws:iam::111111111111:role/operator
-source_profile = default
+source_profile=identity
 ```
 
 For the next step, you will need a temporary access key. Generate this using the AWS console, under *My security credentials*.
@@ -84,7 +93,7 @@ For the next step, you will need a temporary access key. Generate this using the
 Add your default profile to aws-vault:
 
 ```bash
-aws-vault add default
+aws-vault add identity
 ```
 
 When prompted, enter the temporary access key you just generated via the AWS console. (You may also be prompted to create a new keyring on your machine using whatever method is natively available.)
@@ -92,16 +101,16 @@ When prompted, enter the temporary access key you just generated via the AWS con
 Once this is done, check that you have access by running this command:
 
 ```bash
-aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_email_sendgrid_api_key
+aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_gov_pay_key
 ```
 
 You will be prompted for an MFA token, which should be displayed on whichever device you used to set up MFA for your Amazon account.
 
 NB This command is run when starting the application locally, which is why you need to get this set up.
 
-## Running the application locally with integrations
+## Running the application locally
 
-Once you have access to Amazon secrets, you can run the application with integrations from the `opg-lpa` directory with:
+Once you have access to Amazon secrets, you can run the application from the `opg-lpa` directory with:
 
 ```bash
 make dc-up
@@ -123,7 +132,23 @@ To run the unit tests for the PHP applications:
 make dc-unit-tests
 ```
 
-For how to run the functional tests, please see seperate README in tests/functional directory.
+Unit tests for the individual components can be run from their individual directories, e.g.
+
+```
+cd service-front
+/usr/local/opt/php@8.1/bin/php ./vendor/bin/phpunit
+```
+
+NB `shared`, `service-front`, `service-api` and `service-pdf` run using PHP 8.1, while
+`service-admin` uses PHP 8.2. It's important to use the correct PHP version when running
+the unit tests manually, as shown in the example above. Homebrew on mac allows you to install
+different PHP versions in parallel, e.g.
+
+```
+brew install php@8.2
+```
+
+For instructions on how to run the functional tests, please see separate README in tests/functional directory.
 
 ### Load tests
 
@@ -135,12 +160,10 @@ To run the load tests:
 1. Create a virtualenv: `virtualenv -p python3 ~/.loadtestsvenv` (substitute your preferred
 path for the virtual environment).
 1. Install dependencies:
-
-    ```bash
-    cd tests/load
-    pip install -e .
-    ```
-
+```bash
+cd tests/load
+pip install -e .
+```
 1. Run the test suite: `run_load_tests.sh tests/suite.py`
     The tests run indefinitely until you interrupt them. Reports are written to `build/load_tests`.
     Running `run_load_tests.sh` without arguments shows the available switches.
@@ -151,21 +174,29 @@ The output is very verbose but can be useful for a low-level view of the HTTP la
 
 ### Cypress functional tests
 
-**note**: the below assumes that the dev stack has been already started using `make dc-up`.
+**Note:** the below assumes that the dev stack has been already started using `make dc-up`.
 
-First install cypress dependencies in the project root:
+Install python3. This is used to run the S3 monitor, which picks up activation emails (see below). On a mac:
 
 ```bash
-npm install .
+brew install python3
 ```
 
-The cypress functional test suite can be run with:
+Install the dependencies required by the S3 monitor:
+
+```bash
+pip3 install boto3
+```
+
+The cypress functional test suite can now be run with:
 
 ```bash
 make cypress-local
 ```
 
-You can open the test suite and run individual tests with:
+NB this installs the nodejs dependencies required by cypress using npm.
+
+You can open the test suite in the GUI and run individual tests with:
 
 ```bash
 make cypress-open
@@ -199,16 +230,27 @@ The package.json in the root of the repo has all of the required dev dependancie
 npm i <package-name> --saveDev
 ```
 
-### Updating composer dependencies
+### The S3 monitor
 
-Composer install is run when the app containers are built, and on a standard `make dc-up`.
+The cypress test suite runs an instance of the S3 monitor. This is a Python application which polls an S3 bucket looking for emails sent during test runs.
+
+All emails used during test runs, such as the addresses used for new user accounts, are in the lpa.opg.service.justice.gov.uk domain. This enables us to do the following:
+
+1. During a test run, we send requests to the real Notify service, which then sends out emails on our behalf. Examples are account activation and password reset emails. These emails pass through standard email infrastructure; however, the email server for the lpa.opg.service.justice.gov.uk domain is rigged so that any emails sent to it end up in an S3 bucket (opg-lpa-casper-mailbox). (NB "casper" crops up for historical reasons, as the tests were previously implemented in casper.)
+2. The S3 monitor polls the S3 bucket, copying any messages it finds into a local directory. The filename includes the ID of the test account.
+3. Automated tests poll the local directory, looking for text files with specific IDs in their names (put there by the S3 monitor). The ID is included as part of the email address used to sign up or login a user, such as caspertests+1680708521545893617@lpa.opg.service.justice.gov.uk.
+4. On finding the correct file (once it's been pulled down from S3), the email it contains is parsed for the appropriate links. For example, while testing sign up, the cypress tests look for a link to activate the newly-created account; once found, the link is followed to mimic a user opening the link from their email client, activating the account.
+
+## Updating composer dependencies
+
+Composer installs PHP dependencies when the app containers are built, and on a standard `make dc-up`.
 
 However, if you upgrade a package in composer.json for one or more services, you'll need to update the corresponding lock file(s).
 
 This can be done with:
 
 ```bash
-docker run -v `pwd`/service-front/:/app/ composer update --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+docker run -v `pwd`/service-front/:/app/ composer update --prefer-dist --no-interaction --no-scripts
 ```
 
 (replacing `service-front` with the path to the application component you are adding a package to; note that you'll need to do this for the following commands as well)
@@ -216,11 +258,11 @@ docker run -v `pwd`/service-front/:/app/ composer update --prefer-dist --no-inte
 Packages can be added with:
 
 ```bash
-docker run -v `pwd`/service-front/:/app/ composer require author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+docker run -v `pwd`/service-front/:/app/ composer require author/package --prefer-dist --no-interaction --no-scripts
 ```
 
 Packages can be removed with:
 
 ```bash
-docker run -v `pwd`/service-front/:/app/ composer remove author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+docker run -v `pwd`/service-front/:/app/ composer remove author/package --prefer-dist --no-interaction --no-scripts
 ```
