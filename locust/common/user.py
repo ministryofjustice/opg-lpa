@@ -41,15 +41,15 @@ class User:
                 self.account_details["email"],
             )
 
-    def create(self, account_details={}):
+    def create(self):
         csrf_token_name, csrf_token = get_csrf_token(self.client, "/signup")
 
         data = {
             csrf_token_name: csrf_token,
-            "email": account_details["email"],
-            "email_confirm": account_details["email"],
-            "password": account_details["password"],
-            "password_confirm": account_details["password"],
+            "email": self.account_details["email"],
+            "email_confirm": self.account_details["email"],
+            "password": PASSWORD,
+            "password_confirm": PASSWORD,
             "submit": "Create account",
             "skip_confirm_password": "0",
             "terms": "1",
@@ -60,10 +60,10 @@ class User:
         if response.status_code == 200:
             logger.info(
                 "%s %s %s signed up successfully using email address %s",
-                account_details["title"],
-                account_details["first_name"],
-                account_details["last_name"],
-                account_details["email"],
+                self.account_details["title"],
+                self.account_details["first_name"],
+                self.account_details["last_name"],
+                self.account_details["email"],
             )
 
     def update_profile(self):
