@@ -116,7 +116,7 @@
       "groupName": "minor and patch updates (PHP 8.2, npm)",
       "groupSlug": "all-minor-patch-updates-82",
       "labels": ["Dependencies", "Renovate"],
-      "matchManagers": ["composer", "npm", "pip-requirements", "pip-compile", "pipenv", "pyenv", "setup-cfg", "pip-setup"],
+      "matchManagers": ["composer", "npm", "pip_requirements", "pip-compile", "pipenv", "pyenv", "setup-cfg", "pip_setup"],
       "matchUpdateTypes": ["minor", "patch"],
       "excludePackagePatterns": ["cypress"],
       "excludePackageNames": ["php"],
