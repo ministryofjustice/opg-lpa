@@ -4,9 +4,9 @@
   "branchPrefix": "renovate-",
   "labels": ["Renovate", "Dependencies"],
   "commitMessageAction": "Renovate update",
-  "includeForks": true,
   "lockFileMaintenance": {
-    "enabled": false
+    "enabled": true,
+    "schedule": "before 5am on monday"
   },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
@@ -30,12 +30,12 @@
     "github-actions",
     "gomod",
     "terraform",
-    "pip_requirements",
+    "pip-requirements",
     "pip-compile",
     "pipenv",
     "pyenv",
     "setup-cfg",
-    "pip_setup"
+    "pip-setup"
   ],
   "packageRules": [
     {
@@ -109,50 +109,17 @@
     },
     {
       "description": [
-        "composer and npm minor and patch updates (PHP 8.2, stable for 3 days)",
+        "composer , npm and python Minor and Patch updates (stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "minor and patch updates (PHP 8.2, npm)",
-      "groupSlug": "all-minor-patch-updates-82",
+      "groupName": "minor and patch updates",
+      "groupSlug": "all-minor-patch-updates",
       "labels": ["Dependencies", "Renovate"],
       "matchManagers": ["composer", "npm", "pip-requirements", "pip-compile", "pipenv", "pyenv", "setup-cfg", "pip-setup"],
       "matchUpdateTypes": ["minor", "patch"],
       "excludePackagePatterns": ["cypress"],
       "excludePackageNames": ["php"],
-      "ignorePaths": ["**/service-front/**", "**/service-api/**", "**/service-pdf/**", "**/shared/**"],
-      "prCreation": "immediate",
-      "prPriority": 4,
-      "stabilityDays": 3
-    },
-    {
-      "description": [
-        "composer and npm minor and patch updates (PHP 8.1, stable for 3 days)",
-        "These might be automerged once we're comfortable with Renovate"
-      ],
-      "automerge": false,
-      "groupName": "minor and patch updates (PHP 8.1, npm)",
-      "groupSlug": "all-minor-patch-updates-81",
-      "labels": ["Dependencies", "Renovate"],
-      "matchManagers": ["composer", "npm"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "excludePackagePatterns": ["cypress"],
-      "excludePackageNames": ["php"],
-      "ignorePaths": ["**/service-admin/**"],
-      "prCreation": "immediate",
-      "prPriority": 4,
-      "stabilityDays": 3
-    },
-    {
-      "description": [
-        "python minor and patch updates (stable for 3 days)"
-      ],
-      "automerge": false,
-      "groupName": "minor and patch updates (Python)",
-      "groupSlug": "all-minor-patch-updates-python",
-      "labels": ["Dependencies", "Renovate"],
-      "matchManagers": ["pip_requirements", "pip-compile", "pipenv", "pyenv", "setup-cfg", "pip_setup"],
-      "matchUpdateTypes": ["minor", "patch"],
       "prCreation": "immediate",
       "prPriority": 4,
       "stabilityDays": 3
