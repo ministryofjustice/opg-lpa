@@ -19,11 +19,11 @@ class MakeAnLPAUser(HttpUser):
 
     def on_start(self):
         self.client.verify = False
-        if random.randint(2, 5) == 1:
+        if random.randint(1, 1) == 1:
             email_address = (
-                "samuel.ainsworth+"
+                "caspertests+"
                 + str(random.getrandbits(32))
-                + "@digital.justice.gov.uk"
+                + "@lpa.opg.service.justice.gov.uk"
             )
             self.user = User(self.client, email_address)
             self.user.create()
