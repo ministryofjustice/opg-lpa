@@ -18,6 +18,7 @@ class MakeAnLPAUser(HttpUser):
     wait_time = between(5, 30)
 
     def on_start(self):
+        self.client.verify = False
         if random.randint(2, 5) == 1:
             email_address = (
                 "samuel.ainsworth+"
