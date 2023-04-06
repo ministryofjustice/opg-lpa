@@ -1,5 +1,5 @@
 from common.helper import get_csrf_token
-import logging
+import time
 from faker import Faker
 from bs4 import BeautifulSoup
 from common import PASSWORD
@@ -28,7 +28,6 @@ class User:
         logger.debug("Initialising user with details: %s", self.account_details)
 
     def login(self):
-
         data = {"email": self.account_details["email"], "password": PASSWORD}
         response = self.client.post("/login", data=data)
 
@@ -66,8 +65,26 @@ class User:
                 self.account_details["email"],
             )
 
-    def update_profile(self):
+    def activate(self, email_address_id):
+        email_received = False
+        logger.debug("Waiting for email to be received for %s", email_address_id)
+        while not email_received:
+            try:
+                with open(
+                    "../cypress/activation_emails/" + email_address_id + ".activation"
+                ) as f:
+                    email = f.read()
+                    activation_link = email.split(",")[1]
+                    self.client.get(
+                        activation_link, name="/signup/confirm/[activation_code]"
+                    )
+                    email_received = True
+            except FileNotFoundError:
+                logger.debug("Email not received yet for %s", email_address_id)
+                time.sleep(1)
+                pass
 
+    def update_profile(self):
         csrf_token_name, csrf_token = get_csrf_token(self.client, "/user/about-you/new")
 
         data = {
@@ -119,7 +136,9 @@ class User:
                 return list["data-refresh-id"]
 
     def get_all_lpa_ids(self, page=1):
-        response = self.client.get("/user/dashboard/page/" + str(page))
+        response = self.client.get(
+            "/user/dashboard/page/" + str(page), name="/user/dashboard/page/[page]"
+        )
 
         soup = BeautifulSoup(response.text, "html.parser")
         lists = soup.findAll("li")
@@ -145,5 +164,24 @@ class User:
         )
         if lists:
             return lists["data-cy"][4:]
+
+    def view_dashboard(self):
+        response = self.client.get("/user/dashboard")
+
+        if response.status_code == 200:
+            logger.debug(
+                "%s %s %s viewed dashboard successfully for account %s",
+                self.account_details["title"],
+                self.account_details["first_name"],
+                self.account_details["last_name"],
+                self.account_details["email"],
+            )
         else:
-            print("No incomplete LPAs found")
+            logger.warning(
+                "%s %s %s could not view dashboard for account %s. Status code returned: %s",
+                self.account_details["title"],
+                self.account_details["first_name"],
+                self.account_details["last_name"],
+                self.account_details["email"],
+                response.status_code,
+            )

@@ -27,7 +27,6 @@ class LastingPowerAttorney:
         self.num_of_attorneys = 0
 
     def start_application(self):
-
         csrf_token_name, csrf_token = get_csrf_token(self.client, "/lpa/type")
 
         data = {
@@ -52,9 +51,9 @@ class LastingPowerAttorney:
             )
 
     def add_donor_to_lpa(self):
-
         csrf_token_name, csrf_token = get_csrf_token(
-            self.client, "/lpa/%s/donor/add" % self.lpa_id
+            self.client,
+            "/lpa/%s/donor/add" % self.lpa_id,
         )
         data = {
             csrf_token_name: csrf_token,
@@ -75,7 +74,10 @@ class LastingPowerAttorney:
         }
 
         response = self.client.post(
-            "/lpa/%s/donor/add" % self.lpa_id, data=data, allow_redirects=False
+            "/lpa/%s/donor/add" % self.lpa_id,
+            data=data,
+            allow_redirects=False,
+            name="/lpa/[id]/donor/add",
         )
 
         if response.status_code == 302:
@@ -95,7 +97,6 @@ class LastingPowerAttorney:
             )
 
     def decide_when_lpa_starts(self):
-
         csrf_token_name, csrf_token = get_csrf_token(
             self.client, "/lpa/%s/when-lpa-starts" % self.lpa_id
         )
@@ -107,7 +108,10 @@ class LastingPowerAttorney:
         }
 
         response = self.client.post(
-            "/lpa/%s/when-lpa-starts" % self.lpa_id, data=data, allow_redirects=False
+            "/lpa/%s/when-lpa-starts" % self.lpa_id,
+            data=data,
+            allow_redirects=False,
+            name="/lpa/[id]/when-lpa-starts",
         )
 
         if response.status_code == 302:
@@ -125,7 +129,6 @@ class LastingPowerAttorney:
             )
 
     def life_sustaining_treatment(self):
-
         url = "/lpa/%s/life-sustaining" % self.lpa_id
         csrf_token_name, csrf_token = get_csrf_token(self.client, url)
 
@@ -135,7 +138,9 @@ class LastingPowerAttorney:
             "save": "Save and continue",
         }
 
-        response = self.client.post(url, data=data, allow_redirects=False)
+        response = self.client.post(
+            url, data=data, allow_redirects=False, name="/lpa/[id]/life-sustaining"
+        )
 
         if response.status_code == 302:
             logger.debug(
@@ -152,7 +157,6 @@ class LastingPowerAttorney:
             )
 
     def add_primary_attorney_to_lpa(self):
-
         while self.num_of_attorneys < self.num_of_attorneys_to_add:
             csrf_token_name, csrf_token = get_csrf_token(
                 self.client, "/lpa/%s/primary-attorney/add" % self.lpa_id
@@ -184,6 +188,7 @@ class LastingPowerAttorney:
                 "/lpa/%s/primary-attorney/add" % self.lpa_id,
                 data=data,
                 allow_redirects=False,
+                name="/lpa/[id]/primary-attorney/add",
             )
 
             if response.status_code == 302:
@@ -195,7 +200,6 @@ class LastingPowerAttorney:
                 self.num_of_attorneys += 1
 
     def decide_jointly_and_severally(self):
-
         csrf_token_name, csrf_token = get_csrf_token(
             self.client, "/lpa/%s/how-primary-attorneys-make-decision" % self.lpa_id
         )
@@ -212,6 +216,7 @@ class LastingPowerAttorney:
             "/lpa/%s/how-primary-attorneys-make-decision" % self.lpa_id,
             data=data,
             allow_redirects=False,
+            name="/lpa/[id]/how-primary-attorneys-make-decision",
         )
 
         if response.status_code == 302:
@@ -228,7 +233,6 @@ class LastingPowerAttorney:
             )
 
     def add_replacement_attorney_to_lpa(self):
-
         csrf_token_name, csrf_token = get_csrf_token(
             self.client, "/lpa/%s/replacement-attorney" % self.lpa_id
         )
@@ -262,6 +266,7 @@ class LastingPowerAttorney:
                 "/lpa/%s/replacement-attorney/add" % self.lpa_id,
                 data=add_attorney_data,
                 allow_redirects=False,
+                name="/lpa/[id]/replacement-attorney/add",
             )
         else:
             logger.debug(
@@ -276,6 +281,7 @@ class LastingPowerAttorney:
             "/lpa/%s/replacement-attorney" % self.lpa_id,
             data=data,
             allow_redirects=False,
+            name="/lpa/[id]/replacement-attorney",
         )
 
         if response.status_code == 302:
@@ -288,7 +294,6 @@ class LastingPowerAttorney:
             return add_replacement_attorneys
 
     def decide_when_replacement_attorneys_used(self):
-
         csrf_token_name, csrf_token = get_csrf_token(
             self.client, "/lpa/%s/when-replacement-attorney-step-in" % self.lpa_id
         )
@@ -306,6 +311,7 @@ class LastingPowerAttorney:
             "/lpa/%s/when-replacement-attorney-step-in" % self.lpa_id,
             data=data,
             allow_redirects=False,
+            name="/lpa/[id]/when-replacement-attorney-step-in",
         )
         logger.debug(
             "User %s decided  for lpa with id: %s",
@@ -314,7 +320,6 @@ class LastingPowerAttorney:
         )
 
     def add_certificate_provider_to_lpa(self):
-
         csrf_token_name, csrf_token = get_csrf_token(
             self.client, "/lpa/%s/certificate-provider/add" % self.lpa_id
         )
@@ -333,6 +338,7 @@ class LastingPowerAttorney:
             "/lpa/%s/certificate-provider/add" % self.lpa_id,
             data=data,
             allow_redirects=False,
+            name="/lpa/[id]/certificate-provider/add",
         )
 
         if response.status_code == 302:
@@ -353,7 +359,10 @@ class LastingPowerAttorney:
         }
 
         response = self.client.post(
-            "/lpa/%s/people-to-notify" % self.lpa_id, data=data, allow_redirects=False
+            "/lpa/%s/people-to-notify" % self.lpa_id,
+            data=data,
+            allow_redirects=False,
+            name="/lpa/[id]/people-to-notify",
         )
 
         if response.status_code == 302:
@@ -364,7 +373,6 @@ class LastingPowerAttorney:
             )
 
     def add_instructions_to_attorneys_to_lpa(self):
-
         csrf_token_name, csrf_token = get_csrf_token(
             self.client, "/lpa/%s/instructions" % self.lpa_id
         )
@@ -377,7 +385,10 @@ class LastingPowerAttorney:
         }
 
         response = self.client.post(
-            "/lpa/%s/instructions" % self.lpa_id, data=data, allow_redirects=False
+            "/lpa/%s/instructions" % self.lpa_id,
+            data=data,
+            allow_redirects=False,
+            name="/lpa/[id]/instructions",
         )
 
         if response.status_code == 302:
@@ -388,7 +399,6 @@ class LastingPowerAttorney:
             )
 
     def select_applicant_to_lpa(self):
-
         url = "/lpa/%s/applicant" % self.lpa_id
         csrf_token_name, csrf_token = get_csrf_token(self.client, url)
 
@@ -398,7 +408,9 @@ class LastingPowerAttorney:
             "save": "Save and continue",
         }
 
-        response = self.client.post(url, data=data, allow_redirects=False)
+        response = self.client.post(
+            url, data=data, allow_redirects=False, name="/lpa/[id]/applicant"
+        )
 
         if response.status_code == 302:
             logger.debug(
@@ -409,7 +421,6 @@ class LastingPowerAttorney:
             )
 
     def choose_correspondence_options(self):
-
         url = "/lpa/%s/correspondent" % self.lpa_id
         csrf_token_name, csrf_token = get_csrf_token(self.client, url)
 
@@ -424,7 +435,9 @@ class LastingPowerAttorney:
             "save": "Save and continue",
         }
 
-        response = self.client.post(url, data=data, allow_redirects=False)
+        response = self.client.post(
+            url, data=data, allow_redirects=False, name="/lpa/[id]/correspondent"
+        )
         if response.status_code == 302:
             logger.info(
                 "User %s POSTed to %s and got redirected to %s",
@@ -434,7 +447,6 @@ class LastingPowerAttorney:
             )
 
     def who_are_you(self):
-
         url = "/lpa/%s/who-are-you" % self.lpa_id
         csrf_token_name, csrf_token = get_csrf_token(self.client, url)
 
@@ -445,7 +457,9 @@ class LastingPowerAttorney:
             "other": "",
         }
 
-        response = self.client.post(url, data=data, allow_redirects=False)
+        response = self.client.post(
+            url, data=data, allow_redirects=False, name="/lpa/[id]/who-are-you"
+        )
         if response.status_code == 302:
             logger.debug(
                 "User %s POSTed to %s and got redirected to %s",
@@ -455,7 +469,6 @@ class LastingPowerAttorney:
             )
 
     def confirm_repeat_application(self):
-
         url = "/lpa/%s/repeat-application" % self.lpa_id
         csrf_token_name, csrf_token = get_csrf_token(self.client, url)
 
@@ -466,7 +479,9 @@ class LastingPowerAttorney:
             "save": "Save and continue",
         }
 
-        response = self.client.post(url, data=data, allow_redirects=False)
+        response = self.client.post(
+            url, data=data, allow_redirects=False, name="/lpa/[id]/repeat-application"
+        )
         if response.status_code == 302:
             logger.info(
                 "User %s POSTed to %s and got redirected to %s",
@@ -476,7 +491,6 @@ class LastingPowerAttorney:
             )
 
     def add_fee_reductions(self):
-
         url = "/lpa/%s/fee-reduction" % self.lpa_id
         csrf_token_name, csrf_token = get_csrf_token(self.client, url)
 
@@ -486,7 +500,9 @@ class LastingPowerAttorney:
             "save": "Save and continue",
         }
 
-        response = self.client.post(url, data=data, allow_redirects=False)
+        response = self.client.post(
+            url, data=data, allow_redirects=False, name="/lpa/[id]/fee-reduction"
+        )
         if response.status_code == 302:
             logger.info(
                 "User %s POSTed to %s and got redirected to %s",
@@ -496,16 +512,22 @@ class LastingPowerAttorney:
             )
 
     def view_checkout_page(self, pay_now=True):
-
-        self.client.get("/lpa/%s/checkout" % self.lpa_id, allow_redirects=False)
+        self.client.get(
+            "/lpa/%s/checkout" % self.lpa_id,
+            allow_redirects=False,
+            name="/lpa/[id]/checkout",
+        )
 
         if pay_now:
             payment_functions = [self.pay_by_cheque, self.pay_by_card]
             random.choice(payment_functions)()
 
     def pay_by_cheque(self):
-
-        self.client.get("/lpa/%s/checkout/cheque" % self.lpa_id, allow_redirects=False)
+        self.client.get(
+            "/lpa/%s/checkout/cheque" % self.lpa_id,
+            allow_redirects=False,
+            name="/lpa/[id]/checkout/cheque",
+        )
 
         logger.debug(
             "User %s is paying by cheque for lpa with id: %s",
@@ -530,7 +552,9 @@ class LastingPowerAttorney:
             csrf_token_name: csrf_token,
         }
 
-        response = self.client.post("%s/pay" % url, data=data, allow_redirects=True)
+        response = self.client.post(
+            "%s/pay" % url, data=data, allow_redirects=True, name="/lpa/[id]/checkout"
+        )
 
         logger.debug(
             "User %s is paying by card for lpa with id: %s",
@@ -541,7 +565,11 @@ class LastingPowerAttorney:
         pay_url = response.url
         # e.g. https://card.payments.service.gov.uk/card_details/l3duies6q4oso85bjt2gu270l4
 
-        response = self.client.get(pay_url, allow_redirects=True)
+        response = self.client.get(
+            pay_url,
+            allow_redirects=True,
+            name="%s/card_details/[payment_id]" % card_payments_url,
+        )
 
         soup = BeautifulSoup(response.text, "html.parser")
         csrf_token_tag = soup.find(
@@ -556,6 +584,7 @@ class LastingPowerAttorney:
             "%s/check_card/%s" % (card_payments_url, payment_id),
             data={"cardNo": card_number},
             allow_redirects=True,
+            name="%s/check_card/[payment_id]" % card_payments_url,
         )
 
         logger.debug(
@@ -589,11 +618,13 @@ class LastingPowerAttorney:
             "%s/card_details/%s" % (card_payments_url, payment_id),
             data=data,
             allow_redirects=True,
+            name="%s/card_details/[payment_id]" % card_payments_url,
         )
 
         response = self.client.get(
             "%s/card_details/%s/confirm" % (card_payments_url, payment_id),
             allow_redirects=True,
+            name="%s/card_details/[payment_id]/confirm" % card_payments_url,
         )
         soup = BeautifulSoup(response.text, "html.parser")
         csrf_token_tag = soup.find(
@@ -610,27 +641,38 @@ class LastingPowerAttorney:
             "%s/card_details/%s/confirm" % (card_payments_url, payment_id),
             data=data,
             allow_redirects=True,
+            name="%s/card_details/[payment_id]/confirm" % card_payments_url,
         )
 
     def generate_lpa_pdf(self):
         url = "/lpa/%s/download/lp1" % self.lpa_id
 
-        response = self.client.get(url, allow_redirects=False)
+        response = self.client.get(
+            url, allow_redirects=False, name="/lpa/[id]/download/lp1"
+        )
 
         logger.debug("Generating LPA PDF for lpa with id: %s", self.lpa_id)
 
     def download_lpa_pdf(self):
         url = "/lpa/%s/download/lp1" % self.lpa_id
 
-        response = self.client.get(url, allow_redirects=True)
+        response = self.client.get(
+            url, allow_redirects=True, name="/lpa/[id]/download/lp1"
+        )
 
         logger.debug("Downloaded LPA PDF for lpa with id: %s", self.lpa_id)
 
     def delete_lpa(self):
         response = self.client.get(
-            "/user/dashboard/delete-lpa/%s" % self.lpa_id, allow_redirects=True
+            "/user/dashboard/delete-lpa/%s" % self.lpa_id,
+            allow_redirects=True,
+            name="/user/dashboard/delete-lpa/[id]",
         )
         logger.debug("Deleted LPA with id: %s", self.lpa_id)
 
     def view_lpa_status(self):
-        response = self.client.get("/lpa/%s/status" % self.lpa_id, allow_redirects=True)
+        response = self.client.get(
+            "/lpa/%s/status" % self.lpa_id,
+            allow_redirects=True,
+            name="/lpa/[id]/status",
+        )

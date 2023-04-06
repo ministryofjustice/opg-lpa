@@ -1,60 +1,34 @@
 from locust import HttpUser, task, between
 import random
-import time
 from common.user import User
 from common.lpa import LastingPowerAttorney
-from common.config import logger
+from common.config import logger, DISABLE_SSL_VERIFY
 
-# TODO: Add more users to the seeded users list
-# TODO: Get statistics from the production environment and use them to set the weights for the random choices so that the user journey and produced data is more realistic
 # TODO: Add people to notify. Currently nobody is added to notify
 # TODO: Handle being logged out during the user journey
-
-SEEDED_USERS = ["seeded_test_user@digital.justice.gov.uk"]
 
 
 class MakeAnLPAUser(HttpUser):
     wait_time = between(5, 30)
 
     def on_start(self):
-        self.client.verify = False
-        if random.randint(1, 1) == 1:
-            random_number = str(random.getrandbits(32))
-            email_address = (
-                "caspertests+" + random_number + "@lpa.opg.service.justice.gov.uk"
-            )
-            self.user = User(self.client, email_address)
-            self.user.create()
+        if DISABLE_SSL_VERIFY:
+            logger.info("Disabling SSL verification")
+            self.client.verify = False
 
-            # Look for the activation email in /cypress/activation-emails and activate the user with the link in the email.
-            email_received = False
-            while not email_received:
-                logger.debug("Looking for email")
-                try:
-                    with open(
-                        "../cypress/activation_emails/" + random_number + ".activation"
-                    ) as f:
-                        email = f.read()
-                        # Extract the activation link from the email
-                        activation_link = email.split(",")[1]
-                        # Activate the user
-                        logger.debug(activation_link)
-                        self.client.get(activation_link)
-                        email_received = True
-                except FileNotFoundError:
-                    logger.debug("Email not received yet")
-                    time.sleep(5)
-                    pass
-
-            self.user.login()
-            self.user.update_profile()
-        else:
-            self.user = User(self.client, random.choice(SEEDED_USERS))
-            self.user.login()
+        random_number = str(random.getrandbits(32))
+        email_address = (
+            "caspertests+" + random_number + "@lpa.opg.service.justice.gov.uk"
+        )
+        self.user = User(self.client, email_address)
+        self.user.create()
+        self.user.activate(random_number)
+        self.user.login()
+        self.user.update_profile()
+        self.user.login()
 
     @task(8)
     def CompleteFullLPA(self):
-
         lpa_type = random.choice(["property-and-financial", "health-and-welfare"])
         lpa = LastingPowerAttorney(
             self.client, type=lpa_type, account_details=self.user.account_details
@@ -90,12 +64,18 @@ class MakeAnLPAUser(HttpUser):
 
     @task(1)
     def DeleteRandomLPA(self):
+        lpa_ids = self.user.get_all_lpa_ids()
+        if len(lpa_ids) == 0:
+            return
         lpa_id = random.choice(self.user.get_all_lpa_ids())
         lpa = LastingPowerAttorney(self.client, lpa_id=lpa_id)
         lpa.delete_lpa()
 
     @task(5)
     def PrintLPA(self):
+        lpa_ids = self.user.get_all_lpa_ids()
+        if len(lpa_ids) == 0:
+            return
         lpa_id = random.choice(self.user.get_all_lpa_ids())
         lpa = LastingPowerAttorney(self.client, lpa_id=lpa_id)
         lpa.generate_lpa_pdf()
@@ -103,6 +83,9 @@ class MakeAnLPAUser(HttpUser):
 
     @task(3)
     def ViewLPA(self):
+        lpa_ids = self.user.get_all_lpa_ids()
+        if len(lpa_ids) == 0:
+            return
         lpa_id = random.choice(self.user.get_all_lpa_ids())
         lpa = LastingPowerAttorney(self.client, lpa_id=lpa_id)
         lpa.view_lpa_status()
@@ -115,9 +98,9 @@ class MakeAnLPAUser(HttpUser):
             lpa = LastingPowerAttorney(self.client, lpa_id=lpa_id)
             lpa.start_application()
             lpa.add_donor_to_lpa()
-            if lpa.lpa_type == "property-and-financial":
+            if lpa.type == "property-and-financial":
                 lpa.decide_when_lpa_starts()
-            elif lpa.lpa_type == "health-and-welfare":
+            elif lpa.type == "health-and-welfare":
                 lpa.life_sustaining_treatment()
             lpa.add_primary_attorney_to_lpa()
             if lpa.num_of_attorneys > 1:
@@ -138,3 +121,7 @@ class MakeAnLPAUser(HttpUser):
     @task(3)
     def UpdateUserDetails(self):
         self.user.update_profile()
+
+    @task(10)
+    def ViewDashboard(self):
+        self.user.view_dashboard()
