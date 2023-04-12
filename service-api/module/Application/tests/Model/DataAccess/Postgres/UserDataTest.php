@@ -236,7 +236,6 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $this->assertEquals(1, count($actual));
     }
 
-    // TODO failure path once exception handling has been refactored out (see LPAL-487)
     public function testCreate()
     {
         $expected = true;
@@ -302,6 +301,52 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // assertions
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testCreatePDOException()
+    {
+        $id = '99999';
+
+        $details = [
+            'identity' => 'foo',
+            'password_hash' => 'hash',
+            'activation_token' => 'act',
+            'active' => true,
+            'created' => new DateTime(),
+            'last_updated' => new DateTime(),
+            'failed_login_attempts' => 0,
+        ];
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $insertMock = Mockery::mock(Insert::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('insert')->andReturn($insertMock);
+
+        // we checked expectations for this in the success test
+        $insertMock->shouldReceive('values')->andReturn($insertMock);
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($insertMock)
+            ->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute')->andThrow(
+            new InvalidQueryException(
+                'something wrong',
+                1,
+                new PDOException('not the exception we catch', 23505),
+            )
+        );
+
+        // test method
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(false, $userData->create($id, $details));
     }
 
     public function testUpdateEmailUsingToken(): void
@@ -667,5 +712,28 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // assertions
         $this->assertEquals(true, $userData->delete($id));
+    }
+
+    public function testActivate(): void
+    {
+        $token = '912345613333';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['activation_token' => $token]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
+            return Helpers::isGmDateString($set['activated']) &&
+                Helpers::isGmDateString($set['updated']) &&
+                $set['active'] &&
+                is_null($set['activation_token']);
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->activate($token));
     }
 }

@@ -292,13 +292,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         try {
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
-            // If it's a key clash, and not on the identity, re-try with new values.
-            if ($e->getPrevious() instanceof PDOException) {
-                $pdoException = $e->getPrevious();
+            $previousException = $e->getPrevious();
 
+            // If it's a key clash, and not on the identity, re-try with new values.
+            if ($previousException instanceof PDOException) {
                 if (
-                    $pdoException->getCode() == 23505 &&
-                    strpos($pdoException->getMessage(), 'users_identity') === false
+                    $previousException->getCode() == 23505 &&
+                    strpos($previousException->getMessage(), 'users_identity') === false
                 ) {
                     return false;
                 }
