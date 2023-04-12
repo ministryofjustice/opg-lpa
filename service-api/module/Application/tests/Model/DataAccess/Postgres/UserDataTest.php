@@ -8,6 +8,7 @@ use DateTime;
 use PDOException;
 use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Postgres\UserData;
+use Application\Model\DataAccess\Postgres\UserModel;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Repository\User\UserInterface;
@@ -410,6 +411,51 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // test method
         $userData = new UserData($dbWrapperMock);
         $actual = $userData->countActivatedAccounts($since);
+
+        // assertions
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetById(): void
+    {
+        $id = '12345';
+        $expected = new UserModel(['id' => $id]);
+
+        // mocks
+        $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+
+        // expectation
+        $dbWrapperMock->shouldReceive('select')
+            ->with(UserData::USERS_TABLE, ['id' => $id], ['limit' => 1])
+            ->andReturn($resultMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+        $actual = $userData->getById($id);
+
+        // assertions
+        $this->assertEquals($expected, $actual);
+        $this->assertEquals($id, $actual->id());
+    }
+
+    public function testGetByIdUserNotFound(): void
+    {
+        $id = '123451111111';
+        $expected = null;
+
+        // mocks - no records returned from query
+        $resultMock = $this->makeSelectResult(true, 0, null);
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+
+        // expectation
+        $dbWrapperMock->shouldReceive('select')
+            ->with(UserData::USERS_TABLE, ['id' => $id], ['limit' => 1])
+            ->andReturn($resultMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+        $actual = $userData->getById($id);
 
         // assertions
         $this->assertEquals($expected, $actual);
