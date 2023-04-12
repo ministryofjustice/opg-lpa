@@ -9,7 +9,6 @@ use MakeShared\Logging\LoggerTrait;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use Laminas\Stdlib\RequestInterface as Request;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
@@ -69,18 +68,13 @@ abstract class AbstractAuthController extends AbstractRestfulController
     }
 
     /**
-     * @param Request $request
+     * @param HttpRequest $request
      * @param $userId
      * @param bool $extendToken
      * @return bool
      */
-    protected function authenticateUserToken(Request $request, $userId, bool $extendToken = false)
+    protected function authenticateUserToken(HttpRequest $request, $userId, bool $extendToken = false)
     {
-        if (($request instanceof HttpRequest) === false) {
-            return false;
-        }
-
-        /** @var HttpRequest $request */
         $token = $request->getHeader('Token');
 
         if ($token === false) {
