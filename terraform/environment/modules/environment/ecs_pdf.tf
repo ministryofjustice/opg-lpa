@@ -116,8 +116,6 @@ locals {
         { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },
         { "name" : "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-sessions.name },
         { "name" : "OPG_LPA_COMMON_pdf2_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-properties.name },
-        { "name" : "OPG_PHP_POOL_CHILDREN_MAX", "value" : "20" },
-        { "name" : "OPG_PHP_POOL_REQUESTS_MAX", "value" : "500" },
         { "name" : "OPG_NGINX_SSL_HSTS_AGE", "value" : "31536000" },
         { "name" : "OPG_NGINX_SSL_FORCE_REDIRECT", "value" : "TRUE" },
         { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },

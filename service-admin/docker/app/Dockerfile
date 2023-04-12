@@ -1,5 +1,7 @@
 FROM php:8.2-fpm-alpine3.17
 
+ENV OPG_PHP_POOL_CHILDREN_MAX="25"
+
 RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade --no-cache apk-tools
@@ -43,6 +45,7 @@ COPY --chown=root:root shared /shared
 
 COPY --chown=root:root shared/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=root:root shared/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=root:root shared/docker/app/www.conf /usr/local/etc/php-fpm.d/
 
 COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 
