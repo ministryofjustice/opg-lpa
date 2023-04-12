@@ -33,7 +33,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     // $current: array representing single user result
     private function makeSelectResult($isQueryResult, $count, $current)
     {
-        $result = Mockery::Mock(Result::class);
+        $result = Mockery::mock(Result::class);
 
         $result->allows([
             'isQueryResult' => $isQueryResult,
@@ -66,7 +66,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $count = $data['count'];
 
         // mocks
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
         $resultMock = $this->makeSelectResult($isQueryResult, $count, []);
 
         // expectations
@@ -102,7 +102,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $username = 'BShelley';
 
         // mocks
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')
@@ -127,11 +127,11 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $limit = '30';
 
         // mocks
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
-        $sqlMock = Mockery::Mock(Sql::class);
-        $subselectMock = Mockery::Mock(Select::class);
-        $selectMock = Mockery::Mock(Select::class);
-        $statementMock = Mockery::Mock(StatementInterface::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $subselectMock = Mockery::mock(Select::class);
+        $selectMock = Mockery::mock(Select::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
         $resultMock = $resultMock = Helpers::makePdoResultMock([[]]);
 
         // expectations
@@ -229,10 +229,10 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         ];
 
         // mocks
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
-        $sqlMock = Mockery::Mock(Sql::class);
-        $insertMock = Mockery::Mock(Insert::class);
-        $statementMock = Mockery::Mock(StatementInterface::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $insertMock = Mockery::mock(Insert::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
 
         // expectations
         $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
@@ -286,11 +286,11 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $newEmail = 'mrfoo@uat.digital.justice.gov.uk';
 
         // mocks
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
-        $sqlMock = Mockery::Mock(Sql::class);
-        $updateMock = Mockery::Mock(Update::class);
-        $statementMock = Mockery::Mock(StatementInterface::class);
-        $updateResultsMock = Mockery::Mock(Result::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $updateResultsMock = Mockery::mock(Result::class);
 
         // query for token returns single user with matching token
         $getByFieldResult1 = $this->makeSelectResult(
@@ -382,7 +382,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     public function testCountActivatedAccounts($since, $resultMock, $expected)
     {
         // mocks
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')
@@ -423,9 +423,9 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // mocks
         $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
-        // expectation
+        // expectations
         $dbWrapperMock->shouldReceive('select')
             ->with(UserData::USERS_TABLE, ['id' => $id], ['limit' => 1])
             ->andReturn($resultMock);
@@ -445,7 +445,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // mocks - no records returned from query
         $resultMock = $this->makeSelectResult(true, 0, null);
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
@@ -466,7 +466,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // mocks
         $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')
@@ -498,9 +498,9 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // mocks - no records returned from query
         $resultMock = $this->makeSelectResult(true, 0, null);
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
-        // expectation
+        // expectations
         $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
 
         // test
@@ -519,7 +519,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // mocks
         $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')
@@ -551,9 +551,9 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // mocks - no records returned from query
         $resultMock = $this->makeSelectResult(true, 0, null);
-        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
-        // expectation
+        // expectations
         $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
 
         // test
@@ -561,5 +561,39 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // assertions
         $this->assertEquals(null, $userData->getByResetToken($token));
+    }
+
+    public function testUpdateLastLoginTime(): void
+    {
+        $id = '12345612121';
+
+        // mocks
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(Statement::class);
+        $resultMock = Mockery::mock(Result::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        // expectations
+        $sqlMock->shouldReceive('update')->andReturn($updateMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
+            return Helpers::isGmDateString($set['last_login']) &&
+                is_null($set['inactivity_flags']);
+        }));
+
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+
+        $resultMock->shouldReceive('getAffectedRows')->andReturn(1);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->updateLastLoginTime($id));
     }
 }
