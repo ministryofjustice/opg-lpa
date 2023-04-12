@@ -449,7 +449,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * @param $token
      * @param $passwordHash
-     * @return UserRepository\UpdatePasswordUsingTokenError
+     * @return ?UserRepository\UpdatePasswordUsingTokenError
      */
     public function updatePasswordUsingToken(
         string $token,
