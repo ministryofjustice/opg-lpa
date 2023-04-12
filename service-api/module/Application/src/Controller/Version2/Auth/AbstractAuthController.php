@@ -68,13 +68,15 @@ abstract class AbstractAuthController extends AbstractRestfulController
     }
 
     /**
-     * @param HttpRequest $request
      * @param $userId
      * @param bool $extendToken
      * @return bool
      */
-    protected function authenticateUserToken(HttpRequest $request, $userId, bool $extendToken = false)
+    protected function authenticateUserToken($userId, bool $extendToken = false)
     {
+        /** @var HttpRequest */
+        $request = $this->getRequest();
+
         $token = $request->getHeader('Token');
 
         if ($token === false) {
