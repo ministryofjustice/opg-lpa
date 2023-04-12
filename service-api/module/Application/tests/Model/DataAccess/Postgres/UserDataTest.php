@@ -809,4 +809,33 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // assertions
         $this->assertEquals(true, $userData->updateAuthTokenExpiry($id, $expires));
     }
+
+    public function testAddPasswordResetToken(): void
+    {
+        $id = '95555567777';
+        $token = [
+            'token' => '123123123adfsadfs',
+            'expiresIn' => 86400,
+            'expiresAt' => new DateTime('2023-04-12T17:18+0000'),
+        ];
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) use ($token) {
+            $data = json_decode($set['password_reset_token'], true);
+
+            return $data['token'] === $token['token'] &&
+                $data['expiresIn'] === 86400 &&
+                $data['expiresAt'] === '2023-04-12T17:18:00.000000+0000';
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->addPasswordResetToken($id, $token));
+    }
 }
