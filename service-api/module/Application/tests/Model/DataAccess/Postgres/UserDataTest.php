@@ -633,4 +633,39 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // assertions
         $this->assertEquals(true, $userData->incrementFailedLoginCounter($id));
     }
+
+    public function testDelete(): void
+    {
+        $id = '12345613333';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
+            $ok = true;
+
+            foreach ($set as $key => $value) {
+                // all values except 'deleted' are null
+                if ($key === 'deleted') {
+                    $ok = $ok && Helpers::isGmDateString($value);
+                } else {
+                    $ok = $ok && is_null($value);
+                }
+
+                if (!$ok) {
+                    break;
+                }
+            }
+
+            return $ok;
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->delete($id));
+    }
 }
