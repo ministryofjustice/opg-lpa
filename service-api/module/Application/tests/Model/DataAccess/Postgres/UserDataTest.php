@@ -594,4 +594,22 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // assertions
         $this->assertEquals(true, $userData->updateLastLoginTime($id));
     }
+
+    public function testResetFailedLoginCounter(): void
+    {
+        $id = '12345612121';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(['failed_login_attempts' => 0]);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->resetFailedLoginCounter($id));
+    }
 }
