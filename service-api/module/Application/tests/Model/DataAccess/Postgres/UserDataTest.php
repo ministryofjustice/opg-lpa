@@ -44,6 +44,31 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         return $result;
     }
 
+    // create a mock SQL update object from a dbWrapper mock;
+    // expectations can then be set on the returned object to cover
+    // what should happen in different circumstances;
+    // this is mostly to reduce the gruntwork involved in testing updateRow(),
+    // which could eventually be done by moving that method to DbWrapper itself
+    private function makeUpdateMock($dbWrapperMock)
+    {
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(Statement::class);
+        $resultMock = Mockery::mock(Result::class);
+
+        // expectations
+        $sqlMock->shouldReceive('update')->andReturn($updateMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+
+        $resultMock->shouldReceive('getAffectedRows')->andReturn(1);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        return $updateMock;
+    }
+
     // data provider for getByUsername, providing the
     // possible result permutations
     public function getByUsernameDataProvider()
@@ -287,10 +312,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $sqlMock = Mockery::mock(Sql::class);
-        $updateMock = Mockery::mock(Update::class);
-        $statementMock = Mockery::mock(StatementInterface::class);
-        $updateResultsMock = Mockery::mock(Result::class);
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
 
         // query for token returns single user with matching token
         $getByFieldResult1 = $this->makeSelectResult(
@@ -313,9 +335,6 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // expectations
         $dbWrapperMock->shouldReceive('select')
             ->andReturn($getByFieldResult1, $getByFieldResult2);
-        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
-
-        $sqlMock->shouldReceive('update')->andReturn($updateMock);
 
         $updateMock->shouldReceive('where')
             ->with(['id' => $id])
@@ -328,14 +347,6 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
                     is_null($data['email_update_request']);
             }))
             ->andReturn($updateMock);
-
-        $sqlMock->shouldReceive('prepareStatementForSqlObject')
-            ->andReturn($statementMock);
-
-        $statementMock->shouldReceive('execute')
-            ->andReturn($updateResultsMock);
-
-        $updateResultsMock->shouldReceive('getAffectedRows')->andReturn(1);
 
         // test method
         $userData = new UserData($dbWrapperMock);
@@ -568,27 +579,14 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $id = '12345612121';
 
         // mocks
-        $sqlMock = Mockery::mock(Sql::class);
-        $updateMock = Mockery::mock(Update::class);
-        $statementMock = Mockery::mock(Statement::class);
-        $resultMock = Mockery::mock(Result::class);
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
-        // expectations
-        $sqlMock->shouldReceive('update')->andReturn($updateMock);
-        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
-
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
             return Helpers::isGmDateString($set['last_login']) &&
                 is_null($set['inactivity_flags']);
         }));
-
-        $statementMock->shouldReceive('execute')->andReturn($resultMock);
-
-        $resultMock->shouldReceive('getAffectedRows')->andReturn(1);
-
-        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
 
         // test
         $userData = new UserData($dbWrapperMock);
