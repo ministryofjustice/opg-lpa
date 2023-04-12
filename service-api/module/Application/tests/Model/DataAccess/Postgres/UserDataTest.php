@@ -759,4 +759,31 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // assertions
         $this->assertEquals(true, $userData->setNewPassword($id, $newPassword));
     }
+
+    public function testSetAuthToken(): void
+    {
+        $id = '912345613333';
+        $expires = new DateTime();
+        $token = 'aasfadfsgswqw';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) use ($expires, $token) {
+            $data = json_decode($set['auth_token'], true);
+
+            return $data['token'] === $token &&
+                Helpers::isGmDateString($data['updatedAt']) &&
+                Helpers::isGmDateString($data['createdAt']) &&
+                $data['expiresAt'] === $expires->format(DbWrapper::TIME_FORMAT);
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->setAuthToken($id, $expires, $token));
+    }
 }
