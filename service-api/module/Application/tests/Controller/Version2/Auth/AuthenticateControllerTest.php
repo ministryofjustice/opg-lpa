@@ -6,8 +6,12 @@ use Application\Controller\Version2\Auth\AuthenticateController;
 use DateTime;
 use Mockery;
 use Laminas\Http\Header\HeaderInterface;
+use Laminas\Http\Request;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
 use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 class AuthenticateControllerTest extends AbstractAuthControllerTest
 {
@@ -367,5 +371,53 @@ class AuthenticateControllerTest extends AbstractAuthControllerTest
         $resultArray = $result->getVariables();
         $this->assertEquals(true, $resultArray['valid']);
         $this->assertEquals(20, $resultArray['remainingSeconds']);
+    }
+
+    // Test conversion of ApiProblem results to ApiProblemResponse
+    // in the AbstractAuthController->onDispatch() method; because the abstract class
+    // can't be instantiated, we test here instead
+    public function testOnDispatchApiProblem(): void
+    {
+        $rm = Mockery::mock(RouteMatch::class);
+        $rm->shouldReceive('getParam')->with('action', false)->andReturn('session-expiry');
+
+        // deliberately fail authentication so we get an ApiProblem
+        $this->request->shouldReceive('getHeader')->with('CheckedToken')->andReturn(null);
+
+        $e = Mockery::mock(MvcEvent::class);
+        $e->shouldReceive('getRouteMatch')->andReturn($rm);
+        $e->shouldReceive('getRequest')->andReturn($this->request);
+        $e->shouldReceive('setResult');
+
+        $result = $this->getController(AuthenticateController::class)->onDispatch($e);
+
+        $this->assertInstanceOf(ApiProblemResponse::class, $result);
+    }
+
+    // Test setSessionExpiry as triggered by onDispatch(); the result should not be modified
+    // and instead returned as is
+    public function testOnDispatchOK()
+    {
+        $rm = Mockery::mock(RouteMatch::class);
+        $rm->shouldReceive('getParam')->with('action', false)->andReturn('set-session-expiry');
+
+        $e = Mockery::mock(MvcEvent::class);
+        $e->shouldReceive('getRouteMatch')->andReturn($rm);
+        $e->shouldReceive('getRequest')->andReturn($this->request);
+        $e->shouldReceive('setResult');
+
+        $header = Mockery::mock(HeaderInterface::class);
+        $this->request->shouldReceive('getHeader')->with('CheckedToken')->andReturn($header);
+        $header->shouldReceive('getFieldValue')->andReturn('asdfgh123456');
+
+        // mock out request body with valid expireInSeconds property
+        $this->request->shouldReceive('getContent')->andReturn('{"expireInSeconds": 20}');
+
+        $this->authenticationService->shouldReceive('updateToken')
+             ->andReturn(['expiresIn' => 20]);
+
+        $result = $this->getController(AuthenticateController::class)->onDispatch($e);
+
+        $this->assertInstanceOf(JsonModel::class, $result);
     }
 }
