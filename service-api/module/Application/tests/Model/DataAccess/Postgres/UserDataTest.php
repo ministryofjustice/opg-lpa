@@ -11,6 +11,7 @@ use Application\Model\DataAccess\Postgres\UserData;
 use Application\Model\DataAccess\Postgres\UserModel;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
+use Application\Model\DataAccess\Repository\User\UpdatePasswordUsingTokenError;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Driver\StatementInterface;
@@ -516,7 +517,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     public function testGetByAuthToken(): void
     {
         $id = '111111';
-        $token = 'abcdef';
+        $token = 'strutsandfrets';
         $expression = new SqlExpression("auth_token ->> 'token' = ?", $token);
         $expected = new UserModel(['id' => $id]);
 
@@ -549,7 +550,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
     public function testGetByAuthTokenUserNotFound(): void
     {
-        $token = 'abcdef';
+        $token = 'alltheworldisastage';
         $expected = null;
 
         // mocks - no records returned from query
@@ -569,7 +570,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     public function testGetByResetToken(): void
     {
         $id = '111111';
-        $token = 'abcdef';
+        $token = 'tobeornottobe';
         $expression = new SqlExpression("password_reset_token ->> 'token' = ?", $token);
         $expected = new UserModel(['id' => $id]);
 
@@ -602,7 +603,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
     public function testGetByResetTokenUserNotFound(): void
     {
-        $token = 'abcdef';
+        $token = 'verilyisaynay';
         $expected = null;
 
         // mocks - no records returned from query
@@ -716,7 +717,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
     public function testActivate(): void
     {
-        $token = '912345613333';
+        $token = 'umpetsteakripple';
 
         // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
@@ -740,7 +741,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     public function testSetNewPassword(): void
     {
         $id = '912345613333';
-        $newPassword = 'hjasasdadsads';
+        $newPassword = 'cringe';
 
         // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
@@ -764,7 +765,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     {
         $id = '912345613333';
         $expires = new DateTime();
-        $token = 'aasfadfsgswqw';
+        $token = 'thereisalwayssomething';
 
         // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
@@ -814,7 +815,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     {
         $id = '95555567777';
         $token = [
-            'token' => '123123123adfsadfs',
+            'token' => 'howlateitis',
             'expiresIn' => 86400,
             'expiresAt' => new DateTime('2023-04-12T17:18+0000'),
         ];
@@ -837,5 +838,70 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // assertions
         $this->assertEquals(true, $userData->addPasswordResetToken($id, $token));
+    }
+
+    public function testUpdatePasswordUsingToken(): void
+    {
+        $token = 'hermanthefriendlyseagull';
+        $newPassword = 'youcannotguessthis';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+
+        $updateMock->shouldReceive('where')->with(Mockery::on(function ($where) use ($token) {
+            $expr = $where[0];
+            return $expr->getExpression() === "password_reset_token ->> 'token' = ?" &&
+                $expr->getParameters()[0] === $token;
+        }));
+
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) use ($newPassword) {
+            return $set['password_reset_token'] === null &&
+                $set['auth_token'] === null &&
+                $set['password_hash'] === $newPassword &&
+                Helpers::isGmDateString($set['updated']);
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(null, $userData->updatePasswordUsingToken($token, $newPassword));
+    }
+
+    public function testUpdatePasswordUsingTokenFails(): void
+    {
+        $token = 'lutomanjar';
+        $newPassword = 'unbelievablepassword';
+
+        // mocks
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(Statement::class);
+        $resultMock = Mockery::mock(Result::class);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        // expectations
+        $updateMock->shouldReceive('where');
+        $updateMock->shouldReceive('set');
+
+        $resultMock->shouldReceive('getAffectedRows')->andReturn(0);
+
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+
+        $sqlMock->shouldReceive('update')->andReturn($updateMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertInstanceOf(
+            UpdatePasswordUsingTokenError::class,
+            $userData->updatePasswordUsingToken($token, $newPassword)
+        );
     }
 }
