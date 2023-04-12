@@ -612,4 +612,25 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // assertions
         $this->assertEquals(true, $userData->resetFailedLoginCounter($id));
     }
+
+    public function testIncrementFailedLoginCounter(): void
+    {
+        $id = '123456121212';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
+            return Helpers::isGmDateString($set['last_failed_login']) &&
+                $set['failed_login_attempts']->getExpression() === 'failed_login_attempts + 1';
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->incrementFailedLoginCounter($id));
+    }
 }
