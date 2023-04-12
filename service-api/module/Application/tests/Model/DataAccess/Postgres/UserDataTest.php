@@ -736,4 +736,27 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // assertions
         $this->assertEquals(true, $userData->activate($token));
     }
+
+    public function testSetNewPassword(): void
+    {
+        $id = '912345613333';
+        $newPassword = 'hjasasdadsads';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) use ($newPassword) {
+            return Helpers::isGmDateString($set['updated']) &&
+                $set['password_hash'] === $newPassword &&
+                $set['auth_token'] === null;
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->setNewPassword($id, $newPassword));
+    }
 }
