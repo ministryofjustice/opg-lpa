@@ -65,7 +65,7 @@ class PasswordController extends AbstractAuthController
      */
     private function changeWithPassword($userId, $currentPassword, $newPassword)
     {
-        if (!$this->authenticateUserToken($this->getRequest(), $userId)) {
+        if (!$this->authenticateUserToken($userId)) {
             return new ApiProblem(401, 'invalid-token');
         }
 
