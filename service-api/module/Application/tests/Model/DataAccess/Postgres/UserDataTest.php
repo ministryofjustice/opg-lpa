@@ -442,6 +442,58 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     public function testGetByIdUserNotFound(): void
     {
         $id = '123451111111';
+
+        // mocks - no records returned from query
+        $resultMock = $this->makeSelectResult(true, 0, null);
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(null, $userData->getById($id));
+    }
+
+    public function testGetByAuthToken(): void
+    {
+        $id = '111111';
+        $token = 'abcdef';
+        $expression = new SqlExpression("auth_token ->> 'token' = ?", $token);
+        $expected = new UserModel(['id' => $id]);
+
+        // mocks
+        $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('select')
+            ->with(
+                UserData::USERS_TABLE,
+                Mockery::on(function ($where) use ($token) {
+                    $expr = $where[0];
+
+                    return $expr->getExpression() === "auth_token ->> 'token' = ?" &&
+                        $expr->getParameters()[0] === $token;
+                }),
+                ['limit' => 1]
+            )
+            ->andReturn($resultMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+        $actual = $userData->getByAuthToken($token);
+
+        // assertions
+        $this->assertEquals($expected, $actual);
+        $this->assertEquals($id, $actual->id());
+    }
+
+    public function testGetByAuthTokenUserNotFound(): void
+    {
+        $token = 'abcdef';
         $expected = null;
 
         // mocks - no records returned from query
@@ -449,15 +501,65 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $dbWrapperMock = Mockery::Mock(DbWrapper::class);
 
         // expectation
+        $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(null, $userData->getByAuthToken($token));
+    }
+
+    public function testGetByResetToken(): void
+    {
+        $id = '111111';
+        $token = 'abcdef';
+        $expression = new SqlExpression("password_reset_token ->> 'token' = ?", $token);
+        $expected = new UserModel(['id' => $id]);
+
+        // mocks
+        $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+
+        // expectations
         $dbWrapperMock->shouldReceive('select')
-            ->with(UserData::USERS_TABLE, ['id' => $id], ['limit' => 1])
+            ->with(
+                UserData::USERS_TABLE,
+                Mockery::on(function ($where) use ($token) {
+                    $expr = $where[0];
+
+                    return $expr->getExpression() === "password_reset_token ->> 'token' = ?" &&
+                        $expr->getParameters()[0] === $token;
+                }),
+                ['limit' => 1]
+            )
             ->andReturn($resultMock);
 
         // test
         $userData = new UserData($dbWrapperMock);
-        $actual = $userData->getById($id);
+        $actual = $userData->getByResetToken($token);
 
         // assertions
         $this->assertEquals($expected, $actual);
+        $this->assertEquals($id, $actual->id());
+    }
+
+    public function testGetByResetTokenUserNotFound(): void
+    {
+        $token = 'abcdef';
+        $expected = null;
+
+        // mocks - no records returned from query
+        $resultMock = $this->makeSelectResult(true, 0, null);
+        $dbWrapperMock = Mockery::Mock(DbWrapper::class);
+
+        // expectation
+        $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(null, $userData->getByResetToken($token));
     }
 }
