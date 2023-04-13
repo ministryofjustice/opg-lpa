@@ -904,4 +904,36 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
             $userData->updatePasswordUsingToken($token, $newPassword)
         );
     }
+
+    public function testAddEmailUpdateTokenAndNewEmail(): void
+    {
+        $id = 'yolaaaa';
+        $token = [
+            'token' => 'spoon',
+            'expiresIn' => 86400,
+            'expiresAt' => new DateTime('2023-04-13T16:48+0000'),
+        ];
+        $newEmail = 'toughpassword';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) use ($token, $newEmail) {
+            $data = json_decode($set['email_update_request'], true);
+            return Helpers::isGmDateString($data['token']['expiresAt']) &&
+                $data['token']['token'] === $token['token'] &&
+                $data['token']['expiresIn'] === $token['expiresIn'] &&
+                $data['email'] === $newEmail;
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->addEmailUpdateTokenAndNewEmail($id, $token, $newEmail));
+    }
 }
