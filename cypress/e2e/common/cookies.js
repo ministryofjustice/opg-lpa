@@ -19,8 +19,10 @@ const checkCookies = function (shouldBeSet, tries) {
     cy.log(JSON.stringify(cookies));
 
     const gaCookie = cookies.filter((cookie) => cookie['name'] === '_ga');
-    const gidCookie = cookies.filter((cookie) => cookie['name'] === '_gid');
-    const cookiesSet = gaCookie.length > 0 && gidCookie.length > 0;
+    const gaIdCookie = cookies.filter(
+      (cookie) => cookie['name'] === '_ga_1DVC295G9L',
+    );
+    const cookiesSet = gaCookie.length > 0 && gaIdCookie.length > 0;
 
     cy.log('ARE COOKIES SET? ' + cookiesSet);
     cy.log('SHOULD THEY BE? ' + shouldBeSet);
