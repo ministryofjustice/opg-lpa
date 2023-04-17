@@ -31,10 +31,6 @@ output "seeding_security_group_id" {
   value = aws_security_group.seeding_ecs_service.id
 }
 
-output "feedbackdb_security_group_id" {
-  value = aws_security_group.feedbackdb_ecs_service.id
-}
-
 output "cluster_name" {
   value = aws_ecs_cluster.online-lpa.name
 }
