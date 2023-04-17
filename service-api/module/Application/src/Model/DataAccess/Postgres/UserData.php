@@ -549,7 +549,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Returns all accounts that have not been logged into since $since.
      *
-     * If $withoutFlag is set, accounts that contain the passed flag will be excluded.
+     * If $excludeFlag is set, accounts that contain the passed flag will be excluded.
      *
      * @param DateTime $since
      * @param string $excludeFlag
