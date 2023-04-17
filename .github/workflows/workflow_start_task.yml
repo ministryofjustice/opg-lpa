@@ -22,8 +22,8 @@ on:
         required: true
 
 jobs:
-  run_feedback_db_task:
-    name: Run feedbackdb task
+  run_seeding_task:
+    name: Run seeding task
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
