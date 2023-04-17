@@ -351,6 +351,50 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $this->assertEquals(false, $userData->create($id, $details));
     }
 
+    public function testCreateUnexpectedException()
+    {
+        $id = '99999';
+
+        $details = [
+            'identity' => 'foo',
+            'password_hash' => 'hash',
+            'activation_token' => 'act',
+            'active' => true,
+            'created' => new DateTime(),
+            'last_updated' => new DateTime(),
+            'failed_login_attempts' => 0,
+        ];
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $insertMock = Mockery::mock(Insert::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('insert')->andReturn($insertMock);
+
+        // we checked expectations for this in the success test
+        $insertMock->shouldReceive('values')->andReturn($insertMock);
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute')->andThrow(
+            new InvalidQueryException('unexpected')
+        );
+
+        $this->expectException(InvalidQueryException::class);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+        $userData->create($id, $details);
+
+        // ensure all expectations are met
+        Mockery::close();
+    }
+
     public function testUpdateEmailUsingToken(): void
     {
         $id = 'ddddddd';
