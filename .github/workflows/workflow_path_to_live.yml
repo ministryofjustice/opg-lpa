@@ -109,16 +109,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-  run_preprodution_feedback_db_task:
-    name: Run preproduction feedbackdb
-    uses: ./.github/workflows/workflow_start_task.yml
-    with:
-      account_id: "987830934591"
-      task_name: "feedbackdb"
-    needs:
-      - terraform_environment_preproduction
-    secrets: inherit
-
   run_preproduction_seed_db_task:
     name: Run preproduction DB seeding
     uses: ./.github/workflows/workflow_start_task.yml
@@ -340,16 +330,6 @@ jobs:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-  run_production_feedback_db_task:
-    name: Run production feedbackdb
-    uses: ./.github/workflows/workflow_start_task.yml
-    with:
-      account_id: "980242665824"
-      task_name: "feedbackdb"
-    needs:
-      - terraform_environment_production
-    secrets: inherit
 
   run_smoke_tests:
     runs-on: ubuntu-latest
