@@ -7,8 +7,10 @@ use Application\Model\DataAccess\Postgres\UserModel as CollectionUser;
 use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Applications\Service as ApplicationsService;
+use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\Users\ServiceBuilder;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\User\User;
@@ -33,6 +35,12 @@ class ServiceTest extends AbstractServiceTest
      */
     private $authUserRepository;
 
+    /** @var UsersService */
+    private $service;
+
+    /** @var ServiceBuilder */
+    private $serviceBuilder;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,8 +51,15 @@ class ServiceTest extends AbstractServiceTest
         $this->authLogRepository = Mockery::mock(LogRepositoryInterface::class);
 
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
-    }
 
+        $this->serviceBuilder = new ServiceBuilder();
+
+        $this->service = $this->serviceBuilder
+            ->withApplicationsService($this->applicationsService)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
+            ->build();
+    }
 
     public function testFetchDoesNotExist()
     {
@@ -64,14 +79,7 @@ class ServiceTest extends AbstractServiceTest
             ->shouldReceive('saveProfile')
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
-        $entity = $service->fetch($user->getId());
+        $entity = $this->service->fetch($user->getId());
         $entityArray = $entity->toArray();
 
         $expectedUser = new User();
@@ -81,7 +89,7 @@ class ServiceTest extends AbstractServiceTest
         $expectedUser->setUpdatedAt(new DateTime($entityArray['updatedAt']));
         $this->assertEquals(new DataModelEntity($expectedUser), $entity);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testFetch()
@@ -95,18 +103,11 @@ class ServiceTest extends AbstractServiceTest
         $this->authUserRepository
             ->shouldNotReceive('saveProfile');
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
-        $entity = $service->fetch($user->getId());
+        $entity = $this->service->fetch($user->getId());
 
         $this->assertEquals(new DataModelEntity($user), $entity);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testUpdateNotFound()
@@ -127,14 +128,7 @@ class ServiceTest extends AbstractServiceTest
             ->shouldReceive('saveProfile')
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
-        $entity = $service->update([], $user->getId());
+        $entity = $this->service->update([], $user->getId());
         $entityArray = $entity->toArray();
 
         $expectedUser = new User();
@@ -144,7 +138,7 @@ class ServiceTest extends AbstractServiceTest
         $expectedUser->setUpdatedAt(new DateTime($entityArray['updatedAt']));
         $this->assertEquals(new DataModelEntity($expectedUser), $entity);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testUpdateValidationFailed()
@@ -164,16 +158,9 @@ class ServiceTest extends AbstractServiceTest
         $this->authUserRepository
             ->shouldNotReceive('saveProfile');
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
         $userUpdate = FixturesData::getUser();
         $userUpdate->getName()->setTitle('TooLong');
-        $validationError = $service->update($userUpdate->toArray(), $user->getId());
+        $validationError = $this->service->update($userUpdate->toArray(), $user->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(400, $validationError->getStatus());
@@ -184,7 +171,7 @@ class ServiceTest extends AbstractServiceTest
         $this->assertEquals(1, count($validation));
         $this->assertTrue(array_key_exists('name.title', $validation));
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testUpdate()
@@ -204,22 +191,15 @@ class ServiceTest extends AbstractServiceTest
         $this->authUserRepository
             ->shouldReceive('saveProfile');
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
         $userUpdate = FixturesData::getUser();
         $userUpdate->getName()->setFirst('Edited');
-        $entity = $service->update($userUpdate->toArray(), $user->getId());
+        $entity = $this->service->update($userUpdate->toArray(), $user->getId());
         $entityArray = $entity->toArray();
 
         $userUpdate->setUpdatedAt(new DateTime($entityArray['updatedAt']));
         $this->assertEquals(new DataModelEntity($userUpdate), $entity);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testDelete()
@@ -238,18 +218,11 @@ class ServiceTest extends AbstractServiceTest
         $this->authUserRepository
             ->shouldReceive('delete');
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
-        $result = $service->delete($user->getId());
+        $result = $this->service->delete($user->getId());
 
         $this->assertTrue($result);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testMatchUsers()
@@ -267,17 +240,10 @@ class ServiceTest extends AbstractServiceTest
             ->andReturn($users)
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
-        $results = $service->matchUsers($query);
+        $results = $this->service->matchUsers($query);
 
         $this->assertEquals(count($results), 2);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 }
