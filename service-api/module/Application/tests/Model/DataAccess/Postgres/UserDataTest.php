@@ -1097,4 +1097,48 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // assertions
         $this->assertEquals(true, $userData->setInactivityFlag($id, $flag));
     }
+
+    public function testGetAccountsUnactivatedOlderThan(): void
+    {
+        $olderThan = new DateTime();
+
+        // mocks
+        $results = [
+            ['id' => 'user1'],
+            ['id' => 'user2'],
+        ];
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('rewind');
+        $resultMock->shouldReceive('valid')->andReturn(true, true, false);
+        $resultMock->shouldReceive('current')->andReturn($results[0], $results[1]);
+        $resultMock->shouldReceive('next')->andReturn($results[0], $results[1]);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->withArgs(function ($tableName, $where) use ($olderThan) {
+                $olderThanClause = $where[0];
+
+                return $tableName === UserData::USERS_TABLE &&
+                    $olderThanClause->getLeft() === 'created' &&
+                    $olderThanClause->getOperator() === Operator::OPERATOR_LESS_THAN &&
+                    $olderThanClause->getRight() === $olderThan->format('c');
+            })
+            ->andReturn($resultMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+        $accounts = iterator_to_array(
+            $userData->getAccountsUnactivatedOlderThan($olderThan)
+        );
+
+        // assertions
+        $this->assertEquals(2, count($accounts));
+        $this->assertInstanceOf(UserModel::class, $accounts[0]);
+        $this->assertEquals('user1', $accounts[0]->id());
+        $this->assertInstanceOf(UserModel::class, $accounts[1]);
+        $this->assertEquals('user2', $accounts[1]->id());
+
+        Mockery::close();
+    }
 }
