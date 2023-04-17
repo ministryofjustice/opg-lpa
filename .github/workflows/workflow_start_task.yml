@@ -58,4 +58,5 @@ jobs:
       - name: Start ECS task
         run: |
           pip install -e scripts/pipeline/lib
+          pip list -v
           python scripts/pipeline/start_task/ecs_start_task.py --task_name ${{ inputs.task_name }}
