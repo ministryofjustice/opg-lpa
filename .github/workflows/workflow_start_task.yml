@@ -56,5 +56,5 @@ jobs:
           pip install -r scripts/pipeline/requirements.txt
           pip install -e scripts/pipeline/lib
           pip list -v
-          export $PYTHONPATH=$PYTHONPATH:./scripts/pipeline/lib
+          export PYTHONPATH=$PYTHONPATH:./scripts/pipeline/lib
           python scripts/pipeline/start_task/ecs_start_task.py --task_name ${{ inputs.task_name }}
