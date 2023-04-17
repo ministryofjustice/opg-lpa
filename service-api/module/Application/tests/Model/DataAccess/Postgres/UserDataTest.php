@@ -24,6 +24,7 @@ use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Update;
+use MakeShared\DataModel\User\User as ProfileUserModel;
 use ApplicationTest\Helpers;
 
 class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
@@ -1190,5 +1191,58 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         // assertions
         $this->assertEquals(7, $userData->countDeletedAccounts());
+    }
+
+    public function testGetProfileException(): void
+    {
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->andThrow(new LaminasDbAdapterRuntimeException());
+
+        // assertions
+        $this->assertNull((new UserData($dbWrapperMock))->getProfile(''));
+    }
+
+    public function testGetProfileNoUser(): void
+    {
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->andReturn($this->makeSelectResult(true, 0, []));
+
+        // assertions
+        $this->assertNull((new UserData($dbWrapperMock))->getProfile(''));
+    }
+
+    public function testGetProfile(): void
+    {
+        $id = 'barrrraaaaa';
+
+        $user = [
+            'id' => $id,
+            'created' => new DateTime(),
+            'updated' => new DateTime(),
+            'profile' => '{"name":{"title":"Prof","first":"Barr","last":"Rrrraaaaa"}}',
+        ];
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->andReturn($this->makeSelectResult(true, 1, $user));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+        $userProfile = $userData->getProfile($id);
+        $name = $userProfile->getName();
+
+        // assertions
+        $this->assertInstanceOf(ProfileUserModel::class, $userProfile);
+        $this->assertEquals($id, $userProfile->getId());
+        $this->assertEquals($user['created'], $userProfile->getCreatedAt());
+        $this->assertEquals($user['updated'], $userProfile->getUpdatedAt());
+        $this->assertEquals('Prof', $name->getTitle());
+        $this->assertEquals('Barr', $name->getFirst());
+        $this->assertEquals('Rrrraaaaa', $name->getLast());
     }
 }
