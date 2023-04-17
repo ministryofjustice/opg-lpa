@@ -1,12 +1,10 @@
 import argparse
-import sys
 
-# from ECSMonitor import *
+from ECSMonitor import *
 
 
 def main():
 
-    print(sys.path)
     parser = argparse.ArgumentParser(
         description=f"Start the task for the Make an LPA database"
     )
