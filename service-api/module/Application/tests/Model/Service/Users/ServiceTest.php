@@ -5,10 +5,12 @@ namespace ApplicationTest\Model\Service\Users;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Postgres\UserModel as CollectionUser;
 use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\DataModelEntity;
+use ApplicationTest\Helpers;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use ApplicationTest\Model\Service\Users\ServiceBuilder;
 use Mockery;
@@ -59,6 +61,80 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthLogRepository($this->authLogRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->build();
+    }
+
+    public function testCreateInvalidEmail()
+    {
+        $this->assertEquals('invalid-username', $this->service->create('adasadsd', ''));
+    }
+
+    public function testCreateUserAlreadyExists()
+    {
+        $email = 'amadeupname@foo.org';
+        $password = 'Pass1234';
+
+        // expectations
+        $this->authUserRepository->shouldReceive('getByUsername')
+            ->with($email)
+            ->andReturn(Mockery::mock(UserInterface::class));
+
+        // test
+        $result = $this->service->create($email, $password);
+
+        // assertions
+        $this->assertEquals('username-already-exists', $result);
+    }
+
+    public function testCreateInvalidPassword()
+    {
+        $email = 'amadeupname@foo.org';
+        $password = '';
+
+        // expectations
+        $this->authUserRepository->shouldReceive('getByUsername')
+            ->with($email)
+            ->andReturn(null);
+
+        // test
+        $result = $this->service->create($email, $password);
+
+        // assertions
+        $this->assertEquals('invalid-password', $result);
+    }
+
+    public function testCreateSuccess()
+    {
+        $email = 'amadeupname@foo.org';
+        $password = 'Pass1234';
+
+        // expectations
+        $this->authUserRepository->shouldReceive('getByUsername')
+            ->with($email)
+            ->andReturn(null);
+
+        // NB we also include a duplicate hash in here (the false return values),
+        // to exercise the while loop and ensure it works correctly
+        $this->authUserRepository->shouldReceive('create')
+            ->withArgs(function ($userId, $data) use ($email) {
+                return $data['identity'] === $email &&
+                    $data['active'] === false &&
+                    is_a($data['created'], DateTime::class) &&
+                    is_a($data['last_updated'], DateTime::class) &&
+                    strlen($data['activation_token']) > 0 &&
+                    strlen($data['password_hash']) > 0 &&
+                    $data['failed_login_attempts'] === 0;
+            })
+            ->andReturn(false, false, true);
+
+        // test
+        $result = $this->service->create($email, $password);
+
+        // assertions
+        $this->assertIsArray($result);
+        $this->assertTrue(array_key_exists('userId', $result));
+        $this->assertTrue(strlen($result['activation_token']) > 0);
+
+        Mockery::close();
     }
 
     public function testFetchDoesNotExist()
