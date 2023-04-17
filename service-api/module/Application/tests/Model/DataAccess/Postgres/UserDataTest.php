@@ -1141,4 +1141,54 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         Mockery::close();
     }
+
+    public function testCountAccounts(): void
+    {
+        $result = $this->makeSelectResult(true, 1, ['count' => 5]);
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->withArgs(function ($tableName, $where, $options) {
+                $isNullClause = $where[0];
+                $columnsExpression = $options['columns']['count']->getExpression();
+
+                return $tableName === UserData::USERS_TABLE &&
+                    $isNullClause->getSpecification() === '%1$s IS NOT NULL' &&
+                    $isNullClause->getIdentifier() === 'identity' &&
+                    $columnsExpression === 'COUNT(*)';
+            })
+            ->andReturn($result);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(5, $userData->countAccounts());
+    }
+
+    public function testCountDeletedAccounts(): void
+    {
+        $result = $this->makeSelectResult(true, 1, ['count' => 7]);
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->withArgs(function ($tableName, $where, $options) {
+                $isNullClause = $where[0];
+                $columnsExpression = $options['columns']['count']->getExpression();
+
+                return $tableName === UserData::USERS_TABLE &&
+                    $isNullClause->getSpecification() === '%1$s IS NULL' &&
+                    $isNullClause->getIdentifier() === 'identity' &&
+                    $columnsExpression === 'COUNT(*)';
+            })
+            ->andReturn($result);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(7, $userData->countDeletedAccounts());
+    }
 }
