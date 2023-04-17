@@ -222,6 +222,7 @@ jobs:
 
   run_dev_seed_db_task:
     name: Run development DB seeding
+    uses: ./.github/workflows/workflow_start_task.yml
     with:
       account_id: "050256574573"
       task_name: "seeding"
