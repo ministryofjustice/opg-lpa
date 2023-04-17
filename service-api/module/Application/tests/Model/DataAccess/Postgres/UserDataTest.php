@@ -447,7 +447,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $this->assertInstanceOf(UpdateEmailUsingTokenResponse::class, $actual);
     }
 
-    public function testUpdateEmailUsingTokenFailNoUser(): void
+    public function testUpdateEmailUsingTokenFailNoUserToken(): void
     {
         $token = 'scopscoppy';
 
@@ -532,6 +532,72 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // assertions
         $this->assertInstanceOf(UpdateEmailUsingTokenResponse::class, $actual);
         $this->assertEquals('username-already-exists', $actual->message());
+    }
+
+    public function testUpdateEmailUsingTokenNoUserUpdated(): void
+    {
+        $id = 'ddddddd';
+        $token = '1234';
+        $newEmail = 'mrfoo@uat.digital.justice.gov.uk';
+
+        // mocks
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(Statement::class);
+        $resultMock = Mockery::mock(Result::class);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        // query for token returns single user with matching token
+        $getByFieldResult1 = $this->makeSelectResult(
+            true,
+            1,
+            [
+                'id' => $id,
+                'email_update_request' => json_encode([
+                    'token' => [
+                        'expiresAt' => '9999-01-01T00:00:00.00000+0000'
+                    ],
+                    'email' => $newEmail,
+                ])
+            ]
+        );
+
+        // query by email returns no matching user
+        $getByFieldResult2 = $this->makeSelectResult(true, 0, null);
+
+        // expectations
+        $sqlMock->shouldReceive('update')->andReturn($updateMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+
+        $resultMock->shouldReceive('getAffectedRows')->andReturn(0);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $dbWrapperMock->shouldReceive('select')
+            ->andReturn($getByFieldResult1, $getByFieldResult2);
+
+        $updateMock->shouldReceive('where')
+            ->with(['id' => $id])
+            ->andReturn($updateMock);
+
+        $updateMock->shouldReceive('set')
+            ->with(Mockery::on(function ($data) use ($newEmail) {
+                return $data['identity'] === $newEmail &&
+                    Helpers::isGmDateString($data['updated']) &&
+                    is_null($data['email_update_request']);
+            }))
+            ->andReturn($updateMock);
+
+        // test method
+        $userData = new UserData($dbWrapperMock);
+        $actual = $userData->updateEmailUsingToken($token);
+
+        // assertions
+        $this->assertInstanceOf(UpdateEmailUsingTokenResponse::class, $actual);
+        $this->assertEquals('nothing-modified', $actual->message());
     }
 
     // $since: ?DateTime
