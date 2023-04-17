@@ -50,14 +50,10 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Install Python dependencies
+      - name: Start ECS task
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/pipeline/requirements.txt
-
-      - name: Start ECS task
-        run: |
-          pip install --upgrade pip
           pip install -e scripts/pipeline/lib
           pip list -v
           python scripts/pipeline/start_task/ecs_start_task.py --task_name ${{ inputs.task_name }}
