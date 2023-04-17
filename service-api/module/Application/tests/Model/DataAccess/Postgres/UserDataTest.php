@@ -1245,4 +1245,33 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $this->assertEquals('Barr', $name->getFirst());
         $this->assertEquals('Rrrraaaaa', $name->getLast());
     }
+
+    public function testSaveProfile(): void
+    {
+        $id = 'vansant';
+
+        $profileUserModel = new ProfileUserModel([
+            'id' => $id,
+            'createdAt' => new DateTime(),
+            'updatedAt' => new DateTime(),
+            'email' => ['address' => 'vansant@nowhere'],
+        ]);
+
+        $expectedProfileJson = json_encode($profileUserModel->toArray());
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(
+            ['profile' => '{"name":null,"address":null,"dob":null,"email":{"address":"vansant@nowhere"}}']
+        );
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->saveProfile($profileUserModel));
+    }
 }
