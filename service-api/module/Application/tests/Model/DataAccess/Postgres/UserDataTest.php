@@ -1023,4 +1023,51 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         // assertions
         $this->assertEquals(true, $userData->addEmailUpdateTokenAndNewEmail($id, $token, $newEmail));
     }
+
+    public function testGetAccountsInactiveSince(): void
+    {
+        $since = new DateTime();
+        $excludeFlag = '1-month-notice';
+
+        // mocks
+        $results = [
+            ['id' => 'user1'],
+            ['id' => 'user2'],
+        ];
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('rewind');
+        $resultMock->shouldReceive('valid')->andReturn(true, true, false);
+        $resultMock->shouldReceive('current')->andReturn($results[0], $results[1]);
+        $resultMock->shouldReceive('next')->andReturn($results[0], $results[1]);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->withArgs(function ($tableName, $where) use ($since, $excludeFlag) {
+                $lastLoginClause = $where[0];
+                $excludeClause = $where[1];
+
+                return $tableName === UserData::USERS_TABLE &&
+                    $lastLoginClause->getLeft() === 'last_login' &&
+                    $lastLoginClause->getOperator() === Operator::OPERATOR_LESS_THAN &&
+                    $lastLoginClause->getRight() === $since->format('c') &&
+                    $excludeClause->getExpression() === "inactivity_flags -> '$excludeFlag' IS NULL";
+            })
+            ->andReturn($resultMock);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+        $accounts = iterator_to_array(
+            $userData->getAccountsInactiveSince($since, $excludeFlag)
+        );
+
+        // assertions
+        $this->assertEquals(2, count($accounts));
+        $this->assertInstanceOf(UserModel::class, $accounts[0]);
+        $this->assertEquals('user1', $accounts[0]->id());
+        $this->assertInstanceOf(UserModel::class, $accounts[1]);
+        $this->assertEquals('user2', $accounts[1]->id());
+
+        Mockery::close();
+    }
 }
