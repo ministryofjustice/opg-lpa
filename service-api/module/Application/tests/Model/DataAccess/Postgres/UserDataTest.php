@@ -1070,4 +1070,31 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
         Mockery::close();
     }
+
+    public function testSetInactivityFlag(): void
+    {
+        $id = 'qwqwwqwwqqwq';
+        $flag = '1-month-notice';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) use ($flag) {
+            $expression = $set['inactivity_flags'];
+
+            return $expression->getExpression() ===
+                "(CASE WHEN inactivity_flags IS NULL THEN '{}'::JSONB ELSE inactivity_flags END) || ?" &&
+                $expression->getParameters()[0] === "{\"$flag\":true}";
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $this->assertEquals(true, $userData->setInactivityFlag($id, $flag));
+    }
 }
