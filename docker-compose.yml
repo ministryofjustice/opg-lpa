@@ -31,7 +31,7 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:alpine
+    image: library/redis:6.2-alpine
     ports:
       - 6379:6379
 
@@ -121,16 +121,6 @@ services:
       APP_HOST: front-app
       APP_PORT: 9000
       NGINX_LOG_LEVEL: warn
-
-  feedback-app:
-    container_name: lpa-feedback-app
-    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/front-app
-    depends_on:
-      - feedback-api
-    environment:
-      AWS_XRAY_SDK_ENABLED: "false"
-    ports:
-      - 9005:8005
 
   front-app:
     container_name: lpa-front-app
@@ -318,32 +308,6 @@ services:
       retries: 3
       start_period: 90s
 
-  feedback-api:
-    container_name: lpa-feedback-api
-    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/rest-api
-    depends_on:
-      postgres:
-        condition: service_healthy
-      feedbackdb:
-        condition: service_started
-      aws-cli:
-        condition: service_started
-    environment:
-      AWS_XRAY_SDK_ENABLED: "false"
-      POSTGRES_HOSTNAME: "postgres"
-      POSTGRES_PORT: "5432"
-      POSTGRES_NAME: "lpadb"
-      POSTGRES_USERNAME: "lpauser"
-      POSTGRES_PASSWORD: "lpapass"
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
-      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
-      AWS_SECURITY_TOKEN: ${AWS_SECURITY_TOKEN}
-      LOCAL_AWS_ENDPOINT: http://localstack:4566
-    ports:
-      - 9004:8005
-
   # ---------------------------
   # Admin
 
@@ -492,42 +456,3 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
-
-# aws-cli creates the secret in localstack, for feedback api
-  aws-cli:
-    container_name: lpa-feedback-aws-cli
-    image: amazon/aws-cli:latest
-    stdin_open: true
-    tty: true
-    environment:
-      - AWS_SECRET_ACCESS_KEY=dummy
-      - AWS_ACCESS_KEY_ID=dummy
-    command: --region="eu-west-1" --endpoint-url="http://localstack:4566" secretsmanager create-secret --name opg-flask-api-token --secret-string "{\"test\":\"secret\",\"secret\":\"test\"}"
-    depends_on:
-      localstack:
-        condition: service_healthy
-
-  # ---------------------------
-  # Create feedback table and db user for PerfPlat
-  feedbackdb:
-    container_name: lpa-feedbackdb
-    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/opg-feedback/feedbackdb
-    depends_on:
-      localstack:
-        condition: service_healthy
-      local-config:
-        condition: service_started
-      api-app:
-        condition: service_started
-      postgres:
-        condition: service_healthy
-    environment:
-      OPG_LPA_STACK_NAME: "local"
-      OPG_LPA_STACK_ENVIRONMENT: "dev"
-      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
-      OPG_LPA_POSTGRES_PORT: "5432"
-      OPG_LPA_POSTGRES_NAME: "lpadb"
-      OPG_LPA_POSTGRES_USERNAME: "lpauser"
-      OPG_LPA_POSTGRES_PASSWORD: "lpapass"
-      OPG_LPA_POSTGRES_FEEDBACK_USERNAME: "feedbackuser"
-      OPG_LPA_POSTGRES_FEEDBACK_PASSWORD: "feedbackpass"

@@ -1,5 +1,7 @@
 FROM php:8.1-fpm-alpine3.15
 
+ENV OPG_PHP_POOL_CHILDREN_MAX="25"
+
 RUN adduser -D -g '' appuser
 
 RUN apk add --upgrade --no-cache apk-tools
@@ -56,6 +58,7 @@ COPY --chown=root:root shared /shared
 # PHP config files
 COPY --chown=root:root service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=root:root service-api/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=root:root shared/docker/app/www.conf /usr/local/etc/php-fpm.d/
 
 # Migration script
 COPY --chown=root:root service-api/docker/app/db-migrations.sh /app/db-migrations.sh
