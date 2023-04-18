@@ -104,7 +104,7 @@ class Service extends AbstractService
         $user = $this->getUserRepository()->getProfile($id);
 
         // If there is no user create one now and ensure that the email address is correct
-        if (is_null($user)) {
+        if (!$user instanceof ProfileUserModel) {
             $user = $this->save($id);
         }
 
@@ -172,7 +172,7 @@ class Service extends AbstractService
     /**
      * @param $id
      * @param array $data
-     * @return ValidationApiProblem|array|null|object|ProfileUserModel
+     * @return ValidationApiProblem|ProfileUserModel
      */
     private function save($id, array $data = [])
     {
