@@ -323,9 +323,20 @@ class ServiceTest extends AbstractServiceTest
             ->andReturn($collectionUser)
             ->once();
         $this->authUserRepository
-            ->shouldReceive('delete');
+            ->shouldReceive('delete')
+            ->andReturn(true);
+        $this->authLogRepository
+            ->shouldReceive('addLog')
+            ->withArgs(function ($logDetails) use ($collectionUser) {
+                $expectedHash = hash('sha512', strtolower(trim($collectionUser->username())));
 
-        $result = $this->service->delete($user->getId());
+                return $logDetails['reason'] === 'some-reason' &&
+                    $logDetails['type'] === 'account-deleted' &&
+                    $logDetails['loggedAt'] instanceof DateTime &&
+                    $logDetails['identity_hash'] === $expectedHash;
+            });
+
+        $result = $this->service->delete($user->getId(), 'some-reason');
 
         $this->assertTrue($result);
 
