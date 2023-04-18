@@ -48,6 +48,19 @@ return [
                 'password'  => getenv('OPG_LPA_POSTGRES_PASSWORD') ?: null,
             ],
         ],
+        'secrets' => [
+            'client' => [
+                'version' => '2017-10-17',
+                'region' => 'eu-west-1',
+                'credentials' => (getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY')) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                ] : null,
+                ],
+            'settings' => [
+                'secret_name' => getenv('OPG_LPA_DB_SECRET_NAME') ?: null,
+            ],
+        ]
     ],
 
     'pdf' => [

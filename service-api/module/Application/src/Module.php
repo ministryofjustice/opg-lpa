@@ -17,6 +17,8 @@ use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
+use Aws\SecretsManager\SecretsManagerClient;
+use Aws\Exception\AwsException;
 use Http\Adapter\Guzzle7\Client as Guzzle7Client;
 use Http\Client\HttpClient;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
@@ -95,6 +97,11 @@ class Module
                     }
 
                     $dbconf = $config['db']['postgres']['default'];
+
+                    $smclient = new SecretsManagerClient($config['db']['secrets']['client']);
+                    $result = $smclient->getSecretValue(['SecretId' => $config['db']['secrets']['settings']['secret_name']]);
+                    $password = $result['SecretString'];
+
                     $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};" .
                         "port={$dbconf['port']};dbname={$dbconf['dbname']}";
 
@@ -102,7 +109,7 @@ class Module
                         'dsn' => $dsn,
                         'driver' => 'pdo',
                         'username' => $dbconf['username'],
-                        'password' => $dbconf['password'],
+                        'password' => $password,
                         'driver_options' => [
                             // RDS doesn't play well with persistent connections
                             PDO::ATTR_PERSISTENT => false,
