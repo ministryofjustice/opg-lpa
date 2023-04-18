@@ -231,6 +231,27 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
   }
   statement {
+    sid    = "accessDatabasePassword"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      data.aws_secretsmanager_secret.api_rds_password.name,
+    ]
+  }
+  statement {
+    sid    = "decryptDatabasePassword"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+    ]
+    resources = [
+      data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn,
+      data.aws_kms_alias.secrets_encryption_alias.target_key_arn,
+    ]
+  }
+  statement {
     sid    = "lpaQueueDecrypt"
     effect = "Allow"
     actions = [
