@@ -198,9 +198,13 @@ class Service extends AbstractService
             $user = $user->toArray();
         }
 
-        //  Keep email up to date with what's in the auth service
+        // Keep email up to date with what's in the auth service (if anything)
         $authUser = $this->getUserRepository()->getById($id);
-        $data['email']['address'] = $authUser->username();
+        if (!is_null($authUser)) {
+            $data['email'] = [
+                'address' => $authUser->username()
+            ];
+        }
 
         $data = array_merge($user, $data);
 
