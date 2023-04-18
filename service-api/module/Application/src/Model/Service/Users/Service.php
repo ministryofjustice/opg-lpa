@@ -11,7 +11,7 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\PasswordValidatorTrait;
-use MakeShared\DataModel\User\User;
+use MakeShared\DataModel\User\User as ProfileUserModel;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Laminas\Math\BigInteger\BigInteger;
 
@@ -95,7 +95,7 @@ class Service extends AbstractService
 
     /**
      * @param $id
-     * @return ValidationApiProblem|DataModelEntity|array|null|object|User
+     * @return ValidationApiProblem|DataModelEntity|array|null|object|ProfileUserModel
      */
     public function fetch($id)
     {
@@ -107,7 +107,7 @@ class Service extends AbstractService
             $user = $this->save($id);
         }
 
-        if ($user instanceof User) {
+        if ($user instanceof ProfileUserModel) {
             return new DataModelEntity($user);
         }
 
@@ -117,14 +117,14 @@ class Service extends AbstractService
     /**
      * @param $data
      * @param $id
-     * @return ValidationApiProblem|DataModelEntity|array|null|object|User
+     * @return ValidationApiProblem|DataModelEntity|array|null|object|ProfileUserModel
      */
     public function update($data, $id)
     {
         $user = $this->save($id, $data);
 
         // If it's not a user, it's a different kind of response, so return it.
-        if (!$user instanceof User) {
+        if (!$user instanceof ProfileUserModel) {
             return $user;
         }
 
@@ -175,7 +175,7 @@ class Service extends AbstractService
     /**
      * @param $id
      * @param array $data
-     * @return ValidationApiProblem|array|null|object|User
+     * @return ValidationApiProblem|array|null|object|ProfileUserModel
      */
     private function save($id, array $data = [])
     {
@@ -204,7 +204,7 @@ class Service extends AbstractService
 
         $data = array_merge($user, $data);
 
-        $user = new User($data);
+        $user = new ProfileUserModel($data);
 
         if (!$new) {
             // We don't validate if it's new
