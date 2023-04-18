@@ -237,7 +237,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
       "secretsmanager:GetSecretValue",
     ]
     resources = [
-      data.aws_secretsmanager_secret.api_rds_password.name,
+      data.aws_secretsmanager_secret.api_rds_password.arn,
     ]
   }
   statement {
