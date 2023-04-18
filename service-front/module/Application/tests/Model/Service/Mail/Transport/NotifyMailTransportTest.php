@@ -6,6 +6,7 @@ use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
 use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Mail\Exception\InvalidArgumentException;
+use MakeShared\Constants;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Application\Model\Service\AbstractEmailService;
@@ -17,7 +18,11 @@ class NotifyMailTransportTest extends MockeryTestCase
     public function setUp(): void
     {
         $this->notifyClient = Mockery::mock(NotifyClient::class);
-        $this->transport = new NotifyMailTransport($this->notifyClient);
+
+        $this->transport = new NotifyMailTransport(
+            $this->notifyClient,
+            'foo@madeupaddress.bar',
+        );
     }
 
     public function testSend(): void
@@ -67,5 +72,53 @@ class NotifyMailTransportTest extends MockeryTestCase
 
         $this->expectException(ExceptionInterface::class);
         $this->transport->send($mailParams);
+    }
+
+    public function testHealthcheckPass(): void
+    {
+        // No exception means the email was sent OK
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(function ($email, $templateId, $data) {
+                return $email === 'foo@madeupaddress.bar' &&
+                    $templateId === '3fb12879-7665-4ffe-a76f-ed90cde7a35d' &&
+                    $data == [
+                        'rating' => '',
+                        'currentDateTime' => '',
+                        'details' => '',
+                        'email' => 'foo@madeupaddress.bar',
+                        'phone' => '',
+                        'fromPage' => '',
+                        'agent' => '',
+                    ];
+            });
+
+        $this->assertEquals(
+            [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+                'details' => [
+                    'smokeTestEmailAddress' => 'foo@madeupaddress.bar',
+                ],
+            ],
+            $this->transport->healthcheck()
+        );
+    }
+
+    public function testHealthcheckFail(): void
+    {
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->andThrow(new NotifyException());
+
+        $this->assertEquals(
+            [
+                'ok' => false,
+                'status' => Constants::STATUS_FAIL,
+                'details' => [
+                    'smokeTestEmailAddress' => 'foo@madeupaddress.bar',
+                    'exception' => 'Unable to send email to smoke test address',
+                ],
+            ],
+            $this->transport->healthcheck()
+        );
     }
 }

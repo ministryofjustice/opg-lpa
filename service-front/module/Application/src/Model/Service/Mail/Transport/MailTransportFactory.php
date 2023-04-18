@@ -33,6 +33,7 @@ class MailTransportFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $emailConfig = $container->get('Config')['email'];
+        $smokeTestEmailAddress = $emailConfig['notify']['smokeTestEmailAddress'] ?? null;
 
         if (!isset($emailConfig['notify']['key'])) {
             throw new RuntimeException('Notify API settings not found');
@@ -43,6 +44,6 @@ class MailTransportFactory implements FactoryInterface
             'httpClient' => new GuzzleAdapter()
         ]);
 
-        return new NotifyMailTransport($notifyClient);
+        return new NotifyMailTransport($notifyClient, $smokeTestEmailAddress);
     }
 }
