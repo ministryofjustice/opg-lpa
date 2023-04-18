@@ -15,7 +15,7 @@ use ApplicationTest\Model\Service\AbstractServiceTest;
 use ApplicationTest\Model\Service\Users\ServiceBuilder;
 use Mockery;
 use Mockery\MockInterface;
-use MakeShared\DataModel\User\User;
+use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeSharedTest\DataModel\FixturesData;
 use ArrayObject;
 use DateTime;
@@ -189,7 +189,7 @@ class ServiceTest extends AbstractServiceTest
         $entity = $this->service->fetch($user->getId());
         $entityArray = $entity->toArray();
 
-        $expectedUser = new User();
+        $expectedUser = new ProfileUserModel();
         $expectedUser->setId($user->getId());
         $expectedUser->setEmail($user->getEmail());
         $expectedUser->setCreatedAt(new DateTime($entityArray['createdAt']));
@@ -238,7 +238,7 @@ class ServiceTest extends AbstractServiceTest
         $entity = $this->service->update([], $user->getId());
         $entityArray = $entity->toArray();
 
-        $expectedUser = new User();
+        $expectedUser = new ProfileUserModel();
         $expectedUser->setId($user->getId());
         $expectedUser->setEmail($user->getEmail());
         $expectedUser->setCreatedAt(new DateTime($entityArray['createdAt']));

@@ -664,7 +664,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * Return a user's profile details
      *
      * @param $id
-     * @return ProfileUserModel
+     * @return ?ProfileUserModel
      */
     public function getProfile($id): ?ProfileUserModel
     {
