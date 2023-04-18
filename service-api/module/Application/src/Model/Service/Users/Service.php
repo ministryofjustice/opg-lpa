@@ -99,19 +99,20 @@ class Service extends AbstractService
      */
     public function fetch($id)
     {
-        //  Try to get an existing user
+        // Get existing user
         $user = $this->getUserRepository()->getProfile($id);
 
-        //  If there is no user create one now and ensure that the email address is correct
+        // If there is no user create one now and ensure that the email address is correct
         if (is_null($user)) {
             $user = $this->save($id);
         }
 
-        if ($user instanceof ProfileUserModel) {
-            return new DataModelEntity($user);
+        // Failure when saving user
+        if (!($user instanceof ProfileUserModel)) {
+            return $user;
         }
 
-        return $user;
+        return new DataModelEntity($user);
     }
 
     /**
@@ -188,7 +189,7 @@ class Service extends AbstractService
 
         if (is_null($user)) {
             $user = [
-                'id'        => $id,
+                'id' => $id,
                 'createdAt' => new DateTime(),
                 'updatedAt' => new DateTime(),
             ];
