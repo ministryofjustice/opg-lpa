@@ -18,7 +18,6 @@ use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
 use Aws\SecretsManager\SecretsManagerClient;
-use Aws\Exception\AwsException;
 use Http\Adapter\Guzzle7\Client as Guzzle7Client;
 use Http\Client\HttpClient;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
@@ -32,6 +31,7 @@ use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use MakeShared\Telemetry\Tracer;
+use MakeShared\Telemetry\TelemetryEventManager;
 use PDO;
 
 class Module
@@ -98,9 +98,15 @@ class Module
 
                     $dbconf = $config['db']['postgres']['default'];
 
+                    TelemetryEventManager::triggerStart(
+                        'getServiceConfig.ZendDbAdapter.getSecretValue',
+                    );
+
                     $smclient = new SecretsManagerClient($config['db']['secrets']['client']);
                     $result = $smclient->getSecretValue(['SecretId' => $config['db']['secrets']['settings']['secret_name']]);
                     $password = $result['SecretString'];
+
+                    TelemetryEventManager::triggerStop();
 
                     $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};" .
                         "port={$dbconf['port']};dbname={$dbconf['dbname']}";
