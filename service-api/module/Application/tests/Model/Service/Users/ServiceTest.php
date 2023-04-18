@@ -6,6 +6,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Postgres\UserModel as CollectionUser;
 use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserInterface;
+use Application\Model\DataAccess\Postgres\UserModel;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Users\Service as UsersService;
@@ -363,5 +364,73 @@ class ServiceTest extends AbstractServiceTest
         $this->assertEquals(count($results), 2);
 
         $this->serviceBuilder->verify();
+    }
+
+    public function testSearchByUsernameNotUserOrDeleted()
+    {
+        $username = 'ballard';
+        $hashedUsername = hash('sha512', strtolower(trim($username)));
+
+        // user isn't in user table or deletion log
+        $this->authUserRepository
+            ->shouldReceive('getByUsername')
+            ->with($username)
+            ->andReturn(null);
+
+        $this->authLogRepository
+            ->shouldReceive('getLogByIdentityHash')
+            ->with($hashedUsername)
+            ->andReturn(null);
+
+        $this->assertFalse($this->service->searchByUsername($username));
+    }
+
+    public function testSearchByUsernameDeleted()
+    {
+        // user is in deletion log
+        $username = 'shakespeare';
+        $hashedUsername = hash('sha512', strtolower(trim($username)));
+
+        $deletionLogRecord = [
+            'loggedAt' => new DateTime(),
+            'reason' => 'user-initiated',
+        ];
+
+        $this->authUserRepository
+            ->shouldReceive('getByUsername')
+            ->with($username)
+            ->andReturn(null);
+
+        $this->authLogRepository
+            ->shouldReceive('getLogByIdentityHash')
+            ->with($hashedUsername)
+            ->andReturn($deletionLogRecord);
+
+        $expected = [
+            'isDeleted' => true,
+            'deletedAt' => $deletionLogRecord['loggedAt'],
+            'reason' => $deletionLogRecord['reason']
+        ];
+
+        $this->assertEquals($expected, $this->service->searchByUsername($username));
+    }
+
+    public function testSearchByUsername()
+    {
+        // user is in main table
+        $username = 'shakespeare';
+
+        $userRecord = new UserModel([
+            'id' => $username,
+        ]);
+
+        $this->authUserRepository
+            ->shouldReceive('getByUsername')
+            ->with($username)
+            ->andReturn($userRecord);
+
+        $expected = $userRecord->toArray();
+
+        $this->assertEquals($expected, $this->service->searchByUsername($username));
     }
 }
