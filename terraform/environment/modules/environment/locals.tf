@@ -68,10 +68,6 @@ locals {
     component = "seeding"
   }
 
-  feedbackdb_component_tag = {
-    component = "feedbackdb"
-  }
-
   app_init_container = jsonencode(
     {
       "name" : "permissions-init",
