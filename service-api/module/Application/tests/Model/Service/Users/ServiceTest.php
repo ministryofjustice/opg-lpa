@@ -66,6 +66,7 @@ class ServiceTest extends AbstractServiceTest
     public function testCreateInvalidEmail()
     {
         $this->assertEquals('invalid-username', $this->service->create('adasadsd', ''));
+        $this->serviceBuilder->verify();
     }
 
     public function testCreateUserAlreadyExists()
@@ -83,6 +84,8 @@ class ServiceTest extends AbstractServiceTest
 
         // assertions
         $this->assertEquals('username-already-exists', $result);
+
+        $this->serviceBuilder->verify();
     }
 
     public function testCreateInvalidPassword()
@@ -100,6 +103,8 @@ class ServiceTest extends AbstractServiceTest
 
         // assertions
         $this->assertEquals('invalid-password', $result);
+
+        $this->serviceBuilder->verify();
     }
 
     public function testCreateSuccess()
@@ -134,7 +139,7 @@ class ServiceTest extends AbstractServiceTest
         $this->assertTrue(array_key_exists('userId', $result));
         $this->assertTrue(strlen($result['activation_token']) > 0);
 
-        Mockery::close();
+        $this->serviceBuilder->verify();
     }
 
     public function testActivateNoAccount()
@@ -144,6 +149,8 @@ class ServiceTest extends AbstractServiceTest
 
         $this->authUserRepository->shouldReceive('activate')->andReturn(false);
         $this->assertEquals('account-not-found', $this->service->activate('bar'));
+
+        $this->serviceBuilder->verify();
     }
 
     public function testActivateSuccess()
@@ -157,6 +164,8 @@ class ServiceTest extends AbstractServiceTest
 
         // assertions
         $this->assertTrue($this->service->activate($token));
+
+        $this->serviceBuilder->verify();
     }
 
     public function testFetchDoesNotExist()
