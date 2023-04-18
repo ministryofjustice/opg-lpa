@@ -137,6 +137,28 @@ class ServiceTest extends AbstractServiceTest
         Mockery::close();
     }
 
+    public function testActivateNoAccount()
+    {
+        $this->authUserRepository->shouldReceive('activate')->andReturn(null);
+        $this->assertEquals('account-not-found', $this->service->activate('foo'));
+
+        $this->authUserRepository->shouldReceive('activate')->andReturn(false);
+        $this->assertEquals('account-not-found', $this->service->activate('bar'));
+    }
+
+    public function testActivateSuccess()
+    {
+        $token = 'sussusssuuussss';
+
+        // expectations
+        $this->authUserRepository->shouldReceive('activate')
+            ->with($token)
+            ->andReturn(true);
+
+        // assertions
+        $this->assertTrue($this->service->activate($token));
+    }
+
     public function testFetchDoesNotExist()
     {
         $user = FixturesData::getUser();
