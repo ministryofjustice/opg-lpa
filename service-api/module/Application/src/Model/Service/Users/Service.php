@@ -6,6 +6,7 @@ use ArrayObject;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
@@ -95,7 +96,7 @@ class Service extends AbstractService
 
     /**
      * @param $id
-     * @return ValidationApiProblem|DataModelEntity|array|null|object|ProfileUserModel
+     * @return DataModelEntity
      */
     public function fetch($id)
     {
@@ -105,11 +106,6 @@ class Service extends AbstractService
         // If there is no user create one now and ensure that the email address is correct
         if (is_null($user)) {
             $user = $this->save($id);
-        }
-
-        // Failure when saving user
-        if (!($user instanceof ProfileUserModel)) {
-            return $user;
         }
 
         return new DataModelEntity($user);
@@ -201,7 +197,7 @@ class Service extends AbstractService
 
         // Keep email up to date with what's in the auth service (if anything)
         $authUser = $this->getUserRepository()->getById($id);
-        if (!is_null($authUser)) {
+        if ($authUser instanceof UserInterface) {
             $data['email'] = [
                 'address' => $authUser->username()
             ];
