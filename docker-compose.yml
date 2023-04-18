@@ -31,7 +31,7 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:alpine
+    image: library/redis:6.2-alpine
     ports:
       - 6379:6379
 
