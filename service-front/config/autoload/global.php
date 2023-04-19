@@ -87,6 +87,7 @@ return [
         // implementation-specific configuration
         'notify' => [
             'key' => getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: null,
+            'smokeTestEmailAddress' => 'simulate-delivered@notifications.service.gov.uk',
         ],
 
         'sender' => [

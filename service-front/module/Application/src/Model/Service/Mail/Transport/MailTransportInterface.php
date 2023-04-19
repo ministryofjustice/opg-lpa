@@ -12,4 +12,12 @@ interface MailTransportInterface
      * @throws TransportInvalidArgumentException
      */
     public function send(MailParameters $mailParameters): void;
+
+    /**
+     * Health check the mail transport
+     *
+     * @return array with at least these keys:
+     * ['ok' => bool, 'status' => Constants::STATUS_*]
+     */
+    public function healthcheck(): array;
 }
