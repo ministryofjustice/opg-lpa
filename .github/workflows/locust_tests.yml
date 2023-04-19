@@ -83,7 +83,7 @@ jobs:
         env:
           DISABLE_SSL_VERIFY: True
         run: |
-          pip install boto3 locust beautifulsoup4
+          pip install boto3 locust beautifulsoup4 faker
           #python3 cypress/s3_monitor.py
           locust --headless -f locust/locustfile.py --host ${{ inputs.front_url }} -u 1 -r 1 --run-time 1m
 
