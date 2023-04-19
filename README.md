@@ -39,6 +39,7 @@ brew install black
 brew install eslint
 
 # PHP code linting
+brew install php-code-sniffer
 brew install php-cs-fixer
 
 brew install pre-commit
@@ -46,7 +47,7 @@ brew install pre-commit
 pre-commit install
 ```
 
-Pre-commit hooks run any time you add a commit. They covers:
+Pre-commit hooks run any time you add a commit. They cover:
 
 * PHP code formatting and fixing
 * Python code linting
