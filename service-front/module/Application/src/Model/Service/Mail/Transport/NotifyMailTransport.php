@@ -4,6 +4,7 @@ namespace Application\Model\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
+use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
@@ -47,16 +48,26 @@ class NotifyMailTransport implements MailTransportInterface
     /** @var NotifyClient */
     private $client;
 
+    // Address used to test email functionality
+    /** @var string */
+    private $smokeTestEmailAddress;
+
     /**
      * MailTransport constructor
      *
      * @param NotifyClient $client
+     * @param string $smokeTestEmailAddress Used for health check on Notify
      * @param array $templateMap Map from local template IDs to Notify template IDs;
      * set to $this->defaultTemplateMap if not specified
      */
-    public function __construct(NotifyClient $client, array $templateMap = null)
-    {
+    public function __construct(
+        NotifyClient $client,
+        ?string $smokeTestEmailAddress = null,
+        ?array $templateMap = null
+    ) {
         $this->client = $client;
+
+        $this->smokeTestEmailAddress = $smokeTestEmailAddress;
 
         if (is_null($templateMap)) {
             $templateMap = $this->defaultTemplateMap;
@@ -104,5 +115,50 @@ class NotifyMailTransport implements MailTransportInterface
                 throw new TransportInvalidArgumentException($ex->getMessage());
             }
         }
+    }
+
+    /**
+     * Check whether the mail transport is functioning correctly.
+     * This "sends" a feedback email to one of the smoke testing
+     * email addresses described here:
+     * https://docs.notifications.service.gov.uk/php.html#smoke-testing
+     *
+     * @return array
+     */
+    public function healthcheck(): array
+    {
+        $result = [
+            'ok' => true,
+            'status' => Constants::STATUS_PASS,
+            'details' => [
+                'smokeTestEmailAddress' => $this->smokeTestEmailAddress,
+            ],
+        ];
+
+        $data = [
+            'rating' => '',
+            'currentDateTime' => '',
+            'details' => '',
+            'email' => $this->smokeTestEmailAddress,
+            'phone' => '',
+            'fromPage' => '',
+            'agent' => '',
+        ];
+
+        try {
+            $this->client->sendEmail(
+                $this->smokeTestEmailAddress,
+                $this->templateMap[AbstractEmailService::EMAIL_FEEDBACK],
+                $data,
+            );
+        } catch (NotifyException $ex) {
+            $this->getLogger()->err('Healthcheck on Notify failed: ' . $ex->getMessage());
+
+            $result['ok'] = false;
+            $result['status'] = Constants::STATUS_FAIL;
+            $result['details']['exception'] = 'Unable to send email to smoke test address';
+        }
+
+        return $result;
     }
 }
