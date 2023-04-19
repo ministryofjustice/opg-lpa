@@ -220,16 +220,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-  run_dev_feedback_db_task:
-    name: Run development feedbackdb
-    uses: ./.github/workflows/workflow_start_task.yml
-    with:
-      account_id: "050256574573"
-      task_name: "feedbackdb"
-    needs:
-      - terraform_environment_development
-    secrets: inherit
-
   run_dev_seed_db_task:
     name: Run development DB seeding
     uses: ./.github/workflows/workflow_start_task.yml
@@ -246,13 +236,12 @@ jobs:
     needs:
       - run_dev_seed_db_task
       - terraform_environment_development
-      - run_dev_feedback_db_task
     outputs:
       admin_fqdn: ${{ steps.admin_fqdn.outputs.value }}
       front_fqdn: ${{ steps.front_fqdn.outputs.value }}
     steps:
       - name: Checkout
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3.5.0
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
 
       - name: Download Terraform Task definition
         uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2

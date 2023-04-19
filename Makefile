@@ -64,11 +64,6 @@ dc-up: run-composers
 		--username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
 	docker-compose up
 
-# target for users outside MoJ to run the stack without 3rd party integrations
-.PHONY: dc-up-out
-dc-up-out: run-composers
-	@${MAKE} dc-up ORDNANCESURVEY=-
-
 .PHONY: dc-build
 dc-build:
 	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
@@ -164,24 +159,14 @@ dc-front-unit-tests:
 	@docker-compose run front-app /app/vendor/bin/phpunit
 
 .PHONY: dc-unit-tests
-dc-unit-tests:
-	@${MAKE} dc-front-unit-tests
+dc-unit-tests: dc-front-unit-tests
 	@docker-compose run admin-app /app/vendor/bin/phpunit
 	@docker-compose run api-app /app/vendor/bin/phpunit
 	@docker-compose run pdf-app /app/vendor/bin/phpunit
 
-.PHONY: integration-api-local
-integration-api-local:
-	docker build -f ./service-api/docker/app/Dockerfile -t integration-api-tests .;\
-	docker run -it --network="host" --rm integration-api-tests  sh -c "cd /app/tests/integration && php ../../vendor/bin/phpunit -v"
-
-.PHONY: test-pdf-local
-test-pdf-local:
-	docker build -f ./service-pdf/docker/app/Dockerfile -t pdf-tests .;\
-	docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name pdf-test-run pdf-tests; \
-	docker exec pdf-test-run /app/vendor/bin/phpunit -d memory_limit=256M; \
-	docker stop pdf-test-run;
-	docker rm pdf-test-run;
+.PHONY: npm-install
+npm-install:
+	npm install
 
 # CYPRESS_RUNNER_* environment variables are used to consolidate setting environment
 # variables detected by cypress (like CYPRESS_baseUrl) and variables which are
@@ -191,7 +176,7 @@ test-pdf-local:
 # we can apply any logic about how to set vars for cypress, as well as provide
 # reasonable defaults (e.g. for CYPRESS_baseUrl), in one location.
 .PHONY: cypress-local
-cypress-local:
+cypress-local: npm-install
 	docker rm -f cypress_tests || true
 	docker build -f ./cypress/Dockerfile  -t cypress:local .; \
 	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
@@ -206,8 +191,7 @@ s3-monitor:
 	aws-vault exec moj-lpa-dev -- python3 cypress/s3_monitor.py -v
 
 .PHONY: cypress-gui
-cypress-gui:
-	npm install;
+cypress-gui: npm-install
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
