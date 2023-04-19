@@ -84,7 +84,8 @@ jobs:
           DISABLE_SSL_VERIFY: True
         run: |
           pip install boto3 locust
-          python3 cypress/s3_monitor.py
+          #python3 cypress/s3_monitor.py
+          locust --headless --host ${{ inputs.front_url }} -u 1 -r 1 --run-time 1m
 
       - name: Configure AWS Credentials
         if: always()
