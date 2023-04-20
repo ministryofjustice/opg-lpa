@@ -20,7 +20,7 @@ const checkCookies = function (shouldBeSet, tries) {
 
     const gaCookie = cookies.filter((cookie) => cookie['name'] === '_ga');
     const gaIdCookie = cookies.filter(
-      (cookie) => cookie['name'] === '_ga_1DVC295G9L',
+      (cookie) => cookie['name'] === '_ga_DY4BCL021L',
     );
     const cookiesSet = gaCookie.length > 0 && gaIdCookie.length > 0;
 
