@@ -6,7 +6,7 @@
 
   moj.Modules.Analytics = {
     dataLayer: window.dataLayer || [],
-    gaId: '1DVC295G9L',
+    gaId: 'DY4BCL021L',
 
     init: function () {
       // Check if we have permission to enable tracking

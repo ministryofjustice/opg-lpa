@@ -15,7 +15,7 @@
     cookie_policy: 'essential',
     seen_cookie_message: 'essential',
     _ga: 'usage',
-    _ga_1DVC295G9L: 'usage',
+    _ga_DY4BCL021L: 'usage',
   };
 
   /*
