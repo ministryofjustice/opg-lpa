@@ -59,15 +59,9 @@ class TypeController extends AbstractAuthenticatedController
             }
         }
 
-        $analyticsDimensions = [
-            'dimension2' => date('Y-m-d'),
-            'dimension3' => 0,
-        ];
-
         $view = new ViewModel([
             'form'                => $form,
             'isChangeAllowed'     => true,
-            'analyticsDimensions' => $analyticsDimensions,
         ]);
 
         $view->setTemplate('application/authenticated/lpa/type/index.twig');
