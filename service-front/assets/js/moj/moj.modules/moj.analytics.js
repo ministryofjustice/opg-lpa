@@ -14,13 +14,12 @@
         typeof GOVUK.checkConsentCookieCategory !== 'function' ||
         !GOVUK.checkConsentCookieCategory('analytics', 'usage')
       ) {
-        // set session state _ga cookie to expire
-        document.cookie = `_ga_${this.gaId}=; domain=.justice.gov.uk; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-
-        // set session state _ga cookie to expire on localhost
-        if (document.location.hostname == 'localhost') {
-          document.cookie = `_ga_${this.gaId}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-        }
+        const domain =
+          document.location.hostname === 'localhost'
+            ? 'localhost'
+            : '.justice.gov.uk';
+        // Remove session state _ga cookie
+        document.cookie = `_ga_${this.gaId}=; domain=${domain}; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
         return;
       }
 
