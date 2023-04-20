@@ -38,10 +38,6 @@ class CompleteControllerTest extends AbstractControllerTest
         $this->assertEquals($this->lpa->payment->reference, $result->getVariable('paymentReferenceNo'));
         $this->assertEquals(false, $result->getVariable('hasRemission'));
         $this->assertEquals(true, $result->getVariable('isPaymentSkipped'));
-        $this->assertEquals([
-            'dimension2' => '2017-03-07',
-            'dimension3' => 4
-        ], $result->getVariable('analyticsDimensions'));
     }
 
     public function testViewDocsActionPeopleToNotifyFeeReduction()
