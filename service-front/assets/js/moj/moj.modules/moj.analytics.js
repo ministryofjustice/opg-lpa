@@ -7,6 +7,11 @@
   moj.Modules.Analytics = {
     dataLayer: window.dataLayer || [],
     gaId: 'DY4BCL021L',
+    cookieDomains: {
+      localhost: 'localhost',
+      'www.lastingpowerofattorney.service.gov.uk':
+        '.lastingpowerofattorney.service.gov.uk',
+    },
 
     init: function () {
       // Check if we have permission to enable tracking
@@ -15,9 +20,8 @@
         !GOVUK.checkConsentCookieCategory('analytics', 'usage')
       ) {
         const domain =
-          document.location.hostname === 'localhost'
-            ? 'localhost'
-            : '.justice.gov.uk';
+          this.cookieDomains[document.location.hostname] || '.justice.gov.uk';
+
         // Remove session state _ga cookie
         document.cookie = `_ga_${this.gaId}=; domain=${domain}; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
         return;
