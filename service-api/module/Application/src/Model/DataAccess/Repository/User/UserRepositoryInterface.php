@@ -3,7 +3,7 @@
 namespace Application\Model\DataAccess\Repository\User;
 
 use DateTime;
-use MakeShared\DataModel\User\User as UserModel;
+use MakeShared\DataModel\User\User as ProfileUserModel;
 
 interface UserRepositoryInterface
 {
@@ -202,15 +202,15 @@ interface UserRepositoryInterface
      * Return a user's profile details
      *
      * @param $id
-     * @return UserModel
+     * @return ProfileUserModel|null
      */
-    public function getProfile($id): ?UserModel;
+    public function getProfile($id): ?ProfileUserModel;
 
     /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      *
-     * @param UserModel $data
+     * @param ProfileUserModel $data
      * @return bool
      */
-    public function saveProfile(UserModel $data): bool;
+    public function saveProfile(ProfileUserModel $data): bool;
 }

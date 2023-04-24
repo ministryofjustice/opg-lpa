@@ -36,7 +36,7 @@ class EmailController extends AbstractAuthController
             return new ApiProblem(400, 'Email address must be passed');
         }
 
-        if (!$this->authenticateUserToken($this->getRequest(), $userId)) {
+        if (!$this->authenticateUserToken($userId)) {
             return new ApiProblem(401, 'invalid-token');
         }
 
