@@ -6,12 +6,13 @@ use ArrayObject;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\PasswordValidatorTrait;
-use MakeShared\DataModel\User\User;
+use MakeShared\DataModel\User\User as ProfileUserModel;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Laminas\Math\BigInteger\BigInteger;
 
@@ -95,36 +96,32 @@ class Service extends AbstractService
 
     /**
      * @param $id
-     * @return ValidationApiProblem|DataModelEntity|array|null|object|User
+     * @return DataModelEntity
      */
     public function fetch($id)
     {
-        //  Try to get an existing user
+        // Get existing user
         $user = $this->getUserRepository()->getProfile($id);
 
-        //  If there is no user create one now and ensure that the email address is correct
-        if (is_null($user)) {
+        // If there is no user create one now and ensure that the email address is correct
+        if (!$user instanceof ProfileUserModel) {
             $user = $this->save($id);
         }
 
-        if ($user instanceof User) {
-            return new DataModelEntity($user);
-        }
-
-        return $user;
+        return new DataModelEntity($user);
     }
 
     /**
      * @param $data
      * @param $id
-     * @return ValidationApiProblem|DataModelEntity|array|null|object|User
+     * @return ValidationApiProblem|DataModelEntity|array|null|object|ProfileUserModel
      */
     public function update($data, $id)
     {
         $user = $this->save($id, $data);
 
         // If it's not a user, it's a different kind of response, so return it.
-        if (!$user instanceof User) {
+        if (!$user instanceof ProfileUserModel) {
             return $user;
         }
 
@@ -175,7 +172,7 @@ class Service extends AbstractService
     /**
      * @param $id
      * @param array $data
-     * @return ValidationApiProblem|array|null|object|User
+     * @return ValidationApiProblem|ProfileUserModel
      */
     private function save($id, array $data = [])
     {
@@ -188,7 +185,7 @@ class Service extends AbstractService
 
         if (is_null($user)) {
             $user = [
-                'id'        => $id,
+                'id' => $id,
                 'createdAt' => new DateTime(),
                 'updatedAt' => new DateTime(),
             ];
@@ -198,13 +195,17 @@ class Service extends AbstractService
             $user = $user->toArray();
         }
 
-        //  Keep email up to date with what's in the auth service
+        // Keep email up to date with what's in the auth service (if anything)
         $authUser = $this->getUserRepository()->getById($id);
-        $data['email']['address'] = $authUser->username();
+        if ($authUser instanceof UserInterface) {
+            $data['email'] = [
+                'address' => $authUser->username()
+            ];
+        }
 
         $data = array_merge($user, $data);
 
-        $user = new User($data);
+        $user = new ProfileUserModel($data);
 
         if (!$new) {
             // We don't validate if it's new

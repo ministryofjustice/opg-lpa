@@ -116,7 +116,7 @@ class Service extends AbstractService
      * Pulls back a list of all users who have no logged in for x time and sends them a notification
      * warning when their account will be deleted.
      *
-     * @param $warningType
+     * @param $warningType: '1-week-notice', '1-month-notice'
      * @return int The number of users notified
      * @throws Exception
      */

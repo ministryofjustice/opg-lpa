@@ -292,13 +292,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         try {
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
-            // If it's a key clash, and not on the identity, re-try with new values.
-            if ($e->getPrevious() instanceof PDOException) {
-                $pdoException = $e->getPrevious();
+            $previousException = $e->getPrevious();
 
+            // If it's a key clash, and not on the identity, re-try with new values.
+            if ($previousException instanceof PDOException) {
                 if (
-                    $pdoException->getCode() == 23505 &&
-                    strpos($pdoException->getMessage(), 'users_identity') === false
+                    $previousException->getCode() == 23505 &&
+                    strpos($previousException->getMessage(), 'users_identity') === false
                 ) {
                     return false;
                 }
@@ -449,7 +449,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * @param $token
      * @param $passwordHash
-     * @return UserRepository\UpdatePasswordUsingTokenError
+     * @return ?UserRepository\UpdatePasswordUsingTokenError
      */
     public function updatePasswordUsingToken(
         string $token,
@@ -549,7 +549,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Returns all accounts that have not been logged into since $since.
      *
-     * If $withoutFlag is set, accounts that contain the passed flag will be excluded.
+     * If $excludeFlag is set, accounts that contain the passed flag will be excluded.
      *
      * @param DateTime $since
      * @param string $excludeFlag
@@ -664,7 +664,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * Return a user's profile details
      *
      * @param $id
-     * @return ProfileUserModel
+     * @return ?ProfileUserModel
      */
     public function getProfile($id): ?ProfileUserModel
     {
