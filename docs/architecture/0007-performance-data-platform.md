@@ -21,7 +21,8 @@ Make an LPA service. The key pieces of data we must publish are:
   from "very dissatisfied" to "very satisfied". This is currently collected through
   a [centralised government feedback page](https://www.gov.uk/done/lasting-power-of-attorney).
 * **Completion rate:** Percentage of transactions started on the service by users
-  which are subsequently completed. This is currently derived from Google Analytics.
+  which are subsequently completed. We derive this from Google Analytics and
+  the database.
 * **Digital take-up:** Number of users using the online service as a percentage of
   users across all channels (online + paper + phone etc.). There is no API for this
   presently.
