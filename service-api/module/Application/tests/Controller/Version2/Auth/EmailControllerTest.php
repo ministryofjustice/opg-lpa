@@ -12,7 +12,7 @@ use Mockery;
 
 class EmailControllerTest extends AbstractAuthControllerTest
 {
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->service = Mockery::mock(Service::class);
 
@@ -58,6 +58,29 @@ class EmailControllerTest extends AbstractAuthControllerTest
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals($tokenReturnData, $result->getVariables());
+    }
+
+    public function testChangeActionNoTokenHeader()
+    {
+        $userId = 'abcdef123456';
+        $newEmail = 'new@email.com';
+
+        $this->params->shouldReceive('fromRoute')
+            ->with('userId')
+            ->andReturn($userId);
+
+        $this->request->shouldReceive('getHeader')
+            ->with('Token')
+            ->andReturn(false);
+
+        /** @var EmailController $controller */
+        $controller = $this->getController(EmailController::class, [
+            'newEmail' => $newEmail,
+        ]);
+
+        $result = $controller->changeAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
     }
 
     public function testChangeActionFailNoEmail()

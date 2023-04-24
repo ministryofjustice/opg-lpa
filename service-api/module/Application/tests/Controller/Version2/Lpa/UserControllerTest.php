@@ -3,6 +3,7 @@
 namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\Version2\Lpa\UserController;
+use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Users\Service;
@@ -10,6 +11,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class UserControllerTest extends AbstractControllerTest
 {
@@ -18,7 +20,7 @@ class UserControllerTest extends AbstractControllerTest
      */
     private $service;
 
-    public function getController(Array $parameters = []) : UserController
+    public function getController(array $parameters = []): UserController
     {
         $this->service = Mockery::mock(Service::class);
 
@@ -54,6 +56,37 @@ class UserControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(NoContent::class, $response);
     }
 
+    public function testGetSuccessWithUserIdentity()
+    {
+        $service = Mockery::mock(Service::class);
+        $service->shouldReceive('fetch')->andReturn($this->createEntity(['key' => 'value']));
+
+        $identity = Mockery::mock(UserIdentity::class);
+        $identity->shouldReceive('email')->andReturn('identity@email.address');
+
+        $authorizationService = Mockery::mock(AuthorizationService::class);
+        $authorizationService->shouldReceive('isGranted')->withArgs(['authenticated'])
+            ->andReturn(true);
+        $authorizationService->shouldReceive('isGranted')
+            ->withArgs(['isAuthorizedToManageUser', $this->userId])
+            ->andReturn(false);
+        $authorizationService->shouldReceive('isGranted')
+            ->withArgs(['admin'])
+            ->andReturn(true);
+        $authorizationService->shouldReceive('getIdentity')->andReturn($identity);
+
+        $controller = new UserController($authorizationService, $service);
+        $this->callDispatch($controller);
+        $this->callOnDispatch($controller);
+
+        $response = $controller->get(10);
+
+        $this->assertInstanceOf(Json::class, $response);
+
+        $responseArray = json_decode($response->getContent(), true);
+        $this->assertEquals('identity@email.address', $responseArray['email']['address']);
+    }
+
     public function testGetApiProblemFromService()
     {
         $controller = $this->getController();
@@ -65,13 +98,12 @@ class UserControllerTest extends AbstractControllerTest
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals(array (
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
         ), $response->toArray());
-
     }
 
     public function testGetUnexpectedResponse()
@@ -84,7 +116,7 @@ class UserControllerTest extends AbstractControllerTest
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals(array (
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
@@ -106,10 +138,10 @@ class UserControllerTest extends AbstractControllerTest
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([['some'=>'data'], 10])
+        $this->service->shouldReceive('update')->withArgs([['some' => 'data'], 10])
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
-        $response = $controller->update(10, ['some'=>'data']);
+        $response = $controller->update(10, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(Json::class, $response);
@@ -120,34 +152,33 @@ class UserControllerTest extends AbstractControllerTest
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([['some'=>'data'], 10])
+        $this->service->shouldReceive('update')->withArgs([['some' => 'data'], 10])
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
-        $response = $controller->update(10, ['some'=>'data']);
+        $response = $controller->update(10, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals(array (
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
         ), $response->toArray());
-
     }
 
     public function testUpdateUnexpectedResponse()
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([['some'=>'data'], 10])
+        $this->service->shouldReceive('update')->withArgs([['some' => 'data'], 10])
             ->andReturn('unexpected type')->once();
 
-        $response = $controller->update(10, ['some'=>'data']);
+        $response = $controller->update(10, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals(array (
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
@@ -189,13 +220,12 @@ class UserControllerTest extends AbstractControllerTest
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals(array (
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
         ), $response->toArray());
-
     }
 
     public function testDeleteFailed()
@@ -209,7 +239,7 @@ class UserControllerTest extends AbstractControllerTest
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals(array (
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,

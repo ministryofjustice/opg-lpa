@@ -5,13 +5,18 @@ namespace ApplicationTest\Model\Service\Users;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Postgres\UserModel as CollectionUser;
 use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserInterface;
+use Application\Model\DataAccess\Postgres\UserModel;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Applications\Service as ApplicationsService;
+use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\DataModelEntity;
+use ApplicationTest\Helpers;
 use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\Users\ServiceBuilder;
 use Mockery;
 use Mockery\MockInterface;
-use MakeShared\DataModel\User\User;
+use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeSharedTest\DataModel\FixturesData;
 use ArrayObject;
 use DateTime;
@@ -33,6 +38,12 @@ class ServiceTest extends AbstractServiceTest
      */
     private $authUserRepository;
 
+    /** @var UsersService */
+    private $service;
+
+    /** @var ServiceBuilder */
+    private $serviceBuilder;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,8 +54,120 @@ class ServiceTest extends AbstractServiceTest
         $this->authLogRepository = Mockery::mock(LogRepositoryInterface::class);
 
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
+
+        $this->serviceBuilder = new ServiceBuilder();
+
+        $this->service = $this->serviceBuilder
+            ->withApplicationsService($this->applicationsService)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
+            ->build();
     }
 
+    public function testCreateInvalidEmail()
+    {
+        $this->assertEquals('invalid-username', $this->service->create('adasadsd', ''));
+        $this->serviceBuilder->verify();
+    }
+
+    public function testCreateUserAlreadyExists()
+    {
+        $email = 'amadeupname@foo.org';
+        $password = 'Pass1234';
+
+        // expectations
+        $this->authUserRepository->shouldReceive('getByUsername')
+            ->with($email)
+            ->andReturn(Mockery::mock(UserInterface::class));
+
+        // test
+        $result = $this->service->create($email, $password);
+
+        // assertions
+        $this->assertEquals('username-already-exists', $result);
+
+        $this->serviceBuilder->verify();
+    }
+
+    public function testCreateInvalidPassword()
+    {
+        $email = 'amadeupname@foo.org';
+        $password = '';
+
+        // expectations
+        $this->authUserRepository->shouldReceive('getByUsername')
+            ->with($email)
+            ->andReturn(null);
+
+        // test
+        $result = $this->service->create($email, $password);
+
+        // assertions
+        $this->assertEquals('invalid-password', $result);
+
+        $this->serviceBuilder->verify();
+    }
+
+    public function testCreateSuccess()
+    {
+        $email = 'amadeupname@foo.org';
+        $password = 'Pass1234';
+
+        // expectations
+        $this->authUserRepository->shouldReceive('getByUsername')
+            ->with($email)
+            ->andReturn(null);
+
+        // NB we also include a duplicate hash in here (the false return values),
+        // to exercise the while loop and ensure it works correctly
+        $this->authUserRepository->shouldReceive('create')
+            ->withArgs(function ($userId, $data) use ($email) {
+                return $data['identity'] === $email &&
+                    $data['active'] === false &&
+                    is_a($data['created'], DateTime::class) &&
+                    is_a($data['last_updated'], DateTime::class) &&
+                    strlen($data['activation_token']) > 0 &&
+                    strlen($data['password_hash']) > 0 &&
+                    $data['failed_login_attempts'] === 0;
+            })
+            ->andReturn(false, false, true);
+
+        // test
+        $result = $this->service->create($email, $password);
+
+        // assertions
+        $this->assertIsArray($result);
+        $this->assertTrue(array_key_exists('userId', $result));
+        $this->assertTrue(strlen($result['activation_token']) > 0);
+
+        $this->serviceBuilder->verify();
+    }
+
+    public function testActivateNoAccount()
+    {
+        $this->authUserRepository->shouldReceive('activate')->andReturn(null);
+        $this->assertEquals('account-not-found', $this->service->activate('foo'));
+
+        $this->authUserRepository->shouldReceive('activate')->andReturn(false);
+        $this->assertEquals('account-not-found', $this->service->activate('bar'));
+
+        $this->serviceBuilder->verify();
+    }
+
+    public function testActivateSuccess()
+    {
+        $token = 'sussusssuuussss';
+
+        // expectations
+        $this->authUserRepository->shouldReceive('activate')
+            ->with($token)
+            ->andReturn(true);
+
+        // assertions
+        $this->assertTrue($this->service->activate($token));
+
+        $this->serviceBuilder->verify();
+    }
 
     public function testFetchDoesNotExist()
     {
@@ -64,24 +187,17 @@ class ServiceTest extends AbstractServiceTest
             ->shouldReceive('saveProfile')
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
-        $entity = $service->fetch($user->getId());
+        $entity = $this->service->fetch($user->getId());
         $entityArray = $entity->toArray();
 
-        $expectedUser = new User();
+        $expectedUser = new ProfileUserModel();
         $expectedUser->setId($user->getId());
         $expectedUser->setEmail($user->getEmail());
         $expectedUser->setCreatedAt(new DateTime($entityArray['createdAt']));
         $expectedUser->setUpdatedAt(new DateTime($entityArray['updatedAt']));
         $this->assertEquals(new DataModelEntity($expectedUser), $entity);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testFetch()
@@ -95,18 +211,11 @@ class ServiceTest extends AbstractServiceTest
         $this->authUserRepository
             ->shouldNotReceive('saveProfile');
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
-        $entity = $service->fetch($user->getId());
+        $entity = $this->service->fetch($user->getId());
 
         $this->assertEquals(new DataModelEntity($user), $entity);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testUpdateNotFound()
@@ -127,24 +236,17 @@ class ServiceTest extends AbstractServiceTest
             ->shouldReceive('saveProfile')
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
-        $entity = $service->update([], $user->getId());
+        $entity = $this->service->update([], $user->getId());
         $entityArray = $entity->toArray();
 
-        $expectedUser = new User();
+        $expectedUser = new ProfileUserModel();
         $expectedUser->setId($user->getId());
         $expectedUser->setEmail($user->getEmail());
         $expectedUser->setCreatedAt(new DateTime($entityArray['createdAt']));
         $expectedUser->setUpdatedAt(new DateTime($entityArray['updatedAt']));
         $this->assertEquals(new DataModelEntity($expectedUser), $entity);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testUpdateValidationFailed()
@@ -164,16 +266,9 @@ class ServiceTest extends AbstractServiceTest
         $this->authUserRepository
             ->shouldNotReceive('saveProfile');
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
         $userUpdate = FixturesData::getUser();
         $userUpdate->getName()->setTitle('TooLong');
-        $validationError = $service->update($userUpdate->toArray(), $user->getId());
+        $validationError = $this->service->update($userUpdate->toArray(), $user->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(400, $validationError->getStatus());
@@ -184,7 +279,7 @@ class ServiceTest extends AbstractServiceTest
         $this->assertEquals(1, count($validation));
         $this->assertTrue(array_key_exists('name.title', $validation));
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testUpdate()
@@ -204,22 +299,15 @@ class ServiceTest extends AbstractServiceTest
         $this->authUserRepository
             ->shouldReceive('saveProfile');
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
         $userUpdate = FixturesData::getUser();
         $userUpdate->getName()->setFirst('Edited');
-        $entity = $service->update($userUpdate->toArray(), $user->getId());
+        $entity = $this->service->update($userUpdate->toArray(), $user->getId());
         $entityArray = $entity->toArray();
 
         $userUpdate->setUpdatedAt(new DateTime($entityArray['updatedAt']));
         $this->assertEquals(new DataModelEntity($userUpdate), $entity);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testDelete()
@@ -236,20 +324,24 @@ class ServiceTest extends AbstractServiceTest
             ->andReturn($collectionUser)
             ->once();
         $this->authUserRepository
-            ->shouldReceive('delete');
+            ->shouldReceive('delete')
+            ->andReturn(true);
+        $this->authLogRepository
+            ->shouldReceive('addLog')
+            ->withArgs(function ($logDetails) use ($collectionUser) {
+                $expectedHash = hash('sha512', strtolower(trim($collectionUser->username())));
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
+                return $logDetails['reason'] === 'some-reason' &&
+                    $logDetails['type'] === 'account-deleted' &&
+                    $logDetails['loggedAt'] instanceof DateTime &&
+                    $logDetails['identity_hash'] === $expectedHash;
+            });
 
-        $result = $service->delete($user->getId());
+        $result = $this->service->delete($user->getId(), 'some-reason');
 
         $this->assertTrue($result);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
     }
 
     public function testMatchUsers()
@@ -267,17 +359,78 @@ class ServiceTest extends AbstractServiceTest
             ->andReturn($users)
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
-
-        $results = $service->matchUsers($query);
+        $results = $this->service->matchUsers($query);
 
         $this->assertEquals(count($results), 2);
 
-        $serviceBuilder->verify();
+        $this->serviceBuilder->verify();
+    }
+
+    public function testSearchByUsernameNotUserOrDeleted()
+    {
+        $username = 'ballard';
+        $hashedUsername = hash('sha512', strtolower(trim($username)));
+
+        // user isn't in user table or deletion log
+        $this->authUserRepository
+            ->shouldReceive('getByUsername')
+            ->with($username)
+            ->andReturn(null);
+
+        $this->authLogRepository
+            ->shouldReceive('getLogByIdentityHash')
+            ->with($hashedUsername)
+            ->andReturn(null);
+
+        $this->assertFalse($this->service->searchByUsername($username));
+    }
+
+    public function testSearchByUsernameDeleted()
+    {
+        // user is in deletion log
+        $username = 'shakespeare';
+        $hashedUsername = hash('sha512', strtolower(trim($username)));
+
+        $deletionLogRecord = [
+            'loggedAt' => new DateTime(),
+            'reason' => 'user-initiated',
+        ];
+
+        $this->authUserRepository
+            ->shouldReceive('getByUsername')
+            ->with($username)
+            ->andReturn(null);
+
+        $this->authLogRepository
+            ->shouldReceive('getLogByIdentityHash')
+            ->with($hashedUsername)
+            ->andReturn($deletionLogRecord);
+
+        $expected = [
+            'isDeleted' => true,
+            'deletedAt' => $deletionLogRecord['loggedAt'],
+            'reason' => $deletionLogRecord['reason']
+        ];
+
+        $this->assertEquals($expected, $this->service->searchByUsername($username));
+    }
+
+    public function testSearchByUsername()
+    {
+        // user is in main table
+        $username = 'shakespeare';
+
+        $userRecord = new UserModel([
+            'id' => $username,
+        ]);
+
+        $this->authUserRepository
+            ->shouldReceive('getByUsername')
+            ->with($username)
+            ->andReturn($userRecord);
+
+        $expected = $userRecord->toArray();
+
+        $this->assertEquals($expected, $this->service->searchByUsername($username));
     }
 }
