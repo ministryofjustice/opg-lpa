@@ -13,6 +13,26 @@ services:
       context: ./
       dockerfile: node-build-assets/docker/Dockerfile
 
+  pgbouncer:
+    container_name: lpa-pgbouncer
+    image: bitnami/pgbouncer:latest
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo -n > /dev/tcp/127.0.0.1/6432 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    depends_on:
+      - postgres
+    ports:
+      - 6432:6432
+    environment:
+      POSTGRESQL_HOST: postgres
+      POSTGRESQL_USERNAME: lpauser
+      POSTGRESQL_PASSWORD: lpapass
+      POSTGRESQL_DATABASE: lpadb
+      PGBOUNCER_DATABASE: lpadb
+
   postgres:
     container_name: lpa-postgres
     image: postgres:13.7
@@ -262,8 +282,8 @@ services:
       OPG_LPA_STACK_ENVIRONMENT: "dev"
 
       OPG_LPA_API_NOTIFY_API_KEY: "${OPG_LPA_API_NOTIFY_API_KEY}"
-      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
-      OPG_LPA_POSTGRES_PORT: "5432"
+      OPG_LPA_POSTGRES_HOSTNAME: "pgbouncer"
+      OPG_LPA_POSTGRES_PORT: "6432"
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
