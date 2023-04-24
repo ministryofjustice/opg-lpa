@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "api_crons" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  container_definitions    = "[${local.api_app}, ${local.app_init_container}]"
+  container_definitions    = "[${local.api_app}, ${local.app_init_container}, ${local.pgbouncer}]"
   task_role_arn            = var.ecs_iam_task_roles.api.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.api_component_tag

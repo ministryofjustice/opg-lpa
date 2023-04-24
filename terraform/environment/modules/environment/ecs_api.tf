@@ -123,7 +123,7 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
+  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.app_init_container}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
   task_role_arn            = var.ecs_iam_task_roles.api.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.api_component_tag
@@ -178,6 +178,48 @@ locals {
     }
   )
 
+  pgbouncer = jsonencode(
+    {
+      "cpu" : 1,
+      "essential" : true,
+      "image" : "bitnami/pgbouncer:latest",
+      "name" : "pgbouncer",
+      "mountPoints" : [],
+      "healthCheck" : {
+        "command" : ["CMD", "bash", "-c", "echo -n > /dev/tcp/127.0.0.1/6432 || exit 1"]
+        "startPeriod" : 90,
+        "interval" : 10,
+        "timeout" : 15,
+        "retries" : 3
+      },
+      "portMappings" : [
+        {
+          "containerPort" : 6432,
+          "hostPort" : 6432,
+          "protocol" : "tcp"
+        }
+      ],
+      "logConfiguration" : {
+        "logDriver" : "awslogs",
+        "options" : {
+          "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
+          "awslogs-region" : "${var.region_name}",
+          "awslogs-stream-prefix" : "${var.environment_name}.pgbouncer.online-lpa"
+        }
+      },
+      "secrets" : [
+        { "name" : "POSTGRESQL_USERNAME", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
+        { "name" : "POSTGRESQL_PASSWORD", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
+      ],
+      "environment" : [
+        { "name" : "POSTGRESQL_DATABASE", "value" : module.api_aurora[0].name },
+        { "name" : "PGBOUNCER_DATABASE", "value" : module.api_aurora[0].name },
+        { "name" : "POSTGRESQL_HOST", "value" : module.api_aurora[0].endpoint },
+        { "name" : "PGBOUNCER_SERVER_TLS_SSLMODE", "value" : "require" },
+      ],
+    }
+  )
+
   api_app = jsonencode(
     {
       "cpu" : 1,
@@ -218,6 +260,10 @@ locals {
         {
           "containerName" : "permissions-init",
           "condition" : "SUCCESS"
+        },
+        {
+          "containerName" : "pgbouncer",
+          "condition" : "HEALTHY"
         }
       ],
       "secrets" : [
@@ -229,8 +275,8 @@ locals {
       ],
       "environment" : [
         { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
-        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : module.api_aurora[0].endpoint },
-        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(module.api_aurora[0].port) },
+        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : "127.0.0.1" },
+        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : "6432" },
         { "name" : "OPG_LPA_POSTGRES_NAME", "value" : module.api_aurora[0].name },
         { "name" : "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value" : var.account.sirius_api_gateway_endpoint },
         { "name" : "OPG_LPA_API_TRACK_FROM_DATE", "value" : local.track_from_date },
