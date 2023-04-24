@@ -4,64 +4,47 @@
 (function () {
   'use strict';
 
-  if (typeof gaConfig === 'undefined') {
-    moj.log('gaConfig not set. skipping Google Analytics tracking.');
-    return;
-  }
-
   moj.Modules.Analytics = {
-    init: function () {
-      this.bindEvents();
+    dataLayer: window.dataLayer || [],
+    gaId: 'DY4BCL021L',
+    cookieDomains: {
+      localhost: 'localhost',
+      'www.lastingpowerofattorney.service.gov.uk':
+        '.lastingpowerofattorney.service.gov.uk',
+    },
 
+    init: function () {
       // Check if we have permission to enable tracking
       if (
-        typeof GOVUK.checkConsentCookieCategory === 'function' &&
-        GOVUK.checkConsentCookieCategory('analytics', 'usage')
+        typeof GOVUK.checkConsentCookieCategory !== 'function' ||
+        !GOVUK.checkConsentCookieCategory('analytics', 'usage')
       ) {
-        this.setup();
-      }
-    },
+        const domain =
+          this.cookieDomains[document.location.hostname] || '.justice.gov.uk';
 
-    bindEvents: function () {
-      moj.Events.on('Analytics.start', this.setup);
-    },
-
-    setup: function () {
-      GOVUK.Analytics.load();
-
-      // Use document.domain in dev, preview and staging so that tracking works
-      // Otherwise remove proceeding www, as only prod will append www to the URL
-      var regEx = new RegExp('^www.');
-      var cookieDomain = regEx.test(document.domain)
-        ? document.domain.replace(regEx, '.')
-        : document.domain;
-
-      // Configure profiles and make interface public
-      // for custom dimensions, virtual pageviews and events
-      GOVUK.analytics = new GOVUK.Analytics({
-        universalId: gaConfig.universalId || '',
-        cookieDomain: cookieDomain,
-        allowLinker: true,
-        allowAnchor: true,
-
-        //TODO are we tracking this within lpa
-        stripPostcodePII: true,
-        stripDatePII: true,
-      });
-
-      if (regEx.test(document.domain)) {
-        GOVUK.analytics.addLinkedTrackerDomain(gaConfig.govId, 'govuk_shared', [
-          'www.gov.uk',
-          '.payments.service.gov.uk',
-        ]);
+        // Remove session state _ga cookie
+        document.cookie = `_ga_${this.gaId}=; domain=${domain}; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+        return;
       }
 
-      // Track initial pageview
-      if (typeof GOVUK.pageviewOptions !== 'undefined') {
-        GOVUK.analytics.trackPageview(null, null, GOVUK.pageviewOptions);
+      this.gtag('js', new Date());
+
+      // GA is in debug mode ('dev traffic') if traffic is not from the main website - ie. localhost
+      // or dev/test environments - this allows us to use a data filter to filter out dev traffic in GA
+      // and keep integration tests that check analytics cookies
+      if (
+        window.location.hostname.indexOf(
+          'lastingpowerofattorney.service.gov.uk',
+        ) == 0
+      ) {
+        this.gtag('config', `G-${this.gaId}`);
       } else {
-        GOVUK.analytics.trackPageview();
+        this.gtag('config', `G-${this.gaId}`, { debug_mode: true });
       }
+    },
+
+    gtag: function () {
+      this.dataLayer.push(arguments);
     },
   };
 })();

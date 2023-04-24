@@ -3,7 +3,6 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use Exception;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
@@ -11,9 +10,6 @@ use MakeShared\DataModel\Lpa\Document\Document;
 
 class DownloadController extends AbstractLpaController
 {
-    /** @var GoogleAnalyticsService */
-    private $analyticsService;
-
     /**
      * @psalm-suppress ImplementedReturnTypeMismatch
      * @return ViewModel|HttpResponse|false
@@ -123,15 +119,6 @@ class DownloadController extends AbstractLpaController
             $headers->addHeaderLine('Content-Disposition', 'inline; filename="' . $fileName . '"');
         }
 
-        // Send a page view to the analytics service for the document being provided
-        try {
-            $uri = $request->getUri();
-            $this->analyticsService->sendPageView($uri->getHost(), $uri->getPath(), $fileName);
-        } catch (Exception $ex) {
-            // Log the error but don't impact the user because of analytics failures
-            $this->getLogger()->err($ex->getMessage());
-        }
-
         return $this->response;
     }
 
@@ -182,15 +169,5 @@ class DownloadController extends AbstractLpaController
         }
 
         return $draftString . 'Lasting-Power-of-Attorney-' . strtoupper($pdfType) . $lpaTypeChar . '.pdf';
-    }
-
-    /**
-     * Set the service to be used for sending analytics data
-     *
-     * @param GoogleAnalyticsService $analyticsService
-     */
-    public function setAnalyticsService($analyticsService)
-    {
-        $this->analyticsService = $analyticsService;
     }
 }
