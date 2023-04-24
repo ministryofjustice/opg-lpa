@@ -47,10 +47,6 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertEquals('application/authenticated/lpa/type/index.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
-        $this->assertEquals([
-            'dimension2' => (new DateTime())->format('Y-m-d'),
-            'dimension3' => 0
-        ], $result->getVariable('analyticsDimensions'));
     }
 
     public function testIndexActionPostInvalid()
@@ -67,10 +63,6 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertEquals('application/authenticated/lpa/type/index.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
-        $this->assertEquals([
-            'dimension2' => (new DateTime())->format('Y-m-d'),
-            'dimension3' => 0
-        ], $result->getVariable('analyticsDimensions'));
     }
 
     public function testIndexActionPostCreationError()

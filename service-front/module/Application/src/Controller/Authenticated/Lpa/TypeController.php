@@ -45,15 +45,6 @@ class TypeController extends AbstractLpaController
             }
         }
 
-        $analyticsDimensions = [];
-
-        if (empty($lpa->document->type)) {
-            $analyticsDimensions = [
-                'dimension2' => date('Y-m-d'),
-                'dimension3' => 0,
-            ];
-        }
-
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
 
         $nextUrl = $this->url()->fromRoute(
@@ -68,7 +59,6 @@ class TypeController extends AbstractLpaController
             'cloneUrl'            => $cloneUrl,
             'nextUrl'             => $nextUrl,
             'isChangeAllowed'     => $isChangeAllowed,
-            'analyticsDimensions' => $analyticsDimensions,
         ]);
     }
 }

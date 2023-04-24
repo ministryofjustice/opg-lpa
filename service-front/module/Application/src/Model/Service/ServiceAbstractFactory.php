@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service;
 
-use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\Client as ApiClient;
 use Application\Model\Service\Lpa\Applicant;
@@ -34,9 +33,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         Details::class => [
             'setUserDetailsSession' => 'UserDetailsSession'
         ],
-        GoogleAnalyticsService::class => [
-            'setAnalyticsClient' => 'AnalyticsClient'
-        ],
         Metadata::class => [
             'setLpaApplicationService' => 'LpaApplicationService',
         ],
@@ -48,6 +44,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setSessionSaveHandler' => 'SaveHandler',
             'setOrdnanceSurveyClient' => 'OrdnanceSurvey',
             'setRedisClient' => 'RedisClient',
+            'setMailTransport' => 'MailTransport',
         ],
     ];
 

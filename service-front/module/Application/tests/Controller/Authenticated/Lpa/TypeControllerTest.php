@@ -54,7 +54,6 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertEquals('user/dashboard/create-lpa?lpa-id=' . $this->lpa->id, $result->getVariable('cloneUrl'));
         $this->assertEquals('lpa/donor?lpa-id=' . $this->lpa->id, $result->getVariable('nextUrl'));
         $this->assertEquals('', $result->getVariable('isChangeAllowed'));
-        $this->assertEquals([], $result->getVariable('analyticsDimensions'));
     }
 
     public function testIndexActionGetNoType()
@@ -82,10 +81,6 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertEquals('user/dashboard/create-lpa?lpa-id=' . $this->lpa->id, $result->getVariable('cloneUrl'));
         $this->assertEquals('lpa/donor?lpa-id=' . $this->lpa->id, $result->getVariable('nextUrl'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
-        $this->assertEquals([
-            'dimension2' => date('Y-m-d'),
-            'dimension3' => 0
-        ], $result->getVariable('analyticsDimensions'));
     }
 
     public function testIndexActionPostInvalid()
@@ -110,7 +105,6 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertEquals('user/dashboard/create-lpa?lpa-id=' . $this->lpa->id, $result->getVariable('cloneUrl'));
         $this->assertEquals('lpa/donor?lpa-id=' . $this->lpa->id, $result->getVariable('nextUrl'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
-        $this->assertEquals([], $result->getVariable('analyticsDimensions'));
     }
 
     public function testIndexActionPostFailed()
