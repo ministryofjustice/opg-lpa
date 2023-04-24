@@ -27,7 +27,6 @@ use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
 use Redis;
-use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 use Twig\TwigFunction;
@@ -152,11 +151,6 @@ class Module implements FormElementProviderInterface
                 'OrdnanceSurvey'        => 'Application\Model\Service\AddressLookup\OrdnanceSurveyFactory',
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
-
-                // Analytics Client
-                'AnalyticsClient' => function () {
-                    return new Analytics(true);
-                },
 
                 // Authentication Adapter
                 'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {

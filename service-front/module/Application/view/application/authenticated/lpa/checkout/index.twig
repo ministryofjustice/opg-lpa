@@ -25,7 +25,7 @@
     {# Don't show 'Next steps' if CP has been skipped #}
     {% if (lpa.document.certificateProvider) %}
         <details role="group">
-            <summary role="button" data-journey-click="page:link.reveal:help: What do I need to do next?">
+            <summary role="button" data-analytics-click="page:link.reveal:help: What do I need to do next?">
                 <span class="summary">What do I need to do next?</span>
             </summary>
             <div class="panel text">
@@ -76,7 +76,7 @@
 
         <div class="iconlinks iconlinks--right">
             <div class="iconlinks-item">
-                <a href="#" class="iconlinks-link js-print hide-if-no-js" data-journey-click="page:link:Print this summary">
+                <a href="#" class="iconlinks-link js-print hide-if-no-js" data-analytics-click="page:link:Print this summary">
                     <i class="icon icon-print"></i>
                     <span class="iconlinks-text">Print this summary</span>
                 </a>
@@ -110,7 +110,7 @@
         {% else %}
 
             <details class="no-print-for-summary">
-                <summary data-journey-click="page:link.reveal:help: Why are you asking me to pay now?">
+                <summary data-analytics-click="page:link.reveal:help: Why are you asking me to pay now?">
                     <span class="summary">Why are you asking me to pay now?</span>
                 </summary>
                 <div class="panel panel-border-narrow text">
@@ -149,7 +149,7 @@
         {% endif %}
 
         <p class="divorced">
-            <a href="/user/dashboard" data-journey-click="page:link:save: Save for later">Save for later</a>
+            <a href="/user/dashboard" data-analytics-click="page:link:save: Save for later">Save for later</a>
         </p>
 
     {% else %}
@@ -162,7 +162,7 @@
         </div>
 
         <a class="button" disabled="disabled">Confirm</a>
-        <a href="/user/dashboard" class="button-link" data-journey-click="page:link:save: Save for later">Save for later</a>
+        <a href="/user/dashboard" class="button-link" data-analytics-click="page:link:save: Save for later">Save for later</a>
 
     {% endif %}
 

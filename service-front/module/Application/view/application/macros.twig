@@ -76,7 +76,7 @@
     <div class="action-item use-details-link-panel hard--bottom">
         <form novalidate="novalidate" method="post" action="{{ action }}">
             <input type="hidden" name="reuse-details" value="0">
-            <input type="submit" name="submit" class="button-input-to-link" value="Use my details" data-cy="use-my-details" {% if analyticsDescription %} data-journey-click="page:link:reuse: {{ analyticsDescription }}" {% endif %}>
+            <input type="submit" name="submit" class="button-input-to-link" value="Use my details" data-cy="use-my-details" {% if analyticsDescription %} data-analytics-click="page:link:reuse: {{ analyticsDescription }}" {% endif %}>
         </form>
     </div>
 {% endmacro %}
