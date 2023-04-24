@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\Service\Guidance;
 
 use Application\Model\Service\AbstractService;
@@ -28,7 +29,7 @@ class Guidance extends AbstractService
                 $sectionFilename = trim($matches[1]);
 
                 // Cleaning out characters that won't play nicely in a url
-                $sectionTitleClean = str_replace(array('?',','),'',$sectionTitle);
+                $sectionTitleClean = str_replace(array('?',','), '', $sectionTitle);
 
                 $sectionId = trim(strtolower(str_replace(' ', '-', $sectionTitleClean)));
 
@@ -63,10 +64,10 @@ class Guidance extends AbstractService
         $html = '<article id="topic-' . $sectionId . '">';
 
         $html .= preg_replace(
-                    '/<a href="\/help\/#topic-([^"]*)">([^"]*)<\/a>/',
-                    '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="js-guidance" data-cy="${1}-link" data-journey-click="guidance:link:help: ${1}">${2}</a>',
-                    $md
-                 );
+            '/<a href="\/help\/#topic-([^"]*)">([^"]*)<\/a>/',
+            '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="js-guidance" data-cy="${1}-link" data-analytics-click="guidance:link:help: ${1}">${2}</a>',
+            $md
+        );
 
         $html .= '</article>';
 

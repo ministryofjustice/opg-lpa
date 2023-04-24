@@ -87,7 +87,7 @@
         <div class="panel-body">
             <ul class="list iconlinks flush hard text-left">
                 <li class="iconlinks-item">
-                    <a class="iconlinks-link" href="{{ lp1Url }}" rel="noreferrer noopener" target="_blank" data-journey-click="page:link:download: Download your print-ready LPA form">
+                    <a class="iconlinks-link" href="{{ lp1Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your print-ready LPA form">
                         <i class="icon icon-file-download"></i>
                         <span class="iconlinks-text">Download your print-ready LPA form (PDF, opens in new tab)</span>
                     </a>
@@ -96,7 +96,7 @@
                 {% if lpa120Url %}
                     {% if feeBenefits %}
                         <li class="iconlinks-item">
-                            <a class="iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-journey-click="page:link:download: Download your fee exemption form">
+                            <a class="iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your fee exemption form">
                                 <i class="icon icon-file-download"></i>
                                 <span class="iconlinks-text">Download your fee exemption form (PDF, opens in new tab)</span>
                             </a>
@@ -104,7 +104,7 @@
                     {% endif %}
                     {% if feeUC or feeLowIncome %}
                         <li class="iconlinks-item">
-                            <a class="iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-journey-click="page:link:download: Download your fee remission form">
+                            <a class="iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your fee remission form">
                                 <i class="icon icon-file-download"></i>
                                 <span class="iconlinks-text">Download your fee remission form (PDF, opens in new tab)</span>
                             </a>
@@ -114,7 +114,7 @@
 
                 {% if lp3Url %}
                     <li class="iconlinks-item">
-                        <a class="iconlinks-link" href="{{ lp3Url }}" rel="noreferrer noopener" target="_blank" data-journey-click="page:link:download: Download the letter to send to your 'people to notify'">
+                        <a class="iconlinks-link" href="{{ lp3Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download the letter to send to your 'people to notify'">
                             <i class="icon icon-file-download"></i>
                             <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF, opens in new tab)</span>
                         </a>
@@ -126,7 +126,7 @@
 
     <p>These documents are PDF files and each should be no larger than 4MB.</p>
 
-    <p>If you cannot view the documents, you'll need to <a rel="noopener noreferrer" target="_blank" href="https://get.adobe.com/uk/reader/" data-journey-click="page:link:external: Acrobat Reader">download Acrobat Reader from the Adobe website (opens in new tab)</a>.</p>
+    <p>If you cannot view the documents, you'll need to <a rel="noopener noreferrer" target="_blank" href="https://get.adobe.com/uk/reader/" data-analytics-click="page:link:external: Acrobat Reader">download Acrobat Reader from the Adobe website (opens in new tab)</a>.</p>
 
     {{ macros.continuationNotes(continuationNoteKeys) }}
 
@@ -134,15 +134,15 @@
 
     <p>The different sections of the LPA must be signed in the right order. If they’re not, we cannot register the LPA.</p>
 
-    <p><a class="js-guidance" href="/guide#topic-signing-the-lpa" data-journey-click="page:link:help: -This guide- shows you how to sign">This guide</a> shows you how to sign in the right order.</p>
+    <p><a class="js-guidance" href="/guide#topic-signing-the-lpa" data-analytics-click="page:link:help: -This guide- shows you how to sign">This guide</a> shows you how to sign in the right order.</p>
 
-    <p>Once the LPA has been signed, you can <a href="{{ dateCheckUrl }}" data-journey-click="page:link:navigation: -this tool- to check">use this tool to check your LPA is correct before sending it to us</a>. If you find the LPA has been signed in the wrong order, you'll need to print the relevant sections of the LPA and get them signed again.</p>
+    <p>Once the LPA has been signed, you can <a href="{{ dateCheckUrl }}" data-analytics-click="page:link:navigation: -this tool- to check">use this tool to check your LPA is correct before sending it to us</a>. If you find the LPA has been signed in the wrong order, you'll need to print the relevant sections of the LPA and get them signed again.</p>
 
     <h2 class="heading-large">Found a mistake in the LPA?</h2>
 
     <p>If you spot a mistake in the LPA, do not cross anything out or write anything on the LPA - if you do, we may not be able to register it.</p>
 
-    <p>Find out what to do if you’ve <a class="js-guidance" href="/guide#topic-if-you-find-a-mistake" data-journey-click="page:link:help: found a mistake in the LPA">found a mistake in the LPA</a>.</p>
+    <p>Find out what to do if you’ve <a class="js-guidance" href="/guide#topic-if-you-find-a-mistake" data-analytics-click="page:link:help: found a mistake in the LPA">found a mistake in the LPA</a>.</p>
 
 
     <h2 class="heading-large">Post your LPA to the Office of the Public Guardian</h2>
@@ -208,10 +208,10 @@
 
     <ul class="list">
         <li>
-            <a href="{{ cloneUrl }}" data-journey-click="page:link:reuse: Make an LPA based on this one">Make an LPA based on this one</a> (you'll be able to add people in a single click).
+            <a href="{{ cloneUrl }}" data-analytics-click="page:link:reuse: Make an LPA based on this one">Make an LPA based on this one</a> (you'll be able to add people in a single click).
         </li>
         <li>
-            <a href="/user/dashboard/create" data-journey-click="page:link:create new: Make an LPA from scratch">Make an LPA from scratch</a>
+            <a href="/user/dashboard/create" data-analytics-click="page:link:create new: Make an LPA from scratch">Make an LPA from scratch</a>
         </li>
     </ul>
 </div>
