@@ -1,0 +1,105 @@
+name: "[Workflow] Locust Tests"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+    inputs:
+      account_id:
+        description: "AWS account ID containing the role to assume for boto commands"
+        required: true
+        type: string
+      front_url:
+        description: "URL of the frontend"
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS:
+        required: true
+      AWS_SECRET_ACCESS_KEY_ACTIONS:
+        required: true
+
+jobs:
+  locust_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+
+      - name: Configure AWS Credentials - Security Group & ECR
+        uses: aws-actions/configure-aws-credentials@e1e17a757e536f70e52b5a12b2e8d1d1c60e04ef # tag=v2.0.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::${{ inputs.account_id }}:role/opg-lpa-ci
+          role-duration-seconds: 900
+          role-session-name: OPGLPACypressTestsSecurityGroupECR
+
+      - name: Setup Python
+        uses: actions/setup-python@d27e3f3d7c64b4bbf8e4abfb9b63b83e846e0435 # tag=v4.5.0
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/pipeline/ci_ingress/requirements.txt
+
+      - name: Download Terraform Task definition
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2
+        with:
+          name: terraform-artifact
+          path: /tmp/
+
+      - name: Add GitHub Actions runner Ingress Rule
+        run: |
+          python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
+
+      - name: Configure AWS Credentials - Cypress / S3Monitor
+        uses: aws-actions/configure-aws-credentials@e1e17a757e536f70e52b5a12b2e8d1d1c60e04ef # tag=v2.0.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
+          role-duration-seconds: 3600
+          role-session-name: OPGLPACypressTestsCypressS3Monitor
+
+      - uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: node-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # tag=v3.6.0
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Run Locust Tests
+        env:
+          DISABLE_SSL_VERIFY: True
+        run: |
+          pip install boto3 locust beautifulsoup4 faker
+          python cypress/s3_monitor.py -c &
+          cd locust # note- for now need to run locust from within locust dir as it looks for activation_emails dir relative to this
+          locust --headless -f ./locustfile.py --host ${{ inputs.front_url }} -u 5 -r 1 --run-time 2m
+
+      - name: Configure AWS Credentials
+        if: always()
+        uses: aws-actions/configure-aws-credentials@e1e17a757e536f70e52b5a12b2e8d1d1c60e04ef # tag=v2.0.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-duration-seconds: 900
+          role-to-assume: arn:aws:iam::${{ inputs.account_id }}:role/opg-lpa-ci
+          role-session-name: OPGLPACypressTestsSecurityGroupEnd
+
+      - name: Remove GitHub Actions runner Ingress Rule
+        if: always()
+        run: |
+          python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json
