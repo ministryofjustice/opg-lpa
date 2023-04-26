@@ -101,8 +101,6 @@ jobs:
           CYPRESS_RUN_A11Y_TESTS: true
         run: |
           pip install boto3
-          #pip install -e s3monitor
-          #export PYTHONPATH=$PYTHONPATH:./s3monitor
           npm install .
           ./cypress/cypress_start.sh
 
