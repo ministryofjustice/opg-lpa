@@ -6,7 +6,7 @@ from subprocess import Popen
 from threading import Thread
 from urllib.parse import urlparse
 
-from s3monitor import S3Monitor
+from s3_monitor import S3Monitor
 from stitch import stitch_feature_files
 from user_number import generate_user_number
 
