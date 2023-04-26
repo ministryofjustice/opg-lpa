@@ -103,7 +103,6 @@ jobs:
           pip install boto3
           #pip install -e s3monitor
           #export PYTHONPATH=$PYTHONPATH:./s3monitor
-          python cypress/s3_monitor.py -v
           npm install .
           ./cypress/cypress_start.sh
 
