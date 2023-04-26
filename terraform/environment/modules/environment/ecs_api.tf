@@ -215,7 +215,7 @@ locals {
         { "name" : "POSTGRESQL_DATABASE", "value" : module.api_aurora[0].name },
         { "name" : "PGBOUNCER_DATABASE", "value" : module.api_aurora[0].name },
         { "name" : "POSTGRESQL_HOST", "value" : module.api_aurora[0].endpoint },
-        { "name" : "PGBOUNCER_SERVER_TLS_SSLMODE", "value" : "require" },
+        { "name" : "PGBOUNCER_SERVER_TLS_SSLMODE", "value" : "verify-full" },
       ],
     }
   )
