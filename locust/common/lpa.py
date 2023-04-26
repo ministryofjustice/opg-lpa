@@ -1,6 +1,5 @@
 from common.helper import get_csrf_token
 import random
-import logging
 from bs4 import BeautifulSoup
 from faker import Faker
 from common.config import logger
