@@ -84,7 +84,7 @@ jobs:
           DISABLE_SSL_VERIFY: True
         run: |
           pip install boto3 locust beautifulsoup4 faker
-          python cypress/s3_monitor.py -c -v &
+          python cypress/s3_monitor.py -c &
           cd locust # note- for now need to run locust from within locust dir as it looks for activation_emails dir relative to this
           locust --headless -f ./locustfile.py --host ${{ inputs.front_url }} -u 5 -r 1 --run-time 2m
 
