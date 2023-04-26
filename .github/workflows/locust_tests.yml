@@ -85,7 +85,8 @@ jobs:
         run: |
           pip install boto3 locust beautifulsoup4 faker
           python cypress/s3_monitor.py -c -v &
-          locust --headless -f locust/locustfile.py --host ${{ inputs.front_url }} -u 5 -r 1 --run-time 2m
+          cd locust
+          locust --headless -f ./locustfile.py --host ${{ inputs.front_url }} -u 5 -r 1 --run-time 2m
 
       - name: Configure AWS Credentials
         if: always()
