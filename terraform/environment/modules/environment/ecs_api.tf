@@ -267,6 +267,11 @@ data "aws_ecr_repository" "lpa_api_app" {
   name     = "online-lpa/api_app"
 }
 
+data "aws_ecr_repository" "lpa_pgbouncer" {
+  provider = aws.management
+  name     = "online-lpa/pgbouncer"
+}
+
 //-----------------------------------------------
 // api ECS Service Task Container level config
 
@@ -307,7 +312,7 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      "image" : "bitnami/pgbouncer:latest",
+      "image" : "${data.aws_ecr_repository.lpa_pgbouncer.repository_url}:${var.container_version}",
       "name" : "pgbouncer",
       "mountPoints" : [],
       "healthCheck" : {
