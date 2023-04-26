@@ -209,6 +209,16 @@ jobs:
       cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway"
     secrets: inherit
 
+  locust_tests:
+    name: Run locust tests
+    uses: ./.github/workflows/locust_tests.yml
+    needs:
+      - preprod_terraform_outputs
+    with:
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
+      account_id: "987830934591"
+    secrets: inherit
+
   slack_msg_production_deploy_begin:
     name: Annouce Production Deployment
     runs-on: ubuntu-latest

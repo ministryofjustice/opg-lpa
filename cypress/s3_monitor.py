@@ -12,7 +12,6 @@ import boto3
 
 
 class S3Monitor:
-
     MAILBOX_BUCKET = "opg-lpa-casper-mailbox"
     ACTIVATION_EMAILS_PATH = (Path(__file__).parent / "activation_emails").resolve()
 
