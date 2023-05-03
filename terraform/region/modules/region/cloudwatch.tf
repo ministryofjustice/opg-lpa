@@ -90,3 +90,16 @@ data "aws_iam_policy_document" "task_stopped_topic_policy" {
     resources = [aws_sns_topic.cloudwatch_to_account_ops_alerts.arn]
   }
 }
+
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
+resource "aws_cloudwatch_log_group" "online-lpa" {
+  name              = "online-lpa"
+  retention_in_days = local.account.retention_in_days
+
+  tags = merge(
+    local.shared_component_tag,
+    {
+      "Name" = "online-lpa"
+    },
+  )
+}
