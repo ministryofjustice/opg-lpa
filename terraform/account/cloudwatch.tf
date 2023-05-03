@@ -1,19 +1,5 @@
-#tfsec:ignore:aws-cloudwatch-log-group-customer-key
-resource "aws_cloudwatch_log_group" "online-lpa" {
-  name              = "online-lpa"
-  retention_in_days = local.account.retention_in_days
-
-  tags = merge(
-    local.shared_component_tag,
-    {
-      "Name" = "online-lpa"
-    },
-  )
-}
-
 data "aws_cloudwatch_log_group" "cloudtrail" {
-  name     = "online_lpa_cloudtrail_${local.account_name}"
-  provider = aws.eu-west-1
+  name = "online_lpa_cloudtrail_${local.account_name}"
 }
 
 resource "aws_cloudwatch_log_metric_filter" "breakglass_metric" {
