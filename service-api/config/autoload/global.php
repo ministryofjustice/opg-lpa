@@ -19,7 +19,7 @@ return [
             'client' => [
                 'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 'version' => '2012-08-10',
-                'region' => 'eu-west-1',
+                'region' => getenv('AWS_REGION') ?: 'eu-west-1',
                 'credentials' => (getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY')) ? [
                     'key'    => getenv('AWS_ACCESS_KEY_ID'),
                     'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
@@ -65,7 +65,7 @@ return [
                     'endpoint' => getenv('OPG_LPA_COMMON_S3_ENDPOINT') ?: null,
                     'use_path_style_endpoint' => true,
                     'version' => '2006-03-01',
-                    'region' => 'eu-west-1',
+                    'region' => getenv('AWS_REGION') ?: 'eu-west-1',
                 ],
             ], // S3
 
@@ -77,7 +77,7 @@ return [
                     'url' => getenv('OPG_LPA_COMMON_PDF_QUEUE_URL') ?: null,
                 ],
                 'client' => [
-                    'region' => 'eu-west-1',
+                    'region' => getenv('AWS_REGION') ?: 'eu-west-1',
                     'version' => '2012-11-05',
                 ],
             ],
@@ -92,7 +92,7 @@ return [
                 'client' => [
                     'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                     'version' => '2012-08-10',
-                    'region' => 'eu-west-1',
+                    'region' => getenv('AWS_REGION') ?: 'eu-west-1',
                     'credentials' => (getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY')) ? [
                         'key'    => getenv('AWS_ACCESS_KEY_ID'),
                         'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
@@ -114,7 +114,7 @@ return [
             'client' => [
                 'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 'version' => '2012-08-10',
-                'region' => 'eu-west-1',
+                'region' => getenv('AWS_REGION') ?: 'eu-west-1',
                 'credentials' => (getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY')) ? [
                     'key'    => getenv('AWS_ACCESS_KEY_ID'),
                     'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
