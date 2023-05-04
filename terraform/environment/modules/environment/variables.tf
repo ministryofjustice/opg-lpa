@@ -100,11 +100,6 @@ variable "ecs_iam_task_roles" {
       arn  = string
       id   = string
     })
-    feedbackdb = object({
-      name = string
-      arn  = string
-      id   = string
-    })
     seeding = object({
       name = string
       arn  = string
