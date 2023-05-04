@@ -41,15 +41,6 @@ resource "aws_iam_role" "pdf_task_role" {
   tags               = local.pdf_component_tag
 }
 
-//----------------
-// Feedback ECS task role
-
-resource "aws_iam_role" "feedbackdb_task_role" {
-  name               = "${local.environment_name}-feedbackdb-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.feedbackdb_component_tag
-}
-
 
 //----------------
 // Seed ECS task role
