@@ -45,7 +45,6 @@ resource "aws_iam_role" "pdf_task_role" {
 //----------------
 // Seed ECS task role
 resource "aws_iam_role" "seeding_task_role" {
-  count              = local.environment_name == "production" ? 0 : 1
   name               = "${local.environment_name}-seeding-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = local.seeding_component_tag

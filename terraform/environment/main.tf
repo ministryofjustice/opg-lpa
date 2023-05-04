@@ -15,7 +15,7 @@ module "eu-west-1" {
     front             = aws_iam_role.front_task_role
     admin             = aws_iam_role.admin_task_role
     pdf               = aws_iam_role.pdf_task_role
-    seeding           = aws_iam_role.seeding_task_role[0]
+    seeding           = aws_iam_role.seeding_task_role
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
   providers = {
@@ -42,7 +42,7 @@ module "eu-west-2" {
     front             = aws_iam_role.front_task_role
     admin             = aws_iam_role.admin_task_role
     pdf               = aws_iam_role.pdf_task_role
-    seeding           = aws_iam_role.seeding_task_role[0]
+    seeding           = aws_iam_role.seeding_task_role
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
 
