@@ -21,6 +21,14 @@ data "aws_db_snapshot" "api_snapshot" {
   most_recent            = true
 }
 
+data "aws_availability_zones" "aws_zones" {
+  # Exclude Local Zones
+  filter {
+    name   = "opt-in-status"
+    values = ["opt-in-not-required"]
+  }
+}
+
 resource "aws_db_instance" "api" {
   count                               = var.account.always_on ? 1 : 0
   identifier                          = lower("api-${var.environment_name}")
@@ -83,6 +91,7 @@ module "api_aurora" {
   count                         = var.account.aurora_enabled ? 1 : 0
   aurora_serverless             = var.account.aurora_serverless
   account_id                    = data.aws_caller_identity.current.account_id
+  availability_zones            = data.aws_availability_zones.aws_zones.names
   apply_immediately             = !var.account.deletion_protection
   cluster_identifier            = "api2"
   db_subnet_group_name          = "data-persistence-subnet-default"
