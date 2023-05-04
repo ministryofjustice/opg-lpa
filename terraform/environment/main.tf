@@ -9,7 +9,15 @@ module "eu-west-1" {
   pagerduty_token          = var.pagerduty_token
   management_role          = var.management_role
   default_role             = var.default_role
-
+  ecs_execution_role       = aws_iam_role.execution_role
+  ecs_iam_task_roles = {
+    api               = aws_iam_role.api_task_role
+    front             = aws_iam_role.front_task_role
+    admin             = aws_iam_role.admin_task_role
+    pdf               = aws_iam_role.pdf_task_role
+    seeding           = aws_iam_role.seeding_task_role
+    cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
+  }
   providers = {
     aws            = aws.eu_west_1
     aws.management = aws.management
@@ -28,6 +36,15 @@ module "eu-west-2" {
   pagerduty_token          = var.pagerduty_token
   management_role          = var.management_role
   default_role             = var.default_role
+  ecs_execution_role       = aws_iam_role.execution_role
+  ecs_iam_task_roles = {
+    api               = aws_iam_role.api_task_role
+    front             = aws_iam_role.front_task_role
+    admin             = aws_iam_role.admin_task_role
+    pdf               = aws_iam_role.pdf_task_role
+    seeding           = aws_iam_role.seeding_task_role
+    cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
+  }
 
   providers = {
     aws            = aws.eu_west_2
