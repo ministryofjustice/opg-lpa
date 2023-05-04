@@ -11,6 +11,7 @@ class ECSMonitor:
     aws_ecs_cluster = ""
     aws_ec2_client = ""
     aws_logs_client = ""
+    aws_region = ""
     aws_private_subnets = []
     db_client_security_group = ""
     security_group = ""
@@ -20,7 +21,7 @@ class ECSMonitor:
     nextForwardToken = ""
     logStreamName = ""
     taskName = ""
-    
+
     def __init__(self, config_file, nameOfTask):
         self.taskName = nameOfTask
         self.read_parameters_from_file(config_file)
@@ -28,7 +29,7 @@ class ECSMonitor:
 
         self.aws_ecs_client = boto3.client(
             "ecs",
-            region_name="eu-west-1",
+            region_name=self.aws_region,
             aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
             aws_secret_access_key=self.aws_iam_session["Credentials"][
                 "SecretAccessKey"
@@ -37,7 +38,7 @@ class ECSMonitor:
         )
         self.aws_ec2_client = boto3.client(
             "ec2",
-            region_name="eu-west-1",
+            region_name=self.aws_region,
             aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
             aws_secret_access_key=self.aws_iam_session["Credentials"][
                 "SecretAccessKey"
@@ -46,7 +47,7 @@ class ECSMonitor:
         )
         self.aws_logs_client = boto3.client(
             "logs",
-            region_name="eu-west-1",
+            region_name=self.aws_region,
             aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
             aws_secret_access_key=self.aws_iam_session["Credentials"][
                 "SecretAccessKey"
@@ -65,6 +66,7 @@ class ECSMonitor:
             self.environment = parameters["environment"]
             self.db_client_security_group = parameters["db_client_security_group_id"]
             self.security_group = parameters[f"{self.taskName}_security_group_id"]
+            self.aws_region = parameters["region"]
 
     def get_task_definition(self):
         # get the latest task definition
@@ -78,7 +80,6 @@ class ECSMonitor:
         print(self.task_definition)
 
     def set_iam_role_session(self):
-
         current_role_arn = boto3.client("sts").get_caller_identity().get("Arn")
         if os.getenv("CI"):
             role_arn = f"arn:aws:iam::{self.aws_account_id}:role/opg-lpa-ci"
@@ -96,13 +97,19 @@ class ECSMonitor:
             and role_to_assume_account == current_role_account
         ):
             print("Already in the correct role")
-            self.aws_iam_session["Credentials"]["AccessKeyId"] = os.getenv("AWS_ACCESS_KEY_ID")
-            self.aws_iam_session["Credentials"]["SecretAccessKey"] = os.getenv("AWS_SECRET_ACCESS_KEY")
-            self.aws_iam_session["Credentials"]["SessionToken"] = os.getenv("AWS_SESSION_TOKEN")
+            self.aws_iam_session["Credentials"]["AccessKeyId"] = os.getenv(
+                "AWS_ACCESS_KEY_ID"
+            )
+            self.aws_iam_session["Credentials"]["SecretAccessKey"] = os.getenv(
+                "AWS_SECRET_ACCESS_KEY"
+            )
+            self.aws_iam_session["Credentials"]["SessionToken"] = os.getenv(
+                "AWS_SESSION_TOKEN"
+            )
         else:
             sts = boto3.client(
                 "sts",
-                region_name="eu-west-1",
+                region_name=self.aws_region,
             )
             session = sts.assume_role(
                 RoleArn=role_arn,
