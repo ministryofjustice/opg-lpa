@@ -30,20 +30,9 @@ resource "aws_ecs_task_definition" "seeding" {
   cpu                      = 2048
   memory                   = 4096
   container_definitions    = "[${local.seeding_app}]"
-  task_role_arn            = aws_iam_role.seeding_task_role[count.index].arn
-  execution_role_arn       = aws_iam_role.execution_role.arn
+  task_role_arn            = var.ecs_iam_task_roles.seeding.arn
+  execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.seeding_component_tag
-}
-
-
-//----------------
-// Permissions
-
-resource "aws_iam_role" "seeding_task_role" {
-  count              = var.environment_name == "production" ? 0 : 1
-  name               = "${var.environment_name}-seeding-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.seeding_component_tag
 }
 
 data "aws_ecr_repository" "lpa_seeding_app" {

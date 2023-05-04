@@ -78,6 +78,55 @@ variable "region_name" {
   type = string
 }
 
+variable "ecs_iam_task_roles" {
+  type = object({
+    front = object({
+      name = string
+      arn  = string
+      id   = string
+    })
+    api = object({
+      name = string
+      arn  = string
+      id   = string
+    })
+    pdf = object({
+      name = string
+      arn  = string
+      id   = string
+    })
+    admin = object({
+      name = string
+      arn  = string
+      id   = string
+    })
+    feedbackdb = object({
+      name = string
+      arn  = string
+      id   = string
+    })
+    seeding = object({
+      name = string
+      arn  = string
+      id   = string
+    })
+    cloudwatch_events = object({
+      name = string
+      arn  = string
+      id   = string
+    })
+  })
+  description = "IAM roles to be used by the ECS tasks"
+}
+
+variable "ecs_execution_role" {
+  type = object({
+    name = string
+    arn  = string
+  })
+  description = "The ARN of the ECS execution role"
+}
+
 # run-time variables
 variable "container_version" {
   type    = string
