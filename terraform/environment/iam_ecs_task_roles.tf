@@ -95,6 +95,6 @@ data "aws_iam_policy_document" "cloudwatch_events_role_policy" {
 
 // The assumed role's permissions
 resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
-  role   = aws_iam_role.execution_role.name
+  role   = aws_iam_role.cloudwatch_events_ecs_role.name
   policy = data.aws_iam_policy_document.cloudwatch_events_role_policy.json
 }
