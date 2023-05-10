@@ -13,6 +13,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client as HttpClient;
+use MakeShared\Telemetry\TelemetryEventManager;
 use RuntimeException;
 
 class Service extends AbstractService
@@ -79,6 +80,11 @@ class Service extends AbstractService
         // build request loop
         $requests = [];
         $siriusResponseArray = [];
+
+        TelemetryEventManager::triggerStart(
+            'ProcessingStatus.Service.getStatuses',
+            ['annotations' => ['lpa_ids' => $ids]]
+        );
 
         foreach ($ids as $id) {
             $prefixedId = $id;
@@ -164,6 +170,8 @@ class Service extends AbstractService
                     break;
             }
         }
+
+        TelemetryEventManager::triggerStop();
 
         return $siriusResponseArray;
     }
