@@ -12,6 +12,7 @@ use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Session\Container;
 use Exception;
 use RuntimeException;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 /**
  * On many of the methods in this class where we're catching

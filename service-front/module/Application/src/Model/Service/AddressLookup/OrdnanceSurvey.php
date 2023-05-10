@@ -5,6 +5,7 @@ namespace Application\Model\Service\AddressLookup;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient as HttpClientInterface;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 /**
  * Postcode Lookup service using Ordnance Survey data.
@@ -89,6 +90,10 @@ class OrdnanceSurvey
         $url = URI::withQueryValue($url, 'postcode', $postcode);
         $url = URI::withQueryValue($url, 'lr', 'EN');
 
+        TelemetryEventManager::triggerStart(
+            'OrdnanceSurvey.getData',
+        );
+
         $headers = [
             'Accept' => 'application/json',
             'Accept-Language' => 'en',
@@ -111,6 +116,8 @@ class OrdnanceSurvey
         if (!isset($body['results']) || !is_array($body['results'])) {
             throw new \RuntimeException('Error retrieving address details: invalid JSON');
         }
+
+        TelemetryEventManager::triggerStop();
 
         return $body['results'];
     }
