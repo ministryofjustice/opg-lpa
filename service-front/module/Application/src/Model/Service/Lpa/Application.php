@@ -24,7 +24,6 @@ use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use ArrayObject;
 use RuntimeException;
-use MakeShared\Telemetry\TelemetryEventManager;
 
 class Application extends AbstractService implements ApiClientAwareInterface
 {
@@ -46,11 +45,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         $target = sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId);
 
         try {
-            TelemetryEventManager::triggerStart(
-                'Application.getApplication',
-            );
             $result = $this->apiClient->httpGet($target);
-            TelemetryEventManager::triggerStop();
             return new Lpa($result);
         } catch (ApiException $ex) {
             $this->getLogger()->err($ex->getMessage());
@@ -64,11 +59,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         $target = sprintf('/v2/user/%s/statuses/%s', $this->getUserId(), $ids);
 
         try {
-            TelemetryEventManager::triggerStart(
-                'Application.getStatuses',
-            );
             $result = $this->apiClient->httpGet($target);
-            TelemetryEventManager::triggerStop();
         } catch (ApiException $ex) {
             $this->getLogger()->err($ex->getMessage());
             $result = null;
@@ -171,14 +162,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         //  Get the response and check its contents
         try {
-            TelemetryEventManager::triggerStart(
-                'Application.getLpaSummaries',
-            );
             $response = $this->apiClient->httpGet(
                 sprintf('/v2/user/%s/applications', $this->getUserId()),
                 $queryParams
             );
-            TelemetryEventManager::triggerStop();
             if (is_array($response)) {
                 $result = $response;
             }
@@ -348,9 +335,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
         $target = sprintf('/v2/user/%s/applications/%s/primary-attorneys', $this->getUserId(), $lpa->id);
 
         try {
-            TelemetryEventManager::triggerStart(
-                'Application.addPrimaryAttorney',
-            );
             $result = $this->apiClient->httpPost($target, $primaryAttorney->toArray());
             if (is_array($result)) {
                 //  Marshall the data into the required data object and set it in the LPA
@@ -359,8 +343,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 } else {
                     $lpa->document->primaryAttorneys[] = new TrustCorporation($result);
                 }
-
-                TelemetryEventManager::triggerStop();
 
                 return true;
             }

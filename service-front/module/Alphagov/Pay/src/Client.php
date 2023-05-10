@@ -1,4 +1,5 @@
 <?php
+
 namespace Alphagov\Pay;
 
 use GuzzleHttp\Psr7\Uri;                            // Concrete PSR-7 URL representation.
@@ -6,6 +7,7 @@ use GuzzleHttp\Psr7\Request;                        // Concrete PSR-7 HTTP Reque
 use Psr\Http\Message\UriInterface;                  // PSR-7 URI Interface
 use Psr\Http\Message\ResponseInterface;             // PSR-7 HTTP Response Interface
 use Http\Client\HttpClient as HttpClientInterface;  // Interface for a PSR-7 compatible HTTP Client.
+use MakeShared\Telemetry\TelemetryEventManager;
 
 /**
  * Client for accessing GOV.UK Pay.
@@ -17,8 +19,8 @@ use Http\Client\HttpClient as HttpClientInterface;  // Interface for a PSR-7 com
  * Class Client
  * @package Alphagov\Pay
  */
-class Client {
-
+class Client
+{
     /**
      * @const string Current version of this client.
      * This follows Semantic Versioning (http://semver.org/)
@@ -72,7 +74,7 @@ class Client {
      *
      * @param array $config
      */
-    public function __construct( array $config )
+    public function __construct(array $config)
     {
 
         $config = array_merge([
@@ -85,54 +87,39 @@ class Client {
         //--------------------------
         // Set base URL
 
-        if( !isset( $config['baseUrl'] ) ){
-
+        if (!isset($config['baseUrl'])) {
             // If not set, we default to production
             $this->baseUrl = self::BASE_URL_PRODUCTION;
-
-        } elseif ( filter_var($config['baseUrl'], FILTER_VALIDATE_URL) !== false ) {
-
+        } elseif (filter_var($config['baseUrl'], FILTER_VALIDATE_URL) !== false) {
             // Else we allow an arbitrary URL to be set.
             $this->baseUrl = $config['baseUrl'];
-
         } else {
-
             throw new Exception\InvalidArgumentException(
                 "Invalid 'baseUrl' set. This must be either a valid URL, or null to use the production URL."
             );
-
         }
 
         //--------------------------
         // Set HTTP Client
 
-        if( $config['httpClient'] instanceof HttpClientInterface ){
-
-            $this->setHttpClient( $config['httpClient'] );
-
+        if ($config['httpClient'] instanceof HttpClientInterface) {
+            $this->setHttpClient($config['httpClient']);
         } else {
-
             throw new Exception\InvalidArgumentException(
                 "An instance of HttpClientInterface must be set under 'httpClient'"
             );
-
         }
 
         //--------------------------
         // Set API Key
 
-        if( is_string($config['apiKey']) ){
-
+        if (is_string($config['apiKey'])) {
             $this->apiKey = $config['apiKey'];
-
         } else {
-
             throw new Exception\InvalidArgumentException(
                 "'apiKey' must be set"
             );
-
         }
-
     }
 
     //------------------------------------------------------------------------------------
@@ -147,15 +134,16 @@ class Client {
      * @param $returnUrl UriInterface URL the user will be directed back to.
      * @return Response\Payment
      */
-    public function createPayment( $amount, $reference, $description, UriInterface $returnUrl ){
+    public function createPayment($amount, $reference, $description, UriInterface $returnUrl)
+    {
 
-        if( !is_int($amount) ){
+        if (!is_int($amount)) {
             throw new Exception\InvalidArgumentException(
                 '$amount must be an integer, representing the amount, in pence'
             );
         }
 
-        $response = $this->httpPost( self::PATH_PAYMENT_CREATE, [
+        $response = $this->httpPost(self::PATH_PAYMENT_CREATE, [
             'amount'        => (int)$amount,
             'reference'     => (string)$reference,
             'description'   => (string)$description,
@@ -164,12 +152,11 @@ class Client {
 
         //---
 
-        if( $response->getStatusCode() != 201 ){
-            throw $this->createErrorException( $response );
+        if ($response->getStatusCode() != 201) {
+            throw $this->createErrorException($response);
         }
 
         return Response\Payment::buildFromResponse($response);
-        
     }
 
     /**
@@ -181,18 +168,18 @@ class Client {
      * @param $payment string|Response\Payment GOV.UK payment ID or a Payment Response object.
      * @return null|Response\Payment
      */
-    public function getPayment( $payment ){
+    public function getPayment($payment)
+    {
 
         $paymentId = ( $payment instanceof Response\Payment ) ? $payment->payment_id : $payment;
 
-        $path = sprintf( self::PATH_PAYMENT_LOOKUP, $paymentId );
+        $path = sprintf(self::PATH_PAYMENT_LOOKUP, $paymentId);
 
-        $response = $this->httpGet( $path );
+        $response = $this->httpGet($path);
 
         //---
 
         return ( $response->getStatusCode() == 200 ) ? Response\Payment::buildFromResponse($response) : null;
-
     }
 
     /**
@@ -204,18 +191,18 @@ class Client {
      * @param $payment string|Response\Payment GOV.UK payment ID or a Payment Response object.
      * @return array|Response\Events
      */
-    public function getPaymentEvents( $payment ){
+    public function getPaymentEvents($payment)
+    {
 
         $paymentId = ( $payment instanceof Response\Payment ) ? $payment->payment_id : $payment;
 
-        $path = sprintf( self::PATH_PAYMENT_EVENTS, $paymentId );
+        $path = sprintf(self::PATH_PAYMENT_EVENTS, $paymentId);
 
-        $response = $this->httpGet( $path );
+        $response = $this->httpGet($path);
 
         //---
 
         return ( $response->getStatusCode() == 200 ) ? Response\Events::buildFromResponse($response) : array();
-
     }
 
     /**
@@ -226,18 +213,18 @@ class Client {
      * @param $payment string|Response\Payment GOV.UK payment ID or a Payment Response object.
      * @return array|Response\Refunds
      */
-    public function getPaymentRefunds( $payment ){
+    public function getPaymentRefunds($payment)
+    {
 
         $paymentId = ( $payment instanceof Response\Payment ) ? $payment->payment_id : $payment;
 
-        $path = sprintf( self::PATH_PAYMENT_REFUNDS, $paymentId );
+        $path = sprintf(self::PATH_PAYMENT_REFUNDS, $paymentId);
 
-        $response = $this->httpGet( $path );
+        $response = $this->httpGet($path);
 
         //---
 
         return ( $response->getStatusCode() == 200 ) ? Response\Refunds::buildFromResponse($response) : array();
-
     }
 
     /**
@@ -250,19 +237,19 @@ class Client {
      * @param $refund string|Response\Refund GOV.UK refund ID or a Refund Response object.
      * @return null|Response\Refund
      */
-    public function getPaymentRefund( $payment, $refund ){
+    public function getPaymentRefund($payment, $refund)
+    {
 
         $paymentId = ( $payment instanceof Response\Payment ) ? $payment->payment_id : $payment;
         $refundId  = ( $refund instanceof Response\Refund   ) ? $refund->refund_id   : $refund;
 
-        $path = sprintf( self::PATH_PAYMENT_REFUND, $paymentId, $refundId );
+        $path = sprintf(self::PATH_PAYMENT_REFUND, $paymentId, $refundId);
 
-        $response = $this->httpGet( $path );
+        $response = $this->httpGet($path);
 
         //---
 
         return ( $response->getStatusCode() == 200 ) ? Response\Refund::buildFromResponse($response) : null;
-
     }
 
     /**
@@ -271,22 +258,22 @@ class Client {
      * @param $payment string|Response\Payment GOV.UK payment ID or a Payment Response object.
      * @return bool
      */
-    public function cancelPayment( $payment ){
+    public function cancelPayment($payment)
+    {
 
         $paymentId = ( $payment instanceof Response\Payment ) ? $payment->payment_id : $payment;
 
-        $path = sprintf( self::PATH_PAYMENT_CANCEL, $paymentId );
+        $path = sprintf(self::PATH_PAYMENT_CANCEL, $paymentId);
 
-        $response = $this->httpPost( $path );
+        $response = $this->httpPost($path);
 
         //---
 
-        if( $response->getStatusCode() != 204 ){
-            throw $this->createErrorException( $response );
+        if ($response->getStatusCode() != 204) {
+            throw $this->createErrorException($response);
         }
 
         return true;
-
     }
 
     /**
@@ -297,11 +284,12 @@ class Client {
      * @param $refundAmountAvailable null|int The expected amount available for refund, in pence.
      * @return Response\Refund
      */
-    public function refundPayment( $payment, $amount, $refundAmountAvailable = null ){
+    public function refundPayment($payment, $amount, $refundAmountAvailable = null)
+    {
 
         $paymentId = ( $payment instanceof Response\Payment ) ? $payment->payment_id : $payment;
 
-        $path = sprintf( self::PATH_PAYMENT_REFUNDS, $paymentId );
+        $path = sprintf(self::PATH_PAYMENT_REFUNDS, $paymentId);
 
         //---
 
@@ -309,22 +297,21 @@ class Client {
             'amount' => (int)$amount,
         );
 
-        if( is_numeric($refundAmountAvailable) ){
+        if (is_numeric($refundAmountAvailable)) {
             $payload['refund_amount_available'] = (int)$refundAmountAvailable;
         }
 
         //---
 
-        $response = $this->httpPost( $path, $payload );
+        $response = $this->httpPost($path, $payload);
 
         //---
 
-        if( $response->getStatusCode() != 202 ){
-            throw $this->createErrorException( $response );
+        if ($response->getStatusCode() != 202) {
+            throw $this->createErrorException($response);
         }
 
         return Response\Refund::buildFromResponse($response);
-
     }
 
     /**
@@ -333,10 +320,11 @@ class Client {
      * @param $filters array key=>value filters applied to the search.
      * @return array|Response\Payments
      */
-    public function searchPayments( array $filters = array() ){
+    public function searchPayments(array $filters = array())
+    {
 
         // Only allow the following filter keys.
-        $filters = array_intersect_key( $filters, array_flip([
+        $filters = array_intersect_key($filters, array_flip([
             'reference',
             'state',
             'from_date',
@@ -348,30 +336,25 @@ class Client {
         //---
 
         // We force the use of PHP's DateTime to ensure dates are encoded correctly.
-        foreach( [ 'from_date', 'to_date' ] as $dateField ){
-
-            if( isset($filters[$dateField]) ) {
-
+        foreach ([ 'from_date', 'to_date' ] as $dateField) {
+            if (isset($filters[$dateField])) {
                 // If the date is not a DateTime, then we don't allow it.
-                if ( !($filters[$dateField] instanceof \DateTime) ) {
+                if (!($filters[$dateField] instanceof \DateTime)) {
                     throw new Exception\InvalidArgumentException("'{$dateField}' must be passed as a PHP DateTime object");
                 }
 
                 // Otherwise convert it to a URL encoded ISO 8601 string.
                 $filters[$dateField] = urlencode($filters[$dateField]->format('c'));
-
             } // if
-
         } // foreach
 
         //---
 
-        $response = $this->httpGet( self::PATH_PAYMENT_LIST, $filters );
+        $response = $this->httpGet(self::PATH_PAYMENT_LIST, $filters);
 
         //---
 
         return ( $response->getStatusCode() == 200 ) ? Response\Payments::buildFromResponse($response) : array();
-        
     }
 
     //------------------------------------------------------------------------------------
@@ -383,15 +366,15 @@ class Client {
      *
      * @return array
      */
-    private function buildHeaders(){
+    private function buildHeaders()
+    {
 
         return [
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'Authorization' => 'Bearer ' . $this->apiKey,
             'Accept'        => 'application/json',
             'Content-type'  => 'application/json',
-            'User-agent'    => 'PAY-API-PHP-CLIENT/'.self::VERSION
+            'User-agent'    => 'PAY-API-PHP-CLIENT/' . self::VERSION
         ];
-
     }
 
     //-------------------------------------------
@@ -406,12 +389,18 @@ class Client {
      * @return ResponseInterface
      * @throw Exception\PayException | Exception\ApiException | Exception\UnexpectedValueException
      */
-    private function httpGet( $path, array $query = array() ){
+    private function httpGet($path, array $query = array())
+    {
 
-        $url = new Uri( $this->baseUrl . $path );
+        TelemetryEventManager::triggerStart(
+            'AlphaGovClient.httpGet',
+            ['annotations' => ['path' => $path]]
+        );
 
-        foreach( $query as $name => $value ){
-            $url = Uri::withQueryValue($url, $name, $value );
+        $url = new Uri($this->baseUrl . $path);
+
+        foreach ($query as $name => $value) {
+            $url = Uri::withQueryValue($url, $name, $value);
         }
 
         //---
@@ -423,21 +412,20 @@ class Client {
         );
 
         try {
-
-            $response = $this->getHttpClient()->sendRequest( $request );
-
-        } catch (\RuntimeException $e){
-            throw new Exception\PayException( $e->getMessage(), $e->getCode(), $e );
+            $response = $this->getHttpClient()->sendRequest($request);
+        } catch (\RuntimeException $e) {
+            throw new Exception\PayException($e->getMessage(), $e->getCode(), $e);
         }
 
         //---
 
-        if( !in_array($response->getStatusCode(), [200, 404]) ){
-            throw $this->createErrorException( $response );
+        if (!in_array($response->getStatusCode(), [200, 404])) {
+            throw $this->createErrorException($response);
         }
 
-        return $response;
+        TelemetryEventManager::triggerStop();
 
+        return $response;
     }
 
 
@@ -450,9 +438,15 @@ class Client {
      * @return ResponseInterface
      * @throw Exception\PayException | Exception\ApiException | Exception\UnexpectedValueException
      */
-    private function httpPost( $path, array $payload = array() ){
+    private function httpPost($path, array $payload = array())
+    {
 
-        $url = new Uri( $this->baseUrl . $path );
+        TelemetryEventManager::triggerStart(
+            'AlphaGovClient.httpPost',
+            ['annotations' => ['path' => $path]]
+        );
+
+        $url = new Uri($this->baseUrl . $path);
 
         $request = new Request(
             'POST',
@@ -462,21 +456,20 @@ class Client {
         );
 
         try {
-
-            $response = $this->getHttpClient()->sendRequest( $request );
-
-        } catch (\RuntimeException $e){
-            throw new Exception\PayException( $e->getMessage(), $e->getCode(), $e );
+            $response = $this->getHttpClient()->sendRequest($request);
+        } catch (\RuntimeException $e) {
+            throw new Exception\PayException($e->getMessage(), $e->getCode(), $e);
         }
 
         //---
 
-        if( !in_array($response->getStatusCode(), [201, 202, 204]) ){
-            throw $this->createErrorException( $response );
+        TelemetryEventManager::triggerStop();
+
+        if (!in_array($response->getStatusCode(), [201, 202, 204])) {
+            throw $this->createErrorException($response);
         }
 
         return $response;
-
     }
 
     //-------------------------------------------
@@ -489,15 +482,15 @@ class Client {
      *
      * @return Exception\ApiException
      */
-    protected function createErrorException( ResponseInterface $response ){
+    protected function createErrorException(ResponseInterface $response)
+    {
 
         $body = json_decode($response->getBody(), true);
 
         $message = "HTTP:{$response->getStatusCode()} - ";
         $message .= (is_array($body)) ? print_r($body, true) : 'Unexpected response from server';
 
-        return new Exception\ApiException( $message, $response->getStatusCode(), $response );
-
+        return new Exception\ApiException($message, $response->getStatusCode(), $response);
     }
 
     //------------------------------------------------------------------------------------
@@ -507,24 +500,22 @@ class Client {
      * @return HttpClientInterface
      * @throws Exception\UnexpectedValueException
      */
-    final protected function getHttpClient(){
+    final protected function getHttpClient()
+    {
 
-        if( !( $this->httpClient instanceof HttpClientInterface ) ){
+        if (!( $this->httpClient instanceof HttpClientInterface )) {
             throw new Exception\UnexpectedValueException('Invalid HttpClient set');
         }
 
         return $this->httpClient;
-
     }
 
     /**
      * @param HttpClientInterface $client
      */
-    final protected function setHttpClient( HttpClientInterface $client ){
+    final protected function setHttpClient(HttpClientInterface $client)
+    {
 
         $this->httpClient = $client;
-
     }
-
-
 }

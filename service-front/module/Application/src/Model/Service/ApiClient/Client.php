@@ -78,6 +78,11 @@ class Client
         $anonymous = false,
         $additionalHeaders = []
     ) {
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpGet',
+            ['annotations' => ['path' => $path, 'query_count' => count($query)]]
+        );
+
         $url = new Uri($this->apiBaseUri . $path);
 
         foreach ($query as $name => $value) {
@@ -89,6 +94,8 @@ class Client
         $request = new Request('GET', $url, $headers);
 
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -116,6 +123,10 @@ class Client
      */
     public function httpPost($path, array $payload = [], array $additionalHeaders = [])
     {
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpPost',
+            ['annotations' => ['path' => $path]]
+        );
         $url = $this->apiBaseUri . $path;
 
         $headers = $this->buildHeaders($additionalHeaders);
@@ -123,6 +134,8 @@ class Client
         $request = new Request('POST', $url, $headers, json_encode($payload));
 
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -146,11 +159,17 @@ class Client
      */
     public function httpPut($path, array $payload = [])
     {
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpPut',
+            ['annotations' => ['path' => $path]]
+        );
         $url = new Uri($this->apiBaseUri . $path);
 
         $request = new Request('PUT', $url, $this->buildHeaders(), json_encode($payload));
 
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -174,11 +193,17 @@ class Client
      */
     public function httpPatch($path, array $payload = [])
     {
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpPatch',
+            ['annotations' => ['path' => $path]]
+        );
         $url = new Uri($this->apiBaseUri . $path);
 
         $request = new Request('PATCH', $url, $this->buildHeaders(), json_encode($payload));
 
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -199,11 +224,17 @@ class Client
      */
     public function httpDelete($path)
     {
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpDelete',
+            ['annotations' => ['path' => $path]]
+        );
         $url = new Uri($this->apiBaseUri . $path);
 
         $request = new Request('DELETE', $url, $this->buildHeaders());
 
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 204:
