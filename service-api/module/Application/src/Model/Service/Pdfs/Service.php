@@ -11,6 +11,7 @@ use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Filter\Compress;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 class Service extends AbstractService
 {
@@ -153,6 +154,9 @@ class Service extends AbstractService
      */
     private function getPdfStatus(Lpa $lpa, $type)
     {
+        TelemetryEventManager::triggerStart(
+            'PDFService.getPdfStatus',
+        );
         $ident = $this->getPdfIdent($lpa, $type);
 
         // Check if the file already exists in the cache.
@@ -162,6 +166,8 @@ class Service extends AbstractService
             $this->s3Client->headObject($bucketConfig + [
                 'Key' => $ident,
             ]);
+
+            TelemetryEventManager::triggerStop();
 
             // If we get here it exists in the bucket...
             return self::STATUS_READY;
@@ -183,6 +189,9 @@ class Service extends AbstractService
      */
     private function addLpaToQueue(Lpa $lpa, $type)
     {
+        TelemetryEventManager::triggerStart(
+            'PDFService.addLpaToQueue',
+        );
         // Setup the message
         $message = json_encode([
             'lpa' => $lpa->toArray(),
@@ -211,6 +220,7 @@ class Service extends AbstractService
             'MessageGroupId' => $jobId,
             'MessageDeduplicationId' => $jobId,
         ]);
+        TelemetryEventManager::triggerStop();
     }
 
     /**
@@ -220,6 +230,9 @@ class Service extends AbstractService
      */
     private function getPdfFile(Lpa $lpa, $type)
     {
+        TelemetryEventManager::triggerStart(
+            'PDFService.getPdfFile',
+        );
         $bucketConfig = $this->pdfConfig['cache']['s3']['settings'];
 
         try {
@@ -229,7 +242,7 @@ class Service extends AbstractService
         } catch (\Aws\S3\Exception\S3Exception $e) {
             return false;
         }
-
+        TelemetryEventManager::triggerStop();
         return $file['Body']->getContents();
     }
 
