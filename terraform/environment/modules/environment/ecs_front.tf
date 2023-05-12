@@ -142,7 +142,7 @@ locals {
 
   front_app = jsonencode(
     {
-      "cpu" : 224,
+      "cpu" : 192,
       "essential" : true,
       "readonlyRootFilesystem" : true,
       "image" : "${data.aws_ecr_repository.lpa_front_app.repository_url}:${var.container_version}",
