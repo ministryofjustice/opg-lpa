@@ -48,7 +48,7 @@ RUN chmod +x /usr/local/bin/health-check.sh
 WORKDIR /app
 
 # Enable debug and test coverage tooling if needed. Should only be used locally.
-ARG ENABLE_XDEBUG=1
+ARG ENABLE_XDEBUG=0
 RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
     chmod a+w /tmp ; \
     chown -R appuser:appuser /app ; \

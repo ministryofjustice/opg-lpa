@@ -148,4 +148,12 @@ return [
             'port' => getenv('OPG_LPA_TELEMETRY_PORT') ?: null,
         ],
     ],
+
+    'zfctwig' => [
+        'environment_options' => ['cache' => getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR') ?: '/tmp/twig_cache'],
+    ],
+
+    'twig' => [
+        'cache_dir' => getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR') ?: '/tmp/twig_cache',
+    ],
 ];
