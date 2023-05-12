@@ -6,6 +6,7 @@ use MakeShared\Logging\LoggerTrait;
 use InvalidArgumentException;
 use Redis;
 use RedisException;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 /**
  * Basic save handler to connect, write to and read from Redis
@@ -66,12 +67,17 @@ class RedisClient
     {
         $result = false;
 
+        TelemetryEventManager::triggerStart(
+            'RedisClient.open',
+        );
+
+
         try {
             // this will throw a RedisException if the Redis server is unavailable;
             // the '@' suppresses PHP warning messages, e.g. if the Redis server's
             // domain name cannot be resolved (in this case, an exception is still thrown)
             // Use a persistent connection to avoid the overhead of connecting to Redis on every request
-            $result = @$this->redisClient->pconnect($this->redisHost, $this->redisPort);
+            $result = @$this->redisClient->connect($this->redisHost, $this->redisPort);
         } catch (RedisException $e) {
             $this->getLogger()->err(sprintf(
                 'Unable to connect to Redis server at %s:%s',
@@ -81,6 +87,8 @@ class RedisClient
             $this->getLogger()->err($e->getMessage());
             $result = false;
         }
+
+        TelemetryEventManager::triggerStop();
 
         return $result;
     }
@@ -92,6 +100,9 @@ class RedisClient
 
     public function read(string $id): string
     {
+        TelemetryEventManager::triggerStart(
+            'RedisClient.read',
+        );
         $data = $this->redisClient->get($id);
 
         // Redis returns FALSE if a key doesn't exist, but
@@ -99,6 +110,8 @@ class RedisClient
         if ($data === false || !is_string($data)) {
             $data = '';
         }
+
+        TelemetryEventManager::triggerStop();
 
         return $data;
     }
@@ -110,17 +123,30 @@ class RedisClient
     {
         // This appears to return a Redis instance, not a boolean; so we
         // check that here so we always get a boolean.
+        TelemetryEventManager::triggerStart(
+            'RedisClient.write',
+        );
+
         $success = $this->redisClient->setEx($id, $this->ttl, $data);
         if ($success !== false) {
             return true;
         }
+
+        TelemetryEventManager::triggerStop();
 
         return false;
     }
 
     public function destroy(string $id): bool
     {
+        TelemetryEventManager::triggerStart(
+            'RedisClient.destroy',
+        );
+
         $this->redisClient->del($id);
+
+        TelemetryEventManager::triggerStop();
+
         return true;
     }
 }
