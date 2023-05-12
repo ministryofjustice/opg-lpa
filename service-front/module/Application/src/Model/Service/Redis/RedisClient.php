@@ -70,7 +70,8 @@ class RedisClient
             // this will throw a RedisException if the Redis server is unavailable;
             // the '@' suppresses PHP warning messages, e.g. if the Redis server's
             // domain name cannot be resolved (in this case, an exception is still thrown)
-            $result = @$this->redisClient->connect($this->redisHost, $this->redisPort);
+            // Use a persistent connection to avoid the overhead of connecting to Redis on every request
+            $result = @$this->redisClient->pconnect($this->redisHost, $this->redisPort);
         } catch (RedisException $e) {
             $this->getLogger()->err(sprintf(
                 'Unable to connect to Redis server at %s:%s',
