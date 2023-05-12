@@ -48,14 +48,14 @@ RUN chmod +x /usr/local/bin/health-check.sh
 WORKDIR /app
 
 # Enable debug and test coverage tooling if needed. Should only be used locally.
-ARG ENABLE_XDEBUG=0
+ARG ENABLE_XDEBUG=1
 RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
     chmod a+w /tmp ; \
     chown -R appuser:appuser /app ; \
-    apk add --no-cache --virtual .build-dependencies linux-headers ; \
+    apk add --no-cache --virtual --update linux-headers .build-dependencies linux-headers pcre-dev ${PHPIZE_DEPS} ; \
     pecl install xdebug ; \
-    echo "xdebug.mode = develop,debug,coverage" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-    echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.mode = profile" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.discover_client_host = 0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
