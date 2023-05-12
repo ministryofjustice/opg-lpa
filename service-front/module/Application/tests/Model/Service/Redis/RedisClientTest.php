@@ -62,7 +62,7 @@ class RedisClientTest extends MockeryTestCase
         $expected = false;
 
         $redisMock = $this->makeRedisClientWithMock('tcp://foohost');
-        $redisMock->shouldReceive('connect')
+        $redisMock->shouldReceive('pconnect')
             ->with('foohost', 6379)
             ->andThrow(new RedisException());
 
@@ -76,7 +76,7 @@ class RedisClientTest extends MockeryTestCase
         $expected = true;
 
         $redisMock = $this->makeRedisClientWithMock('tcp://foohost');
-        $redisMock->shouldReceive('connect')
+        $redisMock->shouldReceive('pconnect')
             ->with('foohost', 6379)
             ->andReturn(true);
 
