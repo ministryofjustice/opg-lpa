@@ -103,7 +103,7 @@ data "aws_ecr_repository" "lpa_front_app" {
 
 locals {
   front_web = jsonencode({
-    "cpu" : 1,
+    "cpu" : 64,
     "essential" : true,
     "image" : "${data.aws_ecr_repository.lpa_front_web.repository_url}:${var.container_version}",
     "mountPoints" : [],
@@ -142,7 +142,7 @@ locals {
 
   front_app = jsonencode(
     {
-      "cpu" : 1,
+      "cpu" : 224,
       "essential" : true,
       "readonlyRootFilesystem" : true,
       "image" : "${data.aws_ecr_repository.lpa_front_app.repository_url}:${var.container_version}",
