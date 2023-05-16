@@ -93,6 +93,9 @@ class LongName extends AbstractData
      */
     public function getTitle(): string
     {
+        if (is_null($this->title)) {
+            return "";
+        }
         return $this->title;
     }
 
