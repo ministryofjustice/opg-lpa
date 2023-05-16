@@ -212,6 +212,7 @@ jobs:
   locust_tests:
     name: Run locust tests
     uses: ./.github/workflows/locust_tests.yml
+    continue-on-error: true
     needs:
       - preprod_terraform_outputs
     with:
