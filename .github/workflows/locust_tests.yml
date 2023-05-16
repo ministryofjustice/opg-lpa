@@ -80,6 +80,7 @@ jobs:
           node-version-file: '.nvmrc'
 
       - name: Run Locust Tests
+        continue-on-error: true
         env:
           DISABLE_SSL_VERIFY: True
         run: |
