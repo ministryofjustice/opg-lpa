@@ -93,6 +93,10 @@ class LongName extends AbstractData
      */
     public function getTitle(): string
     {
+        // title should never be null, but for historical reasons it sometimes can be
+        if (is_null($this->title)) {
+            return "";
+        }
         return $this->title;
     }
 
