@@ -222,7 +222,12 @@ class Module implements FormElementProviderInterface
 
                 'TwigViewRenderer' => function (ServiceLocatorInterface $sm) {
                     $loader = new FilesystemLoader('module/Application/view/application');
-                    return new Environment($loader);
+                    return new Environment(
+                        $loader,
+                        [
+                            'cache' => $sm->get('config')['twig']['cache_dir']
+                        ]
+                    );
                 },
 
                 'TelemetryTracer' => function ($sm) {
