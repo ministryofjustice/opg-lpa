@@ -16,6 +16,11 @@ resource "aws_ecs_service" "pdf" {
     assign_public_ip = false
   }
 
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+    weight            = 100
+  }
+
   tags = local.pdf_component_tag
 }
 
