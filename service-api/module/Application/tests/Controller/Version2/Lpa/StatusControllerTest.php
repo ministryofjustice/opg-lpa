@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Version2\Lpa;
 use Application\Controller\StatusController;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
-use Application\Library\DateTime;
+use Application\Library\MillisecondDateTime;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\DataModelEntity;
@@ -55,7 +55,7 @@ class StatusControllerTest extends AbstractControllerTest
     public function testGetWithFirstUpdateOnValidCase()
     {
         $this->statusController->onDispatch($this->mvcEvent);
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => []]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -72,7 +72,7 @@ class StatusControllerTest extends AbstractControllerTest
                     'deleted'   => false,
                     'response'  => [
                         'status' => 'Processed',
-                        'rejectedDate' => new DateTime('2019-02-11'),
+                        'rejectedDate' => new MillisecondDateTime('2019-02-11'),
                         'returnUnpaid' => null
                     ]
                 ]
@@ -85,7 +85,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'sirius-processing-status' => 'Processed',
                         'application-receipt-date' => null,
                         'application-registration-date' => null,
-                        'application-rejected-date' => new DateTime('2019-02-11'),
+                        'application-rejected-date' => new MillisecondDateTime('2019-02-11'),
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
@@ -111,7 +111,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Received']]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -128,7 +128,7 @@ class StatusControllerTest extends AbstractControllerTest
                     'deleted'   => false,
                     'response'  => [
                         'status' => 'Checking',
-                        'receiptDate' => new DateTime('2019-02-11'),
+                        'receiptDate' => new MillisecondDateTime('2019-02-11'),
                         'returnUnpaid' => null
                     ]
                 ]
@@ -140,7 +140,7 @@ class StatusControllerTest extends AbstractControllerTest
                     'metadata' => [
                         'sirius-processing-status' => 'Checking',
                         'application-registration-date' => null,
-                        'application-receipt-date' => new DateTime('2019-02-11'),
+                        'application-receipt-date' => new MillisecondDateTime('2019-02-11'),
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
@@ -167,7 +167,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Received']]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -183,7 +183,7 @@ class StatusControllerTest extends AbstractControllerTest
                     'metadata' => [
                         'sirius-processing-status' => 'Received',
                         'application-registration-date' => null,
-                        'application-receipt-date' => new DateTime('2019-02-11'),
+                        'application-receipt-date' => new MillisecondDateTime('2019-02-11'),
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
@@ -200,7 +200,7 @@ class StatusControllerTest extends AbstractControllerTest
                     'deleted'   => false,
                     'response'  => [
                         'status' => 'Received',
-                        'receiptDate' => new DateTime('2019-02-11'),
+                        'receiptDate' => new MillisecondDateTime('2019-02-11'),
                         'returnUnpaid' => null
                     ]
                 ]
@@ -223,7 +223,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Received']]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -240,7 +240,7 @@ class StatusControllerTest extends AbstractControllerTest
                     'deleted'   => false,
                     'response'  => [
                         'status' => 'Checking',
-                        'registrationDate' => new DateTime('2019-02-11'),
+                        'registrationDate' => new MillisecondDateTime('2019-02-11'),
                         'returnUnpaid' => null
                     ]
                 ]
@@ -251,7 +251,7 @@ class StatusControllerTest extends AbstractControllerTest
                 [
                     'metadata' => [
                         'sirius-processing-status' => 'Checking',
-                        'application-registration-date' => new DateTime('2019-02-11'),
+                        'application-registration-date' => new MillisecondDateTime('2019-02-11'),
                         'application-receipt-date' => null,
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
@@ -279,7 +279,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Waiting',
                 Lpa::APPLICATION_REJECTED_DATE => null,
@@ -298,7 +298,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Processed' , 'rejectedDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Processed' , 'rejectedDate' => new MillisecondDateTime('2019-02-11')]
                 ]
             ]);
 
@@ -309,7 +309,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'sirius-processing-status' => 'Processed',
                         'application-registration-date' => null,
                         'application-receipt-date' => null,
-                        'application-rejected-date' => new DateTime('2019-02-11'),
+                        'application-rejected-date' => new MillisecondDateTime('2019-02-11'),
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
@@ -335,7 +335,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
                 Lpa::APPLICATION_REJECTED_DATE => null,
@@ -356,7 +356,7 @@ class StatusControllerTest extends AbstractControllerTest
                     'deleted'   => false,
                     'response'  => [
                         'status' => 'Checking',
-                        'receiptDate' => new DateTime('2019-02-11'),
+                        'receiptDate' => new MillisecondDateTime('2019-02-11'),
                         'returnUnpaid' => null
                     ]
                 ]
@@ -368,7 +368,7 @@ class StatusControllerTest extends AbstractControllerTest
                     'metadata' => [
                         'sirius-processing-status' => 'Checking',
                         'application-registration-date' => null,
-                        'application-receipt-date' => new DateTime('2019-02-11'),
+                        'application-receipt-date' => new MillisecondDateTime('2019-02-11'),
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
@@ -394,7 +394,7 @@ class StatusControllerTest extends AbstractControllerTest
     public function testGetWithNoUpdateOnValidCase()
     {
         $this->statusController->onDispatch($this->mvcEvent);
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -426,7 +426,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => []]);
 
         $this->applicationsService->shouldReceive('filterByIdsAndUser')
@@ -454,10 +454,10 @@ class StatusControllerTest extends AbstractControllerTest
 
         $lpa = new Lpa([
             'id' => 98765,
-            'completedAt' => new DateTime('2019-02-01'),
+            'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
-                Lpa::APPLICATION_RECEIPT_DATE => new DateTime('2019-02-02'),
+                Lpa::APPLICATION_RECEIPT_DATE => new MillisecondDateTime('2019-02-02'),
             ]
         ]);
 
@@ -473,7 +473,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Checking', 'receiptDate' => new DateTime('2019-02-02')]
+                    'response'  => ['status' => 'Checking', 'receiptDate' => new MillisecondDateTime('2019-02-02')]
                 ]
             ]);
 
@@ -491,7 +491,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -507,7 +507,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Checking','registrationDate' => new MillisecondDateTime('2019-02-11')]
                 ]
             ]);
 
@@ -525,10 +525,10 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
-                Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')
+                Lpa::APPLICATION_REJECTED_DATE => new MillisecondDateTime('2019-02-10')
             ]]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -543,7 +543,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Checking','registrationDate' => new MillisecondDateTime('2019-02-11')]
                 ]
             ]);
 
@@ -552,7 +552,7 @@ class StatusControllerTest extends AbstractControllerTest
                 [
                     'metadata' => [
                         'sirius-processing-status' => 'Checking',
-                        'application-registration-date' => new DateTime('2019-02-11') ,
+                        'application-registration-date' => new MillisecondDateTime('2019-02-11') ,
                         'application-receipt-date' => null,
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
@@ -577,10 +577,10 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
-                Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')
+                Lpa::APPLICATION_REJECTED_DATE => new MillisecondDateTime('2019-02-10')
             ]]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -595,7 +595,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Processed','rejectedDate' => new DateTime('2019-02-10')]
+                    'response'  => ['status' => 'Processed','rejectedDate' => new MillisecondDateTime('2019-02-10')]
                 ]
             ]);
 
@@ -613,7 +613,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98766, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98766, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Pending'
             ]]);
@@ -631,7 +631,7 @@ class StatusControllerTest extends AbstractControllerTest
                 '98766' => [
                     'deleted'   => false,
                     'response'  => [
-                        'status' => 'Processed', 'dispatchDate' => new DateTime('2019-02-15'),
+                        'status' => 'Processed', 'dispatchDate' => new MillisecondDateTime('2019-02-15'),
                         'returnUnpaid' => true
                     ]
                 ]
@@ -652,7 +652,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98766, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98766, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Pending'
             ]]);
@@ -669,7 +669,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98766' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Processed','dispatchDate' => new DateTime('2019-02-15')]
+                    'response'  => ['status' => 'Processed','dispatchDate' => new MillisecondDateTime('2019-02-15')]
                 ]
             ]);
         $this->applicationsService->shouldReceive('patch')->once();
@@ -695,10 +695,10 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa1 = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa1 = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => []]);
 
-        $lpa2 = new Lpa(['id' => 98766, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa2 = new Lpa(['id' => 98766, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => []]);
 
         $dataModel1 = new DataModelEntity($lpa1);
@@ -714,11 +714,11 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Processed', 'rejectedDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Processed', 'rejectedDate' => new MillisecondDateTime('2019-02-11')]
                 ],
                 '98766' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Received', 'receiptDate' => new DateTime('2019-02-11')]
+                    'response'  => ['status' => 'Received', 'receiptDate' => new MillisecondDateTime('2019-02-11')]
                 ]
             ]);
 
@@ -729,7 +729,7 @@ class StatusControllerTest extends AbstractControllerTest
                         'sirius-processing-status' => 'Processed',
                         'application-registration-date' => null,
                         'application-receipt-date' => null,
-                        'application-rejected-date' => new DateTime('2019-02-11'),
+                        'application-rejected-date' => new MillisecondDateTime('2019-02-11'),
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
                         'application-dispatch-date' => null,
@@ -743,7 +743,7 @@ class StatusControllerTest extends AbstractControllerTest
                     'metadata' => [
                         'sirius-processing-status' => 'Received',
                         'application-registration-date' => null,
-                        'application-receipt-date' => new DateTime('2019-02-11'),
+                        'application-receipt-date' => new MillisecondDateTime('2019-02-11'),
                         'application-rejected-date' => null,
                         'application-invalid-date' => null,
                         'application-withdrawn-date' => null,
@@ -772,10 +772,10 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
-                Lpa::APPLICATION_INVALID_DATE => new DateTime('2019-02-10')
+                Lpa::APPLICATION_INVALID_DATE => new MillisecondDateTime('2019-02-10')
             ]]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -790,7 +790,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Processed','invalidDate' => new DateTime('2019-02-10')]
+                    'response'  => ['status' => 'Processed','invalidDate' => new MillisecondDateTime('2019-02-10')]
                 ]
             ]);
 
@@ -808,10 +808,10 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
-                Lpa::APPLICATION_WITHDRAWN_DATE => new DateTime('2019-02-12')
+                Lpa::APPLICATION_WITHDRAWN_DATE => new MillisecondDateTime('2019-02-12')
             ]]);
 
         $dataModel = new DataModelEntity($lpa);
@@ -826,7 +826,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn([
                 '98765' => [
                     'deleted'   => false,
-                    'response'  => ['status' => 'Processed','withdrawnDate' => new DateTime('2019-02-12')]
+                    'response'  => ['status' => 'Processed','withdrawnDate' => new MillisecondDateTime('2019-02-12')]
                 ]
             ]);
 
@@ -844,7 +844,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
             ]]);
@@ -877,7 +877,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
 
-        $lpa = new Lpa(['id' => 98765, 'completedAt' => new DateTime('2019-02-01'),
+        $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
             ]]);

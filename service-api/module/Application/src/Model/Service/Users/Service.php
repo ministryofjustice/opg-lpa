@@ -4,7 +4,7 @@ namespace Application\Model\Service\Users;
 
 use ArrayObject;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Library\DateTime;
+use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
@@ -67,8 +67,8 @@ class Service extends AbstractService
                 'active'                => false,
                 'activation_token'      => $activationToken,
                 'password_hash'         => password_hash($password, PASSWORD_DEFAULT),
-                'created'               => new \DateTime(),
-                'last_updated'          => new \DateTime(),
+                'created'               => new \MillisecondDateTime(),
+                'last_updated'          => new \MillisecondDateTime(),
                 'failed_login_attempts' => 0,
             ]);
         } while (!$created);
@@ -150,7 +150,7 @@ class Service extends AbstractService
                     'identity_hash' => $this->hashIdentity($user->username()),
                     'type'          => 'account-deleted',
                     'reason'        => $reason,
-                    'loggedAt'      => new \DateTime(),
+                    'loggedAt'      => new \MillisecondDateTime(),
                 ]);
             }
         }
@@ -186,8 +186,8 @@ class Service extends AbstractService
         if (is_null($user)) {
             $user = [
                 'id' => $id,
-                'createdAt' => new DateTime(),
-                'updatedAt' => new DateTime(),
+                'createdAt' => new MillisecondDateTime(),
+                'updatedAt' => new MillisecondDateTime(),
             ];
 
             $new = true;
