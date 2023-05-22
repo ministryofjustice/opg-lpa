@@ -67,8 +67,8 @@ class Service extends AbstractService
                 'active'                => false,
                 'activation_token'      => $activationToken,
                 'password_hash'         => password_hash($password, PASSWORD_DEFAULT),
-                'created'               => new \MillisecondDateTime(),
-                'last_updated'          => new \MillisecondDateTime(),
+                'created'               => new MillisecondDateTime(),
+                'last_updated'          => new MillisecondDateTime(),
                 'failed_login_attempts' => 0,
             ]);
         } while (!$created);
@@ -150,7 +150,7 @@ class Service extends AbstractService
                     'identity_hash' => $this->hashIdentity($user->username()),
                     'type'          => 'account-deleted',
                     'reason'        => $reason,
-                    'loggedAt'      => new \MillisecondDateTime(),
+                    'loggedAt'      => new MillisecondDateTime(),
                 ]);
             }
         }
