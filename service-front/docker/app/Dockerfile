@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-alpine3.15
+FROM php:8.2-fpm-alpine3.16
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -9,7 +9,7 @@ RUN apk upgrade --no-cache
 # The --virtual flag puts build dependencies into their own
 # directory to make them easier to remove en masse
 RUN apk add --no-cache icu fcgi \
-    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
+    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && docker-php-ext-install intl \
@@ -52,9 +52,9 @@ ARG ENABLE_XDEBUG=0
 RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
     chmod a+w /tmp ; \
     chown -R appuser:appuser /app ; \
-    apk add --no-cache --virtual .build-dependencies linux-headers ; \
+    apk add --no-cache --virtual .build-dependencies linux-headers pcre-dev ${PHPIZE_DEPS} ; \
     pecl install xdebug ; \
-    echo "xdebug.mode = develop,debug,coverage" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+    echo "xdebug.mode = profile" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
