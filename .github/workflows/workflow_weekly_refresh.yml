@@ -59,7 +59,7 @@ jobs:
       - image_tag
     steps:
       - id: slack
-        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
+        uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
         with:
           channel-id: "C01BDM8T67J"
           payload: |
@@ -213,7 +213,7 @@ jobs:
       - run_smoke_tests
       - image_tag
     steps:
-    - uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
+    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
       if: needs.run_smoke_tests.smoke_test_status == 'passed'
       with:
         channel-id: "C01BDM8T67J"
@@ -263,7 +263,7 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    - uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
+    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
       if: needs.run_smoke_tests.smoke_test_status == 'failed'
       with:
         channel-id: "C01BDM8T67J"
