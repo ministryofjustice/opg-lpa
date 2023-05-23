@@ -17,8 +17,15 @@ resource "aws_ecs_service" "pdf" {
 
   capacity_provider_strategy {
     capacity_provider = "FARGATE_SPOT"
-    weight            = 100
+    weight            = 99
   }
+
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE"
+    weight            = 1
+    base              = 1
+  }
+
 
   tags = local.pdf_component_tag
 }
