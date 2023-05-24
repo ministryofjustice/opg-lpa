@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Service\Applications;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Library\DateTime;
+use Application\Library\MillisecondDateTime;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
@@ -137,7 +137,7 @@ class ServiceTest extends AbstractServiceTest
     public function testCreateFilterIncomingData()
     {
         $lpa = FixturesData::getHwLpa();
-        $lpa->set('lockedAt', new DateTime());
+        $lpa->set('lockedAt', new MillisecondDateTime());
         $lpa->set('locked', true);
 
         $user = FixturesData::getUser();
@@ -381,13 +381,13 @@ class ServiceTest extends AbstractServiceTest
     public function testPatchFilterIncomingData()
     {
         $lpa = FixturesData::getHwLpa();
-        $lpa->set('startedAt', new DateTime());
-        $lpa->set('createdAt', new DateTime());
-        $lpa->set('updatedAt', new DateTime());
-        $lpa->set('completedAt', new DateTime());
+        $lpa->set('startedAt', new MillisecondDateTime());
+        $lpa->set('createdAt', new MillisecondDateTime());
+        $lpa->set('updatedAt', new MillisecondDateTime());
+        $lpa->set('completedAt', new MillisecondDateTime());
         $lpa->set('user', 'changed');
         $lpa->set('whoAreYouAnswered', false);
-        $lpa->set('lockedAt', new DateTime());
+        $lpa->set('lockedAt', new MillisecondDateTime());
         $lpa->set('locked', true);
         $lpa->set('seed', 'changed');
 
@@ -716,8 +716,8 @@ class ServiceTest extends AbstractServiceTest
                 }
 
                 if ($lpaIn->isStateCreated()) {
-                    if (!$lpaIn->getCreatedAt() instanceof DateTime) {
-                        $lpaIn->setCreatedAt(new DateTime());
+                    if (!$lpaIn->getCreatedAt() instanceof MillisecondDateTime) {
+                        $lpaIn->setCreatedAt(new MillisecondDateTime());
                     }
                 } else {
                     $lpaIn->setCreatedAt(null);
@@ -726,8 +726,8 @@ class ServiceTest extends AbstractServiceTest
                 // If completed, record the date.
                 if ($lpaIn->isStateCompleted()) {
                     // If we don't already have a complete date and the LPA is locked...
-                    if (!$lpaIn->getCompletedAt() instanceof DateTime && $lpaIn->isLocked()) {
-                        $lpaIn->setCompletedAt(new DateTime());
+                    if (!$lpaIn->getCompletedAt() instanceof MillisecondDateTime && $lpaIn->isLocked()) {
+                        $lpaIn->setCompletedAt(new MillisecondDateTime());
                     }
                 } else {
                     $lpaIn->setCompletedAt(null);
@@ -735,7 +735,7 @@ class ServiceTest extends AbstractServiceTest
 
                 if ($updateTimestamp === true) {
                     // Record the time we updated the document.
-                    $lpaIn->setUpdatedAt(new DateTime());
+                    $lpaIn->setUpdatedAt(new MillisecondDateTime());
                 }
 
                 return true;

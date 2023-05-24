@@ -20,6 +20,9 @@ jobs:
           - name: service-front
             path: "./service-front"
             minCoverage: 85
+          - name: service-api
+            path: "./service-api"
+            minCoverage: 74
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
@@ -63,9 +66,6 @@ jobs:
       fail-fast: true
       matrix:
         scan:
-          - name: service-api
-            path: "./service-api"
-            minCoverage: 74
           - name: service-pdf
             path: "./service-pdf"
             minCoverage: 85

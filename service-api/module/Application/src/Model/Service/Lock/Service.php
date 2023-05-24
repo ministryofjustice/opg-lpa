@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Lock;
 
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\DateTime;
+use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use RuntimeException;
@@ -25,7 +25,7 @@ class Service extends AbstractService
         }
 
         $lpa->setLocked(true);
-        $lpa->setLockedAt(new DateTime());
+        $lpa->setLockedAt(new MillisecondDateTime());
 
         if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object was created');
