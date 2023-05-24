@@ -23,49 +23,6 @@ jobs:
           - name: service-api
             path: "./service-api"
             minCoverage: 74
-    defaults:
-      run:
-        working-directory: ${{ matrix.scan.path }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Configure AWS Credentials
-        if: matrix.scan.path == './service-api' # aws creds currently needed for service-api but dependency will be removed in LPAL-1075
-        uses: aws-actions/configure-aws-credentials@e1e17a757e536f70e52b5a12b2e8d1d1c60e04ef # tag=v2.0.0
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
-          role-duration-seconds: 1800
-          role-session-name: OPGMakeaLPAECRGithubAction
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-      - name: pdftk install
-        if: matrix.scan.path == './service-pdf'
-        run: |
-          sudo apt-get update
-          sudo apt-get install pdftk-java
-      - name: Composer install
-        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
-      - name: Run phpunit
-        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
-      - name: Check coverage
-        run: php ../scripts/pipeline/php_coverage/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
-      - name: Upload Coverage Artifacts
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
-        with:
-          name: coverage-html
-          path: ${{ matrix.scan.path }}/coverage-html/
-  phpunit_all_services:
-    name: phpunit
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        scan:
           - name: service-pdf
             path: "./service-pdf"
             minCoverage: 85
@@ -91,7 +48,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.1"
+          php-version: "8.2"
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |

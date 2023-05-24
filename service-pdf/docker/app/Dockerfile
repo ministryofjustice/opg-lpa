@@ -1,4 +1,4 @@
-FROM php:8.1-cli-alpine3.15
+FROM php:8.2-cli-alpine3.16
 
 RUN adduser -D -g '' appuser
 
