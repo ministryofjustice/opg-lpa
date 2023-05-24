@@ -4,7 +4,7 @@ namespace Application\Model\Service\Applications;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Library\DateTime;
+use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
@@ -38,8 +38,8 @@ class Service extends AbstractService
 
             $lpa = new Lpa([
                 'id'                => $id,
-                'startedAt'         => new DateTime(),
-                'updatedAt'         => new DateTime(),
+                'startedAt'         => new MillisecondDateTime(),
+                'updatedAt'         => new MillisecondDateTime(),
                 'user'              => $userId,
                 'locked'            => false,
                 'whoAreYouAnswered' => false,

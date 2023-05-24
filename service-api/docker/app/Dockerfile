@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-alpine3.15
+FROM php:8.2-fpm-alpine3.16
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -8,7 +8,7 @@ RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
 RUN apk add --no-cache postgresql-libs icu fcgi \
-    && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev icu-dev \
+    && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev icu-dev linux-headers \
     && docker-php-ext-install pgsql pdo_pgsql \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install opcache \
