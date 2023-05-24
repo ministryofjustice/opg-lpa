@@ -6,6 +6,7 @@ use MakeShared\Logging\LoggerTrait;
 use InvalidArgumentException;
 use Redis;
 use RedisException;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 /**
  * Basic save handler to connect, write to and read from Redis
@@ -66,6 +67,10 @@ class RedisClient
     {
         $result = false;
 
+        TelemetryEventManager::triggerStart(
+            'RedisClient.open'
+        );
+
         try {
             // this will throw a RedisException if the Redis server is unavailable;
             // the '@' suppresses PHP warning messages, e.g. if the Redis server's
@@ -81,6 +86,7 @@ class RedisClient
             $result = false;
         }
 
+        TelemetryEventManager::triggerStop();
         return $result;
     }
 

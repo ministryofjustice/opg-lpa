@@ -8,6 +8,7 @@ use Http\Client\HttpClient as HttpClientInterface;
 use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\Tracer;
 use Psr\Http\Message\ResponseInterface;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 class Client
 {
@@ -87,7 +88,14 @@ class Client
 
         $request = new Request('GET', $url, $headers);
 
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpGet',
+            ['annotations' => ['path' => $path]]
+        );
+
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -121,7 +129,14 @@ class Client
 
         $request = new Request('POST', $url, $headers, json_encode($payload));
 
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpPost',
+            ['annotations' => ['path' => $path]]
+        );
+
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -149,7 +164,14 @@ class Client
 
         $request = new Request('PUT', $url, $this->buildHeaders(), json_encode($payload));
 
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpPut',
+            ['annotations' => ['path' => $path]]
+        );
+
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -177,7 +199,14 @@ class Client
 
         $request = new Request('PATCH', $url, $this->buildHeaders(), json_encode($payload));
 
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpPatch',
+            ['annotations' => ['path' => $path]]
+        );
+
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 200:
@@ -202,7 +231,14 @@ class Client
 
         $request = new Request('DELETE', $url, $this->buildHeaders());
 
+        TelemetryEventManager::triggerStart(
+            'ApiClient.httpDelete',
+            ['annotations' => ['path' => $path]]
+        );
+
         $response = $this->httpClient->sendRequest($request);
+
+        TelemetryEventManager::triggerStop();
 
         switch ($response->getStatusCode()) {
             case 204:

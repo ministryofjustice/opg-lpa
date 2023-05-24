@@ -18,6 +18,7 @@ use MakeShared\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Repository\User as UserRepository;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface
 {
@@ -87,7 +88,15 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $update->set($set);
 
         $statement = $sql->prepareStatementForSqlObject($update);
+
+        TelemetryEventManager::triggerStart(
+            'sql.insert.' . self::USERS_TABLE,
+            ['annotations' => ['table' => self::USERS_TABLE, 'function' => 'UserData->updateRow']]
+        );
+
         $results = $statement->execute();
+
+        TelemetryEventManager::triggerStop();
 
         return $results->getAffectedRows() === 1;
     }
@@ -290,6 +299,10 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $statement = $sql->prepareStatementForSqlObject($insert);
 
         try {
+            TelemetryEventManager::triggerStart(
+                'sql.insert.' . self::USERS_TABLE,
+                ['annotations' => ['table' => self::USERS_TABLE, 'function' => 'UserData->create']]
+            );
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             $previousException = $e->getPrevious();
@@ -307,6 +320,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             // Otherwise re-throw the exception
             throw($e);
         }
+
+        TelemetryEventManager::triggerStop();
 
         // All ended well
         return true;

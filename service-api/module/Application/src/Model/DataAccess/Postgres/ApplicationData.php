@@ -16,6 +16,7 @@ use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Library\MillisecondDateTime;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 class ApplicationData extends AbstractBase implements ApplicationRepository\ApplicationRepositoryInterface
 {
@@ -163,6 +164,10 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $statement = $sql->prepareStatementForSqlObject($insert);
 
         try {
+            TelemetryEventManager::triggerStart(
+                'sql.insert.' . self::APPLICATIONS_TABLE,
+                ['annotations' => ['table' => self::APPLICATIONS_TABLE, 'function' => 'ApplicationData->insert']]
+            );
             $statement->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
             // If it's a key clash, re-try with new values.
@@ -178,6 +183,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             throw($e);
         }
 
+        TelemetryEventManager::triggerStop();
         return true;
     }
 
@@ -266,7 +272,15 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $update->set($data);
 
         $statement = $sql->prepareStatementForSqlObject($update);
+
+        TelemetryEventManager::triggerStart(
+            'sql.update.' . self::APPLICATIONS_TABLE,
+            ['annotations' => ['table' => self::APPLICATIONS_TABLE, 'function' => 'ApplicationData->update']]
+        );
+
         $results = $statement->execute();
+
+        TelemetryEventManager::triggerStop();
 
         return $results->getAffectedRows() === 1;
     }

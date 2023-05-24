@@ -14,6 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client as HttpClient;
 use RuntimeException;
+use MakeShared\Telemetry\TelemetryEventManager;
 
 class Service extends AbstractService
 {
@@ -111,11 +112,17 @@ class Service extends AbstractService
             },
         ]);
 
+        TelemetryEventManager::triggerStart(
+            'ProcessingStatus.Service->getStatuses'
+        );
+
         // Initiate transfers and create a promise
         $promise = $pool->promise();
 
         // Force the pool of requests to complete
         $promise->wait();
+
+        TelemetryEventManager::triggerStop();
 
         // Handle all request response now
         foreach ($results as $lpaId => $result) {
