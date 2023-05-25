@@ -6,7 +6,6 @@ resource "aws_ecs_service" "pdf" {
   cluster               = aws_ecs_cluster.online-lpa.id
   task_definition       = aws_ecs_task_definition.pdf.arn
   desired_count         = var.account.autoscaling.pdf.minimum
-  launch_type           = "FARGATE"
   platform_version      = "1.3.0"
   propagate_tags        = "TASK_DEFINITION"
   wait_for_steady_state = true
@@ -15,6 +14,18 @@ resource "aws_ecs_service" "pdf" {
     subnets          = data.aws_subnets.private.ids
     assign_public_ip = false
   }
+
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+    weight            = 99
+  }
+
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE"
+    weight            = 1
+    base              = 1
+  }
+
 
   tags = local.pdf_component_tag
 }
