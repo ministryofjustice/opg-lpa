@@ -64,12 +64,12 @@ jobs:
             override_tag: latest
 
     steps:
-      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
 
       - uses: unfor19/install-aws-cli-action@3c53dab4dd62b5d9d647f0ce9519285250a3c767 # v1.0.6
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@5727f247b64f324ec403ac56ae05e220fd02b65f # v2.1.0
+        uses: aws-actions/configure-aws-credentials@5fd3084fc36e372ff1fff382a39b10d03659f355 # v2.2.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -129,7 +129,7 @@ jobs:
 
       - name: Setup Docker Buildx
         id: docker_buildx
-        uses: docker/setup-buildx-action@4b4e9c3e2d4531116a6f8ba8e71fc6e2cb6e6c8c # v2.5.0
+        uses: docker/setup-buildx-action@ecf95283f03858871ff00b787d79c419715afc34 # v2.7.0
         with:
           install: true
 
