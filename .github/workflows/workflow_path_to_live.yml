@@ -16,6 +16,7 @@ on:
       - "cypress/**"
       - "terraform/**"
       - "scripts/**"
+      - "shared/**"
       - ".github/workflows/**"
 
 permissions:
