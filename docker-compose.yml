@@ -111,8 +111,8 @@ services:
     volumes:
       - ./local-config/:/app/
     environment:
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "devkey"
       AWS_ENDPOINT_DYNAMODB: dynamodb:8000
 
       OPG_LPA_COMMON_SQS_ENDPOINT: localstack:4566
@@ -186,8 +186,8 @@ services:
       OPG_LPA_FRONT_CSRF_SALT: "test"
 
       # Local only
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "devkey"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
@@ -253,14 +253,14 @@ services:
 
   api-app:
     container_name: lpa-api-app
-    image: lpa-api-app
+    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:34c63f1
     build:
       context: ./
 # Enable debug is recommended to default to off for api to avoid slowness. Turn this on if you ever need to debug the api
       args:
         ENABLE_XDEBUG: 0
         OPG_LPA_COMMON_APP_VERSION: "${OPG_LPA_COMMON_APP_VERSION}"
-      dockerfile: service-api/docker/app/Dockerfile
+          #dockerfile: service-api/docker/app/Dockerfile
     volumes:
 # to speed running, volumes are restricted to source code that may change while container is running
       - ./service-api/bin:/app/bin
@@ -305,8 +305,8 @@ services:
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
       # Local only
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "devkey"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
@@ -381,8 +381,8 @@ services:
       OPG_LPA_ADMIN_JWT_SECRET: "test-secret"
 
       # Local only
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "devkey"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
@@ -443,8 +443,8 @@ services:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
 
       # Local only
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "devkey"
 
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo

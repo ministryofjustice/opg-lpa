@@ -73,7 +73,7 @@ docker pull 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:late
 run the image up, enable xdebug on the container and run the tests, using the following commands:
 
 ``` bash
-docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name api-tests 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
+docker run -d --env AWS_ACCESS_KEY_ID='devkey' --env AWS_SECRET_ACCESS_KEY='devkey' --name api-tests 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
 docker exec api-tests docker-php-ext-enable xdebug
 docker exec api-tests /app/vendor/bin/phpunit -d memory_limit=256M
 
@@ -88,11 +88,11 @@ docker exec api-tests /app/vendor/bin/phpunit -d memory_limit=256M
    3. set image name (as in previous step)
    4. set container name as set in previous step
    5. you may need to set AWS environment variables - these should be all you need:
-      1. `AWS_ACCESS_KEY_ID='-'; AWS_SECRET_ACCESS_KEY='-'`
+      1. `AWS_ACCESS_KEY_ID='devkey'; AWS_SECRET_ACCESS_KEY='devkey'`
    6. in the command preview you will see the constructed command look like this:
 
 ``` bash
-    docker run -P --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name api-tests 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
+    docker run -P --env AWS_ACCESS_KEY_ID='devkey' --env AWS_SECRET_ACCESS_KEY='devkey' --name api-tests 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
 ```
 
 ## Setting up debugging of PHPUnit tests in PHPStorm
@@ -124,7 +124,7 @@ This consists of 3 main steps:
 7. connect to a running instance of the image above to work this out.
 
     ``` bash
-    docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name api-tests 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
+    docker run -d --env AWS_ACCESS_KEY_ID='devkey' --env AWS_SECRET_ACCESS_KEY='devkey' --name api-tests 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
     docker exec -it api-tests sh
     ```
 

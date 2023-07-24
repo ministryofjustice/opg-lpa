@@ -4,8 +4,7 @@ ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
 RUN adduser -D -g '' appuser
 
-RUN apk add --upgrade --no-cache apk-tools
-RUN apk upgrade --no-cache
+RUN apk add --no-cache apk-tools
 
 RUN apk add --no-cache postgresql-libs icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev icu-dev linux-headers \
