@@ -260,7 +260,7 @@ services:
       args:
         ENABLE_XDEBUG: 0
         OPG_LPA_COMMON_APP_VERSION: "${OPG_LPA_COMMON_APP_VERSION}"
-          #dockerfile: service-api/docker/app/Dockerfile
+        dockerfile: service-api/docker/app/Dockerfile
     volumes:
 # to speed running, volumes are restricted to source code that may change while container is running
       - ./service-api/bin:/app/bin
