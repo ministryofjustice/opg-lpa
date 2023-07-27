@@ -267,3 +267,5 @@ Packages can be removed with:
 ```bash
 docker run -v `pwd`/service-front/:/app/ composer remove author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 ```
+
+build
