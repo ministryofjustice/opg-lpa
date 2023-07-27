@@ -230,7 +230,7 @@ locals {
       "cpu" : 1,
       "essential" : true,
       "readonlyRootFilesystem" : true,
-      "image" : "${data.aws_ecr_repository.lpa_api_app.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_api_app.repository_url}:34c63f1",
       "name" : "app",
       "mountPoints" : [
         {
