@@ -16,13 +16,13 @@ certifi==2023.7.22
     # via
     #   geventhttpclient
     #   requests
-charset-normalizer==3.1.0
+charset-normalizer==3.2.0
     # via requests
-click==8.1.3
+click==8.1.6
     # via flask
-configargparse==1.5.3
+configargparse==1.7
     # via locust
-faker==18.3.1
+faker==18.13.0
     # via -r requirements.in
 flask==2.3.2
     # via
@@ -47,9 +47,9 @@ itsdangerous==2.1.2
     # via flask
 jinja2==3.1.2
     # via flask
-locust==2.15.1
+locust==2.16.1
     # via -r requirements.in
-markupsafe==2.1.2
+markupsafe==2.1.3
     # via
     #   jinja2
     #   werkzeug
@@ -72,11 +72,11 @@ six==1.16.0
     #   python-dateutil
 soupsieve==2.4.1
     # via beautifulsoup4
-typing-extensions==4.6.2
+typing-extensions==4.7.1
     # via locust
 urllib3==1.26.16
     # via requests
-werkzeug==2.3.4
+werkzeug==2.3.6
     # via
     #   flask
     #   locust
