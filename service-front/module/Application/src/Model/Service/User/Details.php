@@ -165,7 +165,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         $logger->info('Updating email using token');
 
         try {
-            $this->apiClient->httpPost(sprintf('/v2/users/email'), [
+            $this->apiClient->httpPost('/v2/users/email', [
                 'emailUpdateToken' => $emailUpdateToken,
             ]);
 
