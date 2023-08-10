@@ -183,5 +183,8 @@
       "prPriority": 4,
       "stabilityDays": 3
     }
-  ]
+  ],
+  "pip-compile": {
+    "fileMatch": ["(^|/)requirements\\.in$"]
+  }
 }
