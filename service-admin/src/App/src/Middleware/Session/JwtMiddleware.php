@@ -88,7 +88,10 @@ final class JwtMiddleware implements MiddlewareInterface
                 /** @phpstan-ignore-next-line */
                 call_user_func([$this, $method], $value);
             } else {
-                /* Or fallback to setting option directly */
+                /**
+                * Or fallback to setting option directly
+                * @psalm-suppress InvalidPropertyAssignmentValue
+                */
                 $this->options[$key] = $value;
             }
         }
