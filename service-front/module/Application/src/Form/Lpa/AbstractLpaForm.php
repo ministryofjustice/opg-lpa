@@ -124,7 +124,7 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
      *     ['address-address2'=>'linked-1-cannot-be-null','address-postcode'=>'linked-1-cannot-be-null',]
      *
      * @param ValidatorResponse $validationResponse
-     * @return array|string
+     * @return mixed
      */
     protected function modelValidationMessageConverter(ValidatorResponse $validationResponse, $context = null)
     {
