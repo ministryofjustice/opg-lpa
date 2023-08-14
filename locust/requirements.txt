@@ -31,9 +31,9 @@ flask==2.3.2
     #   locust
 flask-basicauth==0.2.0
     # via locust
-flask-cors==3.0.10
+flask-cors==4.0.0
     # via locust
-gevent==22.10.2
+gevent==23.7.0
     # via
     #   geventhttpclient
     #   locust
@@ -59,7 +59,7 @@ psutil==5.9.5
     # via locust
 python-dateutil==2.8.2
     # via faker
-pyzmq==25.1.0
+pyzmq==25.1.1
     # via locust
 requests==2.31.0
     # via locust
@@ -67,20 +67,19 @@ roundrobin==0.0.4
     # via locust
 six==1.16.0
     # via
-    #   flask-cors
     #   geventhttpclient
     #   python-dateutil
 soupsieve==2.4.1
     # via beautifulsoup4
 typing-extensions==4.7.1
     # via locust
-urllib3==1.26.16
+urllib3==2.0.4
     # via requests
 werkzeug==2.3.6
     # via
     #   flask
     #   locust
-zope-event==4.6
+zope-event==5.0
     # via gevent
 zope-interface==6.0
     # via gevent
