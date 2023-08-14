@@ -61,7 +61,7 @@ jobs:
       - id: slack
         uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
         with:
-          channel-id: "C9PNCT2KS"
+          channel-id: "C01BDM8T67J"
           payload: |
             {
               "blocks": [
@@ -214,62 +214,12 @@ jobs:
       - image_tag
     steps:
     - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
-      if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
+      if: needs.run_smoke_tests.smoke_test_status == 'passed'
       with:
-        channel-id: "C9PNCT2KS"
-        update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
-        payload: |
-          {
-            "blocks": [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": "Production Deployment",
-                  "emoji": true
-                }
-              },
-              {
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Status:*\nStarted"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Started by:*\n Cron (Weekly Refresh)"
-                  }
-                ]
-              },
-              {
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
-                  }
-                ]
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
-                }
-              }
-            ]
-          }
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
-      if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
-      with:
-        channel-id: "C9PNCT2KS"
+        channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
             {
-              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
@@ -284,11 +234,11 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Status:*\nComplete :white_check_mark:"
+                      "text": "*Status:*\nStarted"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Started by:*\n Cron (Weekly Refresh)"
+                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
                     }
                   ]
                 },
@@ -314,13 +264,12 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
     - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
-      if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
+      if: needs.run_smoke_tests.smoke_test_status == 'failed'
       with:
-        channel-id: "C9PNCT2KS"
+        channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
             {
-              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
@@ -335,11 +284,11 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Status:*\nFailed! :x:"
+                      "text": "*Status:*\nStarted"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Started by:*\n Cron (Weekly Refresh)"
+                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
                     }
                   ]
                 },
@@ -357,26 +306,6 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
-                  }
-                }
-              ]
-            }
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
-      if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
-      with:
-        channel-id: "C9PNCT2KS"
-        payload: |
-            {
-              "icon_emoji": ":warning:",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Production Make deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
                   }
                 }
               ]
