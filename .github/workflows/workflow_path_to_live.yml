@@ -236,7 +236,7 @@ jobs:
       - id: slack
         uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
         with:
-          channel-id: "C9PNCT2KS"
+          channel-id: "C01BDM8T67J"
           payload: |
             {
              "icon_emoji": ":robot_face:",
@@ -391,7 +391,7 @@ jobs:
     - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
       if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
       with:
-        channel-id: "C9PNCT2KS"
+        channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
             {
@@ -442,7 +442,7 @@ jobs:
     - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
       if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
       with:
-        channel-id: "C9PNCT2KS"
+        channel-id: "C01BDM8T67J"
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
             {
@@ -493,7 +493,7 @@ jobs:
     - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
       if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
       with:
-        channel-id: "C9PNCT2KS"
+        channel-id: "C01BDM8T67J"
         payload: |
             {
               "icon_emoji": ":warning:",
@@ -502,7 +502,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Production Make deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
+                    "text": "Production deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. @here"
                   }
                 }
               ]
