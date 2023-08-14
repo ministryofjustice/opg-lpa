@@ -1,0 +1,385 @@
+name: "[Workflow] Weekly Refresh"
+
+on:
+  schedule:
+    # 6am on Wednesdays
+    - cron: '0 6 * * 3'
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: write
+  security-events: write
+  pull-requests: read
+  actions: none
+  checks: none
+  deployments: none
+  issues: none
+  packages: none
+  repository-projects: none
+  statuses: none
+
+jobs:
+  image_tag:
+    name: Generate image tags
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.short_sha.outputs.short_sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        with:
+          fetch-depth: 2
+      - name: Set output to penultimate short SHA
+        id: short_sha
+        run: |
+          echo "short_sha=$(git rev-list --no-merges -n 1 HEAD | cut -c1-7)" >> $GITHUB_OUTPUT
+
+  docker_build_scan_push:
+    name: Docker Build, Scan and Push
+    uses: ./.github/workflows/docker_job.yml
+    needs:
+      - image_tag
+    with:
+      tag: ${{ needs.image_tag.outputs.short_sha }}
+    secrets: inherit
+
+  slack_msg_production_deploy_begin:
+    name: Annouce Production Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      ts: ${{ steps.slack.outputs.ts }}
+    needs:
+      - image_tag
+    steps:
+      - id: slack
+        uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+        with:
+          channel-id: "C9PNCT2KS"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Production Deployment",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\nStarted"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Started by:*\n Cron (Weekly Refresh)"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+
+  terraform_account_production:
+    name: TF Production - Account
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
+    needs:
+      - slack_msg_production_deploy_begin
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: production
+      is_ephemeral: false
+      terraform_apply: true
+      terraform_directory: ./terraform/account
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_region_production:
+    name: TF Production - Region
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
+    needs:
+      - slack_msg_production_deploy_begin
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: production
+      is_ephemeral: false
+      terraform_apply: true
+      terraform_directory: ./terraform/region
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_environment_production:
+    name: TF Production - Environment
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
+    with:
+      terraform_version: 1.1.2
+      terraform_workspace: production
+      is_ephemeral: false
+      terraform_apply: true
+      terraform_directory: ./terraform/environment
+      use_ssh_private_key: true
+      persist_artifacts: true
+      terraform_variables: "-var container_version=${{ needs.image_tag.outputs.short_sha }}"
+    needs:
+      - docker_build_scan_push
+      - slack_msg_production_deploy_begin
+      - image_tag
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+
+  run_smoke_tests:
+    runs-on: ubuntu-latest
+    outputs:
+      smoke_test_status: ${{ steps.smoke_tests.outputs.smoke_test_status }}
+    needs:
+      - terraform_environment_production
+      - terraform_region_production
+      - terraform_account_production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+
+      - name: Download Terraform Task definition
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2
+        with:
+          name: terraform-artifact
+          path: /tmp/
+
+      - name: Setup Python
+        uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/pipeline/requirements.txt
+
+      - name: Run smoke tests
+        id: smoke_tests
+        run: |
+          if python scripts/pipeline/healthcheck_test/healthcheck_test.py; then
+            echo "smoke_test_status=passed" >> $GITHUB_OUTPUT
+          else
+            echo "smoke_test_status=failed" >> $GITHUB_OUTPUT
+          fi
+
+  slack_msg_production_deployed:
+    name: Post-Deployment Slack message
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - slack_msg_production_deploy_begin
+      - run_smoke_tests
+      - image_tag
+    steps:
+    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+      if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
+      with:
+        channel-id: "C9PNCT2KS"
+        update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
+        payload: |
+          {
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Production Deployment",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Status:*\nStarted"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Started by:*\n Cron (Weekly Refresh)"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
+                }
+              }
+            ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+      if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
+      with:
+        channel-id: "C9PNCT2KS"
+        update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
+        payload: |
+            {
+              "icon_emoji": ":robot_face:",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Production Deployment",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\nComplete :white_check_mark:"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Started by:*\n Cron (Weekly Refresh)"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
+                  }
+                }
+              ]
+            }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+      if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
+      with:
+        channel-id: "C9PNCT2KS"
+        update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
+        payload: |
+            {
+              "icon_emoji": ":robot_face:",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Production Deployment",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\nFailed! :x:"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Started by:*\n Cron (Weekly Refresh)"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
+                  }
+                }
+              ]
+            }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+      if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
+      with:
+        channel-id: "C9PNCT2KS"
+        payload: |
+            {
+              "icon_emoji": ":warning:",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Production Make deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
+                  }
+                }
+              ]
+            }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
