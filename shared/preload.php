@@ -1,5 +1,5 @@
 <?php
-$directory = new RecursiveDirectoryIterator(__DIR__ . '/app');
+$directory = new RecursiveDirectoryIterator('/app');
 $fullTree = new RecursiveIteratorIterator($directory);
 $phpFiles = new RegexIterator($fullTree, '/.+((?<!Test)+\.php$)/i', RecursiveRegexIterator::GET_MATCH);
 
