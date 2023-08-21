@@ -1,8 +1,9 @@
 <?php
-$appClassMap = require '/app/vendor/composer/autoload_classmap.php';
-$appFileMap = array_flip($appClassMap);
+$directory = new RecursiveDirectoryIterator(__DIR__ . '/app');
+$fullTree = new RecursiveIteratorIterator($directory);
+$phpFiles = new RegexIterator($fullTree, '/.+((?<!Test)+\.php$)/i', RecursiveRegexIterator::GET_MATCH);
 
-foreach ($appFileMap as $file => $class) {
-    opcache_compile_file($file);
+foreach ($phpFiles as $key => $file) {
+    opcache_compile_file($file[0]);
 }
 ?>
