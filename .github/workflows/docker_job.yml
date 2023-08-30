@@ -88,39 +88,14 @@ jobs:
           fi
           echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
 
-      - name: Check if image needs to be built
-        id: check_if_image_needs_to_be_built
-        uses: ./.github/actions/detect_changes
-        with:
-          path: ${{ matrix.service_path }}
-
-      - name: Check if image already exists
-        id: check_if_image_exists
-        if: github.ref == 'refs/heads/main'
-        run: |
-          if aws ecr describe-images --repository-name=${{ matrix.image_name }} --image-ids=imageTag=${{ steps.set_image_tag.outputs.image_tag }} &> /dev/null; then
-            echo "image_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "image_exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Set boolean for whether to build image
-        id: build_image
-        run: |
-          if [[ ( "${{ github.ref }}" != "refs/heads/main" && "${{ steps.check_if_image_needs_to_be_built.outputs.changes_detected }}" == "true" ) || "${{ steps.check_if_image_exists.outputs.image_exists }}" == "false" ]]; then
-            echo "build=true" >> $GITHUB_OUTPUT
-          else
-            echo "build=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Setup Node.js
         uses: actions/setup-node@e33196f7422957bea03ed53f6fbb155025ffc7b8 # v3.7.0
-        if: ${{ (matrix.image_name == 'online-lpa/front_web') && steps.build_image.outputs.build == 'true' }}
+        if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
         with:
           node-version-file: '.nvmrc'
 
       - name: Install Dependencies
-        if: ${{ (matrix.image_name == 'online-lpa/front_web') && steps.build_image.outputs.build == 'true' }}
+        if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
         run: |
           pushd service-front/
           npm ci -y && npm install -g sass
@@ -135,7 +110,6 @@ jobs:
 
       - name: Setup Docker Layer Cache
         uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
-        if: ${{ steps.build_image.outputs.build == 'true' }}
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ matrix.image_name }}-${{ github.sha }}
@@ -144,7 +118,6 @@ jobs:
 
       - name: Build Image
         uses: docker/build-push-action@1104d471370f9806843c095c1db02b5a90c5f8b6 # tag=v3.3.1
-        if: steps.build_image.outputs.build == 'true'
         with:
           context: .
           load: true
@@ -169,7 +142,7 @@ jobs:
           registries: 311462405659
 
       - name: Prefix production image tag with branch name
-        if: github.ref == 'refs/heads/main' && steps.build_image.outputs.build == 'false'
+        if: github.ref == 'refs/heads/main'
         env:
           IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
           IMAGE_NAME: ${{ matrix.image_name }}
@@ -177,32 +150,7 @@ jobs:
         run: |
           docker buildx imagetools create $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG --tag $ECR_REGISTRY/$IMAGE_NAME:main-$IMAGE_TAG
 
-      - name: Reuse images being used by production
-        if: steps.check_if_image_needs_to_be_built.outputs.changes_detected == 'false' && github.ref != 'refs/heads/main'
-        env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          IMAGE_NAME: ${{ matrix.image_name }}
-          IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
-        run: |
-          if [[ "${{ matrix.override_tag }}X" != "X" ]]; then
-            MAIN_IMAGE_TAG=main-${{ matrix.override_tag }}
-          else
-            MAIN_IMAGE_TAG=`aws ecr describe-images --repository-name=$IMAGE_NAME | \
-              jq '.imageDetails | map(select(.imageTags)) | map(select(.imageTags[] | test("main"))) | sort_by(.imagePushedAt) | .[-1].imageTags | map(select(test("main")))[0]' | \
-              sed -e 's/"//g'`
-          fi
-
-          if [ "$MAIN_IMAGE_TAG" = "null" ]; then
-            echo "ERROR: image does not need to be built, but no main-* tagged image available instead"
-            exit 1
-          fi
-
-          echo "Using prod image $ECR_REGISTRY/$IMAGE_NAME:$MAIN_IMAGE_TAG to create $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG"
-
-          docker buildx imagetools create $ECR_REGISTRY/$IMAGE_NAME:$MAIN_IMAGE_TAG --tag $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-
       - name: Tag and Push Container
-        if: steps.build_image.outputs.build == 'true'
         env:
           ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
           IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
@@ -215,19 +163,16 @@ jobs:
           docker push --all-tags $ECR_REGISTRY/$IMAGE_NAME
 
       - name: Setup Python
-        if: steps.build_image.outputs.build == 'true'
         uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
         with:
           python-version: "3.9"
 
       - name: Install Python dependencies
-        if: steps.build_image.outputs.build == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/pipeline/check_ecr_scan_results/requirements.txt
 
       - name: Scan Container
-        if: steps.build_image.outputs.build == 'true'
         env:
           ECR_REGISTRY_ALIAS: online-lpa
           IMAGE_TAG: ${{ inputs.tag }}
