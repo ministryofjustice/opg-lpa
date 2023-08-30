@@ -121,8 +121,8 @@ resource "aws_ecs_task_definition" "api" {
   family                   = "${terraform.workspace}-api"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 256
-  memory                   = 512
+  cpu                      = 512
+  memory                   = 1024
   container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.app_init_container}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
   task_role_arn            = var.ecs_iam_task_roles.api.arn
   execution_role_arn       = var.ecs_execution_role.arn
