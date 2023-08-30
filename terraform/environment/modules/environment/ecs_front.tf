@@ -77,8 +77,8 @@ resource "aws_ecs_task_definition" "front" {
   family                   = "${var.environment_name}-front"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 256
-  memory                   = 512
+  cpu                      = 512
+  memory                   = 1024
   container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
   task_role_arn            = var.ecs_iam_task_roles.front.arn
   execution_role_arn       = var.ecs_execution_role.arn
