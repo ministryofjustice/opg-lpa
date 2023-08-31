@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine3.17
+FROM php:8.2-fpm-alpine3.18
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
