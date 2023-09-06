@@ -70,7 +70,7 @@ six==1.16.0
     #   flask-cors
     #   geventhttpclient
     #   python-dateutil
-soupsieve==2.4.1
+soupsieve==2.5
     # via beautifulsoup4
 typing-extensions==4.7.1
     # via locust
