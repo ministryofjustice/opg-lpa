@@ -1,8 +1,5 @@
 name: "[Docker] Build and Push Images"
 
-# This workflow will build and push new container images to ECR on non-main branches
-# On main branch, it will retag the image with a main- prefix and push it to ECR
-
 defaults:
   run:
     shell: bash
@@ -130,7 +127,6 @@ jobs:
             OPG_LPA_COMMON_APP_VERSION=${{ github.sha }}
 
       - name: Move cache
-        if: steps.build_image.outputs.build == 'true'
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
@@ -140,15 +136,6 @@ jobs:
         uses: aws-actions/amazon-ecr-login@2fc7aceee09e9e4a7105c0d060c656fad0b4f63d # v1.7.0
         with:
           registries: 311462405659
-
-      - name: Prefix production image tag with branch name
-        if: github.ref == 'refs/heads/main'
-        env:
-          IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
-          IMAGE_NAME: ${{ matrix.image_name }}
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-        run: |
-          docker buildx imagetools create $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG --tag $ECR_REGISTRY/$IMAGE_NAME:main-$IMAGE_TAG
 
       - name: Tag and Push Container
         env:
