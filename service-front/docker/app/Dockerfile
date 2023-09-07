@@ -37,8 +37,8 @@ COPY --chown=root:root service-front/public /app/public
 COPY --chown=root:root shared /shared
 
 # PHP config files
-COPY --chown=root:root service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-COPY --chown=root:root service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
+COPY --chown=root:root shared/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root shared/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 COPY --chown=root:root shared/docker/app/www.conf /usr/local/etc/php-fpm.d/
 
 COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
