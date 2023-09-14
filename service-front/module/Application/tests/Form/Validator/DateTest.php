@@ -10,7 +10,7 @@ class DateTest extends MockeryTestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testIsValid($data, array $errors)
+    static public function testIsValid($data, array $errors)
     {
         $validator = new Date();
 

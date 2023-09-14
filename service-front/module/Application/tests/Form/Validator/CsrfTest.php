@@ -11,7 +11,7 @@ class CsrfTest extends MockeryTestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testIsValid($data, array $errors)
+    static public function testIsValid($data, array $errors)
     {
         $validator = new Csrf();
 
