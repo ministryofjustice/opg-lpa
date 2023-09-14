@@ -68,7 +68,7 @@ class StatusControllerTest extends AbstractControllerTest
      * @param $status
      * @dataProvider  statusProvider
      */
-    public function testIndexActionWithValidStatuses($status)
+    static public function testIndexActionWithValidStatuses($status)
     {
         /** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
@@ -116,7 +116,7 @@ class StatusControllerTest extends AbstractControllerTest
      *
      * @dataProvider processedDateFixtureProvider
      */
-    public function testIndexActionProcessedDateGeneration($dates, $shouldReceiveByDate)
+    static public function testIndexActionProcessedDateGeneration($dates, $shouldReceiveByDate)
     {
         if (!is_null($shouldReceiveByDate)) {
             $shouldReceiveByDate = new DateTime($shouldReceiveByDate);
