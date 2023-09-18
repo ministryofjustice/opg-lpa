@@ -4,11 +4,12 @@ namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Validator\Password;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class PasswordTest extends MockeryTestCase
 {
     #[DataProvider('dataProvider')]
-    static public function testIsValid($data, array $errors)
+    public function testIsValid($data, array $errors)
     {
         $validator = new Password();
 
@@ -18,7 +19,7 @@ class PasswordTest extends MockeryTestCase
         $this->assertEquals($errors, $validator->getMessages());
     }
 
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             [
