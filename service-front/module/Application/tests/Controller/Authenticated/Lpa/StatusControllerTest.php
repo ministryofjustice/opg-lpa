@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\DashboardController;
 use Application\Controller\Authenticated\Lpa\StatusController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use ApplicationTest\Controller\Authenticated\TestableDashboardController;
 use DateTime;
 use MakeShared\DataModel\Lpa\Payment\Payment;
@@ -13,7 +13,7 @@ use Laminas\Http\Response;
 use Laminas\Session\Container;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class StatusControllerTest extends AbstractControllerTest
+class StatusControllerTest extends AbstractControllerTestCase
 {
     public function testIndexAction()
     {

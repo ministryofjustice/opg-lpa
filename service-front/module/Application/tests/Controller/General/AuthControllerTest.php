@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -17,7 +17,7 @@ use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
 
-class AuthControllerTest extends AbstractControllerTest
+class AuthControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|Login

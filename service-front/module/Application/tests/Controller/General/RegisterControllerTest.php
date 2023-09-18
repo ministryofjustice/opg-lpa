@@ -7,7 +7,7 @@ use Application\Form\User\ConfirmEmail;
 use Application\Form\User\Registration;
 use Application\Model\Service\User\Details;
 use Application\Model\Service\User\Register;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\Http\Headers;
@@ -18,7 +18,7 @@ use Laminas\Router\RouteMatch;
 use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
 
-class RegisterControllerTest extends AbstractControllerTest
+class RegisterControllerTest extends AbstractControllerTestCase
 {
     public const GA = 987654321987654321;
     /**

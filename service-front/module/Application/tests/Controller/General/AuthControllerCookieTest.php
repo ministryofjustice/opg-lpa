@@ -4,13 +4,13 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Laminas\Http\Header\Cookie;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class AuthControllerCookieTest extends AbstractControllerTest
+class AuthControllerCookieTest extends AbstractControllerTestCase
 {
     public function testIndexActionAlreadySignedIn()
     {

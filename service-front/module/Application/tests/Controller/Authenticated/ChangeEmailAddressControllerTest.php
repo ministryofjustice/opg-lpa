@@ -4,12 +4,12 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\ChangeEmailAddressController;
 use Application\Form\User\ChangeEmailAddress;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\View\Model\ViewModel;
 
-class ChangeEmailAddressControllerTest extends AbstractControllerTest
+class ChangeEmailAddressControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|ChangeEmailAddress

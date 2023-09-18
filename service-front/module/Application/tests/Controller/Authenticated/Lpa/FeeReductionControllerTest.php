@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\FeeReductionController;
 use Application\Form\Lpa\FeeReductionForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use RuntimeException;
@@ -12,7 +12,7 @@ use Laminas\Form\Element\Select;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class FeeReductionControllerTest extends AbstractControllerTest
+class FeeReductionControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|FeeReductionForm

@@ -3,11 +3,11 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\VerifyEmailAddressController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class VerifyEmailAddressControllerTest extends AbstractControllerTest
+class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
 {
     protected function getController(string $controllerName)
     {

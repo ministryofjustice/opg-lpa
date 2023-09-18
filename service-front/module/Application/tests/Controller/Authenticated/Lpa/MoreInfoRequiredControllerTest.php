@@ -3,10 +3,10 @@
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\MoreInfoRequiredController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\View\Model\ViewModel;
 
-class MoreInfoRequiredControllerTest extends AbstractControllerTest
+class MoreInfoRequiredControllerTest extends AbstractControllerTestCase
 {
     public function testIndexAction()
     {

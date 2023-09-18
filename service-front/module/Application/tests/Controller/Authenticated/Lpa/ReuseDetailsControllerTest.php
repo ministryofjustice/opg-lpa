@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Form\Lpa\ReuseDetailsForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use RuntimeException;
@@ -12,7 +12,7 @@ use Laminas\Http\Response;
 use Laminas\Router\RouteMatch;
 use Laminas\View\Model\ViewModel;
 
-class ReuseDetailsControllerTest extends AbstractControllerTest
+class ReuseDetailsControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|ReuseDetailsForm

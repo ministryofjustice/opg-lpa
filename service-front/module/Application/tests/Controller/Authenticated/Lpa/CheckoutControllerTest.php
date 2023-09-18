@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Model\Service\Lpa\Communication;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -17,7 +17,7 @@ use Laminas\View\Model\ViewModel;
 use Alphagov\Pay\Client as GovPayClient;
 use Alphagov\Pay\Response\Payment as GovPayPayment;
 
-class CheckoutControllerTest extends AbstractControllerTest
+class CheckoutControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|Communication

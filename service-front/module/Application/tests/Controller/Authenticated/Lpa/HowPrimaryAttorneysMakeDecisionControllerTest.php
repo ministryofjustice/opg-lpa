@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
 use Application\Form\Lpa\HowAttorneysMakeDecisionForm;
 use Application\Model\Service\Lpa\Applicant;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
@@ -13,7 +13,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTest
+class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|HowAttorneysMakeDecisionForm
