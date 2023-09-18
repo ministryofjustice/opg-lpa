@@ -11,6 +11,7 @@ use MakeShared\DataModel\Lpa\Payment\Payment;
 use Laminas\View\Model\ViewModel;
 use Laminas\Http\Response;
 use Laminas\Session\Container;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class StatusControllerTest extends AbstractControllerTest
 {
