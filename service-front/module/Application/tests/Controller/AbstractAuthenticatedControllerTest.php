@@ -12,7 +12,7 @@ use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayObject;
 use Laminas\View\Model\ViewModel;
 
-class AbstractAuthenticatedControllerTest extends AbstractControllerTest
+class AbstractAuthenticatedControllerTestCase extends AbstractControllerTestCase
 {
     public function testOnDispatchNotAuthenticated()
     {
