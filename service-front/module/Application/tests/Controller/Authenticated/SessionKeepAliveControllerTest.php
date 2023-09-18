@@ -3,11 +3,11 @@
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\SessionKeepAliveController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\View\Model\JsonModel;
 use Laminas\Http\Response;
 
-class SessionKeepAliveControllerTest extends AbstractControllerTest
+class SessionKeepAliveControllerTest extends AbstractControllerTestCase
 {
     public function setUp() : void
     {

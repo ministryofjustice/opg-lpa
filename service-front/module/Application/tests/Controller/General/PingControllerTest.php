@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\PingController;
 use Application\Model\Service\System\Status;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;

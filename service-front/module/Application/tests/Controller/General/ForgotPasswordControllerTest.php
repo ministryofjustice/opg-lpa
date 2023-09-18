@@ -6,13 +6,13 @@ use Application\Controller\General\ForgotPasswordController;
 use Application\Form\User\ConfirmEmail;
 use Application\Form\User\SetPassword;
 use Application\Model\Service\User\Details;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class ForgotPasswordControllerTest extends AbstractControllerTest
+class ForgotPasswordControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|ConfirmEmail

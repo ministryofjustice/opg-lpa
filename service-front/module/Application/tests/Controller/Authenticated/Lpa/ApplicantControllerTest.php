@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\ApplicantController;
 use Application\Form\Lpa\ApplicantForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
@@ -13,7 +13,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class ApplicantControllerTest extends AbstractControllerTest
+class ApplicantControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|ApplicantForm

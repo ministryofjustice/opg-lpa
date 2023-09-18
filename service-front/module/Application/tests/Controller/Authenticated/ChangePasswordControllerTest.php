@@ -4,13 +4,13 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\ChangePasswordController;
 use Application\Form\User\ChangePassword;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class ChangePasswordControllerTest extends AbstractControllerTest
+class ChangePasswordControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|ChangePassword

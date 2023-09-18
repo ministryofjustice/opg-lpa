@@ -3,10 +3,10 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\HomeController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\View\Model\ViewModel;
 
-class HomeControllerTest extends AbstractControllerTest
+class HomeControllerTest extends AbstractControllerTestCase
 {
     public function testIndexAction()
     {

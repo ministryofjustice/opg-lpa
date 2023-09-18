@@ -4,12 +4,12 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Form\Lpa\DateCheckForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class DateCheckControllerTest extends AbstractControllerTest
+class DateCheckControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|DateCheckForm
