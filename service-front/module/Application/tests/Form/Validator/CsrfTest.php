@@ -5,11 +5,12 @@ namespace ApplicationTest\Form\Lpa;
 use Application\Form\Validator\Csrf;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Laminas\Session\Container;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CsrfTest extends MockeryTestCase
 {
     #[DataProvider('dataProvider')]
-    static public function testIsValid($data, array $errors)
+    public function testIsValid($data, array $errors)
     {
         $validator = new Csrf();
 
@@ -24,7 +25,7 @@ class CsrfTest extends MockeryTestCase
         $this->assertEquals($errors, $validator->getMessages());
     }
 
-    public function dataProvider()
+    static public function dataProvider()
     {
         return [
             [
