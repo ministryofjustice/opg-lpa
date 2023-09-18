@@ -8,9 +8,7 @@ use Laminas\Session\Container;
 
 class CsrfTest extends MockeryTestCase
 {
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     static public function testIsValid($data, array $errors)
     {
         $validator = new Csrf();
