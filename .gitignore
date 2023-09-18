@@ -36,7 +36,7 @@ cypress/logs/
 /cypress/downloads/
 service-front-v2/app/static
 service-front-v2/govuk_components
-.phpunit.result.cache
+.phpunit..cache
 cypress/integration/common/local_dev_only.js
 *.egg-info
 *.pyc
