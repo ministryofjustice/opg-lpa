@@ -9,7 +9,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 
-class ContinuationSheetTest extends AbstractHttpControllerTestCase
+class ContinuationSheetsTest extends AbstractHttpControllerTestCase
 {
     /**
      * @var $service Applicant
