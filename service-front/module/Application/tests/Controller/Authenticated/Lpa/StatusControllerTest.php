@@ -69,7 +69,7 @@ class StatusControllerTest extends AbstractControllerTest
      * @param $status
      */
     #[DataProvider('statusProvider')]
-    static public function testIndexActionWithValidStatuses($status)
+    public function testIndexActionWithValidStatuses($status)
     {
         /** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
@@ -82,7 +82,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(ViewModel::class, $result);
     }
-    public function statusProvider()
+    static public function statusProvider()
     {
         return[
             ['waiting'],
@@ -117,7 +117,7 @@ class StatusControllerTest extends AbstractControllerTest
      *
      */
     #[DataProvider('processedDateFixtureProvider')]
-    static public function testIndexActionProcessedDateGeneration($dates, $shouldReceiveByDate)
+    public function testIndexActionProcessedDateGeneration($dates, $shouldReceiveByDate)
     {
         if (!is_null($shouldReceiveByDate)) {
             $shouldReceiveByDate = new DateTime($shouldReceiveByDate);
@@ -168,7 +168,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals($result->shouldReceiveByDate, $shouldReceiveByDate);
     }
 
-    public function processedDateFixtureProvider()
+    static public function processedDateFixtureProvider()
     {
         /*
          * Each element in the returned array represents the data for a test
