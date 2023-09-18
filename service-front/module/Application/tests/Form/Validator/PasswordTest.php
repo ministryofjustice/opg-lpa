@@ -7,9 +7,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class PasswordTest extends MockeryTestCase
 {
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     static public function testIsValid($data, array $errors)
     {
         $validator = new Password();

@@ -66,8 +66,8 @@ class StatusControllerTest extends AbstractControllerTest
 
     /**
      * @param $status
-     * @dataProvider  statusProvider
      */
+    #[DataProvider('statusProvider')]
     static public function testIndexActionWithValidStatuses($status)
     {
         /** @var StatusController $controller */
@@ -114,8 +114,8 @@ class StatusControllerTest extends AbstractControllerTest
      * is set by one of the dates returned by Sirius (latest of dispatchDate,
      * withdrawnDate, invalidDate or rejectedDate).
      *
-     * @dataProvider processedDateFixtureProvider
      */
+    #[DataProvider('processedDateFixtureProvider')]
     static public function testIndexActionProcessedDateGeneration($dates, $shouldReceiveByDate)
     {
         if (!is_null($shouldReceiveByDate)) {
