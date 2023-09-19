@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CorrespondentController;
 use Application\Form\Lpa\CorrespondentForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Common\EmailAddress;
@@ -17,7 +17,7 @@ use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class CorrespondentControllerTest extends AbstractControllerTest
+class CorrespondentControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|CorrespondentForm

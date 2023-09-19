@@ -8,7 +8,7 @@ use Application\Model\Service\Payment\Helper\LpaIdHelper;
 /**
  * Payment test case.
  */
-class PaymentTest extends AbstractHttpControllerTestCase
+class LpaIdHelperTest extends AbstractHttpControllerTestCase
 {
     /**
      * Prepares the environment before running a test.

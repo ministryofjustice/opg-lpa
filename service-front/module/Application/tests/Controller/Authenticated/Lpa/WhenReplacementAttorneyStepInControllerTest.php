@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\WhenReplacementAttorneyStepInController;
 use Application\Form\Lpa\WhenReplacementAttorneyStepInForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
@@ -12,7 +12,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
+class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|WhenReplacementAttorneyStepInForm

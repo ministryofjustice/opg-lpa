@@ -4,12 +4,12 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\StatsController;
 use Application\Model\Service\Stats\Stats as StatsService;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\View\Model\ViewModel;
 
-class StatsControllerTest extends AbstractControllerTest
+class StatsControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|StatsService

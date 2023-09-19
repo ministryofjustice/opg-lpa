@@ -4,12 +4,12 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\GuidanceController;
 use Application\Model\Service\Guidance\Guidance;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\View\Model\ViewModel;
 
-class GuidanceControllerTest extends AbstractControllerTest
+class GuidanceControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|Guidance

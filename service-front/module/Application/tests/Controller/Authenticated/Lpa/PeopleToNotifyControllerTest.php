@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\PeopleToNotifyController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\PeopleToNotifyForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Common\Address;
@@ -19,7 +19,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class PeopleToNotifyControllerTest extends AbstractControllerTest
+class PeopleToNotifyControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|BlankMainFlowForm

@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\FeedbackController;
 use Application\Form\General\FeedbackForm;
 use Application\Model\Service\Feedback\Feedback;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
@@ -14,7 +14,7 @@ use Laminas\Http\Response;
 use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
 
-class FeedbackControllerTest extends AbstractControllerTest
+class FeedbackControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|FeedbackForm

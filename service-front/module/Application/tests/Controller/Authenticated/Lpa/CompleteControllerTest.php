@@ -3,11 +3,11 @@
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CompleteController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use Laminas\View\Model\ViewModel;
 
-class CompleteControllerTest extends AbstractControllerTest
+class CompleteControllerTest extends AbstractControllerTestCase
 {
     public function testIndexActionGetNotLocked()
     {

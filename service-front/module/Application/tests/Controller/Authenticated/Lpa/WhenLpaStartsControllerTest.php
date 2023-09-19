@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\WhenLpaStartsController;
 use Application\Form\Lpa\WhenLpaStartsForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
@@ -12,7 +12,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class WhenLpaStartsControllerTest extends AbstractControllerTest
+class WhenLpaStartsControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|WhenLpaStartsForm

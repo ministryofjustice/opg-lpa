@@ -3,7 +3,7 @@
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DownloadController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use DateTime;
 use Exception;
 use Mockery;
@@ -13,7 +13,7 @@ use Laminas\Http\Headers;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class DownloadControllerTest extends AbstractControllerTest
+class DownloadControllerTest extends AbstractControllerTestCase
 {
     public function testIndexActionNoPdfAvailable()
     {

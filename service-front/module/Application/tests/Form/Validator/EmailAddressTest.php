@@ -4,12 +4,11 @@ namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Validator\EmailAddress;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class EmailAddressTest extends MockeryTestCase
 {
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testIsValid($data, array $errors)
     {
         $validator = new EmailAddress();
@@ -20,7 +19,7 @@ class EmailAddressTest extends MockeryTestCase
         $this->assertEquals($errors, $validator->getMessages());
     }
 
-    public function dataProvider()
+    static public function dataProvider()
     {
         return [
             [

@@ -3,10 +3,10 @@
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\SummaryController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\View\Model\ViewModel;
 
-class SummaryControllerTest extends AbstractControllerTest
+class SummaryControllerTest extends AbstractControllerTestCase
 {
     public function testIndexAction()
     {

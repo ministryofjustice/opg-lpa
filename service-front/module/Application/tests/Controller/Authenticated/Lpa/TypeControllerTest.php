@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\TypeController;
 use Application\Form\Lpa\TypeForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Document;
@@ -12,7 +12,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class TypeControllerTest extends AbstractControllerTest
+class TypeControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|TypeForm

@@ -1,12 +1,6 @@
 <?xml version="1.0"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./module/Application/tests/Bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage processUncoveredFiles="true" includeUncoveredFiles="true">
-    <include>
-      <directory suffix=".php">./module/Application/src</directory>
-
-      <!-- next line only required if you want coverage reports for twig templates -->
-      <!--directory suffix=".php">./build/twig-cache</directory-->
-    </include>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./module/Application/tests/Bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <coverage includeUncoveredFiles="true">
     <report>
       <html outputDirectory="./build/coverage"/>
     </report>
@@ -15,6 +9,13 @@
     <directory>./module/Application/tests/</directory>
   </testsuite>
   <php>
-    <ini name="memory_limit" value="512M" />
+    <ini name="memory_limit" value="512M"/>
   </php>
+  <source>
+    <include>
+      <directory suffix=".php">./module/Application/src</directory>
+      <!-- next line only required if you want coverage reports for twig templates -->
+      <!--directory suffix=".php">./build/twig-cache</directory-->
+    </include>
+  </source>
 </phpunit>

@@ -4,14 +4,14 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\LifeSustainingController;
 use Application\Form\Lpa\LifeSustainingForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class LifeSustainingControllerTest extends AbstractControllerTest
+class LifeSustainingControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|LifeSustainingForm

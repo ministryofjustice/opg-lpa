@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DonorController;
 use Application\Form\Lpa\DonorForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Common\Dob;
@@ -17,7 +17,7 @@ use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class DonorControllerTest extends AbstractControllerTest
+class DonorControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|DonorForm

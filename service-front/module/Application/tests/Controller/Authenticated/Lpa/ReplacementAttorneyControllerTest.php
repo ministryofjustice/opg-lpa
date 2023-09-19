@@ -6,7 +6,7 @@ use Application\Controller\Authenticated\Lpa\ReplacementAttorneyController;
 use Application\Form\Lpa\AttorneyForm;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\TrustCorporationForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Common\Address;
@@ -20,7 +20,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class ReplacementAttorneyControllerTest extends AbstractControllerTest
+class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|BlankMainFlowForm
