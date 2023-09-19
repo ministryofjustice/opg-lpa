@@ -4,14 +4,14 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\InstructionsController;
 use Application\Form\Lpa\InstructionsAndPreferencesForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class InstructionsControllerTest extends AbstractControllerTest
+class InstructionsControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|InstructionsAndPreferencesForm

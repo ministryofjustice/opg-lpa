@@ -58,7 +58,7 @@ use Laminas\Stdlib\Parameters;
 use Laminas\Uri\Uri;
 use DateTime;
 
-abstract class AbstractControllerTest extends MockeryTestCase
+abstract class AbstractControllerTestCase extends MockeryTestCase
 {
     /**
      * @var MockInterface|Logger

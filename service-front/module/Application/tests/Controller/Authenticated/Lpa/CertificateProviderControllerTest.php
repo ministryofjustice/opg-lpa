@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\CertificateProviderController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\CertificateProviderForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\CertificateProvider;
@@ -15,7 +15,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class CertificateProviderControllerTest extends AbstractControllerTest
+class CertificateProviderControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|BlankMainFlowForm

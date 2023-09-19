@@ -3,7 +3,7 @@
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\DashboardController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
@@ -15,7 +15,7 @@ use Laminas\Stdlib\ArrayObject;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class DashboardControllerTest extends AbstractControllerTest
+class DashboardControllerTest extends AbstractControllerTestCase
 {
     public function testIndexActionZeroLpas()
     {

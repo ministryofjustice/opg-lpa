@@ -4,15 +4,16 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\DashboardController;
 use Application\Controller\Authenticated\Lpa\StatusController;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use ApplicationTest\Controller\Authenticated\TestableDashboardController;
 use DateTime;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Laminas\View\Model\ViewModel;
 use Laminas\Http\Response;
 use Laminas\Session\Container;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class StatusControllerTest extends AbstractControllerTest
+class StatusControllerTest extends AbstractControllerTestCase
 {
     public function testIndexAction()
     {
@@ -66,8 +67,8 @@ class StatusControllerTest extends AbstractControllerTest
 
     /**
      * @param $status
-     * @dataProvider  statusProvider
      */
+    #[DataProvider('statusProvider')]
     public function testIndexActionWithValidStatuses($status)
     {
         /** @var StatusController $controller */
@@ -81,7 +82,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(ViewModel::class, $result);
     }
-    public function statusProvider()
+    static public function statusProvider()
     {
         return[
             ['waiting'],
@@ -114,8 +115,8 @@ class StatusControllerTest extends AbstractControllerTest
      * is set by one of the dates returned by Sirius (latest of dispatchDate,
      * withdrawnDate, invalidDate or rejectedDate).
      *
-     * @dataProvider processedDateFixtureProvider
      */
+    #[DataProvider('processedDateFixtureProvider')]
     public function testIndexActionProcessedDateGeneration($dates, $shouldReceiveByDate)
     {
         if (!is_null($shouldReceiveByDate)) {
@@ -167,7 +168,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals($result->shouldReceiveByDate, $shouldReceiveByDate);
     }
 
-    public function processedDateFixtureProvider()
+    static public function processedDateFixtureProvider()
     {
         /*
          * Each element in the returned array represents the data for a test

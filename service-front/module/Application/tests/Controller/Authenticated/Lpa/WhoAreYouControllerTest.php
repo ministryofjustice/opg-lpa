@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\WhoAreYouController;
 use Application\Form\Lpa\WhoAreYouForm;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
@@ -13,7 +13,7 @@ use Laminas\Form\Element\Select;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class WhoAreYouControllerTest extends AbstractControllerTest
+class WhoAreYouControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|WhoAreYouForm

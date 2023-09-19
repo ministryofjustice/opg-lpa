@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\AboutYouController;
 use Application\Form\User\AboutYou;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Hamcrest\MatcherAssert;
 use Hamcrest\Matchers;
 use Mockery;
@@ -13,7 +13,7 @@ use MakeShared\DataModel\User\User;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class AboutYouControllerTest extends AbstractControllerTest
+class AboutYouControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|AboutYou

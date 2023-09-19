@@ -4,12 +4,11 @@ namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Validator\Date;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class DateTest extends MockeryTestCase
 {
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testIsValid($data, array $errors)
     {
         $validator = new Date();
@@ -20,7 +19,7 @@ class DateTest extends MockeryTestCase
         $this->assertEquals($errors, $validator->getMessages());
     }
 
-    public function dataProvider()
+    static public function dataProvider()
     {
         return [
             [

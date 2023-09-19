@@ -8,7 +8,7 @@ use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 
-class AbstractLpaActorControllerTest extends AbstractControllerTest
+class AbstractLpaActorControllerTest extends AbstractControllerTestCase
 {
     public function testReuseActorDetailsHttpOneOption()
     {

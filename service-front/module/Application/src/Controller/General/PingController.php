@@ -58,14 +58,17 @@ class PingController extends AbstractActionController
         $result = $this->statusService->check();
 
         if (in_array($result['status'], [Constants::STATUS_PASS, Constants::STATUS_WARN])) {
+            /** @psalm-suppress UndefinedPropertyAssignment */
             $xml->status = 'OK';
         } else {
             $response->setStatusCode(500);
+            /** @psalm-suppress UndefinedPropertyAssignment */
             $xml->status = 'ERROR';
         }
 
         $end = round(microtime(true) * 1000);
 
+        /** @psalm-suppress UndefinedPropertyAssignment */
         $xml->response_time = ($end - $start) / 1000;
 
         $response->setContent($xml->asXML());

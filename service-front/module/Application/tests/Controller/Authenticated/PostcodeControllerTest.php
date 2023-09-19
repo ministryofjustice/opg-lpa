@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Authenticated;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Model\Service\AddressLookup\PostcodeInfo;
-use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\Http\Response;
@@ -14,7 +14,7 @@ use Laminas\Router\RouteMatch;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class PostcodeControllerTest extends AbstractControllerTest
+class PostcodeControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|MvcEvent
