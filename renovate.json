@@ -109,16 +109,15 @@
     },
     {
       "description": [
-        "composer minor and patch updates (PHP 8.2, stable for 3 days)",
+        "admin composer minor and patch updates (PHP 8.2, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "minor and patch updates (PHP 8.2)",
-      "groupSlug": "all-minor-patch-updates-php82",
+      "groupName": "admin minor and patch updates (PHP 8.2)",
+      "groupSlug": "admin-minor-patch-updates-php82",
       "labels": ["Dependencies", "Renovate", "PHP 8.2"],
       "matchManagers": ["composer"],
       "matchUpdateTypes": ["minor", "patch"],
-      "excludePackagePatterns": ["cypress"],
       "excludePackageNames": ["php"],
       "matchFiles": [
         "service-admin/composer.json"
@@ -129,21 +128,74 @@
     },
     {
       "description": [
-        "composer minor and patch updates (PHP 8.1, stable for 3 days)",
+        "front composer minor and patch updates (PHP 8.2, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "minor and patch updates (PHP 8.1)",
-      "groupSlug": "all-minor-patch-updates-php81",
+      "groupName": "front minor and patch updates (PHP 8.2)",
+      "groupSlug": "front-minor-patch-updates-php82",
+      "labels": ["Dependencies", "Renovate", "PHP 8.2"],
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "excludePackageNames": ["php"],
+      "matchFiles": [
+        "service-front/composer.json"
+      ],
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "stabilityDays": 3
+    },
+    {
+      "description": [
+        "api composer minor and patch updates (PHP 8.2, stable for 3 days)",
+        "These might be automerged once we're comfortable with Renovate"
+      ],
+      "automerge": false,
+      "groupName": "api minor and patch updates (PHP 8.2)",
+      "groupSlug": "api-minor-patch-updates-php82",
+      "labels": ["Dependencies", "Renovate", "PHP 8.2"],
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "excludePackageNames": ["php"],
+      "matchFiles": [
+        "service-api/composer.json"
+      ],
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "stabilityDays": 3
+    },
+    {
+      "description": [
+        "pdf composer minor and patch updates (PHP 8.1, stable for 3 days)",
+        "These might be automerged once we're comfortable with Renovate"
+      ],
+      "automerge": false,
+      "groupName": "pdf minor and patch updates (PHP 8.1)",
+      "groupSlug": "pdf-minor-patch-updates-php81",
       "labels": ["Dependencies", "Renovate", "PHP 8.1"],
       "matchManagers": ["composer"],
       "matchUpdateTypes": ["minor", "patch"],
-      "excludePackagePatterns": ["cypress"],
       "excludePackageNames": ["php"],
       "matchFiles": [
-        "service-front/composer.json",
-        "service-api/composer.json",
-        "service-pdf/composer.json",
+        "service-pdf/composer.json"
+      ],
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "stabilityDays": 3
+    },
+    {
+      "description": [
+        "shared composer minor and patch updates (PHP 8.2, stable for 3 days)",
+        "These might be automerged once we're comfortable with Renovate"
+      ],
+      "automerge": false,
+      "groupName": "shared minor and patch updates (PHP 8.2)",
+      "groupSlug": "shared-minor-patch-updates-php82",
+      "labels": ["Dependencies", "Renovate", "PHP 8.2"],
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "excludePackageNames": ["php"],
+      "matchFiles": [
         "shared/composer.json"
       ],
       "prCreation": "immediate",
