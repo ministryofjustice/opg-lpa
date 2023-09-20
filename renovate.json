@@ -129,7 +129,7 @@
     },
     {
       "description": [
-        "composer minor and patch updates (PHP 8.1, stable for 3 days)",
+        "front composer minor and patch updates (PHP 8.1, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
@@ -141,9 +141,66 @@
       "excludePackagePatterns": ["cypress"],
       "excludePackageNames": ["php"],
       "matchFiles": [
-        "service-front/composer.json",
-        "service-api/composer.json",
-        "service-pdf/composer.json",
+        "service-front/composer.json"
+      ],
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "stabilityDays": 3
+    },
+    {
+      "description": [
+        "api composer minor and patch updates (PHP 8.1, stable for 3 days)",
+        "These might be automerged once we're comfortable with Renovate"
+      ],
+      "automerge": false,
+      "groupName": "minor and patch updates (PHP 8.1)",
+      "groupSlug": "all-minor-patch-updates-php81",
+      "labels": ["Dependencies", "Renovate", "PHP 8.1"],
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "excludePackagePatterns": ["cypress"],
+      "excludePackageNames": ["php"],
+      "matchFiles": [
+        "service-api/composer.json"
+      ],
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "stabilityDays": 3
+    },
+    {
+      "description": [
+        "pdf composer minor and patch updates (PHP 8.1, stable for 3 days)",
+        "These might be automerged once we're comfortable with Renovate"
+      ],
+      "automerge": false,
+      "groupName": "minor and patch updates (PHP 8.1)",
+      "groupSlug": "all-minor-patch-updates-php81",
+      "labels": ["Dependencies", "Renovate", "PHP 8.1"],
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "excludePackagePatterns": ["cypress"],
+      "excludePackageNames": ["php"],
+      "matchFiles": [
+        "service-pdf/composer.json"
+      ],
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "stabilityDays": 3
+    },
+    {
+      "description": [
+        "shared composer minor and patch updates (PHP 8.1, stable for 3 days)",
+        "These might be automerged once we're comfortable with Renovate"
+      ],
+      "automerge": false,
+      "groupName": "minor and patch updates (PHP 8.1)",
+      "groupSlug": "all-minor-patch-updates-php81",
+      "labels": ["Dependencies", "Renovate", "PHP 8.1"],
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "excludePackagePatterns": ["cypress"],
+      "excludePackageNames": ["php"],
+      "matchFiles": [
         "shared/composer.json"
       ],
       "prCreation": "immediate",
