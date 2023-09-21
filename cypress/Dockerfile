@@ -1,4 +1,4 @@
-FROM cypress/included:13.1.0
+FROM cypress/included:13.2.0
 
 WORKDIR /app
 
