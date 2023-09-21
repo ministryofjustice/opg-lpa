@@ -61,8 +61,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: path filters
-        uses: dorny/paths-filter@v2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
