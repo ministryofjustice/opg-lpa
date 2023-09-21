@@ -33,7 +33,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup PHP
-        if: steps.filter.outputs.check == 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
