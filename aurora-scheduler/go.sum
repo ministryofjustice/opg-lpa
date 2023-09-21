@@ -116,6 +116,8 @@ github.com/aws/aws-sdk-go-v2/service/rds v1.43.0 h1:fpEW2TAVv0V+dbvaTgjjx69BuLzS
 github.com/aws/aws-sdk-go-v2/service/rds v1.43.0/go.mod h1:MsNKuqHhTJrmI6A0TBdhSYiQ7SYkKncIWRIp9KfzRfs=
 github.com/aws/aws-sdk-go-v2/service/rds v1.45.0 h1:Yi23UNiGidNfT7tIW0lbE6JtRR1ZN+cNZGRTKLB+opk=
 github.com/aws/aws-sdk-go-v2/service/rds v1.45.0/go.mod h1:rS6T0DrjdZ5LDr8ZC/J9iZdD1oSbie5reWWzqv5zLOw=
+github.com/aws/aws-sdk-go-v2/service/rds v1.54.0 h1:FmExQnV6PXPAwP2DT3nXlWyKtCJ30gCEQIu4MUOuESo=
+github.com/aws/aws-sdk-go-v2/service/rds v1.54.0/go.mod h1:UNv1vk1fU1NJefzteykVpVLA88w4WxB05g3vp2kQhYM=
 github.com/aws/aws-sdk-go-v2/service/sso v1.11.25 h1:GFZitO48N/7EsFDt8fMa5iYdmWqkUDDB3Eje6z3kbG0=
 github.com/aws/aws-sdk-go-v2/service/sso v1.11.25/go.mod h1:IARHuzTXmj1C0KS35vboR0FeJ89OkEy1M9mWbK2ifCI=
 github.com/aws/aws-sdk-go-v2/service/sso v1.12.5 h1:bdKIX6SVF3nc3xJFw6Nf0igzS6Ff/louGq8Z6VP/3Hs=
