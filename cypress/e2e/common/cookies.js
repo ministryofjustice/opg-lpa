@@ -10,7 +10,7 @@ const checkCookies = function (shouldBeSet, tries) {
     tries = 0;
   }
 
-  if (tries > 2) {
+  if (tries > 10) {
     cy.log('TOO MANY TRIES');
     return cy.wrap(false).should('be.true');
   }
