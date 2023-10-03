@@ -23,7 +23,7 @@
         "laminas-api-tools/api-tools-api-problem": "^1.4",
         "php-http/guzzle7-adapter": "^1.0.0",
         "alphagov/notifications-php-client": "^5.0.0",
-        "robmorgan/phinx": "^0.14.0",
+        "robmorgan/phinx": "^0.15.0",
         "laminas/laminas-db": "^2.13.4",
         "symfony/console": "^6.1",
         "laminas/laminas-cli": "^1.5",
