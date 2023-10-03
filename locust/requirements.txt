@@ -73,7 +73,7 @@ soupsieve==2.5
     # via beautifulsoup4
 typing-extensions==4.8.0
     # via locust
-urllib3==2.0.5
+urllib3==2.0.6
     # via requests
 werkzeug==3.0.0
     # via
