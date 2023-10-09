@@ -38,7 +38,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         try {
             return new User($this->apiClient->httpGet('/v2/user/' . $this->getUserId()));
         } catch (ApiException $ex) {
-            $this->getLogger()->err($ex->getMessage());
+            $this->getLogger()->error($ex->getMessage());
         }
 
         return false;
@@ -117,7 +117,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex1) {
-                    $logger->err($ex1->getMessage());
+                    $logger->error($ex1->getMessage());
                 }
 
                 // Send the new email address an email with link to verify that
@@ -137,14 +137,14 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex2) {
-                    $logger->err($ex2->getMessage());
+                    $logger->error($ex2->getMessage());
                     return 'failed-sending-email';
                 }
 
                 return true;
             }
         } catch (ApiException $ex3) {
-            $logger->err($ex3->getMessage());
+            $logger->error($ex3->getMessage());
 
             //  Get the real error out of the exception details
             switch ($ex3->getMessage()) {
@@ -171,7 +171,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
             return true;
         } catch (ApiException $ex) {
-            $logger->err($ex->getMessage());
+            $logger->error($ex->getMessage());
         }
 
         return false;
@@ -216,7 +216,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex) {
-                    $logger->err($ex->getMessage());
+                    $logger->error($ex->getMessage());
                 }
 
                 // Update the identity with the new token to avoid being
@@ -228,7 +228,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 return true;
             }
         } catch (ApiException $ex) {
-            $logger->err($ex->getMessage());
+            $logger->error($ex->getMessage());
         }
 
         return 'unknown-error';
@@ -253,7 +253,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             }
             $failureCode = null;
         } catch (ApiException $ex) {
-            $this->getLogger()->err($ex->getMessage());
+            $this->getLogger()->error($ex->getMessage());
 
             $success = false;
             $expiresIn = null;
@@ -284,7 +284,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         try {
             $this->apiClient->httpDelete('/v2/user/' . $this->getUserId());
         } catch (ApiException $ex) {
-            $logger->err($ex->getMessage());
+            $logger->error($ex->getMessage());
             return false;
         }
 
@@ -330,7 +330,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                     try {
                         $this->getMailTransport()->send($mailParameters);
                     } catch (ExceptionInterface $ex) {
-                        $logger->err($ex->getMessage());
+                        $logger->error($ex->getMessage());
                         return "failed-sending-email";
                     }
 
@@ -355,7 +355,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex) {
-                    $logger->err($ex->getMessage());
+                    $logger->error($ex->getMessage());
                     return "failed-sending-email";
                 }
 
@@ -390,7 +390,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         try {
             $this->getMailTransport()->send($mailParameters);
         } catch (ExceptionInterface $ex) {
-            $this->getLogger()->err($ex->getMessage());
+            $this->getLogger()->error($ex->getMessage());
             return 'failed-sending-email';
         }
 
@@ -420,7 +420,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             }
         } catch (ApiException $ex) {
             $msg = $ex->getMessage();
-            $logger->err($msg);
+            $logger->error($msg);
 
             if ($msg === 'Invalid passwordToken') {
                 return 'invalid-token';
@@ -469,7 +469,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex1) {
-                    $logger->err($ex1->getMessage());
+                    $logger->error($ex1->getMessage());
                     return 'failed-sending-email';
                 }
 
@@ -485,7 +485,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 try {
                     $this->getMailTransport()->send($mailParameters);
                 } catch (ExceptionInterface $ex3) {
-                    $logger->err($ex3->getMessage());
+                    $logger->error($ex3->getMessage());
                     return 'failed-sending-warning-email';
                 }
                 return 'address-already-registered';
@@ -516,7 +516,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 return $this->sendAccountActivateEmail($email, $result['activation_token']);
             }
         } catch (ApiException $ex) {
-            $this->getLogger()->err($ex->getMessage());
+            $this->getLogger()->error($ex->getMessage());
         }
 
         //  If a proper reset token was returned, or the exception thrown was NOT account-not-activated then
@@ -544,7 +544,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
             return true;
         } catch (ApiException $ex) {
-            $logger->err($ex->getMessage());
+            $logger->error($ex->getMessage());
         }
 
         $logger->info('Account activation attempt with token failed, or was already activated');

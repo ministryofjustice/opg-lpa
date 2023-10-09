@@ -23,7 +23,7 @@
         "laminas/laminas-config-aggregator": "^1.7",
         "laminas/laminas-diactoros": "^2.8.0",
         "laminas/laminas-form": "^3.0.1",
-        "laminas/laminas-log": "^2.13",
+        "monolog/monolog": "^3.4",
         "laminas/laminas-math": "^3.4",
         "laminas/laminas-permissions-rbac": "^3.2.0",
         "laminas/laminas-router": "^3.7",

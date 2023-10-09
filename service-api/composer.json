@@ -14,7 +14,7 @@
         "laminas/laminas-cache-storage-adapter-memory": "2.2.0",
         "laminas/laminas-crypt": "^3.4",
         "laminas/laminas-filter": "^2.12.0",
-        "laminas/laminas-log": "^2.13",
+        "monolog/monolog": "^3.4",
         "laminas/laminas-math": "^3.4",
         "laminas/laminas-mvc": "^3.2",
         "laminas/laminas-mvc-i18n": "^2.0",

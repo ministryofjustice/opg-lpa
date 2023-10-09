@@ -72,12 +72,12 @@ class RedisClient
             // domain name cannot be resolved (in this case, an exception is still thrown)
             $result = @$this->redisClient->connect($this->redisHost, $this->redisPort);
         } catch (RedisException $e) {
-            $this->getLogger()->err(sprintf(
+            $this->getLogger()->error(sprintf(
                 'Unable to connect to Redis server at %s:%s',
                 $this->redisHost,
                 $this->redisPort
             ));
-            $this->getLogger()->err($e->getMessage());
+            $this->getLogger()->error($e->getMessage());
             $result = false;
         }
 
