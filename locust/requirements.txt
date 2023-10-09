@@ -6,7 +6,7 @@
 #
 beautifulsoup4==4.12.2
     # via bs4
-blinker==1.6.2
+blinker==1.6.3
     # via flask
 brotli==1.1.0
     # via geventhttpclient
