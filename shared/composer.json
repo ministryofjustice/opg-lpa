@@ -14,7 +14,7 @@
         "egulias/email-validator": "~1.2",
         "laminas/laminas-diactoros": "^2.23",
         "laminas/laminas-eventmanager": "^3.5",
-        "laminas/laminas-log": "^2.13",
+        "monolog/monolog": "^3.4",
         "laminas/laminas-mvc": "^3.5",
         "symfony/validator": "^4.2"
     },
