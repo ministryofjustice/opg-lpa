@@ -2,7 +2,7 @@
 
 namespace MakeShared\Logging;
 
-use Laminas\Log\Processor\ProcessorInterface;
+use Monolog\Processor\ProcessorInterface;
 
 /**
  * Process any headers array in the $extra field, stripping sensitive
@@ -49,7 +49,7 @@ class HeadersProcessor implements ProcessorInterface
 
     public const HEADERS_TO_STRIP = ['cookie', 'authorization', '_ga', '_gid', 'token'];
 
-    public function process(array $event): array
+    public function __invoke(array $event): array
     {
         // early return if there's no "headers" in $extra
         if (!isset($event['extra'][self::HEADERS_FIELD_NAME])) {
