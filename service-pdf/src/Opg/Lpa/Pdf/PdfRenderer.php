@@ -81,12 +81,12 @@ class PdfRenderer
         }
 
         if (!isset($assetsConfig['source_template_path'])) {
-            $this->getLogger()->err('source_template_path not set in config');
+            $this->getLogger()->error('source_template_path not set in config');
             return false;
         }
 
         if (!isset($assetsConfig['template_path_on_ram_disk'])) {
-            $this->getLogger()->err('template_path_on_ram_disk not set in config');
+            $this->getLogger()->error('template_path_on_ram_disk not set in config');
             return false;
         }
 
@@ -215,7 +215,7 @@ class PdfRenderer
         $message = $docId . ': ' . $message;
 
         if ($isError) {
-            $this->getLogger()->err($message, $loggingParams);
+            $this->getLogger()->error($message, $loggingParams);
         } else {
             $this->getLogger()->info($message, $loggingParams);
         }
