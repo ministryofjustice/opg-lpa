@@ -6,7 +6,7 @@
 #
 beautifulsoup4==4.12.2
     # via bs4
-blinker==1.6.3
+blinker==1.7.0
     # via flask
 brotli==1.1.0
     # via geventhttpclient
@@ -16,7 +16,7 @@ certifi==2023.7.22
     # via
     #   geventhttpclient
     #   requests
-charset-normalizer==3.3.0
+charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via flask
@@ -39,7 +39,7 @@ gevent==23.9.1
     #   locust
 geventhttpclient==2.0.11
     # via locust
-greenlet==3.0.0
+greenlet==3.0.1
     # via gevent
 idna==3.4
     # via requests
@@ -75,7 +75,7 @@ typing-extensions==4.8.0
     # via locust
 urllib3==2.0.7
     # via requests
-werkzeug==3.0.0
+werkzeug==3.0.1
     # via
     #   flask
     #   locust
