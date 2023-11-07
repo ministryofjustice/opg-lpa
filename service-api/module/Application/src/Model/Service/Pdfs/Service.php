@@ -166,7 +166,7 @@ class Service extends AbstractService
             // If we get here it exists in the bucket...
             return self::STATUS_READY;
         } catch (\Aws\S3\Exception\S3Exception $ignore) {
-            $this->getLogger()->err('Exception while attempting to get PDF info from S3');
+            $this->getLogger()->error('Exception while attempting to get PDF info from S3');
         }
 
         /*

@@ -16,7 +16,7 @@
         "tecnickcom/tcpdf": "6.4.1",
         "setasign/fpdi-tcpdf": "^2.0",
         "laminas/laminas-zendframework-bridge": "^1.1.1",
-        "laminas/laminas-log": "^2.13",
+        "monolog/monolog": "^3.4",
         "symfony/validator": "^4.2",
         "egulias/email-validator": "~1.2"
     },

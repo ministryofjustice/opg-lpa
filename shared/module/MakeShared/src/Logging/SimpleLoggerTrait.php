@@ -2,7 +2,7 @@
 
 namespace MakeShared\Logging;
 
-use Laminas\Log\Logger as LaminasLogger;
+use Monolog\Logger as MonologLogger;
 use MakeShared\Logging\SimpleLogger;
 
 /**
@@ -12,16 +12,16 @@ use MakeShared\Logging\SimpleLogger;
 trait SimpleLoggerTrait
 {
     /**
-     * @var LaminasLogger
+     * @var MonologLogger
      */
     private $logger;
 
     /**
-     * @return LaminasLogger $logger
+     * @return MonologLogger $logger
      */
     public function getLogger()
     {
-        if (!$this->logger instanceof LaminasLogger) {
+        if (!$this->logger instanceof MonologLogger) {
             $this->logger = new SimpleLogger();
         }
 

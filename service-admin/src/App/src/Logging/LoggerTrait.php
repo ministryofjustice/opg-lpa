@@ -2,8 +2,10 @@
 
 namespace App\Logging;
 
-use Laminas\Log\Logger as LaminasLogger;
-use Laminas\Log\Writer\Stream as StreamWriter;
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
 
 /**
  * Trait LoggerTrait
@@ -12,18 +14,18 @@ use Laminas\Log\Writer\Stream as StreamWriter;
 trait LoggerTrait
 {
     /**
-     * @var LaminasLogger
+     * @var Logger
      */
     private $logger;
 
     /**
-     * @return LaminasLogger $logger
+     * @return Logger $logger
      */
     public function getLogger()
     {
-        if (!$this->logger instanceof LaminasLogger) {
-            $this->logger = new LaminasLogger();
-            $this->logger->addWriter(new StreamWriter('php://stderr'));
+        if (!$this->logger instanceof Logger) {
+            $this->logger = new Logger('logger');
+            $this->logger->pushHandler(new StreamHandler('php://stderr', Level::Warning));
         }
 
         return $this->logger;

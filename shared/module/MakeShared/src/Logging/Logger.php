@@ -2,9 +2,10 @@
 
 namespace MakeShared\Logging;
 
-use Laminas\Log\Logger as LaminasLogger;
-use Laminas\Log\Writer\Stream as StreamWriter;
-use Laminas\Log\Formatter\Json as JsonFormatter;
+use Monolog\Level;
+use Monolog\Logger as MonologLogger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\JsonFormatter;
 use Laminas\Stdlib\ArrayUtils;
 use MakeShared\Constants;
 use MakeShared\Logging\MvcEventProcessor;
@@ -17,33 +18,33 @@ use Traversable;
  *
  * A simple StreamWriter file logger which converts log events to JSON.
  */
-class Logger extends LaminasLogger
+class Logger extends MonologLogger
 {
     /* @var Logger */
-    public function __construct(StreamWriter $writer = null)
+    public function __construct(StreamHandler $handler = null)
     {
         parent::__construct();
 
-        $this->addProcessor(new MvcEventProcessor());
-        $this->addProcessor(new HeadersProcessor());
-        $this->addProcessor(new TraceIdProcessor());
+        $this->pushProcessor(new MvcEventProcessor()); 
+        $this->pushProcessor(new HeadersProcessor());
+        $this->pushProcessor(new TraceIdProcessor());
 
-        if (is_null($writer)) {
-            $writer = new StreamWriter('php://stderr');
-            $writer->setFormatter(new JsonFormatter());
+        if (is_null($handler)) {
+            $handler = new StreamHandler('php://stderr', Level::Warning);
+            $handler->setFormatter(new JsonFormatter());  
         }
 
-        $this->addWriter($writer);
+        $this->pushHandler($handler);
     }
 
     /**
      * Override the log() method to allow us to append a trace_id field into
      * the $extra argument.
      */
-    public function log($priority, $message, $extra = [])
+    public function log($level, string|\Stringable $message, array $context = []): void
     {
         if ($extra instanceof Traversable) {
-            $extra = ArrayUtils::iteratorToArray($extra);
+            $extra = ArrayUtils::iteratorToArray($context);
         }
 
         // HACK - get the X-Trace-Id direct from the $_SERVER global
@@ -53,6 +54,6 @@ class Logger extends LaminasLogger
                 $_SERVER[Constants::X_TRACE_ID_HEADER_NAME];
         }
 
-        return parent::log($priority, $message, $extra);
+        return parent::log($level, $message, $context);
     }
 }

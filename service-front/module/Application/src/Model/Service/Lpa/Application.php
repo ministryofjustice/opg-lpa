@@ -48,7 +48,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $result = $this->apiClient->httpGet($target);
             return new Lpa($result);
         } catch (ApiException $ex) {
-            $this->getLogger()->err($ex->getMessage());
+            $this->getLogger->error($ex->getMessage());
         }
 
         return false;
@@ -61,7 +61,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         try {
             $result = $this->apiClient->httpGet($target);
         } catch (ApiException $ex) {
-            $this->getLogger()->err($ex->getMessage());
+            $this->getLogger->error($ex->getMessage());
             $result = null;
         }
 
@@ -94,7 +94,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 $this->apiClient->httpPost(sprintf('/v2/user/%s/applications', $this->getUserId()))
             );
         } catch (ApiException $ex) {
-            $this->getLogger()->err('ApiException thrown when creating LPA application');
+            $this->getLogger->error('ApiException thrown when creating LPA application');
         }
 
         return false;
@@ -114,7 +114,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         try {
             return new Lpa($this->apiClient->httpPatch($target, $data));
         } catch (ApiException $ex) {
-            $this->getLogger()->err('ApiException thrown when updating LPA application');
+            $this->getLogger->error('ApiException thrown when updating LPA application');
         }
 
         return false;
@@ -171,7 +171,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 $result = $response;
             }
         } catch (ApiException $ex) {
-            $this->getLogger()->err('ApiException thrown when fetching LPA application summaries');
+            $this->getLogger->error('ApiException thrown when fetching LPA application summaries');
         }
 
         $trackFromDate = new DateTime($this->getConfig()['processing-status']['track-from-date']);
@@ -292,7 +292,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 sprintf('/v2/user/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfType),
             );
         } catch (ApiException $ex) {
-            $this->getLogger()->err('Error connecting to API while fetching PDF: ' . $ex->getMessage());
+            $this->getLogger->error('Error connecting to API while fetching PDF: ' . $ex->getMessage());
             return false;
         }
 

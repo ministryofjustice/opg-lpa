@@ -2,14 +2,14 @@
 
 namespace MakeShared\Logging;
 
-use Laminas\Log\Logger as LaminasLogger;
-use Laminas\Log\Writer\Stream as StreamWriter;
+use Monolog\Logger as MonologLogger;
+use Monolog\Handler\StreamHandler;
 
-class SimpleLogger extends LaminasLogger
+class SimpleLogger extends MonologLogger
 {
     public function __construct()
     {
         parent::__construct();
-        $this->addWriter(new StreamWriter('php://stderr'));
+        $this->pushHandler(new StreamHandler('php://stderr', Level::Warning));
     }
 }

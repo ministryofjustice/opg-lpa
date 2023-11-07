@@ -20,11 +20,11 @@ class ErrorEventListenerTest extends MockeryTestCase
 
         $logger = Mockery::mock(Logger::class);
 
-        $logger->shouldReceive('err')
+        $logger->shouldReceive('error')
                ->with(MvcEvent::EVENT_DISPATCH_ERROR, Mockery::type('array'))
                ->times(1);
 
-        $logger->shouldReceive('err')
+        $logger->shouldReceive('error')
                ->with(MvcEvent::EVENT_RENDER_ERROR, Mockery::type('array'))
                ->times(1);
 
@@ -33,7 +33,7 @@ class ErrorEventListenerTest extends MockeryTestCase
         $eventLogger->attach($eventManager);
 
         // dispatch events from the event manager and check that the logger
-        // has err() called
+        // has error() called
         $eventManager->trigger(MvcEvent::EVENT_DISPATCH_ERROR);
         $eventManager->trigger(MvcEvent::EVENT_RENDER_ERROR);
     }
