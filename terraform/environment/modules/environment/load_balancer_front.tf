@@ -28,6 +28,7 @@ resource "aws_lb" "front" {
 
   security_groups = [
     aws_security_group.front_loadbalancer.id,
+    aws_security_group.front_loadbalancer_route53.id,
   ]
   enable_deletion_protection = var.account_name == "development" ? false : true
   access_logs {
@@ -49,6 +50,28 @@ resource "aws_lb_listener" "front_loadbalancer" {
     target_group_arn = aws_lb_target_group.front.arn
     type             = "forward"
   }
+}
+
+
+resource "aws_security_group" "front_loadbalancer_route53" {
+  name_prefix = "${var.environment_name}-actor-loadbalancer-route53"
+  description = "Allow Route53 healthchecks"
+  vpc_id      = data.aws_vpc.default.id
+}
+
+resource "aws_security_group_rule" "actor_loadbalancer_ingress_route53_healthchecks" {
+  description       = "Loadbalancer ingresss from Route53 healthchecks"
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = "443"
+  to_port           = "443"
+  cidr_blocks       = data.aws_ip_ranges.route53_healthchecks.cidr_blocks
+  security_group_id = aws_security_group.front_loadbalancer_route53.id
+}
+
+data "aws_ip_ranges" "route53_healthchecks" {
+  regions  = ["eu-west-1", "eu-west-2"]
+  services = ["ROUTE53_HEALTHCHECKS"]
 }
 
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
@@ -183,3 +206,4 @@ resource "aws_lb_listener_rule" "www_redirect" {
     }
   }
 }
+
