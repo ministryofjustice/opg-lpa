@@ -3,7 +3,8 @@ terraform {
     aws = {
       source = "hashicorp/aws"
       configuration_aliases = [
-        aws.management
+        aws.management,
+        aws.us_east_1
       ]
     }
     pagerduty = {
