@@ -70,7 +70,7 @@ resource "aws_security_group_rule" "actor_loadbalancer_ingress_route53_healthche
 }
 
 data "aws_ip_ranges" "route53_healthchecks" {
-  regions = ["eu-west-1", "eu-west-2"]
+  regions  = ["eu-west-1", "eu-west-2"]
   services = ["ROUTE53_HEALTHCHECKS"]
 }
 
