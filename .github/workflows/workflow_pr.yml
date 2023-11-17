@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@2d7717813b818dd2c3dd6e2228b8292176503bd5 # v1.19.0
 
   image_tag:
     name: Generate image tags
@@ -42,7 +42,7 @@ jobs:
 
   terraform_lint:
     name: TF - Lint
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@d3e10d4ffecd454dd83c064f809a1c35645894bd # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@2d7717813b818dd2c3dd6e2228b8292176503bd5 # v1.19.0
     with:
       terraform_version: 0.0.0
       terraform_version_file: ./terraform/environment/.terraform-version
@@ -63,7 +63,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@d3e10d4ffecd454dd83c064f809a1c35645894bd # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d7717813b818dd2c3dd6e2228b8292176503bd5 # v1.19.0
     needs:
       - workspace_name
       - terraform_lint
@@ -85,7 +85,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@d3e10d4ffecd454dd83c064f809a1c35645894bd # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d7717813b818dd2c3dd6e2228b8292176503bd5 # v1.19.0
     needs:
       - workspace_name
       - terraform_lint
@@ -107,7 +107,7 @@ jobs:
 
   terraform_email_development:
     name: TF Development - Email
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@d3e10d4ffecd454dd83c064f809a1c35645894bd # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d7717813b818dd2c3dd6e2228b8292176503bd5 # v1.19.0
     needs:
       - workspace_name
       - terraform_lint
@@ -129,7 +129,7 @@ jobs:
 
   terraform_environment_development:
     name: TF Development - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@d3e10d4ffecd454dd83c064f809a1c35645894bd # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d7717813b818dd2c3dd6e2228b8292176503bd5 # v1.19.0
     needs:
       - docker_build_scan_push
       - phpunit_tests
@@ -159,7 +159,7 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction Plan - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@d3e10d4ffecd454dd83c064f809a1c35645894bd # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d7717813b818dd2c3dd6e2228b8292176503bd5 # v1.19.0
     needs:
       - workspace_name
       - image_tag
@@ -182,7 +182,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction Plan - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@d3e10d4ffecd454dd83c064f809a1c35645894bd # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d7717813b818dd2c3dd6e2228b8292176503bd5 # v1.19.0
     needs:
       - workspace_name
       - image_tag
@@ -205,7 +205,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction Plan - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@d3e10d4ffecd454dd83c064f809a1c35645894bd # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@2d7717813b818dd2c3dd6e2228b8292176503bd5 # v1.19.0
     needs:
       - workspace_name
       - image_tag
