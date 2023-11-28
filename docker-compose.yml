@@ -93,7 +93,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/localstack:/tmp/localstack
     healthcheck:
-      test: ["CMD", "curl", "http://localhost:4566/health?reload"]
+      test: ["CMD", "curl", "http://localhost:4566/_localstack/health?reload"]
 
   local-config:
     container_name: lpa-local-config
