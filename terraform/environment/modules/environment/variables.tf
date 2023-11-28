@@ -25,7 +25,6 @@ variable "account" {
     sirius_api_gateway_arn                 = string
     sirius_api_healthcheck_arn             = string
     telemetry_requests_sampled_fraction    = string
-    deletion_protection                    = bool
     backup_retention_period                = number
     auth_token_ttl_secs                    = number
     skip_final_snapshot                    = bool

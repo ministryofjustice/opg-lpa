@@ -19,9 +19,9 @@
     "prCreation": "immediate",
     "prPriority": 5
   },
-  "prConcurrentLimit": 1,
+  "prConcurrentLimit": 3,
   "prHourlyLimit": 1,
-  "branchConcurrentLimit": 1,
+  "branchConcurrentLimit": 5,
   "enabledManagers": [
     "dockerfile",
     "docker-compose",
@@ -65,7 +65,12 @@
       ],
       "labels": ["devDependencies", "Renovate", "GithubActions"],
       "groupName": "Github Actions",
+      "automerge": true,
+      "schedule": [
+        "after 6am and before 9am on Monday"
+      ],
       "matchUpdateTypes": ["minor", "patch", "digest"],
+      "stabilityDays": 3,
       "matchManagers": ["github-actions"]
     },
     {
