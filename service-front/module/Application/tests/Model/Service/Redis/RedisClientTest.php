@@ -91,7 +91,7 @@ class RedisClientTest extends MockeryTestCase
 
         $redisMock = $this->makeRedisClientWithMock('tcp://foohost');
         $redisMock->shouldReceive('setEx')
-            ->with('foo', 1000, 'bar')
+            ->with('foo', 1, 'bar')
             ->andReturn(false);
 
         $actual = $this->redisHandler->write('foo', 'bar');
@@ -103,7 +103,7 @@ class RedisClientTest extends MockeryTestCase
     {
         $redisMock = $this->makeRedisClientWithMock('tcp://foohost');
         $redisMock->shouldReceive('setEx')
-            ->with('foo', 1000, 'bar')
+            ->with('foo', 1, 'bar')
             ->andReturn(true);
 
         $actual = $this->redisHandler->write('foo', 'bar');
