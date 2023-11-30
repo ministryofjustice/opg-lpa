@@ -123,7 +123,7 @@ def install_redis_cli():
     os.system("sudo yum install -y gcc make")
     os.system("wget http://download.redis.io/redis-stable.tar.gz")
     os.system("tar xvzf redis-stable.tar.gz")
-    os.system("cd redis-stable && make && sudo make install")
+    os.system("cd redis-stable && make BUILD_TLS=yes && sudo make install")
     os.system("sudo cp redis-stable/src/redis-cli /usr/local/bin/")
     os.system("sudo chmod 755 /usr/local/bin/redis-cli")
 
