@@ -70,6 +70,24 @@ variable "tags" {
   type        = map(any)
 }
 
+variable "request_count_scale_in_cooldown" {
+  description = "The amount of time, in seconds, after a scale in activity completes before another scale in activity can start."
+  type        = number
+  default     = 60
+}
+
+variable "request_count_scale_out_cooldown" {
+  description = "The amount of time, in seconds, after a scale out activity completes before another scale out activity can start."
+  type        = number
+  default     = 60
+}
+
+variable "autoscaling_metric_track_request_count_target" {
+  description = "Average Application Load Balancer request count per target per minutes. This is the metric that will be used to scale the service."
+  type        = number
+  default     = 0
+}
+
 output "appautoscaling_target" {
   description = "returns the autoscaling target for other scaling operations to use"
   value = {

@@ -43,6 +43,25 @@ resource "aws_appautoscaling_policy" "memory_track_metric" {
   }
 }
 
+resource "aws_appautoscaling_policy" "request_count" {
+  count              = var.autoscaling_metric_track_request_count_target > 0 ? 1 : 0
+  name               = "${var.environment}-${var.aws_ecs_service_name}-request-count"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs_service.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_service.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_service.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    target_value       = var.autoscaling_metric_track_request_count_target
+    scale_in_cooldown  = var.request_count_scale_in_cooldown
+    scale_out_cooldown = var.request_count_scale_out_cooldown
+
+    predefined_metric_specification {
+      predefined_metric_type = "ALBRequestCountPerTarget"
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "max_scaling_reached" {
   alarm_name                = "${var.environment}-${var.aws_ecs_service_name}-max-scaling-reached"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
