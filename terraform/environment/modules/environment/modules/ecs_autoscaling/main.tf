@@ -58,6 +58,7 @@ resource "aws_appautoscaling_policy" "request_count" {
 
     predefined_metric_specification {
       predefined_metric_type = "ALBRequestCountPerTarget"
+      resource_label         = var.aws_request_count_metric_resource_label
     }
   }
 }

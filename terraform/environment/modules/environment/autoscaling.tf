@@ -8,6 +8,7 @@ module "front_ecs_autoscaling" {
   ecs_task_autoscaling_maximum                  = var.account.autoscaling.front.maximum
   autoscaling_metric_track_request_count_target = 360 # Set to 360 to allow for 25% headroom based on max request count of 480 requests per minute
   request_count_scale_out_cooldown              = 30
+  aws_request_count_metric_resource_label       = "${aws_lb.front.arn_suffix}/${aws_lb_target_group.front.arn_suffix}"
   tags                                          = local.front_component_tag
 }
 

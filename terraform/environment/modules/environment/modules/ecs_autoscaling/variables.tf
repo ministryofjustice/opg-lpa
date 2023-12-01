@@ -88,6 +88,11 @@ variable "autoscaling_metric_track_request_count_target" {
   default     = 0
 }
 
+variable "aws_request_count_metric_resource_label" {
+  description = "Identifies the ALB resource associated with the metric ALBRequestCountPerTarget. Format is app/<load-balancer-name>/<load-balancer-id>/targetgroup/<target-group-name>/<target-group-id>"
+  type        = string
+}
+
 output "appautoscaling_target" {
   description = "returns the autoscaling target for other scaling operations to use"
   value = {
