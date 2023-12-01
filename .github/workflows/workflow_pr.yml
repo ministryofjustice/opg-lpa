@@ -318,7 +318,7 @@ jobs:
     - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
       id: slack
       with:
-        channel-id: "C01BKBWGWTY"
+        channel-id: "CAMB46M6Y"
         payload: |
             {
               "icon_emoji": ":robot_face:",
@@ -468,7 +468,7 @@ jobs:
 
     - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
       with:
-        channel-id: "C01BKBWGWTY"
+        channel-id: "CAMB46M6Y"
         update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
         payload: |
             {
