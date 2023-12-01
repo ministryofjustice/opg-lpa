@@ -167,5 +167,5 @@ jobs:
             cd scripts/pipeline/check_ecr_scan_results/
             python aws_ecr_scan_results.py  --search ${ECR_REGISTRY_ALIAS} \
                                            --tag ${IMAGE_TAG} \
-                                           --slack_channel C01BKBWGWTY \
+                                           --slack_channel CAMB46M6Y \
                                            --slack_token ${{ secrets.SLACK_BOT_TOKEN }}
