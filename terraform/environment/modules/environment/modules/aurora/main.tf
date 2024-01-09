@@ -34,6 +34,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   db_subnet_group_name            = var.db_subnet_group_name
   depends_on                      = [aws_rds_cluster.cluster]
+  ca_cert_identifier              = var.ca_cert_identifier
   cluster_identifier              = "${var.cluster_identifier}-${var.environment}"
   copy_tags_to_snapshot           = var.copy_tags_to_snapshot
   engine                          = var.engine
@@ -95,6 +96,7 @@ resource "aws_rds_cluster_instance" "serverless_instances" {
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   db_subnet_group_name            = var.db_subnet_group_name
   depends_on                      = [aws_rds_cluster.cluster_serverless]
+  ca_cert_identifier              = var.ca_cert_identifier
   cluster_identifier              = "${var.cluster_identifier}-${var.environment}"
   engine                          = var.engine
   engine_version                  = var.engine_version

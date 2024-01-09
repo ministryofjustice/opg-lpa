@@ -109,11 +109,12 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
     needs:
       - slack_msg_production_deploy_begin
     with:
-      terraform_version: 1.1.2
+      terraform_version: 0.0.0
+      terraform_version_file: ./terraform/account/.terraform-version
       terraform_workspace: production
       is_ephemeral: false
       terraform_apply: true
@@ -127,11 +128,12 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
     needs:
       - slack_msg_production_deploy_begin
     with:
-      terraform_version: 1.1.2
+      terraform_version: 0.0.0
+      terraform_version_file: ./terraform/region/.terraform-version
       terraform_workspace: production
       is_ephemeral: false
       terraform_apply: true
@@ -145,9 +147,10 @@ jobs:
 
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
     with:
-      terraform_version: 1.1.2
+      terraform_version: 0.0.0
+      terraform_version_file: ./terraform/environment/.terraform-version
       terraform_workspace: production
       is_ephemeral: false
       terraform_apply: true
@@ -186,7 +189,7 @@ jobs:
           path: /tmp/
 
       - name: Setup Python
-        uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
+        uses: actions/setup-python@b64ffcaf5b410884ad320a9cfac8866006a109aa # v4.8.0
         with:
           python-version: '3.9'
 
