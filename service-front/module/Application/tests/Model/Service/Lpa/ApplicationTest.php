@@ -15,6 +15,7 @@ use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Utils;
 
 class ApplicationTest extends MockeryTestCase
 {
@@ -98,7 +99,7 @@ class ApplicationTest extends MockeryTestCase
     {
         $mockResponse = Mockery::mock(ResponseInterface::class);
         $mockResponse->shouldReceive('getStatusCode')->andReturn(400);
-        $mockResponse->shouldReceive('getBody')->andReturn('{}')->once();
+        $mockResponse->shouldReceive('getBody')->andReturn(Utils::streamFor('{}'))->once();
 
         $this->apiClient->shouldReceive('httpGet')->andThrow(new ApiException($mockResponse));
 
@@ -133,7 +134,7 @@ class ApplicationTest extends MockeryTestCase
     {
         $mockResponse = Mockery::mock(ResponseInterface::class);
         $mockResponse->shouldReceive('getStatusCode')->andReturn(400);
-        $mockResponse->shouldReceive('getBody')->andReturn('{}')->once();
+        $mockResponse->shouldReceive('getBody')->andReturn(Utils::streamFor('{}'))->once();
         $this->apiClient->shouldReceive('httpGet')
             ->once()
             ->andThrow(new ApiException($mockResponse));
