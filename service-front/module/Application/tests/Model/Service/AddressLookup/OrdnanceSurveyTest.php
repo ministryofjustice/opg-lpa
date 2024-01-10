@@ -9,6 +9,7 @@ use Http\Client\HttpClient as HttpClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Utils;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 
 class OrdnanceSurveyTest extends MockeryTestCase
@@ -52,9 +53,9 @@ class OrdnanceSurveyTest extends MockeryTestCase
         $postcode = 'SW1A2AA';
 
         $this->response->shouldReceive('getStatusCode')->andReturn(200);
-        $this->response->shouldReceive('getBody')->andReturn(json_encode([
+        $this->response->shouldReceive('getBody')->andReturn(Utils::streamFor(json_encode([
             'results' => []
-        ]));
+        ])));
 
         $this->httpClient->shouldReceive('sendRequest')
             ->withArgs(function ($arg) use ($postcode) {
@@ -125,9 +126,9 @@ class OrdnanceSurveyTest extends MockeryTestCase
     public function testValidHttpLookupResponse()
     {
         $this->response->shouldReceive('getStatusCode')->andReturn(200);
-        $this->response->shouldReceive('getBody')->andReturn(json_encode([
+        $this->response->shouldReceive('getBody')->andReturn(Utils::streamFor(json_encode([
             'results' => []
-        ]));
+        ])));
 
         $this->httpClient->shouldReceive('sendRequest')
             ->once()
@@ -175,9 +176,9 @@ class OrdnanceSurveyTest extends MockeryTestCase
         }
 
         $this->response->shouldReceive('getStatusCode')->andReturn(200);
-        $this->response->shouldReceive('getBody')->andReturn(json_encode([
+        $this->response->shouldReceive('getBody')->andReturn(Utils::streamFor(json_encode([
             'results' => $results
-        ]));
+        ])));
     }
 
     public function testFormatting()
