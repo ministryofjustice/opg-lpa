@@ -4,6 +4,11 @@ namespace Application\Form\Lpa;
 
 use MakeShared\DataModel\Lpa\Document\CertificateProvider;
 
+/**
+ * @template T
+ * @template-extends AbstractActorForm<T>
+ */
+
 class CertificateProviderForm extends AbstractActorForm
 {
     protected $formElements = [

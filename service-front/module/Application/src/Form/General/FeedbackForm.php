@@ -9,8 +9,8 @@ use Laminas\Validator\StringLength;
 /**
  * To send feedback to the OPG
  *
- * Class Feedback
- * @package Application\Form\General
+ * @template T
+ * @template-extends AbstractCsrfForm<T>
  */
 class FeedbackForm extends AbstractCsrfForm
 {

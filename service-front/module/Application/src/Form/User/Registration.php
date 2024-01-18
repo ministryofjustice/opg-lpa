@@ -5,6 +5,11 @@ namespace Application\Form\User;
 use Laminas\Validator\Identical;
 use Laminas\Validator\NotEmpty;
 
+/**
+ * @template T
+ * @template-extends SetPassword<T>
+ */
+
 class Registration extends SetPassword
 {
     public function init()

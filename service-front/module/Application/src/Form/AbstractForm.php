@@ -5,7 +5,8 @@ namespace Application\Form;
 use Laminas\Form\Form;
 
 /**
- * @template-extends AbstractForm
+ * @template T
+ * @template-extends Form<T>
  */
 
 abstract class AbstractForm extends Form
