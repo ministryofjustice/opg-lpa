@@ -10,9 +10,10 @@ use Laminas\Form\Element\Password;
 use Laminas\InputFilter\Input;
 
 /**
- * Class SignIn
- * @package App\Form
+ * @template T
+ * @template-extends AbstractForm<T>
  */
+
 class SignIn extends AbstractForm
 {
     /**

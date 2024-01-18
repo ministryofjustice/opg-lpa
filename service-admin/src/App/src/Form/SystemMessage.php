@@ -8,9 +8,10 @@ use Laminas\InputFilter\Input;
 use Laminas\Validator\StringLength;
 
 /**
- * Class SystemMessage
- * @package App\Form
+ * @template T
+ * @template-extends AbstractForm<T>
  */
+
 class SystemMessage extends AbstractForm
 {
     /**
