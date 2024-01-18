@@ -5,6 +5,11 @@ namespace Application\Form;
 use Application\Form\Validator\Csrf as CsrfValidator;
 use Laminas\Form\Element\Csrf;
 
+/**
+ * @template T
+ * @template-extends AbstractForm<T>
+ */
+
 abstract class AbstractCsrfForm extends AbstractForm
 {
     /**

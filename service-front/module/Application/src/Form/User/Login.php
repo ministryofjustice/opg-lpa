@@ -7,9 +7,10 @@ use Application\Form\AbstractForm;
 /**
  * Form for logging into the site
  *
- * Class Login
- * @package Application\Form\User
+ * @template T
+ * @template-extends AbstractForm<T>
  */
+
 class Login extends AbstractForm
 {
     public function init()

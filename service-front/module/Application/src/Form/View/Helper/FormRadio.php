@@ -34,9 +34,7 @@ class FormRadio extends LaminasFormRadioHelper
         $attributes['type'] = $this->getInputType();
         $selectedOptions = (array) $element->getValue();
 
-        if (isset($options[$option]['id'])) {
-            $attributes['id'] = $options[$option]['id'];
-        } elseif (isset($options[$option]['value'])) {
+        if (isset($options[$option]['value'])) {
             $attributes['id'] = $name . '-' . $options[$option]['value'];
         } else {
             $attributes['id'] = $name . '-' . $option;

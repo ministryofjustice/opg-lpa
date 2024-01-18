@@ -7,6 +7,11 @@ use Laminas\Authentication\Exception\InvalidArgumentException;
 use Laminas\Validator\Callback;
 use Laminas\Validator\NotEmpty;
 
+/**
+ * @template T
+ * @template-extends SetPassword<T>
+ */
+
 class ChangePassword extends SetPassword
 {
     /**

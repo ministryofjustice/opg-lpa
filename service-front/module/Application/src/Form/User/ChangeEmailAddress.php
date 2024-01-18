@@ -9,6 +9,11 @@ use Laminas\Validator\Callback;
 use Laminas\Validator\Identical;
 use Laminas\Validator\NotEmpty;
 
+/**
+ * @template T
+ * @template-extends AbstractCsrfForm<T>
+ */
+
 class ChangeEmailAddress extends AbstractCsrfForm
 {
     /**

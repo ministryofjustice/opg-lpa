@@ -5,6 +5,11 @@ namespace Application\Form\Lpa;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use Laminas\Form\FormInterface;
 
+/**
+ * @template T
+ * @template-extends AbstractActorForm<T>
+ */
+
 class CorrespondentForm extends AbstractActorForm
 {
     protected $formElements = [
