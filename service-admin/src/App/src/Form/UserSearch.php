@@ -9,9 +9,10 @@ use Laminas\Form\Element\Text;
 use Laminas\InputFilter\Input;
 
 /**
- * Class UserSearch
- * @package App\Form
+ * @template T
+ * @template-extends AbstractForm<T>
  */
+
 class UserSearch extends AbstractForm
 {
     /**
