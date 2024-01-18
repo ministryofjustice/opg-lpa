@@ -2,6 +2,11 @@
 
 namespace Application\Form\Lpa;
 
+/**
+ * @template T
+ * @template-extends AbstractMainFlowForm<T>
+ */
+
 class BlankMainFlowForm extends AbstractMainFlowForm
 {
     public function init()

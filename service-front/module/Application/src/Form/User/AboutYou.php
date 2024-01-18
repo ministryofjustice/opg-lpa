@@ -7,6 +7,11 @@ use MakeShared\DataModel\User\User;
 use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
 
+/**
+ * @template T
+ * @template-extends AbstractActorForm<T>
+ */
+
 class AboutYou extends AbstractActorForm
 {
     /**

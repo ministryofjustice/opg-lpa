@@ -9,6 +9,11 @@ use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\FormInterface;
 
+/**
+ * @template T
+ * @template-extends AbstractCsrfForm<T>
+ */
+
 abstract class AbstractLpaForm extends AbstractCsrfForm
 {
     /**

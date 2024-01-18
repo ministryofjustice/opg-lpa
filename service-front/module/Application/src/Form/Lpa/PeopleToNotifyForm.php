@@ -4,6 +4,11 @@ namespace Application\Form\Lpa;
 
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 
+/**
+ * @template T
+ * @template-extends AbstractActorForm<T>
+ */
+
 class PeopleToNotifyForm extends AbstractActorForm
 {
     protected $formElements = [

@@ -5,6 +5,11 @@ namespace Application\Form\Lpa;
 use Application\Model\FormFlowChecker;
 use MakeShared\DataModel\Lpa\Lpa;
 
+/**
+ * @template T
+ * @template-extends AbstractLpaForm<T>
+ */
+
 abstract class AbstractMainFlowForm extends AbstractLpaForm
 {
     public function init()
