@@ -5,6 +5,11 @@ namespace Application\Form\Lpa;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use MakeShared\DataModel\Validator\ValidatorResponse;
 
+/**
+ * @template T
+ * @template-extends AbstractMainFlowForm<T>
+ */
+
 class WhoAreYouForm extends AbstractMainFlowForm
 {
     protected $formElements = [

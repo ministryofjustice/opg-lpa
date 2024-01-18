@@ -4,6 +4,11 @@ namespace Application\Form\General;
 
 use Application\Form\AbstractCsrfForm;
 
+/**
+ * @template T
+ * @template-extends AbstractCsrfForm<T>
+ */
+
 class CookieConsentForm extends AbstractCsrfForm
 {
     public function init()

@@ -39,7 +39,7 @@ jobs:
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run psalm
-        run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif
+        run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif --no-cache
       - name: Upload Security Analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v1
         with:

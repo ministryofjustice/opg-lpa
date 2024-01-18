@@ -4,6 +4,11 @@ namespace Application\Form\Lpa;
 
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
+/**
+ * @template T
+ * @template-extends AbstractMainFlowForm<T>
+ */
+
 class WhenReplacementAttorneyStepInForm extends AbstractMainFlowForm
 {
     protected $formElements = [
