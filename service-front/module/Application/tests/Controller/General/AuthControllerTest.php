@@ -82,7 +82,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $authenticationResult = new Result(0, null, ['Authentication Failed']);
 
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->authenticationService->shouldReceive('setEmail')
             ->withArgs([$this->postData['email']])
@@ -116,7 +116,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $response = new Response();
 
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->authenticationService->shouldReceive('setEmail')
             ->withArgs([$this->postData['email']])
@@ -148,7 +148,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->setPreAuthRequestUrl('https://localhost/user/about-you');
 
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->authenticationService->shouldReceive('setEmail')
             ->withArgs([$this->postData['email']])
@@ -186,7 +186,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->setPreAuthRequestUrl('https://localhost/lpa/3503563157/when-lpa-starts');
 
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->authenticationService->shouldReceive('setEmail')
             ->withArgs([$this->postData['email']])
