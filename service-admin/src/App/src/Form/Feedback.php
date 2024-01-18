@@ -6,9 +6,10 @@ use DateTime;
 use Exception;
 
 /**
- * Class Feedback
- * @package App\Form
+ * @template T
+ * @template-extends AbstractForm<T>
  */
+
 class Feedback extends AbstractForm
 {
     /**
