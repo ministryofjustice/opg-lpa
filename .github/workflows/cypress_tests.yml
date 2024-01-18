@@ -83,7 +83,7 @@ jobs:
             node_modules
           key: node-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4.0.0
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
           node-version-file: '.nvmrc'
 
