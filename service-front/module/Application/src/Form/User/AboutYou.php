@@ -75,7 +75,7 @@ class AboutYou extends AbstractActorForm
      * retrieve an array of data before sending it to the API
      *
      * @param  int $flag
-     * @return array|object
+     * @return T|object|array<string, mixed>
      */
     public function getData($flag = FormInterface::VALUES_NORMALIZED)
     {
