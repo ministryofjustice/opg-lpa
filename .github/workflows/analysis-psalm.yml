@@ -25,6 +25,8 @@ jobs:
             path: "./service-front"
           - name: service-api
             path: "./service-api"
+          - name: shared
+            path: "./shared"
 
     defaults:
       run:
@@ -53,8 +55,6 @@ jobs:
         scan:
           - name: service-pdf
             path: "./service-pdf"
-          - name: shared
-            path: "./shared"
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
