@@ -200,8 +200,7 @@ class FormFlowChecker
 
         // Once an LPA has been locked, only allow the following pages.
         if (
-            !empty($this->lpa)
-            && $this->lpa->isLocked() === true
+            $this->lpa->isLocked() === true
             && $currentRouteName != 'lpa/complete'
             && strpos($currentRouteName, 'lpa/date-check') === false
             && $currentRouteName != 'lpa/download'
