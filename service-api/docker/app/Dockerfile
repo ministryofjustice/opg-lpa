@@ -20,15 +20,15 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
 # Enable debug if needed. Should only be used locally
 ARG ENABLE_XDEBUG=0
-RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
+RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
       pecl install xdebug ; \
-      docker-php-ext-enable xdebug ; \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+      docker-php-ext-enable xdebug ; \
     fi ;
 
 # Install composer dependencies
