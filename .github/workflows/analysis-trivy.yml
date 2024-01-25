@@ -74,8 +74,7 @@ jobs:
         with:
           scan-type: "config"
           ignore-unfixed: true
-          format: "template"
-          template: "@/contrib/sarif.tpl"
+          format: "sarif"
           output: "${{ matrix.scan.name }}/trivy-results-config.sarif"
           scan-ref: ${{ matrix.scan.path }}
           hide-progress: false
@@ -87,8 +86,7 @@ jobs:
           scan-type: "fs"
           ignore-unfixed: true
           hide-progress: false
-          format: "template"
-          template: "@/contrib/sarif.tpl"
+          format: "sarif"
           output: "${{ matrix.scan.name }}/trivy-results-code.sarif"
           scan-ref: ${{ matrix.scan.path }}
 
