@@ -92,8 +92,14 @@ jobs:
           output: "${{ matrix.scan.name }}/trivy-results-code.sarif"
           scan-ref: ${{ matrix.scan.path }}
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: steps.filter.outputs.check == 'true'
+      - name: Upload Trivy code scan results to GitHub Security tab
+        if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == true
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "${{ matrix.scan.name }}/trivy-results-code.sarif"
+
+      - name: Upload Trivy IaC scan results to GitHub Security tab
+        if: steps.filter.outputs.check == 'true'
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "${{ matrix.scan.name }}/trivy-results-config.sarif"
