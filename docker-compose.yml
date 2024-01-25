@@ -73,7 +73,7 @@ services:
 
   localstack:
     container_name: lpa-localstack
-    image: localstack/localstack:0.14.5
+    image: localstack/localstack:3.0.2
     privileged: true
     ports:
       - 4568:4566
@@ -91,7 +91,10 @@ services:
       - LAMBDA_DOCKER_NETWORK=malpadev
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/localstack:/tmp/localstack
+    networks:
+      default:
+        aliases:
+          - sqs.eu-west-1.localhost.localstack.cloud
     healthcheck:
       test: ["CMD", "curl", "http://localhost:4566/_localstack/health?reload"]
 
@@ -437,6 +440,8 @@ services:
       - /tmp/
     build:
       context: ./
+      args:
+        ENABLE_XDEBUG: 0
       dockerfile: service-pdf/docker/app/Dockerfile
 # Other containers are built with debug on. Lines could be put here to build pdf with debug, but not doing as default due to pdf being slow already
     environment:
@@ -446,9 +451,14 @@ services:
       AWS_ACCESS_KEY_ID: "devkey"
       AWS_SECRET_ACCESS_KEY: "secretdevkey"
 
-      OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
-      OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
+      # XDEBUG mode and session need setting for this to run when xdebug mode above is enabled
+      XDEBUG_MODE: debug
+      XDEBUG_SESSION: 1
 
+      OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
+      OPG_LPA_COMMON_PDF_QUEUE_URL: http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/pdf-queue.fifo
+
+      PHP_IDE_CONFIG: serverName=lpa-pdf-app
   # ---------------------------
   # Seeding
   seeding:
