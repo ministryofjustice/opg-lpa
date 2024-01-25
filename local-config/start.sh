@@ -54,4 +54,5 @@ aws sqs create-queue \
 aws s3api create-bucket \
 --endpoint=http://${OPG_LPA_COMMON_S3_ENDPOINT} \
 --region=${DEFAULT_REGION} \
---bucket=${OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET}
+--bucket=${OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET} \
+--create-bucket-configuration LocationConstraint=eu-west-1
