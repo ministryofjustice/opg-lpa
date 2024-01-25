@@ -17,6 +17,9 @@ on:
       - "local-ssl/**"
       - "node-build-assets/**"
 
+permissions:
+  contents: write
+
 jobs:
   filter-and-scan:
     runs-on: ubuntu-latest
@@ -89,6 +92,16 @@ jobs:
           format: "sarif"
           output: "${{ matrix.scan.name }}/trivy-results-code.sarif"
           scan-ref: ${{ matrix.scan.path }}
+
+      - name: Run Trivy in GitHub SBOM mode and submit results to Dependency Graph
+        if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == true
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          format: 'github'
+          output: 'dependency-results.sbom.json'
+          image-ref: '.'
+          github-pat: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Trivy code scan results to GitHub Security tab
         if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == true
