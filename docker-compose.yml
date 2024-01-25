@@ -451,6 +451,10 @@ services:
       AWS_ACCESS_KEY_ID: "devkey"
       AWS_SECRET_ACCESS_KEY: "secretdevkey"
 
+      # XDEBUG mode and session need setting for this to run when xdebug mode above is enabled
+      XDEBUG_MODE: debug
+      XDEBUG_SESSION: 1
+
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/pdf-queue.fifo
 
