@@ -17,9 +17,6 @@ on:
       - "local-ssl/**"
       - "node-build-assets/**"
 
-permissions:
-  contents: write
-
 jobs:
   filter-and-scan:
     runs-on: ubuntu-latest
@@ -63,9 +60,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Filter paths
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v2
         id: filter
         with:
           filters: |
@@ -77,7 +74,8 @@ jobs:
         with:
           scan-type: "config"
           ignore-unfixed: true
-          format: "sarif"
+          format: "template"
+          template: "@/contrib/sarif.tpl"
           output: "${{ matrix.scan.name }}/trivy-results-config.sarif"
           scan-ref: ${{ matrix.scan.path }}
           hide-progress: false
@@ -89,28 +87,13 @@ jobs:
           scan-type: "fs"
           ignore-unfixed: true
           hide-progress: false
-          format: "sarif"
+          format: "template"
+          template: "@/contrib/sarif.tpl"
           output: "${{ matrix.scan.name }}/trivy-results-code.sarif"
           scan-ref: ${{ matrix.scan.path }}
 
-      - name: Run Trivy in GitHub SBOM mode and submit results to Dependency Graph
-        if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == true
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          format: 'github'
-          output: 'dependency-results.sbom.json'
-          image-ref: '.'
-          github-pat: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Trivy code scan results to GitHub Security tab
-        if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == true
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: "${{ matrix.scan.name }}/trivy-results-code.sarif"
-
-      - name: Upload Trivy IaC scan results to GitHub Security tab
+      - name: Upload Trivy scan results to GitHub Security tab
         if: steps.filter.outputs.check == 'true'
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: "${{ matrix.scan.name }}/trivy-results-config.sarif"
+          sarif_file: "./${{ matrix.scan.name }}"
