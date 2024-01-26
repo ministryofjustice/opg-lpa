@@ -3,8 +3,7 @@ terraform {
     aws = {
       source = "hashicorp/aws"
       configuration_aliases = [
-        aws.management,
-        aws.us_east_1
+        aws.destination
       ]
     }
     pagerduty = {
@@ -12,5 +11,5 @@ terraform {
       version = "~> 2.0"
     }
   }
-  required_version = "1.6.3"
+  required_version = "1.7.1"
 }
