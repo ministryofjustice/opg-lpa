@@ -12,10 +12,6 @@ on:
       - "shared/**"
       - "tests/**"
       - "cypress/**"
-      - "terraform/environment/**"
-      - "terraform/account/**"
-      - "local-ssl/**"
-      - "node-build-assets/**"
 
 jobs:
   filter-and-scan:
@@ -26,69 +22,36 @@ jobs:
         scan:
           - name: service-api
             path: "./service-api"
-            code-scan: true
           - name: service-admin
             path: "./service-admin"
-            code-scan: true
           - name: service-front
             path: "./service-front"
-            code-scan: true
           - name: service-pdf
             path: "./service-pdf"
-            code-scan: true
           - name: shared
             path: "./shared"
-            code-scan: true
           - name: tests
             path: "./tests"
-            code-scan: true
           - name: cypress
             path: "./cypress"
-            code-scan: true
-          - name: terraform/account
-            path: "./terraform/account"
-            code-scan: false
-          - name: terraform/environment
-            path: './terraform/environment'
-            code-scan: false
-          - name: local-ssl
-            path: "./local-ssl"
-            code-scan: false
-          - name: node-build-assets
-            path: "./node-build-assets"
-            code-scan: false
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Filter paths
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
             check: '${{ matrix.scan.path }}/**'
 
-      - name: Run Trivy vulnerability scanner for IaC
-        if: steps.filter.outputs.check == 'true'
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: "config"
-          ignore-unfixed: true
-          format: "template"
-          template: "@/contrib/sarif.tpl"
-          output: "${{ matrix.scan.name }}/trivy-results-config.sarif"
-          scan-ref: ${{ matrix.scan.path }}
-          hide-progress: false
-
       - name: Run Trivy vulnerability scanner for Code
-        if: steps.filter.outputs.check == 'true' && matrix.scan.code-scan == true
+        if: steps.filter.outputs.check == 'true'
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: "fs"
           ignore-unfixed: true
           hide-progress: false
-          format: "template"
-          template: "@/contrib/sarif.tpl"
+          format: "sarif"
           output: "${{ matrix.scan.name }}/trivy-results-code.sarif"
           scan-ref: ${{ matrix.scan.path }}
 
