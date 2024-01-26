@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
 
   set_variables:
     name: Generate image tags
@@ -70,7 +70,7 @@ jobs:
     name: TF - Lint
     needs:
       - set_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
 
@@ -90,7 +90,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
     needs:
       - workspace_name
       - terraform_lint
@@ -112,7 +112,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
     needs:
       - workspace_name
       - terraform_lint
@@ -133,7 +133,7 @@ jobs:
 
   terraform_email_development:
     name: TF Development - Email
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
     needs:
       - workspace_name
       - terraform_lint
@@ -155,7 +155,7 @@ jobs:
 
   terraform_environment_development:
     name: TF Development - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
     needs:
       - docker_build_scan_push
       - phpunit_tests
@@ -184,7 +184,7 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction Plan - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
     needs:
       - workspace_name
       - set_variables
@@ -206,7 +206,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction Plan - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
     needs:
       - workspace_name
       - set_variables
@@ -228,7 +228,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction Plan - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
     needs:
       - workspace_name
       - set_variables
