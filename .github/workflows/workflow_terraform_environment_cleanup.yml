@@ -23,15 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367 # v1.0.7
-      - name: Set Terraform version
-        working-directory: ./terraform/environment
+      - name: Get terraform version
         id: set-terraform-version
-        run: |
-          TF_VERSION=$(cat .terraform-version)
-          echo "TF_VERSION=$TF_VERSION" >> $GITHUB_OUTPUT
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
+        with:
+          terraform_directory: "./terraform/environment"
       - uses: hashicorp/setup-terraform@633666f66e0061ca3b725c73b2ec20cd13a8fdd1 # tag=v2.0.3
         with:
-          terraform_version: ${{ steps.set-terraform-version.outputs.TF_VERSION }}
+          terraform_version: ${{ steps.set-terraform-version.outputs.version }}
           terraform_wrapper: false
 
       - name: Configure AWS Credentials For Terraform

@@ -32,11 +32,14 @@ permissions:
   statuses: none
 
 jobs:
-  image_tag:
-    name: Generate image tags
+  set_variables:
+    name: Set variables
     runs-on: ubuntu-latest
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
+      environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
+      account_terraform_version: ${{ steps.terraform_version_account.outputs.version }}
+      region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
@@ -46,22 +49,38 @@ jobs:
         id: short_sha
         run: |
           echo "short_sha=$(git rev-list --no-merges -n 1 HEAD | cut -c1-7)" >> $GITHUB_OUTPUT
+      - name: Set terraform version - environment
+        id: terraform_version_environment
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
+        with:
+          terraform_directory: "./terraform/environment"
+      - name : Set terraform version - account
+        id: terraform_version_account
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
+        with:
+          terraform_directory: "./terraform/account"
+      - name: Set terraform version - region
+        id: terraform_version_region
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
+        with:
+          terraform_directory: "./terraform/region"
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
     needs:
-      - image_tag
+      - set_variables
     with:
-      tag: ${{ needs.image_tag.outputs.short_sha }}
+      tag: ${{ needs.set_variables.outputs.short_sha }}
     secrets: inherit
 
   terraform_account_preproduction:
     name: TF Preproduction - Account
+    needs:
+      - set_variables
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b
     with:
-      terraform_version: 0.0.0
-      terraform_version_file: ./terraform/account/.terraform-version
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
       terraform_workspace: preproduction
       is_ephemeral: false
       terraform_apply: true
@@ -76,9 +95,10 @@ jobs:
   terraform_region_preproduction:
     name: TF Preproduction - Region
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b
+    needs:
+      - set_variables
     with:
-      terraform_version: 0.0.0
-      terraform_version_file: ./terraform/region/.terraform-version
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       terraform_workspace: preproduction
       is_ephemeral: false
       terraform_apply: true
@@ -94,18 +114,17 @@ jobs:
     name: TF Preproduction - Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
     with:
-      terraform_version: 0.0.0
-      terraform_version_file: ./terraform/environment/.terraform-version
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       terraform_workspace: preproduction
       is_ephemeral: false
       terraform_apply: true
       use_ssh_private_key: true
       terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=main-${{ needs.image_tag.outputs.short_sha }}"
+      terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.short_sha }}"
       persist_artifacts: true
     needs:
       - docker_build_scan_push
-      - image_tag
+      - set_variables
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -234,7 +253,7 @@ jobs:
       - cypress_tests_Signup_StichedHW
       - cypress_tests_SignupIncluded
       - cypress_tests_Remaining
-      - image_tag
+      - set_variables
     steps:
       - id: slack
         uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
@@ -270,7 +289,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
                     }
                   ]
                 },
@@ -291,9 +310,9 @@ jobs:
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
     needs:
       - slack_msg_production_deploy_begin
+      - set_variables
     with:
-      terraform_version: 0.0.0
-      terraform_version_file: ./terraform/account/.terraform-version
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
       terraform_workspace: production
       is_ephemeral: false
       terraform_apply: true
@@ -310,9 +329,9 @@ jobs:
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
     needs:
       - slack_msg_production_deploy_begin
+      - set_variables
     with:
-      terraform_version: 0.0.0
-      terraform_version_file: ./terraform/region/.terraform-version
+      terraform_version: ${{ needs.set_variables.outputs.region_terraform_version }}
       terraform_workspace: production
       is_ephemeral: false
       terraform_apply: true
@@ -328,19 +347,18 @@ jobs:
     name: TF Production - Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@030d047c33f9e3bb9ce526cf407bbe89b056ed3b # v1.22.0
     with:
-      terraform_version: 0.0.0
-      terraform_version_file: ./terraform/environment/.terraform-version
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       terraform_workspace: production
       is_ephemeral: false
       terraform_apply: true
       terraform_directory: ./terraform/environment
       use_ssh_private_key: true
       persist_artifacts: true
-      terraform_variables: "-var container_version=main-${{ needs.image_tag.outputs.short_sha }}"
+      terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.short_sha }}"
     needs:
       - docker_build_scan_push
       - slack_msg_production_deploy_begin
-      - image_tag
+      - set_variables
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -392,7 +410,7 @@ jobs:
     needs:
       - slack_msg_production_deploy_begin
       - run_smoke_tests
-      - image_tag
+      - set_variables
     steps:
     - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
       if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
@@ -429,7 +447,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
                     }
                   ]
                 },
@@ -480,7 +498,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.image_tag.outputs.short_sha }}>"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
                     }
                   ]
                 },
