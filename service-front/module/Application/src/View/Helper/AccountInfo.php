@@ -80,9 +80,10 @@ class AccountInfo extends AbstractHelper
         }
 
         //  Include last logged in date if set a view parameter
+        /** @var \Iterator $layoutChildren */
         $layoutChildren = $this->viewModel->getIterator();
 
-        if ($layoutChildren->count() > 0) {
+        if ($this->viewModel->count() > 0) {
             $view = $layoutChildren->current();
 
             if (isset($view->user) && isset($view->user['lastLogin'])) {

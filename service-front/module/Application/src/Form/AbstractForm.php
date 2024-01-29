@@ -4,6 +4,11 @@ namespace Application\Form;
 
 use Laminas\Form\Form;
 
+/**
+ * @template T
+ * @template-extends Form<T>
+ */
+
 abstract class AbstractForm extends Form
 {
     public function init()

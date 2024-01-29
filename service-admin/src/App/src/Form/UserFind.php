@@ -10,9 +10,10 @@ use Laminas\Form\Element\Hidden;
 use Laminas\InputFilter\Input;
 
 /**
- * Class UserFind
- * @package App\Form
+ * @template T
+ * @template-extends AbstractForm<T>
  */
+
 class UserFind extends AbstractForm
 {
     /**

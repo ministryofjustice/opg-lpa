@@ -4,6 +4,11 @@ namespace Application\Form\Lpa;
 
 use MakeShared\DataModel\Lpa\Document\Document;
 
+/**
+ * @template T
+ * @template-extends AbstractMainFlowForm<T>
+ */
+
 class InstructionsAndPreferencesForm extends AbstractMainFlowForm
 {
     protected $formElements = [

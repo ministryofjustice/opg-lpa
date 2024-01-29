@@ -63,8 +63,10 @@ class AuthController extends AbstractBaseController
                 $session->getStorage()->clear();
                 $session->initialise();
 
-                $email = $form->getData()['email'];
-                $password = $form->getData()['password'];
+                /** @var array<string,mixed> $formData */
+                $formData = $form->getData();
+                $email = $formData['email'];
+                $password = $formData['password'];
 
                 // Perform the authentication with the user email and password
                 $result = $this->getAuthenticationService()

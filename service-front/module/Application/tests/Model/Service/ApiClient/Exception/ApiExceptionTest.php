@@ -7,6 +7,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Utils;
 
 class ApiExceptionTest extends MockeryTestCase
 {
@@ -22,7 +23,7 @@ class ApiExceptionTest extends MockeryTestCase
 
     public function testConstructor(): void
     {
-        $this->response->shouldReceive('getBody')->once()->andReturn(null);
+        $this->response->shouldReceive('getBody')->once()->andReturn(Utils::streamFor(null));
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response, 'Exception message');
@@ -33,7 +34,7 @@ class ApiExceptionTest extends MockeryTestCase
 
     public function testConstructorMessageInResponse(): void
     {
-        $this->response->shouldReceive('getBody')->once()->andReturn('{"detail":"Body exception message"}');
+        $this->response->shouldReceive('getBody')->once()->andReturn(Utils::streamFor('{"detail":"Body exception message"}'));
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
@@ -44,7 +45,7 @@ class ApiExceptionTest extends MockeryTestCase
 
     public function testConstructorNoMessage(): void
     {
-        $this->response->shouldReceive('getBody')->once()->andReturn(null);
+        $this->response->shouldReceive('getBody')->once()->andReturn(Utils::streamFor(null));
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
@@ -55,7 +56,7 @@ class ApiExceptionTest extends MockeryTestCase
 
     public function testGetTitle(): void
     {
-        $this->response->shouldReceive('getBody')->once()->andReturn('{"title":"Test Title"}');
+        $this->response->shouldReceive('getBody')->once()->andReturn(Utils::streamFor('{"title":"Test Title"}'));
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
@@ -65,7 +66,7 @@ class ApiExceptionTest extends MockeryTestCase
 
     public function testGetTitleNotPresent(): void
     {
-        $this->response->shouldReceive('getBody')->once()->andReturn(null);
+        $this->response->shouldReceive('getBody')->once()->andReturn(Utils::streamFor(null));
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
@@ -75,7 +76,7 @@ class ApiExceptionTest extends MockeryTestCase
 
     public function testGetData(): void
     {
-        $this->response->shouldReceive('getBody')->once()->andReturn('{"data":"Test Data"}');
+        $this->response->shouldReceive('getBody')->once()->andReturn(Utils::streamFor('{"data":"Test Data"}'));
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
@@ -85,7 +86,7 @@ class ApiExceptionTest extends MockeryTestCase
 
     public function testGetDataWithKey(): void
     {
-        $this->response->shouldReceive('getBody')->once()->andReturn('{"data":{"test":"Test Data"}}');
+        $this->response->shouldReceive('getBody')->once()->andReturn(Utils::streamFor('{"data":{"test":"Test Data"}}'));
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);
@@ -95,7 +96,7 @@ class ApiExceptionTest extends MockeryTestCase
 
     public function testGetDataNotPresent(): void
     {
-        $this->response->shouldReceive('getBody')->once()->andReturn(null);
+        $this->response->shouldReceive('getBody')->once()->andReturn(Utils::streamFor(null));
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
         $result = new ApiException($this->response);

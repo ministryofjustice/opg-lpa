@@ -4,15 +4,16 @@ namespace App\Form;
 
 use App\Validator;
 use Laminas\Form\Element\Csrf;
-use Laminas\Form\Form as LaminasForm;
+use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\Input;
 
 /**
- * Class AbstractForm
- * @package App\Form
+ * @template T
+ * @template-extends Form<T>
  */
-abstract class AbstractForm extends LaminasForm
+
+abstract class AbstractForm extends Form
 {
     /**
      * @return void

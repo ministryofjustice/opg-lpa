@@ -6,6 +6,11 @@ use Application\Form\AbstractCsrfForm;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 
+/**
+ * @template T
+ * @template-extends AbstractCsrfForm<T>
+ */
+
 class DateCheckForm extends AbstractCsrfForm
 {
     /**

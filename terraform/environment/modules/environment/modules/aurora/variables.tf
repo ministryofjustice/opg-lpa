@@ -28,3 +28,4 @@ variable "replication_source_identifier" {}
 variable "copy_tags_to_snapshot" { default = true }
 variable "iam_database_authentication_enabled" { default = true }
 variable "psql_aurora_parameter_group_family" { default = "aurora-postgresql13" }
+variable "ca_cert_identifier" { default = "rds-ca-rsa2048-g1" }

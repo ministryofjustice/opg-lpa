@@ -4,6 +4,11 @@ namespace Application\Form\Lpa;
 
 use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 
+/**
+ * @template T
+ * @template-extends AbstractActorForm<T>
+ */
+
 class TrustCorporationForm extends AbstractActorForm
 {
     protected $formElements = [

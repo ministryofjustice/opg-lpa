@@ -15,7 +15,7 @@ services:
 
   pgbouncer:
     container_name: lpa-pgbouncer
-    image: bitnami/pgbouncer:latest
+    image: bitnami/pgbouncer:1.21.0
     healthcheck:
       test: ["CMD", "bash", "-c", "echo -n > /dev/tcp/127.0.0.1/6432 || exit 1"]
       interval: 10s
@@ -73,7 +73,7 @@ services:
 
   localstack:
     container_name: lpa-localstack
-    image: localstack/localstack:0.14.5
+    image: localstack/localstack:3.0.2
     privileged: true
     ports:
       - 4568:4566
@@ -91,9 +91,12 @@ services:
       - LAMBDA_DOCKER_NETWORK=malpadev
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/localstack:/tmp/localstack
+    networks:
+      default:
+        aliases:
+          - sqs.eu-west-1.localhost.localstack.cloud
     healthcheck:
-      test: ["CMD", "curl", "http://localhost:4566/health?reload"]
+      test: ["CMD", "curl", "http://localhost:4566/_localstack/health?reload"]
 
   local-config:
     container_name: lpa-local-config
@@ -111,8 +114,8 @@ services:
     volumes:
       - ./local-config/:/app/
     environment:
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
       AWS_ENDPOINT_DYNAMODB: dynamodb:8000
 
       OPG_LPA_COMMON_SQS_ENDPOINT: localstack:4566
@@ -186,8 +189,8 @@ services:
       OPG_LPA_FRONT_CSRF_SALT: "test"
 
       # Local only
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
@@ -305,8 +308,8 @@ services:
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
       # Local only
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
@@ -381,8 +384,8 @@ services:
       OPG_LPA_ADMIN_JWT_SECRET: "test-secret"
 
       # Local only
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
@@ -437,18 +440,25 @@ services:
       - /tmp/
     build:
       context: ./
+      args:
+        ENABLE_XDEBUG: 0
       dockerfile: service-pdf/docker/app/Dockerfile
 # Other containers are built with debug on. Lines could be put here to build pdf with debug, but not doing as default due to pdf being slow already
     environment:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
 
       # Local only
-      AWS_ACCESS_KEY_ID: "-"
-      AWS_SECRET_ACCESS_KEY: "-"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
+
+      # XDEBUG mode and session need setting for this to run when xdebug mode above is enabled
+      XDEBUG_MODE: debug
+      XDEBUG_SESSION: 1
 
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
-      OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
+      OPG_LPA_COMMON_PDF_QUEUE_URL: http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/pdf-queue.fifo
 
+      PHP_IDE_CONFIG: serverName=lpa-pdf-app
   # ---------------------------
   # Seeding
   seeding:

@@ -4,6 +4,11 @@ namespace Application\Form\Lpa;
 
 use MakeShared\DataModel\Lpa\Document\Donor;
 
+/**
+ * @template T
+ * @template-extends AbstractActorForm<T>
+ */
+
 class DonorForm extends AbstractActorForm
 {
     protected $formElements = [

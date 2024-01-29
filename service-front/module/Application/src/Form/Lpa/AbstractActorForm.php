@@ -5,6 +5,11 @@ namespace Application\Form\Lpa;
 use MakeShared\DataModel\AbstractData;
 use Laminas\Form\FormInterface;
 
+/**
+ * @template T
+ * @template-extends AbstractLpaForm<T>
+ */
+
 abstract class AbstractActorForm extends AbstractLpaForm
 {
     public const PREFER_NOT_TO_SAY_TITLE = 'Prefer not to say';

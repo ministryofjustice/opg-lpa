@@ -5,6 +5,11 @@ namespace Application\Form\Lpa;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Validator\StringLength;
 
+/**
+ * @template T
+ * @template-extends AbstractMainFlowForm<T>
+ */
+
 class RepeatApplicationForm extends AbstractMainFlowForm
 {
     protected $formElements = [

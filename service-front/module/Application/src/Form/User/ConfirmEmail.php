@@ -10,8 +10,8 @@ use Laminas\Validator\NotEmpty;
  * Form to accept and validate email addresses
  * Used by the password reset and resend activate token flows
  *
- * Class ConfirmEmail
- * @package Application\Form\User
+ * @template T
+ * @template-extends AbstractCsrfForm<T>
  */
 class ConfirmEmail extends AbstractCsrfForm
 {

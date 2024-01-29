@@ -70,8 +70,8 @@ class FilteringSaveHandler implements SaveHandlerInterface
         return $this;
     }
 
-    // $_savePath and $_sessionName are ignored
-    public function open(string $_savePath, string $_sessionName): bool
+    // $path and $name are ignored
+    public function open(string $path, string $name): bool
     {
         return $this->redisClient->open();
     }

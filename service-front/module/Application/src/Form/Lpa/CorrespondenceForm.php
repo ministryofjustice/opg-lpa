@@ -4,6 +4,11 @@ namespace Application\Form\Lpa;
 
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 
+/**
+ * @template T
+ * @template-extends AbstractMainFlowForm<T>
+ */
+
 class CorrespondenceForm extends AbstractMainFlowForm
 {
     protected $formElements = [

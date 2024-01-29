@@ -31,7 +31,7 @@ on:
 
 jobs:
   workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@383650d409aad063a69ce6cc3a013ac538cc1508 # v1.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
     if: github.event.pull_request.merged == true
 
   cleanup_workspace:
@@ -42,6 +42,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+
+      - name: Get terraform version
+        id: set-terraform-version
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
+        with:
+          terraform_directory: "./terraform/environment"
+
+      - uses: hashicorp/setup-terraform@633666f66e0061ca3b725c73b2ec20cd13a8fdd1 # tag=v2.0.3
+        with:
+          terraform_version: ${{ steps.set-terraform-version.outputs.version }}
+          terraform_wrapper: false
 
       - uses: webfactory/ssh-agent@d4b9b8ff72958532804b70bbe600ad43b36d5f2e # v0.8.0
         with:
