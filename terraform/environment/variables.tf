@@ -21,12 +21,6 @@ variable "management_role" {
   description = "The default role to use to create resources in the management account"
 }
 
-variable "lambda_container_version" {
-  type        = string
-  default     = "latest"
-  description = "The version of the lambda container to deploy"
-}
-
 variable "accounts" {
   type = map(
     object({
