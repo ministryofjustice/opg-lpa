@@ -1,6 +1,7 @@
 # variables for terraform.tfvars.json
 variable "account_mapping" {
-  type = map(any)
+  type        = map(any)
+  description = "Map of account names to account IDs"
 }
 
 variable "accounts" {
@@ -10,6 +11,7 @@ variable "accounts" {
       allow_ingress_modification = bool
     })
   )
+  description = "Map of account names to account IDs"
 }
 
 locals {

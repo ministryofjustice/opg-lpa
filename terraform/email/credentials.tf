@@ -10,7 +10,9 @@ terraform {
 }
 
 variable "default_role" {
-  default = "opg-lpa-ci"
+  default     = "opg-lpa-ci"
+  type        = string
+  description = "The default role to assume"
 }
 
 provider "aws" {

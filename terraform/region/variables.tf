@@ -1,10 +1,12 @@
 variable "default_role" {
   description = "default aws IAM role to use. defaults to the CI Role"
   default     = "opg-lpa-ci"
+  type        = string
 }
 
 variable "pagerduty_token" {
   description = "pagerduty token"
+  type        = string
   sensitive   = true
 }
 

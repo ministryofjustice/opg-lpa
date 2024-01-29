@@ -1,17 +1,3 @@
-data "aws_subnets" "private" {
-  filter {
-    name   = "vpc-id"
-    values = [aws_default_vpc.default.id]
-  }
-
-  tags = {
-    Name = "private*"
-  }
-
-  depends_on = [
-    aws_subnet.private
-  ]
-}
 
 resource "aws_default_subnet" "public" {
   count                   = 3

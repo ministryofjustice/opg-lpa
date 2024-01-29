@@ -5,6 +5,7 @@ terraform {
       configuration_aliases = [
         aws.management
       ]
+      version = "~> 5.0"
     }
     pagerduty = {
       source  = "PagerDuty/pagerduty"
