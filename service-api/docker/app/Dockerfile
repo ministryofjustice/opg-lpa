@@ -18,19 +18,6 @@ RUN apk add --no-cache postgresql-libs icu fcgi \
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
-# Enable debug if needed. Should only be used locally
-ARG ENABLE_XDEBUG=0
-RUN if [[ $ENABLE_XDEBUG = 1 ]] ; then \
-      pecl install xdebug ; \
-      docker-php-ext-enable xdebug ; \
-      echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-      echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-      echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-      echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-      echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-      echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-    fi ;
-
 # Install composer dependencies
 COPY --chown=root:root service-api/composer.json /app/composer.json
 COPY --chown=root:root service-api/composer.lock /app/composer.lock
@@ -43,8 +30,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 ARG OPG_LPA_COMMON_APP_VERSION
 ENV OPG_LPA_COMMON_APP_VERSION=${OPG_LPA_COMMON_APP_VERSION}
 
-# Clean up build dependencies, but only after everything else we need has been installed
-RUN apk del .build-dependencies
 
 # Core files for the application
 COPY --chown=root:root service-api/db/migrations /app/db/migrations
@@ -68,6 +53,23 @@ COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-
 RUN chmod +x /app/db-migrations.sh /usr/local/bin/health-check.sh
 
 WORKDIR /app
+
+# Enable debug if needed. Should only be used locally
+ARG ENABLE_XDEBUG=0
+RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
+      pecl install xdebug ; \
+      echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+      echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+      echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+      echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+      echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+      echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+      docker-php-ext-enable xdebug ; \
+    fi ;
+
+
+# Clean up build dependencies, but only after everything else we need has been installed
+RUN apk del .build-dependencies
 
 USER appuser
 

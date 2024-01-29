@@ -5,6 +5,11 @@ namespace Application\Form\Lpa;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 
+/**
+ * @template T
+ * @template-extends AbstractMainFlowForm<T>
+ */
+
 class ApplicantForm extends AbstractMainFlowForm
 {
     protected $formElements = [

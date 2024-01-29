@@ -7,6 +7,11 @@ use MakeShared\DataModel\User\User;
 use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
 
+/**
+ * @template T
+ * @template-extends AbstractActorForm<T>
+ */
+
 class AboutYou extends AbstractActorForm
 {
     /**
@@ -70,7 +75,7 @@ class AboutYou extends AbstractActorForm
      * retrieve an array of data before sending it to the API
      *
      * @param  int $flag
-     * @return array|object
+     * @return T|object|array<string, mixed>
      */
     public function getData($flag = FormInterface::VALUES_NORMALIZED)
     {

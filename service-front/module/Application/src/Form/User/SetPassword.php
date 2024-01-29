@@ -10,9 +10,10 @@ use Laminas\Validator\StringLength;
 /**
  * For to request a password reset email be sent out.
  *
- * Class SetPassword
- * @package Application\Form\User
+ * @template T
+ * @template-extends AbstractCsrfForm<T>
  */
+
 class SetPassword extends AbstractCsrfForm
 {
     public function init()

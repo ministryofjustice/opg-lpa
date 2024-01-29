@@ -10,6 +10,7 @@ use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Utils;
 
 class ServiceTestHelper
 {
@@ -20,7 +21,7 @@ class ServiceTestHelper
     ) : ApiException {
         /** @var ResponseInterface|MockInterface $response */
         $response = Mockery::mock(ResponseInterface::class);
-        $response->shouldReceive('getBody')->andReturn($body);
+        $response->shouldReceive('getBody')->andReturn(Utils::streamFor($body));
         $response->shouldReceive('getStatusCode')->andReturn($status);
 
         return new ApiException($response, $message);

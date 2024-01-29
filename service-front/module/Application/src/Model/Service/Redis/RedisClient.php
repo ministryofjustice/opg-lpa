@@ -54,7 +54,8 @@ class RedisClient
             $this->redisPort = intval($urlParts['port']);
         }
 
-        $this->ttl = $ttlMs;
+        # Redis' setEx expects TTL in seconds, but this is passed to the constructor in milliseconds
+        $this->ttl = $ttlMs / 1000;
 
         if (is_null($redis)) {
             $redis = new Redis();

@@ -2,6 +2,11 @@
 
 namespace Application\Form\Lpa;
 
+/**
+ * @template T
+ * @template-extends AbstractLpaForm<T>
+ */
+
 class ReuseDetailsForm extends AbstractLpaForm
 {
     protected $formElements = [

@@ -77,6 +77,7 @@ return [
                     'url' => getenv('OPG_LPA_COMMON_PDF_QUEUE_URL') ?: null,
                 ],
                 'client' => [
+                    'endpoint' => getenv('OPG_LPA_COMMON_PDF_QUEUE_URL') ?: null,
                     'region' => getenv('AWS_REGION') ?: 'eu-west-1',
                     'version' => '2012-11-05',
                 ],

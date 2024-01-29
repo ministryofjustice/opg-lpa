@@ -23,6 +23,9 @@ jobs:
           - name: service-api
             path: "./service-api"
             minCoverage: 74
+          - name: shared
+            path: "./shared"
+            minCoverage: 91
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
@@ -69,9 +72,6 @@ jobs:
           - name: service-pdf
             path: "./service-pdf"
             minCoverage: 85
-          - name: shared
-            path: "./shared"
-            minCoverage: 91
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
