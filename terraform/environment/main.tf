@@ -1,15 +1,11 @@
 module "eu-west-1" {
-  source                   = "./modules/environment"
-  account                  = local.account
-  account_name             = local.account_name
-  environment_name         = local.environment_name
-  region_name              = "eu-west-1"
-  container_version        = var.container_version
-  lambda_container_version = var.lambda_container_version
-  pagerduty_token          = var.pagerduty_token
-  management_role          = var.management_role
-  default_role             = var.default_role
-  ecs_execution_role       = aws_iam_role.execution_role
+  source             = "./modules/environment"
+  account            = local.account
+  account_name       = local.account_name
+  environment_name   = local.environment_name
+  region_name        = "eu-west-1"
+  container_version  = var.container_version
+  ecs_execution_role = aws_iam_role.execution_role
   ecs_iam_task_roles = {
     api               = aws_iam_role.api_task_role
     front             = aws_iam_role.front_task_role
@@ -25,18 +21,14 @@ module "eu-west-1" {
 }
 
 module "eu-west-2" {
-  count                    = local.dr_enabled ? 1 : 0
-  source                   = "./modules/environment"
-  account                  = local.account
-  account_name             = local.account_name
-  environment_name         = local.environment_name
-  region_name              = "eu-west-2"
-  container_version        = var.container_version
-  lambda_container_version = var.lambda_container_version
-  pagerduty_token          = var.pagerduty_token
-  management_role          = var.management_role
-  default_role             = var.default_role
-  ecs_execution_role       = aws_iam_role.execution_role
+  count              = local.dr_enabled ? 1 : 0
+  source             = "./modules/environment"
+  account            = local.account
+  account_name       = local.account_name
+  environment_name   = local.environment_name
+  region_name        = "eu-west-2"
+  container_version  = var.container_version
+  ecs_execution_role = aws_iam_role.execution_role
   ecs_iam_task_roles = {
     api               = aws_iam_role.api_task_role
     front             = aws_iam_role.front_task_role
