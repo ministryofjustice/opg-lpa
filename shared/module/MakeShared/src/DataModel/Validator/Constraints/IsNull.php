@@ -8,5 +8,5 @@ class IsNull extends SymfonyConstraints\IsNull
 {
     use ValidatorPathTrait;
 
-    public $message = 'must-be-null';
+    public string $message = 'must-be-null';
 }
