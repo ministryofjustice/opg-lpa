@@ -37,9 +37,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
+      semver_tag: ${{ steps.semver_tag.outputs.created_tag }}
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
       account_terraform_version: ${{ steps.terraform_version_account.outputs.version }}
       region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
@@ -64,6 +67,14 @@ jobs:
         uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
         with:
           terraform_directory: "./terraform/region"
+      - name: Bump version and push tag
+        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@v2.7.3
+        id: semver_tag
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          with_v: true
+          default_bump: minor
+
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
@@ -71,7 +82,7 @@ jobs:
     needs:
       - set_variables
     with:
-      tag: ${{ needs.set_variables.outputs.short_sha }}
+      tag: main-${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit
 
   terraform_account_preproduction:
@@ -120,7 +131,7 @@ jobs:
       terraform_apply: true
       use_ssh_private_key: true
       terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.short_sha }}"
+      terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.semver_tag }}"
       persist_artifacts: true
     needs:
       - docker_build_scan_push
@@ -354,7 +365,7 @@ jobs:
       terraform_directory: ./terraform/environment
       use_ssh_private_key: true
       persist_artifacts: true
-      terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.short_sha }}"
+      terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.semver_tag }}"
     needs:
       - docker_build_scan_push
       - slack_msg_production_deploy_begin
