@@ -1,5 +1,4 @@
 locals {
-  opg_project  = "lpa"
   account_name = lookup(var.account_mapping, terraform.workspace, "development")
   account      = var.accounts[local.account_name]
   account_id   = local.account.account_id
@@ -20,10 +19,6 @@ locals {
   }
 
   default_opg_tags = merge(local.mandatory_moj_tags, local.optional_tags)
-
-  shared_component_tag = {
-    component = "shared"
-  }
 
   admin_component_tag = {
     component = "admin"
