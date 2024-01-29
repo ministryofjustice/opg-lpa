@@ -174,7 +174,7 @@ jobs:
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: true
       terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }} -var lambda_container_version=latest"
+      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }}"
       persist_artifacts: true
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -243,7 +243,7 @@ jobs:
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }} -var lambda_container_version=latest"
+      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }}"
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
