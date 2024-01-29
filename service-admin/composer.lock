@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.296.5",
+            "version": "3.297.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "23b009f305278e227bc5149bcb8fc9c1503fb130"
+                "reference": "5be6a9c74e1d72af75f24b4f4a9cfac51ccd6a56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/23b009f305278e227bc5149bcb8fc9c1503fb130",
-                "reference": "23b009f305278e227bc5149bcb8fc9c1503fb130",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5be6a9c74e1d72af75f24b4f4a9cfac51ccd6a56",
+                "reference": "5be6a9c74e1d72af75f24b4f4a9cfac51ccd6a56",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.296.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.297.1"
             },
-            "time": "2024-01-18T19:06:27+00:00"
+            "time": "2024-01-25T19:18:40+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -726,16 +726,16 @@
         },
         {
             "name": "laminas/laminas-cache",
-            "version": "3.12.0",
+            "version": "3.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-cache.git",
-                "reference": "66cf9a209163cadc65d93483667b995c5ead1563"
+                "reference": "bf8bc7f92e15925991c46079c6cd727372af5a46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/66cf9a209163cadc65d93483667b995c5ead1563",
-                "reference": "66cf9a209163cadc65d93483667b995c5ead1563",
+                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/bf8bc7f92e15925991c46079c6cd727372af5a46",
+                "reference": "bf8bc7f92e15925991c46079c6cd727372af5a46",
                 "shasum": ""
             },
             "require": {
@@ -823,7 +823,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2023-11-06T18:52:54+00:00"
+            "time": "2024-01-19T20:42:11+00:00"
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-memory",
