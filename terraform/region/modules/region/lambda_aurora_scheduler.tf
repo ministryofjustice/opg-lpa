@@ -8,7 +8,6 @@ module "aurora_scheduler" {
   count             = var.account.always_on_aurora ? 0 : 1
   timeout           = 900
   lambda_name       = "${var.account_name}-aurora-scheduler"
-  description       = "Function to start and stop Aurora Serverless clusters on a schedule"
   working_directory = "/"
 
   image_uri = "${data.aws_ecr_repository.aurora_scheduler.repository_url}:latest"

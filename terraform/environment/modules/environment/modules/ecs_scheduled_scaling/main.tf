@@ -1,6 +1,3 @@
-data "aws_iam_role" "ecs_autoscaling_service_role" {
-  name = "AWSServiceRoleForApplicationAutoScaling_ECSService"
-}
 
 resource "aws_appautoscaling_scheduled_action" "trigger_scale_up" {
   for_each           = var.service_config

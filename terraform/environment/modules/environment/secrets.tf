@@ -60,11 +60,3 @@ data "aws_secretsmanager_secret" "performance_platform_db_username" {
 data "aws_secretsmanager_secret" "performance_platform_db_password" {
   name = "${var.account_name}/performance_platform_db_password"
 }
-
-data "aws_secretsmanager_secret_version" "performance_platform_db_username" {
-  secret_id = data.aws_secretsmanager_secret.performance_platform_db_username.id
-}
-
-data "aws_secretsmanager_secret_version" "performance_platform_db_password" {
-  secret_id = data.aws_secretsmanager_secret.performance_platform_db_password.id
-}

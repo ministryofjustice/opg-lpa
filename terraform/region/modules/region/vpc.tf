@@ -29,14 +29,14 @@ data "aws_internet_gateway" "default" {
 
 resource "aws_route_table_association" "private" {
   count          = 3
-  route_table_id = element(aws_route_table.private.*.id, count.index)
-  subnet_id      = element(aws_subnet.private.*.id, count.index)
+  route_table_id = element(aws_route_table.private[*].id, count.index)
+  subnet_id      = element(aws_subnet.private[*].id, count.index)
 }
 
 resource "aws_nat_gateway" "nat" {
   count         = 3
-  allocation_id = element(aws_eip.nat.*.id, count.index)
-  subnet_id     = element(aws_default_subnet.public.*.id, count.index)
+  allocation_id = element(aws_eip.nat[*].id, count.index)
+  subnet_id     = element(aws_default_subnet.public[*].id, count.index)
 
   tags = merge(
     local.shared_component_tag,
@@ -77,7 +77,7 @@ resource "aws_route" "default" {
 
 resource "aws_route" "private" {
   count                  = 3
-  route_table_id         = element(aws_route_table.private.*.id, count.index)
+  route_table_id         = element(aws_route_table.private[*].id, count.index)
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = element(aws_nat_gateway.nat.*.id, count.index)
+  nat_gateway_id         = element(aws_nat_gateway.nat[*].id, count.index)
 }
