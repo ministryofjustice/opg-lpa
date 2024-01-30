@@ -16,6 +16,24 @@ resource "aws_route53_record" "public_facing_lastingpowerofattorney" {
   }
 }
 
+# URL for the LPA Service without the www. subdomain. Redirected to the www. subdomain on front LB.
+resource "aws_route53_record" "public_facing_lastingpowerofattorney_redirect" {
+  count           = var.environment_name == "production" ? 1 : 0
+  provider        = aws.management
+  zone_id         = data.aws_route53_zone.live_service_lasting_power_of_attorney.zone_id
+  name            = data.aws_route53_zone.live_service_lasting_power_of_attorney.name
+  type            = "A"
+  allow_overwrite = true
+  alias {
+    evaluate_target_health = false
+    name                   = var.front_dns_name
+    zone_id                = var.front_zone_id
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
 //-------------------------------------------------------------
 // front
