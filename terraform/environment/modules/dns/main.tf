@@ -37,7 +37,7 @@ resource "aws_route53_record" "public_facing_lastingpowerofattorney_redirect" {
 
 resource "aws_route53_record" "spf_public_facing_lastingpowerofattorney" {
   provider = aws.management
-  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
+  zone_id  = data.aws_route53_zone.live_service_lasting_power_of_attorney.zone_id
   name     = "${local.dns_namespace_env_public}${local.dns_namespace_dev_prefix}${data.aws_route53_zone.live_service_lasting_power_of_attorney.name}"
   type     = "TXT"
   ttl      = "300"
@@ -54,7 +54,7 @@ resource "aws_route53_record" "spf_public_facing_lastingpowerofattorney" {
 resource "aws_route53_record" "spf_public_facing_lastingpowerofattorney_redirect" {
   count    = var.environment_name == "production" ? 1 : 0
   provider = aws.management
-  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
+  zone_id  = data.aws_route53_zone.live_service_lasting_power_of_attorney.zone_id
   name     = data.aws_route53_zone.live_service_lasting_power_of_attorney.name
   type     = "TXT"
   ttl      = "300"
@@ -70,7 +70,7 @@ resource "aws_route53_record" "spf_public_facing_lastingpowerofattorney_redirect
 
 resource "aws_route53_record" "dmarc_public_facing_lastingpowerofattorney" {
   provider = aws.management
-  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
+  zone_id  = data.aws_route53_zone.live_service_lasting_power_of_attorney.zone_id
   name     = "_dmarc.${local.dns_namespace_env_public}${local.dns_namespace_dev_prefix}${data.aws_route53_zone.live_service_lasting_power_of_attorney.name}"
   type     = "TXT"
   ttl      = "300"
@@ -83,7 +83,7 @@ resource "aws_route53_record" "dmarc_public_facing_lastingpowerofattorney" {
 resource "aws_route53_record" "dmarc_public_facing_lastingpowerofattorney_redirect" {
   count    = var.environment_name == "production" ? 1 : 0
   provider = aws.management
-  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
+  zone_id  = data.aws_route53_zone.live_service_lasting_power_of_attorney.zone_id
   name     = "_dmarc.${data.aws_route53_zone.live_service_lasting_power_of_attorney.name}"
   type     = "TXT"
   ttl      = "300"
