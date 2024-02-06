@@ -52,14 +52,14 @@ def cleanup_security_groups(security_group_ids, port) -> None:
                 raise e
 
 
-def clean_redis(**kwargs) -> None:
+def cleanup_redis(**kwargs) -> None:
     """Clean up the security groups for the Redis clusters"""
     clusters = get_redis_clusters()
     for cluster in clusters:
         cleanup_security_groups([clusters[cluster]["security_group_id"]], 6379)
 
 
-def clean_postgres(**kwargs) -> None:
+def cleanup_postgres(**kwargs) -> None:
     """
     Clean up the security groups for the Postgres clusters.
 
