@@ -1,8 +1,8 @@
-# Using Cloud9 to access Redis
+# Using Cloud9 to access Redis and PostgresSQL
 
 ## Overview
 
-Generally, if you want to access a Redis instance, on AWS you will need to spin up a Cloud9 instance. The instructions below help you to do that, so you can query data and perform database operations.
+Generally, if you want to access a Postgres or Redis instance, on AWS you will need to spin up a Cloud9 instance. The instructions below help you to do that, so you can query data and perform database operations.
 
 ## Setup
 
@@ -30,14 +30,25 @@ Generally, if you want to access a Redis instance, on AWS you will need to spin 
 Open a terminal window in your nearly created Cloud9 instance and run the following command to connect to the Redis cluster.
 
 ``` bash
-wget https://raw.githubusercontent.com/ministryofjustice/opg-lpa/main/docs/runbooks/cloud9/redis_init.py
+wget https://raw.githubusercontent.com/ministryofjustice/opg-lpa/main/docs/runbooks/cloud9/setup.py
 ```
 
+#### Redis
 Execute the script inside of your Cloud9 terminal and you should see the URL of each Redis instance in the account and region which you can now connect to using the `redis-cli` tool. You must use TLS to connect to the Redis instance, so you will need to use the `--tls` flag.
 
 ``` bash
-python redis_init.py
-redis-cli --tls -p 6379 -h <endpoint>
+pip3 install boto3
+python3 setup.py --service redis --environment [environment]
+redis-cli --tls -p 6379 -h [endpoint]
 ```
 
-Once you've finished, run `redis_init.py cleanup` to cleanup the security groups then go to Cloud9 Dashboard in AWS Console and delete the instance.
+#### Postgres
+Execute the script inside of your Cloud9 terminal and you should see the URL of each Postgres instance in the account and region which you can now connect to using the `psql` tool. The login details will be printed out in the terminal. You will need to use the `-d` flag to specify the database you want to connect to which is normally `api2` for the Make an LPA service.
+
+```bash
+pip3 install boto3
+python3 setup.py --service postgres --environment [environment]
+psql -d [database] -h [endpoint]
+```
+
+Once you've finished, run `python3 setup.py --cleanup` to cleanup the security groups then go to Cloud9 Dashboard in AWS Console and delete the instance.
