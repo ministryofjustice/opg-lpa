@@ -267,7 +267,7 @@ jobs:
       - set_variables
     steps:
       - id: slack
-        uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+        uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
         with:
           channel-id: "C9PNCT2KS"
           payload: |
@@ -423,7 +423,7 @@ jobs:
       - run_smoke_tests
       - set_variables
     steps:
-    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+    - uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
       if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
       with:
         channel-id: "C9PNCT2KS"
@@ -474,7 +474,7 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+    - uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
       if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
       with:
         channel-id: "C9PNCT2KS"
@@ -525,7 +525,7 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+    - uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
       if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
       with:
         channel-id: "C9PNCT2KS"
