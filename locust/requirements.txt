@@ -12,7 +12,7 @@ brotli==1.1.0
     # via geventhttpclient
 bs4==0.0.2
     # via -r requirements.in
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   geventhttpclient
     #   requests
@@ -33,7 +33,7 @@ flask-cors==4.0.0
     # via locust
 flask-login==0.6.3
     # via locust
-gevent==23.9.1
+gevent==24.2.1
     # via
     #   geventhttpclient
     #   locust
