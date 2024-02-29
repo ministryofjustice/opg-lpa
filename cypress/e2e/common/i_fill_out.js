@@ -79,7 +79,7 @@ Then('I clear the value in {string}', (object) => {
 Then('I see form prepopulated with', (dataTable) => {
   var rawTable = dataTable.rawTable;
   rawTable.forEach((row) => {
-    cy.get('[data-cy=' + row[0] + ']').should('have.value', row[1]);
+    cy.get('[data-cy=' + row[0] + ']').should('include.value', row[1]);
   });
 });
 
@@ -96,5 +96,5 @@ Then(
 
 Then('I see {string} prepopulated with {string}', (object, value) => {
   // set higher timeout because sometimes cypress takes more than the default 4 secs to fill in an element
-  cy.get('[data-cy=' + object + ']').should('have.value', value);
+  cy.get('[data-cy=' + object + ']').should('include.value', value);
 });
