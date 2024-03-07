@@ -1,18 +1,3 @@
-variable "pagerduty_token" {
-}
-
-variable "default_role" {
-  default = "opg-lpa-ci"
-}
-
-variable "management_role" {
-  default = "opg-lpa-ci"
-}
-
-variable "lambda_container_version" {
-  type    = string
-  default = "latest"
-}
 
 variable "account" {
   type = object({

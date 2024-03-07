@@ -7,11 +7,15 @@ provider "aws" {
 }
 
 variable "default_role" {
-  default = "opg-lpa-ci"
+  default     = "opg-lpa-ci"
+  type        = string
+  description = "The role to assume when creating resources"
 }
 
 variable "management_role" {
-  default = "opg-lpa-ci"
+  default     = "opg-lpa-ci"
+  type        = string
+  description = "The role to assume when creating resources in the management account"
 }
 
 provider "aws" {

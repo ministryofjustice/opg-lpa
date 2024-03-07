@@ -12,7 +12,7 @@ brotli==1.1.0
     # via geventhttpclient
 bs4==0.0.2
     # via -r requirements.in
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   geventhttpclient
     #   requests
@@ -24,16 +24,16 @@ configargparse==1.7
     # via locust
 faker==18.13.0
     # via -r requirements.in
-flask==3.0.1
+flask==3.0.2
     # via
-    #   flask-basicauth
     #   flask-cors
+    #   flask-login
     #   locust
-flask-basicauth==0.2.0
-    # via locust
 flask-cors==4.0.0
     # via locust
-gevent==23.9.1
+flask-login==0.6.3
+    # via locust
+gevent==24.2.1
     # via
     #   geventhttpclient
     #   locust
@@ -47,17 +47,17 @@ itsdangerous==2.1.2
     # via flask
 jinja2==3.1.3
     # via flask
-locust==2.20.1
+locust==2.24.0
     # via -r requirements.in
-markupsafe==2.1.4
+markupsafe==2.1.5
     # via
     #   jinja2
     #   werkzeug
-msgpack==1.0.7
+msgpack==1.0.8
     # via locust
 psutil==5.9.8
     # via locust
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via faker
 pyzmq==25.1.2
     # via locust
@@ -71,15 +71,16 @@ six==1.16.0
     #   python-dateutil
 soupsieve==2.5
     # via beautifulsoup4
-urllib3==2.1.0
+urllib3==2.2.1
     # via requests
 werkzeug==3.0.1
     # via
     #   flask
+    #   flask-login
     #   locust
 zope-event==5.0
     # via gevent
-zope-interface==6.1
+zope-interface==6.2
     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:

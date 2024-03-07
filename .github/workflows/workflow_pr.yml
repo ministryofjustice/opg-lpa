@@ -70,7 +70,7 @@ jobs:
     name: TF - Lint
     needs:
       - set_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@v3.1.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
 
@@ -90,7 +90,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
       - workspace_name
       - terraform_lint
@@ -112,10 +112,11 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
       - workspace_name
       - terraform_lint
+      - set_variables
     with:
       terraform_version: ${{ needs.set_variables.outputs.region_terraform_version }}
       terraform_workspace: development
@@ -133,7 +134,7 @@ jobs:
 
   terraform_email_development:
     name: TF Development - Email
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
       - workspace_name
       - terraform_lint
@@ -155,7 +156,7 @@ jobs:
 
   terraform_environment_development:
     name: TF Development - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
       - docker_build_scan_push
       - phpunit_tests
@@ -173,7 +174,7 @@ jobs:
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: true
       terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }} -var lambda_container_version=latest"
+      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }}"
       persist_artifacts: true
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -184,7 +185,7 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction Plan - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
       - workspace_name
       - set_variables
@@ -206,7 +207,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction Plan - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
       - workspace_name
       - set_variables
@@ -228,7 +229,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction Plan - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
       - workspace_name
       - set_variables
@@ -242,7 +243,7 @@ jobs:
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }} -var lambda_container_version=latest"
+      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }}"
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -337,7 +338,7 @@ jobs:
       with:
         string: ${{ github.event.pull_request.title }}
 
-    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+    - uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
       id: slack
       with:
         channel-id: "CAMB46M6Y"
@@ -488,7 +489,7 @@ jobs:
       with:
         string: ${{ github.event.pull_request.title }}
 
-    - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+    - uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
       with:
         channel-id: "CAMB46M6Y"
         update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
