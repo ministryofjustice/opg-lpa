@@ -1,22 +1,24 @@
 # variables for terraform.tfvars.json
 variable "pagerduty_token" {
+  type        = string
+  description = "The Pagerduty API token"
 }
 
 variable "account_mapping" {
-  type = map(any)
+  type        = map(any)
+  description = "The mapping of account names to account IDs"
 }
 
 variable "default_role" {
-  default = "opg-lpa-ci"
+  default     = "opg-lpa-ci"
+  type        = string
+  description = "The default role to use to create resources"
 }
 
 variable "management_role" {
-  default = "opg-lpa-ci"
-}
-
-variable "lambda_container_version" {
-  type    = string
-  default = "latest"
+  default     = "opg-lpa-ci"
+  type        = string
+  description = "The default role to use to create resources in the management account"
 }
 
 variable "accounts" {
@@ -71,10 +73,12 @@ variable "accounts" {
       })
     })
   )
+  description = "A map of the account configuration"
 }
 
 # run-time variables
 variable "container_version" {
-  type    = string
-  default = "latest"
+  type        = string
+  default     = "latest"
+  description = "The version of the container to deploy to ECS"
 }

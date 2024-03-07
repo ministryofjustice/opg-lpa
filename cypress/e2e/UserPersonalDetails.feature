@@ -41,7 +41,7 @@ Feature: Change User Personal Details
         When I log in as seeded user
         And I visit link containing "Your details"
         Then I am taken to "/user/about-you"
-        And I see "address-address1" prepopulated with "THE OFFICE OF THE PUBLIC GUARDIAN"
+        And I see "address-address1" prepopulated with "PUBLIC GUARDIAN"
         And I see "address-address2" prepopulated with "THE AXIS"
         And I see "address-address3" prepopulated with "10 HOLLIDAY STREET, BIRMINGHAM"
         And I see "address-postcode" prepopulated with "B1 1TF"

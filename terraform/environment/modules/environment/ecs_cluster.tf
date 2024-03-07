@@ -21,9 +21,3 @@ resource "aws_ecs_cluster_capacity_providers" "online-lpa" {
     capacity_provider = "FARGATE"
   }
 }
-
-
-data "aws_cloudwatch_log_group" "online-lpa" {
-  name = "online-lpa"
-  tags = local.shared_component_tag
-}

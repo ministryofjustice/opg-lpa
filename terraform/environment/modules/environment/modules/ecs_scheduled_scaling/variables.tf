@@ -1,7 +1,3 @@
-variable "ecs_cluster_name" {
-  description = "Name of the ECS Cluster"
-  type        = string
-}
 
 variable "name" {
   description = "Schedule name if running multiple schedules"
@@ -11,10 +7,12 @@ variable "name" {
 
 variable "scale_down_time" {
   description = "Cron formatted value for scale down trigger"
+  type        = string
 }
 
 variable "scale_up_time" {
   description = "Cron formatted value for scale up trigger"
+  type        = string
 }
 
 variable "service_config" {

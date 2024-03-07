@@ -104,7 +104,7 @@ locals {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : "${var.region_name}",
+          "awslogs-region" : var.region_name,
           "awslogs-stream-prefix" : "${var.environment_name}.pdf-app.online-lpa"
         }
       },

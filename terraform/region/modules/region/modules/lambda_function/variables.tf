@@ -1,8 +1,3 @@
-variable "description" {
-  description = "Description of your Lambda Function (or Layer)"
-  type        = string
-  default     = ""
-}
 
 variable "lambda_role_policy_document" {
   description = "The policy JSON for the lambda IAM role. This policy JSON is merged with Logging and ECR access included in the module."

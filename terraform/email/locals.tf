@@ -9,11 +9,9 @@ variable "accounts" {
 }
 
 locals {
-  opg_project = "lpa"
 
   account_name = "development"
   account      = var.accounts[local.account_name]
-  account_id   = local.account.account_id
 
   mandatory_moj_tags = {
     business-unit = "OPG"

@@ -8,6 +8,7 @@ locals {
 
 variable "docker_remote_ip" {
   description = "IP address for CircleCI docker remote"
+  type        = string
   default     = ""
 }
 
