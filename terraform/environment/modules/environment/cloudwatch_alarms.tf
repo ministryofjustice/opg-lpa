@@ -46,9 +46,9 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
 
 resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   actions_enabled     = true
-  alarm_name          = "${var.environment_name} pdf messages awaiting processing"
+  alarm_name          = "${var.environment_name}-pdf-queue-excess-items"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
-  alarm_description   = "number of pdf requests in queue"
+  alarm_description   = "ApproximateNumberOfMessagesVisible >= 10 for 5 minutes in pdf queue"
   namespace           = "AWS/SQS"
   metric_name         = "ApproximateNumberOfMessagesVisible"
   comparison_operator = "GreaterThanThreshold"
@@ -58,12 +58,34 @@ resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
   period              = 60
   evaluation_periods  = 1
-  datapoints_to_alarm = 1
+  datapoints_to_alarm = 5
   statistic           = "Sum"
   tags                = local.pdf_component_tag
-  threshold           = 6
+  threshold           = 10
   treat_missing_data  = "notBreaching"
 }
+
+resource "aws_cloudwatch_metric_alarm" "pdf_queue_oldest_message" {
+  actions_enabled     = true
+  alarm_name          = "${var.environment_name}-pdf-queue-oldest-message"
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+  alarm_description   = "ApproximateAgeOfOldestMessage >= 60 seconds for 5 minutes in pdf queue"
+  namespace           = "AWS/SQS"
+  metric_name         = "ApproximateAgeOfOldestMessage"
+  comparison_operator = "GreaterThanThreshold"
+  dimensions = {
+    QueueName = aws_sqs_queue.pdf_fifo_queue.name
+  }
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+  period              = 300
+  evaluation_periods  = 1
+  datapoints_to_alarm = 1
+  statistic           = "Maximum"
+  tags                = local.pdf_component_tag
+  threshold           = 60
+  treat_missing_data  = "notBreaching"
+}
+
 
 resource "aws_cloudwatch_metric_alarm" "front_ddos_attack_external" {
   alarm_name          = "${var.environment_name}-FrontDDoSDetected"
