@@ -57,7 +57,7 @@ resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   }
   ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
   period              = 60
-  evaluation_periods  = 1
+  evaluation_periods  = 5
   datapoints_to_alarm = 5
   statistic           = "Sum"
   tags                = local.pdf_component_tag
