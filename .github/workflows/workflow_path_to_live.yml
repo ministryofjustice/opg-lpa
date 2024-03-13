@@ -198,6 +198,7 @@ jobs:
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
@@ -210,6 +211,7 @@ jobs:
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
@@ -222,6 +224,7 @@ jobs:
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
@@ -236,6 +239,7 @@ jobs:
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
@@ -248,6 +252,7 @@ jobs:
     uses: ./.github/workflows/locust_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
