@@ -15,7 +15,7 @@ services:
 
   pgbouncer:
     container_name: lpa-pgbouncer
-    image: bitnami/pgbouncer:1.22.0
+    image: bitnami/pgbouncer:1.22.1
     healthcheck:
       test: ["CMD", "bash", "-c", "echo -n > /dev/tcp/127.0.0.1/6432 || exit 1"]
       interval: 10s
