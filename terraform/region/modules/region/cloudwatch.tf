@@ -1,6 +1,6 @@
 locals {
   # Don't create ECS Task Stopped alerts in development account
-  enable_task_stopped_alerts = var.account_name != "development" ? 1 : 0
+  enable_task_stopped_alerts = var.account_name != "development"
 }
 resource "aws_cloudwatch_metric_alarm" "elasticache_high_cpu_utilization" {
   count                     = local.cache_cluster_count
