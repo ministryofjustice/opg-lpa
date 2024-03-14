@@ -1,3 +1,7 @@
+locals {
+  # Don't create ECS Task Stopped alerts in development account
+  enable_task_stopped_alerts = var.account_name != "development"
+}
 resource "aws_cloudwatch_metric_alarm" "elasticache_high_cpu_utilization" {
   count                     = local.cache_cluster_count
   actions_enabled           = true
@@ -45,6 +49,7 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
 }
 
 resource "aws_cloudwatch_event_rule" "tasks_stopped" {
+  count       = local.enable_task_stopped_alerts ? 1 : 0
   name        = "${local.account_name}-${local.region_name}-capture-ecs-task-stopped"
   description = "Capture each task-stopped event in ECS"
 
@@ -66,15 +71,32 @@ resource "aws_cloudwatch_event_rule" "tasks_stopped" {
   )
 }
 
+moved {
+  from = aws_cloudwatch_event_rule.tasks_stopped
+  to   = aws_cloudwatch_event_rule.tasks_stopped[0]
+}
+
 resource "aws_cloudwatch_event_target" "tasks_stopped" {
-  rule      = aws_cloudwatch_event_rule.tasks_stopped.name
+  count     = local.enable_task_stopped_alerts ? 1 : 0
+  rule      = aws_cloudwatch_event_rule.tasks_stopped[0].name
   target_id = "SendToSNS"
   arn       = aws_sns_topic.cloudwatch_to_account_ops_alerts.arn
 }
 
+moved {
+  from = aws_cloudwatch_event_target.tasks_stopped
+  to   = aws_cloudwatch_event_target.tasks_stopped[0]
+}
+
 resource "aws_sns_topic_policy" "task_stopped_policy" {
+  count  = local.enable_task_stopped_alerts ? 1 : 0
   arn    = aws_sns_topic.cloudwatch_to_account_ops_alerts.arn
   policy = data.aws_iam_policy_document.task_stopped_topic_policy.json
+}
+
+moved {
+  from = aws_sns_topic_policy.task_stopped_policy
+  to   = aws_sns_topic_policy.task_stopped_policy[0]
 }
 
 data "aws_iam_policy_document" "task_stopped_topic_policy" {
