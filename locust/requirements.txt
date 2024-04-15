@@ -24,7 +24,7 @@ configargparse==1.7
     # via locust
 faker==18.13.0
     # via -r requirements.in
-flask==3.0.2
+flask==3.0.3
     # via
     #   flask-cors
     #   flask-login
@@ -37,11 +37,11 @@ gevent==24.2.1
     # via
     #   geventhttpclient
     #   locust
-geventhttpclient==2.0.12
+geventhttpclient==2.1.1
     # via locust
 greenlet==3.0.3
     # via gevent
-idna==3.6
+idna==3.7
     # via requests
 itsdangerous==2.1.2
     # via flask
@@ -73,7 +73,7 @@ soupsieve==2.5
     # via beautifulsoup4
 urllib3==2.2.1
     # via requests
-werkzeug==3.0.1
+werkzeug==3.0.2
     # via
     #   flask
     #   flask-login
