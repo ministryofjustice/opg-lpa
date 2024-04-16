@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="pdf-app-test" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+    <CommandLine>
+      <PhpTestInterpreterSettings>
+        <option name="interpreterName" value="pdf-app" />
+      </PhpTestInterpreterSettings>
+    </CommandLine>
+    <TestRunner configuration_file="$PROJECT_DIR$/service-pdf/phpunit.xml" scope="XML" use_alternative_configuration_file="true" />
+    <method v="2" />
+  </configuration>
+</component>

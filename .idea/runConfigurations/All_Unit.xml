@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All Unit" type="CompoundRunConfigurationType">
+    <toRun name="admin-app-test" type="PHPUnitRunConfigurationType" />
+    <toRun name="api-app-test" type="PHPUnitRunConfigurationType" />
+    <toRun name="front-app-test" type="PHPUnitRunConfigurationType" />
+    <toRun name="pdf-app-test" type="PHPUnitRunConfigurationType" />
+    <toRun name="shared-test" type="PHPUnitRunConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
