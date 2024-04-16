@@ -1,6 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="test-front-downloadcontroller" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-    <TestRunner bootstrap_file="$PROJECT_DIR$/service-front/module/Application/tests/Bootstrap.php" class="ApplicationTest\Controller\Authenticated\Lpa\DownloadControllerTest" configuration_file="$PROJECT_DIR$/service-front/phpunit.xml" file="$PROJECT_DIR$/service-front/module/Application/tests/Controller/Authenticated/Lpa/DownloadControllerTest.php" scope="Class" use_alternative_bootstrap_file="true" use_alternative_configuration_file="true" />
-    <method v="2" />
-  </configuration>
-</component>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./module/Application/tests/Bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" cacheDirectory=".phpunit.cache">
-  <coverage includeUncoveredFiles="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./module/Application/tests/Bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <coverage>
     <report>
       <html outputDirectory="./build/coverage"/>
     </report>
@@ -13,7 +13,7 @@
   </php>
   <source>
     <include>
-      <directory suffix=".php">./module/Application/src</directory>
+      <directory>./module/Application/src</directory>
       <!-- next line only required if you want coverage reports for twig templates -->
       <!--directory suffix=".php">./build/twig-cache</directory-->
     </include>
