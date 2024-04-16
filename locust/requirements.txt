@@ -37,7 +37,7 @@ gevent==24.2.1
     # via
     #   geventhttpclient
     #   locust
-geventhttpclient==2.1.1
+geventhttpclient==2.2.0
     # via locust
 greenlet==3.0.3
     # via gevent
@@ -80,7 +80,7 @@ werkzeug==3.0.2
     #   locust
 zope-event==5.0
     # via gevent
-zope-interface==6.2
+zope-interface==6.3
     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
