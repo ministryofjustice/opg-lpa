@@ -46,11 +46,11 @@ COPY --chown=root:root shared/docker/app/php-fpm-logging.conf /usr/local/etc/php
 COPY --chown=root:root shared/docker/app/www.conf /usr/local/etc/php-fpm.d/
 
 # Migration script
-COPY --chown=root:root service-api/docker/app/db-migrations.sh /app/db-migrations.sh
+COPY --chown=root:root service-api/docker/app/db-migrations.sh /usr/local/bin/db-migrations.sh
 COPY --chown=root:root service-api/phinx.php /app/phinx.php
 COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
 
-RUN chmod +x /app/db-migrations.sh /usr/local/bin/health-check.sh
+RUN chmod +x /usr/local/bin/db-migrations.sh /usr/local/bin/health-check.sh
 
 WORKDIR /app
 
@@ -73,4 +73,4 @@ RUN apk del .build-dependencies
 
 USER appuser
 
-CMD  /app/db-migrations.sh && php-fpm
+CMD  /usr/local/bin/db-migrations.sh && php-fpm
