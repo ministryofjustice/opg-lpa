@@ -11,7 +11,6 @@ node_modules/
 **functional/casperesults.xml
 *.iml
 *.swp
-/.idea
 **notes.md
 **queue_config.json
 async_destroy_lambda/lambdas/vendor
@@ -36,12 +35,12 @@ cypress/logs/
 /cypress/downloads/
 service-front-v2/app/static
 service-front-v2/govuk_components
-.phpunit..cache
+.phpunit.cache/
+.phpunit.result.cache
 cypress/integration/common/local_dev_only.js
 *.egg-info
 *.pyc
 __pycache__
-**/build
 .coverage
 .php-cs-fixer.cache
 shared/module/MakeShared/tests/autoload.php
