@@ -37,7 +37,7 @@ gevent==24.2.1
     # via
     #   geventhttpclient
     #   locust
-geventhttpclient==2.3.1
+geventhttpclient==2.2.1
     # via locust
 greenlet==3.0.3
     # via gevent
@@ -59,20 +59,20 @@ psutil==5.9.8
     # via locust
 python-dateutil==2.9.0.post0
     # via faker
-pyzmq==25.1.2
+pyzmq==26.0.2
     # via locust
 requests==2.31.0
     # via locust
 roundrobin==0.0.4
     # via locust
 six==1.16.0
-    # via
-    #   geventhttpclient
-    #   python-dateutil
+    # via python-dateutil
 soupsieve==2.5
     # via beautifulsoup4
 urllib3==2.2.1
-    # via requests
+    # via
+    #   geventhttpclient
+    #   requests
 werkzeug==3.0.2
     # via
     #   flask
