@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/aws/aws-lambda-go v1.47.0
 	github.com/aws/aws-sdk-go-v2/config v1.27.11
-	github.com/aws/aws-sdk-go-v2/service/rds v1.77.1
+	github.com/aws/aws-sdk-go-v2/service/rds v1.77.2
 )
 
 require (
