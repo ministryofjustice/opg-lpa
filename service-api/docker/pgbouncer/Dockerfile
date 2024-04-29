@@ -4,4 +4,4 @@ ADD --chmod=444 https://truststore.pki.rds.amazonaws.com/global/global-bundle.pe
 
 ENV PGBOUNCER_SERVER_TLS_CA_FILE=/etc/ssl/certs/rds-ca-certificates.crt
 
-RUN apk update && apk add --no-cache openssl=3.0.13
+RUN apt-get install --only-upgrade -y openssl=3.0.13
