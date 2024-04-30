@@ -71,7 +71,7 @@ resource "aws_db_instance" "api" {
 module "aws_rds_api_alarms" {
   count                                     = var.account.always_on ? 1 : 0
   source                                    = "lorenzoaiello/rds-alarms/aws"
-  version                                   = "2.4.0"
+  version                                   = "2.4.1"
   db_instance_id                            = aws_db_instance.api[0].id
   actions_alarm                             = [data.aws_sns_topic.rds_events.arn]
   actions_ok                                = [data.aws_sns_topic.rds_events.arn]
