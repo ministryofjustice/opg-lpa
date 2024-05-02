@@ -37,7 +37,7 @@ gevent==24.2.1
     # via
     #   geventhttpclient
     #   locust
-geventhttpclient==2.3.1
+geventhttpclient==2.2.1
     # via locust
 greenlet==3.0.3
     # via gevent
@@ -59,7 +59,7 @@ psutil==5.9.8
     # via locust
 python-dateutil==2.9.0.post0
     # via faker
-pyzmq==26.0.2
+pyzmq==26.0.3
     # via locust
 requests==2.31.0
     # via locust
