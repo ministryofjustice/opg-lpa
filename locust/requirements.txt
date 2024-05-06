@@ -37,7 +37,7 @@ gevent==24.2.1
     # via
     #   geventhttpclient
     #   locust
-geventhttpclient==2.3.1
+geventhttpclient==2.2.1
     # via locust
 greenlet==3.0.3
     # via gevent
@@ -73,7 +73,7 @@ urllib3==2.2.1
     # via
     #   geventhttpclient
     #   requests
-werkzeug==3.0.2
+werkzeug==3.0.3
     # via
     #   flask
     #   flask-login
