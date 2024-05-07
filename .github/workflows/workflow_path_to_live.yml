@@ -198,6 +198,7 @@ jobs:
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
@@ -210,6 +211,7 @@ jobs:
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
@@ -222,6 +224,7 @@ jobs:
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
@@ -236,6 +239,7 @@ jobs:
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
@@ -248,6 +252,7 @@ jobs:
     uses: ./.github/workflows/locust_tests.yml
     needs:
       - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
     with:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
@@ -267,7 +272,7 @@ jobs:
       - set_variables
     steps:
       - id: slack
-        uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
         with:
           channel-id: "C9PNCT2KS"
           payload: |
@@ -423,7 +428,7 @@ jobs:
       - run_smoke_tests
       - set_variables
     steps:
-    - uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
+    - uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
       if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
       with:
         channel-id: "C9PNCT2KS"
@@ -474,7 +479,7 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    - uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
+    - uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
       if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
       with:
         channel-id: "C9PNCT2KS"
@@ -525,7 +530,7 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    - uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
+    - uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
       if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
       with:
         channel-id: "C9PNCT2KS"
