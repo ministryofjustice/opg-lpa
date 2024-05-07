@@ -13,7 +13,7 @@
         "laminas/laminas-crypt": "^3.11.0",
         "laminas/laminas-filter": "^2.34.0",
         "laminas/laminas-barcode": "^2.13",
-        "tecnickcom/tcpdf": "6.4.1",
+        "tecnickcom/tcpdf": "6.7.4",
         "setasign/fpdi-tcpdf": "^2.0",
         "laminas/laminas-zendframework-bridge": "^1.8.0",
         "laminas/laminas-log": "^2.17",

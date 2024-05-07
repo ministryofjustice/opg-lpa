@@ -15,7 +15,7 @@ services:
 
   pgbouncer:
     container_name: lpa-pgbouncer
-    image: bitnami/pgbouncer:1.22.0
+    image: bitnami/pgbouncer:1.22.1
     healthcheck:
       test: ["CMD", "bash", "-c", "echo -n > /dev/tcp/127.0.0.1/6432 || exit 1"]
       interval: 10s
@@ -24,8 +24,8 @@ services:
       start_period: 60s
     depends_on:
       - postgres
-    ports:
-      - 6432:6432
+#    ports:
+#      - 6432:6432
     environment:
       POSTGRESQL_HOST: postgres
       POSTGRESQL_USERNAME: lpauser
@@ -36,8 +36,8 @@ services:
   postgres:
     container_name: lpa-postgres
     image: postgres:13.7
-    ports:
-      - 5434:5432
+#    ports:
+#      - 5434:5432
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: lpadb
@@ -52,14 +52,14 @@ services:
   redis:
     container_name: lpa-redis
     image: library/redis:6.2-alpine
-    ports:
-      - 6379:6379
+#    ports:
+#      - 6379:6379
 
   dynamodb:
     container_name: lpa-dynamodb
     image: amazon/dynamodb-local
-    ports:
-      - 8000:8000
+#    ports:
+#      - 8000:8000
 
   govpaystub:
     container_name: lpa-govpaystub
@@ -73,10 +73,10 @@ services:
 
   localstack:
     container_name: lpa-localstack
-    image: localstack/localstack:3.1.0
+    image: localstack/localstack:3.4.0
     privileged: true
-    ports:
-      - 4568:4566
+#    ports:
+#      - 4568:4566
     environment:
       - SERVICES=sqs,s3,lambda,secretsmanager
       - DEFAULT_REGION=eu-west-1
@@ -150,19 +150,13 @@ services:
     image: lpa-front-app
     build:
       context: ./
-# Ideally, debug would always be enabled for front-app, as we often want to debug it. In practice, this still runs too slowly so we leave it off as default
       args:
+        # Ideally, debug would always be enabled for front-app, as we often want to debug it. In practice,
+        # this still runs too slowly so we leave it off as default
         ENABLE_XDEBUG: 0
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
-# to speed running, volumes are restricted to source code that may change while container is running
-      - ./service-front/module:/app/module
-      - ./service-front/config:/app/config
-      - ./service-front/node_modules:/app/node_modules
-      - ./service-front/assets:/app/assets
-      - ./service-front/vendor:/app/vendor
-      - ./service-front/public:/app/public
-      - ./service-front/build:/app/build
+      - ./service-front:/app
       - ./tests:/app/tests
       - ./shared:/shared
     depends_on:
@@ -259,17 +253,14 @@ services:
     image: lpa-api-app
     build:
       context: ./
-# Enable debug is recommended to default to off for api to avoid slowness. Turn this on if you ever need to debug the api
       args:
+        # Enable debug is recommended to default to off for api to avoid slowness.
+        # Turn this on if you ever need to debug the api
         ENABLE_XDEBUG: 0
         OPG_LPA_COMMON_APP_VERSION: "${OPG_LPA_COMMON_APP_VERSION}"
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
-# to speed running, volumes are restricted to source code that may change while container is running
-      - ./service-api/bin:/app/bin
-      - ./service-api/config:/app/config
-      - ./service-api/module:/app/module
-      - ./service-api/vendor:/app/vendor
+      - ./service-api:/app
       - ./shared:/shared
     depends_on:
       dynamodb:
@@ -355,14 +346,12 @@ services:
     build:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
-# enable debug is recommended to default to off for admin app to avoid slowness, as admin is rarely debugged. Turn this on if you wish to debug the admin app
       args:
+        # enable debug is recommended to default to off for admin app to avoid slowness, as admin is rarely debugged.
+        # Turn this on if you wish to debug the admin app
         ENABLE_XDEBUG: 0
     volumes:
-# to speed running, volumes are restricted to source code that may change while container is running
-      - ./service-admin/src:/app/src
-      - ./service-admin/config:/app/config
-      - ./service-admin/vendor:/app/vendor
+      - ./service-admin:/app
       - ./shared:/shared
     depends_on:
       dynamodb:
@@ -441,9 +430,10 @@ services:
     build:
       context: ./
       args:
+        # Other containers are built with debug on. Lines could be put here to build pdf with debug,
+        # but not doing as default due to pdf being slow already
         ENABLE_XDEBUG: 0
       dockerfile: service-pdf/docker/app/Dockerfile
-# Other containers are built with debug on. Lines could be put here to build pdf with debug, but not doing as default due to pdf being slow already
     environment:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
 
