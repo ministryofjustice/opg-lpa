@@ -251,10 +251,10 @@ class Service extends AbstractService
     /**
      * @param string $query to match against username
      * @param array $options See UserData.matchUsers()
-     * @return ArrayObject<mixed, mixed> Array of arrays;
-     *     each subarray derived from a UserModel instance
+     *
+     * @return ArrayObject Array of arrays; each subarray derived from a UserModel instance
      */
-    public function matchUsers(string $query, array $options = [])
+    public function matchUsers(string $query, array $options = []): ArrayObject
     {
         $users = new ArrayObject();
 
@@ -270,7 +270,7 @@ class Service extends AbstractService
     /**
      * @param ApplicationService $applicationsService
      */
-    public function setApplicationsService(ApplicationService $applicationsService)
+    public function setApplicationsService(ApplicationService $applicationsService): void
     {
         $this->applicationsService = $applicationsService;
     }
