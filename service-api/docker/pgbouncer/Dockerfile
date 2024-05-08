@@ -1,7 +1,5 @@
-FROM bitnami/pgbouncer:1.22.1-debian-12-r3
+FROM bitnami/pgbouncer:1.22.1-debian-12-r4
 
 ADD --chmod=444 https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/certs/rds-ca-certificates.crt
 
 ENV PGBOUNCER_SERVER_TLS_CA_FILE=/etc/ssl/certs/rds-ca-certificates.crt
-
-RUN apt-get install --only-upgrade -y openssl=3.0.13
