@@ -89,7 +89,7 @@ trait LongContentTrait
     {
         $flatContent = $this->flattenTextContent($content);
 
-        $chunks = $flatContent === '' ? [''] : str_split($flatContent, $this->getContinuationSheet2BoxSize());
+        $chunks = $flatContent === '' ? [''] : mb_str_split($flatContent, $this->getContinuationSheet2BoxSize());
 
         if (isset($chunks[$pageNo - 1])) {
             return "\r\n" . $chunks[$pageNo - 1];
