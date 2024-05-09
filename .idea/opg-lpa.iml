@@ -6,11 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/service-api/module/Application/src" isTestSource="false" packagePrefix="Application\" />
       <sourceFolder url="file://$MODULE_DIR$/service-api/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/service-front/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/service-pdf/../shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
-      <sourceFolder url="file://$MODULE_DIR$/service-pdf/../shared/module/MakeShared/tests" isTestSource="false" packagePrefix="MakeSharedTest\" />
-      <sourceFolder url="file://$MODULE_DIR$/service-pdf/src/Opg/Lpa/Pdf" isTestSource="false" packagePrefix="Opg\Lpa\Pdf\" />
       <sourceFolder url="file://$MODULE_DIR$/service-pdf/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/service-pdf/tests/Opg/Lpa/Pdf" isTestSource="false" packagePrefix="OpgTest\Lpa\Pdf\" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/shared/../shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
       <sourceFolder url="file://$MODULE_DIR$/shared/../shared/module/MakeShared/tests" isTestSource="false" packagePrefix="MakeSharedTest\" />
