@@ -13,7 +13,7 @@
         "php": "~8.2",
         "egulias/email-validator": "^4.0.2",
         "laminas/laminas-diactoros": "^2.23",
-        "laminas/laminas-eventmanager": "^3.5",
+        "laminas/laminas-eventmanager": "^3.6",
         "laminas/laminas-log": "^2.13",
         "laminas/laminas-mvc": "^3.5",
         "symfony/validator": "^7.0.2"
