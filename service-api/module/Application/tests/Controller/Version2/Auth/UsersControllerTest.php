@@ -221,7 +221,7 @@ class UsersControllerTest extends AbstractAuthControllerTest
             ->andReturn(0)
             ->once();
 
-        $userMatchReturnDataArray = [
+        $userMatchReturnData = [
             [
                 'email' => 'horace@foo.com',
                 'user'  => 'ertyu34565456ytyg',
@@ -231,8 +231,6 @@ class UsersControllerTest extends AbstractAuthControllerTest
                 'user' => 'ddasdwrq2524525',
             ]
         ];
-
-        $userMatchReturnData = new \ArrayObject($userMatchReturnDataArray);
 
         $this->service->shouldReceive('matchUsers')
             ->with($query, ['offset' => 0, 'limit' => 10])
@@ -273,8 +271,7 @@ class UsersControllerTest extends AbstractAuthControllerTest
              ->andReturn($offset)
              ->once();
 
-        $userMatchReturnDataArray = [];
-        $userMatchReturnData = new \ArrayObject($userMatchReturnDataArray);
+        $userMatchReturnData = [];
 
         $expectedOptions = [
             'offset' => $offset,

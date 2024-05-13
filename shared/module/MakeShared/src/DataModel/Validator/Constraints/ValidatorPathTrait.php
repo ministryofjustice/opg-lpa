@@ -20,7 +20,7 @@ trait ValidatorPathTrait
      *
      * @api
      */
-    public function validatedBy(): string
+    public function validatedBy()
     {
         $pathParts = explode('\\', get_class($this));
         return 'Symfony\\Component\\Validator\\Constraints\\' . end($pathParts) . 'Validator';

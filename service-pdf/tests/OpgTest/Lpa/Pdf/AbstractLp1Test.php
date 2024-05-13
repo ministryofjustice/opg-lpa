@@ -72,7 +72,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
         $prefix = 'lpa-document-primaryAttorneys-0-';
 
         foreach ($expectedData as $expectedKey => $expectedValue) {
-            $expectedKey = sprintf('%s%s',$prefix, $expectedKey);
+            $expectedKey = "${prefix}${expectedKey}";
             $this->assertEquals($actualData[$expectedKey], $expectedValue);
         }
 
