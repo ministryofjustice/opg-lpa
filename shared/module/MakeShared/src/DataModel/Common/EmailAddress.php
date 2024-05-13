@@ -24,9 +24,7 @@ class EmailAddress extends AbstractData
         // As there is only 1 property, include NotBlank as there is no point this object existing without it.
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank(),
-            new Assert\Email([
-                'strict' => true
-            ])
+            new Assert\Email()
         ]);
     }
 
