@@ -8,7 +8,7 @@ class Range extends SymfonyConstraints\Range
 {
     use ValidatorPathTrait;
 
-    public $minMessage = 'must-be-greater-than-or-equal:{{ limit }}';
-    public $maxMessage = 'must-be-less-than-or-equal:{{ limit }}';
-    public $invalidMessage = 'expected-type:number';
+    public string $minMessage = 'must-be-greater-than-or-equal:{{ limit }}';
+    public string $maxMessage = 'must-be-less-than-or-equal:{{ limit }}';
+    public string $invalidMessage = 'expected-type:number';
 }

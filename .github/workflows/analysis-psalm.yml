@@ -27,6 +27,8 @@ jobs:
             path: "./service-api"
           - name: shared
             path: "./shared"
+          - name: service-pdf
+            path: "./service-pdf"
 
     defaults:
       run:
@@ -42,33 +44,6 @@ jobs:
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif --no-cache
-      - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
-  psalm_all_php:
-    name: psalm-scan
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        scan:
-          - name: service-pdf
-            path: "./service-pdf"
-    defaults:
-      run:
-        working-directory: ${{ matrix.scan.path }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.1"
-      - name: Composer install
-        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
-      - name: Run psalm
-        run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif
       - name: Upload Security Analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v1
         with:
