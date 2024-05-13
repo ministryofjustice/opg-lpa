@@ -8,5 +8,5 @@ class Email extends SymfonyConstraints\Email
 {
     use ValidatorPathTrait;
 
-    public string $message = 'invalid-email-address';
+    public $message = 'invalid-email-address';
 }
