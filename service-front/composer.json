@@ -28,8 +28,8 @@
         "laminas/laminas-log": "^2.13",
         "guzzlehttp/psr7": "^2.4",
         "alphagov/notifications-php-client": "^5.0.0",
-        "symfony/validator": "^7.0.2",
-        "egulias/email-validator": "^4.0.2"
+        "symfony/validator": "^4.2",
+        "egulias/email-validator": "~1.2"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",

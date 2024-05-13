@@ -153,7 +153,9 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        # Ideally, debug would always be enabled for front-app, as we often want to debug it. In practice,
+        # this still runs too slowly so we leave it off as default
+        ENABLE_XDEBUG: 0
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
       - ./service-front:/app
@@ -254,7 +256,9 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        # Enable debug is recommended to default to off for api to avoid slowness.
+        # Turn this on if you ever need to debug the api
+        ENABLE_XDEBUG: 0
         OPG_LPA_COMMON_APP_VERSION: "${OPG_LPA_COMMON_APP_VERSION}"
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
@@ -428,7 +432,9 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        # Other containers are built with debug on. Lines could be put here to build pdf with debug,
+        # but not doing as default due to pdf being slow already
+        ENABLE_XDEBUG: 0
       dockerfile: service-pdf/docker/app/Dockerfile
     environment:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
