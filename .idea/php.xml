@@ -465,7 +465,6 @@
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/service-contracts" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/dom-crawler" />
       <path value="$PROJECT_DIR$/service-front/vendor/guzzlehttp/guzzle" />
-      <path value="$PROJECT_DIR$/service-front/vendor/symfony/validator" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/filesystem" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-intl-idn" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-ctype" />
@@ -555,6 +554,13 @@
       <path value="$PROJECT_DIR$/shared/vendor/symfony/polyfill-php83" />
       <path value="$PROJECT_DIR$/shared/vendor/symfony/polyfill-php72" />
       <path value="$PROJECT_DIR$/shared/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/service-front/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/service-front/vendor/symfony/validator" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -701,8 +707,8 @@
         </phpinfo>
       </interpreter>
       <interpreter name="pdf-app">
-        <phpinfo binary_type="PHP" php_cgi="/usr/local/bin/php-cgi" php_cli="/usr/local/bin/php" path_separator=":" version="8.1.13">
-          <additional_php_ini>/usr/local/etc/php/conf.d/app-php.ini, /usr/local/etc/php/conf.d/docker-php-ext-gd.ini, /usr/local/etc/php/conf.d/docker-php-ext-sodium.ini</additional_php_ini>
+        <phpinfo binary_type="PHP" php_cli="/usr/local/bin/php" path_separator=":" version="8.2.18">
+          <additional_php_ini>/usr/local/etc/php/conf.d/app-php.ini, /usr/local/etc/php/conf.d/docker-fpm.ini, /usr/local/etc/php/conf.d/docker-php-ext-gd.ini, /usr/local/etc/php/conf.d/docker-php-ext-sodium.ini</additional_php_ini>
           <configuration_file />
           <configuration_options>
             <configuration_option name="include_path" value=".:/usr/local/lib/php" />
@@ -721,7 +727,6 @@
             <extension name="dom" />
             <extension name="fileinfo" />
             <extension name="filter" />
-            <extension name="ftp" />
             <extension name="gd" />
             <extension name="hash" />
             <extension name="iconv" />
@@ -733,6 +738,7 @@
             <extension name="pcre" />
             <extension name="pdo_sqlite" />
             <extension name="posix" />
+            <extension name="random" />
             <extension name="readline" />
             <extension name="session" />
             <extension name="sodium" />
@@ -926,10 +932,9 @@
   <component name="PhpUnit">
     <phpunit_settings>
       <phpunit_by_interpreter interpreter_id="49d29832-bc24-4bae-8a82-2c3eb403a4b1" custom_loader_path="/shared/vendor/autoload.php" phpunit_phar_path="" />
-      <phpunit_by_interpreter interpreter_id="49d29832-bc24-4bae-8a82-2c3eb403a4b1" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
-      <phpunit_by_interpreter interpreter_id="106a51db-6e04-4281-a577-326e9ba80765" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
       <phpunit_by_interpreter interpreter_id="088c6e8f-c48c-4fdd-b2ba-3c2d21a222d7" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
       <phpunit_by_interpreter interpreter_id="34e91671-73b3-40e4-87f0-0d70d49a29ce" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
+      <phpunit_by_interpreter interpreter_id="106a51db-6e04-4281-a577-326e9ba80765" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
       <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/service-front/vendor/autoload.php" phpunit_phar_path="" />
     </phpunit_settings>
   </component>

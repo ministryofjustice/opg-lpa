@@ -89,7 +89,7 @@ class CorrespondentFormTest extends MockeryTestCase
                 0 => 'linked-1-cannot-be-null'
             ],
             'company' => [
-                0 => 'linked-1-cannot-be-null'
+                0 => 'must-be-greater-than-or-equal:1'
             ],
             'address-address2' => [
                 0 => 'linked-1-cannot-be-null'
