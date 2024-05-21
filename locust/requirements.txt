@@ -61,7 +61,7 @@ python-dateutil==2.9.0.post0
     # via faker
 pyzmq==26.0.3
     # via locust
-requests==2.31.0
+requests==2.32.0
     # via locust
 roundrobin==0.0.4
     # via locust
