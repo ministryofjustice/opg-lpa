@@ -24,7 +24,7 @@ class Correspondence extends AbstractData
     /**
      * Field length constants
      */
-    const COMPANY_MIN_LENGTH = 1;
+    const COMPANY_MIN_LENGTH = 0;
     const COMPANY_MAX_LENGTH = 75;
 
     const WHO_DONOR = 'donor';
