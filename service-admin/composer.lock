@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.307.1",
+            "version": "3.308.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "cc79f16e1a1bd3feee421401ba2f21915abfdf91"
+                "reference": "c88e9df7e076b6e2c652a1c87d2c3af0a9ac30b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cc79f16e1a1bd3feee421401ba2f21915abfdf91",
-                "reference": "cc79f16e1a1bd3feee421401ba2f21915abfdf91",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c88e9df7e076b6e2c652a1c87d2c3af0a9ac30b6",
+                "reference": "c88e9df7e076b6e2c652a1c87d2c3af0a9ac30b6",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.307.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.308.4"
             },
-            "time": "2024-05-17T18:07:44+00:00"
+            "time": "2024-05-28T18:05:38+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -8895,16 +8895,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.10.0",
+            "version": "3.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "57e09801c2fbae2d257b8b75bebb3deeb7e9deb2"
+                "reference": "8f90f7a53ce271935282967f53d0894f8f1ff877"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/57e09801c2fbae2d257b8b75bebb3deeb7e9deb2",
-                "reference": "57e09801c2fbae2d257b8b75bebb3deeb7e9deb2",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/8f90f7a53ce271935282967f53d0894f8f1ff877",
+                "reference": "8f90f7a53ce271935282967f53d0894f8f1ff877",
                 "shasum": ""
             },
             "require": {
@@ -8971,7 +8971,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-05-20T08:11:32+00:00"
+            "time": "2024-05-22T21:24:41+00:00"
         },
         {
             "name": "symfony/filesystem",
