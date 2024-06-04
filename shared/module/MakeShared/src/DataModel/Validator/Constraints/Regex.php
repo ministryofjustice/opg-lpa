@@ -8,5 +8,5 @@ class Regex extends SymfonyConstraints\Regex
 {
     use ValidatorPathTrait;
 
-    public string $message = 'invalid-regex-match';
+    public $message = 'invalid-regex-match';
 }
