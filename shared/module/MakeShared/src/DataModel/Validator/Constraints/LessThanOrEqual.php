@@ -8,5 +8,5 @@ class LessThanOrEqual extends SymfonyConstraints\LessThanOrEqual
 {
     use ValidatorPathTrait;
 
-    public $message = 'must-be-less-than-or-equal:{{ compared_value }}';
+    public string $message = 'must-be-less-than-or-equal:{{ compared_value }}';
 }
