@@ -19,7 +19,7 @@
     "prCreation": "immediate",
     "prPriority": 5
   },
-  "prConcurrentLimit": 3,
+  "prConcurrentLimit": 1,
   "prHourlyLimit": 1,
   "branchConcurrentLimit": 5,
   "enabledManagers": [
