@@ -5,7 +5,7 @@
   "repository": "https://github.com/ministryofjustice/opg-lpa-front",
   "license": "MIT",
   "resolutions": {
-    "axios": "0.27.2",
+    "axios": "0.28.1",
     "socket.io": "2.5.0"
   },
   "engines": {
