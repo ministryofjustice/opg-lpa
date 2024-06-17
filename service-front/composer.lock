@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9bf3ce2825d0f6d2afe1a4ae85d75b64",
+    "content-hash": "b027f5ac9638b5ae44285514b9dbab3a",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -115,16 +115,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.311.2",
+            "version": "3.314.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "731cd73062909594c5f7443413c4c4c40ed1c25c"
+                "reference": "85207a1f342443f40711ac8fe246120821370f11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/731cd73062909594c5f7443413c4c4c40ed1c25c",
-                "reference": "731cd73062909594c5f7443413c4c4c40ed1c25c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/85207a1f342443f40711ac8fe246120821370f11",
+                "reference": "85207a1f342443f40711ac8fe246120821370f11",
                 "shasum": ""
             },
             "require": {
@@ -204,9 +204,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.311.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.314.1"
             },
-            "time": "2024-06-07T18:05:33+00:00"
+            "time": "2024-06-13T18:07:00+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -930,16 +930,16 @@
         },
         {
             "name": "laminas/laminas-cache",
-            "version": "3.12.1",
+            "version": "3.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-cache.git",
-                "reference": "bf8bc7f92e15925991c46079c6cd727372af5a46"
+                "reference": "f99d10dd1f13d5163a924f8561e9dca3d27d8ad2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/bf8bc7f92e15925991c46079c6cd727372af5a46",
-                "reference": "bf8bc7f92e15925991c46079c6cd727372af5a46",
+                "url": "https://api.github.com/repos/laminas/laminas-cache/zipball/f99d10dd1f13d5163a924f8561e9dca3d27d8ad2",
+                "reference": "f99d10dd1f13d5163a924f8561e9dca3d27d8ad2",
                 "shasum": ""
             },
             "require": {
@@ -1027,7 +1027,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2024-01-19T20:42:11+00:00"
+            "time": "2024-06-14T13:39:14+00:00"
         },
         {
             "name": "laminas/laminas-cache-storage-adapter-memory",
