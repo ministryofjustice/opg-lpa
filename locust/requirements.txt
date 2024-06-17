@@ -63,13 +63,11 @@ pyzmq==26.0.3
     # via locust
 requests==2.32.3
     # via locust
-roundrobin==0.0.4
-    # via locust
 six==1.16.0
     # via python-dateutil
 soupsieve==2.5
     # via beautifulsoup4
-urllib3==2.2.1
+urllib3==2.2.2
     # via
     #   geventhttpclient
     #   requests
