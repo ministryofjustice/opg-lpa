@@ -2,18 +2,12 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/service-api/../shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
-      <sourceFolder url="file://$MODULE_DIR$/service-api/module/Application/src" isTestSource="false" packagePrefix="Application\" />
       <sourceFolder url="file://$MODULE_DIR$/service-api/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/service-front/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/service-pdf/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/shared/../shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
-      <sourceFolder url="file://$MODULE_DIR$/shared/../shared/module/MakeShared/tests" isTestSource="false" packagePrefix="MakeSharedTest\" />
-      <sourceFolder url="file://$MODULE_DIR$/shared/module/Alphagov/Pay/src" isTestSource="false" packagePrefix="Alphagov\Pay\" />
-      <sourceFolder url="file://$MODULE_DIR$/shared/module/Application/src" isTestSource="false" packagePrefix="Application\" />
-      <sourceFolder url="file://$MODULE_DIR$/shared/module/Application/tests" isTestSource="false" packagePrefix="ApplicationTest\" />
-      <sourceFolder url="file://$MODULE_DIR$/shared/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/shared/module/MakeShared/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/service-admin/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/alphagov/notifications-php-client" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/amp" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/byte-stream" />
