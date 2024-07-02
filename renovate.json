@@ -45,19 +45,19 @@
       ],
       "labels": ["devDependencies", "Renovate", "Cypress"],
       "groupName": "Cypress",
-      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchUpdateTypes": ["major"],
       "matchManagers": ["dockerfile", "npm"],
-      "matchPackagePatterns": ["cypress"]
+      "matchPackagePatterns": ["cypress" , "locust"]
     },
     {
       "description": [
-        "dev tools: allow major updates only for dev tools",
+        "dev tools: allow major updates only for dev tools and aws-sdk",
         "note: this may fail if other packages depend on existing versions"
       ],
       "labels": ["devDependencies", "Renovate", "DevTools"],
-      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchUpdateTypes": ["major"],
       "matchManagers": ["composer"],
-      "matchPackageNames": ["vimeo/psalm", "phpunit/phpunit"]
+      "matchPackageNames": ["vimeo/psalm", "phpunit/phpunit", "aws/aws-sdk-php"]
     },
     {
       "description": [
@@ -109,7 +109,7 @@
       ],
       "matchUpdateTypes": ["major"],
       "excludePackageNames": ["vimeo/psalm", "phpunit/phpunit"],
-      "excludePackagePatterns": ["cypress"],
+      "excludePackagePatterns": ["cypress" , "locust"],
       "enabled": false
     },
     {
