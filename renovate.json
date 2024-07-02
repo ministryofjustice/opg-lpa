@@ -51,7 +51,7 @@
     },
     {
       "description": [
-        "dev tools: allow major updates only for dev tools and asw-sdk",
+        "dev tools: allow major updates only for dev tools and aws-sdk",
         "note: this may fail if other packages depend on existing versions"
       ],
       "labels": ["devDependencies", "Renovate", "DevTools"],
