@@ -47,7 +47,7 @@
       "groupName": "Cypress",
       "matchUpdateTypes": ["major"],
       "matchManagers": ["dockerfile", "npm"],
-      "matchPackagePatterns": ["cypress"]
+      "matchPackagePatterns": ["cypress" , "locust"]
     },
     {
       "description": [
@@ -109,7 +109,7 @@
       ],
       "matchUpdateTypes": ["major"],
       "excludePackageNames": ["vimeo/psalm", "phpunit/phpunit"],
-      "excludePackagePatterns": ["cypress"],
+      "excludePackagePatterns": ["cypress" , "locust"],
       "enabled": false
     },
     {
