@@ -24,6 +24,13 @@ resource "aws_ecs_service" "admin" {
     container_port   = 80
   }
 
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      desired_count
+    ]
+  }
+
   depends_on = [aws_lb.admin]
   tags       = local.admin_component_tag
 }
