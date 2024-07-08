@@ -24,6 +24,13 @@ resource "aws_ecs_service" "front" {
     container_port   = 80
   }
 
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      desired_count
+    ]
+  }
+
   depends_on = [aws_lb.front]
   tags       = local.front_component_tag
 }
