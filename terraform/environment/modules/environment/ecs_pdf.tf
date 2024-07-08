@@ -26,6 +26,12 @@ resource "aws_ecs_service" "pdf" {
     base              = 1
   }
 
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      desired_count
+    ]
+  }
 
   tags = local.pdf_component_tag
 }
