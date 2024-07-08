@@ -24,6 +24,14 @@ resource "aws_ecs_service" "api" {
   service_registries {
     registry_arn = aws_service_discovery_service.api_canonical.arn
   }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      desired_count
+    ]
+  }
+
   tags = local.api_component_tag
 }
 
