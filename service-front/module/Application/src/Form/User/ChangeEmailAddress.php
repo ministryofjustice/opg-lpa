@@ -134,7 +134,7 @@ class ChangeEmailAddress extends AbstractCsrfForm
      * @param $value string The value from the password text field.
      * @return bool
      */
-    public function validatePassword($value)
+    public function validatePassword(#[\SensitiveParameter] string $value): bool
     {
         if (!$this->authenticationService instanceof AuthenticationService) {
             throw new InvalidArgumentException('AuthenticationService not set');

@@ -41,7 +41,7 @@ class DateCheck
     public static function checkDates(
         array $dates,
         bool $isDraft = false,
-        array $donorDetails = [],
+        #[\SensitiveParameter] array $donorDetails = [],
         $dateService = null
     ) {
         $donorCanSign = true;
