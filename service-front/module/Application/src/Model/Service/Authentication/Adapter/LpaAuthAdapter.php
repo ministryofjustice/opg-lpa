@@ -35,7 +35,7 @@ class LpaAuthAdapter implements AdapterInterface
      * @param $email
      * @return $this
      */
-    public function setEmail($email)
+    public function setEmail(#[\SensitiveParameter] $email)
     {
         $this->email = trim(strtolower($email));
 
@@ -48,7 +48,7 @@ class LpaAuthAdapter implements AdapterInterface
      * @param $password
      * @return $this
      */
-    public function setPassword($password)
+    public function setPassword(#[\SensitiveParameter] $password)
     {
         $this->password = $password;
 
@@ -127,7 +127,7 @@ class LpaAuthAdapter implements AdapterInterface
      * @return array|null|string
      * @throws \Http\Client\Exception
      */
-    public function getSessionExpiry(string $token)
+    public function getSessionExpiry(#[\SensitiveParameter] string $token)
     {
         try {
             $result = $this->client->httpGet(
@@ -150,7 +150,7 @@ class LpaAuthAdapter implements AdapterInterface
      * @return array|null|string
      * @throws \Http\Client\Exception
      */
-    public function setSessionExpiry(string $token, int $expireInSeconds)
+    public function setSessionExpiry(#[\SensitiveParameter] string $token, int $expireInSeconds)
     {
         try {
             $result = $this->client->httpPost(
