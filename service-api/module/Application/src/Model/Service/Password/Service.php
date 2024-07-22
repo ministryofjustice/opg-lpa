@@ -9,6 +9,7 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\PasswordValidatorTrait;
 use Laminas\Math\BigInteger\BigInteger;
 use DateTime;
+use Random\RandomException;
 
 class Service extends AbstractService
 {
@@ -23,12 +24,12 @@ class Service extends AbstractService
     private $authenticationService;
 
     /**
-     * @param $userId
-     * @param $oldPassword
-     * @param $newPassword
+     * @param string $userId
+     * @param string $oldPassword
+     * @param string $newPassword
      * @return array|string
      */
-    public function changePassword($userId, $oldPassword, $newPassword)
+    public function changePassword(#[\SensitiveParameter] string $userId, #[\SensitiveParameter] string $oldPassword, #[\SensitiveParameter] string $newPassword): array|string
     {
         $user = $this->getUserRepository()->getById($userId);
 
@@ -54,10 +55,11 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $username
+     * @param string $username
      * @return array|string
+     * @throws RandomException
      */
-    public function generateToken($username)
+    public function generateToken(#[\SensitiveParameter] string $username): array|string
     {
         $user = $this->getUserRepository()->getByUsername($username);
 
@@ -92,11 +94,11 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $token
-     * @param $newPassword
+     * @param string $token
+     * @param string $newPassword
      * @return string|null
      */
-    public function updatePasswordUsingToken($token, $newPassword)
+    public function updatePasswordUsingToken(#[\SensitiveParameter] string $token, #[\SensitiveParameter] string $newPassword): ?string
     {
         if (!$this->isPasswordValid($newPassword)) {
             return 'invalid-password';
