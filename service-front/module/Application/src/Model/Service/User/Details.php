@@ -89,7 +89,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      *
      * @psalm-suppress InvalidCatch
      */
-    public function requestEmailUpdate($email, $currentAddress)
+    public function requestEmailUpdate(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string $currentAddress): bool|string
     {
         $identity = $this->getAuthenticationService()->getIdentity();
 
@@ -158,7 +158,12 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         return 'unknown-error';
     }
 
-    public function updateEmailUsingToken($emailUpdateToken)
+    /**
+     * @param string $emailUpdateToken
+     * @return bool
+     * @throws \Http\Client\Exception
+     */
+    public function updateEmailUsingToken(#[\SensitiveParameter] string $emailUpdateToken): bool
     {
         $logger = $this->getLogger();
 
@@ -180,13 +185,14 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     /**
      * Update the user's password
      *
-     * @param $currentPassword
-     * @param $newPassword
+     * @param string $currentPassword
+     * @param string $newPassword
      * @return bool|string
      *
+     * @throws \Http\Client\Exception
      * @psalm-suppress InvalidCatch
      */
-    public function updatePassword($currentPassword, $newPassword)
+    public function updatePassword(#[\SensitiveParameter] string $currentPassword, #[\SensitiveParameter] string $newPassword): bool|string
     {
         $logger = $this->getLogger();
 
@@ -237,10 +243,11 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     /**
      * Returns user account details for a passed authentication token.
      *
-     * @param $token
-     * @return bool|mixed
+     * @param string $token
+     * @return array
+     * @throws \Http\Client\Exception
      */
-    public function getTokenInfo($token)
+    public function getTokenInfo(#[\SensitiveParameter] string $token): array
     {
         try {
             $response = $this->apiClient->httpPost('/v2/authenticate', [
@@ -292,12 +299,13 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     }
 
     /**
-     * @param $email
+     * @param string $email
      * @return bool|string
      *
+     * @throws \Http\Client\Exception
      * @psalm-suppress InvalidCatch
      */
-    public function requestPasswordResetEmail($email)
+    public function requestPasswordResetEmail(#[\SensitiveParameter] string $email): bool|string
     {
         $logger = $this->getLogger();
 
@@ -367,13 +375,13 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     }
 
     /**
-     * @param $email
-     * @param $activationToken
+     * @param string $email
+     * @param string $activationToken
      * @return bool|string
      *
      * @psalm-suppress InvalidCatch
      */
-    private function sendAccountActivateEmail($email, $activationToken)
+    private function sendAccountActivateEmail(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string $activationToken): bool|string
     {
         $activateAccountUrl = $this->url(
             'register/confirm',
@@ -398,11 +406,12 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     }
 
     /**
-     * @param $restToken
-     * @param $password
+     * @param string $restToken
+     * @param string $password
      * @return bool|string
+     * @throws \Http\Client\Exception
      */
-    public function setNewPassword($restToken, $password)
+    public function setNewPassword(#[\SensitiveParameter] string $restToken, #[\SensitiveParameter] string $password): bool|string
     {
         $logger = $this->getLogger();
 
@@ -435,13 +444,13 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     /**
      * Register the user account and send the activate account email
      *
-     * @param $email
-     * @param $password
-     * @return bool|mixed|string
+     * @param string $email
+     * @param string $password
+     * @return bool|string
      *
      * @psalm-suppress InvalidCatch
      */
-    public function registerAccount($email, $password)
+    public function registerAccount(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string $password): bool|string
     {
         $logger = $this->getLogger();
 
@@ -500,10 +509,10 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     /**
      * Resend the activate email to an inactive user
      *
-     * @param $email
+     * @param string $email
      * @return bool|string
      */
-    public function resendActivateEmail($email)
+    public function resendActivateEmail(#[\SensitiveParameter] string $email): bool|string
     {
         // Trigger a request to reset the password in the API - this will return the activation token or
         // throw an exception
@@ -528,10 +537,11 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     /**
      * Activate an account. i.e. confirm the email address.
      *
-     * @param $token
+     * @param string $token
      * @return bool
+     * @throws \Http\Client\Exception
      */
-    public function activateAccount($token)
+    public function activateAccount(#[\SensitiveParameter] string $token): bool
     {
         $logger = $this->getLogger();
 
@@ -552,7 +562,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         return false;
     }
 
-    public function setUserDetailsSession(Container $userDetailsSession)
+    public function setUserDetailsSession(#[\SensitiveParameter] Container $userDetailsSession): void
     {
         $this->userDetailsSession = $userDetailsSession;
     }
