@@ -54,7 +54,7 @@ class Client
      *
      * @param $token
      */
-    public function updateToken($token)
+    public function updateToken(#[\SensitiveParameter] $token)
     {
         $this->defaultHeaders['Token'] = $token;
     }
