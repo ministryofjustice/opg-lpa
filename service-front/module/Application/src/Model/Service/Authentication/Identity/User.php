@@ -38,7 +38,7 @@ class User
      * @param ?DateTime $lastLogin The DateTime the user logged in, or null if they've never logged in
      * @param bool $isAdmin Whether of not the user is an admin.
      */
-    public function __construct(#[\SensitiveParameter] string $userId, #[\SensitiveParameter] string $token, int $expiresIn, ?DateTime $lastLogin, bool $isAdmin = false)
+    public function __construct(#[\SensitiveParameter] string $userId, #[\SensitiveParameter] string $token, ?int $expiresIn, ?DateTime $lastLogin, bool $isAdmin = false)
     {
         $this->id = $userId;
         $this->token = $token;
