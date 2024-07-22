@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\Email;
 
+use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
@@ -16,7 +17,13 @@ class Service extends AbstractService
 
     //-------------
 
-    public function generateToken($userId, $newEmail)
+    /**
+     * @param string $userId
+     * @param string $newEmail
+     * @return array|string
+     * @throws \Random\RandomException
+     */
+    public function generateToken(#[\SensitiveParameter] string $userId, #[\SensitiveParameter] string $newEmail): array|string
     {
 
         $validator = new \Laminas\Validator\EmailAddress();
@@ -60,10 +67,10 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $token
-     * @return \Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse
+     * @param string $token
+     * @return UpdateEmailUsingTokenResponse
      */
-    public function updateEmailUsingToken($token)
+    public function updateEmailUsingToken(#[\SensitiveParameter] string $token)
     {
         return $this->getUserRepository()->updateEmailUsingToken($token);
     }

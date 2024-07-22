@@ -15,6 +15,7 @@ use Application\Model\Service\PasswordValidatorTrait;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Laminas\Math\BigInteger\BigInteger;
+use Random\RandomException;
 
 class Service extends AbstractService
 {
@@ -28,11 +29,12 @@ class Service extends AbstractService
     private $applicationsService;
 
     /**
-     * @param $username
-     * @param $password
+     * @param string $username
+     * @param string $password
      * @return array|string
+     * @throws RandomException
      */
-    public function create($username, $password)
+    public function create(#[\SensitiveParameter] string $username, #[\SensitiveParameter] string $password): array|string
     {
         $emailValidator = new EmailAddressValidator();
 
@@ -80,10 +82,10 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $token
+     * @param string $token
      * @return bool|string
      */
-    public function activate($token)
+    public function activate(#[\SensitiveParameter] string $token): bool|string
     {
         $result = $this->getUserRepository()->activate($token);
 
@@ -225,7 +227,7 @@ class Service extends AbstractService
      * @param string $username
      * @return array|bool
      */
-    public function searchByUsername(string $username)
+    public function searchByUsername(#[\SensitiveParameter] string $username): bool|array
     {
         $user = $this->getUserRepository()->getByUsername($username);
 
