@@ -38,7 +38,7 @@ class Service extends AbstractService
         $this->tokenTtl = $tokenTtl;
     }
 
-    public function withPassword($username, $password, $createToken)
+    public function withPassword(#[\SensitiveParameter] ?string $username, #[\SensitiveParameter] ?string $password, bool $createToken): array|string
     {
         if (empty($username) || empty($password)) {
             return 'missing-credentials';
