@@ -8,7 +8,7 @@ const { Then } = require('@badeball/cypress-cucumber-preprocessor');
 Then(
   `Ordnance Survey postcode lookup responses are stubbed out for good postcode B1 1TF`,
   () => {
-    cy.intercept('GET', '/address-lookup?postcode=B1+1TF', {
+    cy.intercept('GET', /\/address-lookup\?postcode=B1(%20|\+)1TF/, {
       statusCode: 200,
       body: {
         isPostcodeValid: true,
@@ -59,7 +59,7 @@ Then(
 Then(
   `Ordnance Survey postcode lookup responses are stubbed out for good postcode NG2 1AR`,
   () => {
-    cy.intercept('GET', '/address-lookup?postcode=NG2+1AR', {
+    cy.intercept('GET', /\/address-lookup\?postcode=NG2(%20|\+)1AR/, {
       statusCode: 200,
       body: {
         isPostcodeValid: true,
