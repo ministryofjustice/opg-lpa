@@ -5,6 +5,8 @@ Feature: Clone Property and Finance LPA starting from the Type page
 
     Background:
         Given I ignore application exceptions
+        And Ordnance Survey postcode lookup responses are stubbed out for good postcode B1 1TF
+        And Ordnance Survey postcode lookup responses are stubbed out for good postcode NG2 1AR
         And I set cloned to true
         And I log in as second seeded user
         Then I am taken to the dashboard page

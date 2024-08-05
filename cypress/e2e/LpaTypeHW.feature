@@ -5,6 +5,8 @@ Feature: Health and Welfare LPA starting from the Type page
 
     Background:
         Given I ignore application exceptions
+        And Ordnance Survey postcode lookup responses are stubbed out for good postcode B1 1TF
+        And Ordnance Survey postcode lookup responses are stubbed out for good postcode NG2 1AR
         And I log in as appropriate test user
         And If I am on dashboard I visit the type page
 
