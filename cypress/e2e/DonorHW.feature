@@ -28,7 +28,7 @@ Feature: Add donor to Health and Welfare LPA
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
         And I click element marked "Find UK address"
         # casper simply checked for 6 options. PAF was updated to remove some of the addresses from the tested postcode so we check for 3. We may ultimately wish to check the values
-        Then I can find "address-search-result" with 3 options
+        Then I can find "address-search-result" with 6 options
 
         # Check error message when donor > 100 years old
         When I force fill out
