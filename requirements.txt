@@ -1,0 +1,34 @@
+blinker==1.8.2
+boto3==1.26.158
+botocore==1.29.158
+certifi==2023.5.7
+cffi @ file:///private/tmp/cffi-20231014-5454-1xfyd4s/cffi-1.16.0
+charset-normalizer==3.1.0
+click==8.1.7
+distlib @ file:///private/tmp/python-distlib-20231212-4938-trhlvy/distlib-0.3.8
+docutils @ file:///private/tmp/docutils-20231015-5350-1xd6hrn/docutils-0.20.1
+filelock @ file:///private/tmp/python-filelock-20231112-5622-k62fq8/filelock-3.13.1/dist/filelock-3.13.1-py3-none-any.whl#sha256=57dbda9b35157b05fb3e58ee91448612eb674172fab98ee235ccb0b5bee19a1c
+Flask==2.2.2
+Flask-JWT-Extended==4.3.1
+Flask-SQLAlchemy==2.5.1
+idna==3.4
+itsdangerous==2.2.0
+Jinja2==3.1.4
+jmespath==1.0.1
+json-lines==0.5.0
+MarkupSafe==2.1.5
+pi==0.1.2
+platformdirs @ file:///private/tmp/python-platformdirs-20231204-5317-3q4okz/platformdirs-4.1.0
+psycopg2-binary==2.9.1
+pycparser @ file:///private/tmp/pycparser-20231013-5559-1dtd22y/pycparser-2.21
+PyJWT==2.8.0
+python-dateutil==2.8.2
+PyYAML @ file:///private/tmp/pyyaml-20231018-5457-utbrds/PyYAML-6.0.1
+requests==2.31.0
+requests-aws4auth==1.2.3
+s3transfer==0.6.1
+SQLAlchemy==2.0.31
+typing_extensions==4.12.2
+urllib3==2.2.2
+virtualenv==20.26.3
+Werkzeug==3.0.3
