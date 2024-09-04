@@ -12,7 +12,7 @@ brotli==1.1.0
     # via geventhttpclient
 bs4==0.0.2
     # via -r requirements.in
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   geventhttpclient
     #   requests
@@ -41,13 +41,13 @@ geventhttpclient==2.3.1
     # via locust
 greenlet==3.0.3
     # via gevent
-idna==3.7
+idna==3.8
     # via requests
 itsdangerous==2.2.0
     # via flask
 jinja2==3.1.4
     # via flask
-locust==2.29.1
+locust==2.31.5
     # via -r requirements.in
 markupsafe==2.1.5
     # via
@@ -59,19 +59,19 @@ psutil==6.0.0
     # via locust
 python-dateutil==2.9.0.post0
     # via faker
-pyzmq==26.0.3
+pyzmq==26.2.0
     # via locust
 requests==2.32.3
     # via locust
 six==1.16.0
     # via python-dateutil
-soupsieve==2.5
+soupsieve==2.6
     # via beautifulsoup4
 urllib3==2.2.2
     # via
     #   geventhttpclient
     #   requests
-werkzeug==3.0.3
+werkzeug==3.0.4
     # via
     #   flask
     #   flask-login
