@@ -215,12 +215,6 @@
     }
     // scss-lint:enable MergeableSelector
 
-    .dob-label {
-        @include media(mobile) {
-            display: none;
-        }
-    }
-
     .use-details-link-panel {
         padding: 15px;
 
