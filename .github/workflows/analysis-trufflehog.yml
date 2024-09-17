@@ -17,4 +17,4 @@ jobs:
      - name: trufflehog-actions-scan
        uses: edplato/trufflehog-actions-scan@master
        with:
-        scanArguments: "--regex --entropy=False --max_depth=1"
+        scanArguments: "--regex --entropy=False --max_depth=0"
