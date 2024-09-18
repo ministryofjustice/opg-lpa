@@ -41,13 +41,13 @@ geventhttpclient==2.3.1
     # via locust
 greenlet==3.1.0
     # via gevent
-idna==3.8
+idna==3.9
     # via requests
 itsdangerous==2.2.0
     # via flask
 jinja2==3.1.4
     # via flask
-locust==2.31.5
+locust==2.31.6
     # via -r requirements.in
 markupsafe==2.1.5
     # via
@@ -67,7 +67,7 @@ six==1.16.0
     # via python-dateutil
 soupsieve==2.6
     # via beautifulsoup4
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   geventhttpclient
     #   requests
