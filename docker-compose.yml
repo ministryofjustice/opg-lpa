@@ -75,7 +75,7 @@ services:
 
   localstack:
     container_name: lpa-localstack
-    image: localstack/localstack:3.4.0
+    image: localstack/localstack:3.7.2
     privileged: true
 #    ports:
 #      - 4568:4566
