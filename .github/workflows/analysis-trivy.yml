@@ -44,19 +44,29 @@ jobs:
           filters: |
             check: '${{ matrix.scan.path }}/**'
 
+      - name: ecr login
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@f8cb900d38ecff281181b9924245b4f0ddc1860a # pin@v1.5.1
+        with:
+          registries: 311462405659
+
       - name: Run Trivy vulnerability scanner for Code
         if: steps.filter.outputs.check == 'true'
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@97646fedde05bcd0961217c60b50e23f721e7ec7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
         with:
           scan-type: "fs"
           ignore-unfixed: true
           hide-progress: false
           format: "sarif"
+          severity: 'HIGH,CRITICAL'
           output: "${{ matrix.scan.name }}/trivy-results-code.sarif"
           scan-ref: ${{ matrix.scan.path }}
 
       - name: Upload Trivy scan results to GitHub Security tab
         if: steps.filter.outputs.check == 'true'
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "./${{ matrix.scan.name }}"
