@@ -44,6 +44,16 @@ jobs:
           filters: |
             check: '${{ matrix.scan.path }}/**'
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@50ac8dd1e1b10d09dac7b8727528b91bed831ac0 # v3.0.2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
+          role-duration-seconds: 900
+          role-session-name: OPGLPABuildPipeline
+
       - name: ecr login
         id: login_ecr
         uses: aws-actions/amazon-ecr-login@d5dd46d537c86e506335323688c342319bedcfe1 # pin@v1.5.1
