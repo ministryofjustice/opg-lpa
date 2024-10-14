@@ -28,6 +28,7 @@ on:
       - "terraform/**"
       - "scripts/**"
       - ".github/workflows/**"
+      - "locust/**"
 
 jobs:
   workspace_name:
