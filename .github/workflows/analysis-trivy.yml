@@ -56,13 +56,13 @@ jobs:
 
       - name: ecr login
         id: login_ecr
-        uses: aws-actions/amazon-ecr-login@d5dd46d537c86e506335323688c342319bedcfe1 # pin@v1.5.1
+        uses: aws-actions/amazon-ecr-login@6f9c6fad87720db87041e25e3ecf5b609c0368a0 # pin@v1.5.1
         with:
           registries: 311462405659
 
       - name: Run Trivy vulnerability scanner for Code
         if: steps.filter.outputs.check == 'true'
-        uses: aquasecurity/trivy-action@5681af892cd0f4997658e2bacc62bd0a894cf564
+        uses: aquasecurity/trivy-action@fc1500abdcdc9fc681e98d8912a52fa70dbc67de
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
