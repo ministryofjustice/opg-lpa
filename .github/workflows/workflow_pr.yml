@@ -25,19 +25,24 @@ permissions:
   statuses: none
 
 jobs:
-  workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
 
   set_variables:
     name: Generate image tags
     runs-on: ubuntu-latest
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
+      safe_branch_name: ${{ steps.safe_branch_name.outputs.safe }}
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
       account_terraform_version: ${{ steps.terraform_version_account.outputs.version }}
       region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
       email_terraform_version: ${{ steps.terraform_version_email.outputs.version }}
     steps:
+      - name: Set safe branch name
+        id: safe_branch_name
+        uses: ministryofjustice/opg-github-actions/.github/actions/branch-name@v3.1.0
+        with:
+          length: "15"
+
       - name: Set output to short SHA
         id: short_sha
         env:
@@ -92,7 +97,6 @@ jobs:
     name: TF Development - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
-      - workspace_name
       - terraform_lint
       - set_variables
     with:
@@ -114,7 +118,6 @@ jobs:
     name: TF Development - Region
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
-      - workspace_name
       - terraform_lint
       - set_variables
     with:
@@ -136,7 +139,6 @@ jobs:
     name: TF Development - Email
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
-      - workspace_name
       - terraform_lint
       - set_variables
     with:
@@ -160,7 +162,6 @@ jobs:
     needs:
       - docker_build_scan_push
       - phpunit_tests
-      - workspace_name
       - set_variables
       - terraform_email_development
       - terraform_account_development
@@ -168,7 +169,7 @@ jobs:
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       use_ssh_private_key: true
-      terraform_workspace: ${{ needs.workspace_name.outputs.name }}
+      terraform_workspace: ${{ needs.set_variables.outputs.safe_branch_name }}
       is_ephemeral: true
       workspace_manager_aws_account_id: "050256574573"
       workspace_manager_aws_iam_role: opg-lpa-ci
@@ -187,7 +188,6 @@ jobs:
     name: TF Preproduction Plan - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
-      - workspace_name
       - set_variables
       - terraform_lint
     with:
@@ -209,7 +209,6 @@ jobs:
     name: TF Preproduction Plan - Region
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
-      - workspace_name
       - set_variables
       - terraform_lint
     with:
@@ -231,7 +230,6 @@ jobs:
     name: TF Preproduction Plan - Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     needs:
-      - workspace_name
       - set_variables
       - terraform_lint
     with:
@@ -529,17 +527,16 @@ jobs:
       - cypress_tests_Signup_StichedClone
       - cypress_tests_Signup_StichedHW
       - cypress_tests_Signup_StichedPF
-      - workspace_name
       - terraform_outputs
       - set_variables
     environment:
-      name: "dev_${{ needs.workspace_name.outputs.name }}"
+      name: "dev_${{ needs.set_variables.outputs.safe_branch_name }}"
       url: "https://${{ env.FRONT_URL }}/home"
     env:
       FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
     steps:
       - name: End of PR Workflow
         run: |
-          echo "${{ needs.workspace_name.outputs.name }} PR environment tested, built and deployed"
+          echo "${{ needs.set_variables.outputs.safe_branch_name }} PR environment tested, built and deployed"
           echo "Tag Deployed: ${{ needs.set_variables.outputs.short_sha }}"
           echo "URL: https://${{ env.FRONT_URL }}/home"
