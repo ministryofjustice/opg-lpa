@@ -14,5 +14,5 @@ terraform {
     }
   }
 
-  required_version = "1.9.7"
+  required_version = "1.9.8"
 }
