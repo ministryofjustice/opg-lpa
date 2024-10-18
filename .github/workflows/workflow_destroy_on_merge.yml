@@ -32,7 +32,13 @@ on:
 
 jobs:
   workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set safe branch name
+        id: safe_branch_name
+        uses: ministryofjustice/opg-github-actions/.github/actions/branch-name@v3.1.0
+        with:
+          length: "15"
     if: github.event.pull_request.merged == true
 
   cleanup_workspace:
