@@ -534,7 +534,7 @@ jobs:
     steps:
       - name: End of Workflow
         run: |
-          if ${{ (contains(needs.terraform_outputs.result, 'success') && !contains(needs.terraform_outputs.result, 'skipped')) && contains(needs.post_tests_slack_msg.result, 'success') }}; then
+          if ${{ contains(needs.terraform_outputs.result, 'success') && contains(needs.post_tests_slack_msg.result, 'success') }}; then
             echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
             echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
             echo "URL: https://${{ env.FRONT_URL }}/home"
