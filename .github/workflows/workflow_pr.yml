@@ -32,6 +32,7 @@ jobs:
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
       safe_branch_name: ${{ steps.safe_branch_name.outputs.safe }}
+      workspace_name: ${{ steps.set_workspace_name.outputs.workspace_name }}
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
       account_terraform_version: ${{ steps.terraform_version_account.outputs.version }}
       region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
@@ -40,8 +41,11 @@ jobs:
       - name: Set safe branch name
         id: safe_branch_name
         uses: ministryofjustice/opg-github-actions/.github/actions/branch-name@v3.1.0
-        with:
-          length: "15"
+
+      - name: Set workspace name
+        id: set_workspace_name
+        run: |
+          echo "workspace_name=${{ github.event.number }}${{ steps.safe_branch_name.outputs.safe }}" >> $GITHUB_OUTPUT
 
       - name: Set output to short SHA
         id: short_sha
@@ -68,8 +72,6 @@ jobs:
         uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
         with:
           terraform_directory: "./terraform/email"
-
-
 
   terraform_lint:
     name: TF - Lint
@@ -169,7 +171,7 @@ jobs:
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
       use_ssh_private_key: true
-      terraform_workspace: ${{ needs.workflow_variables.outputs.safe_branch_name }}
+      terraform_workspace: ${{ needs.workflow_variables.outputs.workspace_name }}
       is_ephemeral: true
       workspace_manager_aws_account_id: "050256574573"
       workspace_manager_aws_iam_role: opg-lpa-ci
@@ -525,7 +527,7 @@ jobs:
       - workflow_variables
       - post_tests_slack_msg
     environment:
-      name: "dev_${{ needs.workflow_variables.outputs.safe_branch_name }}"
+      name: "dev_${{ needs.workflow_variables.outputs.workspace_name }}"
       url: "https://${{ env.FRONT_URL }}/home"
     env:
       FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
@@ -533,7 +535,7 @@ jobs:
       - name: End of Workflow
         run: |
           if ${{ contains(needs.terraform_outputs.result, 'success') && contains(needs.post_tests_slack_msg.result, 'success') }}; then
-            echo "${{ needs.workflow_variables.outputs.safe_branch_name }} PR environment tested, built and deployed"
+            echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
             echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
             echo "URL: https://${{ env.FRONT_URL }}/home"
             exit 0
