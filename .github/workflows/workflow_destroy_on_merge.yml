@@ -81,4 +81,4 @@ jobs:
         env:
           TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
         run: |
-          ../../scripts/pipeline/workspace_cleanup/destroy_workspace.sh ${{ needs.workspace_name.outputs.safe_branch_name }}
+          ../../scripts/pipeline/workspace_cleanup/destroy_workspace.sh ${{ github.event.number }}${{ needs.workspace_name.outputs.safe_branch_name }}
