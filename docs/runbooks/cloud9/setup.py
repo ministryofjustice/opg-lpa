@@ -44,7 +44,7 @@ def cleanup_security_groups(security_group_ids, port) -> None:
                     }
                 ],
             )
-            logger.debug("Removed ingress rule from Security Group {}".format(sg_id))
+            logger.info("Removed ingress rule from Security Group {}".format(sg_id))
         except botocore.exceptions.ClientError as e:
             if e.response["Error"]["Code"] == "InvalidPermission.NotFound":
                 pass
@@ -57,6 +57,7 @@ def cleanup_redis(**kwargs) -> None:
     clusters = get_redis_clusters()
     for cluster in clusters:
         cleanup_security_groups([clusters[cluster]["security_group_id"]], 6379)
+        print("")
 
 
 def cleanup_postgres(**kwargs) -> None:
@@ -105,8 +106,8 @@ def cleanup_all(**kwargs) -> None:
     Returns:
         None
     """
-    clean_redis()
-    clean_postgres()
+    cleanup_redis()
+    cleanup_postgres()
 
 
 def get_redis_clusters() -> dict:
