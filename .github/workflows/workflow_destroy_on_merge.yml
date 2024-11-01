@@ -39,8 +39,6 @@ jobs:
       - name: Set safe branch name
         id: safe_branch_name
         uses: ministryofjustice/opg-github-actions/.github/actions/branch-name@v3.1.0
-        with:
-          length: "15"
     if: github.event.pull_request.merged == true
 
   cleanup_workspace:
