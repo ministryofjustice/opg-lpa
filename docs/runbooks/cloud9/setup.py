@@ -78,7 +78,7 @@ def cleanup_postgres(**kwargs) -> None:
     # Delete the environment variables for the Postgres CLI and clear the bash history
     os.system("unset PGUSER")
     os.system("unset PGPASSWORD")
-    os.system("cat /dev/null > ~/.bash_history && history -c")
+    os.system("cat /dev/null > ~/.bash_history && history -c && exit")
 
 
 def setup_all(**kwargs) -> None:
