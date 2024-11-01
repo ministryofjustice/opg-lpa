@@ -57,7 +57,6 @@ def cleanup_redis(**kwargs) -> None:
     clusters = get_redis_clusters()
     for cluster in clusters:
         cleanup_security_groups([clusters[cluster]["security_group_id"]], 6379)
-        print("")
 
 
 def cleanup_postgres(**kwargs) -> None:
