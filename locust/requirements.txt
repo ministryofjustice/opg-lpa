@@ -47,7 +47,7 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.4
     # via flask
-locust==2.32.1
+locust==2.32.2
     # via -r requirements.in
 markupsafe==3.0.2
     # via
@@ -71,7 +71,7 @@ urllib3==2.2.3
     # via
     #   geventhttpclient
     #   requests
-werkzeug==3.1.1
+werkzeug==3.1.2
     # via
     #   flask
     #   flask-login
