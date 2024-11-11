@@ -33,7 +33,7 @@ flask-cors==5.0.0
     # via locust
 flask-login==0.6.3
     # via locust
-gevent==24.10.3
+gevent==24.11.1
     # via geventhttpclient
 geventhttpclient==2.3.1
     # via locust
