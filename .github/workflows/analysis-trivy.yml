@@ -44,19 +44,40 @@ jobs:
           filters: |
             check: '${{ matrix.scan.path }}/**'
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@50ac8dd1e1b10d09dac7b8727528b91bed831ac0 # v3.0.2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
+          role-duration-seconds: 900
+          role-session-name: OPGLPABuildPipeline
+
+      - name: ecr login
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@bfbd05a2dcf76451041cbd4b9d11cff82489a1ee # pin@v1.5.1
+        with:
+          registries: 311462405659
+
       - name: Run Trivy vulnerability scanner for Code
         if: steps.filter.outputs.check == 'true'
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@d2a392a13760cb64cb6bbd31d4bed2a7d9a5298d
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1
         with:
           scan-type: "fs"
           ignore-unfixed: true
           hide-progress: false
           format: "sarif"
+          severity: 'HIGH,CRITICAL'
           output: "${{ matrix.scan.name }}/trivy-results-code.sarif"
           scan-ref: ${{ matrix.scan.path }}
 
       - name: Upload Trivy scan results to GitHub Security tab
         if: steps.filter.outputs.check == 'true'
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "./${{ matrix.scan.name }}"
