@@ -50,19 +50,19 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
           aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
+          role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
           role-duration-seconds: 900
           role-session-name: OPGLPABuildPipeline
 
       - name: ecr login
         id: login_ecr
-        uses: aws-actions/amazon-ecr-login@6f9c6fad87720db87041e25e3ecf5b609c0368a0 # pin@v1.5.1
+        uses: aws-actions/amazon-ecr-login@37b726ebcaba9d1c1838caf54540902bad814823 # pin@v1.5.1
         with:
           registries: 311462405659
 
       - name: Run Trivy vulnerability scanner for Code
         if: steps.filter.outputs.check == 'true'
-        uses: aquasecurity/trivy-action@fc1500abdcdc9fc681e98d8912a52fa70dbc67de
+        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2

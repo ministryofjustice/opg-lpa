@@ -49,7 +49,7 @@ We also use the time to check that the LPA has been made correctly and there's n
 
 Once we’ve registered the LPA, we’ll stamp the LPA form you sent us and return it to the correspondent by post.
 
-It takes up to 16 weeks in total to register the LPA if there are no mistakes in the application.
+It takes up to 8 weeks in total to register the LPA if there are no mistakes in the application.
 
 #### Using the LPA
 
