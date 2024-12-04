@@ -44,7 +44,7 @@ def cleanup_security_groups(security_group_ids, port) -> None:
                     }
                 ],
             )
-            logger.debug("Removed ingress rule from Security Group {}".format(sg_id))
+            logger.info("Removed ingress rule from Security Group {}".format(sg_id))
         except botocore.exceptions.ClientError as e:
             if e.response["Error"]["Code"] == "InvalidPermission.NotFound":
                 pass
@@ -78,7 +78,7 @@ def cleanup_postgres(**kwargs) -> None:
     # Delete the environment variables for the Postgres CLI and clear the bash history
     os.system("unset PGUSER")
     os.system("unset PGPASSWORD")
-    os.system("cat /dev/null > ~/.bash_history && history -c")
+    os.system("cat /dev/null > ~/.bash_history && history -c && exit")
 
 
 def setup_all(**kwargs) -> None:
@@ -105,8 +105,8 @@ def cleanup_all(**kwargs) -> None:
     Returns:
         None
     """
-    clean_redis()
-    clean_postgres()
+    cleanup_redis()
+    cleanup_postgres()
 
 
 def get_redis_clusters() -> dict:
