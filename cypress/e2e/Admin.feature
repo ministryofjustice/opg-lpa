@@ -157,10 +157,10 @@ Feature: Admin
     # date fields for feedback range
     When I force fill out "#id-day-start-date" element with "28"
     And I force fill out "#id-month-start-date" element with "11"
-    And I force fill out "#id-year-start-date" element with "2023"
+    And I force fill out "#id-year-start-date" element with "2024"
     And I force fill out "#id-day-end-date" element with "28"
     And I force fill out "#id-month-end-date" element with "11"
-    And I force fill out "#id-year-end-date" element with "2023"
+    And I force fill out "#id-year-end-date" element with "2024"
     And I click "submit-button"
 
     Then very long feedback details from user "longwindeduser@test.com" displays correctly in the page
