@@ -7,7 +7,7 @@ toolchain go1.23.4
 require (
 	github.com/aws/aws-lambda-go v1.47.0
 	github.com/aws/aws-sdk-go-v2/config v1.28.6
-	github.com/aws/aws-sdk-go-v2/service/rds v1.92.0
+	github.com/aws/aws-sdk-go-v2/service/rds v1.93.0
 )
 
 require (
