@@ -38,8 +38,8 @@ services:
   postgres:
     container_name: lpa-postgres
     image: postgres:13.7
-#    ports:
-#      - 5434:5432
+    ports:
+      - 5434:5432
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: lpadb
