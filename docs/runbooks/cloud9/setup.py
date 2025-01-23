@@ -105,8 +105,8 @@ def cleanup_all(**kwargs) -> None:
     Returns:
         None
     """
-    clean_redis()
-    clean_postgres()
+    cleanup_redis()
+    cleanup_postgres()
 
 
 def get_redis_clusters() -> dict:
