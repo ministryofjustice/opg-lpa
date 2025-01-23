@@ -27,7 +27,7 @@ Before registering an LPA, OPG:
 * checks that there are no errors
 * gives people the opportunity to object if they have concerns about the LPA
 
-It takes up to 16 weeks to register an LPA if there are no mistakes in the application and no objections.
+It takes up to 8 weeks to register an LPA if there are no mistakes in the application and no objections.
 
 ### When an LPA can be used
 
