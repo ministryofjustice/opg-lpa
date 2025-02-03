@@ -57,7 +57,7 @@ jobs:
           pip install -r scripts/pipeline/ci_ingress/requirements.txt
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2
+        uses: actions/download-artifact@v4.1.8
         with:
           name: terraform-artifact
           path: /tmp/
@@ -104,12 +104,13 @@ jobs:
           npm install .
           ./cypress/cypress_start.sh
 
-      - name: Upload Screenshot Artifact
-        if: failure()
-        uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots/
+      # Note - V 3 of upload-artifact is deprecated but V 4 disallows uploading artifact of the same name. Commented for now but needs rework
+      #- name: Upload Screenshot Artifact
+      #  if: failure()
+      #  uses: actions/upload-artifact@v4.6.0
+      #  with:
+      #    name: cypress-screenshots
+      #    path: cypress/screenshots/
 
       - name: Configure AWS Credentials
         if: always()
