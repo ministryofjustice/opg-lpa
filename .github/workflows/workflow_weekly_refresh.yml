@@ -127,7 +127,7 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.5.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
@@ -146,7 +146,7 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.5.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
@@ -165,7 +165,7 @@ jobs:
 
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.5.0
     needs:
       - docker_build_scan_push
       - slack_msg_production_deploy_begin
@@ -200,7 +200,7 @@ jobs:
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2
+        uses: actions/download-artifact@v4.1.8
         with:
           name: terraform-artifact
           path: /tmp/
