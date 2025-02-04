@@ -104,13 +104,13 @@ jobs:
           npm install .
           ./cypress/cypress_start.sh
 
-      # Note - V 3 of upload-artifact is deprecated but V 4 disallows uploading artifact of the same name. Commented for now but needs rework
-      #- name: Upload Screenshot Artifact
-      #  if: failure()
-      #  uses: actions/upload-artifact@v4.6.0
-      #  with:
-      #    name: cypress-screenshots
-      #    path: cypress/screenshots/
+      - name: Upload Screenshot Artifact
+        if: failure()
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
+          overwrite: true
 
       - name: Configure AWS Credentials
         if: always()
