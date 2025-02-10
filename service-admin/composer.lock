@@ -9212,5 +9212,5 @@
         "php": ">=8.2 <8.3.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
