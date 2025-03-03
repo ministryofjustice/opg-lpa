@@ -4,8 +4,7 @@ namespace ApplicationTest\Model\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
-use Laminas\Mail\Exception\ExceptionInterface;
-use Laminas\Mail\Exception\InvalidArgumentException;
+use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use MakeShared\Constants;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -54,7 +53,7 @@ class NotifyMailTransportTest extends MockeryTestCase
             []
         );
 
-        $this->expectException(ExceptionInterface::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->transport->send($mailParams);
     }
 
@@ -70,7 +69,7 @@ class NotifyMailTransportTest extends MockeryTestCase
             ->with('another@uat.digital.justice.gov.uk', '3fb12879-7665-4ffe-a76f-ed90cde7a35d', [])
             ->andThrow(new NotifyException());
 
-        $this->expectException(ExceptionInterface::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->transport->send($mailParams);
     }
 

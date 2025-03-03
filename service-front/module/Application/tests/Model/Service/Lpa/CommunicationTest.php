@@ -16,8 +16,7 @@ use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
-use Laminas\Mail\Exception\ExceptionInterface;
-use Laminas\Mail\Exception\InvalidArgumentException;
+use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
 
 class CommunicationTest extends AbstractEmailServiceTest
