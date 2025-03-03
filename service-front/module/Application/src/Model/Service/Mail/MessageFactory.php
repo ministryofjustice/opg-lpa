@@ -6,7 +6,7 @@ use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Message;
 use Application\View\Helper\LocalViewRenderer;
-use Laminas\Mail\Exception\InvalidArgumentException;
+use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\Mime;
 
 /**

@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\User;
 
 use Hamcrest\MatcherAssert;
-use Laminas\Mail\Exception\InvalidArgumentException;
+use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
 use Exception;
 use RuntimeException;
