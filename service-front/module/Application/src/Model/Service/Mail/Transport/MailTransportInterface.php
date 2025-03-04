@@ -3,13 +3,13 @@
 namespace Application\Model\Service\Mail\Transport;
 
 use Application\Model\Service\Mail\MailParameters;
-use Laminas\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
+use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 
 interface MailTransportInterface
 {
     /**
      * Send an email using MailParameters.
-     * @throws TransportInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function send(MailParameters $mailParameters): void;
 
