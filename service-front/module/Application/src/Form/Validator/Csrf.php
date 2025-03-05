@@ -3,7 +3,6 @@
 namespace Application\Form\Validator;
 
 use MakeShared\Logging\LoggerTrait;
-use Laminas\Math\Rand;
 use Laminas\Session\Container;
 use Laminas\Validator\Csrf as LaminasCsrfValidator;
 use RuntimeException;
@@ -91,7 +90,7 @@ class Csrf extends LaminasCsrfValidator
         $session = new Container('CsrfValidator');
 
         if (!isset($session->token)) {
-            $session->token = hash('sha512', Rand::getBytes(128));
+            $session->token = hash('sha512', openssl_random_pseudo_bytes(16));
         }
 
         $this->hash = hash('sha512', $this->getName() . $session->token . $salt);
