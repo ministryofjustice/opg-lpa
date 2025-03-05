@@ -9,7 +9,6 @@ use DateTime;
 use DateTimeZone;
 use DateInterval;
 use Exception;
-use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Session\Container;
 
 /**
@@ -76,7 +75,7 @@ class Communication extends AbstractEmailService
         try {
             $mailParameters = new MailParameters($to, $this->emailTemplateRef, $this->data);
             $this->getMailTransport()->send($mailParameters);
-        } catch (ExceptionInterface $ex) {
+        } catch (Exception $ex) {
             $this->getLogger()->err($ex->getMessage());
             return "failed-sending-email";
         }
