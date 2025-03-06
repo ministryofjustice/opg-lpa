@@ -6,7 +6,6 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\DataAccess\Repository\User\TokenInterface as Token;
 use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
-use Laminas\Math\BigInteger\BigInteger;
 use DateTime;
 
 class Service extends AbstractService
@@ -102,7 +101,7 @@ class Service extends AbstractService
                 $authToken = bin2hex(random_bytes(32));
 
                 // Use base62 for shorter tokens
-                $authToken = BigInteger::factory('bcmath')->baseConvert($authToken, 16, 62);
+                $authToken = gmp_strval(gmp_init($authToken, 10), 62);
 
                 $created = $this->getUserRepository()->setAuthToken(
                     $user->id(),

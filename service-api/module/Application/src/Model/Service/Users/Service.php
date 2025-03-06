@@ -14,7 +14,6 @@ use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\PasswordValidatorTrait;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
-use Laminas\Math\BigInteger\BigInteger;
 use Random\RandomException;
 
 class Service extends AbstractService
@@ -62,7 +61,7 @@ class Service extends AbstractService
             $activationToken = bin2hex(random_bytes(16));
 
             // Use base62 for shorter tokens
-            $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
+            $activationToken = gmp_strval(gmp_init($activationToken, 10), 62);
 
             $created = $this->getUserRepository()->create($userId, [
                 'identity'              => $username,
