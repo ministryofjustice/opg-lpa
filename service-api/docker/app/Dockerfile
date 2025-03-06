@@ -12,7 +12,6 @@ RUN apk upgrade --no-cache
 RUN apk add --no-cache postgresql-libs icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev icu-dev linux-headers \
     && docker-php-ext-install pgsql pdo_pgsql \
-    && docker-php-ext-install bcmath \
     && docker-php-ext-install opcache \
     && docker-php-ext-install intl \
     && docker-php-ext-install sockets \
