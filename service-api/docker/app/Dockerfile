@@ -1,5 +1,7 @@
 FROM php:8.2-fpm-alpine3.20
 
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
+
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
 RUN adduser -D -g '' appuser
@@ -13,8 +15,9 @@ RUN apk add --no-cache postgresql-libs icu fcgi \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install opcache \
     && docker-php-ext-install intl \
-    && docker-php-ext-install gmp \
-    && docker-php-ext-install sockets
+    && docker-php-ext-install sockets \
+    && install-php-extensions gmp \
+    && rm /usr/bin/install-php-extensions
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
