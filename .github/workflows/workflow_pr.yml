@@ -259,8 +259,6 @@ jobs:
       task_name: "seeding"
     needs:
       - terraform_environment_development
-      - terraform_account_preproduction
-      - terraform_region_preproduction
     secrets: inherit
 
   terraform_outputs:
