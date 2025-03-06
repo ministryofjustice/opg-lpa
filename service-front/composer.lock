@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "3e04ba2215885a23357cecb49e0ca604",
+=======
+    "content-hash": "6051233344b1ce8770a2d4612a1a2498",
+>>>>>>> main
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -1982,6 +1986,7 @@
             "time": "2024-12-05T15:59:56+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "laminas/laminas-mail",
             "version": "2.25.1",
             "source": {
@@ -2090,12 +2095,53 @@
             "autoload": {
                 "psr-4": {
                     "Laminas\\Mime\\": "src/"
+=======
+            "name": "laminas/laminas-math",
+            "version": "3.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-math.git",
+                "reference": "3e90445828fd64308de2a600b48c3df051b3b17a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-math/zipball/3e90445828fd64308de2a600b48c3df051b3b17a",
+                "reference": "3e90445828fd64308de2a600b48c3df051b3b17a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0"
+            },
+            "conflict": {
+                "zendframework/zend-math": "*"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~2.4.0",
+                "phpunit/phpunit": "~9.5.25"
+            },
+            "suggest": {
+                "ext-bcmath": "If using the bcmath functionality",
+                "ext-gmp": "If using the gmp functionality"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2.x-dev",
+                    "dev-develop": "3.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Math\\": "src/"
+>>>>>>> main
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
+<<<<<<< HEAD
             "description": "Create and parse MIME messages and parts",
             "homepage": "https://laminas.dev",
             "keywords": [
@@ -2109,6 +2155,21 @@
                 "issues": "https://github.com/laminas/laminas-mime/issues",
                 "rss": "https://github.com/laminas/laminas-mime/releases.atom",
                 "source": "https://github.com/laminas/laminas-mime"
+=======
+            "description": "Create cryptographically secure pseudo-random numbers, and manage big integers",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "laminas",
+                "math"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-math/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-math/issues",
+                "rss": "https://github.com/laminas/laminas-math/releases.atom",
+                "source": "https://github.com/laminas/laminas-math"
+>>>>>>> main
             },
             "funding": [
                 {
@@ -2116,8 +2177,12 @@
                     "type": "community_bridge"
                 }
             ],
+<<<<<<< HEAD
             "abandoned": "symfony/mime",
             "time": "2023-11-02T16:47:19+00:00"
+=======
+            "time": "2023-10-18T09:53:37+00:00"
+>>>>>>> main
         },
         {
             "name": "laminas/laminas-modulemanager",
@@ -3956,6 +4021,7 @@
             "time": "2024-09-09T11:45:10+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "symfony/polyfill-intl-idn",
             "version": "v1.31.0",
             "source": {
@@ -4120,6 +4186,8 @@
             "time": "2024-09-09T11:45:10+00:00"
         },
         {
+=======
+>>>>>>> main
             "name": "symfony/polyfill-mbstring",
             "version": "v1.31.0",
             "source": {
@@ -4197,7 +4265,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2024-09-09T11:45:10+00:00"
+=======
+            "time": "2024-06-19T12:30:46+00:00"
+>>>>>>> main
         },
         {
             "name": "symfony/polyfill-php80",
@@ -7791,6 +7863,87 @@
                 }
             ],
             "time": "2024-09-09T11:45:10+00:00"
+        },
+        {
+            "name": "symfony/polyfill-intl-normalizer",
+            "version": "v1.30.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
+                "reference": "a95281b0be0d9ab48050ebd988b967875cdb9fdb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/a95281b0be0d9ab48050ebd988b967875cdb9fdb",
+                "reference": "a95281b0be0d9ab48050ebd988b967875cdb9fdb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "suggest": {
+                "ext-intl": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Intl\\Normalizer\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for intl's Normalizer class and related functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "intl",
+                "normalizer",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.30.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2024-05-31T15:07:36+00:00"
         },
         {
             "name": "symfony/service-contracts",
