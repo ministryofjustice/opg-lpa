@@ -9,8 +9,7 @@ use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
-use Laminas\Mail\Exception\InvalidArgumentException;
-use Laminas\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
+use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 
 /**
  * Sends an email via the Notify API.
@@ -82,7 +81,7 @@ class NotifyMailTransport implements MailTransportInterface
      * to one throws an exception, subsequent emails will not be sent.
      *
      * @param  MailParameters $mailParameters
-     * @throws TransportInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function send(MailParameters $mailParameters): void
     {
@@ -104,7 +103,7 @@ class NotifyMailTransport implements MailTransportInterface
             // - Alphagov\Notifications\Exception\NotifyException
             // - Alphagov\Notifications\Exception\ApiException
             // ApiException extends NotifyException, so we can just catch that
-            // and turn it into an instance of a Laminas\Mail\Exception\ExceptionInterface
+            // and turn it into an instance of a use Application\Model\Service\Mail\Exception\InvalidArgumentException 
             try {
                 $this->client->sendEmail($toAddress, $notifyTemplateId, $data);
             } catch (NotifyException $ex) {
@@ -112,7 +111,7 @@ class NotifyMailTransport implements MailTransportInterface
                     'Failed sending email via Notify: ' . $ex->getMessage() . '\n' . $ex->getTraceAsString()
                 );
 
-                throw new TransportInvalidArgumentException($ex->getMessage());
+                throw new InvalidArgumentException($ex->getMessage());
             }
         }
     }

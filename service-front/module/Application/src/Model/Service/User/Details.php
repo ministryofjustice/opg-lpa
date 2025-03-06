@@ -8,19 +8,9 @@ use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Mail\MailParameters;
 use MakeShared\DataModel\User\User;
-use Laminas\Mail\Exception\ExceptionInterface;
 use Laminas\Session\Container;
 use Exception;
 use RuntimeException;
-
-/**
- * On many of the methods in this class where we're catching
- * Laminas\Mail\Exception\ExceptionInterface,
- * psalm (linting) complains about catching that interface; however, this is
- * because ExceptionInterface does not implement Throwable
- * or extend Exception (i.e. issue is nothing to do with our code).
- * We use `psalm-suppress InvalidCatch` to deal with these.
- */
 class Details extends AbstractEmailService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
@@ -87,7 +77,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param string $currentAddress The current email address
      * @return bool|string
      *
-     * @psalm-suppress InvalidCatch
      */
     public function requestEmailUpdate(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string $currentAddress): bool|string
     {
@@ -116,7 +105,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex1) {
+                } catch (Exception $ex1) {
                     $logger->err($ex1->getMessage());
                 }
 
@@ -136,7 +125,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex2) {
+                } catch (Exception $ex2) {
                     $logger->err($ex2->getMessage());
                     return 'failed-sending-email';
                 }
@@ -190,7 +179,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @return bool|string
      *
      * @throws \Http\Client\Exception
-     * @psalm-suppress InvalidCatch
      */
     public function updatePassword(#[\SensitiveParameter] string $currentPassword, #[\SensitiveParameter] string $newPassword): bool|string
     {
@@ -221,7 +209,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 //  Send the password changed email - ignore any errors
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex) {
+                } catch (Exception $ex) {
                     $logger->err($ex->getMessage());
                 }
 
@@ -303,7 +291,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @return bool|string
      *
      * @throws \Http\Client\Exception
-     * @psalm-suppress InvalidCatch
      */
     public function requestPasswordResetEmail(#[\SensitiveParameter] string $email): bool|string
     {
@@ -337,7 +324,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                     try {
                         $this->getMailTransport()->send($mailParameters);
-                    } catch (ExceptionInterface $ex) {
+                    } catch (Exception $ex) {
                         $logger->err($ex->getMessage());
                         return "failed-sending-email";
                     }
@@ -362,7 +349,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex) {
+                } catch (Exception $ex) {
                     $logger->err($ex->getMessage());
                     return "failed-sending-email";
                 }
@@ -379,7 +366,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param string $activationToken
      * @return bool|string
      *
-     * @psalm-suppress InvalidCatch
      */
     private function sendAccountActivateEmail(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string $activationToken): bool|string
     {
@@ -397,7 +383,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
         try {
             $this->getMailTransport()->send($mailParameters);
-        } catch (ExceptionInterface $ex) {
+        } catch (Exception $ex) {
             $this->getLogger()->err($ex->getMessage());
             return 'failed-sending-email';
         }
@@ -448,7 +434,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      * @param string $password
      * @return bool|string
      *
-     * @psalm-suppress InvalidCatch
      */
     public function registerAccount(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string $password): bool|string
     {
@@ -477,7 +462,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex1) {
+                } catch (Exception $ex1) {
                     $logger->err($ex1->getMessage());
                     return 'failed-sending-email';
                 }
@@ -493,7 +478,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
                 try {
                     $this->getMailTransport()->send($mailParameters);
-                } catch (ExceptionInterface $ex3) {
+                } catch (Exception $ex3) {
                     $logger->err($ex3->getMessage());
                     return 'failed-sending-warning-email';
                 }

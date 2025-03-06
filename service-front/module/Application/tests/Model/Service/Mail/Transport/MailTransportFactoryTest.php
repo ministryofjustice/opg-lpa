@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\Model\Service\Mail\Transport;
 
-use Application\Model\Service\Mail\MessageFactory;
 use Application\Model\Service\Mail\Transport\NotifyMailTransport;
 use Application\Model\Service\Mail\Transport\MailTransportFactory;
 use Hamcrest\Matchers;

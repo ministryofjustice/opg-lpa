@@ -7,8 +7,7 @@ use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\Mail\MailParameters;
-use Application\Model\Service\Mail\Transport\MailTransport;
-use Laminas\Mail\Exception\InvalidArgumentException;
+use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use DateTime;
 use DateTimeZone;
 
