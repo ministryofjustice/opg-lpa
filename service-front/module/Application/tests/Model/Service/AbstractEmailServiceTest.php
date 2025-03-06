@@ -10,7 +10,7 @@ use Application\View\Helper\LocalViewRenderer;
 use Application\View\Helper\MoneyFormat;
 use Hamcrest\MatcherAssert;
 use Hamcrest\Matchers;
-use Laminas\Mail\Exception\InvalidArgumentException;
+use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\View\HelperPluginManager;
 use Mockery;
 use Mockery\MockInterface;
