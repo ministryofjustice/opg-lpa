@@ -90,7 +90,7 @@ class Csrf extends LaminasCsrfValidator
         $session = new Container('CsrfValidator');
 
         if (!isset($session->token)) {
-            $session->token = hash('sha512', openssl_random_pseudo_bytes(16));
+            $session->token = hash('sha512', openssl_random_pseudo_bytes(128));
         }
 
         $this->hash = hash('sha512', $this->getName() . $session->token . $salt);
