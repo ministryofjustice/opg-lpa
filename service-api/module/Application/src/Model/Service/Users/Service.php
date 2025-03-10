@@ -58,7 +58,7 @@ class Service extends AbstractService
         do {
             // Create a 32 character user id and activation token.
             $userId = bin2hex(random_bytes(16));
-            $activationToken = sprintf("0x%s", bin2hex(random_bytes(16)));
+            $activationToken = sprintf('0x%s', bin2hex(random_bytes(16)));
 
             // Use base62 for shorter tokens
             $activationToken = gmp_strval($activationToken, 62);
