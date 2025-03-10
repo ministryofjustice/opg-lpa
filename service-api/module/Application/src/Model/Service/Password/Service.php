@@ -74,7 +74,7 @@ class Service extends AbstractService
             ];
         }
 
-        $token = sprintf("0x%s", bin2hex(random_bytes(16)));
+        $token = sprintf('0x%s', bin2hex(random_bytes(16)));
 
         //  Use base62 for shorter tokens
         $token = gmp_strval($token, 62);
