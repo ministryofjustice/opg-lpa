@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eca675f629fe2e1373bd2b6f9d9bafbf",
+    "content-hash": "0263a00aabffdc2872a36a732aae229b",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1836,49 +1836,6 @@
                 }
             ],
             "time": "2023-02-09T10:38:43+00:00"
-        },
-        {
-            "name": "setasign/fpdi-tcpdf",
-            "version": "v2.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Setasign/FPDI-TCPDF.git",
-                "reference": "f6711a95cba64db16e1a63e1b6195827a2150c93"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Setasign/FPDI-TCPDF/zipball/f6711a95cba64db16e1a63e1b6195827a2150c93",
-                "reference": "f6711a95cba64db16e1a63e1b6195827a2150c93",
-                "shasum": ""
-            },
-            "require": {
-                "setasign/fpdi": "^2.3",
-                "tecnickcom/tcpdf": "^6.3.5"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jan Slabon",
-                    "email": "jan.slabon@setasign.com",
-                    "homepage": "https://www.setasign.com"
-                }
-            ],
-            "description": "Kind of metadata package for dependencies of the latest versions of FPDI and TCPDF.",
-            "homepage": "https://www.setasign.com/fpdi",
-            "keywords": [
-                "TCPDF",
-                "fpdi",
-                "pdf"
-            ],
-            "support": {
-                "source": "https://github.com/Setasign/FPDI-TCPDF/tree/v2.3.0"
-            },
-            "abandoned": true,
-            "time": "2020-02-19T11:40:30+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -5957,5 +5914,5 @@
     "platform-dev": {
         "ext-json": "*"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
