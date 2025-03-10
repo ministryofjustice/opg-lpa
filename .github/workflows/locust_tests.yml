@@ -49,7 +49,7 @@ jobs:
           pip install -r scripts/pipeline/ci_ingress/requirements.txt
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@v4.1.9
         with:
           name: terraform-artifact
           path: /tmp/
@@ -68,7 +68,7 @@ jobs:
           role-duration-seconds: 3600
           role-session-name: OPGLPACypressTestsCypressS3Monitor
 
-      - uses: actions/cache@f4b3439a656ba812b8cb417d2d49f9c810103092 # v3.4.0
+      - uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3.4.3
         with:
           path: |
             ~/.cache/Cypress
