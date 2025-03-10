@@ -34,7 +34,7 @@ run-front-composer:
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
-	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer update tecnickcom/tcpdf --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-api-composer
 run-api-composer:
@@ -42,7 +42,7 @@ run-api-composer:
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer update tecnickcom/tcpdf --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-shared-composer
 run-shared-composer:
