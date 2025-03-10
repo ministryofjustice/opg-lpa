@@ -98,10 +98,10 @@ class Service extends AbstractService
             $expires = new DateTime("+" . $this->tokenTtl . " seconds");
 
             do {
-                $authToken = bin2hex(random_bytes(32));
+                $authToken = sprintf("0x%s", bin2hex(random_bytes(32)));
 
                 // Use base62 for shorter tokens
-                $authToken = gmp_strval(gmp_init($authToken, 10), 62);
+                $authToken = gmp_strval($authToken, 62);
 
                 $created = $this->getUserRepository()->setAuthToken(
                     $user->id(),

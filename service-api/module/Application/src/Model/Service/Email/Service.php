@@ -47,10 +47,10 @@ class Service extends AbstractService
             return 'user-not-found';
         }
 
-        $token = random_bytes(16);
+        $token = sprintf("0x%s", bin2hex(random_bytes(16)));
 
         // Use base62 for shorter tokens
-        $token = gmp_strval(gmp_init(bin2hex($token), 10), 62);
+        $token = gmp_strval($token, 62);
 
         $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
 
