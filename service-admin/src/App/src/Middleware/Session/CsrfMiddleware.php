@@ -27,7 +27,7 @@ class CsrfMiddleware implements MiddlewareInterface
 
         if (is_null($csrf)) {
             //  Generate a secret csrf value before proceeding
-            $secret = gmp_strval(sprintf("0x%s", bin2hex(random_bytes(64))), 62);
+            $secret = gmp_strval(sprintf('0x%s', bin2hex(random_bytes(64))), 62);
 
             $this->addTokenData('csrf', $secret);
         }
