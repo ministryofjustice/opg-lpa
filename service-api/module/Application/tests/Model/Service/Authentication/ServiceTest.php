@@ -186,7 +186,9 @@ class ServiceTest extends AbstractServiceTest
         ]));
 
         $this->authUserRepository->shouldReceive('updateLastLoginTime')
-            ->withArgs([1])->once();
+                                 ->withArgs([1])->once();
+
+        //$this>shouldReceive('make_token')->once();
 
         $this->authUserRepository->shouldReceive('setAuthToken')
             ->withArgs(function ($userId, $expires, $authToken) {
@@ -198,8 +200,21 @@ class ServiceTest extends AbstractServiceTest
                 ];
 
                 $expectedExpires = new DateTime('+' . (AuthenticationService::TOKEN_TTL - 1) . ' seconds');
+                if ($userId !== "1") {
+                    printf("user id %s is not 1 \n", $userId);
+                    return false;
+                }
 
-                return $userId === "1" && $expires > $expectedExpires && strlen($authToken) > 40;
+                if (! ($expires > $expectedExpires)) {
+                    print("bad expiry date \n");
+                    return false;
+                }
+
+                if (!  (strlen($authToken) > 40)) {
+                    printf("token %s too short \n", $authToken);
+                    return false;
+                }
+                return true;
             })->once()
             ->andReturn(true);
 

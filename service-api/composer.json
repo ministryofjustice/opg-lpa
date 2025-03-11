@@ -51,7 +51,10 @@
         "psr-4": {
             "Application\\": "module/Application/src/",
             "MakeShared\\": "../shared/module/MakeShared/src/"
-        }
+        },
+        "files": [
+            "../shared/src/functions/make_token.php"
+        ]
     },
     "config": {
         "allow-plugins": {
