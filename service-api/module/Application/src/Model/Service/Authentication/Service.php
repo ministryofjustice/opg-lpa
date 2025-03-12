@@ -122,7 +122,7 @@ class Service extends AbstractService
             ] + $tokenDetails;
     }
 
-    public function withToken($tokenStr, $extendToken)
+    public function withToken(string $tokenStr, bool $extendToken)
     {
         // limit token updates to once every 5 seconds
         $throttle = true;
@@ -137,14 +137,20 @@ class Service extends AbstractService
     /**
      * $tokenStr: string; representation of token, derived from request
      * $needsUpdate: bool; set to true to decide whether to try to update the
-     *     token expiry; if false, no update is attempted
+     * token expiry; if false, no update is attempted
      * $throttle: bool; if $needsUpdate is true and $throttle is true,
-     *     the update will still only be applied if the last update time for the
-     *     token is more than 5 seconds ago
+     * the update will still only be applied if the last update time for the
+     * token is more than 5 seconds ago
      * $expiresAt: DateTime|null; if null, defaults to the current time +
-     *     the tokenTtl on this service
+     * the tokenTtl on this service
+     *
+     * @param true $needsUpdate
+     *
+     * @return (DateTime|false|int|mixed|null|string)[]|string
+     *
+     * @psalm-return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null}
      */
-    public function updateToken($tokenStr, $needsUpdate = true, $throttle = true, $expiresAt = null)
+    public function updateToken(string $tokenStr, bool $needsUpdate = true, bool $throttle = true, DateTime|false|null $expiresAt = null): array|string
     {
         $user = $this->getUserRepository()->getByAuthToken($tokenStr);
 

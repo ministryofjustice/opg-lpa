@@ -14,6 +14,9 @@ class Entity implements EntityInterface
         $this->seed = $seed;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         $result = [

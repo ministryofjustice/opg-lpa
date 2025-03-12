@@ -117,10 +117,14 @@ class Service extends AbstractService
      * warning when their account will be deleted.
      *
      * @param $warningType: '1-week-notice', '1-month-notice'
+     *
      * @return int The number of users notified
+     *
      * @throws Exception
+     *
+     * @psalm-param '1-month-notice'|'1-week-notice' $warningType
      */
-    private function sendWarningEmails($warningType)
+    private function sendWarningEmails(string $warningType)
     {
         if (!array_key_exists($warningType, $this->warningEmailConfig)) {
             throw new Exception('Invalid warning type: ' . $warningType);
@@ -238,7 +242,7 @@ class Service extends AbstractService
     /**
      * @param array $config
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): void
     {
         $this->config = $config;
     }
@@ -246,7 +250,7 @@ class Service extends AbstractService
     /**
      * @param NotifyClient $notifyClient
      */
-    public function setNotifyClient(NotifyClient $notifyClient)
+    public function setNotifyClient(NotifyClient $notifyClient): void
     {
         $this->notifyClient = $notifyClient;
     }
@@ -254,7 +258,7 @@ class Service extends AbstractService
     /**
      * @param UsersService $usersService
      */
-    public function setUsersService(UsersService $usersService)
+    public function setUsersService(UsersService $usersService): void
     {
         $this->usersService = $usersService;
     }

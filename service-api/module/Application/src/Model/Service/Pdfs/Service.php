@@ -61,7 +61,7 @@ class Service extends AbstractService
      * @return ApiProblem|ValidationApiProblem|FileResponse|array
      * @throws \Exception
      */
-    public function fetch($lpaId, $id)
+    public function fetch(string $lpaId, $id)
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -179,7 +179,10 @@ class Service extends AbstractService
     /**
      * @param Lpa $lpa
      * @param $type
+     *
      * @throws \Exception
+     *
+     * @return void
      */
     private function addLpaToQueue(Lpa $lpa, $type)
     {
@@ -218,7 +221,7 @@ class Service extends AbstractService
      * @param $type
      * @return bool|string
      */
-    private function getPdfFile(Lpa $lpa, $type)
+    private function getPdfFile(Lpa $lpa, string $type)
     {
         $bucketConfig = $this->pdfConfig['cache']['s3']['settings'];
 
@@ -265,7 +268,7 @@ class Service extends AbstractService
      *
      * @param array $config
      */
-    public function setPdfConfig(array $config)
+    public function setPdfConfig(array $config): void
     {
         if (isset($config['pdf'])) {
             $this->pdfConfig = $config['pdf'];
@@ -275,7 +278,7 @@ class Service extends AbstractService
     /**
      * @param S3Client $s3Client
      */
-    public function setS3Client(S3Client $s3Client)
+    public function setS3Client(S3Client $s3Client): void
     {
         $this->s3Client = $s3Client;
     }
@@ -283,7 +286,7 @@ class Service extends AbstractService
     /**
      * @param SqsClient $sqsClient
      */
-    public function setSqsClient(SqsClient $sqsClient)
+    public function setSqsClient(SqsClient $sqsClient): void
     {
         $this->sqsClient = $sqsClient;
     }

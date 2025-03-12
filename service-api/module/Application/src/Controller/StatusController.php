@@ -95,7 +95,7 @@ class StatusController extends AbstractRestfulController
     // $lpaId: ID of LPA to update
     // $metaData: existing metadata for the LPA; [] if no metadata exists yet
     // $data: data to use to update the existing metadata
-    private function updateMetadata($lpaId, $metaData, $data)
+    private function updateMetadata($lpaId, $metaData, array $data): void
     {
         // Update metadata in DB
         $newMeta[LPA::SIRIUS_PROCESSING_STATUS] = $data['status'];
@@ -116,14 +116,22 @@ class StatusController extends AbstractRestfulController
         }
     }
 
-    private function getValue($array, $key, $default = null)
+    /**
+     * @param (bool|mixed|null)[] $array
+     *
+     * @psalm-param array{status: mixed|null, inDb: bool} $array
+     */
+    private function getValue(array $array, string $key, array|null $default = null)
     {
         return (isset($array[$key]) ? $array[$key] : $default);
     }
 
     // returns true if the value of at least one key in $array1 is different
     // from that key in $array2
-    private function hasDifference($array1, $array2): bool
+    /**
+     * @psalm-param array{'sirius-processing-status': mixed, 'application-registration-date': mixed, 'application-receipt-date': mixed, 'application-rejected-date': mixed, 'application-invalid-date': mixed, 'application-withdrawn-date': mixed, 'application-return-unpaid': mixed, 'application-dispatch-date': mixed,...} $array1
+     */
+    private function hasDifference(array $array1, $array2): bool
     {
         foreach ($array1 as $key => $array1Value) {
             $array2Value = $this->getValue($array2, $key);

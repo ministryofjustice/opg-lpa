@@ -16,7 +16,7 @@ trait ApplicationRepositoryTrait
     /**
      * @param ApplicationRepositoryInterface $repo
      */
-    public function setApplicationRepository(ApplicationRepositoryInterface $repo)
+    public function setApplicationRepository(ApplicationRepositoryInterface $repo): void
     {
         $this->applicationRepository = $repo;
     }

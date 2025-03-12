@@ -21,6 +21,9 @@ class AuthenticationListener
 {
     use LoggerTrait;
 
+    /**
+     * @return ApiProblemResponse|null
+     */
     public function authenticate(MvcEvent $e)
     {
         $serviceManager = $e->getApplication()->getServiceManager();
