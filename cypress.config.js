@@ -10,7 +10,7 @@ const testStore = {}
 
 async function setupNodeEvents(on, config) {
   await preprocessor.addCucumberPreprocessorPlugin(on, config);
-  on("file:preprocessor", browserify.default(config));
+  //on("file:preprocessor", browserify.default(config));
 
   on("task", {
     putValue({name, value}) {
