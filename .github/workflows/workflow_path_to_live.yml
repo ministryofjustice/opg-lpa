@@ -151,6 +151,8 @@ jobs:
       task_name: "seeding"
     needs:
       - terraform_environment_preproduction
+      - terraform_region_preproduction
+      - terraform_account_preproduction
     secrets: inherit
 
   preprod_terraform_outputs:
@@ -403,7 +405,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@b64ffcaf5b410884ad320a9cfac8866006a109aa # v4.8.0
         with:
-          python-version: '3.9'
+          python-version: '3.13'
 
       - name: Install dependencies
         run: |
