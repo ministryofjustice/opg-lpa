@@ -11,7 +11,7 @@ trait FeedbackRepositoryTrait {
     /**
      * @param FeedbackRepositoryInterface $repo
      */
-    public function setFeedbackRepository(FeedbackRepositoryInterface $repo)
+    public function setFeedbackRepository(FeedbackRepositoryInterface $repo): void
     {
         $this->feedbackRepository = $repo;
     }

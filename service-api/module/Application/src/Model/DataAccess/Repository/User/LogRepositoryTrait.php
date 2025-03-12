@@ -12,7 +12,7 @@ trait LogRepositoryTrait
     /**
      * @param LogRepositoryInterface $repo
      */
-    public function setLogRepository(LogRepositoryInterface $repo)
+    public function setLogRepository(LogRepositoryInterface $repo): void
     {
         $this->logRepository = $repo;
     }
