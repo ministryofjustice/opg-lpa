@@ -1,4 +1,5 @@
 FROM php:8.2-fpm-alpine3.20
+COPY --from=mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/bin/
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -10,7 +11,8 @@ RUN apk upgrade --no-cache
 RUN apk add --no-cache icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
     && docker-php-ext-install intl \
-    && docker-php-ext-install bcmath
+    && install-php-extensions gmp \
+    && rm /usr/bin/install-php-extensions
 
 # Install composer dependencies
 COPY --chown=root:root service-admin/composer.json /app/composer.json

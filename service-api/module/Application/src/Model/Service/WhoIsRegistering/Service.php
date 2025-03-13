@@ -16,7 +16,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|Entity
      */
-    public function update($lpaId, $data)
+    public function update(string $lpaId, $data)
     {
         $whoIsRegistering = (isset($data['whoIsRegistering']) ? $data['whoIsRegistering'] : null);
 

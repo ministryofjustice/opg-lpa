@@ -24,7 +24,7 @@ class Service extends AbstractService
      * @param $userId
      * @return ApiProblem|Entity
      */
-    public function fetch($lpaId, $userId)
+    public function fetch(string $lpaId, string $userId)
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -50,7 +50,7 @@ class Service extends AbstractService
      * @param $userId
      * @return ApiProblem|Entity
      */
-    public function update($lpaId, $data, $userId)
+    public function update(string $lpaId, $data, string $userId)
     {
         if (!isset($data['seed']) || !is_numeric($data['seed'])) {
             return new ApiProblem(400, 'Invalid LPA identifier to seed from');
@@ -87,7 +87,7 @@ class Service extends AbstractService
     /**
      * @param ApplicationService $applicationsService
      */
-    public function setApplicationsService(ApplicationService $applicationsService)
+    public function setApplicationsService(ApplicationService $applicationsService): void
     {
         $this->applicationsService = $applicationsService;
     }

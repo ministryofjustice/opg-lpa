@@ -11,7 +11,7 @@ trait WhoRepositoryTrait {
     /**
      * @param WhoRepositoryInterface $repo
      */
-    public function setWhoRepository(WhoRepositoryInterface $repo)
+    public function setWhoRepository(WhoRepositoryInterface $repo): void
     {
         $this->whoRepository = $repo;
     }

@@ -23,9 +23,12 @@ class TokenModel implements UserRepository\TokenInterface
      * Returns a DateTime for a given key from a range of time formats.
      *
      * @param $key
+     *
      * @return DateTime|null
+     *
+     * @psalm-param 'createdAt'|'expiresAt'|'updatedAt' $key
      */
-    private function returnDateField($key)
+    private function returnDateField(string $key)
     {
         if (!isset($this->data[$key])) {
             return null;

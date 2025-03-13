@@ -14,7 +14,6 @@ use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\PasswordValidatorTrait;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
-use Laminas\Math\BigInteger\BigInteger;
 use Random\RandomException;
 
 class Service extends AbstractService
@@ -59,10 +58,8 @@ class Service extends AbstractService
         do {
             // Create a 32 character user id and activation token.
             $userId = bin2hex(random_bytes(16));
-            $activationToken = bin2hex(random_bytes(16));
 
-            // Use base62 for shorter tokens
-            $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
+            $activationToken = make_token();
 
             $created = $this->getUserRepository()->create($userId, [
                 'identity'              => $username,
@@ -163,10 +160,11 @@ class Service extends AbstractService
     /**
      * Hashes the passed identity, ensuring it's trimmed and lowercase.
      *
-     * @param $identity
+     * @param null|string $identity
+     *
      * @return string
      */
-    private function hashIdentity($identity)
+    private function hashIdentity(string|null $identity)
     {
         return hash('sha512', strtolower(trim($identity)));
     }
@@ -253,10 +251,10 @@ class Service extends AbstractService
     /**
      * @param string $query to match against username
      * @param array $options See UserData.matchUsers()
-     * @return ArrayObject<mixed, mixed> Array of arrays;
-     *     each subarray derived from a UserModel instance
+     *
+     * @return ArrayObject Array of arrays; each subarray derived from a UserModel instance
      */
-    public function matchUsers(string $query, array $options = [])
+    public function matchUsers(string $query, array $options = []): ArrayObject
     {
         $users = new ArrayObject();
 
@@ -272,7 +270,7 @@ class Service extends AbstractService
     /**
      * @param ApplicationService $applicationsService
      */
-    public function setApplicationsService(ApplicationService $applicationsService)
+    public function setApplicationsService(ApplicationService $applicationsService): void
     {
         $this->applicationsService = $applicationsService;
     }

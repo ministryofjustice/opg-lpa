@@ -13,6 +13,11 @@ class Entity implements EntityInterface
         $this->preference = $preference;
     }
 
+    /**
+     * @return (false|string)[]
+     *
+     * @psalm-return array{preference?: false|string}
+     */
     public function toArray()
     {
         if (is_string($this->preference) || $this->preference === false) {
