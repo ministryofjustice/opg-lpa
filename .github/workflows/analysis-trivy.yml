@@ -62,7 +62,7 @@ jobs:
 
       - name: Run Trivy vulnerability scanner for Code
         if: steps.filter.outputs.check == 'true'
-        uses: aquasecurity/trivy-action@a11da62073708815958ea6d84f5650c78a3ef85b
+        uses: aquasecurity/trivy-action@53e8848d3e517db48b0e70ae4f648a12ae04fe02
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
