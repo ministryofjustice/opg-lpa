@@ -127,7 +127,7 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.9.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
@@ -146,7 +146,7 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.9.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
@@ -165,7 +165,7 @@ jobs:
 
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.9.0
     needs:
       - docker_build_scan_push
       - slack_msg_production_deploy_begin
@@ -208,7 +208,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@b64ffcaf5b410884ad320a9cfac8866006a109aa # v4.8.0
         with:
-          python-version: '3.9'
+          python-version: '3.13'
 
       - name: Install dependencies
         run: |
