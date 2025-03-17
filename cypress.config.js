@@ -61,6 +61,7 @@ module.exports = defineConfig({
   defaultCommandTimeout: 12000,
   requestTimeout: 12000,
   trashAssetsBeforeRuns: false,
+  injectDocumentDomain: true,
   e2e: {
     specPattern: "cypress/e2e/**/*.feature",
     supportFile: "cypress/support/e2e.js",
