@@ -89,7 +89,7 @@ jobs:
     name: TF Preproduction - Account
     needs:
       - set_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.9.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
       terraform_workspace: preproduction
@@ -105,7 +105,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.9.0
     needs:
       - set_variables
     with:
@@ -123,7 +123,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.9.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       terraform_workspace: preproduction
@@ -325,7 +325,7 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.9.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
@@ -344,7 +344,7 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.9.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
@@ -363,7 +363,7 @@ jobs:
 
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.9.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       terraform_workspace: production
