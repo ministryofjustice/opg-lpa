@@ -7,7 +7,6 @@ use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\PasswordValidatorTrait;
-use Laminas\Math\BigInteger\BigInteger;
 use DateTime;
 use Random\RandomException;
 
@@ -75,10 +74,7 @@ class Service extends AbstractService
             ];
         }
 
-        $token = random_bytes(16);
-
-        //  Use base62 for shorter tokens
-        $token = BigInteger::factory('bcmath')->baseConvert(bin2hex($token), 16, 62);
+        $token = make_token();
 
         $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
 
