@@ -27,7 +27,7 @@ class CsrfMiddleware implements MiddlewareInterface
 
         if (is_null($csrf)) {
             //  Generate a secret csrf value before proceeding
-            $secret = make_token();
+            $secret = make_token(64);
 
             $this->addTokenData('csrf', $secret);
         }
