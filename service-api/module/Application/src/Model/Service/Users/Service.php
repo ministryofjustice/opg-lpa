@@ -160,11 +160,10 @@ class Service extends AbstractService
     /**
      * Hashes the passed identity, ensuring it's trimmed and lowercase.
      *
-     * @param null|string $identity
-     *
+     * @param $identity
      * @return string
      */
-    private function hashIdentity(string|null $identity)
+    private function hashIdentity($identity)
     {
         return hash('sha512', strtolower(trim($identity)));
     }
@@ -251,10 +250,10 @@ class Service extends AbstractService
     /**
      * @param string $query to match against username
      * @param array $options See UserData.matchUsers()
-     *
-     * @return ArrayObject Array of arrays; each subarray derived from a UserModel instance
+     * @return ArrayObject<mixed, mixed> Array of arrays;
+     *     each subarray derived from a UserModel instance
      */
-    public function matchUsers(string $query, array $options = []): ArrayObject
+    public function matchUsers(string $query, array $options = [])
     {
         $users = new ArrayObject();
 
@@ -270,7 +269,7 @@ class Service extends AbstractService
     /**
      * @param ApplicationService $applicationsService
      */
-    public function setApplicationsService(ApplicationService $applicationsService): void
+    public function setApplicationsService(ApplicationService $applicationsService)
     {
         $this->applicationsService = $applicationsService;
     }

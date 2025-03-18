@@ -33,7 +33,7 @@ class UserModel implements UserRepository\UserInterface
      * @param $key
      * @return DateTime|null
      */
-    private function returnDateField(string $key)
+    private function returnDateField($key)
     {
         if (!isset($this->data[$key])) {
             return null;
@@ -225,8 +225,6 @@ class UserModel implements UserRepository\UserInterface
     /**
      * Sets the failed login attempts to zero in this instance.
      * NOTE - this does not change the value in the database!
-     *
-     * @return void
      */
     public function resetFailedLoginAttempts()
     {

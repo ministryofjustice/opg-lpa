@@ -66,10 +66,7 @@
         "psr-4": {
             "App\\": "src/App/src/",
             "MakeShared\\": "../shared/module/MakeShared/src/"
-        },
-        "files": [
-            "../shared/src/functions/make_token.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {

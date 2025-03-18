@@ -12,7 +12,7 @@ trait UserRepositoryTrait
     /**
      * @param UserRepositoryInterface $repo
      */
-    public function setUserRepository(UserRepositoryInterface $repo): void
+    public function setUserRepository(UserRepositoryInterface $repo)
     {
         $this->userRepository = $repo;
     }

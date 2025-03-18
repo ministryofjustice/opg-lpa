@@ -16,7 +16,7 @@ class Service extends AbstractService
      * @param $lpaId
      * @return ApiProblem|Entity
      */
-    public function create(string $lpaId)
+    public function create($lpaId)
     {
         $lpa = $this->getLpa($lpaId);
 

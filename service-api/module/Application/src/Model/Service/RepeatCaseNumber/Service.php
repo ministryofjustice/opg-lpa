@@ -15,7 +15,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|Entity
      */
-    public function update(string $lpaId, $data)
+    public function update($lpaId, $data)
     {
         $repeatCaseNumber = (isset($data['repeatCaseNumber']) ? $data['repeatCaseNumber'] : null);
 
@@ -41,7 +41,7 @@ class Service extends AbstractService
      * @param $lpaId
      * @return ValidationApiProblem|bool
      */
-    public function delete(string $lpaId)
+    public function delete($lpaId)
     {
         $lpa = $this->getLpa($lpaId);
 

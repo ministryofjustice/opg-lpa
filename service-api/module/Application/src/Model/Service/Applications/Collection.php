@@ -11,12 +11,7 @@ use Traversable;
  */
 class Collection extends Paginator
 {
-    /**
-     * @return (array|int)[]
-     *
-     * @psalm-return array{applications: list{0?: mixed,...}, total: int}
-     */
-    public function toArray(): array
+    public function toArray()
     {
         //  Extract the applications data
         $applications = [];

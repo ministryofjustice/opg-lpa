@@ -13,11 +13,6 @@ class Entity implements EntityInterface
         $this->repeatCaseNumber = $repeatCaseNumber;
     }
 
-    /**
-     * @return array
-     *
-     * @psalm-return array{repeatCaseNumber?: mixed}
-     */
     public function toArray()
     {
         if (!is_null($this->repeatCaseNumber)) {

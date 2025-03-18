@@ -13,11 +13,6 @@ class Entity implements EntityInterface
         $this->type = $type;
     }
 
-    /**
-     * @return string[]
-     *
-     * @psalm-return array{type?: string}
-     */
     public function toArray()
     {
         if (is_string($this->type)) {

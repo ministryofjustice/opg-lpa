@@ -18,7 +18,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function update(string $lpaId, $data)
+    public function update($lpaId, $data)
     {
         $correspondent = new Correspondence($data);
 
@@ -44,7 +44,7 @@ class Service extends AbstractService
      * @param $lpaId
      * @return ValidationApiProblem|bool
      */
-    public function delete(string $lpaId)
+    public function delete($lpaId)
     {
         $lpa = $this->getLpa($lpaId);
 

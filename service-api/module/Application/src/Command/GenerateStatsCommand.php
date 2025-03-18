@@ -36,7 +36,7 @@ class GenerateStatsCommand extends Command
         return $this;
     }
 
-    public function setStatsService(StatsService $statsService): void
+    public function setStatsService(StatsService $statsService)
     {
         $this->statsService = $statsService;
     }
