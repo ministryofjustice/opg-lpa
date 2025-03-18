@@ -6,7 +6,6 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\DataAccess\Repository\User\TokenInterface as Token;
 use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
-use Laminas\Math\BigInteger\BigInteger;
 use DateTime;
 
 class Service extends AbstractService
@@ -99,10 +98,7 @@ class Service extends AbstractService
             $expires = new DateTime("+" . $this->tokenTtl . " seconds");
 
             do {
-                $authToken = bin2hex(random_bytes(32));
-
-                // Use base62 for shorter tokens
-                $authToken = BigInteger::factory('bcmath')->baseConvert($authToken, 16, 62);
+                $authToken = make_token(32);
 
                 $created = $this->getUserRepository()->setAuthToken(
                     $user->id(),

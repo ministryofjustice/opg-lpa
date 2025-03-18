@@ -15,7 +15,6 @@
         "laminas/laminas-crypt": "^3.4",
         "laminas/laminas-filter": "^2.12.0",
         "laminas/laminas-log": "^2.13",
-        "laminas/laminas-math": "^3.4",
         "laminas/laminas-mvc": "^3.2",
         "laminas/laminas-mvc-i18n": "^2.0",
         "laminas/laminas-paginator": "^2.8",
@@ -52,7 +51,10 @@
         "psr-4": {
             "Application\\": "module/Application/src/",
             "MakeShared\\": "../shared/module/MakeShared/src/"
-        }
+        },
+        "files": [
+            "../shared/src/functions/make_token.php"
+        ]
     },
     "config": {
         "allow-plugins": {
