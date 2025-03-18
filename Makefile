@@ -30,7 +30,7 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer update laminas-math --ignore-platform-reqs
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
@@ -38,11 +38,11 @@ run-pdf-composer:
 
 .PHONY: run-api-composer
 run-api-composer:
-	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer remove laminas-math --no-update
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer update laminas-math --ignore-platform-reqs
 
 .PHONY: run-shared-composer
 run-shared-composer:
