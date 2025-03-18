@@ -88,7 +88,7 @@ class Service extends AbstractService
         return $this->pruneBeforeDate;
     }
 
-    public function setFeedbackValidator(FeedbackValidator $feedbackValidator): void
+    public function setFeedbackValidator(FeedbackValidator $feedbackValidator)
     {
         $this->feedbackValidator = $feedbackValidator;
     }

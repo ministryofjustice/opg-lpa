@@ -38,7 +38,7 @@ class UsersController extends AbstractAuthController
      * @param $password
      * @return JsonModel|ApiProblem
      */
-    private function createAccount(string $username, $password)
+    private function createAccount($username, $password)
     {
         $result = $this->getService()->create($username, $password);
 
@@ -55,7 +55,7 @@ class UsersController extends AbstractAuthController
      * @param $activationToken
      * @return JsonModel|ApiProblem
      */
-    private function activateAccount(string $activationToken)
+    private function activateAccount($activationToken)
     {
         $result = $this->getService()->activate($activationToken);
 

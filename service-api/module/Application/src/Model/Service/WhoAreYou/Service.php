@@ -20,7 +20,7 @@ class Service extends AbstractService
      * @param $data
      * @return ApiProblem|ValidationApiProblem|Entity
      */
-    public function update(string $lpaId, $data)
+    public function update($lpaId, $data)
     {
         $lpa = $this->getLpa($lpaId);
 

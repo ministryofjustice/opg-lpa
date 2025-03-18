@@ -13,11 +13,6 @@ class Entity implements EntityInterface
         $this->answered = $answered;
     }
 
-    /**
-     * @return bool[]
-     *
-     * @psalm-return array{whoAreYouAnswered?: bool}
-     */
     public function toArray()
     {
         if (is_bool($this->answered)) {

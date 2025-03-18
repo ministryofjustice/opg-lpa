@@ -30,7 +30,7 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer update --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
@@ -38,11 +38,11 @@ run-pdf-composer:
 
 .PHONY: run-api-composer
 run-api-composer:
-	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer update --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer update --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-shared-composer
 run-shared-composer:
@@ -153,10 +153,6 @@ dc-unit-tests: dc-front-unit-tests
 	@docker-compose run admin-app /app/vendor/bin/phpunit
 	@docker-compose run api-app /app/vendor/bin/phpunit
 	@docker-compose run pdf-app /app/vendor/bin/phpunit
-
-.PHONY: run-api-psalm
-run-api-psalm:
-	@docker-compose run api-app /app/vendor/bin/psalm --alter --issues=MissingReturnType,InvalidReturnType,MissingParamType 
 
 .PHONY: npm-install
 npm-install:

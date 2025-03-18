@@ -126,7 +126,7 @@ class Service extends AbstractService
     /**
      * @param AuthenticationService $authenticationService
      */
-    public function setAuthenticationService(AuthenticationService $authenticationService): void
+    public function setAuthenticationService(AuthenticationService $authenticationService)
     {
         $this->authenticationService = $authenticationService;
     }

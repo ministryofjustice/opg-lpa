@@ -56,7 +56,7 @@ class AuthenticateController extends AbstractAuthController
      * @param $updateToken
      * @return JsonModel|ApiProblem
      */
-    private function withToken(string $authToken, bool $updateToken)
+    private function withToken($authToken, $updateToken)
     {
         $result = $this->authenticationService->withToken($authToken, $updateToken);
 
@@ -90,7 +90,7 @@ class AuthenticateController extends AbstractAuthController
      * @param $updateToken
      * @return JsonModel|ApiProblem
      */
-    private function withPassword(string $username, $password, bool $updateToken)
+    private function withPassword($username, $password, $updateToken)
     {
         $result = $this->authenticationService->withPassword($username, $password, $updateToken);
 
@@ -152,11 +152,9 @@ class AuthenticateController extends AbstractAuthController
      * expects a JSON POST with the following properties:
      * - CheckedToken header, containing the user's auth token
      * - JSON body with these properties:
-     * - "expiresInSeconds": <int>
-     *
-     * @return ApiProblem|JsonModel
+     *   - "expiresInSeconds": <int>
      */
-    public function setSessionExpiryAction(): JsonModel|ApiProblem
+    public function setSessionExpiryAction()
     {
         // Suppress psalm errors caused by bug in laminas-mvc;
         // see https://github.com/laminas/laminas-mvc/issues/77

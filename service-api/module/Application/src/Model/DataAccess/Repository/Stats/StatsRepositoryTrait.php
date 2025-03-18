@@ -11,7 +11,7 @@ trait StatsRepositoryTrait {
     /**
      * @param StatsRepositoryInterface $repo
      */
-    public function setStatsRepository(StatsRepositoryInterface $repo): void
+    public function setStatsRepository(StatsRepositoryInterface $repo)
     {
         $this->statsRepository = $repo;
     }

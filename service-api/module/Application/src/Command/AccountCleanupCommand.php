@@ -37,7 +37,7 @@ class AccountCleanupCommand extends Command
         return $this;
     }
 
-    public function setAccountCleanupService(AccountCleanupService $accountCleanupService): void
+    public function setAccountCleanupService(AccountCleanupService $accountCleanupService)
     {
         $this->accountCleanupService = $accountCleanupService;
     }
