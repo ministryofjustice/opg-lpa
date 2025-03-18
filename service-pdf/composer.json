@@ -6,7 +6,7 @@
     "repositories": [
     ],
     "require": {
-        "php": ">=8.1 <8.2.0",
+        "php": ">=8.2 <8.4.0",
         "aws/aws-sdk-php": "^3.204.5",
         "mikehaertl/php-pdftk": "0.2.1",
         "mikehaertl/php-shellcommand": "1.6.4 as 1.0.2",
