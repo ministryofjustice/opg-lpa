@@ -67,7 +67,7 @@ six==1.17.0
     # via python-dateutil
 soupsieve==2.6
     # via beautifulsoup4
-typing-extensions==4.12.2
+typing-extensions==4.13.0
     # via beautifulsoup4
 urllib3==2.3.0
     # via
