@@ -31,7 +31,7 @@ jobs:
         working-directory: ${{ matrix.scan.path }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Configure AWS Credentials
         if: matrix.scan.path == './service-api' # aws creds currently needed for service-api but dependency will be removed in LPAL-1075
         uses: aws-actions/configure-aws-credentials@50ac8dd1e1b10d09dac7b8727528b91bed831ac0 # v3.0.2
@@ -43,7 +43,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: OPGMakeaLPAECRGithubAction
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@9e72090525849c5e82e596468b86eb55e9cc5401 # 2.32.0
         with:
           php-version: "8.2"
       - name: pdftk install
@@ -58,7 +58,7 @@ jobs:
       - name: Check coverage
         run: php ../scripts/pipeline/php_coverage/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
       - name: Upload Coverage Artifacts
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: coverage-html
           path: ${{ matrix.scan.path }}/coverage-html/
@@ -78,7 +78,7 @@ jobs:
         working-directory: ${{ matrix.scan.path }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Configure AWS Credentials
         if: matrix.scan.path == './service-api' # aws creds currently needed for service-api but dependency will be removed in LPAL-1075
         uses: aws-actions/configure-aws-credentials@50ac8dd1e1b10d09dac7b8727528b91bed831ac0 # v3.0.2
@@ -90,7 +90,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: OPGMakeaLPAECRGithubAction
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@9e72090525849c5e82e596468b86eb55e9cc5401 # 2.32.0
         with:
           php-version: "8.3"
       - name: pdftk install
@@ -105,7 +105,7 @@ jobs:
       - name: Check coverage
         run: php ../scripts/pipeline/php_coverage/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
       - name: Upload Coverage Artifacts
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: coverage-html
           path: ${{ matrix.scan.path }}/coverage-html/
