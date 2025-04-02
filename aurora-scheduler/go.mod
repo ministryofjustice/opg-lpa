@@ -2,7 +2,7 @@ module descheduler
 
 go 1.22
 
-toolchain go1.24.1
+toolchain go1.24.2
 
 require (
 	github.com/aws/aws-lambda-go v1.47.0
