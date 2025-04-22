@@ -33,13 +33,13 @@ flask-cors==5.0.1
     # via locust
 flask-login==0.6.3
     # via locust
-gevent==24.11.1
+gevent==25.4.1
     # via
     #   geventhttpclient
     #   locust
 geventhttpclient==2.3.3
     # via locust
-greenlet==3.2.0
+greenlet==3.2.1
     # via gevent
 idna==3.10
     # via requests
@@ -65,7 +65,7 @@ requests==2.32.3
     # via locust
 six==1.17.0
     # via python-dateutil
-soupsieve==2.6
+soupsieve==2.7
     # via beautifulsoup4
 typing-extensions==4.13.2
     # via beautifulsoup4
