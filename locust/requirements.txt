@@ -33,7 +33,7 @@ flask-cors==5.0.1
     # via locust
 flask-login==0.6.3
     # via locust
-gevent==25.4.1
+gevent==25.4.2
     # via
     #   geventhttpclient
     #   locust
@@ -47,7 +47,7 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-locust==2.35.0
+locust==2.36.1
     # via -r requirements.in
 markupsafe==3.0.2
     # via
