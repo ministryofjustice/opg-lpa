@@ -49,8 +49,8 @@ jobs:
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |
-          sudo apt-get update
-          sudo apt-get install pdftk-java
+          sudo apt update
+          sudo apt install pdftk-java
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
@@ -96,8 +96,8 @@ jobs:
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |
-          sudo apt-get update
-          sudo apt-get install pdftk-java
+          sudo apt update
+          sudo apt install pdftk-java
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
       - name: Run phpunit
