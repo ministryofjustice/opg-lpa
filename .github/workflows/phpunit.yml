@@ -49,7 +49,7 @@ jobs:
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |
-          sudo apt-get update
+          sudo apt-get update --allow-releaseinfo-change
           sudo apt-get install pdftk-java
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
@@ -96,7 +96,7 @@ jobs:
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |
-          sudo apt-get update
+          sudo apt-get update --allow-releaseinfo-change
           sudo apt-get install pdftk-java
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
