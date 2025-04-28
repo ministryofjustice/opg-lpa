@@ -24,7 +24,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 # PDFTK does have a community based docker container, but the version is not up to date.
 COPY --chown=root:root service-pdf/bin/pdftk /usr/local/bin/pdftk
 
-RUN curl -sS -o /usr/local/bin/pdftk-all.jar https://gitlab.com/pdftk-java/pdftk/-/jobs/5367688793/artifacts/raw/build/libs/pdftk-all.jar \
+RUN curl -sS -o /usr/local/bin/pdftk-all.jar https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/build/libs/pdftk-all.jar \
     && chmod 755 /usr/local/bin/pdftk
 
 COPY --chown=root:root shared /shared
