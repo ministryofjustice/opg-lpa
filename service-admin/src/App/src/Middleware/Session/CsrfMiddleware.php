@@ -7,7 +7,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Laminas\Math\BigInteger\BigInteger;
 
 /**
  * Class CsrfMiddleware
@@ -28,11 +27,7 @@ class CsrfMiddleware implements MiddlewareInterface
 
         if (is_null($csrf)) {
             //  Generate a secret csrf value before proceeding
-            $secret = BigInteger::factory('bcmath')->baseConvert(
-                bin2hex(random_bytes(64)),
-                16,
-                62
-            );
+            $secret = make_token(64);
 
             $this->addTokenData('csrf', $secret);
         }

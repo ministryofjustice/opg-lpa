@@ -4,7 +4,6 @@ namespace Opg\Lpa\Pdf\Worker\Response;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use Laminas\Crypt\Symmetric\Exception\InvalidArgumentException;
 use MakeShared\Logging\SimpleLoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
 
@@ -38,7 +37,7 @@ class S3Response
      * Store the file on the passed path for retrieval by the API service.
      *
      * @param string $filecontents
-     * @throws InvalidArgumentException|S3Exception
+     * @throws S3Exception
      */
     public function save(string $fileContents)
     {

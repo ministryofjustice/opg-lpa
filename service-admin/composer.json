@@ -24,7 +24,6 @@
         "laminas/laminas-diactoros": "^2.8.0",
         "laminas/laminas-form": "^3.0.1",
         "laminas/laminas-log": "^2.13",
-        "laminas/laminas-math": "^3.4",
         "laminas/laminas-permissions-rbac": "^3.2.0",
         "laminas/laminas-router": "^3.7",
         "laminas/laminas-servicemanager": "^3.10.0",
@@ -67,7 +66,10 @@
         "psr-4": {
             "App\\": "src/App/src/",
             "MakeShared\\": "../shared/module/MakeShared/src/"
-        }
+        },
+        "files": [
+            "../shared/src/functions/make_token.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
