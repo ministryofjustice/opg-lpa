@@ -1,12 +1,16 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    "helpers:pinGitHubActionDigests"
   ],
   "branchPrefix": "renovate-",
   "labels": [
     "Renovate",
     "Dependencies"
+  ],
+  "ignoreDeps": [
+        "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list"
   ],
   "commitMessageAction": "Renovate update",
   "forkProcessing": "enabled",
