@@ -10,7 +10,7 @@
   },
   "engines": {
     "npm": ">=10.0.0 <11.0.0",
-    "node": ">=20.0.0 <=22.14.0"
+    "node": ">=20.0.0 <=22.15.0"
   },
   "scripts": {
     "preinstall": "npx npm-force-resolutions"
