@@ -86,7 +86,7 @@ jobs:
           echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
 
       - name: Setup Node.js
-        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
+        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
         if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
         with:
           node-version-file: '.nvmrc'
@@ -150,7 +150,7 @@ jobs:
           docker push --all-tags $ECR_REGISTRY/$IMAGE_NAME
 
       - name: Setup Python
-        uses: actions/setup-python@b64ffcaf5b410884ad320a9cfac8866006a109aa # v4.8.0
+        uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4.9.1
         with:
           python-version: "3.13"
 
