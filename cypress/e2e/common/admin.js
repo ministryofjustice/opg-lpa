@@ -99,16 +99,6 @@ Then(`I can export feedback and download it as a CSV file`, () => {
     });
   });
 
-  // work-around for cypress bug when downloading files from a link;
-  // see https://github.com/cypress-io/cypress/issues/7083#issuecomment-858489694
-  cy.document().then((doc) => {
-    doc.addEventListener('click', () => {
-      setTimeout(function () {
-        doc.location.reload();
-      }, 1000);
-    });
-  });
-
   cy.contains('Export').click();
 });
 

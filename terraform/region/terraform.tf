@@ -1,10 +1,12 @@
 terraform {
   backend "s3" {
-    bucket         = "opg.terraform.state"
-    key            = "moj-lasting-power-of-attorney-region/terraform.tfstate"
-    encrypt        = true
-    region         = "eu-west-1"
-    role_arn       = "arn:aws:iam::311462405659:role/opg-lpa-ci"
+    bucket  = "opg.terraform.state"
+    key     = "moj-lasting-power-of-attorney-region/terraform.tfstate"
+    encrypt = true
+    region  = "eu-west-1"
+    assume_role = {
+      role_arn = "arn:aws:iam::311462405659:role/opg-lpa-ci"
+    }
     dynamodb_table = "remote_lock"
   }
 }

@@ -5,12 +5,12 @@
   "repository": "https://github.com/ministryofjustice/opg-lpa-front",
   "license": "MIT",
   "resolutions": {
-    "axios": "0.27.2",
-    "socket.io": "2.5.0"
+    "axios": "0.30.0",
+    "socket.io": "2.5.1"
   },
   "engines": {
     "npm": ">=10.0.0 <11.0.0",
-    "node": ">=20.0.0 <=22.1.0"
+    "node": ">=20.0.0 <=22.15.0"
   },
   "scripts": {
     "preinstall": "npx npm-force-resolutions"

@@ -38,8 +38,8 @@ services:
   postgres:
     container_name: lpa-postgres
     image: postgres:13.7
-#    ports:
-#      - 5434:5432
+    ports:
+      - 5434:5432
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: lpadb
@@ -75,7 +75,7 @@ services:
 
   localstack:
     container_name: lpa-localstack
-    image: localstack/localstack:3.4.0
+    image: localstack/localstack:3.8.1
     privileged: true
 #    ports:
 #      - 4568:4566
