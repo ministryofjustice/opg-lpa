@@ -1,18 +1,31 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests"
+  ],
   "branchPrefix": "renovate-",
-  "labels": ["Renovate", "Dependencies"],
+  "labels": [
+    "Renovate",
+    "Dependencies"
+  ],
+  "ignoreDeps": [
+    "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list"
+  ],
   "commitMessageAction": "Renovate update",
-  "includeForks": true,
+  "forkProcessing": "enabled",
   "lockFileMaintenance": {
     "enabled": false
   },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
-    "labels": ["Dependencies", "Renovate", "SecurityAlert"],
+    "labels": [
+      "Dependencies",
+      "Renovate",
+      "SecurityAlert"
+    ],
     "dependencyDashboardApproval": false,
-    "stabilityDays": 0,
+    "minimumReleaseAge": null,
     "rangeStrategy": "update-lockfile",
     "commitMessagePrefix": "[SECURITY]",
     "branchTopic": "{{{datasource}}}-{{{depName}}}-vulnerability",
@@ -43,44 +56,87 @@
         "cypress: bundle updates to package.json and dockerfile",
         "allow major version updates"
       ],
-      "labels": ["devDependencies", "Renovate", "Cypress"],
+      "labels": [
+        "devDependencies",
+        "Renovate",
+        "Cypress"
+      ],
       "groupName": "Cypress",
-      "matchUpdateTypes": ["major"],
-      "matchManagers": ["dockerfile", "npm"],
-      "matchPackagePatterns": ["cypress" , "locust"]
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchManagers": [
+        "dockerfile",
+        "npm"
+      ],
+      "matchPackageNames": [
+        "/cypress/",
+        "/locust/"
+      ]
     },
     {
       "description": [
         "dev tools: allow major updates only for dev tools and aws-sdk",
         "note: this may fail if other packages depend on existing versions"
       ],
-      "labels": ["devDependencies", "Renovate", "DevTools"],
-      "matchUpdateTypes": ["major"],
-      "matchManagers": ["composer"],
-      "matchPackageNames": ["vimeo/psalm", "phpunit/phpunit", "aws/aws-sdk-php"]
+      "labels": [
+        "devDependencies",
+        "Renovate",
+        "DevTools"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchPackageNames": [
+        "vimeo/psalm",
+        "phpunit/phpunit",
+        "aws/aws-sdk-php"
+      ]
     },
     {
       "description": [
         "Github Actions: bundle all updates together"
       ],
-      "labels": ["devDependencies", "Renovate", "GithubActions"],
+      "labels": [
+        "devDependencies",
+        "Renovate",
+        "GithubActions"
+      ],
       "groupName": "Github Actions",
       "automerge": true,
       "schedule": [
         "after 6am and before 9am on Monday"
       ],
-      "matchUpdateTypes": ["minor", "patch", "digest"],
-      "stabilityDays": 3,
-      "matchManagers": ["github-actions"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "minimumReleaseAge": "3 days",
+      "matchManagers": [
+        "github-actions"
+      ]
     },
     {
       "description": [
         "Terraform: bundle all updates together"
       ],
-      "labels": ["devDependencies", "Renovate", "Terraform"],
+      "labels": [
+        "devDependencies",
+        "Renovate",
+        "Terraform"
+      ],
       "groupName": "Terraform",
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchManagers": ["terraform"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchManagers": [
+        "terraform"
+      ]
     },
     {
       "description": [
@@ -89,28 +145,56 @@
         "redis: keep in sync with live",
         "php: 8.2 upgrade needs to be managed manually"
       ],
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "matchManagers": ["dockerfile", "docker-compose", "composer"],
-      "matchPackageNames": ["postgres", "redis", "php", "python"],
+      "matchUpdateTypes": [
+        "major",
+        "minor",
+        "patch"
+      ],
+      "matchManagers": [
+        "dockerfile",
+        "docker-compose",
+        "composer"
+      ],
+      "matchPackageNames": [
+        "postgres",
+        "redis",
+        "php",
+        "python"
+      ],
       "enabled": false
     },
     {
       "description": [
         "No updates to PHP PDF libraries (too sensitive and risky)"
       ],
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "matchManagers": ["composer"],
-      "matchPackageNames": ["tecnickcom/tcpdf", "mikehaertl/php-pdftk"],
+      "matchUpdateTypes": [
+        "major",
+        "minor",
+        "patch"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchPackageNames": [
+        "tecnickcom/tcpdf",
+        "mikehaertl/php-pdftk"
+      ],
       "enabled": false
     },
     {
       "description": [
         "No major version updates except for dev tools"
       ],
-      "matchUpdateTypes": ["major"],
-      "excludePackageNames": ["vimeo/psalm", "phpunit/phpunit"],
-      "excludePackagePatterns": ["cypress" , "locust"],
-      "enabled": false
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false,
+      "matchPackageNames": [
+        "!vimeo/psalm",
+        "!phpunit/phpunit",
+        "!/cypress/",
+        "!/locust/"
+      ]
     },
     {
       "description": [
@@ -120,16 +204,27 @@
       "automerge": false,
       "groupName": "admin minor and patch updates (PHP 8.2)",
       "groupSlug": "admin-minor-patch-updates-php82",
-      "labels": ["Dependencies", "Renovate", "PHP 8.2"],
-      "matchManagers": ["composer"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "excludePackageNames": ["php"],
-      "matchFiles": [
+      "labels": [
+        "Dependencies",
+        "Renovate",
+        "PHP 8.2"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchFileNames": [
         "service-admin/composer.json"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "stabilityDays": 3
+      "minimumReleaseAge": "3 days",
+      "matchPackageNames": [
+        "!php"
+      ]
     },
     {
       "description": [
@@ -139,16 +234,27 @@
       "automerge": false,
       "groupName": "front minor and patch updates (PHP 8.2)",
       "groupSlug": "front-minor-patch-updates-php82",
-      "labels": ["Dependencies", "Renovate", "PHP 8.2"],
-      "matchManagers": ["composer"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "excludePackageNames": ["php"],
-      "matchFiles": [
+      "labels": [
+        "Dependencies",
+        "Renovate",
+        "PHP 8.2"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchFileNames": [
         "service-front/composer.json"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "stabilityDays": 3
+      "minimumReleaseAge": "3 days",
+      "matchPackageNames": [
+        "!php"
+      ]
     },
     {
       "description": [
@@ -158,16 +264,27 @@
       "automerge": false,
       "groupName": "api minor and patch updates (PHP 8.2)",
       "groupSlug": "api-minor-patch-updates-php82",
-      "labels": ["Dependencies", "Renovate", "PHP 8.2"],
-      "matchManagers": ["composer"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "excludePackageNames": ["php"],
-      "matchFiles": [
+      "labels": [
+        "Dependencies",
+        "Renovate",
+        "PHP 8.2"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchFileNames": [
         "service-api/composer.json"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "stabilityDays": 3
+      "minimumReleaseAge": "3 days",
+      "matchPackageNames": [
+        "!php"
+      ]
     },
     {
       "description": [
@@ -177,16 +294,27 @@
       "automerge": false,
       "groupName": "pdf minor and patch updates (PHP 8.1)",
       "groupSlug": "pdf-minor-patch-updates-php81",
-      "labels": ["Dependencies", "Renovate", "PHP 8.1"],
-      "matchManagers": ["composer"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "excludePackageNames": ["php"],
-      "matchFiles": [
+      "labels": [
+        "Dependencies",
+        "Renovate",
+        "PHP 8.1"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchFileNames": [
         "service-pdf/composer.json"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "stabilityDays": 3
+      "minimumReleaseAge": "3 days",
+      "matchPackageNames": [
+        "!php"
+      ]
     },
     {
       "description": [
@@ -196,16 +324,27 @@
       "automerge": false,
       "groupName": "shared minor and patch updates (PHP 8.2)",
       "groupSlug": "shared-minor-patch-updates-php82",
-      "labels": ["Dependencies", "Renovate", "PHP 8.2"],
-      "matchManagers": ["composer"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "excludePackageNames": ["php"],
-      "matchFiles": [
+      "labels": [
+        "Dependencies",
+        "Renovate",
+        "PHP 8.2"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchFileNames": [
         "shared/composer.json"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "stabilityDays": 3
+      "minimumReleaseAge": "3 days",
+      "matchPackageNames": [
+        "!php"
+      ]
     },
     {
       "description": [
@@ -215,16 +354,25 @@
       "automerge": false,
       "groupName": "minor and patch updates (npm)",
       "groupSlug": "all-minor-patch-updates-npm",
-      "labels": ["Dependencies", "Renovate", "nodejs"],
-      "matchManagers": ["npm"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchFiles": [
+      "labels": [
+        "Dependencies",
+        "Renovate",
+        "nodejs"
+      ],
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchFileNames": [
         "package.json",
         "service-front/package.json"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "stabilityDays": 3
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": [
@@ -233,15 +381,30 @@
       "automerge": false,
       "groupName": "minor and patch updates (Python)",
       "groupSlug": "all-minor-patch-updates-python",
-      "labels": ["Dependencies", "Renovate"],
-      "matchManagers": ["pip_requirements", "pip-compile", "pipenv", "pyenv", "setup-cfg", "pip_setup"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "labels": [
+        "Dependencies",
+        "Renovate"
+      ],
+      "matchManagers": [
+        "pip_requirements",
+        "pip-compile",
+        "pipenv",
+        "pyenv",
+        "setup-cfg",
+        "pip_setup"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "stabilityDays": 3
+      "minimumReleaseAge": "3 days"
     }
   ],
   "pip-compile": {
-    "fileMatch": ["(^|/)requirements\\.in$"]
+    "managerFilePatterns": [
+      "/(^|/)requirements\\.txt$/"
+    ]
   }
 }

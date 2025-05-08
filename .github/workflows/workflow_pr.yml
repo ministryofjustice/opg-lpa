@@ -1,4 +1,4 @@
-name: "[Workflow] PR"
+name: "[Workflow] PR Environment"
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -25,19 +25,28 @@ permissions:
   statuses: none
 
 jobs:
-  workspace_name:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-workspace.yml@bd6ac6106a4adda64cecefa3632fb64ab0ddab4b # v1.36.0
 
-  set_variables:
-    name: Generate image tags
+  workflow_variables:
+    name: Output workflow variables
     runs-on: ubuntu-latest
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
+      safe_branch_name: ${{ steps.safe_branch_name.outputs.safe }}
+      workspace_name: ${{ steps.set_workspace_name.outputs.workspace_name }}
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
       account_terraform_version: ${{ steps.terraform_version_account.outputs.version }}
       region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
       email_terraform_version: ${{ steps.terraform_version_email.outputs.version }}
     steps:
+      - name: Set safe branch name
+        id: safe_branch_name
+        uses: ministryofjustice/opg-github-actions/.github/actions/branch-name@9a39e099657fda2d7389e1fab3c333ad3c704212 # v3.1.3
+
+      - name: Set workspace name
+        id: set_workspace_name
+        run: |
+          echo "workspace_name=${{ github.event.number }}${{ steps.safe_branch_name.outputs.safe }}" >> $GITHUB_OUTPUT
+
       - name: Set output to short SHA
         id: short_sha
         env:
@@ -45,34 +54,32 @@ jobs:
         run: echo "short_sha=${HEAD_GITHUB_SHA::7}" >> $GITHUB_OUTPUT
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9a39e099657fda2d7389e1fab3c333ad3c704212 # v3.1.3
         with:
           terraform_directory: "./terraform/environment"
       - name : Set terraform version - account
         id: terraform_version_account
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9a39e099657fda2d7389e1fab3c333ad3c704212 # v3.1.3
         with:
           terraform_directory: "./terraform/account"
       - name: Set terraform version - region
         id: terraform_version_region
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9a39e099657fda2d7389e1fab3c333ad3c704212 # v3.1.3
         with:
           terraform_directory: "./terraform/region"
       - name: Set terraform version - email
         id: terraform_version_email
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9a39e099657fda2d7389e1fab3c333ad3c704212 # v3.1.3
         with:
           terraform_directory: "./terraform/email"
-
-
 
   terraform_lint:
     name: TF - Lint
     needs:
-      - set_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@v3.1.0
+      - workflow_variables
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
 
   phpunit_tests:
     name: Run PHPUnit tests
@@ -83,20 +90,19 @@ jobs:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
     needs:
-      - set_variables
+      - workflow_variables
     with:
-      tag: ${{ needs.set_variables.outputs.short_sha }}
+      tag: ${{ needs.workflow_variables.outputs.short_sha }}
     secrets: inherit
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     needs:
-      - workspace_name
       - terraform_lint
-      - set_variables
+      - workflow_variables
     with:
-      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_version: ${{ needs.workflow_variables.outputs.account_terraform_version }}
       terraform_workspace: development
       is_ephemeral: false
       workspace_manager_aws_account_id: "050256574573"
@@ -112,13 +118,12 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     needs:
-      - workspace_name
       - terraform_lint
-      - set_variables
+      - workflow_variables
     with:
-      terraform_version: ${{ needs.set_variables.outputs.region_terraform_version }}
+      terraform_version: ${{ needs.workflow_variables.outputs.region_terraform_version }}
       terraform_workspace: development
       is_ephemeral: false
       workspace_manager_aws_account_id: "050256574573"
@@ -134,13 +139,12 @@ jobs:
 
   terraform_email_development:
     name: TF Development - Email
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     needs:
-      - workspace_name
       - terraform_lint
-      - set_variables
+      - workflow_variables
     with:
-      terraform_version: ${{ needs.set_variables.outputs.email_terraform_version }}
+      terraform_version: ${{ needs.workflow_variables.outputs.email_terraform_version }}
       terraform_workspace: development
       is_ephemeral: false
       workspace_manager_aws_account_id: "050256574573"
@@ -156,25 +160,24 @@ jobs:
 
   terraform_environment_development:
     name: TF Development - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     needs:
       - docker_build_scan_push
       - phpunit_tests
-      - workspace_name
-      - set_variables
+      - workflow_variables
       - terraform_email_development
       - terraform_account_development
       - terraform_region_development
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
       use_ssh_private_key: true
-      terraform_workspace: ${{ needs.workspace_name.outputs.name }}
+      terraform_workspace: ${{ needs.workflow_variables.outputs.workspace_name }}
       is_ephemeral: true
       workspace_manager_aws_account_id: "050256574573"
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: true
       terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }}"
+      terraform_variables: "-var container_version=${{ needs.workflow_variables.outputs.short_sha }}"
       persist_artifacts: true
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -185,13 +188,12 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction Plan - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     needs:
-      - workspace_name
-      - set_variables
+      - workflow_variables
       - terraform_lint
     with:
-      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_version: ${{ needs.workflow_variables.outputs.account_terraform_version }}
       terraform_workspace: preproduction
       is_ephemeral: false
       workspace_manager_aws_account_id: "987830934591"
@@ -207,13 +209,12 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction Plan - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     needs:
-      - workspace_name
-      - set_variables
+      - workflow_variables
       - terraform_lint
     with:
-      terraform_version: ${{ needs.set_variables.outputs.region_terraform_version }}
+      terraform_version: ${{ needs.workflow_variables.outputs.region_terraform_version }}
       terraform_workspace: preproduction
       is_ephemeral: false
       workspace_manager_aws_account_id: "987830934591"
@@ -229,13 +230,12 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction Plan - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     needs:
-      - workspace_name
-      - set_variables
+      - workflow_variables
       - terraform_lint
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
       use_ssh_private_key: true
       terraform_workspace: preproduction
       is_ephemeral: false
@@ -243,7 +243,7 @@ jobs:
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=${{ needs.set_variables.outputs.short_sha }}"
+      terraform_variables: "-var container_version=${{ needs.workflow_variables.outputs.short_sha }}"
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -272,10 +272,10 @@ jobs:
       front_fqdn: ${{ steps.front_fqdn.outputs.value }}
     steps:
       - name: Checkout
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # tag=v3.0.2
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: terraform-artifact
           path: /tmp/
@@ -318,12 +318,12 @@ jobs:
       ts: ${{ steps.slack.outputs.ts }}
     needs:
       - terraform_outputs
-      - set_variables
+      - workflow_variables
     env:
       FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
       ADMIN_URL: ${{ needs.terraform_outputs.outputs.admin_fqdn }}
     steps:
-    - uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v1.27.0
+    - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
       id: slack
       with:
         channel-id: "CAMB46M6Y"
@@ -357,7 +357,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
                     }
                   ]
                 },
@@ -448,7 +448,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - terraform_outputs
-      - set_variables
+      - workflow_variables
       - post_deployment_slack_msg
       - cypress_tests_Remaining
       - cypress_tests_SignupIncluded
@@ -460,7 +460,7 @@ jobs:
       ADMIN_URL: ${{ needs.terraform_outputs.outputs.admin_fqdn }}
     steps:
 
-    - uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v1.27.0
+    - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
       with:
         channel-id: "CAMB46M6Y"
         update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
@@ -494,7 +494,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
                     }
                   ]
                 },
@@ -519,27 +519,28 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
 
-  end_of_pr_workflow:
-    name: End of PR Workflow
-    if: github.ref != 'refs/heads/main'
+  end_of_workflow:
+    name: End of Workflow
     runs-on: ubuntu-latest
     needs:
-      - cypress_tests_Remaining
-      - cypress_tests_SignupIncluded
-      - cypress_tests_Signup_StichedClone
-      - cypress_tests_Signup_StichedHW
-      - cypress_tests_Signup_StichedPF
-      - workspace_name
       - terraform_outputs
-      - set_variables
+      - workflow_variables
+      - post_tests_slack_msg
     environment:
-      name: "dev_${{ needs.workspace_name.outputs.name }}"
+      name: "dev_${{ needs.workflow_variables.outputs.workspace_name }}"
       url: "https://${{ env.FRONT_URL }}/home"
     env:
       FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
     steps:
-      - name: End of PR Workflow
+      - name: End of Workflow
         run: |
-          echo "${{ needs.workspace_name.outputs.name }} PR environment tested, built and deployed"
-          echo "Tag Deployed: ${{ needs.set_variables.outputs.short_sha }}"
-          echo "URL: https://${{ env.FRONT_URL }}/home"
+          if ${{ contains(needs.terraform_outputs.result, 'success') && contains(needs.post_tests_slack_msg.result, 'success') }}; then
+            echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
+            echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
+            echo "URL: https://${{ env.FRONT_URL }}/home"
+            exit 0
+          else
+            echo "Previous jobs in pipeline failed."
+            exit 1
+          fi
+    if: always()

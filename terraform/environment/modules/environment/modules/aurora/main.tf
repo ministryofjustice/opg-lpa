@@ -24,7 +24,10 @@ resource "aws_rds_cluster" "cluster" {
   tags                                = var.tags
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
   lifecycle {
-    ignore_changes  = [replication_source_identifier]
+    ignore_changes = [
+      replication_source_identifier,
+      engine_version
+    ]
     prevent_destroy = true
   }
 }
@@ -55,6 +58,9 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   }
 
   lifecycle {
+    ignore_changes = [
+      engine_version
+    ]
     prevent_destroy = true
   }
 }
@@ -88,6 +94,11 @@ resource "aws_rds_cluster" "cluster_serverless" {
     min_capacity = 0.5
     max_capacity = 4
   }
+  lifecycle {
+    ignore_changes = [
+      engine_version
+    ]
+  }
 }
 
 resource "aws_rds_cluster_instance" "serverless_instances" {
@@ -113,6 +124,11 @@ resource "aws_rds_cluster_instance" "serverless_instances" {
     create = var.timeout_create
     update = var.timeout_update
     delete = var.timeout_delete
+  }
+  lifecycle {
+    ignore_changes = [
+      engine_version
+    ]
   }
 }
 
