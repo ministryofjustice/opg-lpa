@@ -57,7 +57,7 @@ class StatusViewModelHelperTest extends MockeryTestCase
         ]);
 
         $this->renderer = new ViewModelRenderer();
-        $this->renderer->addFunction('formatLpaId', new FormatLpaId());
+        $this->renderer->addFunction('formatLpaId');
         $this->renderer->loadTemplate('application/authenticated/lpa/status/index.twig');
     }
 
