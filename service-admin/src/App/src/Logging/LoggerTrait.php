@@ -3,7 +3,9 @@
 namespace App\Logging;
 
 use Laminas\Log\Logger as LaminasLogger;
+use Laminas\Log\PsrLoggerAdapter;
 use Laminas\Log\Writer\Stream as StreamWriter;
+use Psr\Log\LoggerInterface;
 
 /**
  * Trait LoggerTrait
@@ -11,19 +13,14 @@ use Laminas\Log\Writer\Stream as StreamWriter;
  */
 trait LoggerTrait
 {
-    /**
-     * @var LaminasLogger
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @return LaminasLogger $logger
-     */
-    public function getLogger()
+    public function getLogger(): LoggerInterface
     {
-        if (!$this->logger instanceof LaminasLogger) {
-            $this->logger = new LaminasLogger();
-            $this->logger->addWriter(new StreamWriter('php://stderr'));
+        if (!isset($this->logger)) {
+            $logger = new LaminasLogger();
+            $logger->addWriter(new StreamWriter('php://stderr'));
+            $this->logger = new PsrLoggerAdapter($logger);
         }
 
         return $this->logger;
