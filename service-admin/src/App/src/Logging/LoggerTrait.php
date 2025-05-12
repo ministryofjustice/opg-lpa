@@ -17,11 +17,9 @@ trait LoggerTrait
 
     public function getLogger(): LoggerInterface
     {
-        if (!isset($this->logger)) {
-            $logger = new LaminasLogger();
-            $logger->addWriter(new StreamWriter('php://stderr'));
-            $this->logger = new PsrLoggerAdapter($logger);
-        }
+        $logger = new LaminasLogger();
+        $logger->addWriter(new StreamWriter('php://stderr'));
+        $this->logger = new PsrLoggerAdapter($logger);
 
         return $this->logger;
     }
