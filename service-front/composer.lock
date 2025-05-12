@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e50bd4153e1e8a5908eaddd12665f2cb",
+    "content-hash": "69f085378d693bd565eab2687c3459d9",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -775,16 +775,16 @@
         },
         {
             "name": "kokspflanze/zfc-twig",
-            "version": "4.1.1",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kokspflanze/ZfcTwig.git",
-                "reference": "17fb1cce5a3fbe1b6f1c0aaedc451d380a02bc3a"
+                "reference": "e1ccf529b9770020a855fdd563cfe853edbcbd5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kokspflanze/ZfcTwig/zipball/17fb1cce5a3fbe1b6f1c0aaedc451d380a02bc3a",
-                "reference": "17fb1cce5a3fbe1b6f1c0aaedc451d380a02bc3a",
+                "url": "https://api.github.com/repos/kokspflanze/ZfcTwig/zipball/e1ccf529b9770020a855fdd563cfe853edbcbd5b",
+                "reference": "e1ccf529b9770020a855fdd563cfe853edbcbd5b",
                 "shasum": ""
             },
             "require": {
@@ -792,7 +792,7 @@
                 "laminas/laminas-mvc-plugin-flashmessenger": "^1.0",
                 "laminas/laminas-servicemanager": "^3.0",
                 "laminas/laminas-view": "^2.7",
-                "php": "^7.3 || ~8.0.0 || ~8.1.0 || ~8.2.0",
+                "php": "^7.3 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
                 "twig/twig": "^3.3.4"
             },
             "replace": {
@@ -810,8 +810,8 @@
                     "module": "ZfcTwig"
                 },
                 "branch-alias": {
-                    "dev-release/1.4": "1.4-dev",
-                    "dev-master": "4.x-dev"
+                    "dev-master": "4.x-dev",
+                    "dev-release/1.4": "1.4-dev"
                 }
             },
             "autoload": {
@@ -848,9 +848,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kokspflanze/ZfcTwig/issues",
-                "source": "https://github.com/kokspflanze/ZfcTwig/tree/4.1.1"
+                "source": "https://github.com/kokspflanze/ZfcTwig/tree/4.2.1"
             },
-            "time": "2022-12-01T22:22:41+00:00"
+            "time": "2025-03-09T22:46:27+00:00"
         },
         {
             "name": "laminas/laminas-authentication",
