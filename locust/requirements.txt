@@ -54,9 +54,9 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-locust==2.36.2
+locust==2.37.1
     # via -r requirements.in
-locust-cloud==1.21.2
+locust-cloud==1.21.3
     # via locust
 markupsafe==3.0.2
     # via
@@ -64,7 +64,7 @@ markupsafe==3.0.2
     #   werkzeug
 msgpack==1.1.0
     # via locust
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via locust-cloud
 psutil==7.0.0
     # via locust
