@@ -76,7 +76,7 @@ class Communication extends AbstractEmailService
             $mailParameters = new MailParameters($to, $this->emailTemplateRef, $this->data);
             $this->getMailTransport()->send($mailParameters);
         } catch (Exception $ex) {
-            $this->getLogger()->err($ex->getMessage());
+            $this->getLogger()->error($ex->getMessage());
             return "failed-sending-email";
         }
 
