@@ -3,7 +3,9 @@
 namespace MakeShared\Logging;
 
 use Laminas\Log\Logger as LaminasLogger;
-use MakeShared\Logging\Logger;
+use Laminas\Log\PsrLoggerAdapter;
+use Laminas\Log\Writer\Stream as StreamWriter;
+use Psr\Log\LoggerInterface;
 
 /**
  * Trait LoggerTrait
@@ -11,30 +13,21 @@ use MakeShared\Logging\Logger;
  */
 trait LoggerTrait
 {
-    /**
-     * @var LaminasLogger
-     */
-    private $logger;
+    private ?LoggerInterface $logger = null;
 
-    /**
-     * @param LaminasLogger $logger
-     * @return $this
-     */
-    public function setLogger(LaminasLogger $logger)
+    public function setLogger(LoggerInterface $logger): static
     {
         $this->logger = $logger;
         return $this;
     }
 
-    /**
-     * @return LaminasLogger $logger
-     */
-    public function getLogger()
+    public function getLogger(): LoggerInterface
     {
-        if (!$this->logger instanceof LaminasLogger) {
-            $this->logger = new Logger();
+        if ($this->logger === null) {
+            $logger = new LaminasLogger();
+            $logger->addWriter(new StreamWriter('php://stderr'));
+            $this->logger = new PsrLoggerAdapter($logger);
         }
-
         return $this->logger;
     }
 }
