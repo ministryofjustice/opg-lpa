@@ -12,12 +12,12 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\Feedback\FeedbackValidator;
 use Mockery;
 use Mockery\MockInterface;
-use MakeShared\Logging\Logger;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractServiceBuilder
 {
     /**
-     * @var MockInterface|Logger
+     * @var MockInterface|LoggerInterface
      */
     private $logger = null;
 
@@ -58,7 +58,7 @@ abstract class AbstractServiceBuilder
      * @param $logger
      * @return $this
      */
-    public function withLogger($logger)
+    public function withLogger($logger): static
     {
         $this->logger = $logger;
 
@@ -143,10 +143,10 @@ abstract class AbstractServiceBuilder
     {
         //  If the logger hasn't been mocked yet, do that now
         if ($this->logger === null) {
-            $this->logger = Mockery::mock(Logger::class);
+            $this->logger = Mockery::mock(LoggerInterface::class);
             $this->logger->shouldReceive('info');
             $this->logger->shouldReceive('debug');
-            $this->logger->shouldReceive('err');
+            $this->logger->shouldReceive('error');
         }
 
         /** @var AbstractService $service */
