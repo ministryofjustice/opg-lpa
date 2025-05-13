@@ -12,7 +12,6 @@ use Mockery\MockInterface;
 use Aws\Sqs\SqsClient;
 use MakeShared\Constants;
 use MakeShared\Logging\Logger;
-use MakeShared\Logging\SimpleLogger;
 use Laminas\Db\Adapter\Adapter as DbAdapter;
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Adapter\Driver\DriverInterface;
@@ -20,6 +19,7 @@ use Laminas\View\Model\JsonModel;
 use Http\Client\HttpClient;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Psr\Log\LoggerInterface;
 
 class PingControllerTest extends MockeryTestCase
 {
@@ -75,7 +75,7 @@ class PingControllerTest extends MockeryTestCase
             $this->httpClient
         );
 
-        $this->logger = Mockery::mock(Logger::class);
+        $this->logger = Mockery::mock(LoggerInterface::class);
         $this->controller->setLogger($this->logger);
     }
 
@@ -117,7 +117,7 @@ class PingControllerTest extends MockeryTestCase
             ],
         ];
 
-        $this->logger->shouldReceive('err')
+        $this->logger->shouldReceive('error')
             ->once();
 
         $this->logger->shouldReceive('info')
@@ -132,8 +132,6 @@ class PingControllerTest extends MockeryTestCase
 
     public function testIndexActionSuccessQueueDownDbAndGatewayExceptions()
     {
-        $this->controller->setLogger(new SimpleLogger());
-
         // bad response from SQS, so we throw an exception
         $this->sqsClient->shouldReceive('getQueueAttributes')
             ->andReturn([]);
@@ -162,6 +160,13 @@ class PingControllerTest extends MockeryTestCase
             ],
         ];
 
+        $this->logger->shouldReceive('error')
+            ->times(3);
+
+        $this->logger->shouldReceive('info')
+            ->with('PingController results', $expectedResult)
+            ->once();
+
         /** @var JsonModel $result */
         $result = $this->controller->indexAction();
 
@@ -170,8 +175,6 @@ class PingControllerTest extends MockeryTestCase
 
     public function testIndexActionSuccessAllServicesOk()
     {
-        $this->controller->setLogger(new SimpleLogger());
-
         // good response from SQS
         $this->sqsClient->shouldReceive('getQueueAttributes')
             ->andReturn([
@@ -219,6 +222,10 @@ class PingControllerTest extends MockeryTestCase
                 'ok' => true,
             ],
         ];
+
+        $this->logger->shouldReceive('info')
+            ->with('PingController results', $expectedResult)
+            ->once();
 
         /** @var JsonModel $result */
         $result = $this->controller->indexAction();
