@@ -13,13 +13,15 @@ use Psr\Log\LoggerInterface;
  */
 trait LoggerTrait
 {
-    private LoggerInterface $logger;
+    private ?LoggerInterface $logger = null;
 
     public function getLogger(): LoggerInterface
     {
-        $logger = new LaminasLogger();
-        $logger->addWriter(new StreamWriter('php://stderr'));
-        $this->logger = new PsrLoggerAdapter($logger);
+        if ($this->logger === null) {
+            $logger = new LaminasLogger();
+            $logger->addWriter(new StreamWriter('php://stderr'));
+            $this->logger = new PsrLoggerAdapter($logger);
+        }
 
         return $this->logger;
     }
