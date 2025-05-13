@@ -157,7 +157,7 @@ class Service extends AbstractService
                 echo "NotifyException: " . $e->getMessage() . "\n";
 
                 // Notify exceptions aren't too bad, we will just retry tomorrow.
-                $this->getLogger()->warn('Unable to send account expiry notification', [
+                $this->getLogger()->warning('Unable to send account expiry notification', [
                     'exception' => $e->getMessage()
                 ]);
             } catch (Exception $e) {
