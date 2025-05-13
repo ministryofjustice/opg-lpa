@@ -91,7 +91,7 @@ class FeedbackController extends AbstractRestfulController
         $result = $this->service->add($data);
 
         if ($result === false) {
-            $this->getLogger()->err('Data required for database insert was missing');
+            $this->getLogger()->error('Data required for database insert was missing');
 
             return new ApiProblemResponse(
                 new ApiProblem(400, 'Unable to save feedback. Ensure at least one valid field is sent.')
