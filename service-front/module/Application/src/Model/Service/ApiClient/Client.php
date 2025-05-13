@@ -294,7 +294,7 @@ class Client
     private function handleErrorResponse(ResponseInterface $response)
     {
         $exception = new Exception\ApiException($response);
-        $this->getLogger()->err($exception->getMessage(), ['headers' => $this->defaultHeaders]);
+        $this->getLogger()->error($exception->getMessage(), ['headers' => $this->defaultHeaders]);
         throw $exception;
     }
 }

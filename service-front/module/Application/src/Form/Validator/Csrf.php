@@ -45,7 +45,7 @@ class Csrf extends LaminasCsrfValidator
         $hash = $this->getHash(true);
 
         if ($value !== $hash) {
-            $this->getLogger()->err(sprintf(
+            $this->getLogger()->error(sprintf(
                 "Mismatched CSRF provided; expected %s received %s",
                 $this->getHash(),
                 $value,

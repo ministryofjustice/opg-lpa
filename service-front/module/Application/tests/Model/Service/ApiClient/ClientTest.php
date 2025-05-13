@@ -8,13 +8,13 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Hamcrest\Matchers;
 use Http\Client\HttpClient;
-use MakeShared\Logging\Logger;
 use MakeShared\Telemetry\Tracer;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Log\LoggerInterface;
 
 class ClientTest extends MockeryTestCase
 {
@@ -29,7 +29,7 @@ class ClientTest extends MockeryTestCase
     private $response;
 
     /**
-     * @var Logger|MockInterface
+     * @var LoggerInterface|MockInterface
      */
     private $logger;
 
@@ -41,7 +41,7 @@ class ClientTest extends MockeryTestCase
     public function setUp(): void
     {
         $this->httpClient = Mockery::mock(HttpClient::class);
-        $this->logger = Mockery::mock(Logger::class);
+        $this->logger = Mockery::mock(LoggerInterface::class);
 
         $this->client = new Client($this->httpClient, 'base_url/', ['Token' => 'test token']);
         $this->client->setLogger($this->logger);
@@ -176,7 +176,7 @@ class ClientTest extends MockeryTestCase
             ['headers' => ['Token' => 'test token']]
         ];
 
-        $this->logger->shouldReceive('err')
+        $this->logger->shouldReceive('error')
                      ->withArgs($expectedLoggerArgs)
                      ->once();
 
@@ -199,7 +199,7 @@ class ClientTest extends MockeryTestCase
             ['headers' => ['Token' => 'test token']]
         ];
 
-        $this->logger->shouldReceive('err')
+        $this->logger->shouldReceive('error')
                      ->withArgs($expectedLoggerArgs)
                      ->once();
 
@@ -228,7 +228,7 @@ class ClientTest extends MockeryTestCase
             ['headers' => ['Token' => 'test token']]
         ];
 
-        $this->logger->shouldReceive('err')
+        $this->logger->shouldReceive('error')
                      ->withArgs($expectedLoggerArgs)
                      ->once();
 
@@ -278,7 +278,7 @@ class ClientTest extends MockeryTestCase
             ['headers' => ['Token' => 'test token']]
         ];
 
-        $this->logger->shouldReceive('err')
+        $this->logger->shouldReceive('error')
                      ->withArgs($expectedLoggerArgs)
                      ->once();
 
@@ -316,7 +316,7 @@ class ClientTest extends MockeryTestCase
             ['headers' => ['Token' => 'test token']]
         ];
 
-        $this->logger->shouldReceive('err')
+        $this->logger->shouldReceive('error')
                      ->withArgs($expectedLoggerArgs)
                      ->once();
 
@@ -349,7 +349,7 @@ class ClientTest extends MockeryTestCase
         $this->setUpRequest(500, 'An error', 'PUT', 'base_url/path', '{"a":1}');
         $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
-        $this->logger->shouldReceive('err')
+        $this->logger->shouldReceive('error')
                      ->withArgs(['HTTP:500 - Unexpected API response', ['headers' => ['Token' => 'test token']]])
                      ->once();
 
