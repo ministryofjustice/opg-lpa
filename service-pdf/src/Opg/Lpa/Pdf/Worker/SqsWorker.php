@@ -35,7 +35,7 @@ class SqsWorker
         $pdfFilePath = $pdf['filepath'];
 
         if (is_null($pdfFilePath)) {
-            $this->getLogger()->err('null path returned for generated PDF');
+            $this->getLogger()->error('null path returned for generated PDF');
             return null;
         }
 
@@ -108,7 +108,7 @@ class SqsWorker
                         (microtime(true) - $startTime) .
                         " seconds to make PDF for LPA " . $lpaId);
                 } catch (\Exception $e) {
-                    $this->getLogger()->err("Error generating PDF", [
+                    $this->getLogger()->error("Error generating PDF", [
                         'jobId' => $lpaMessage['jobId'],
                         'lpaId' => $lpaMessage['lpaId'],
                     ]);
