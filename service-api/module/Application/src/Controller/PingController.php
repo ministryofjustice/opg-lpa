@@ -144,7 +144,7 @@ class PingController extends AbstractRestfulController
 
             $queueOk = ($count < 50);
         } catch (Exception $e) {
-            $this->getLogger()->err('SQS queue is not available to API: ' . $e->getMessage());
+            $this->getLogger()->error('SQS queue is not available to API: ' . $e->getMessage());
         }
 
         // Main database
@@ -152,7 +152,7 @@ class PingController extends AbstractRestfulController
             $this->database->getDriver()->getConnection()->connect();
             $dbOk = true;
         } catch (Exception $e) {
-            $this->getLogger()->err('Database is not available to API: ' . $e->getMessage());
+            $this->getLogger()->error('Database is not available to API: ' . $e->getMessage());
         }
 
         // OPG Gateway
@@ -174,7 +174,7 @@ class PingController extends AbstractRestfulController
                 $opgGatewayOk = true;
             }
         } catch (Exception $e) {
-            $this->getLogger()->err(
+            $this->getLogger()->error(
                 "Sirius gateway not available to API at $url: " . $e->getMessage()
             );
         }
