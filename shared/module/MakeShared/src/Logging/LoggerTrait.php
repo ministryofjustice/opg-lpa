@@ -15,7 +15,7 @@ trait LoggerTrait
 {
     private ?LoggerInterface $logger = null;
 
-    public function setLogger(LoggerInterface $logger): static
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
         return $this;
