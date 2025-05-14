@@ -125,7 +125,7 @@ class SqsWorker
                 $this->getLogger()->debug("No message found in queue for this poll, finishing thread.");
             }
         } catch (\Exception $e) {
-            $this->getLogger()->emerg("Exception in SqsWorker: " . $e->getMessage());
+            $this->getLogger()->emergency("Exception in SqsWorker: " . $e->getMessage());
             sleep(5);
         }
     }
