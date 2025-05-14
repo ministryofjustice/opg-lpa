@@ -2,7 +2,7 @@
 
 namespace Opg\Lpa\Pdf;
 
-use MakeShared\Logging\SimpleLoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
@@ -21,7 +21,7 @@ use pathinfo;
 
 class PdfRenderer
 {
-    use SimpleLoggerTrait;
+    use LoggerTrait;
 
     /** @var bool */
     private bool $inited = false;
