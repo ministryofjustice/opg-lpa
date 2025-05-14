@@ -28,7 +28,7 @@ configargparse==1.7
     #   locust-cloud
 faker==18.13.0
     # via -r requirements.in
-flask==3.1.0
+flask==3.1.1
     # via
     #   flask-cors
     #   flask-login
