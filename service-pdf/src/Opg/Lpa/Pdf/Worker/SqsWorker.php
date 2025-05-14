@@ -3,14 +3,14 @@
 namespace Opg\Lpa\Pdf\Worker;
 
 use Laminas\Filter\Decompress;
-use MakeShared\Logging\SimpleLoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdfRenderer;
 use Aws\Sqs\SqsClient;
 
 class SqsWorker
 {
-    use SimpleLoggerTrait;
+    use LoggerTrait;
 
     /** @var PdfRenderer */
     private PdfRenderer $pdfRenderer;
