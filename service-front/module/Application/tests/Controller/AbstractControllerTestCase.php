@@ -5,7 +5,6 @@ namespace ApplicationTest\Controller;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
-use MakeShared\Logging\Logger;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
@@ -57,11 +56,12 @@ use Laminas\Session\Storage\ArrayStorage;
 use Laminas\Stdlib\Parameters;
 use Laminas\Uri\Uri;
 use DateTime;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractControllerTestCase extends MockeryTestCase
 {
     /**
-     * @var MockInterface|Logger
+     * @var MockInterface|LoggerInterface
      */
     protected $logger;
     /**
@@ -184,7 +184,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     {
         $this->lpa = FixturesData::getPfLpa();
 
-        $this->logger = Mockery::mock(Logger::class);
+        $this->logger = Mockery::mock(LoggerInterface::class);
 
         $this->pluginManager = Mockery::mock(PluginManager::class);
         $this->pluginManager->shouldReceive('setController');

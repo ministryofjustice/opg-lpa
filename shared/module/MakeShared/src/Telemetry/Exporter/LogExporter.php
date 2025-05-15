@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakeShared\Telemetry\Exporter;
 
-use MakeShared\Logging\SimpleLoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\Segment;
 
 /**
@@ -14,7 +14,7 @@ use MakeShared\Telemetry\Segment;
  */
 class LogExporter implements ExporterInterface
 {
-    use SimpleLoggerTrait;
+    use LoggerTrait;
 
     public function export(Segment $segment): void
     {

@@ -4,7 +4,7 @@ namespace Opg\Lpa\Pdf\Worker\Response;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use MakeShared\Logging\SimpleLoggerTrait;
+use MakeShared\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
 
 /**
@@ -14,7 +14,7 @@ use Opg\Lpa\Pdf\Config\Config;
  */
 class S3Response
 {
-    use SimpleLoggerTrait;
+    use LoggerTrait;
 
     /** @var string */
     private $docId;
@@ -55,7 +55,7 @@ class S3Response
 
             $s3->putObject($file);
         } catch (S3Exception $e) {
-            $this->getLogger()->emerg('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
+            $this->getLogger()->emergency('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
             throw $e;
         }
 
