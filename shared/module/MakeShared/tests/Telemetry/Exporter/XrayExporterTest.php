@@ -3,18 +3,18 @@
 namespace MakeSharedTest\Telemetry\Exporter;
 
 use Hamcrest\Matchers;
-use MakeShared\Logging\SimplerLogger;
 use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class XrayExporterTest extends TestCase
 {
     public function testPayloadTooLarge()
     {
-        $logger = Mockery::mock(SimplerLogger::class);
-        $logger->shouldReceive('err')
+        $logger = Mockery::mock(LoggerInterface::class);
+        $logger->shouldReceive('error')
             ->withArgs([
                 Matchers::startsWith('Segment too large to export')
             ])
