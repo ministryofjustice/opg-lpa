@@ -21,7 +21,8 @@ class XrayExporterTest extends TestCase
             ->andReturn()
             ->once();
 
-        $exporter = new XrayExporter('localhost', 2000, $logger);
+        $exporter = new XrayExporter('localhost', 2000);
+        $exporter->setLogger($logger);
 
         $segment = new Segment('foo', 'bar');
         for ($i = 0; $i < 1000; $i++) {
