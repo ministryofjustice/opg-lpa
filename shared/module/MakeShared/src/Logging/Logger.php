@@ -17,7 +17,8 @@ use Traversable;
  *
  * A simple StreamWriter file logger which converts log events to JSON.
  */
-class Logger extends LaminasLogger
+class Logger extends LaminasLogger  // TODO this should no longer be used but may need to add processors like below, to new way of logging,
+    probably needs to be in getLogger to add the tracing
 {
     /* @var Logger */
     public function __construct(StreamWriter $writer = null)
