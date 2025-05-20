@@ -23,7 +23,7 @@
         "laminas/laminas-session": "^2.12.0",
         "kokspflanze/zfc-twig": "^4.2.1",
         "laminas/laminas-mvc-i18n": "^2.0",
-        "laminas/laminas-log": "^2.13",
+        "monolog/monolog": "^3.9",
         "guzzlehttp/psr7": "^2.4",
         "alphagov/notifications-php-client": "^5.0.0",
         "symfony/validator": "^4.2",

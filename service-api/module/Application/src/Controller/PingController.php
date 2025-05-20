@@ -10,7 +10,6 @@ use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
 use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
-use Laminas\Log\Logger as LaminasLogger;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
 use Exception;
