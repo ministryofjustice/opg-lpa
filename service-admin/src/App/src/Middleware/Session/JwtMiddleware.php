@@ -180,7 +180,7 @@ final class JwtMiddleware implements MiddlewareInterface
         };
 
         /* If everything fails log and throw. */
-        $this->getLogger()->warn("Token not found");
+        $this->getLogger()->warning("Token not found");
         throw new RuntimeException("Token not found.");
     }
 
@@ -198,7 +198,7 @@ final class JwtMiddleware implements MiddlewareInterface
             );
             return (array) $decoded;
         } catch (Exception $exception) {
-            $this->getLogger()->warn($exception->getMessage(), [$token]);
+            $this->getLogger()->warning($exception->getMessage(), [$token]);
             throw $exception;
         }
     }
