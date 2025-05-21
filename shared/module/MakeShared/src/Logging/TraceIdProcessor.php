@@ -9,14 +9,14 @@ use Laminas\Log\Processor\ProcessorInterface;
  * promote it to a top-level property on the log event and remove it from $extra.
  * If it is present but null, just remove it from $extra.
  */
-class TraceIdProcessor implements ProcessorInterface
+class TraceIdProcessor implements \Monolog\Processor\ProcessorInterface
 {
     /**
      * Name of the trace ID field in the $extra array passed to the logger.
      */
     public const TRACE_ID_FIELD_NAME = 'trace_id';
 
-    public function process(array $event): array
+    public function __invoke(array $event): array
     {
         // early return if there's no "trace_id" in $extra
         if (!array_key_exists(self::TRACE_ID_FIELD_NAME, $event['extra'])) {
