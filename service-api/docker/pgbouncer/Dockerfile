@@ -6,7 +6,7 @@ USER root
 # TODO: update base image once update to Debian rolls out
 RUN echo "deb http://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list \
     && apt-get update \
-    && apt-get -y -t sid install libc6 libc6-dev libc-bin \
+    && apt-get -y -t sid install libc6=2.41-8 libc6-dev=2.41-8 libc-bin=2.41-8 \
     && rm /etc/apt/sources.list.d/sid.list \
     && apt-get clean \ 
     && rm -rf /var/lib/apt/lists/*
