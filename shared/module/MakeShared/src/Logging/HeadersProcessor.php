@@ -16,7 +16,7 @@ use Laminas\Log\Processor\ProcessorInterface;
  *        'Content-Type' => 'application/json'
  *    ];
  *
- *    $this->getLogger()->err('an error', ['headers' => $headers]);
+ *    $this->getLogger()->error('an error', ['headers' => $headers]);
  *
  * This sets $extra to ['headers' => $headers], and this processor will receive
  * a $event like:

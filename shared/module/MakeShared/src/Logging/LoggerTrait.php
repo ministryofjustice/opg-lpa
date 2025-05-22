@@ -2,8 +2,9 @@
 
 namespace MakeShared\Logging;
 
-use Laminas\Log\Logger as LaminasLogger;
-use MakeShared\Logging\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Psr\Log\LoggerInterface;
 
 /**
  * Trait LoggerTrait
@@ -11,30 +12,20 @@ use MakeShared\Logging\Logger;
  */
 trait LoggerTrait
 {
-    /**
-     * @var LaminasLogger
-     */
-    private $logger;
+    private ?LoggerInterface $logger = null;
 
-    /**
-     * @param LaminasLogger $logger
-     * @return $this
-     */
-    public function setLogger(LaminasLogger $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
         return $this;
     }
 
-    /**
-     * @return LaminasLogger $logger
-     */
-    public function getLogger()
+    public function getLogger(): LoggerInterface
     {
-        if (!$this->logger instanceof LaminasLogger) {
-            $this->logger = new Logger();
+        if ($this->logger === null) {
+            $this->logger = new \Monolog\Logger('MakeAnLPALogger');
+            $this->logger->pushHandler(new StreamHandler('php://stderr', Level::Debug  ));
         }
-
         return $this->logger;
     }
 }

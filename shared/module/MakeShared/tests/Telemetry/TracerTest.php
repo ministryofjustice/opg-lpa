@@ -3,7 +3,6 @@
 namespace MakeSharedTest\Telemetry;
 
 use MakeShared\Constants;
-use MakeShared\Logging\SimpleLogger;
 use MakeShared\Telemetry\Exporter\LogExporter;
 use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;

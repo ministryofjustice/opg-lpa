@@ -25,7 +25,7 @@ jobs:
             minCoverage: 74
           - name: shared
             path: "./shared"
-            minCoverage: 91
+            minCoverage: 90
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}

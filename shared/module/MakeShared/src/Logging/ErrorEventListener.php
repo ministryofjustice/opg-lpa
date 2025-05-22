@@ -53,6 +53,6 @@ class ErrorEventListener extends AbstractListenerAggregate
             MvcEventProcessor::EVENT_FIELD_NAME => $event,
         ];
 
-        $this->getLogger()->err($errorType, $extra);
+        $this->getLogger()->error($errorType, $extra);
     }
 }
