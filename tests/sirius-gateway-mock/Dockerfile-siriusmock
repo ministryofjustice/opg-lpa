@@ -1,4 +1,4 @@
-FROM stoplight/prism:4
+FROM stoplight/prism:4.11.0@sha256:8eb6f94ddd60b8cf02f243b3b9a77902ba20658760b1217edaead1d1530ea17a
 
 RUN apk add python3 py3-pip
 
