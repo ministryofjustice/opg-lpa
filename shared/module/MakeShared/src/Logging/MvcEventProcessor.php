@@ -16,7 +16,7 @@ use Monolog\LogRecord;
  * an "event" key which points to an MvcEvent instance. The value for this
  * key is converted into an array, removing any circular references.
  */
-class MvcEventProcessor implements ProcessorInterface
+class MvcEventProcessor implements \Monolog\Processor\ProcessorInterface
 {
     /**
      * Name of the field in the $extra array passed to the logger.
