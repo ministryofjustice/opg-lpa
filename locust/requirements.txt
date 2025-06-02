@@ -20,9 +20,9 @@ certifi==2025.4.26
     #   requests
 charset-normalizer==3.4.2
     # via requests
-click==8.2.0
+click==8.2.1
     # via flask
-configargparse==1.7
+configargparse==1.7.1
     # via
     #   locust
     #   locust-cloud
@@ -54,9 +54,9 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-locust==2.37.3
+locust==2.37.6
     # via -r requirements.in
-locust-cloud==1.21.7
+locust-cloud==1.21.9
     # via locust
 markupsafe==3.0.2
     # via
