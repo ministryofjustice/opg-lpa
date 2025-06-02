@@ -39,7 +39,7 @@ jobs:
         with:
           php-version: "8.2"
       - name: Composer install
-        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
+        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif --no-cache
       - name: Upload Security Analysis results to GitHub
@@ -66,7 +66,7 @@ jobs:
         with:
           php-version: "8.1"
       - name: Composer install
-        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction
+        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif
       - name: Upload Security Analysis results to GitHub
