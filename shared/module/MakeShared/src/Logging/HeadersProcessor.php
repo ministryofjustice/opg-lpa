@@ -39,7 +39,7 @@ use Monolog\LogRecord;
  * - strip out 'cookie' header
  * - retain other headers as-is in $extra
  */
-class HeadersProcessor implements ProcessorInterface
+class HeadersProcessor implements \Monolog\Processor\ProcessorInterface
 {
     /**
      * Name of the field in the $extra array passed to the logger.
