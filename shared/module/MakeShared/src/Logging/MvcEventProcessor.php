@@ -4,6 +4,7 @@ namespace MakeShared\Logging;
 
 use Laminas\Mvc\MvcEvent;
 use Laminas\Log\Processor\ProcessorInterface;
+use Monolog\LogRecord;
 
 /**
  * Recognise MVC events sent to the logger and convert them to arrays.
@@ -24,7 +25,7 @@ class MvcEventProcessor implements ProcessorInterface
      */
     public const EVENT_FIELD_NAME = 'event';
 
-    public function process(array $event): array
+    public function __invoke(LogRecord $event): LogRecord
     {
         // early return if there's no "event" in $extra
         if (
