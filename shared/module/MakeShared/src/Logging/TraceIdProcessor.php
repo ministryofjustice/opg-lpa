@@ -3,6 +3,7 @@
 namespace MakeShared\Logging;
 
 use Laminas\Log\Processor\ProcessorInterface;
+use Monolog\LogRecord;
 
 /**
  * If a non-null trace_id property is in the $extra field for the log event,
@@ -16,7 +17,7 @@ class TraceIdProcessor implements \Monolog\Processor\ProcessorInterface
      */
     public const TRACE_ID_FIELD_NAME = 'trace_id';
 
-    public function __invoke(array $event): array
+    public function __invoke(LogRecord $event): LogRecord
     {
         // early return if there's no "trace_id" in $extra
         if (!array_key_exists(self::TRACE_ID_FIELD_NAME, $event['extra'])) {
