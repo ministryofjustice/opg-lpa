@@ -52,7 +52,7 @@ jobs:
           sudo apt-get update --allow-releaseinfo-change
           sudo apt-get install pdftk-java
       - name: Composer install
-        run: composer install --prefer-dist --optimize-autoloader --no-interaction --no-dev
+        run: composer install --prefer-dist --optimize-autoloader --no-interaction --no-scripts
       - name: Run phpunit
         run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
       - name: Check coverage
@@ -99,7 +99,7 @@ jobs:
           sudo apt-get update --allow-releaseinfo-change
           sudo apt-get install pdftk-java
       - name: Composer install
-        run: composer install --prefer-dist --optimize-autoloader --no-interaction --no-dev
+        run: composer install --prefer-dist --optimize-autoloader --no-interaction --no-scripts
       - name: Run phpunit
         run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
       - name: Check coverage
