@@ -151,6 +151,7 @@ class Module implements FormElementProviderInterface
                 'OrdnanceSurvey'        => 'Application\Model\Service\AddressLookup\OrdnanceSurveyFactory',
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
+                'Logger'                => 'MakeShared\Logging\LoggerFactory',
 
                 // Authentication Adapter
                 'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {
