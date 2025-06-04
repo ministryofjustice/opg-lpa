@@ -5,6 +5,7 @@ namespace Application\Form\Validator;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Session\Container;
 use Laminas\Validator\Csrf as LaminasCsrfValidator;
+use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
 /**
@@ -21,7 +22,7 @@ use RuntimeException;
  * Class Csrf
  * @package Application\Form\Validator
  */
-class Csrf extends LaminasCsrfValidator
+class Csrf extends LaminasCsrfValidator implements LoggerAwareInterface
 {
     use LoggerTrait;
 

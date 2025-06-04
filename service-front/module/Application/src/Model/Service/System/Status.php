@@ -14,6 +14,7 @@ use Exception;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Goes through all required services and checks they're operating.
@@ -21,7 +22,7 @@ use MakeShared\Logging\LoggerTrait;
  * Class Status
  * @package Application\Model\Service\System
  */
-class Status extends AbstractService implements ApiClientAwareInterface
+class Status extends AbstractService implements ApiClientAwareInterface, LoggerAwareInterface
 {
     use ApiClientTrait;
     use LoggerTrait;

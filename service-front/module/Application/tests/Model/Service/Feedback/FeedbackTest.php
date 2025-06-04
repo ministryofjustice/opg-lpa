@@ -12,6 +12,7 @@ use Hamcrest\Matchers;
 use Hamcrest\MatcherAssert;
 use Mockery;
 use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
 
 class FeedbackTest extends AbstractEmailServiceTest
 {
@@ -35,9 +36,11 @@ class FeedbackTest extends AbstractEmailServiceTest
             $this->mailTransport,
             $this->helperPluginManager
         );
+        $logger = Mockery::spy(LoggerInterface::class);
 
         $this->apiClient = Mockery::mock(Client::class);
         $this->service->setApiClient($this->apiClient);
+        $this->service->setLogger($logger);
     }
 
     public function testAdd(): void

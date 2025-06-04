@@ -4,13 +4,14 @@ namespace Application\Model\Service\Redis;
 
 use MakeShared\Logging\LoggerTrait;
 use InvalidArgumentException;
+use Psr\Log\LoggerAwareInterface;
 use Redis;
 use RedisException;
 
 /**
  * Basic save handler to connect, write to and read from Redis
  */
-class RedisClient
+class RedisClient implements LoggerAwareInterface
 {
     use LoggerTrait;
 

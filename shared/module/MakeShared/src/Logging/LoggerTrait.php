@@ -4,27 +4,27 @@ namespace MakeShared\Logging;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
 /**
  * Trait LoggerTrait
  * @package MakeShared\Logging
+ * @psalm-require-implements LoggerAwareInterface
  */
 trait LoggerTrait
 {
     private ?LoggerInterface $logger = null;
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
-        return $this;
     }
 
     public function getLogger(): LoggerInterface
     {
         if ($this->logger === null) {
-            $this->logger = new \Monolog\Logger('MakeAnLPALogger');
-            $this->logger->pushHandler(new StreamHandler('php://stderr', Level::Debug  ));
+            throw new \RuntimeException('Logger not set');
         }
         return $this->logger;
     }

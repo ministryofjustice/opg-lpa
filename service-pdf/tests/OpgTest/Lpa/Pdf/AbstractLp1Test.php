@@ -4,9 +4,11 @@ namespace OpgTest\Lpa\Pdf;
 
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Mockery;
 use Opg\Lpa\Pdf\Lp1f;
 use Opg\Lpa\Pdf\Lp1h;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
+use Psr\Log\LoggerInterface;
 
 /**
  * Tests of the AbstractLp1 test through its concrete subclasses.
@@ -244,8 +246,10 @@ class AbstractLp1Test extends AbstractPdfTestCase
         $data = $this->populatePageEighteen_CertificateProviderCorrespondentData($data);
 
         // Load the data to make our amended LPA
+        $logger = Mockery::spy(LoggerInterface::class);
         $lpa = $this->buildLpaFromJSON($data);
         $pdf = new Lp1f($lpa, [], $this->factory);
+        $pdf->setLogger($logger);
         $pdf->generate();
 
         // Get data which will be injected into the output PDF
@@ -323,8 +327,10 @@ class AbstractLp1Test extends AbstractPdfTestCase
         unset($data['payment']);
 
         // Load the data to make our amended LPA
+        $logger = Mockery::spy(LoggerInterface::class);
         $lpa = $this->buildLpaFromJSON($data);
         $pdf = new Lp1h($lpa, [], $this->factory);
+        $pdf->setLogger($logger);
         $pdf->generate();
 
         // Get data which will be injected into the output PDF
