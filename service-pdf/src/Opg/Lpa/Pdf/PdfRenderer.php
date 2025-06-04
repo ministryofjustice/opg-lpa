@@ -12,6 +12,7 @@ use Opg\Lpa\Pdf\Lpa120;
 use Opg\Lpa\Pdf\Aggregator\Lp3;
 use Opg\Lpa\Pdf\PdftkFactory;
 use Exception;
+use Psr\Log\LoggerAwareInterface;
 use UnexpectedValueException;
 use copy;
 use file_exists;
@@ -19,7 +20,7 @@ use glob;
 use mkdir;
 use pathinfo;
 
-class PdfRenderer
+class PdfRenderer implements LoggerAwareInterface
 {
     use LoggerTrait;
 
