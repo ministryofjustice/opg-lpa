@@ -6,13 +6,14 @@ use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use MakeShared\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Stores the generated PDF into Amazon S3
  *
  * Files will be automatically deleted after a period by the bucket's lifecycle policy
  */
-class S3Response
+class S3Response implements LoggerAwareInterface
 {
     use LoggerTrait;
 

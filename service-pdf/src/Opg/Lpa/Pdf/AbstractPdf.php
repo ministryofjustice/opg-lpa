@@ -6,16 +6,16 @@ use MakeShared\DataModel\Lpa\Formatter;
 use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
 use MakeShared\Logging\LoggerTrait;
-use Opg\Lpa\Pdf\PdftkFactory;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Exception;
 use JsonSerializable;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Class AbstractPdf
  * @package Opg\Lpa\Pdf
  */
-abstract class AbstractPdf extends PdftkPdf implements JsonSerializable
+abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerAwareInterface
 {
     /**
      * Logger utility

@@ -7,8 +7,9 @@ use MakeShared\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdfRenderer;
 use Aws\Sqs\SqsClient;
+use Psr\Log\LoggerAwareInterface;
 
-class SqsWorker
+class SqsWorker implements LoggerAwareInterface
 {
     use LoggerTrait;
 
