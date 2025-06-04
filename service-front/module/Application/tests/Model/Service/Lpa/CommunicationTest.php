@@ -18,6 +18,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
+use Psr\Log\LoggerInterface;
 
 class CommunicationTest extends AbstractEmailServiceTest
 {
@@ -39,10 +40,12 @@ class CommunicationTest extends AbstractEmailServiceTest
                 $this->helperPluginManager,
             ]
         )->makePartial();
+        $logger = Mockery::spy(LoggerInterface::class);
 
         $userDetailSession = new Container();
         $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
         $this->service->setUserDetailsSession($userDetailSession);
+        $this->service->setLogger($logger);
     }
 
     public function testSendRegistrationCompleteEmailWithoutPaymentButWithPersonToNotify(): void

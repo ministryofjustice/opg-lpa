@@ -6,6 +6,7 @@ use Application\Model\Service\Redis\RedisClient;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Psr\Log\LoggerInterface;
 use Redis;
 use RedisException;
 use ReflectionProperty;
@@ -16,7 +17,9 @@ class RedisClientTest extends MockeryTestCase
     private function makeRedisClientWithMock(string $redisUrl): Redis
     {
         $redisMock = Mockery::Mock(Redis::class);
+        $logger = Mockery::spy(LoggerInterface::class);
         $this->redisHandler = new RedisClient($redisUrl, 1000, $redisMock);
+        $this->redisHandler->setLogger($logger);
         return $redisMock;
     }
 

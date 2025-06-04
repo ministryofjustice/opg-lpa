@@ -4,8 +4,9 @@ namespace Application\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Log\LoggerAwareInterface;
 
-abstract class AbstractService
+abstract class AbstractService implements LoggerAwareInterface
 {
     use LoggerTrait;
 

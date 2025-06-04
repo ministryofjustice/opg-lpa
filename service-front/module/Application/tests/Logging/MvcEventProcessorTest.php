@@ -7,6 +7,7 @@ use Laminas\Stdlib\RequestInterface as Request;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\Logging\MvcEventProcessor;
+use Monolog\LogRecord;
 
 class MvcEventProcessorTest extends MockeryTestCase
 {
@@ -41,15 +42,15 @@ class MvcEventProcessorTest extends MockeryTestCase
                   ->once();
         $fakeEvent->shouldReceive('isError')->andReturn(true)->once();
         $fakeEvent->shouldReceive('getError')->andReturn('generic error')->once();
-
-        $logEvent = [
+// TODO pass in all params that logrecord needs
+        $logEvent = new LogRecord([
             'extra' => [
                 MvcEventProcessor::EVENT_FIELD_NAME => $fakeEvent
             ]
-        ];
+        ]);
 
         $processor = new MvcEventProcessor();
-        $actual = $processor->process($logEvent);
+        $actual = $processor($logEvent);
 
         $expectedLoggedHeaders = [
             'X-Trace-Id' => $fakeHeadersArray['X-Trace-Id'],
