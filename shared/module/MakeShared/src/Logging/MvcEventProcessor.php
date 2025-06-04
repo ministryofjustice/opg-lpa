@@ -5,6 +5,7 @@ namespace MakeShared\Logging;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Log\Processor\ProcessorInterface;
 use Monolog\LogRecord;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Recognise MVC events sent to the logger and convert them to arrays.

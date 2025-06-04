@@ -8,8 +8,9 @@ use Http\Client\HttpClient as HttpClientInterface;
 use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\Tracer;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerAwareInterface;
 
-class Client
+class Client implements LoggerAwareInterface
 {
     use LoggerTrait;
 

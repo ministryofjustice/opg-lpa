@@ -8,14 +8,14 @@ use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
-use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Sends an email via the Notify API.
  * See https://docs.notifications.service.gov.uk/php.html
  */
-class NotifyMailTransport implements MailTransportInterface
+class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 
