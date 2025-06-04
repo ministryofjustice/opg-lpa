@@ -11,6 +11,7 @@ use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
 use mt_rand;
 use mt_getrandmax;
+use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
 /**
