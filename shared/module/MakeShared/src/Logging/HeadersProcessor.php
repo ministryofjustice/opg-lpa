@@ -50,14 +50,14 @@ class HeadersProcessor implements \Monolog\Processor\ProcessorInterface
 
     public const HEADERS_TO_STRIP = ['cookie', 'authorization', '_ga', '_gid', 'token'];
 
-    public function __invoke(LogRecord $event): LogRecord
+    public function __invoke(LogRecord $record): LogRecord
     {
         // early return if there's no "headers" in $extra
-        if (!isset($event['extra'][self::HEADERS_FIELD_NAME])) {
-            return $event;
+        if (!isset($record['extra'][self::HEADERS_FIELD_NAME])) {
+            return $record;
         }
 
-        $headers = $event['extra'][self::HEADERS_FIELD_NAME];
+        $headers = $record['extra'][self::HEADERS_FIELD_NAME];
 
         // headers; filter out any which potentially contain private data
         // and promote X-Trace-Id to top level property in $extra
@@ -72,8 +72,8 @@ class HeadersProcessor implements \Monolog\Processor\ProcessorInterface
         }
 
         // set fixed headers on $extra
-        $event['extra'][self::HEADERS_FIELD_NAME] = $headersArray;
+        $record['extra'][self::HEADERS_FIELD_NAME] = $headersArray;
 
-        return $event;
+        return $record;
     }
 }
