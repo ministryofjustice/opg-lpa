@@ -149,7 +149,7 @@ class Service extends AbstractService
 
                 case 500:
                 case 503:
-                    $this->getLogger()->err(
+                    $this->getLogger()->error(
                         'Bad ' . $statusCode . ' response from Sirius gateway: ' .
                         (string)$result->getBody()
                     );
@@ -157,7 +157,7 @@ class Service extends AbstractService
                     throw new ApiProblemException('Bad response from Sirius gateway: ' . $statusCode);
 
                 default:
-                    $this->getLogger()->err(
+                    $this->getLogger()->error(
                         'Unexpected response from Sirius gateway: ' . $statusCode .
                         '; ' . (string)$result->getBody()
                     );

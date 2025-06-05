@@ -3,7 +3,6 @@
 namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\StatusController;
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\MillisecondDateTime;
 use Application\Library\Http\Response\Json;
@@ -13,6 +12,7 @@ use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusServic
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
+use Psr\Log\LoggerInterface;
 
 class StatusControllerTest extends AbstractControllerTest
 {
@@ -50,6 +50,8 @@ class StatusControllerTest extends AbstractControllerTest
             $this->processingStatusService,
             $this->config
         );
+        $logger = Mockery::spy(LoggerInterface::class);
+        $this->statusController->setLogger($logger);
     }
 
     public function testGetWithFirstUpdateOnValidCase()

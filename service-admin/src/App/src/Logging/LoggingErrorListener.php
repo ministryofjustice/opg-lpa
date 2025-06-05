@@ -2,7 +2,6 @@
 
 namespace App\Logging;
 
-use MakeShared\Logging\SimpleLoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -13,7 +12,7 @@ use Throwable;
  */
 class LoggingErrorListener
 {
-    use SimpleLoggerTrait;
+    use LoggerTrait;
 
     /**
      * @param Throwable $error
@@ -23,7 +22,7 @@ class LoggingErrorListener
      */
     public function __invoke(Throwable $error, ServerRequestInterface $_1, ResponseInterface $_2)
     {
-        $this->getLogger()->err(sprintf(
+        $this->getLogger()->error(sprintf(
             '%s in %s on line %s - %s',
             $error->getMessage(),
             $error->getFile(),

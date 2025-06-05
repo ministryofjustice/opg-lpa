@@ -4,7 +4,6 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
-use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\Tracer;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
@@ -13,28 +12,23 @@ use Application\Model\Service\Redis\RedisClient;
 use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManager;
-use Application\View\Helper\LocalViewRenderer;
 use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
-use Closure;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
-use Laminas\Router\RouteMatch;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Psr\Log\LoggerAwareInterface;
 use Redis;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
-use Twig\TwigFunction;
 
 class Module implements FormElementProviderInterface
 {
-    use LoggerTrait;
-
     public function onBootstrap(MvcEvent $e)
     {
         $eventManager = $e->getApplication()->getEventManager();
@@ -151,6 +145,7 @@ class Module implements FormElementProviderInterface
                 'OrdnanceSurvey'        => 'Application\Model\Service\AddressLookup\OrdnanceSurveyFactory',
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
+                'Logger'                => 'MakeShared\Logging\LoggerFactory',
 
                 // Authentication Adapter
                 'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {
@@ -235,6 +230,14 @@ class Module implements FormElementProviderInterface
                     return Tracer::create($telemetryConfig);
                 },
             ], // factories
+            'initializers' => [
+                function(ServiceLocatorInterface $container, $instance) {
+                    if (! $instance instanceof LoggerAwareInterface) {
+                        return;
+                    }
+                    $instance->setLogger($container->get(\Monolog\Logger::class));
+                }
+            ]
         ];
     }
 

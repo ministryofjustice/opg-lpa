@@ -3,13 +3,13 @@
 namespace MakeSharedTest\Telemetry;
 
 use MakeShared\Constants;
-use MakeShared\Logging\SimpleLogger;
 use MakeShared\Telemetry\Exporter\LogExporter;
 use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
 use MakeShared\Telemetry\Tracer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class TracerTest extends TestCase
 {
@@ -44,7 +44,9 @@ class TracerTest extends TestCase
 
     public function testStartStopRootSegmentFromServerEnv()
     {
+        $logger = Mockery::spy(LoggerInterface::class);
         $tracer = Tracer::create($this->config);
+        $tracer->getExporter()->setLogger($logger);
 
         $_SERVER = [];
         $_SERVER[Constants::X_TRACE_ID_HEADER_NAME] =
