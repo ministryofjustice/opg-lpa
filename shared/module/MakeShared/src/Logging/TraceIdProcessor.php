@@ -3,6 +3,7 @@
 namespace MakeShared\Logging;
 
 use Laminas\Log\Processor\ProcessorInterface;
+use MakeShared\Constants;
 use Monolog\LogRecord;
 
 /**
@@ -17,21 +18,13 @@ class TraceIdProcessor implements \Monolog\Processor\ProcessorInterface
      */
     public const TRACE_ID_FIELD_NAME = 'trace_id';
 
-    public function __invoke(LogRecord $event): LogRecord
+    public function __invoke(LogRecord $record): LogRecord
     {
-        // early return if there's no "trace_id" in $extra
-        if (!array_key_exists(self::TRACE_ID_FIELD_NAME, $event['extra'])) {
-            return $event;
+        if (array_key_exists(Constants::X_TRACE_ID_HEADER_NAME, $_SERVER)) {
+            $record['extra'][TraceIdProcessor::TRACE_ID_FIELD_NAME] =
+                $_SERVER[Constants::X_TRACE_ID_HEADER_NAME];
         }
 
-        $traceId = $event['extra'][self::TRACE_ID_FIELD_NAME];
-
-        if (!is_null($traceId)) {
-            $event['trace_id'] = $traceId;
-        }
-
-        unset($event['extra'][self::TRACE_ID_FIELD_NAME]);
-
-        return $event;
+        return $record;
     }
 }
