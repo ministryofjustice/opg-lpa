@@ -26,34 +26,34 @@ class MvcEventProcessor implements \Monolog\Processor\ProcessorInterface
      */
     public const EVENT_FIELD_NAME = 'event';
 
-    public function __invoke(LogRecord $event): LogRecord
+    public function __invoke(LogRecord $record): LogRecord
     {
-        // early return if there's no "event" in $extra
+        // early return if there's no "event" in $record
         if (
-            !isset($event['extra'][self::EVENT_FIELD_NAME]) ||
-            !($event['extra'][self::EVENT_FIELD_NAME] instanceof MvcEvent)
+            !isset($record['extra'][self::EVENT_FIELD_NAME]) ||
+            !($record['extra'][self::EVENT_FIELD_NAME] instanceof MvcEvent)
         ) {
-            return $event;
+            return $record;
         }
 
-        // pick apart the log event
-        $laminasEvent = $event['extra'][self::EVENT_FIELD_NAME];
+        // pick apart the log record
+        $laminasEvent = $record['extra'][self::EVENT_FIELD_NAME];
         $req = $laminasEvent->getRequest();
 
         // raw headers
-        $event['extra']['headers'] = $req->getHeaders()->toArray();
+        $record['extra']['headers'] = $req->getHeaders()->toArray();
 
         // other request data
-        $event['extra']['request_uri'] = $req->getUriString();
-        $event['extra']['request_method'] = $req->getMethod();
+        $record['extra']['request_uri'] = $req->getUriString();
+        $record['extra']['request_method'] = $req->getMethod();
 
         // event source controller
-        $event['extra']['controller'] = $laminasEvent->getController();
+        $record['extra']['controller'] = $laminasEvent->getController();
 
         // exception (if present)
         $exception = $laminasEvent->getParam('exception');
         if ($exception != null) {
-            $event['extra']['exception'] = [
+            $record['extra']['exception'] = [
                 'message' => $exception->getMessage(),
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
@@ -63,12 +63,12 @@ class MvcEventProcessor implements \Monolog\Processor\ProcessorInterface
 
         // error (if present)
         if ($laminasEvent->isError()) {
-            $event['extra']['errorMessage'] = $laminasEvent->getError();
+            $record['extra']['errorMessage'] = $laminasEvent->getError();
         }
 
         // remove the event we've now decomposed
-        unset($event['extra'][self::EVENT_FIELD_NAME]);
+        unset($record['extra'][self::EVENT_FIELD_NAME]);
 
-        return $event;
+        return $record;
     }
 }
