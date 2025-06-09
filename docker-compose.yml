@@ -37,7 +37,7 @@ services:
 
   postgres:
     container_name: lpa-postgres
-    image: postgres:13.7
+    image: postgres:13.7@sha256:03652c675ae177af98ddd50f9f4b4b2cf8ad38d0e116aa68fe670fbc2cf250fc
     ports:
       - 5434:5432
     environment:
@@ -53,19 +53,19 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:6.2-alpine
+    image: library/redis:6.2-alpine@sha256:3211c33a618c457e5d241922c975dbc4f446d0bdb2dc75694f5573ef8e2d01fa
 #    ports:
 #      - 6379:6379
 
   dynamodb:
     container_name: lpa-dynamodb
-    image: amazon/dynamodb-local
+    image: amazon/dynamodb-local@sha256:1856c05cc66a0e49dc1099e483ad2851477eeebe2135250ac11a1d1227db54b1
 #    ports:
 #      - 8000:8000
 
   govpaystub:
     container_name: lpa-govpaystub
-    image: bbyars/mountebank
+    image: bbyars/mountebank@sha256:a770f137a004b47317a9748c343208299d224dbd81a9214b5084634020df7ba2
     ports:
       - 2527:2525
       - 4547:4545
@@ -75,7 +75,7 @@ services:
 
   localstack:
     container_name: lpa-localstack
-    image: localstack/localstack:3.8.1
+    image: localstack/localstack:3.8.1@sha256:b279c01f4cfb8f985a482e4014cabc1e2697b9d7a6c8c8db2e40f4d9f93687c7
     privileged: true
 #    ports:
 #      - 4568:4566
