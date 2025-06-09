@@ -44,7 +44,7 @@ gevent==24.11.1
     #   locust-cloud
 geventhttpclient==2.3.3
     # via locust
-greenlet==3.2.2
+greenlet==3.2.3
     # via gevent
 h11==0.16.0
     # via wsproto
@@ -56,7 +56,7 @@ jinja2==3.1.6
     # via flask
 locust==2.37.6
     # via -r requirements.in
-locust-cloud==1.23.0
+locust-cloud==1.23.1
     # via locust
 markupsafe==3.0.2
     # via
@@ -71,8 +71,10 @@ psutil==7.0.0
     # via locust
 python-dateutil==2.9.0.post0
     # via faker
-python-engineio==4.12.1
-    # via python-socketio
+python-engineio==4.12.2
+    # via
+    #   locust-cloud
+    #   python-socketio
 python-socketio[client]==5.13.0
     # via locust-cloud
 pyzmq==26.4.0
