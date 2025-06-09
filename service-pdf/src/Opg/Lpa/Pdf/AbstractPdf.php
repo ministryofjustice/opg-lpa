@@ -2,13 +2,12 @@
 
 namespace Opg\Lpa\Pdf;
 
-use MakeShared\DataModel\Lpa\Formatter;
-use MakeShared\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Config\Config;
-use MakeShared\Logging\LoggerTrait;
-use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Exception;
 use JsonSerializable;
+use MakeShared\DataModel\Lpa\Formatter;
+use MakeShared\DataModel\Lpa\Lpa;
+use mikehaertl\pdftk\Pdf as PdftkPdf;
+use Opg\Lpa\Pdf\Config\Config;
 use Psr\Log\LoggerAwareInterface;
 
 /**
@@ -22,7 +21,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerA
      *
      * @var Logger
      */
-    use LoggerTrait;
+    use Traits\LoggerTrait;
 
     /**
      * Constants

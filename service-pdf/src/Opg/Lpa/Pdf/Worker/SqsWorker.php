@@ -2,11 +2,11 @@
 
 namespace Opg\Lpa\Pdf\Worker;
 
+use Aws\Sqs\SqsClient;
 use Laminas\Filter\Decompress;
-use MakeShared\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdfRenderer;
-use Aws\Sqs\SqsClient;
+use Opg\Lpa\Pdf\Traits\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 
 class SqsWorker implements LoggerAwareInterface
