@@ -4,7 +4,6 @@ namespace Opg\Lpa\Pdf\Worker\Response;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use MakeShared\Logging\LoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
 use Psr\Log\LoggerAwareInterface;
 
@@ -15,7 +14,7 @@ use Psr\Log\LoggerAwareInterface;
  */
 class S3Response implements LoggerAwareInterface
 {
-    use LoggerTrait;
+    use \Opg\Lpa\Pdf\Traits\LoggerTrait;
 
     /** @var string */
     private $docId;
