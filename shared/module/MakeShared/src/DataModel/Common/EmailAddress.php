@@ -4,6 +4,7 @@ namespace MakeShared\DataModel\Common;
 
 use MakeShared\DataModel\AbstractData;
 use MakeShared\DataModel\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
@@ -25,7 +26,7 @@ class EmailAddress extends AbstractData
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank(),
             new Assert\Email([
-                'strict' => true
+                'mode' => Email::VALIDATION_MODE_STRICT
             ])
         ]);
     }
