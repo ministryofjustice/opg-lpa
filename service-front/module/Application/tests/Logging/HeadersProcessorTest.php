@@ -2,9 +2,12 @@
 
 namespace ApplicationTest\Logging;
 
+use DateTimeImmutable;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\Logging\HeadersProcessor;
+use Monolog\Level;
+use Monolog\LogRecord;
 
 class HeadersProcessorTest extends MockeryTestCase
 {
@@ -23,14 +26,19 @@ class HeadersProcessorTest extends MockeryTestCase
             'Token' => 'ffasdfasdfasasdasd',
         ];
 
-        $logEvent = [
-            'extra' => [
+        $logEvent = new LogRecord(
+            datetime: new DateTimeImmutable('2023-07-04T23:59:59+01:00'),
+            channel: 'MakeAnLPALogger',
+            level: Level::Debug,
+            message: 'A log message',
+            context: [],
+            extra: [
                 'headers' => $fakeHeadersArray,
             ],
-        ];
+        );
 
         $headersProcessor = new HeadersProcessor();
-        $actual = $headersProcessor->process($logEvent);
+        $actual = $headersProcessor($logEvent);
 
         $expectedHeaders = [
             'X-Trace-Id' => '999-000-111-222',

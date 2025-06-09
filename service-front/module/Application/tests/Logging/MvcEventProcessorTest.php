@@ -2,11 +2,13 @@
 
 namespace ApplicationTest\Logging;
 
+use DateTimeImmutable;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\RequestInterface as Request;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\Logging\MvcEventProcessor;
+use Monolog\Level;
 use Monolog\LogRecord;
 
 class MvcEventProcessorTest extends MockeryTestCase
@@ -42,12 +44,16 @@ class MvcEventProcessorTest extends MockeryTestCase
                   ->once();
         $fakeEvent->shouldReceive('isError')->andReturn(true)->once();
         $fakeEvent->shouldReceive('getError')->andReturn('generic error')->once();
-// TODO pass in all params that logrecord needs
-        $logEvent = new LogRecord([
-            'extra' => [
+        $logEvent = new LogRecord(
+            datetime: new DateTimeImmutable('2023-07-04T23:59:59+01:00'),
+            channel: 'MakeAnLPALogger',
+            level: Level::Debug,
+            message: 'A log message',
+            context: [],
+            extra: [
                 MvcEventProcessor::EVENT_FIELD_NAME => $fakeEvent
-            ]
-        ]);
+            ],
+        );
 
         $processor = new MvcEventProcessor();
         $actual = $processor($logEvent);
