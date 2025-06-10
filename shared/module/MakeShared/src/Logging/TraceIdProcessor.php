@@ -2,16 +2,16 @@
 
 namespace MakeShared\Logging;
 
-use Laminas\Log\Processor\ProcessorInterface;
 use MakeShared\Constants;
 use Monolog\LogRecord;
+use Monolog\Processor\ProcessorInterface;
 
 /**
  * If a non-null trace_id property is in the $extra field for the log event,
  * promote it to a top-level property on the log event and remove it from $extra.
  * If it is present but null, just remove it from $extra.
  */
-class TraceIdProcessor implements \Monolog\Processor\ProcessorInterface
+class TraceIdProcessor implements ProcessorInterface
 {
     /**
      * Name of the trace ID field in the $extra array passed to the logger.
