@@ -2,8 +2,8 @@
 
 namespace MakeShared\Logging;
 
-use Laminas\Log\Processor\ProcessorInterface;
 use Monolog\LogRecord;
+use Monolog\Processor\ProcessorInterface;
 
 /**
  * Process any headers array in the $extra field, stripping sensitive
@@ -39,7 +39,7 @@ use Monolog\LogRecord;
  * - strip out 'cookie' header
  * - retain other headers as-is in $extra
  */
-class HeadersProcessor implements \Monolog\Processor\ProcessorInterface
+class HeadersProcessor implements ProcessorInterface
 {
     /**
      * Name of the field in the $extra array passed to the logger.
