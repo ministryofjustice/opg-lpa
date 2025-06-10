@@ -3,9 +3,8 @@
 namespace MakeShared\Logging;
 
 use Laminas\Mvc\MvcEvent;
-use Laminas\Log\Processor\ProcessorInterface;
 use Monolog\LogRecord;
-use Psr\Log\LoggerAwareInterface;
+use Monolog\Processor\ProcessorInterface;
 
 /**
  * Recognise MVC events sent to the logger and convert them to arrays.
@@ -17,7 +16,7 @@ use Psr\Log\LoggerAwareInterface;
  * an "event" key which points to an MvcEvent instance. The value for this
  * key is converted into an array, removing any circular references.
  */
-class MvcEventProcessor implements \Monolog\Processor\ProcessorInterface
+class MvcEventProcessor implements ProcessorInterface
 {
     /**
      * Name of the field in the $extra array passed to the logger.

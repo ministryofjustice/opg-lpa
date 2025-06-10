@@ -17,7 +17,6 @@ $aggregator = new ConfigAggregator([
     \Mezzio\Tooling\ConfigProvider::class,
     \Laminas\Diactoros\ConfigProvider::class,
     \Laminas\Cache\Storage\Adapter\Memory\ConfigProvider::class,
-    \Laminas\Log\ConfigProvider::class,
     \Laminas\Cache\ConfigProvider::class,
     \Laminas\Form\ConfigProvider::class,
     \Laminas\InputFilter\ConfigProvider::class,
