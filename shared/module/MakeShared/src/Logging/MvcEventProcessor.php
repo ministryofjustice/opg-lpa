@@ -2,6 +2,7 @@
 
 namespace MakeShared\Logging;
 
+use Laminas\Http\Request;
 use Laminas\Mvc\MvcEvent;
 use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
@@ -37,6 +38,12 @@ class MvcEventProcessor implements ProcessorInterface
 
         // pick apart the log record
         $laminasEvent = $record->extra[self::EVENT_FIELD_NAME];
+
+        /**
+
+         * @var Request $req
+
+         **/
         $req = $laminasEvent->getRequest();
 
         // raw headers
