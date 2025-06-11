@@ -11,8 +11,9 @@ use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Psr\Log\LoggerAwareInterface;
 
-abstract class AbstractAuthController extends AbstractRestfulController
+abstract class AbstractAuthController extends AbstractRestfulController implements LoggerAwareInterface
 {
     use LoggerTrait;
 
