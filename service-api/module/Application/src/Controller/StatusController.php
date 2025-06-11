@@ -16,8 +16,9 @@ use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use LmcRbacMvc\Service\AuthorizationService;
+use Psr\Log\LoggerAwareInterface;
 
-class StatusController extends AbstractRestfulController
+class StatusController extends AbstractRestfulController implements LoggerAwareInterface
 {
     use LoggerTrait;
 
