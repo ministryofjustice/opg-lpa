@@ -8,12 +8,13 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Adapter\AdapterInterface;
 use Laminas\Db\Exception\ExceptionInterface as LaminasExceptionInterface;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Class LpaAuth
  * @package Application\Library\Authentication\Adapter
  */
-class LpaAuth implements AdapterInterface
+class LpaAuth implements AdapterInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 

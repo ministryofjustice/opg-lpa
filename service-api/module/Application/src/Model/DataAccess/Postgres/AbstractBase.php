@@ -4,8 +4,9 @@ namespace Application\Model\DataAccess\Postgres;
 
 use MakeShared\Logging\LoggerTrait;
 use Application\Model\DataAccess\Postgres\DbWrapper;
+use Psr\Log\LoggerAwareInterface;
 
-class AbstractBase
+class AbstractBase implements LoggerAwareInterface
 {
     use LoggerTrait;
 
