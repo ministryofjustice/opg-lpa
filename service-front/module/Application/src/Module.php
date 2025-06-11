@@ -4,6 +4,7 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
+use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
@@ -22,6 +23,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Monolog\Logger;
 use Psr\Log\LoggerAwareInterface;
 use Redis;
 use Twig\Loader\FilesystemLoader;
@@ -185,6 +187,10 @@ class Module implements FormElementProviderInterface
                     return new DynamoDbClient($sm->get('config')['admin']['dynamodb']['client']);
                 },
 
+                'ExporterFactory' => function (ServiceLocatorInterface $sm) {
+                    return new ExporterFactory($sm);
+                },
+
                 'GovPayClient' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config')['alphagov']['pay'];
 
@@ -227,7 +233,7 @@ class Module implements FormElementProviderInterface
 
                 'TelemetryTracer' => function ($sm) {
                     $telemetryConfig = $sm->get('config')['telemetry'];
-                    return Tracer::create($telemetryConfig);
+                    return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
                 },
             ], // factories
             'initializers' => [
@@ -235,7 +241,7 @@ class Module implements FormElementProviderInterface
                     if (! $instance instanceof LoggerAwareInterface) {
                         return;
                     }
-                    $instance->setLogger($container->get(\Monolog\Logger::class));
+                    $instance->setLogger($container->get('Logger'));
                 }
             ]
         ];

@@ -16,7 +16,6 @@ return array(
         'Laminas\Validator',
         'Laminas\Cache\Storage\Adapter\Memory',
         'Application',
-        'Monolog\Monolog',
         //ZfcTwig MUST be the last module!
         //note that at this time that ZfcTwig has not been given a new Laminas namespace
         'ZfcTwig',
