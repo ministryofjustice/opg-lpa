@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakeShared\Telemetry;
 
 use MakeShared\Constants;
+use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Exporter\ExporterInterface;
 use MakeShared\Telemetry\Exporter\LogExporter;
 use MakeShared\Telemetry\Exporter\XrayExporter;
@@ -64,7 +65,7 @@ class Tracer
      * If requestsSampledFraction (a float from 0-1) is present in $config, it is used
      * to set the fraction of requests which will be sampled; otherwise, the default is used.
      */
-    public static function create(array $config = [])
+    public static function create(ExporterFactory $exporterFactory, array $config = []): Tracer
     {
         $requestsSampledFraction = $config['requestsSampledFraction'] ?? null;
         if (!is_null($requestsSampledFraction)) {
@@ -76,9 +77,9 @@ class Tracer
         $exporterPort = $config['exporter']['port'] ?? null;
 
         if (is_null($exporterHost) || is_null($exporterPort)) {
-            $exporter = new LogExporter();
+            $exporter = $exporterFactory->createLogExporter();
         } else {
-            $exporter = new XrayExporter($exporterHost, intval($exporterPort));
+            $exporter = $exporterFactory->createXRayExporter($exporterHost, intval($exporterPort));
         }
 
         return new Tracer(
