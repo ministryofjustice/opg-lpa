@@ -3,11 +3,13 @@
 namespace Application\Library\Authentication;
 
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Laminas\EventManager\ListenerAggregateInterface;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Authentication\Result as AuthenticationResult;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Authenticate the user from a header token.
@@ -17,7 +19,7 @@ use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
  * Class AuthenticationListener
  * @package Application\Library\Authentication
  */
-class AuthenticationListener
+class AuthenticationListener implements LoggerAwareInterface
 {
     use LoggerTrait;
 
