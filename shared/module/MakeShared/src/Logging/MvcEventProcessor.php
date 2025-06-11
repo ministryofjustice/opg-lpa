@@ -29,30 +29,30 @@ class MvcEventProcessor implements ProcessorInterface
     {
         // early return if there's no "event" in $record
         if (
-            !isset($record['extra'][self::EVENT_FIELD_NAME]) ||
-            !($record['extra'][self::EVENT_FIELD_NAME] instanceof MvcEvent)
+            !isset($record->extra[self::EVENT_FIELD_NAME]) ||
+            !($record->extra[self::EVENT_FIELD_NAME] instanceof MvcEvent)
         ) {
             return $record;
         }
 
         // pick apart the log record
-        $laminasEvent = $record['extra'][self::EVENT_FIELD_NAME];
+        $laminasEvent = $record->extra[self::EVENT_FIELD_NAME];
         $req = $laminasEvent->getRequest();
 
         // raw headers
-        $record['extra']['headers'] = $req->getHeaders()->toArray();
+        $record->extra['headers'] = $req->getHeaders()->toArray();
 
         // other request data
-        $record['extra']['request_uri'] = $req->getUriString();
-        $record['extra']['request_method'] = $req->getMethod();
+        $record->extra['request_uri'] = $req->getUriString();
+        $record->extra['request_method'] = $req->getMethod();
 
         // event source controller
-        $record['extra']['controller'] = $laminasEvent->getController();
+        $record->extra['controller'] = $laminasEvent->getController();
 
         // exception (if present)
         $exception = $laminasEvent->getParam('exception');
         if ($exception != null) {
-            $record['extra']['exception'] = [
+            $record->extra['exception'] = [
                 'message' => $exception->getMessage(),
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
@@ -62,11 +62,11 @@ class MvcEventProcessor implements ProcessorInterface
 
         // error (if present)
         if ($laminasEvent->isError()) {
-            $record['extra']['errorMessage'] = $laminasEvent->getError();
+            $record->extra['errorMessage'] = $laminasEvent->getError();
         }
 
         // remove the event we've now decomposed
-        unset($record['extra'][self::EVENT_FIELD_NAME]);
+        unset($record->extra[self::EVENT_FIELD_NAME]);
 
         return $record;
     }

@@ -53,11 +53,11 @@ class HeadersProcessor implements ProcessorInterface
     public function __invoke(LogRecord $record): LogRecord
     {
         // early return if there's no "headers" in $extra
-        if (!isset($record['extra'][self::HEADERS_FIELD_NAME])) {
+        if (!isset($record->extra[self::HEADERS_FIELD_NAME])) {
             return $record;
         }
 
-        $headers = $record['extra'][self::HEADERS_FIELD_NAME];
+        $headers = $record->extra[self::HEADERS_FIELD_NAME];
 
         // headers; filter out any which potentially contain private data
         // and promote X-Trace-Id to top level property in $extra
@@ -72,7 +72,7 @@ class HeadersProcessor implements ProcessorInterface
         }
 
         // set fixed headers on $extra
-        $record['extra'][self::HEADERS_FIELD_NAME] = $headersArray;
+        $record->extra[self::HEADERS_FIELD_NAME] = $headersArray;
 
         return $record;
     }
