@@ -15,12 +15,13 @@ use Laminas\View\Model\JsonModel;
 use Exception;
 use Laminas\Db\Adapter\Adapter as DbAdapter;
 use Aws\Sqs\SqsClient;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Class PingController
  * @package Application\Controller
  */
-class PingController extends AbstractRestfulController
+class PingController extends AbstractRestfulController implements LoggerAwareInterface
 {
     use LoggerTrait;
 
