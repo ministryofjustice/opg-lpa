@@ -3,6 +3,7 @@
 namespace MakeSharedTest\Telemetry;
 
 use MakeShared\Constants;
+use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Exporter\LogExporter;
 use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
@@ -26,7 +27,11 @@ class TracerTest extends TestCase
 
     public function testCreateNoConfigMakesConsoleExporter()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        // TODO exporterfactory returns logExporter  (createLogExporter should be called)
+        $exporterFactory->
+        $tracer = Tracer::create($exporterFactory, $this->config);
         $this->assertInstanceOf(LogExporter::class, $tracer->getExporter());
     }
 

@@ -11,10 +11,12 @@ use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Filter\Compress;
+use MakeShared\Logging\LoggerTrait;
 
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * PDF status constants
