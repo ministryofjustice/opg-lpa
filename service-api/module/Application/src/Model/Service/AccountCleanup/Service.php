@@ -24,7 +24,7 @@ class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
     use UserRepositoryTrait;
-    use LoggerTrait
+    use LoggerTrait;
 
     /**
      * GOV Notify template ID
