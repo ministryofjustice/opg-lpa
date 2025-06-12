@@ -3,12 +3,13 @@
 namespace Application\Model\DataAccess\Repository\Application;
 
 use MakeShared\Logging\LoggerTrait;
+use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 use MakeShared\DataModel\Lpa\Lpa;
 
+/** @psalm-require-implements LoggerAwareInterface */
 trait ApplicationRepositoryTrait
 {
-    use LoggerTrait;
     /**
      * @var ApplicationRepositoryInterface
      */
