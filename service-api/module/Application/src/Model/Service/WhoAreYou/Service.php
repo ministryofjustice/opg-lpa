@@ -8,12 +8,14 @@ use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
     use WhoRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @param $lpaId
