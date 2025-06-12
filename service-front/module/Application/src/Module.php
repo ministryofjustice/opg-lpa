@@ -4,6 +4,7 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
+use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use Application\Model\Service\ApiClient\Exception\ApiException;
@@ -137,9 +138,13 @@ class Module implements FormElementProviderInterface
             'shared' => [
                 'HttpClient' => false,
             ],
+            'abstract_factories' => [
+                ReflectionBasedAbstractFactory::class,
+            ],
             'aliases' => [
                 'AddressLookup' => 'OrdnanceSurvey',
                 'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
+                ServiceLocatorInterface::class => ServiceManager::class,
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
@@ -148,6 +153,7 @@ class Module implements FormElementProviderInterface
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
                 'Logger'                => 'MakeShared\Logging\LoggerFactory',
+                'ExporterFactory'       => ReflectionBasedAbstractFactory::class,
 
                 // Authentication Adapter
                 'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {
@@ -185,10 +191,6 @@ class Module implements FormElementProviderInterface
 
                 'DynamoDbSystemMessageClient' => function (ServiceLocatorInterface $sm) {
                     return new DynamoDbClient($sm->get('config')['admin']['dynamodb']['client']);
-                },
-
-                'ExporterFactory' => function (ServiceLocatorInterface $sm) {
-                    return new ExporterFactory($sm);
                 },
 
                 'GovPayClient' => function (ServiceLocatorInterface $sm) {
