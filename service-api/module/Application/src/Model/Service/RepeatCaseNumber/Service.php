@@ -5,10 +5,12 @@ namespace Application\Model\Service\RepeatCaseNumber;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
+use MakeShared\Logging\LoggerTrait;
 
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @param $lpaId

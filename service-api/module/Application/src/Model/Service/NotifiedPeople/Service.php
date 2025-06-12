@@ -8,10 +8,12 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTra
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
+use MakeShared\Logging\LoggerTrait;
 
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @param $lpaId

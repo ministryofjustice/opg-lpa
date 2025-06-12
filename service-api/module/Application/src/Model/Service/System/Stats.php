@@ -14,6 +14,7 @@ use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use DateTime;
 use Exception;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * Generate LPA stats and saves the results back into the Database.
@@ -28,6 +29,7 @@ class Stats extends AbstractService
     use ApplicationRepositoryTrait;
     use StatsRepositoryTrait;
     use WhoRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @return bool

@@ -5,11 +5,13 @@ namespace Application\Model\Service\Preference;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @param $lpaId

@@ -130,8 +130,6 @@
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/webimpress/safe-writer" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/webmozart/assert" />
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/monolog/monolog" />
-      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-translator" />
-      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/lm-commons/rbac" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/monolog/monolog" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/alphagov/notifications-php-client" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/amp" />
@@ -332,6 +330,10 @@
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/vimeo/psalm" />
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/webmozart/assert" />
       <excludeFolder url="file://$MODULE_DIR$/shared/vendor/monolog/monolog" />
+      <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/fidry/cpu-core-counter" />
+      <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/laminas/laminas-cli" />
+      <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/netresearch/jsonmapper" />
+      <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/php-http/promise" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
