@@ -15,6 +15,7 @@ use Laminas\Mvc\ApplicationInterface;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Psr\Log\LoggerInterface;
 
 class AuthenticationListenerTest extends MockeryTestCase
 {
@@ -59,6 +60,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->mvcEvent = Mockery::mock(MvcEvent::class);
         $this->mvcEvent->shouldReceive('getApplication')->andReturn($this->application)->once();
         $this->mvcEvent->shouldReceive('getRequest')->andReturn($this->request)->once();
+        $this->logger = Mockery::spy(LoggerInterface::class);
     }
 
     public function testAuthenticationSuccess(): void
@@ -79,6 +81,7 @@ class AuthenticationListenerTest extends MockeryTestCase
             ->andReturn(Mockery::mock(Service::class))->once();
 
         $authenticationListener = new AuthenticationListener();
+        $authenticationListener->setLogger($this->logger);
         $result = $authenticationListener->authenticate($this->mvcEvent);
 
         $this->assertEquals(null, $result);
@@ -107,6 +110,7 @@ class AuthenticationListenerTest extends MockeryTestCase
             ->andReturn(Mockery::mock(Service::class))->once();
 
         $authenticationListener = new AuthenticationListener();
+        $authenticationListener->setLogger($this->logger);
         $result = $authenticationListener->authenticate($this->mvcEvent);
 
         $this->assertInstanceOf(ApiProblemResponse::class, $result);
@@ -152,6 +156,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->authService->shouldReceive('getStorage')->andReturn($storage)->once();
 
         $authenticationListener = new AuthenticationListener();
+        $authenticationListener->setLogger($this->logger);
         $result = $authenticationListener->authenticate($this->mvcEvent);
 
         $this->assertEquals(null, $result);

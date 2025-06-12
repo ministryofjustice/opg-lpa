@@ -28,7 +28,9 @@ use Laminas\Http\Request as LaminasRequest;
 use Laminas\Http\Response as LaminasResponse;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use PDO;
 
@@ -59,6 +61,9 @@ class Module
         // calls to $sm->get('config') return the array in
         // service-api/config/autoload/global.php
         return [
+            'abstract_factories' => [
+                ReflectionBasedAbstractFactory::class,
+            ],
             'aliases' => [
                 // Map the Repository Interfaces to concrete implementations.
                 Repository\User\LogRepositoryInterface::class => Postgres\LogData::class,
@@ -73,6 +78,8 @@ class Module
                 Client::class => Client::class,
             ],
             'factories' => [
+                'ExporterFactory' => ReflectionBasedAbstractFactory::class,
+
                 'NotifyClient' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
 
@@ -161,7 +168,7 @@ class Module
 
                 'TelemetryTracer' => function ($sm) {
                     $telemetryConfig = $sm->get('config')['telemetry'];
-                    return Tracer::create($telemetryConfig);
+                    return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
                 },
 
             ], // factories

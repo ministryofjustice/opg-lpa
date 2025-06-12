@@ -6,13 +6,12 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\Event;
 use Laminas\Mvc\MvcEvent;
-use MakeShared\Logging\LoggerTrait;
-use MakeShared\Logging\MvcEventProcessor;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Listener for error events arising from controllers.
  */
-class ErrorEventListener extends AbstractListenerAggregate
+class ErrorEventListener extends AbstractListenerAggregate implements LoggerAwareInterface
 {
     use LoggerTrait;
 
@@ -53,6 +52,6 @@ class ErrorEventListener extends AbstractListenerAggregate
             MvcEventProcessor::EVENT_FIELD_NAME => $event,
         ];
 
-        $this->getLogger()->err($errorType, $extra);
+        $this->getLogger()->error($errorType, $extra);
     }
 }
