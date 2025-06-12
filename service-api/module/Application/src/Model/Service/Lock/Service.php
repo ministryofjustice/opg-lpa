@@ -6,11 +6,13 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @param $lpaId

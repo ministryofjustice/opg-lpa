@@ -10,6 +10,7 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\Users\Service as UsersService;
 use DateTime;
 use Exception;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * - Deletes accounts after 9 months.
@@ -23,6 +24,7 @@ class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
     use UserRepositoryTrait;
+    use LoggerTrait
 
     /**
      * GOV Notify template ID
