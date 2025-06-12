@@ -30,6 +30,7 @@ use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use PDO;
 
@@ -167,7 +168,7 @@ class Module
 
                 'TelemetryTracer' => function ($sm) {
                     $telemetryConfig = $sm->get('config')['telemetry'];
-                    return Tracer::create($telemetryConfig);
+                    return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
                 },
 
             ], // factories
