@@ -2,16 +2,12 @@
 
 namespace Opg\Lpa\Pdf;
 
-use MakeShared\Logging\LoggerTrait;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Lp1f;
-use Opg\Lpa\Pdf\Lp1h;
-use Opg\Lpa\Pdf\Lpa120;
 use Opg\Lpa\Pdf\Aggregator\Lp3;
-use Opg\Lpa\Pdf\PdftkFactory;
 use Exception;
+use Opg\Lpa\Pdf\Traits\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 use UnexpectedValueException;
 use copy;
