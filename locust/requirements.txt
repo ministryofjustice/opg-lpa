@@ -42,7 +42,7 @@ gevent==25.5.1
     #   geventhttpclient
     #   locust
     #   locust-cloud
-geventhttpclient==2.3.3
+geventhttpclient==2.3.4
     # via locust
 greenlet==3.2.3
     # via gevent
@@ -63,7 +63,7 @@ markupsafe==3.0.2
     #   flask
     #   jinja2
     #   werkzeug
-msgpack==1.1.0
+msgpack==1.1.1
     # via locust
 platformdirs==4.3.8
     # via locust-cloud
