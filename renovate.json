@@ -2,7 +2,9 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    "helpers:pinGitHubActionDigests"
+    "schedule:earlyMondays",
+    "helpers:pinGitHubActionDigests",
+    "docker:pinDigests"
   ],
   "branchPrefix": "renovate-",
   "labels": [
@@ -10,7 +12,7 @@
     "Dependencies"
   ],
   "ignoreDeps": [
-        "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list"
+    "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list"
   ],
   "commitMessageAction": "Renovate update",
   "forkProcessing": "enabled",
@@ -403,8 +405,8 @@
     }
   ],
   "pip-compile": {
-    "fileMatch": [
-      "(^|/)requirements\\.txt$"
+    "managerFilePatterns": [
+      "/(^|/)requirements\\.txt$/"
     ]
   }
 }

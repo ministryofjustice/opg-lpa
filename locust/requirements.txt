@@ -18,33 +18,33 @@ certifi==2025.4.26
     # via
     #   geventhttpclient
     #   requests
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via requests
-click==8.1.8
+click==8.2.1
     # via flask
-configargparse==1.7
+configargparse==1.7.1
     # via
     #   locust
     #   locust-cloud
 faker==18.13.0
     # via -r requirements.in
-flask==3.1.0
+flask==3.1.1
     # via
     #   flask-cors
     #   flask-login
     #   locust
-flask-cors==5.0.1
+flask-cors==6.0.1
     # via locust
 flask-login==0.6.3
     # via locust
-gevent==24.11.1
+gevent==25.5.1
     # via
     #   geventhttpclient
     #   locust
     #   locust-cloud
-geventhttpclient==2.3.3
+geventhttpclient==2.3.4
     # via locust
-greenlet==3.2.1
+greenlet==3.2.3
     # via gevent
 h11==0.16.0
     # via wsproto
@@ -54,29 +54,32 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-locust==2.36.1
+locust==2.37.10
     # via -r requirements.in
-locust-cloud==1.20.7
+locust-cloud==1.23.1
     # via locust
 markupsafe==3.0.2
     # via
+    #   flask
     #   jinja2
     #   werkzeug
-msgpack==1.1.0
+msgpack==1.1.1
     # via locust
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via locust-cloud
 psutil==7.0.0
     # via locust
 python-dateutil==2.9.0.post0
     # via faker
-python-engineio==4.12.0
-    # via python-socketio
+python-engineio==4.12.2
+    # via
+    #   locust-cloud
+    #   python-socketio
 python-socketio[client]==5.13.0
     # via locust-cloud
 pyzmq==26.4.0
     # via locust
-requests==2.32.3
+requests==2.32.4
     # via
     #   locust
     #   python-socketio
@@ -86,7 +89,7 @@ six==1.17.0
     # via python-dateutil
 soupsieve==2.7
     # via beautifulsoup4
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via beautifulsoup4
 urllib3==2.4.0
     # via
