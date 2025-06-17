@@ -2,6 +2,7 @@
 
 namespace MakeSharedTest\Telemetry;
 
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use MakeShared\Constants;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Exporter\LogExporter;
@@ -29,8 +30,8 @@ class TracerTest extends TestCase
     {
         $exporterFactory = Mockery::mock(ExporterFactory::class);
         $logExporter = Mockery::mock(LogExporter::class);
-        // TODO exporterfactory returns logExporter  (createLogExporter should be called)
-        $exporterFactory->
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
         $tracer = Tracer::create($exporterFactory, $this->config);
         $this->assertInstanceOf(LogExporter::class, $tracer->getExporter());
     }
