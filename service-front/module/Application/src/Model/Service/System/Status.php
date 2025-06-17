@@ -22,10 +22,9 @@ use Psr\Log\LoggerAwareInterface;
  * Class Status
  * @package Application\Model\Service\System
  */
-class Status extends AbstractService implements ApiClientAwareInterface, LoggerAwareInterface
+class Status extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
-    use LoggerTrait;
 
     // if any of these have a status of 'fail', the service
     // is considered down; if any is 'warn', the service
