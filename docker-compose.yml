@@ -313,6 +313,7 @@ services:
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
+      XDEBUG_TRIGGER: "true"
     healthcheck:
       test:
         [
