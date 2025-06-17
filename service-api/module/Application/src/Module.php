@@ -33,6 +33,7 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use PDO;
+use Psr\Log\LoggerAwareInterface;
 
 class Module
 {
@@ -47,7 +48,9 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_FINISH, [$this, 'negotiateContent'], 1000);
 
         // Setup authentication listener...
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener(), 'authenticate'], 500);
+        $sm = $e->getApplication()->getServiceManager();
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$sm->get(AuthenticationListener::class), 'authenticate'], 500);
+
 
         // Register error handler for dispatch and render errors;
         // priority is set to 100 here so that the global MvcEventListener
@@ -72,12 +75,14 @@ class Module
                 Repository\Application\WhoRepositoryInterface::class => Postgres\WhoAreYouData::class,
                 Repository\Application\ApplicationRepositoryInterface::class => Postgres\ApplicationData::class,
                 Repository\Feedback\FeedbackRepositoryInterface::class => Postgres\FeedbackData::class,
+                ServiceLocatorInterface::class => 'ServiceManager',
             ],
             'invokables' => [
                 HttpClient::class => Guzzle7Client::class,
                 Client::class => Client::class,
             ],
             'factories' => [
+                'Logger'          => 'MakeShared\Logging\LoggerFactory',
                 'ExporterFactory' => ReflectionBasedAbstractFactory::class,
 
                 'NotifyClient' => function (ServiceLocatorInterface $sm) {
@@ -131,6 +136,7 @@ class Module
                 Postgres\WhoAreYouData::class   => Postgres\DataFactory::class,
                 Postgres\FeedbackData::class    => Postgres\DataFactory::class,
 
+
                 // Get S3Client Client
                 'S3Client' => function ($sm) {
                     $config = $sm->get('config');
@@ -172,6 +178,14 @@ class Module
                 },
 
             ], // factories
+            'initializers' => [
+                function(ServiceLocatorInterface $container, $instance) {
+                    if (! $instance instanceof LoggerAwareInterface) {
+                        return;
+                    }
+                    $instance->setLogger($container->get('Logger'));
+                }
+            ]
 
         ];
     }
