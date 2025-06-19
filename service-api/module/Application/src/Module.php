@@ -48,8 +48,7 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_FINISH, [$this, 'negotiateContent'], 1000);
 
         // Setup authentication listener...
-        $sm = $e->getApplication()->getServiceManager();
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$sm->get(AuthenticationListener::class), 'authenticate'], 500);
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener(), 'authenticate'], 500);
 
 
         // Register error handler for dispatch and render errors;
@@ -64,9 +63,6 @@ class Module
         // calls to $sm->get('config') return the array in
         // service-api/config/autoload/global.php
         return [
-            'abstract_factories' => [
-                ReflectionBasedAbstractFactory::class,
-            ],
             'aliases' => [
                 // Map the Repository Interfaces to concrete implementations.
                 Repository\User\LogRepositoryInterface::class => Postgres\LogData::class,
@@ -178,15 +174,6 @@ class Module
                 },
 
             ], // factories
-            'initializers' => [
-                function(ServiceLocatorInterface $container, $instance) {
-                    if (! $instance instanceof LoggerAwareInterface) {
-                        return;
-                    }
-                    $instance->setLogger($container->get('Logger'));
-                }
-            ]
-
         ];
     }
 

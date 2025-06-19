@@ -29,7 +29,6 @@ class Stats extends AbstractService
     use ApplicationRepositoryTrait;
     use StatsRepositoryTrait;
     use WhoRepositoryTrait;
-    use LoggerTrait;
 
     /**
      * @return bool

@@ -3,7 +3,6 @@
 namespace Application\Library\Authentication;
 
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use Laminas\EventManager\ListenerAggregateInterface;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Authentication\Result as AuthenticationResult;
 use Laminas\Mvc\MvcEvent;
