@@ -2,7 +2,6 @@
 
 namespace Application\Model\DataAccess\Repository\Application;
 
-use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 use MakeShared\DataModel\Lpa\Lpa;
