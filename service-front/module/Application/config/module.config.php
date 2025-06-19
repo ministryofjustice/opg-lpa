@@ -31,7 +31,6 @@ return [
         'abstract_factories' => [
             'Application\Model\Service\ServiceAbstractFactory',
             'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Laminas\Log\LoggerAbstractServiceFactory',
         ],
         'aliases' => [
             'AdminService'                  => 'Application\Model\Service\Admin\Admin',
