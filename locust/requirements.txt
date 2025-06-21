@@ -56,7 +56,7 @@ jinja2==3.1.6
     # via flask
 locust==2.37.10
     # via -r requirements.in
-locust-cloud==1.23.1
+locust-cloud==1.23.2
     # via locust
 markupsafe==3.0.2
     # via
@@ -91,7 +91,7 @@ soupsieve==2.7
     # via beautifulsoup4
 typing-extensions==4.14.0
     # via beautifulsoup4
-urllib3==2.4.0
+urllib3==2.5.0
     # via
     #   geventhttpclient
     #   requests
