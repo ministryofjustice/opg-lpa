@@ -56,7 +56,7 @@ jinja2==3.1.6
     # via flask
 locust==2.37.10
     # via -r requirements.in
-locust-cloud==1.23.2
+locust-cloud==1.24.0
     # via locust
 markupsafe==3.0.2
     # via
@@ -77,7 +77,7 @@ python-engineio==4.12.2
     #   python-socketio
 python-socketio[client]==5.13.0
     # via locust-cloud
-pyzmq==26.4.0
+pyzmq==27.0.0
     # via locust
 requests==2.32.4
     # via
