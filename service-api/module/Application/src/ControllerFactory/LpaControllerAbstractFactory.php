@@ -7,6 +7,7 @@ use Application\Model\Service;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use MakeShared\Logging\LoggerTrait;
 
 class LpaControllerAbstractFactory implements AbstractFactoryInterface
 {
@@ -73,6 +74,12 @@ class LpaControllerAbstractFactory implements AbstractFactoryInterface
         $authorizationService = $container->get('LmcRbacMvc\Service\AuthorizationService');
         $service = $container->get($this->serviceMappings[$requestedName]);
 
-        return new $requestedName($authorizationService, $service);
+        $controller = new $requestedName($authorizationService, $service);
+        $traitsUsed = class_uses($controller);
+
+        if (in_array(LoggerTrait::class, $traitsUsed)) {
+            $controller->setLogger($container->get('Logger'));
+        }
+        return $controller;
     }
 }

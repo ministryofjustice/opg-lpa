@@ -24,6 +24,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use GuzzleHttp\Client as GuzzleHttpClient;
+use Psr\Log\LoggerInterface;
 
 class ServiceAbstractFactoryTest extends MockeryTestCase
 {
@@ -57,6 +58,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     'NotifyClient' => Mockery::mock(Client::class),
                     'config' => [],
                     UsersService::class =>  Mockery::mock(UsersService::class),
+                    'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],
             [PasswordService::class,
@@ -71,12 +73,14 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     'config' => [],
                     'S3Client' => Mockery::mock(S3Client::class),
                     'SqsClient' => Mockery::mock(SqsClient::class),
+                    'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],
             [SeedService::class,
                 [
                     ApplicationRepositoryInterface::class =>  Mockery::mock(ApplicationRepositoryInterface::class),
                     ApplicationsService::class => Mockery::mock(ApplicationsService::class),
+                    'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],
             [UsersService::class,

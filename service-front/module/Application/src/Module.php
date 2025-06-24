@@ -4,6 +4,7 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
+use Application\Form\Validator\Csrf;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
@@ -138,9 +139,6 @@ class Module implements FormElementProviderInterface
             'shared' => [
                 'HttpClient' => false,
             ],
-            'abstract_factories' => [
-                ReflectionBasedAbstractFactory::class,
-            ],
             'aliases' => [
                 'AddressLookup' => 'OrdnanceSurvey',
                 'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
@@ -154,6 +152,13 @@ class Module implements FormElementProviderInterface
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
                 'Logger'                => 'MakeShared\Logging\LoggerFactory',
                 'ExporterFactory'       => ReflectionBasedAbstractFactory::class,
+
+                'CsrfValidator' => function ($sm) {
+                    $csrfName = 'secret_' . md5(get_class($this));
+                    $csrf = new \Laminas\Form\Element\Csrf($csrfName);
+                    $csrfSalt = $sm->get('config')['csrf']['salt'];
+                    return new Csrf($csrf->getName(), $csrfSalt);
+                },
 
                 // Authentication Adapter
                 'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {
