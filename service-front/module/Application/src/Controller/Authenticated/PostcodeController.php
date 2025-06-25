@@ -5,9 +5,11 @@ namespace Application\Controller\Authenticated;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Controller\AbstractAuthenticatedController;
 use Laminas\View\Model\JsonModel;
+use MakeShared\Logging\LoggerTrait;
 
 class PostcodeController extends AbstractAuthenticatedController
 {
+    use LoggerTrait;
     /**
      * @var OrdnanceSurvey
      */
