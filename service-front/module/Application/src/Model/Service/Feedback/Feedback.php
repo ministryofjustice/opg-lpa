@@ -10,10 +10,12 @@ use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use DateTime;
 use DateTimeZone;
+use MakeShared\Logging\LoggerTrait;
 
 class Feedback extends AbstractEmailService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
+    use LoggerTrait;
 
     /**
      * Send feedback data to the feedback inbox using a template
