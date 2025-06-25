@@ -6,9 +6,11 @@ use Application\Model\Service\Password\Service;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\View\Model\JsonModel;
 use DateTime;
+use MakeShared\Logging\LoggerTrait;
 
 class PasswordController extends AbstractAuthController
 {
+    use LoggerTrait;
     /**
      * Get the service to use
      *
