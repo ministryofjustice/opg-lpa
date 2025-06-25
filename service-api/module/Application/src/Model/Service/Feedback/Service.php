@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Feedback;
 
 use DateTime;
+use MakeShared\Logging\LoggerTrait;
 use Traversable;
 use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryTrait;
 use Application\Model\Service\AbstractService;
@@ -10,6 +11,7 @@ use Application\Model\Service\AbstractService;
 class Service extends AbstractService
 {
     use FeedbackRepositoryTrait;
+    use LoggerTrait;
 
     public const FEEDBACK_TTL = '-2 years';
 
