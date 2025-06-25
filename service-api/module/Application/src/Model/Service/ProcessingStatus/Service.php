@@ -10,6 +10,7 @@ use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception as HttpException;
 use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client as HttpClient;
@@ -17,6 +18,7 @@ use RuntimeException;
 
 class Service extends AbstractService
 {
+    use LoggerTrait;
     private const SIRIUS_STATUS_TO_LPA = [
         'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
         'Payment Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
