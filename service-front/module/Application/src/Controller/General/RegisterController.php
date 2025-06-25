@@ -8,9 +8,11 @@ use Laminas\Http\Header\Referer;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use ArrayIterator;
+use MakeShared\Logging\LoggerTrait;
 
 class RegisterController extends AbstractBaseController
 {
+    use LoggerTrait;
     /**
      * @var UserService
      */

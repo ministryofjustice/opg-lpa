@@ -23,11 +23,13 @@ use MakeShared\DataModel\Lpa\Formatter as LpaFormatter;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use ArrayObject;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 class Application extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
+    use LoggerTrait;
 
     /**
      * Get an application by lpaId

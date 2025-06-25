@@ -10,10 +10,12 @@ use Application\Model\Service\Mail\MailParameters;
 use MakeShared\DataModel\User\User;
 use Laminas\Session\Container;
 use Exception;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 class Details extends AbstractEmailService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
+    use LoggerTrait;
 
     /**
      * @var Container
