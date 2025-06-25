@@ -1,5 +1,7 @@
 <?php
 
+use MakeShared\Factories\ListenerAbstractFactory;
+
 return [
 
     'router' => [
@@ -458,6 +460,7 @@ return [
 
     'service_manager' => [
         'abstract_factories' => [
+            ListenerAbstractFactory::class,
             'Application\Model\Service\ServiceAbstractFactory',
             'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
             'Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory',
