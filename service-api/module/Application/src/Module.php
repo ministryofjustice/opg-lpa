@@ -30,6 +30,7 @@ use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use PDO;
@@ -41,6 +42,7 @@ class Module
 
     public function onBootstrap(MvcEvent $e)
     {
+
         $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
@@ -48,7 +50,10 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_FINISH, [$this, 'negotiateContent'], 1000);
 
         // Setup authentication listener...
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener(), 'authenticate'], 500);
+        $sm = $e->getApplication()->getServiceManager();
+
+        $auth = $sm->get(AuthenticationListener::class);
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$auth, 'authenticate'], 500);
 
 
         // Register error handler for dispatch and render errors;
@@ -78,8 +83,7 @@ class Module
                 Client::class => Client::class,
             ],
             'factories' => [
-                'Logger'          => 'MakeShared\Logging\LoggerFactory',
-                'ExporterFactory' => ReflectionBasedAbstractFactory::class,
+                'Logger'          => LoggerFactory::class,
 
                 'NotifyClient' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');

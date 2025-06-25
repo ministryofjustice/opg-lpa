@@ -56,10 +56,4 @@ return array(
     'listeners' => [
         'MakeShared\Logging\ErrorEventListener',
     ],
-    // Should be compatible with Laminas\ServiceManager\Config.
-    'service_manager' => [
-        'factories' => [
-            'MakeShared\Logging\ErrorEventListener'  => 'MakeShared\Logging\ErrorEventListener',
-        ],
-    ],
 );
