@@ -10,6 +10,7 @@ use DateTimeZone;
 use DateInterval;
 use Exception;
 use Laminas\Session\Container;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * A model service class for sending emails on LPA creation and completion.
@@ -19,6 +20,8 @@ use Laminas\Session\Container;
  */
 class Communication extends AbstractEmailService
 {
+    use LoggerTrait;
+
     /** @var Container */
     private $userDetailsSession;
     private $emailTemplateRef;

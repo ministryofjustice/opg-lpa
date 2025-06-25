@@ -14,9 +14,11 @@ use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
+use MakeShared\Logging\LoggerTrait;
 
 abstract class AbstractAuthenticatedController extends AbstractBaseController
 {
+    use LoggerTrait;
     /**
      * Identity of the logged in user
      */
