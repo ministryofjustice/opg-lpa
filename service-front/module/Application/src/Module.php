@@ -153,9 +153,9 @@ class Module implements FormElementProviderInterface
                 'Logger'                => 'MakeShared\Logging\LoggerFactory',
                 'ExporterFactory'       => ReflectionBasedAbstractFactory::class,
 
-                'CsrfValidator' => function ($sm) {
+                'CsrfValidator' => function (ServiceLocatorInterface $sm) {
                     $csrfName = 'secret_' . md5(get_class($this));
-                    $csrf = new \Laminas\Form\Element\Csrf($csrfName);
+                    $csrf = $sm->build(\Laminas\Form\Element\Csrf::class, [$csrfName]);
                     $csrfSalt = $sm->get('config')['csrf']['salt'];
                     return new Csrf($csrf->getName(), $csrfSalt);
                 },
