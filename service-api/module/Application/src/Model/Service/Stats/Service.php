@@ -5,11 +5,13 @@ namespace Application\Model\Service\Stats;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryTrait;
 use Application\Model\Service\AbstractService;
+use MakeShared\Logging\LoggerTrait;
 
 class Service extends AbstractService
 {
     use StatsRepositoryTrait;
     use UserRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @param $type

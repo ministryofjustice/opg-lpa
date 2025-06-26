@@ -15,7 +15,7 @@ use DateTime;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
-use MakeShared\Logging\Logger;
+use Psr\Log\LoggerInterface;
 
 class ServiceTest extends AbstractServiceTest
 {
@@ -69,11 +69,11 @@ class ServiceTest extends AbstractServiceTest
     private $usersService;
 
     /**
-     * @var MockInterface|Logger
+     * @var MockInterface|LoggerInterface
      */
     private $logger;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -86,7 +86,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->usersService = Mockery::mock(UsersService::class);
 
-        $this->logger = Mockery::mock(Logger::class);
+        $this->logger = Mockery::mock(LoggerInterface::class);
     }
 
     public function testCleanupNone()
@@ -285,7 +285,7 @@ class ServiceTest extends AbstractServiceTest
             ->once()
             ->andThrow(new NotifyException('Unit test exception'));
 
-        $this->logger->shouldReceive('warn')
+        $this->logger->shouldReceive('warning')
             ->withArgs(function ($message, $extra) {
                 return $message === 'Unable to send account expiry notification'
                     && $extra['exception'] === 'Unit test exception';

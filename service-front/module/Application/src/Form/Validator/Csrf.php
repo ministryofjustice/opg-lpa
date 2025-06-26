@@ -5,6 +5,7 @@ namespace Application\Form\Validator;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Session\Container;
 use Laminas\Validator\Csrf as LaminasCsrfValidator;
+use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
 /**
@@ -21,7 +22,7 @@ use RuntimeException;
  * Class Csrf
  * @package Application\Form\Validator
  */
-class Csrf extends LaminasCsrfValidator
+class Csrf extends LaminasCsrfValidator implements LoggerAwareInterface
 {
     use LoggerTrait;
 
@@ -45,7 +46,7 @@ class Csrf extends LaminasCsrfValidator
         $hash = $this->getHash(true);
 
         if ($value !== $hash) {
-            $this->getLogger()->err(sprintf(
+            $this->getLogger()->error(sprintf(
                 "Mismatched CSRF provided; expected %s received %s",
                 $this->getHash(),
                 $value,
