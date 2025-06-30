@@ -13,4 +13,4 @@ on:
 
 jobs:
   tfsec_analysis_to_github_security:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/analysis-infrastructure-tfsec-to-github-security.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/analysis-infrastructure-tfsec-to-github-security.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
