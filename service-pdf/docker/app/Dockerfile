@@ -1,4 +1,4 @@
-FROM php:8.1-cli-alpine3.21@sha256:8b1f531cea9f7399aae8bba9fd440485f25e18f777ba691d356940c5ff5d8d65
+FROM php:8.1-cli-alpine3.21@sha256:9b80731e6dba4005f243598e3699c996a995a950e54317983a6408be8e001f79
 
 RUN adduser -D -g '' appuser
 
