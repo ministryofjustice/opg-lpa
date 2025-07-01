@@ -1,6 +1,6 @@
 # This is only used locally, and depends on the service-front
 # directory being mounted into this image at /service-front
-FROM node:20-alpine3.21@sha256:be56e91681a8ec1bba91e3006039bd228dc797fd984794a3efedab325b36e679
+FROM node:20-alpine3.21@sha256:82f7e381b009b4adc79cef79ec296896788bb91e522d277048b2d8ff6d976393
 
 RUN apk upgrade --no-cache
 RUN apk add --no-cache ruby
