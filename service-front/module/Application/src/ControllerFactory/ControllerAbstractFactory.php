@@ -26,6 +26,7 @@ use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\Stdlib\DispatchableInterface as Dispatchable;
 use Exception;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 /**
@@ -202,6 +203,12 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
 
                 $controller->$setterMethod($container->get($additionalService));
             }
+        }
+
+        $traitsUsed = class_uses($controller);
+
+        if (in_array(LoggerTrait::class, $traitsUsed)) {
+            $controller->setLogger($container->get('Logger'));
         }
 
         return $controller;

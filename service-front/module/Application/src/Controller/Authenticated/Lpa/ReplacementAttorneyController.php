@@ -7,9 +7,12 @@ use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class ReplacementAttorneyController extends AbstractLpaActorController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $lpa = $this->getLpa();

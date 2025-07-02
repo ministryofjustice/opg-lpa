@@ -10,6 +10,7 @@ use MakeShared\Logging\LoggerTrait;
 class PostcodeController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
+
     /**
      * @var OrdnanceSurvey
      */

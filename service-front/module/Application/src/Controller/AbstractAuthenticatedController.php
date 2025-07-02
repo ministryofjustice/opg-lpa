@@ -19,6 +19,7 @@ use MakeShared\Logging\LoggerTrait;
 abstract class AbstractAuthenticatedController extends AbstractBaseController
 {
     use LoggerTrait;
+
     /**
      * Identity of the logged in user
      */

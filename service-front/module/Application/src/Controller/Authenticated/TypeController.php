@@ -7,10 +7,13 @@ use Application\Model\FormFlowChecker;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 class TypeController extends AbstractAuthenticatedController
 {
+    use LoggerTrait;
+
     /**
      * indexAction() is only supposed to return ViewModel
      * according to the Laminas API.
