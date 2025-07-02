@@ -12,11 +12,15 @@ class ExporterFactory
 
     public function createLogExporter(): ExporterInterface
     {
-        return $this->container->get(LogExporter::class);
+        $exporter = $this->container->get(LogExporter::class);
+        $exporter->setLogger($this->container->get('Logger'));
+        return $exporter;
     }
 
     public function createXRayExporter(string $host, int $port): ExporterInterface
     {
-        return $this->container->build(XrayExporter::class, [$host,$port]);
+        $exporter = $this->container->build(XrayExporter::class, [$host,$port]);
+        $exporter->setLogger($this->container->get('Logger'));
+        return $exporter;
     }
 }
