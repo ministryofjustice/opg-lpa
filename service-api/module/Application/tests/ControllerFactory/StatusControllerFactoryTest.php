@@ -10,6 +10,7 @@ use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Monolog\Logger;
 use RuntimeException;
 use LmcRbacMvc\Service\AuthorizationService;
 
@@ -44,6 +45,10 @@ class StatusControllerFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')
             ->with(ProcessingStatusService::class)
             ->andReturn(Mockery::mock(ProcessingStatusService::class))
+            ->once();
+        $this->container->shouldReceive('get')
+            ->with('Logger')
+            ->andReturn(Mockery::mock(Logger::class))
             ->once();
 
         $controller = $this->factory->__invoke($this->container, StatusController::class);
