@@ -6,9 +6,12 @@ use Application\Controller\AbstractLpaActorController;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Router\RouteStackInterface;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class ReuseDetailsController extends AbstractLpaActorController
 {
+    use LoggerTrait;
+
     /** @var RouteStackInterface */
     private $router;
 

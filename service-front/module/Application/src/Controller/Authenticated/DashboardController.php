@@ -3,13 +3,15 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
-use DateTime;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class DashboardController extends AbstractAuthenticatedController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $search = $this->params()->fromQuery('search', null);

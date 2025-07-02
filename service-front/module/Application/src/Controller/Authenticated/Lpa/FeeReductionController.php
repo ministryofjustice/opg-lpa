@@ -16,9 +16,12 @@ use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
+use MakeShared\Logging\LoggerTrait;
 
 class FeeReductionController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     /** @var MoneyFormat */
     private $moneyFormat;
 

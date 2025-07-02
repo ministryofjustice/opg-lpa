@@ -6,9 +6,12 @@ use Application\Controller\AbstractLpaActorController;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class PeopleToNotifyController extends AbstractLpaActorController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $lpa = $this->getLpa();

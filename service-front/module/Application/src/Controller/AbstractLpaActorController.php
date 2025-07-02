@@ -18,9 +18,12 @@ use MakeShared\DataModel\Lpa\Document\Document;
 use Laminas\Session\Container;
 use Laminas\Router;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 abstract class AbstractLpaActorController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     /**
      * Function to check if the reuse details options are available and if it is appropriate to redirect to them
      *
