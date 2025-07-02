@@ -12,7 +12,7 @@ use MakeShared\Logging\LoggerTrait;
 class WhoAreYouController extends AbstractLpaController
 {
     use LoggerTrait;
-    
+
     public function indexAction()
     {
         $lpa = $this->getLpa();

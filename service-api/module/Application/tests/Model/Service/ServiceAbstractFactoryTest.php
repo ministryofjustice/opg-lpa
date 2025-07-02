@@ -18,7 +18,6 @@ use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
-use Http\Client\HttpClient;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -96,6 +95,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     'config' => ['processing-status' => ['endpoint' => 'test endpoint']],
                     'AwsCredentials' => Mockery::mock(\Aws\Credentials\CredentialsInterface::class),
                     'AwsApiGatewaySignature' => Mockery::mock(\Aws\Signature\SignatureV4::class),
+                    'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ]
         ];
