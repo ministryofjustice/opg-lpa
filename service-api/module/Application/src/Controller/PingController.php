@@ -4,7 +4,6 @@ namespace Application\Controller;
 
 use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
-use Closure;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
