@@ -7,9 +7,12 @@ use Application\Model\Service\Lpa\ContinuationSheets;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\DataModel\Common\LongName;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class CompleteController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $this->ensureLpaIsLocked();
