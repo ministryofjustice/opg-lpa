@@ -43,7 +43,7 @@ class PingControllerFactory implements FactoryInterface
             throw new \RuntimeException('Missing config: Track my LPA endpoint');
         }
 
-        return new PingController(
+        $controller = new PingController(
             $awsCredentials,
             $awsSigner,
             $database,
@@ -52,5 +52,9 @@ class PingControllerFactory implements FactoryInterface
             $config['processing-status']['endpoint'],
             $container->get(HttpClient::class)
         );
+
+        $controller->setLogger($container->get('Logger'));
+
+        return $controller;
     }
 }
