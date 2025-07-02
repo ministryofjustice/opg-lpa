@@ -16,10 +16,13 @@ use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController
 {
+    use LoggerTrait;
+
     /** @var LPA The LPA currently referenced in to the URL */
     private $lpa;
 

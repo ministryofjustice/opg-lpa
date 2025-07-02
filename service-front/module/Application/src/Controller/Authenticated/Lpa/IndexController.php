@@ -3,9 +3,12 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
+use MakeShared\Logging\LoggerTrait;
 
 class IndexController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $lpa = $this->getLpa();
