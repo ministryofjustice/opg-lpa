@@ -23,10 +23,14 @@ class StatusControllerFactory
         $applicationsService = $container->get(ApplicationService::class);
         $processingStatusService = $container->get(ProcessingStatusService::class);
 
-        return new StatusController(
+        $controller = new StatusController(
             $authorizationService,
             $applicationsService,
             $processingStatusService
         );
+
+        $controller->setLogger($container->get('Logger'));
+
+        return $controller;
     }
 }
