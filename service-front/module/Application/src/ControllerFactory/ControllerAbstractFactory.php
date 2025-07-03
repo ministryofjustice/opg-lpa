@@ -7,7 +7,6 @@ use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
 use Application\Controller\Authenticated\AboutYouController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
-use Application\Controller\Authenticated\Lpa\DownloadController;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
 use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
@@ -115,7 +114,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      *     creating a service.
      * @throws Exception if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface|\Psr\Container\ContainerInterface $container, $requestedName, array $options = null)
     {
         if (!$this->canCreate($container, $requestedName)) {
             throw new ServiceNotFoundException(sprintf(
@@ -208,6 +207,11 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $traitsUsed = class_uses($controller);
 
         if (in_array(LoggerTrait::class, $traitsUsed)) {
+            /**
+             * psalm thinks controller could be a DispatchableInterface which lacks a setLogger
+             * but in practice this will always be a subclass of AbstractLpaController or AbstractAuthenticatedController
+             * @psalm-suppress UndefinedInterfaceMethod
+             */
             $controller->setLogger($container->get('Logger'));
         }
 
