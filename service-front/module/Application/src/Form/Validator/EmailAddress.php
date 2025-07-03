@@ -4,6 +4,11 @@ namespace Application\Form\Validator;
 
 use Laminas\Validator\EmailAddress as LaminasEmailAddressValidator;
 
+/**
+ * Psalm rightly objects to overriding final but we cannot fix this right now
+ * @psalm-suppress InvalidExtendClass, MethodSignatureMismatch
+ */
+
 class EmailAddress extends LaminasEmailAddressValidator
 {
     /**
