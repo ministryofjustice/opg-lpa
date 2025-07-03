@@ -11,6 +11,11 @@ use Psr\Container\ContainerInterface;
 
 class ListenerAbstractFactory implements AbstractFactoryInterface
 {
+    /**
+     * Psalm doesn't understand the context that this code is called bty code that
+     * knowns where AuthenticationListener is defined
+     * @psalm-suppress UndefinedClass
+     */
     private $createableListeners = [
         AuthenticationListener::class,
         ErrorEventListener::class,
