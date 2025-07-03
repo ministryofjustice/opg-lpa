@@ -21,6 +21,9 @@ use RuntimeException;
  *
  * Class Csrf
  * @package Application\Form\Validator
+ *
+ * Psalm rightly objects to overriding final but we cannot fix this right now
+ * @psalm-suppress InvalidExtendClass, MethodSignatureMismatch
  */
 class Csrf extends LaminasCsrfValidator implements LoggerAwareInterface
 {
