@@ -4,15 +4,15 @@ namespace Application\View\Helper;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\User\User;
 use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Log\LoggerAwareInterface;
 
-class AccountInfo extends AbstractHelper
+class AccountInfo extends AbstractHelper implements LoggerAwareInterface
 {
     use LoggerTrait;
 

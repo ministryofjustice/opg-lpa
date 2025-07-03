@@ -2,14 +2,16 @@
 
 namespace MakeSharedTest\Telemetry;
 
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use MakeShared\Constants;
-use MakeShared\Logging\SimpleLogger;
+use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Exporter\LogExporter;
 use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
 use MakeShared\Telemetry\Tracer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class TracerTest extends TestCase
 {
@@ -26,25 +28,41 @@ class TracerTest extends TestCase
 
     public function testCreateNoConfigMakesConsoleExporter()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
+        $tracer = Tracer::create($exporterFactory, $this->config);
         $this->assertInstanceOf(LogExporter::class, $tracer->getExporter());
     }
 
     public function testCreateWithConfigMakesXrayExporter()
     {
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $xrayExporter = Mockery::mock(XrayExporter::class);
+        $exporterFactory->shouldReceive('createXRayExporter')
+            ->andReturn($xrayExporter);
         $config['exporter'] = array_merge($this->config['exporter'], [
             'host' => 'localhost',
             'port' => '2000',
         ]);
 
-        $tracer = Tracer::create($config);
+        $tracer = Tracer::create($exporterFactory, $config);
 
         $this->assertInstanceOf(XrayExporter::class, $tracer->getExporter());
     }
 
     public function testStartStopRootSegmentFromServerEnv()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        $logExporter->shouldReceive('setLogger');
+        $logExporter->shouldReceive('export');
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
+        $logger = Mockery::spy(LoggerInterface::class);
+        $tracer = Tracer::create($exporterFactory, $this->config);
+        $tracer->getExporter()->setLogger($logger);
 
         $_SERVER = [];
         $_SERVER[Constants::X_TRACE_ID_HEADER_NAME] =
@@ -63,7 +81,15 @@ class TracerTest extends TestCase
 
     public function testStartRootSegmentAlreadyStarted()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        $logExporter->shouldReceive('setLogger');
+        $logExporter->shouldReceive('export');
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
+        $logger = Mockery::spy(LoggerInterface::class);
+        $tracer = Tracer::create($exporterFactory, $this->config);
+        $tracer->getExporter()->setLogger($logger);
 
         $headers = [];
         $headers[Constants::X_TRACE_ID_HEADER_NAME] =
@@ -78,7 +104,15 @@ class TracerTest extends TestCase
 
     public function testStartRootSegmentNoRootInHeader()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        $logExporter->shouldReceive('setLogger');
+        $logExporter->shouldReceive('export');
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
+        $logger = Mockery::spy(LoggerInterface::class);
+        $tracer = Tracer::create($exporterFactory, $this->config);
+        $tracer->getExporter()->setLogger($logger);
 
         $headers = [];
         $headers[Constants::X_TRACE_ID_HEADER_NAME] =
@@ -92,7 +126,15 @@ class TracerTest extends TestCase
 
     public function testStartSegment()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        $logExporter->shouldReceive('setLogger');
+        $logExporter->shouldReceive('export');
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
+        $logger = Mockery::spy(LoggerInterface::class);
+        $tracer = Tracer::create($exporterFactory, $this->config);
+        $tracer->getExporter()->setLogger($logger);
 
         $headers = [];
         $headers[Constants::X_TRACE_ID_HEADER_NAME] =
@@ -108,7 +150,15 @@ class TracerTest extends TestCase
 
     public function testStartSegmentRootNotStarted()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        $logExporter->shouldReceive('setLogger');
+        $logExporter->shouldReceive('export');
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
+        $logger = Mockery::spy(LoggerInterface::class);
+        $tracer = Tracer::create($exporterFactory, $this->config);
+        $tracer->getExporter()->setLogger($logger);
 
         $nextSegment = $tracer->startSegment('foo');
 
@@ -118,7 +168,15 @@ class TracerTest extends TestCase
 
     public function testStopSegmentRootNotStarted()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        $logExporter->shouldReceive('setLogger');
+        $logExporter->shouldReceive('export');
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
+        $logger = Mockery::spy(LoggerInterface::class);
+        $tracer = Tracer::create($exporterFactory, $this->config);
+        $tracer->getExporter()->setLogger($logger);
 
         $tracer->stopSegment();
 
@@ -127,7 +185,15 @@ class TracerTest extends TestCase
 
     public function testStopRootSegmentRootNotStarted()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        $logExporter->shouldReceive('setLogger');
+        $logExporter->shouldReceive('export');
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
+        $logger = Mockery::spy(LoggerInterface::class);
+        $tracer = Tracer::create($exporterFactory, $this->config);
+        $tracer->getExporter()->setLogger($logger);
 
         $tracer->stopRootSegment();
 
@@ -189,7 +255,15 @@ class TracerTest extends TestCase
 
     public function testXTraceIdHeaderWithCurrentSegment()
     {
-        $tracer = Tracer::create($this->config);
+        $exporterFactory = Mockery::mock(ExporterFactory::class);
+        $logExporter = Mockery::mock(LogExporter::class);
+        $logExporter->shouldReceive('setLogger');
+        $logExporter->shouldReceive('export');
+        $exporterFactory->shouldReceive('createLogExporter')
+            ->andReturn($logExporter);
+        $logger = Mockery::spy(LoggerInterface::class);
+        $tracer = Tracer::create($exporterFactory, $this->config);
+        $tracer->getExporter()->setLogger($logger);
 
         // before we have a segment started in the tracer, the X-Trace-Id header
         // is null

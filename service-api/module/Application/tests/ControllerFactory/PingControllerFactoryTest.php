@@ -13,6 +13,7 @@ use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
 use Aws\Sqs\SqsClient;
 use Http\Client\HttpClient;
+use Monolog\Logger;
 
 class PingControllerFactoryTest extends MockeryTestCase
 {
@@ -60,6 +61,10 @@ class PingControllerFactoryTest extends MockeryTestCase
                 'pdf' => ['queue' => ['sqs' => ['settings' => ['url' => 'http://test']]]],
                 'processing-status' => ['endpoint' => 'http://test']
             ])
+            ->once();
+        $this->container->shouldReceive('get')
+            ->with('Logger')
+            ->andReturn(Mockery::mock(Logger::class))
             ->once();
 
         $controller = $this->factory->__invoke($this->container, PingController::class);

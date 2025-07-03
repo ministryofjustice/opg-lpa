@@ -10,10 +10,12 @@ use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use DateTime;
 use DateTimeZone;
+use MakeShared\Logging\LoggerTrait;
 
 class Feedback extends AbstractEmailService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
+    use LoggerTrait;
 
     /**
      * Send feedback data to the feedback inbox using a template
@@ -60,10 +62,10 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
 
             return true;
         } catch (ApiException $ex) {
-            $this->getLogger()->err("API exception while adding feedback from Feedback service\n" .
+            $this->getLogger()->error("API exception while adding feedback from Feedback service\n" .
                 $ex->getMessage() . "\n" . $ex->getTraceAsString());
         } catch (InvalidArgumentException $ex) {
-            $this->getLogger()->err("Mail exception while adding feedback from Feedback service\n" .
+            $this->getLogger()->error("Mail exception while adding feedback from Feedback service\n" .
                 $ex->getMessage() . "\n" . $ex->getTraceAsString());
         }
 

@@ -5,9 +5,12 @@ namespace Application\Controller\Authenticated;
 use Application\Controller\AbstractAuthenticatedController;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\JsonModel;
+use MakeShared\Logging\LoggerTrait;
 
 class SessionKeepAliveController extends AbstractAuthenticatedController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         return new JsonModel(['refreshed' => $this->getSessionManager()->sessionExists()]);
