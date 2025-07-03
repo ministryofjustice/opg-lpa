@@ -157,6 +157,10 @@ class Module implements FormElementProviderInterface
                     $csrfName = 'secret_' . md5(get_class($this));
                     $csrf = $sm->build(\Laminas\Form\Element\Csrf::class, [$csrfName]);
                     $csrfSalt = $sm->get('config')['csrf']['salt'];
+                    /**
+                     *  Psalm rightly objects to overriding Csrf final methods but we cannot fix this right now
+                     * @psalm-suppress TooManyArguments, InvalidArgument
+                     */
                     return new Csrf($csrf->getName(), $csrfSalt);
                 },
 
