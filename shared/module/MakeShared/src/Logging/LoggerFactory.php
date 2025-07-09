@@ -16,8 +16,8 @@ class LoggerFactory implements FactoryInterface
         $logger = new Logger('MakeAnLPALogger');
         $logger->pushHandler(new StreamHandler('php://stderr', Level::Debug  ));
         $logger->pushProcessor($container->get(MvcEventProcessor::class))
-            ->pushProcessor($container->get(HeadersProcessor::class)
-            ->pushProcessor($container->get(TraceIdProcessor::class);
+            ->pushProcessor($container->get(HeadersProcessor::class))
+            ->pushProcessor($container->get(TraceIdProcessor::class));
 
         return $logger;
     }
