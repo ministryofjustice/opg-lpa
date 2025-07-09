@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
  */
 trait LoggerTrait
 {
-    private $logger;
+    private ?LoggerInterface $logger = null;
 
     public function getLogger(): LoggerInterface
     {
