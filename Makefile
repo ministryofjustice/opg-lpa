@@ -53,6 +53,13 @@ run-composers:
 	@docker pull composer:${COMPOSER_VERSION}; \
 	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer run-shared-composer
 
+# use front-composer-update PACKAGE=PACKAGE=symfony\/validator\:5.4.43
+# you'll need to escape the \ and : as above
+.PHONY: front-composer-update
+front-composer-update:
+	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+
+
 .PHONY: dc-up
 dc-up: run-composers
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
