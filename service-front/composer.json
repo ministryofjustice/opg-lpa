@@ -10,7 +10,7 @@
     ],
     "homepage": "https://github.com/ministryofjustice/opg-lpa",
     "require": {
-        "php": "~8.4.0",
+        "php": "8.2.*",
         "guzzlehttp/guzzle": "^7.0",
         "aws/aws-sdk-php": "^3.204.5",
         "michelf/php-markdown": "^1.9.1",
