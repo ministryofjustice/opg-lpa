@@ -55,6 +55,22 @@
   "packageRules": [
     {
       "description": [
+        "Docker Minor Dependency Exclusions",
+        "php - Prevent point version PHP beyond 8.2 until we can be sure of compatibility."
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchDepNames": [
+        "php"
+      ],
+      "enabled": false
+    },
+    {
+      "description": [
         "cypress: bundle updates to package.json and dockerfile",
         "allow major version updates"
       ],
