@@ -62,11 +62,11 @@ dc-up: run-composers
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	aws-vault exec moj-lpa-dev -- aws ecr get-login-password --region eu-west-1 | docker login \
 		--username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
-	docker-compose up -d
+	docker compose up -d
 
 .PHONY: dc-build
 dc-build:
-	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
+	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build
 
 # remove docker containers, volumes, images left by existing system, rebuild everything
 # with no-cache
@@ -90,7 +90,7 @@ dc-build-clean:
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
 	rm -fr ./service-pdf/vendor; \
-	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache
+	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build --no-cache
 
 # standard reset only the front app container - useful for quick reset when only been working on front component
 # compared to soft reset, this currently cleans up volumes too. this may turn out not to be needed , we
@@ -100,7 +100,7 @@ reset-front:
 	@${MAKE} dc-down
 	@docker system prune -f --volumes; \
 	docker rmi lpa-front-app || true; \
-	docker-compose build --no-cache front-app
+	docker compose build --no-cache front-app
 
 # hard reset only the front app container - cleaning up vendor folders too, useful when changing versions of deps
 .PHONY: hard-reset-front
@@ -112,14 +112,14 @@ hard-reset-front:
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
-	docker-compose build --no-cache front-app
+	docker compose build --no-cache front-app
 
 .PHONY: soft-reset-front
 # soft reset only the front app container without no-cache option.
 # quickest rebuild but runs risk of some staleness if not every change is picked up
 soft-reset-front:
 	@${MAKE} dc-down
-	docker-compose build front-app
+	docker compose build front-app
 
 # only reset the front web container - uesful for quick reset after nginx.conf tweak
 .PHONY: reset-front-web
@@ -130,7 +130,7 @@ reset-front-web:
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker rmi lpa-front-web || true; \
-	docker-compose build --no-cache front-web
+	docker compose build --no-cache front-web
 
 # hard reset only the api app container
 .PHONY: reset-api
@@ -138,21 +138,21 @@ reset-api:
 	@${MAKE} dc-down
 	docker rmi lpa-api-app || true; \
 	rm -fr ./service-api/vendor; \
-	docker-compose build --no-cache api-app
+	docker compose build --no-cache api-app
 
 .PHONY: dc-down
 dc-down:
-	@docker-compose down --remove-orphans
+	@docker compose down --remove-orphans
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
-	@docker-compose run front-app /app/vendor/bin/phpunit
+	@docker compose run front-app /app/vendor/bin/phpunit
 
 .PHONY: dc-unit-tests
 dc-unit-tests: dc-front-unit-tests
-	@docker-compose run admin-app /app/vendor/bin/phpunit
-	@docker-compose run api-app /app/vendor/bin/phpunit
-	@docker-compose run pdf-app /app/vendor/bin/phpunit
+	@docker compose run admin-app /app/vendor/bin/phpunit
+	@docker compose run api-app /app/vendor/bin/phpunit
+	@docker compose run pdf-app /app/vendor/bin/phpunit
 
 .PHONY: npm-install
 npm-install:
