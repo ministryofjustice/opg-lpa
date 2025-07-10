@@ -2,6 +2,7 @@
 
 namespace Application\Form;
 
+use Application\Form\Element\CsrfBuilder;
 use Application\Form\Validator\Csrf as CsrfValidator;
 use Laminas\Form\Element\Csrf;
 
@@ -13,37 +14,18 @@ use Laminas\Form\Element\Csrf;
 abstract class AbstractCsrfForm extends AbstractForm
 {
     /**
-     * @var array
-     */
-    private $config;
-
-    /**
      * @var Csrf
      */
     private $csrf = null;
 
-    public function setConfig(array $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * Set the CSRF element
      */
-    public function setCsrf()
+    public function setCsrf(CsrfBuilder $builder)
     {
         //  Add the csrf element
-        $csrfName = 'secret_' . md5(get_class($this));
-        $csrf = new Csrf($csrfName);
-
-        $csrfSalt = $this->config['csrf']['salt'];
-
-        $csrfValidator = new CsrfValidator([
-            'name' => $csrf->getName(),
-            'salt' => $csrfSalt,
-        ]);
-
-        $csrf->setCsrfValidator($csrfValidator);
+        $csrf = $builder(get_class($this));
 
         //  Add the CSRF specification to the input filter
         $this->addToInputFilter($csrf->getInputSpecification());

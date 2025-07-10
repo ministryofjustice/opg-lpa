@@ -11,9 +11,12 @@ use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\PhoneNumber;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class CorrespondentController extends AbstractLpaActorController
 {
+    use LoggerTrait;
+
     /* Page loads:
      *  If correspondent details are set, they are used;
      *  Else we should the details of the default correspondent (taken from applicant).

@@ -16,6 +16,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Utils;
+use Psr\Log\LoggerInterface;
 
 class ApplicationTest extends MockeryTestCase
 {
@@ -58,6 +59,7 @@ class ApplicationTest extends MockeryTestCase
 
     public function setUp(): void
     {
+        $logger = Mockery::spy(LoggerInterface::class);
         $identity = Mockery::mock();
         $identity->shouldReceive('id')->andReturn(4321);
 
@@ -70,6 +72,7 @@ class ApplicationTest extends MockeryTestCase
             'processing-status' => ['track-from-date' => '2019-01-01']
         ]);
         $this->service->setApiClient($this->apiClient);
+        $this->service->setLogger($logger);
     }
 
     public function testGetApplication()
