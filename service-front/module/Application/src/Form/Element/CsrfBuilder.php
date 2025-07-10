@@ -1,7 +1,9 @@
 <?php
 
-namespace Application\Form\Validator;
+namespace Application\Form\Element;
 
+use Application\Form\Validator\Csrf as CsrfValidator;
+use Laminas\Form\Element\Csrf;
 use Laminas\ServiceManager\ServiceManager;
 
 class CsrfBuilder
@@ -12,7 +14,17 @@ class CsrfBuilder
 
     public function __invoke(string $name) : Csrf
     {
-        return Cs
-        // TODO: Implement __invoke() method.
+        $csrfName = 'secret_' . md5($name);
+        $csrf = new Csrf($csrfName);
+        $csrfSalt = $this->serviceManager->get('config')['csrf']['salt'];
+        $csrfValidator = $this->serviceManager->build(CsrfValidator::class, [
+            [
+                'name' => $csrf->getName(),
+                'salt' => $csrfSalt,
+            ]
+        ] );
+
+        $csrf->setCsrfValidator($csrfValidator);
+        return $csrf;
     }
 }
