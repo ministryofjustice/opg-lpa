@@ -28,13 +28,11 @@ use Laminas\Http\Request as LaminasRequest;
 use Laminas\Http\Response as LaminasResponse;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
-use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use PDO;
-use Psr\Log\LoggerAwareInterface;
 
 class Module
 {
