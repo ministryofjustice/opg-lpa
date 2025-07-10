@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine3.21@sha256:681c369da9d85525ff8ce081456fa79988e5a0e39fc286a1e59e179cbcb2711c
+FROM php:8.2-fpm-alpine3.21@sha256:d86218cf2c89c512b1c05cac75a4c16fa5083384674361a2fe5b631e5baa3815
 COPY --from=mlocati/php-extension-installer:2@sha256:a7d3e11e022dbc563c85d3c71827cc3a0a338640bcb4dc629ce3e98bcd5875e4 /usr/bin/install-php-extensions /usr/bin/
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
