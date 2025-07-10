@@ -4,7 +4,7 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
-use Application\Form\Validator\Csrf;
+use Application\Form\Element\CsrfBuilder;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
@@ -25,7 +25,6 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
-use Monolog\Logger;
 use Psr\Log\LoggerAwareInterface;
 use Redis;
 use Twig\Loader\FilesystemLoader;
@@ -152,17 +151,6 @@ class Module implements FormElementProviderInterface
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
                 'Logger'                => 'MakeShared\Logging\LoggerFactory',
                 'ExporterFactory'       => ReflectionBasedAbstractFactory::class,
-
-                'CsrfValidator' => function (ServiceLocatorInterface $sm) {
-                    $csrfName = 'secret_' . md5(get_class($this));
-                    $csrf = $sm->build(\Laminas\Form\Element\Csrf::class, [$csrfName]);
-                    $csrfSalt = $sm->get('config')['csrf']['salt'];
-                    /**
-                     *  Psalm rightly objects to overriding Csrf final methods but we cannot fix this right now
-                     * @psalm-suppress TooManyArguments, InvalidArgument
-                     */
-                    return new Csrf($csrf->getName(), $csrfSalt);
-                },
 
                 // Authentication Adapter
                 'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {
@@ -366,9 +354,7 @@ class Module implements FormElementProviderInterface
             'initializers' => [
                 'InitCsrfForm' => function (ServiceManager $serviceManager, $form) {
                     if ($form instanceof AbstractCsrfForm) {
-                        $config = $serviceManager->get('Config');
-                        $form->setConfig($config);
-                        $form->setCsrf();
+                        $form->setCsrf($serviceManager->get(CsrfBuilder::class));
                     }
                 },
             ],
