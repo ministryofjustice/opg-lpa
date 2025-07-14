@@ -13,7 +13,7 @@
         }
     },
     "require": {
-        "php": ">=8.2 <8.3.0",
+        "php": "<8.5.0",
         "aws/aws-sdk-php": "^3.81",
         "firebase/php-jwt": "^6.0",
         "guzzlehttp/guzzle": "^7.0",
