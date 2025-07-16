@@ -4,24 +4,23 @@ namespace Application\Controller;
 
 use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
-use Closure;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
 use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
-use Laminas\Log\Logger as LaminasLogger;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
 use Exception;
 use Laminas\Db\Adapter\Adapter as DbAdapter;
 use Aws\Sqs\SqsClient;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Class PingController
  * @package Application\Controller
  */
-class PingController extends AbstractRestfulController
+class PingController extends AbstractRestfulController implements LoggerAwareInterface
 {
     use LoggerTrait;
 
@@ -144,7 +143,7 @@ class PingController extends AbstractRestfulController
 
             $queueOk = ($count < 50);
         } catch (Exception $e) {
-            $this->getLogger()->err('SQS queue is not available to API: ' . $e->getMessage());
+            $this->getLogger()->error('SQS queue is not available to API: ' . $e->getMessage());
         }
 
         // Main database
@@ -152,7 +151,7 @@ class PingController extends AbstractRestfulController
             $this->database->getDriver()->getConnection()->connect();
             $dbOk = true;
         } catch (Exception $e) {
-            $this->getLogger()->err('Database is not available to API: ' . $e->getMessage());
+            $this->getLogger()->error('Database is not available to API: ' . $e->getMessage());
         }
 
         // OPG Gateway
@@ -174,7 +173,7 @@ class PingController extends AbstractRestfulController
                 $opgGatewayOk = true;
             }
         } catch (Exception $e) {
-            $this->getLogger()->err(
+            $this->getLogger()->error(
                 "Sirius gateway not available to API at $url: " . $e->getMessage()
             );
         }

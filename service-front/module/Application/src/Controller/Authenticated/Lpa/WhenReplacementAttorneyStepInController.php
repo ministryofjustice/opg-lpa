@@ -5,9 +5,12 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Laminas\View\Model\ViewModel;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use MakeShared\Logging\LoggerTrait;
 
 class WhenReplacementAttorneyStepInController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $lpa = $this->getLpa();

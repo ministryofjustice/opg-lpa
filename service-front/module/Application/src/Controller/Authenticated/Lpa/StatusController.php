@@ -5,6 +5,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Application\View\StatusViewModelHelper;
 use DateTime;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * Class StatusController
@@ -12,6 +13,8 @@ use DateTime;
  */
 class StatusController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $viewModel = null;

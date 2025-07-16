@@ -4,6 +4,7 @@ namespace Application\Controller\Authenticated;
 
 use Laminas\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * For deleting a user's account
@@ -13,6 +14,8 @@ use Application\Controller\AbstractAuthenticatedController;
  */
 class DeleteController extends AbstractAuthenticatedController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         return new ViewModel();

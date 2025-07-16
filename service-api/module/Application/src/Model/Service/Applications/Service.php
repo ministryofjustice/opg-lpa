@@ -12,11 +12,13 @@ use MakeShared\DataModel\Lpa\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Paginator\Adapter\Callback as PaginatorCallback;
 use Laminas\Paginator\Adapter\NullFill as PaginatorNull;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @param $data

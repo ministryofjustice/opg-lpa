@@ -13,6 +13,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use Application\Library\Http\Response\Json;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\NoContent;
+use Psr\Log\LoggerInterface;
 
 class FeedbackControllerTest extends MockeryTestCase
 {
@@ -43,6 +44,8 @@ class FeedbackControllerTest extends MockeryTestCase
         $this->authorizationServiceService = Mockery::mock(AuthorizationService::class);
 
         $this->controller = new FeedbackController($this->feedbackService, $this->authorizationServiceService);
+        $logger = Mockery::spy(LoggerInterface::class);
+        $this->controller->setLogger($logger);
 
         $this->pluginManager = Mockery::mock(PluginManager::class);
         $this->pluginManager->shouldReceive('setController');

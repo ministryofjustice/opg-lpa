@@ -6,12 +6,6 @@
         <Configuration>
           <option name="path" value="$PROJECT_DIR$/shared/tests" />
         </Configuration>
-        <Configuration>
-          <option name="path" value="$PROJECT_DIR$/service-api/tests" />
-        </Configuration>
-        <Configuration>
-          <option name="path" value="$PROJECT_DIR$/shared/tests" />
-        </Configuration>
       </list>
     </option>
   </component>
