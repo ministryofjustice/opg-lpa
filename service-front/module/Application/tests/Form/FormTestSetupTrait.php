@@ -27,8 +27,11 @@ trait FormTestSetupTrait
     {
         $form->init();
 
-        $csrfBuilder = Mockery::mock(CsrfBuilder::class);
-        $csrfBuilder->shouldReceive('__invoke')->andReturn(new \Laminas\Form\Element\Csrf("secret"));
+        $sm = Mockery::mock(ServiceManager::class);
+        $sm->shouldReceive('get')->andReturn(['salt' => 'Rando_Calrissian']);
+        $sm->shouldReceive('build')->andReturn(new Csrf());
+
+        $csrfBuilder = new CsrfBuilder($sm);
 
         if ($form instanceof AbstractCsrfForm) {
             $form->setCsrf($csrfBuilder);
