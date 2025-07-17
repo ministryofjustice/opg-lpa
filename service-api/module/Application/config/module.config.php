@@ -1,5 +1,7 @@
 <?php
 
+use Application\Handler;
+use Laminas\Mvc\Middleware\PipeSpec;
 use MakeShared\Factories\ListenerAbstractFactory;
 
 return [
@@ -22,8 +24,10 @@ return [
                 'options' => [
                     'route' => '/ping[/:action]',
                     'defaults' => [
-                        'controller' => 'Application\Controller\Ping',
-                        'action'     => 'index',
+//                        'controller' => 'Application\Controller\Ping',
+//                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\PingHandler::class,
                     ],
                 ],
             ],
