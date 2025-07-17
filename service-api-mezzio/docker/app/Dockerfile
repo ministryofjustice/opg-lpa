@@ -16,9 +16,9 @@ RUN set -xe \
   && install-php-extensions apcu gmp opcache \
   && rm /usr/bin/install-php-extensions
 
-#COPY service-api-mezzio/docker/app/app-php.ini /usr/local/etc/php/conf.d/
-#COPY service-api-mezzio/docker/app/fpm-pool.ini /usr/local/etc/php-fpm.d/zz-logging.conf
-#COPY service-api-mezzio/docker/app/health-check.sh /usr/local/bin/health-check.sh
+COPY service-api-mezzio/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY service-api-mezzio/docker/app/fpm-pool.ini /usr/local/etc/php-fpm.d/zz-logging.conf
+COPY service-api-mezzio/docker/app/health-check.sh /usr/local/bin/health-check.sh
 
 WORKDIR /app
 
