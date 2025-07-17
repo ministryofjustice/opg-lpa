@@ -16,6 +16,7 @@ use Http\Client\HttpClient;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Exception;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * Creates a service and injects the required dependencies
@@ -135,6 +136,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
                 $service->setFeedbackRepository(
                     $container->get(FeedbackRepository\FeedbackRepositoryInterface::class)
                 );
+            }
+
+            if (in_array(LoggerTrait::class, $traitsUsed)) {
+                $service->setLogger($container->get('Logger'));
             }
         }
 

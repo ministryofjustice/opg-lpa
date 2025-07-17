@@ -12,6 +12,7 @@ use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Laminas\View\Helper\ServerUrl;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 use function number_format;
@@ -29,6 +30,8 @@ use function floatval;
  */
 class CheckoutController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     /** @var Communication */
     private $communicationService;
 

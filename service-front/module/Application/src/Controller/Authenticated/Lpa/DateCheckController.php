@@ -6,9 +6,12 @@ use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Signatures\DateCheck;
 use Application\View\DateCheckViewModelHelper;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class DateCheckController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $lpa = $this->getLpa();
