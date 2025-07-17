@@ -200,6 +200,7 @@ services:
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
 
       OPG_LPA_OS_PLACES_HUB_ENDPOINT : "https://api.os.uk/search/places/v1/postcode"
+      #XDEBUG_TRIGGER: "true"
     healthcheck:
       test:
         [
@@ -238,6 +239,7 @@ services:
     image: lpa-api-web
     depends_on:
       - api-app
+      - mezzio-api-app
     build:
       context: ./
       dockerfile: service-api/docker/web/Dockerfile
@@ -320,6 +322,26 @@ services:
       timeout: 15s
       retries: 3
       start_period: 90s
+
+  mezzio-api-app:
+    container_name: mezzio-lpa-api-app
+    image: mezzio-lpa-api-app
+    build:
+      context: ./
+      args:
+      dockerfile: service-api-mezzio/docker/app/Dockerfile
+    volumes:
+      - ./service-api-mezzio:/app
+    depends_on:
+      dynamodb:
+        condition: service_started
+      localstack:
+        condition: service_healthy
+      local-config:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    environment:
 
   # ---------------------------
   # Admin
