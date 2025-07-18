@@ -11,6 +11,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Monolog\Logger;
 
 class AuthControllerAbstractFactoryTest extends MockeryTestCase
 {
@@ -53,6 +54,10 @@ class AuthControllerAbstractFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')
             ->with(EmailService::class)
             ->andReturn(Mockery::mock(EmailService::class))
+            ->once();
+        $this->container->shouldReceive('get')
+            ->with('Logger')
+            ->andReturn(Mockery::mock(Logger::class))
             ->once();
 
         $controller = $this->factory->__invoke($this->container, EmailController::class);

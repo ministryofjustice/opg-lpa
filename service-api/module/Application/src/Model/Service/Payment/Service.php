@@ -7,11 +7,13 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTra
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use MakeShared\DataModel\Lpa\Payment\Payment;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @param $lpaId

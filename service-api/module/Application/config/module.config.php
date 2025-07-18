@@ -1,5 +1,9 @@
 <?php
 
+use Application\Handler;
+use Laminas\Mvc\Middleware\PipeSpec;
+use MakeShared\Factories\ListenerAbstractFactory;
+
 return [
 
     'router' => [
@@ -18,10 +22,21 @@ return [
             'ping' => [
                 'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
-                    'route' => '/ping[/:action]',
+                    'route' => '/ping',
                     'defaults' => [
-                        'controller' => 'Application\Controller\Ping',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\PingHandler::class,
+                    ],
+                ],
+            ],
+
+            'elb-ping' => [
+                'type' => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route' => '/ping/elb',
+                    'defaults' => [
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\ELBPingHandler::class,
                     ],
                 ],
             ],
@@ -444,7 +459,6 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController'
         ],
         'factories' => [
-            'Application\Controller\Ping' => Application\ControllerFactory\PingControllerFactory::class,
             'Application\Controller\Stats' => Application\ControllerFactory\StatsControllerFactory::class,
             'Application\Controller\Feedback' => Application\ControllerFactory\FeedbackControllerFactory::class,
             Application\Controller\StatusController::class =>
@@ -458,8 +472,10 @@ return [
 
     'service_manager' => [
         'abstract_factories' => [
+            ListenerAbstractFactory::class,
             'Application\Model\Service\ServiceAbstractFactory',
             'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory',
         ],
         'aliases' => [
             'translator' => 'MvcTranslator',

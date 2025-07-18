@@ -14,7 +14,7 @@
         "laminas/laminas-cache-storage-adapter-memory": "2.2.0",
         "laminas/laminas-crypt": "^3.4",
         "laminas/laminas-filter": "^2.12.0",
-        "laminas/laminas-log": "^2.13",
+        "monolog/monolog": "^3.9",
         "laminas/laminas-mvc": "^3.2",
         "laminas/laminas-mvc-i18n": "^2.0",
         "laminas/laminas-paginator": "^2.8",
@@ -27,7 +27,8 @@
         "symfony/console": "^6.1",
         "laminas/laminas-cli": "^1.5",
         "symfony/validator": "^4.2",
-        "egulias/email-validator": "~1.2"
+        "egulias/email-validator": "~1.2",
+        "laminas/laminas-mvc-middleware": "^2.5"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
