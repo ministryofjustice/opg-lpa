@@ -459,7 +459,6 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController'
         ],
         'factories' => [
-            'Application\Controller\Ping' => Application\ControllerFactory\PingControllerFactory::class,
             'Application\Controller\Stats' => Application\ControllerFactory\StatsControllerFactory::class,
             'Application\Controller\Feedback' => Application\ControllerFactory\FeedbackControllerFactory::class,
             Application\Controller\StatusController::class =>
