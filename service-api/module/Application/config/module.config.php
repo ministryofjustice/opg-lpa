@@ -22,12 +22,21 @@ return [
             'ping' => [
                 'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
-                    'route' => '/ping[/:action]',
+                    'route' => '/ping',
                     'defaults' => [
-//                        'controller' => 'Application\Controller\Ping',
-//                        'action'     => 'index',
                         'controller' => PipeSpec::class,
                         'middleware' => Handler\PingHandler::class,
+                    ],
+                ],
+            ],
+
+            'elb-ping' => [
+                'type' => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route' => '/ping/elb',
+                    'defaults' => [
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\ELBPingHandler::class,
                     ],
                 ],
             ],
