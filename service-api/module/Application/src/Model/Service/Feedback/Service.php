@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Feedback;
 
 use DateTime;
+use MakeShared\Logging\LoggerTrait;
 use Traversable;
 use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryTrait;
 use Application\Model\Service\AbstractService;
@@ -10,6 +11,7 @@ use Application\Model\Service\AbstractService;
 class Service extends AbstractService
 {
     use FeedbackRepositoryTrait;
+    use LoggerTrait;
 
     public const FEEDBACK_TTL = '-2 years';
 
@@ -37,19 +39,19 @@ class Service extends AbstractService
 
         // Feedback cannot be empty
         if (empty($feedback)) {
-            $this->getLogger()->err('Required fields for saving feedback not present');
+            $this->getLogger()->error('Required fields for saving feedback not present');
             return false;
         }
 
         // validator only checks the validity of fields which can be saved as feedback
         if (!$this->feedbackValidator->isValid($feedback)) {
-            $this->getLogger()->err('Feedback data failed validation');
+            $this->getLogger()->error('Feedback data failed validation');
             return false;
         }
 
         $dbInsertResult = $this->getFeedbackRepository()->insert($feedback);
         if (!$dbInsertResult) {
-            $this->getLogger()->err('Error inserting feedback into database: invalid query');
+            $this->getLogger()->error('Error inserting feedback into database: invalid query');
         }
 
         return $dbInsertResult;

@@ -6,10 +6,13 @@ use Application\Controller\AbstractLpaController;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 class TypeController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $lpa = $this->getLpa();

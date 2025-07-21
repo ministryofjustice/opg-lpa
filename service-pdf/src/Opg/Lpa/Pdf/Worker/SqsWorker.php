@@ -2,15 +2,16 @@
 
 namespace Opg\Lpa\Pdf\Worker;
 
+use Aws\Sqs\SqsClient;
 use Laminas\Filter\Decompress;
-use MakeShared\Logging\SimpleLoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdfRenderer;
-use Aws\Sqs\SqsClient;
+use Opg\Lpa\Pdf\Traits\LoggerTrait;
+use Psr\Log\LoggerAwareInterface;
 
-class SqsWorker
+class SqsWorker implements LoggerAwareInterface
 {
-    use SimpleLoggerTrait;
+    use LoggerTrait;
 
     /** @var PdfRenderer */
     private PdfRenderer $pdfRenderer;
@@ -35,7 +36,7 @@ class SqsWorker
         $pdfFilePath = $pdf['filepath'];
 
         if (is_null($pdfFilePath)) {
-            $this->getLogger()->err('null path returned for generated PDF');
+            $this->getLogger()->error('null path returned for generated PDF');
             return null;
         }
 
@@ -108,7 +109,7 @@ class SqsWorker
                         (microtime(true) - $startTime) .
                         " seconds to make PDF for LPA " . $lpaId);
                 } catch (\Exception $e) {
-                    $this->getLogger()->err("Error generating PDF", [
+                    $this->getLogger()->error("Error generating PDF", [
                         'jobId' => $lpaMessage['jobId'],
                         'lpaId' => $lpaMessage['lpaId'],
                     ]);
@@ -125,7 +126,7 @@ class SqsWorker
                 $this->getLogger()->debug("No message found in queue for this poll, finishing thread.");
             }
         } catch (\Exception $e) {
-            $this->getLogger()->emerg("Exception in SqsWorker: " . $e->getMessage());
+            $this->getLogger()->emergency("Exception in SqsWorker: " . $e->getMessage());
             sleep(5);
         }
     }

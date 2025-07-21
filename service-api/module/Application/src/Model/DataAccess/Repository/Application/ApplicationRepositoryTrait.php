@@ -2,10 +2,11 @@
 
 namespace Application\Model\DataAccess\Repository\Application;
 
+use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 use MakeShared\DataModel\Lpa\Lpa;
-use MakeShared\Logging\Logger;
 
+/** @psalm-require-implements LoggerAwareInterface */
 trait ApplicationRepositoryTrait
 {
     /**
@@ -46,9 +47,7 @@ trait ApplicationRepositoryTrait
 
     protected function updateLpa(Lpa $lpa): bool
     {
-        $logger = new Logger();
-
-        $logger->info('Updating LPA', [
+        $this->getLogger()->info('Updating LPA', [
             'lpaid' => $lpa->id
         ]);
 
@@ -59,7 +58,7 @@ trait ApplicationRepositoryTrait
 
         $result = $this->getApplicationRepository()->update($lpa);
 
-        $logger->info('LPA updated successfully', [
+        $this->getLogger()->info('LPA updated successfully', [
             'lpaid' => $lpa->id,
             'updatedAt' => $lpa->updatedAt,
         ]);

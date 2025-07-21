@@ -4,17 +4,17 @@ namespace Opg\Lpa\Pdf\Worker\Response;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use MakeShared\Logging\SimpleLoggerTrait;
 use Opg\Lpa\Pdf\Config\Config;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Stores the generated PDF into Amazon S3
  *
  * Files will be automatically deleted after a period by the bucket's lifecycle policy
  */
-class S3Response
+class S3Response implements LoggerAwareInterface
 {
-    use SimpleLoggerTrait;
+    use \Opg\Lpa\Pdf\Traits\LoggerTrait;
 
     /** @var string */
     private $docId;
@@ -55,7 +55,7 @@ class S3Response
 
             $s3->putObject($file);
         } catch (S3Exception $e) {
-            $this->getLogger()->emerg('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
+            $this->getLogger()->emergency('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
             throw $e;
         }
 

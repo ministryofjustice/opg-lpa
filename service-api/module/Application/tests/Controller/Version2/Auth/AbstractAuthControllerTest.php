@@ -17,6 +17,7 @@ use Laminas\Http\Headers;
 use Laminas\Http\Request;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\PluginManager;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractAuthControllerTest extends MockeryTestCase
 {
@@ -31,7 +32,7 @@ abstract class AbstractAuthControllerTest extends MockeryTestCase
     protected $service;
 
     /**
-     * @var MockInterface|Logger
+     * @var MockInterface|LoggerInterface
      */
     protected $logger;
 
@@ -62,7 +63,7 @@ abstract class AbstractAuthControllerTest extends MockeryTestCase
     {
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
 
-        $this->logger = Mockery::mock(Logger::class);
+        $this->logger = Mockery::mock(LoggerInterface::class);
 
         //  Mock the params plugin
         $this->params = Mockery::mock(Params::class);

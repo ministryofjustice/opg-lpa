@@ -3,6 +3,7 @@
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
+use MakeShared\Logging\LoggerTrait;
 use Traversable;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
@@ -11,6 +12,7 @@ use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 
 class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRepositoryInterface
 {
+    use LoggerTrait;
     public const FEEDBACK_TABLE = 'feedback';
 
     /**
@@ -45,9 +47,9 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
         try {
             $sql->execute();
         } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
-            $this->getLogger()->err('Error running insert query for feedback');
-            $this->getLogger()->err($e->getMessage());
-            $this->getLogger()->err($e->getTraceAsString());
+            $this->getLogger()->error('Error running insert query for feedback');
+            $this->getLogger()->error($e->getMessage());
+            $this->getLogger()->error($e->getTraceAsString());
             return false;
         }
 

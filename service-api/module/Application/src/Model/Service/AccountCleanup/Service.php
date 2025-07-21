@@ -10,6 +10,7 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\Users\Service as UsersService;
 use DateTime;
 use Exception;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * - Deletes accounts after 9 months.
@@ -23,6 +24,7 @@ class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
     use UserRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * GOV Notify template ID
@@ -157,7 +159,7 @@ class Service extends AbstractService
                 echo "NotifyException: " . $e->getMessage() . "\n";
 
                 // Notify exceptions aren't too bad, we will just retry tomorrow.
-                $this->getLogger()->warn('Unable to send account expiry notification', [
+                $this->getLogger()->warning('Unable to send account expiry notification', [
                     'exception' => $e->getMessage()
                 ]);
             } catch (Exception $e) {

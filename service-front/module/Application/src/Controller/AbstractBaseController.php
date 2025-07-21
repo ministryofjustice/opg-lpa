@@ -10,8 +10,9 @@ use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\View\Model\ViewModel;
+use Psr\Log\LoggerAwareInterface;
 
-abstract class AbstractBaseController extends AbstractActionController
+abstract class AbstractBaseController extends AbstractActionController implements LoggerAwareInterface
 {
     use LoggerTrait;
 

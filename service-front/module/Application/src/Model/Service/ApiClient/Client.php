@@ -8,8 +8,9 @@ use Http\Client\HttpClient as HttpClientInterface;
 use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\Tracer;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerAwareInterface;
 
-class Client
+class Client implements LoggerAwareInterface
 {
     use LoggerTrait;
 
@@ -294,7 +295,7 @@ class Client
     private function handleErrorResponse(ResponseInterface $response)
     {
         $exception = new Exception\ApiException($response);
-        $this->getLogger()->err($exception->getMessage(), ['headers' => $this->defaultHeaders]);
+        $this->getLogger()->error($exception->getMessage(), ['headers' => $this->defaultHeaders]);
         throw $exception;
     }
 }

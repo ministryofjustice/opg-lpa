@@ -11,10 +11,12 @@ use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Filter\Compress;
+use MakeShared\Logging\LoggerTrait;
 
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * PDF status constants
@@ -166,7 +168,7 @@ class Service extends AbstractService
             // If we get here it exists in the bucket...
             return self::STATUS_READY;
         } catch (\Aws\S3\Exception\S3Exception $ignore) {
-            $this->getLogger()->err('Exception while attempting to get PDF info from S3');
+            $this->getLogger()->error('Exception while attempting to get PDF info from S3');
         }
 
         /*

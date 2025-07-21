@@ -2,7 +2,6 @@
 
 namespace Application\Controller;
 
-use Laminas\Mvc\MvcEvent;
 use DateTime;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
@@ -12,9 +11,9 @@ use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use LmcRbacMvc\Service\AuthorizationService;
-use Laminas\Mvc\Controller\PluginManager;
+use Psr\Log\LoggerAwareInterface;
 
-class FeedbackController extends AbstractRestfulController
+class FeedbackController extends AbstractRestfulController implements LoggerAwareInterface
 {
     use LoggerTrait;
 
@@ -91,7 +90,7 @@ class FeedbackController extends AbstractRestfulController
         $result = $this->service->add($data);
 
         if ($result === false) {
-            $this->getLogger()->err('Data required for database insert was missing');
+            $this->getLogger()->error('Data required for database insert was missing');
 
             return new ApiProblemResponse(
                 new ApiProblem(400, 'Unable to save feedback. Ensure at least one valid field is sent.')

@@ -11,9 +11,6 @@
       <PhpSpecSuiteConfiguration>
         <option name="myPath" value="$PROJECT_DIR$/service-api" />
       </PhpSpecSuiteConfiguration>
-      <PhpSpecSuiteConfiguration>
-        <option name="myPath" value="$PROJECT_DIR$/shared" />
-      </PhpSpecSuiteConfiguration>
     </suites>
   </component>
 </project>
