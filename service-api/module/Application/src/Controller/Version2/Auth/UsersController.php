@@ -5,9 +5,11 @@ namespace Application\Controller\Version2\Auth;
 use Application\Model\Service\Users\Service;
 use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use MakeShared\Logging\LoggerTrait;
 
 class UsersController extends AbstractAuthController
 {
+    use LoggerTrait;
     /**
      * Get the service to use
      *

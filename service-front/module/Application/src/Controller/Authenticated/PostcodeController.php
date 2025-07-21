@@ -5,9 +5,12 @@ namespace Application\Controller\Authenticated;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Controller\AbstractAuthenticatedController;
 use Laminas\View\Model\JsonModel;
+use MakeShared\Logging\LoggerTrait;
 
 class PostcodeController extends AbstractAuthenticatedController
 {
+    use LoggerTrait;
+
     /**
      * @var OrdnanceSurvey
      */
@@ -33,7 +36,7 @@ class PostcodeController extends AbstractAuthenticatedController
         try {
             $addresses = $this->addressLookup->lookupPostcode($postcode);
         }catch (\RuntimeException $e) {
-            $this->getLogger()->warn("Exception from postcode lookup: ".$e->getMessage());
+            $this->getLogger()->warning("Exception from postcode lookup: ".$e->getMessage());
         }
 
 

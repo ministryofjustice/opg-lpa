@@ -5,6 +5,7 @@ namespace Application\Model\Service\Session;
 use Application\Model\Service\Redis\RedisClient;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Custom save handler to which write filters can be applied.
@@ -14,7 +15,7 @@ use Laminas\Session\SaveHandler\SaveHandlerInterface;
  * request, environment etc. to determine whether the session
  * should be written after execution of an action.
  */
-class FilteringSaveHandler implements SaveHandlerInterface
+class FilteringSaveHandler implements SaveHandlerInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 

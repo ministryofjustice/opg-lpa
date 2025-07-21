@@ -8,14 +8,14 @@ use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
-use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Sends an email via the Notify API.
  * See https://docs.notifications.service.gov.uk/php.html
  */
-class NotifyMailTransport implements MailTransportInterface
+class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 
@@ -107,7 +107,7 @@ class NotifyMailTransport implements MailTransportInterface
             try {
                 $this->client->sendEmail($toAddress, $notifyTemplateId, $data);
             } catch (NotifyException $ex) {
-                $this->getLogger()->err(
+                $this->getLogger()->error(
                     'Failed sending email via Notify: ' . $ex->getMessage() . '\n' . $ex->getTraceAsString()
                 );
 
@@ -151,7 +151,7 @@ class NotifyMailTransport implements MailTransportInterface
                 $data,
             );
         } catch (NotifyException $ex) {
-            $this->getLogger()->err('Healthcheck on Notify failed: ' . $ex->getMessage());
+            $this->getLogger()->error('Healthcheck on Notify failed: ' . $ex->getMessage());
 
             $result['ok'] = false;
             $result['status'] = Constants::STATUS_FAIL;

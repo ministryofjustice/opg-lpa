@@ -10,6 +10,7 @@ use DateTimeZone;
 use DateInterval;
 use Exception;
 use Laminas\Session\Container;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * A model service class for sending emails on LPA creation and completion.
@@ -19,6 +20,8 @@ use Laminas\Session\Container;
  */
 class Communication extends AbstractEmailService
 {
+    use LoggerTrait;
+
     /** @var Container */
     private $userDetailsSession;
     private $emailTemplateRef;
@@ -76,7 +79,7 @@ class Communication extends AbstractEmailService
             $mailParameters = new MailParameters($to, $this->emailTemplateRef, $this->data);
             $this->getMailTransport()->send($mailParameters);
         } catch (Exception $ex) {
-            $this->getLogger()->err($ex->getMessage());
+            $this->getLogger()->error($ex->getMessage());
             return "failed-sending-email";
         }
 

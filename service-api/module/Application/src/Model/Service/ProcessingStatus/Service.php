@@ -10,6 +10,7 @@ use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception as HttpException;
 use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client as HttpClient;
@@ -17,6 +18,7 @@ use RuntimeException;
 
 class Service extends AbstractService
 {
+    use LoggerTrait;
     private const SIRIUS_STATUS_TO_LPA = [
         'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
         'Payment Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
@@ -149,7 +151,7 @@ class Service extends AbstractService
 
                 case 500:
                 case 503:
-                    $this->getLogger()->err(
+                    $this->getLogger()->error(
                         'Bad ' . $statusCode . ' response from Sirius gateway: ' .
                         (string)$result->getBody()
                     );
@@ -157,7 +159,7 @@ class Service extends AbstractService
                     throw new ApiProblemException('Bad response from Sirius gateway: ' . $statusCode);
 
                 default:
-                    $this->getLogger()->err(
+                    $this->getLogger()->error(
                         'Unexpected response from Sirius gateway: ' . $statusCode .
                         '; ' . (string)$result->getBody()
                     );

@@ -14,6 +14,7 @@ use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use DateTime;
 use Exception;
+use MakeShared\Logging\LoggerTrait;
 
 /**
  * Generate LPA stats and saves the results back into the Database.
@@ -28,6 +29,7 @@ class Stats extends AbstractService
     use ApplicationRepositoryTrait;
     use StatsRepositoryTrait;
     use WhoRepositoryTrait;
+    use LoggerTrait;
 
     /**
      * @return bool
@@ -42,7 +44,7 @@ class Stats extends AbstractService
             $stats['lpas'] = $this->getLpaStats();
             $this->getLogger()->info("Successfully generated lpas stats");
         } catch (Exception $ex) {
-            $this->getLogger()->err("Failed to generate lpas stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error("Failed to generate lpas stats due to {$ex->getMessage()}", [$ex]);
             $stats['lpas'] = ['generated' => false];
         }
 
@@ -55,7 +57,7 @@ class Stats extends AbstractService
 
             $this->getLogger()->info("Successfully generated lpasPerUser stats");
         } catch (Exception $ex) {
-            $this->getLogger()->err("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
             $stats['lpasPerUser'] = ['generated' => false];
         }
 
@@ -63,7 +65,7 @@ class Stats extends AbstractService
             $stats['who'] = $this->getWhoAreYou();
             $this->getLogger()->info("Successfully generated who stats");
         } catch (Exception $ex) {
-            $this->getLogger()->err("Failed to generate who stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error("Failed to generate who stats due to {$ex->getMessage()}", [$ex]);
             $stats['who'] = ['generated' => false];
         }
 
@@ -71,7 +73,7 @@ class Stats extends AbstractService
             $stats['correspondence'] = $this->getCorrespondenceStats();
             $this->getLogger()->info("Successfully generated correspondence stats");
         } catch (Exception $ex) {
-            $this->getLogger()->err("Failed to generate correspondence stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error("Failed to generate correspondence stats due to {$ex->getMessage()}", [$ex]);
             $stats['correspondence'] = ['generated' => false];
         }
 
@@ -79,7 +81,7 @@ class Stats extends AbstractService
             $stats['preferencesInstructions'] = $this->getPreferencesInstructionsStats();
             $this->getLogger()->info("Successfully generated preferencesInstructions stats");
         } catch (Exception $ex) {
-            $this->getLogger()->err(
+            $this->getLogger()->error(
                 "Failed to generate preferencesInstructions stats due to {$ex->getMessage()}",
                 [$ex]
             );
@@ -90,7 +92,7 @@ class Stats extends AbstractService
             $stats['options'] = $this->getOptionsStats();
             $this->getLogger()->info("Successfully generated options stats");
         } catch (Exception $ex) {
-            $this->getLogger()->err("Failed to generate options stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error("Failed to generate options stats due to {$ex->getMessage()}", [$ex]);
             $stats['options'] = ['generated' => false];
         }
 

@@ -3,7 +3,6 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
-        'Laminas\Log',
         'Laminas\Db',
         'Laminas\Mvc\I18n',
         'Laminas\I18n',
@@ -56,11 +55,5 @@ return array(
     ),
     'listeners' => [
         'MakeShared\Logging\ErrorEventListener',
-    ],
-    // Should be compatible with Laminas\ServiceManager\Config.
-    'service_manager' => [
-        'factories' => [
-            'MakeShared\Logging\ErrorEventListener'  => 'MakeShared\Logging\ErrorEventListener',
-        ],
     ],
 );

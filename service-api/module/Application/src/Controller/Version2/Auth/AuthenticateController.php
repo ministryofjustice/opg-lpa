@@ -6,11 +6,14 @@ use DateTime;
 use Application\Model\Service\AbstractService;
 use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\TelemetryEventManager;
 use RuntimeException;
 
 class AuthenticateController extends AbstractAuthController
 {
+    use LoggerTrait;
+
     /**
      * @return AbstractService
      */

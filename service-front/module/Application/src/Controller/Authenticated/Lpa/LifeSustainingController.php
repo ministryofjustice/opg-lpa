@@ -5,10 +5,13 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
 class LifeSustainingController extends AbstractLpaController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $lpa = $this->getLpa();

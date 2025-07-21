@@ -8,12 +8,13 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Adapter\AdapterInterface;
 use Laminas\Db\Exception\ExceptionInterface as LaminasExceptionInterface;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Class LpaAuth
  * @package Application\Library\Authentication\Adapter
  */
-class LpaAuth implements AdapterInterface
+class LpaAuth implements AdapterInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 
@@ -53,7 +54,7 @@ class LpaAuth implements AdapterInterface
         try {
             $data = $this->authenticationService->withToken($this->token, true);
         } catch (LaminasExceptionInterface $ex) {
-            $this->getLogger()->err(
+            $this->getLogger()->error(
                 'Unable to get user with token; possible database issue; message: ' . $ex->getMessage()
             );
             return new Result(Result::FAILURE, null);

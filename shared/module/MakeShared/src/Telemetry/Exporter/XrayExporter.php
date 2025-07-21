@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace MakeShared\Telemetry\Exporter;
 
-use MakeShared\Logging\SimpleLogger;
+use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\Segment;
 use json_encode;
+use Psr\Log\LoggerAwareInterface;
 use Socket;
 use socket_create;
 use socket_close;
@@ -17,24 +18,17 @@ use sprintf;
 use strlen;
 use trigger_error;
 
-class XrayExporter implements ExporterInterface
+class XrayExporter implements ExporterInterface, LoggerAwareInterface
 {
+    use LoggerTrait;
     public const MAX_PAYLOAD_LEN = 64000;
 
     public Socket|false $socket;
 
-    private $logger;
-
     public function __construct(
         private string $host = 'localhost',
         private int $port = 2000,
-        $logger = null,
     ) {
-        if (is_null($logger)) {
-            $logger = new SimpleLogger();
-        }
-        $this->logger = $logger;
-
         $this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
         if (!$this->socket) {
@@ -63,14 +57,14 @@ class XrayExporter implements ExporterInterface
         $payload = json_encode(['format' => 'json', 'version' => 1]) . "\n" . json_encode($segment);
 
         if (strlen($payload) > $this::MAX_PAYLOAD_LEN) {
-            $this->logger->err("Segment too large to export: " . substr($payload, 0, 400));
+            $this->getLogger()->error("Segment too large to export: " . substr($payload, 0, 400));
             return;
         }
 
         $result = socket_sendto($this->socket, $payload, strlen($payload), 0, $this->host, $this->port);
 
         if ($result === false) {
-            $this->logger->err("Unable to send telemetry to {$this->host}:{$this->port}");
+            $this->getLogger()->error("Unable to send telemetry to {$this->host}:{$this->port}");
         }
     }
 }

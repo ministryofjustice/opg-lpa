@@ -3,7 +3,11 @@
 namespace ApplicationTest\Form;
 
 use Application\Form\AbstractCsrfForm;
+use Application\Form\Element\CsrfBuilder;
+use Application\Form\Validator\Csrf;
 use Laminas\Form\FormInterface;
+use Laminas\ServiceManager\ServiceManager;
+use Mockery;
 
 trait FormTestSetupTrait
 {
@@ -23,15 +27,14 @@ trait FormTestSetupTrait
     {
         $form->init();
 
-        if ($form instanceof AbstractCsrfForm) {
-            $config = [
-                'csrf' => [
-                    'salt' => 'Rando_Calrissian'
-                ]
-            ];
+        $sm = Mockery::mock(ServiceManager::class);
+        $sm->shouldReceive('get')->andReturn(['salt' => 'Rando_Calrissian']);
+        $sm->shouldReceive('build')->andReturn(new Csrf());
 
-            $form->setConfig($config);
-            $form->setCsrf();
+        $csrfBuilder = new CsrfBuilder($sm);
+
+        if ($form instanceof AbstractCsrfForm) {
+            $form->setCsrf($csrfBuilder);
         }
 
         $this->form = $form;

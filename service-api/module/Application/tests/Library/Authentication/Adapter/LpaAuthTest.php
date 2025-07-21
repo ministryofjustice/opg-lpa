@@ -10,6 +10,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\Authentication\Result;
+use Psr\Log\LoggerInterface;
 
 class LpaAuthTest extends MockeryTestCase
 {
@@ -21,6 +22,7 @@ class LpaAuthTest extends MockeryTestCase
     public function setUp(): void
     {
         $this->authenticationService = Mockery::mock(Service::class);
+        $this->logger = Mockery::spy(LoggerInterface::class);
     }
 
     public function testAuthenticateStandardUser(): void
@@ -29,6 +31,7 @@ class LpaAuthTest extends MockeryTestCase
             ->andReturn(['userId' => 'ID', 'username' => 'user name']);
 
         $lpaAuth = new LpaAuth($this->authenticationService, 'Token', []);
+        $lpaAuth->setLogger($this->logger);
         $result = $lpaAuth->authenticate();
 
         $this->assertNotNull($result);
@@ -48,6 +51,7 @@ class LpaAuthTest extends MockeryTestCase
             ->andReturn(['userId' => 'ID', 'username' => 'user name']);
 
         $lpaAuth = new LpaAuth($this->authenticationService, 'Token', ['user name']);
+        $lpaAuth->setLogger($this->logger);
         $result = $lpaAuth->authenticate();
 
         $this->assertNotNull($result);
@@ -67,6 +71,7 @@ class LpaAuthTest extends MockeryTestCase
             ->andReturn(null);
 
         $lpaAuth = new LpaAuth($this->authenticationService, 'Token', ['user name']);
+        $lpaAuth->setLogger($this->logger);
         $result = $lpaAuth->authenticate();
 
         $this->assertNotNull($result);
@@ -84,6 +89,7 @@ class LpaAuthTest extends MockeryTestCase
             ->andThrow($expectedException);
 
         $lpaAuth = new LpaAuth($this->authenticationService, 'Token', ['user name']);
+        $lpaAuth->setLogger($this->logger);
 
         $result = $lpaAuth->authenticate();
 

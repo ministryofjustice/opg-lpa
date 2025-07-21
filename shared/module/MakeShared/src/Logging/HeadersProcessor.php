@@ -2,7 +2,8 @@
 
 namespace MakeShared\Logging;
 
-use Laminas\Log\Processor\ProcessorInterface;
+use Monolog\LogRecord;
+use Monolog\Processor\ProcessorInterface;
 
 /**
  * Process any headers array in the $extra field, stripping sensitive
@@ -16,7 +17,7 @@ use Laminas\Log\Processor\ProcessorInterface;
  *        'Content-Type' => 'application/json'
  *    ];
  *
- *    $this->getLogger()->err('an error', ['headers' => $headers]);
+ *    $this->getLogger()->error('an error', ['headers' => $headers]);
  *
  * This sets $extra to ['headers' => $headers], and this processor will receive
  * a $event like:
@@ -49,14 +50,14 @@ class HeadersProcessor implements ProcessorInterface
 
     public const HEADERS_TO_STRIP = ['cookie', 'authorization', '_ga', '_gid', 'token'];
 
-    public function process(array $event): array
+    public function __invoke(LogRecord $record): LogRecord
     {
         // early return if there's no "headers" in $extra
-        if (!isset($event['extra'][self::HEADERS_FIELD_NAME])) {
-            return $event;
+        if (!isset($record->extra[self::HEADERS_FIELD_NAME])) {
+            return $record;
         }
 
-        $headers = $event['extra'][self::HEADERS_FIELD_NAME];
+        $headers = $record->extra[self::HEADERS_FIELD_NAME];
 
         // headers; filter out any which potentially contain private data
         // and promote X-Trace-Id to top level property in $extra
@@ -71,8 +72,8 @@ class HeadersProcessor implements ProcessorInterface
         }
 
         // set fixed headers on $extra
-        $event['extra'][self::HEADERS_FIELD_NAME] = $headersArray;
+        $record->extra[self::HEADERS_FIELD_NAME] = $headersArray;
 
-        return $event;
+        return $record;
     }
 }

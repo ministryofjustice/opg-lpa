@@ -14,6 +14,7 @@ use Exception;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Goes through all required services and checks they're operating.
@@ -24,7 +25,6 @@ use MakeShared\Logging\LoggerTrait;
 class Status extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
-    use LoggerTrait;
 
     // if any of these have a status of 'fail', the service
     // is considered down; if any is 'warn', the service

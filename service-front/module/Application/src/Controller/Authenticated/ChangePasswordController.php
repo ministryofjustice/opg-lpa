@@ -4,9 +4,12 @@ namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class ChangePasswordController extends AbstractAuthenticatedController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $form = $this->getFormElementManager()->get('Application\Form\User\ChangePassword');

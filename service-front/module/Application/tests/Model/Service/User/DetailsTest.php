@@ -6,6 +6,8 @@ use Hamcrest\MatcherAssert;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
 use Exception;
+use MakeShared\Logging\Logger;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
@@ -31,12 +33,14 @@ class DetailsTest extends AbstractEmailServiceTest
      * @var $service Details
      */
     private $service;
+    private $logger;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->apiClient = Mockery::mock(Client::class);
+        $this->logger = Mockery::spy(LoggerInterface::class);
 
         $this->service = new Details(
             $this->authenticationService,
@@ -45,6 +49,7 @@ class DetailsTest extends AbstractEmailServiceTest
             $this->helperPluginManager
         );
         $this->service->setApiClient($this->apiClient);
+        $this->service->setLogger($this->logger);
     }
 
     public function setUpIdentity(

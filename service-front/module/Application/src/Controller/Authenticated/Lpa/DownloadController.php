@@ -7,9 +7,11 @@ use Exception;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\Logging\LoggerTrait;
 
 class DownloadController extends AbstractLpaController
 {
+    use LoggerTrait;
     /**
      * @psalm-suppress ImplementedReturnTypeMismatch
      * @return ViewModel|HttpResponse|false

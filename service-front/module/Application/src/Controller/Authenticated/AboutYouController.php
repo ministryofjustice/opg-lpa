@@ -5,9 +5,12 @@ namespace Application\Controller\Authenticated;
 use Application\Controller\AbstractAuthenticatedController;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class AboutYouController extends AbstractAuthenticatedController
 {
+    use LoggerTrait;
+
     /** @var Container */
     private $userDetailsSession;
 

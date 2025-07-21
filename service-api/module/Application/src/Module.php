@@ -29,6 +29,8 @@ use Laminas\Http\Response as LaminasResponse;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use MakeShared\Logging\LoggerFactory;
+use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use PDO;
 
@@ -38,6 +40,7 @@ class Module
 
     public function onBootstrap(MvcEvent $e)
     {
+
         $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
@@ -45,7 +48,11 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_FINISH, [$this, 'negotiateContent'], 1000);
 
         // Setup authentication listener...
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener(), 'authenticate'], 500);
+        $sm = $e->getApplication()->getServiceManager();
+
+        $auth = $sm->get(AuthenticationListener::class);
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$auth, 'authenticate'], 500);
+
 
         // Register error handler for dispatch and render errors;
         // priority is set to 100 here so that the global MvcEventListener
@@ -67,12 +74,15 @@ class Module
                 Repository\Application\WhoRepositoryInterface::class => Postgres\WhoAreYouData::class,
                 Repository\Application\ApplicationRepositoryInterface::class => Postgres\ApplicationData::class,
                 Repository\Feedback\FeedbackRepositoryInterface::class => Postgres\FeedbackData::class,
+                ServiceLocatorInterface::class => 'ServiceManager',
             ],
             'invokables' => [
                 HttpClient::class => Guzzle7Client::class,
                 Client::class => Client::class,
             ],
             'factories' => [
+                'Logger'          => LoggerFactory::class,
+
                 'NotifyClient' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
 
@@ -124,6 +134,7 @@ class Module
                 Postgres\WhoAreYouData::class   => Postgres\DataFactory::class,
                 Postgres\FeedbackData::class    => Postgres\DataFactory::class,
 
+
                 // Get S3Client Client
                 'S3Client' => function ($sm) {
                     $config = $sm->get('config');
@@ -161,11 +172,10 @@ class Module
 
                 'TelemetryTracer' => function ($sm) {
                     $telemetryConfig = $sm->get('config')['telemetry'];
-                    return Tracer::create($telemetryConfig);
+                    return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
                 },
 
             ], // factories
-
         ];
     }
 

@@ -8,6 +8,7 @@ use Application\Model\Service;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
+use MakeShared\Logging\LoggerTrait;
 
 class AuthControllerAbstractFactory implements AbstractFactoryInterface
 {
@@ -61,6 +62,14 @@ class AuthControllerAbstractFactory implements AbstractFactoryInterface
         }
 
         $controller = new $requestedName($authenticationService, $service);
+
+        // Note that class_uses only returns traits in a specific subclass which does not include those in its base class
+        // Therefore traits need to be specified again in the subclass for this to work.
+        $traitsUsed = class_uses($controller);
+
+        if (in_array(LoggerTrait::class, $traitsUsed)) {
+            $controller->setLogger($container->get('Logger'));
+        }
 
         return $controller;
     }

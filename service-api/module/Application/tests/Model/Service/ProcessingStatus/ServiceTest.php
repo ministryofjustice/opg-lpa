@@ -17,6 +17,7 @@ use Mockery\MockInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class ServiceTest extends MockeryTestCase
@@ -46,12 +47,14 @@ class ServiceTest extends MockeryTestCase
         $this->httpClient = Mockery::mock(Client::class);
         $this->credentials = Mockery::mock(CredentialsInterface::class);
         $this->awsSignature = Mockery::mock(SignatureV4::class);
+        $logger = Mockery::spy(LoggerInterface::class);
 
         $this->service = new Service();
         $this->service->setAwsSignatureV4($this->awsSignature);
         $this->service->setClient($this->httpClient);
         $this->service->setCredentials($this->credentials);
         $this->service->setConfig(['processing-status' => ['endpoint' => 'http://thing/processing-status/']]);
+        $this->service->setLogger($logger);
     }
 
     public function setUpSigning($timesCalled = 1)

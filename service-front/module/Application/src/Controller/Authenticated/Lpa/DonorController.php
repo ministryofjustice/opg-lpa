@@ -5,9 +5,12 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaActorController;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
 
 class DonorController extends AbstractLpaActorController
 {
+    use LoggerTrait;
+
     public function indexAction()
     {
         $lpaId = $this->getLpa()->id;

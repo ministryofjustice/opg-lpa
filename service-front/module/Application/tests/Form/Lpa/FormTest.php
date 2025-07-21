@@ -8,6 +8,7 @@ use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
 use ReflectionClass;
+use function PHPUnit\Framework\assertEquals;
 
 class FormTest extends MockeryTestCase
 {
@@ -16,6 +17,8 @@ class FormTest extends MockeryTestCase
     public function testAllFormsHaveCsrfCheck()
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+
+        $csrfNames = [];
 
         foreach (glob(__DIR__ . '/../../../src/Form/Lpa/*.php') as $filepath) {
             $pathInfo = pathinfo(realpath($filepath));
@@ -41,7 +44,11 @@ class FormTest extends MockeryTestCase
                 }
 
                 $this->assertInstanceOf('Laminas\Form\Element\Csrf', $secretKeys);
+                array_push($csrfNames, $secretKeys->getName());
             }
         }
+
+        // ensure no duplicates in csrfs
+        assertEquals($csrfNames, array_unique($csrfNames));
     }
 }
