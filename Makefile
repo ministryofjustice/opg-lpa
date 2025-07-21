@@ -53,11 +53,16 @@ run-composers:
 	@docker pull composer:${COMPOSER_VERSION}; \
 	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer run-shared-composer
 
-# use front-composer-update PACKAGE=PACKAGE=symfony\/validator\:5.4.43
+# use make front-composer-update PACKAGE=PACKAGE=symfony\/validator\:v5.4.43
 # you'll need to escape the \ and : as above
 .PHONY: front-composer-update
 front-composer-update:
 	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+
+#run composer outdated in front container
+.PHONY: front-composer-outdated
+front-composer-outdated:
+	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer outdated
 
 
 .PHONY: dc-up
