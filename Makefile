@@ -59,6 +59,11 @@ run-composers:
 front-composer-update:
 	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
+.PHONY: front-composer-remove
+front-composer-remove:
+	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer remove $(PACKAGE)  --ignore-platform-reqs --no-install
+
+
 #run composer outdated in front container
 .PHONY: front-composer-outdated
 front-composer-outdated:
