@@ -248,6 +248,8 @@ services:
     environment:
       APP_HOST: api-app
       APP_PORT: 9000
+      APP_V2_HOST: mezzio-api-app
+      APP_V2_PORT: 9000
       NGINX_LOG_LEVEL: warn
 
   api-app:
@@ -328,7 +330,6 @@ services:
     image: mezzio-lpa-api-app
     build:
       context: ./
-      args:
       dockerfile: service-api-mezzio/docker/app/Dockerfile
     volumes:
       - ./service-api-mezzio:/app
@@ -341,7 +342,6 @@ services:
         condition: service_started
       postgres:
         condition: service_healthy
-    environment:
 
   # ---------------------------
   # Admin
