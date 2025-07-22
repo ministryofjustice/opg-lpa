@@ -53,7 +53,7 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:6.2-alpine@sha256:3211c33a618c457e5d241922c975dbc4f446d0bdb2dc75694f5573ef8e2d01fa
+    image: library/redis:6.2-alpine@sha256:7fe72c486b910f6b1a9769c937dad5d63648ddee82e056f47417542dd40825bb
 #    ports:
 #      - 6379:6379
 
