@@ -466,53 +466,39 @@ jobs:
         update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
         payload: |
             {
-              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "Development Environment Deployment",
+                    "text": "Make - development deployment",
                     "emoji": true
                   }
                 },
                 {
                   "type": "section",
-                  "fields": [
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Front URL:* https://${{ env.FRONT_URL }}/home\n*Admin URL:* https://${{ env.ADMIN_URL }}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Status:*\nDeployed (Tests have passed!)"
+                      "text": ":white_check_mark: <https://github.com/${{ github.payload.repository.full_name }}/actions/runs/${{ github.runId }}|Success>"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "fields": [
+                      "text": ":astronaut: ${{ github.triggering_actor }}"
+                    },
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
+                      "text": ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
                     }
                   ]
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                     "text": "*Front URL:* https://${{ env.FRONT_URL }}/home\n*Admin URL:* https://${{ env.ADMIN_URL }}"
-                  }
                 }
-
               ]
             }
       env:
