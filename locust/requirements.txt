@@ -14,7 +14,7 @@ brotli==1.1.0
     # via geventhttpclient
 bs4==0.0.2
     # via -r requirements.in
-certifi==2025.6.15
+certifi==2025.7.14
     # via
     #   geventhttpclient
     #   requests
@@ -54,9 +54,9 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-locust==2.37.11
+locust==2.37.14
     # via -r requirements.in
-locust-cloud==1.24.2
+locust-cloud==1.26.3
     # via locust
 markupsafe==3.0.2
     # via
@@ -89,7 +89,7 @@ six==1.17.0
     # via python-dateutil
 soupsieve==2.7
     # via beautifulsoup4
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via beautifulsoup4
 urllib3==2.5.0
     # via
