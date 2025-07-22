@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine3.21@sha256:681c369da9d85525ff8ce081456fa79988e5a0e39fc286a1e59e179cbcb2711c
+FROM php:8.2-fpm-alpine3.21@sha256:37715a44b00d22afd772aa4180ed82a0523a121ef3bf7d2275ffb8fcca905a5e
 
 COPY --from=mlocati/php-extension-installer:2@sha256:5d2a8b6dd8ae8ff898513c6491135baa635394d278f8eeb6ed5757261c034c22 /usr/bin/install-php-extensions /usr/bin/
 
