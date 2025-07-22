@@ -60,7 +60,7 @@ jobs:
       - name: Upload Coverage Artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: coverage-html
+          name: ${{ matrix.scan.name }}-coverage-html
           path: ${{ matrix.scan.path }}/coverage-html/
           overwrite: true
   phpunit_all_services:
