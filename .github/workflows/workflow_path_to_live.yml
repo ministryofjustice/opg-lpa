@@ -437,44 +437,31 @@ jobs:
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
             {
-              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "Production Deployment",
+                    "text": "Make - production release",
                     "emoji": true
                   }
                 },
                 {
-                  "type": "section",
-                  "fields": [
+                  "type": "context",
+                  "elements": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Status:*\nComplete :white_check_mark:"
+                      "text": ":white_check_mark: <https://github.com/${{ github.payload.repository.full_name }}/actions/runs/${{ github.runId }}|Success>"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "fields": [
+                      "text": ":astronaut: ${{ github.triggering_actor }}"
+                    },
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
+                      "text": ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
                     }
                   ]
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
-                  }
                 }
               ]
             }
@@ -488,44 +475,31 @@ jobs:
         update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
         payload: |
             {
-              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "Production Deployment",
+                    "text": "Make - production release",
                     "emoji": true
                   }
                 },
                 {
-                  "type": "section",
-                  "fields": [
+                  "type": "context",
+                  "elements": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Status:*\nFailed! :x:"
+                      "text": ":cross-red: <https://github.com/${{ github.payload.repository.full_name }}/actions/runs/${{ github.runId }}|Failed>"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "fields": [
+                      "text": ":astronaut: ${{ github.triggering_actor }}"
+                    },
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
+                      "text": ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
                     }
                   ]
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
-                  }
                 }
               ]
             }
@@ -538,7 +512,6 @@ jobs:
         channel-id: "C9PNCT2KS"
         payload: |
             {
-              "icon_emoji": ":warning:",
               "blocks": [
                 {
                   "type": "section",
