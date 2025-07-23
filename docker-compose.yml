@@ -332,7 +332,7 @@ services:
       context: ./
       dockerfile: service-api-mezzio/docker/app/Dockerfile
     volumes:
-      - ./service-api-mezzio:/app
+      - ./service-api-mezzio/app:/app
     depends_on:
       dynamodb:
         condition: service_started
