@@ -1,25 +1,21 @@
 <?php
 
-namespace Application\ControllerFactory;
+declare(strict_types=1);
 
-use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
-use Application\Controller\PingController;
-use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\Factory\FactoryInterface;
+namespace Application\Handler;
+
 use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
 use Aws\Sqs\SqsClient;
-use Http\Client\HttpClient;
+use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
 
-class PingControllerFactory implements FactoryInterface
+class PingHandlerFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array|null $options
-     * @return PingController
-     */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container): PingHandler
     {
         /** @var CredentialsInterface $awsCredentials */
         $awsCredentials = $container->get('AwsCredentials');
@@ -36,25 +32,22 @@ class PingControllerFactory implements FactoryInterface
         $config = $container->get('config');
 
         if (!isset($config['pdf']['queue']['sqs']['settings']['url'])) {
-            throw new \RuntimeException('Missing config: SQS URL');
+            throw new RuntimeException('Missing config: SQS URL');
         }
 
         if (!isset($config['processing-status']['endpoint'])) {
-            throw new \RuntimeException('Missing config: Track my LPA endpoint');
+            throw new RuntimeException('Missing config: Track my LPA endpoint');
         }
 
-        $controller = new PingController(
+        return new PingHandler(
             $awsCredentials,
             $awsSigner,
             $database,
             $sqs,
             $config['pdf']['queue']['sqs']['settings']['url'],
             $config['processing-status']['endpoint'],
-            $container->get(HttpClient::class)
+            $container->get(ClientInterface::class),
+            $container->get(LoggerInterface::class),
         );
-
-        $controller->setLogger($container->get('Logger'));
-
-        return $controller;
     }
 }

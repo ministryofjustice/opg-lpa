@@ -1,110 +1,39 @@
 <?php
 
-namespace Application\Controller;
+declare(strict_types=1);
+
+namespace Application\Handler;
 
 use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
+use Aws\Sqs\SqsClient;
+use Exception;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
-use Http\Client\HttpClient;
+use Laminas\Diactoros\Response\JsonResponse;
 use MakeShared\Constants;
-use MakeShared\Logging\LoggerTrait;
-use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\View\Model\JsonModel;
-use Exception;
+use Psr\Http\Client\ClientInterface as HttpClient;
 use Laminas\Db\Adapter\Adapter as DbAdapter;
-use Aws\Sqs\SqsClient;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
-/**
- * Class PingController
- * @package Application\Controller
- */
-class PingController extends AbstractRestfulController implements LoggerAwareInterface
+readonly class PingHandler implements RequestHandlerInterface
 {
-    use LoggerTrait;
-
-    /**
-     * @var CredentialsInterface
-     */
-    private $awsCredentials;
-
-    /**
-     * @var SignatureV4
-     */
-    private $signer;
-
-    /**
-     * @var DbAdapter
-     */
-    private $database;
-
-    /**
-     * @var SqsClient
-     */
-    private $sqsClient;
-
-    /**
-     * @var string
-     */
-    private $sqsQueueUrl;
-
-    /**
-     * @var HttpClient
-     */
-    private $httpClient;
-
-    /**
-     * @var string
-     */
-    private $trackMyLpaEndpoint;
-
-    /**
-     * PingController constructor.
-     * @param CredentialsInterface $awsCredentials
-     * @param SignatureV4 $signer
-     * @param DbAdapter $database
-     * @param SqsClient $sqsClient
-     * @param string $queueUrl
-     * @param string $trackMyLpaEndpoint
-     * @param HttpClient $httpClient
-     */
     public function __construct(
-        CredentialsInterface $awsCredentials,
-        SignatureV4 $signer,
-        DbAdapter $database,
-        SqsClient $sqsClient,
-        string $queueUrl,
-        string $trackMyLpaEndpoint,
-        HttpClient $httpClient
+        private CredentialsInterface $awsCredentials,
+        private SignatureV4          $signer,
+        private DbAdapter            $database,
+        private SqsClient            $sqsClient,
+        private string               $sqsQueueUrl,
+        private string               $trackMyLpaEndpoint,
+        private HttpClient           $httpClient,
+        private LoggerInterface      $logger,
     ) {
-        $this->awsCredentials = $awsCredentials;
-        $this->signer = $signer;
-        $this->database = $database;
-        $this->sqsClient = $sqsClient;
-        $this->sqsQueueUrl = $queueUrl;
-        $this->trackMyLpaEndpoint = $trackMyLpaEndpoint;
-        $this->httpClient = $httpClient;
     }
 
-    /**
-     * Endpoint for the AWS ELB.
-     * All we're checking is that PHP can be called and a 200 returned.
-     *
-     * @return \Laminas\Stdlib\ResponseInterface
-     */
-    public function elbAction()
-    {
-        $response = $this->getResponse();
-        $response->setContent('Happy face');
-        return $response;
-    }
-
-    /**
-     * @return JsonModel
-     * @throws \Http\Client\Exception
-     */
-    public function indexAction()
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         // Initialise the states as false
         $queueOk = false;
@@ -133,7 +62,7 @@ class PingController extends AbstractRestfulController implements LoggerAwareInt
             }
 
             $count = (int)$result['Attributes']['ApproximateNumberOfMessages']
-                        + (int)$result['Attributes']['ApproximateNumberOfMessagesNotVisible'];
+                + (int)$result['Attributes']['ApproximateNumberOfMessagesNotVisible'];
 
             $queueDetails = [
                 'available' => true,
@@ -143,7 +72,7 @@ class PingController extends AbstractRestfulController implements LoggerAwareInt
 
             $queueOk = ($count < 50);
         } catch (Exception $e) {
-            $this->getLogger()->error('SQS queue is not available to API: ' . $e->getMessage());
+            $this->logger->error('SQS queue is not available to API: ' . $e->getMessage());
         }
 
         // Main database
@@ -151,7 +80,7 @@ class PingController extends AbstractRestfulController implements LoggerAwareInt
             $this->database->getDriver()->getConnection()->connect();
             $dbOk = true;
         } catch (Exception $e) {
-            $this->getLogger()->error('Database is not available to API: ' . $e->getMessage());
+            $this->logger->error('Database is not available to API: ' . $e->getMessage());
         }
 
         // OPG Gateway
@@ -173,7 +102,7 @@ class PingController extends AbstractRestfulController implements LoggerAwareInt
                 $opgGatewayOk = true;
             }
         } catch (Exception $e) {
-            $this->getLogger()->error(
+            $this->logger->error(
                 "Sirius gateway not available to API at $url: " . $e->getMessage()
             );
         }
@@ -204,8 +133,8 @@ class PingController extends AbstractRestfulController implements LoggerAwareInt
             ],
         ];
 
-        $this->getLogger()->info('PingController results', $result);
+        $this->logger->info('PingController results', $result);
 
-        return new JsonModel($result);
+        return new JsonResponse($result);
     }
 }

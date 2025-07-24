@@ -5,6 +5,7 @@ return array(
     'modules' => array(
         'Laminas\Db',
         'Laminas\Mvc\I18n',
+        'Laminas\Mvc\Middleware',
         'Laminas\I18n',
         'Laminas\Cache',
         'Laminas\Filter',
