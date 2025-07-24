@@ -53,7 +53,7 @@ run-composers:
 	@docker pull composer:${COMPOSER_VERSION}; \
 	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer run-shared-composer
 
-# use make front-composer-update PACKAGE=PACKAGE=symfony\/validator\:v5.4.43
+# use make front-composer-update PACKAGE=symfony\/validator\:v5.4.43
 # you'll need to escape the \ and : as above
 .PHONY: front-composer-update
 front-composer-update:
