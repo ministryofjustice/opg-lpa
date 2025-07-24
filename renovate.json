@@ -31,8 +31,7 @@
     "rangeStrategy": "update-lockfile",
     "commitMessagePrefix": "[SECURITY]",
     "branchTopic": "{{{datasource}}}-{{{depName}}}-vulnerability",
-    "prCreation": "immediate",
-    "prPriority": 5
+    "prCreation": "immediate"
   },
   "prConcurrentLimit": 1,
   "prHourlyLimit": 1,
@@ -53,6 +52,14 @@
     "pip_setup"
   ],
   "packageRules": [
+    {
+      "description": [
+        "Ignore main PHP version in composer",
+        "You will need to manually update"
+      ],
+      "matchPackageNames": ["php"],
+      "enabled": false
+    },
     {
       "description": [
         "cypress: bundle updates to package.json and dockerfile",
@@ -224,9 +231,6 @@
       "prCreation": "immediate",
       "prPriority": 4,
       "minimumReleaseAge": "3 days",
-      "matchPackageNames": [
-        "!php"
-      ]
     },
     {
       "description": [
@@ -253,10 +257,7 @@
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "minimumReleaseAge": "3 days",
-      "matchPackageNames": [
-        "!php"
-      ]
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": [
@@ -283,10 +284,7 @@
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "minimumReleaseAge": "3 days",
-      "matchPackageNames": [
-        "!php"
-      ]
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": [
@@ -313,10 +311,7 @@
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "minimumReleaseAge": "3 days",
-      "matchPackageNames": [
-        "!php"
-      ]
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": [
@@ -343,10 +338,7 @@
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "minimumReleaseAge": "3 days",
-      "matchPackageNames": [
-        "!php"
-      ]
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": [
@@ -403,10 +395,5 @@
       "prPriority": 4,
       "minimumReleaseAge": "3 days"
     }
-  ],
-  "pip-compile": {
-    "managerFilePatterns": [
-      "/(^|/)requirements\\.txt$/"
-    ]
-  }
+  ]
 }
