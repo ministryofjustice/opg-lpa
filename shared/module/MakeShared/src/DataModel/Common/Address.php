@@ -79,7 +79,6 @@ class Address extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'min' => self::POSTCODE_MIN_LENGTH,
                 'max' => self::POSTCODE_MAX_LENGTH,
             ]),
         ]);

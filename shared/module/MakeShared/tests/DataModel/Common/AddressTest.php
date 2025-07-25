@@ -59,6 +59,47 @@ class AddressTest extends TestCase
         $this->assertNotNull($errors['postcode']);
     }
 
+     public function testLine1And2IsValid()
+    {
+        $address = new Address();
+        $address->set('address1', FixturesData::generateRandomString(20));
+        $address->set('address2', FixturesData::generateRandomString(20));
+        $address->set('address3', '');
+        $address->set('postcode', '');
+
+        $validatorResponse = $address->validate();
+        $this->assertFalse($validatorResponse->hasErrors());
+    }
+
+    public function testLine1AndPostCodeIsValid()
+    {
+        $address = new Address();
+        $address->set('address1', FixturesData::generateRandomString(20));
+        $address->set('address2', '');
+        $address->set('address3', '');
+        $address->set('postcode', FixturesData::generateRandomString(7));
+
+        $validatorResponse = $address->validate();
+        $this->assertFalse($validatorResponse->hasErrors());
+    }
+
+    public function testLineNoLine2orPostCodeInvalid()
+    {
+        $address = new Address();
+        $address->set('address1', FixturesData::generateRandomString(20));
+        $address->set('address2', '');
+        $address->set('address3', FixturesData::generateRandomString(20));
+        $address->set('postcode', '');
+
+        $validatorResponse = $address->validate();
+        $this->assertTrue($validatorResponse->hasErrors());
+
+        $errors = $validatorResponse->getArrayCopy();
+        $this->assertEquals(1, count($errors));
+        TestHelper::assertNoDuplicateErrorMessages($errors, $this);
+        $this->assertNotNull($errors['address2/postcode']);
+    }
+
     public function testGetsAndSets()
     {
         $model = new Address();
