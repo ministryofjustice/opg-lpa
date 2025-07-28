@@ -2,6 +2,8 @@
 
 namespace Application;
 
+use Application\Handler\PingHandler;
+use Application\Handler\PingHandlerFactory;
 use ArrayIterator;
 use GuzzleHttp\Client;
 use Alphagov\Notifications\Client as NotifyClient;
@@ -33,6 +35,8 @@ use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use PDO;
+use Psr\Http\Client\ClientInterface;
+use Psr\Log\LoggerInterface;
 
 class Module
 {
@@ -75,13 +79,16 @@ class Module
                 Repository\Application\ApplicationRepositoryInterface::class => Postgres\ApplicationData::class,
                 Repository\Feedback\FeedbackRepositoryInterface::class => Postgres\FeedbackData::class,
                 ServiceLocatorInterface::class => 'ServiceManager',
+
+                LoggerInterface::class => 'Logger',
+                ClientInterface::class => Client::class,
             ],
             'invokables' => [
                 HttpClient::class => Guzzle7Client::class,
-                Client::class => Client::class,
+                //Client::class => Client::class,
             ],
             'factories' => [
-                'Logger'          => LoggerFactory::class,
+                'Logger' => LoggerFactory::class,
 
                 'NotifyClient' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
@@ -174,6 +181,8 @@ class Module
                     $telemetryConfig = $sm->get('config')['telemetry'];
                     return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
                 },
+
+                PingHandler::class => PingHandlerFactory::class,
 
             ], // factories
         ];
