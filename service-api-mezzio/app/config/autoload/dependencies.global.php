@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-use Mezzio\Router\FastRouteRouter;
-use Mezzio\Router\RouterInterface;
-
 return [
     // Provides application-wide services.
     // We recommend using fully-qualified class names whenever possible as
@@ -20,7 +17,6 @@ return [
         // class name.
         'invokables' => [
             // Fully\Qualified\InterfaceName::class => Fully\Qualified\ClassName::class,
-            RouterInterface::class => FastRouteRouter::class,
         ],
         // Use 'factories' for services provided by callbacks/factory classes.
         'factories' => [
