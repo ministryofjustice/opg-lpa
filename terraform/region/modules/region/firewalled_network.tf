@@ -73,6 +73,6 @@ module "vpc_endpoints" {
   public_subnets_cidr_blocks      = module.network.public_subnets[*].cidr_block
   application_route_tables        = data.aws_route_tables.firewalled_network_application
   providers = {
-    aws.region = aws.region
+    aws.region = aws
   }
 }
