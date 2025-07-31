@@ -7,8 +7,7 @@ module "network" {
   default_security_group_egress       = []
   aws_networkfirewall_firewall_policy = aws_networkfirewall_firewall_policy.main
   providers = {
-    aws = aws.region
-  }
+  aws = aws }
 }
 
 resource "aws_networkfirewall_firewall_policy" "main" {
@@ -26,7 +25,7 @@ resource "aws_networkfirewall_firewall_policy" "main" {
       resource_arn = aws_networkfirewall_rule_group.rule_file.arn
     }
   }
-  provider = aws.region
+  # provider = aws.region
 }
 
 resource "aws_networkfirewall_rule_group" "rule_file" {
@@ -37,11 +36,11 @@ resource "aws_networkfirewall_rule_group" "rule_file" {
   lifecycle {
     create_before_destroy = true
   }
-  provider = aws.region
+  # provider = aws.region
 }
 
 data "aws_route_tables" "firewalled_network_application" {
-  provider = aws.region
+  # provider = aws.region
   filter {
     name   = "tag:Name"
     values = ["application-route-table"]
