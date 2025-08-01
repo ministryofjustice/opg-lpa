@@ -18,7 +18,7 @@ resource "aws_elasticache_replication_group" "front_cache" {
   engine                     = "redis"
   engine_version             = "6.x"
   node_type                  = "cache.t2.micro"
-  number_cache_clusters      = local.cache_cluster_count
+  num_cache_clusters         = local.cache_cluster_count
   transit_encryption_enabled = true
   at_rest_encryption_enabled = true
   automatic_failover_enabled = true
