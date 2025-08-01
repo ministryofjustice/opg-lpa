@@ -21,6 +21,7 @@ class ECSMonitor:
     nextForwardToken = ""
     logStreamName = ""
     taskName = ""
+    vpc_id = ""
 
     def __init__(self, config_file, nameOfTask):
         self.taskName = nameOfTask
@@ -67,6 +68,7 @@ class ECSMonitor:
             self.db_client_security_group = parameters["db_client_security_group_id"]
             self.security_group = parameters[f"{self.taskName}_security_group_id"]
             self.aws_region = parameters["region"]
+            self.vpc_id = parameters["vpc_id"]
 
     def get_task_definition(self):
         # get the latest task definition
@@ -127,7 +129,12 @@ class ECSMonitor:
                     "Name": "tag:Name",
                     "Values": ["private", "application"],
                 },
-                {"Name": "vpc-id", "Values": ["vpc-58bcb23e"]},
+                {
+                    "Name": "vpc-id",
+                    "Values": [
+                        self.vpc_id,
+                    ],
+                },
             ],
             MaxResults=5,
         )
