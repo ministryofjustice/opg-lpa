@@ -1,5 +1,5 @@
 module "network" {
-  source                              = "github.com/ministryofjustice/opg-terraform-aws-firewalled-network?ref=v0.2.16-trimspacesfr.0"
+  source                              = "github.com/ministryofjustice/opg-terraform-aws-firewalled-network?ref=v0.2.16"
   cidr                                = var.network_cidr_block
   enable_dns_hostnames                = true
   enable_dns_support                  = true
@@ -25,7 +25,6 @@ resource "aws_networkfirewall_firewall_policy" "main" {
       resource_arn = aws_networkfirewall_rule_group.rule_file.arn
     }
   }
-  # provider = aws.region
 }
 
 resource "aws_networkfirewall_rule_group" "rule_file" {
@@ -36,11 +35,9 @@ resource "aws_networkfirewall_rule_group" "rule_file" {
   lifecycle {
     create_before_destroy = true
   }
-  # provider = aws.region
 }
 
 data "aws_route_tables" "firewalled_network_application" {
-  # provider = aws.region
   filter {
     name   = "tag:Name"
     values = ["application-route-table"]
