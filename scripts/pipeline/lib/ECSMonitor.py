@@ -125,10 +125,9 @@ class ECSMonitor:
             Filters=[
                 {
                     "Name": "tag:Name",
-                    "Values": [
-                        "private",
-                    ],
+                    "Values": ["private", "application"],
                 },
+                {"Name": "vpc-id", "Values": ["vpc-58bcb23e"]},
             ],
             MaxResults=5,
         )
