@@ -1,11 +1,13 @@
+// GOVUK Frontend
+@use "../../node_modules/govuk-frontend/dist/govuk/index" with (
+  $govuk-assets-path: "/assets/v2/"
+);
+
 // Settings
 @import 'settings/variables';
 
 // GOVUK Elements
 @import "govuk-elements";
-@use "../../node_modules/govuk-frontend/dist/govuk/index" with (
-  $govuk-assets-path: "/assets/v2/"
-);
 
 // Extensions
 @import 'extensions/elements/elements-typography';
