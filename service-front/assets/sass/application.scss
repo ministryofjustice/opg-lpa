@@ -3,7 +3,9 @@
 
 // GOVUK Elements
 @import "govuk-elements";
-@import "../../node_modules/govuk-frontend/govuk/all";
+@use "../../node_modules/govuk-frontend/dist/govuk/index" with (
+  $govuk-assets-path: "/assets/v2/"
+);
 
 // Extensions
 @import 'extensions/elements/elements-typography';
