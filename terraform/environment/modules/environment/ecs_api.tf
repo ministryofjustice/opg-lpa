@@ -52,7 +52,6 @@ resource "aws_service_discovery_service" "api" {
     routing_policy = "MULTIVALUE"
   }
 
-  health_check_custom_config {}
 }
 
 resource "aws_service_discovery_service" "api_canonical" {
@@ -69,7 +68,6 @@ resource "aws_service_discovery_service" "api_canonical" {
     routing_policy = "MULTIVALUE"
   }
 
-  health_check_custom_config {}
 }
 locals {
 
