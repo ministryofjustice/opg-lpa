@@ -101,6 +101,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "lpa_pdf_cache" {
     expiration {
       days = 1
     }
+    filter {
+      prefix = ""
+    }
+
   }
 }
 
@@ -169,6 +173,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "redacted_logs" {
 
     expiration {
       days = 120
+    }
+
+    filter {
+      prefix = ""
     }
 
 
