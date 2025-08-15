@@ -5,7 +5,7 @@ terraform {
       configuration_aliases = [
         aws.destination
       ]
-      version = "~> 5.0"
+      version = "6.9.0"
     }
     pagerduty = {
       source  = "PagerDuty/pagerduty"
