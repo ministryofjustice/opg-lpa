@@ -128,7 +128,7 @@ jobs:
       is_ephemeral: false
       workspace_manager_aws_account_id: "050256574573"
       workspace_manager_aws_iam_role: opg-lpa-ci
-      terraform_apply: true
+      terraform_apply: false
       terraform_directory: ./terraform/region
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
