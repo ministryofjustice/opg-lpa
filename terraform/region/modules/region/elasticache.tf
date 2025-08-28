@@ -8,7 +8,7 @@ resource "aws_security_group" "front_cache" {
 
 resource "aws_elasticache_subnet_group" "private_subnets" {
   name       = "${local.account_name_short}-${local.region_name}-elasticache-private-subnets"
-  subnet_ids = aws_subnet.private[*].id
+  subnet_ids = data.aws_default_tags.current.tags.environment-name == "development" ? module.network.application_subnets : aws_subnet.private[*].id
 }
 
 #New Network
