@@ -79,7 +79,7 @@ data "aws_iam_policy_document" "cloudwatch_encryption_kms" {
     principals {
       type = "Service"
       identifiers = [
-        "logs.${data.aws_region.current.name}.amazonaws.com",
+        "logs.${data.aws_region.current.region}.amazonaws.com",
         "events.amazonaws.com"
       ]
     }

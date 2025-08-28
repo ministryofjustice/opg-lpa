@@ -1,5 +1,5 @@
 data "aws_sns_topic" "rds_events" {
-  name = "${var.account_name}-${data.aws_region.current.name}-rds-events"
+  name = "${var.account_name}-${data.aws_region.current.region}-rds-events"
 }
 
 resource "aws_backup_vault_notifications" "aws_backup_failures" {

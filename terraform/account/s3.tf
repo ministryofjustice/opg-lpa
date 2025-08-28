@@ -47,9 +47,13 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
 
 # We will keep this in for historical purposes. we need to think how far back we need this.
 #versioning not required for a logging bucket bucket logging not needed
-#tfsec:ignore:aws-s3-enable-bucket-logging  #tfsec:ignore:aws-s3-enable-versioning 
+#tfsec:ignore:aws-s3-enable-bucket-logging  #tfsec:ignore:aws-s3-enable-versioning
 resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${terraform.workspace}-lb-access-logs"
+}
+
+resource "aws_s3_bucket_acl" "access_log" {
+  bucket = aws_s3_bucket.access_log.id
   acl    = "private"
 }
 

@@ -15,7 +15,7 @@ data "aws_kms_key" "destination_rds_snapshot_key" {
 }
 
 data "aws_kms_key" "source_rds_snapshot_key" {
-  key_id = "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/${var.key_alias}"
+  key_id = "arn:aws:kms:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:alias/${var.key_alias}"
 }
 
 data "aws_iam_policy_document" "aurora_backup_role" {

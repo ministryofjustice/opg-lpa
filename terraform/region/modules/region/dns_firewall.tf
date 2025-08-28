@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_log_group" "aws_route53_resolver_query_log" {
   count             = var.account.dns_firewall.enabled ? 1 : 0
-  name              = "${var.account_name}-${data.aws_region.current.name}-make-an-lpa-aws-route53-resolver-query-log-config"
+  name              = "${var.account_name}-${data.aws_region.current.region}-make-an-lpa-aws-route53-resolver-query-log-config"
   retention_in_days = 400
   kms_key_id        = aws_kms_key.cloudwatch_encryption.arn
   tags = merge(
@@ -25,14 +25,14 @@ resource "aws_route53_resolver_query_log_config_association" "egress" {
 
 locals {
   interpolated_dns = [
-    "logs.${data.aws_region.current.name}.amazonaws.com.",
-    "logs.${data.aws_region.current.name}.amazonaws.com.${data.aws_region.current.name}.compute.internal.",
-    "api.ecr.${data.aws_region.current.name}.amazonaws.com.",
-    "api.ecr.${data.aws_region.current.name}.amazonaws.com.${data.aws_region.current.name}.compute.internal.",
-    "dynamodb.${data.aws_region.current.name}.amazonaws.com.",
-    "kms.${data.aws_region.current.name}.amazonaws.com.",
-    "secretsmanager.${data.aws_region.current.name}.amazonaws.com.",
-    "secretsmanager.${data.aws_region.current.name}.amazonaws.com.${data.aws_region.current.name}.compute.internal.",
+    "logs.${data.aws_region.current.region}.amazonaws.com.",
+    "logs.${data.aws_region.current.region}.amazonaws.com.${data.aws_region.current.region}.compute.internal.",
+    "api.ecr.${data.aws_region.current.region}.amazonaws.com.",
+    "api.ecr.${data.aws_region.current.region}.amazonaws.com.${data.aws_region.current.region}.compute.internal.",
+    "dynamodb.${data.aws_region.current.region}.amazonaws.com.",
+    "kms.${data.aws_region.current.region}.amazonaws.com.",
+    "secretsmanager.${data.aws_region.current.region}.amazonaws.com.",
+    "secretsmanager.${data.aws_region.current.region}.amazonaws.com.${data.aws_region.current.region}.compute.internal.",
     "${replace(aws_elasticache_replication_group.front_cache.primary_endpoint_address, "master", "*")}.",
     "311462405659.dkr.ecr.eu-west-1.amazonaws.com.",
     "${var.account_name}.opg.lpa.api.ecs.internal.",
@@ -87,7 +87,7 @@ resource "aws_route53_resolver_firewall_rule_group_association" "egress" {
 
 resource "aws_cloudwatch_query_definition" "dns_firewall_statistics" {
   count = var.account.dns_firewall.enabled ? 1 : 0
-  name  = "${var.account_name} ${data.aws_region.current.name} DNS Firewall Queries/DNS Firewall Statistics"
+  name  = "${var.account_name} ${data.aws_region.current.region} DNS Firewall Queries/DNS Firewall Statistics"
 
   log_group_names = [aws_cloudwatch_log_group.aws_route53_resolver_query_log[0].name]
 
