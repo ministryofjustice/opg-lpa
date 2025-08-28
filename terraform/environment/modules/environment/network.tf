@@ -40,6 +40,7 @@ data "aws_vpc" "main" {
   }
 }
 
+# tflint-ignore: terraform_unused_declarations
 data "aws_subnet" "application" {
   count             = 3
   vpc_id            = data.aws_vpc.main.id
@@ -51,6 +52,7 @@ data "aws_subnet" "application" {
   }
 }
 
+# tflint-ignore: terraform_unused_declarations
 data "aws_subnet" "public" {
   count             = 3
   vpc_id            = data.aws_vpc.main.id
