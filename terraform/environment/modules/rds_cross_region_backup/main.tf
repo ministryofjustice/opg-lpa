@@ -29,13 +29,13 @@ resource "aws_backup_plan" "main" {
 }
 
 resource "aws_backup_vault" "main" {
-  name        = "${var.environment_name}_${data.aws_region.current.name}_aurora_backup_vault"
+  name        = "${var.environment_name}_${data.aws_region.current.region}_aurora_backup_vault"
   kms_key_arn = data.aws_kms_key.source_rds_snapshot_key.arn
 }
 
 resource "aws_backup_vault" "secondary" {
   provider    = aws.destination
-  name        = "${var.environment_name}_${data.aws_region.secondary.name}_aurora_backup_vault"
+  name        = "${var.environment_name}_${data.aws_region.secondary.region}_aurora_backup_vault"
   kms_key_arn = data.aws_kms_key.destination_rds_snapshot_key.arn
 }
 
