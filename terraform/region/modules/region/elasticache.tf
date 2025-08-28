@@ -10,7 +10,6 @@ resource "aws_elasticache_subnet_group" "private_subnets" {
   subnet_ids = data.aws_default_tags.current.tags.environment-name == "development" ? module.network.application_subnets : aws_subnet.private[*].id
 }
 
-
 resource "aws_elasticache_replication_group" "front_cache" {
   replication_group_id       = "${local.account_name_short}-${local.region_name}-front-cache-rg"
   description                = "front cache replication group"
@@ -30,7 +29,6 @@ resource "aws_elasticache_replication_group" "front_cache" {
 
   tags = local.front_component_tag
 }
-
 
 locals {
   cache_cluster_count   = 2
