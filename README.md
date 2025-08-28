@@ -267,3 +267,13 @@ Packages can be removed with:
 ```bash
 docker run -v `pwd`/service-front/:/app/ composer remove author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 ```
+
+There are additional make shortcuts of:
+
+```make front-composer-update PACKAGE=author\/package\:v5.4.43```
+
+```make front-composer-remove PACKAGE=author\/package\:v5.4.43```
+
+```make front-composer-outdated```
+
+for package updates, removals and outdated checks in front.

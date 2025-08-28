@@ -26,7 +26,7 @@
         "monolog/monolog": "^3.9",
         "guzzlehttp/psr7": "^2.4",
         "alphagov/notifications-php-client": "^5.0.0",
-        "symfony/validator": "^4.2",
+        "symfony/validator": "^5.4",
         "egulias/email-validator": "^4"
     },
     "replace": {
