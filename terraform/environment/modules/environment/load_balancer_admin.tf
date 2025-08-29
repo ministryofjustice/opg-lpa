@@ -3,7 +3,7 @@ resource "aws_lb_target_group" "admin" {
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
-  vpc_id               = data.aws_vpc.default.id
+  vpc_id               = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
   deregistration_delay = 0
   health_check {
     enabled             = true
@@ -54,7 +54,7 @@ resource "aws_lb_listener" "admin_loadbalancer" {
 resource "aws_security_group" "admin_loadbalancer" {
   name        = "${var.environment_name}-admin-loadbalancer"
   description = "Allow inbound traffic"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
   tags        = local.admin_component_tag
 }
 

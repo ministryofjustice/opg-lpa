@@ -6,7 +6,7 @@ data "aws_vpc" "default" {
 data "aws_subnets" "private" {
   filter {
     name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
+    values = [var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id]
   }
 
   tags = {
@@ -17,7 +17,7 @@ data "aws_subnets" "private" {
 data "aws_subnets" "public" {
   filter {
     name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
+    values = [var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id]
   }
 
   tags = {
