@@ -6,11 +6,11 @@ use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryInterface
 use Application\Model\Service\Feedback\FeedbackValidator;
 use Application\Model\Service\Feedback\Service as FeedbackService;
 use ApplicationTest\Model\Service\Feedback\FeedbackServiceBuilder;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use DateTime;
 use Mockery;
 
-class FeedbackServiceTest extends AbstractServiceTest
+class FeedbackServiceTest extends AbstractServiceTestCase
 {
     // feedback service under test
     private FeedbackService $sut;

@@ -10,7 +10,7 @@ use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Mockery;
 
-class EmailControllerTest extends AbstractAuthControllerTest
+class EmailControllerTest extends AbstractAuthControllerTestCase
 {
     public function setUp(): void
     {

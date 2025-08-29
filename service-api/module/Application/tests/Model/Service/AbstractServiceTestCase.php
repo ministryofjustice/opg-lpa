@@ -9,7 +9,7 @@ use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 
-abstract class AbstractServiceTest extends MockeryTestCase
+abstract class AbstractServiceTestCase extends MockeryTestCase
 {
     /**
      * Convenience function to get a pre-mocked ApiLpaCollection

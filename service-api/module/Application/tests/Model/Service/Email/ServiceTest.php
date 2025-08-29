@@ -6,12 +6,12 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Email\Service as EmailUpdateService;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     /**
      * @var MockInterface|UserRepositoryInterface

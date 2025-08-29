@@ -14,7 +14,7 @@ use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 use Psr\Log\LoggerInterface;
 
-class StatusControllerTest extends AbstractControllerTest
+class StatusControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var $service ApplicationsService|MockInterface
