@@ -144,7 +144,7 @@ resource "aws_db_parameter_group" "postgres13-db-params" {
 resource "aws_security_group" "rds-client" {
   name                   = "rds-client-${var.environment_name}"
   description            = "rds access for ${var.environment_name}"
-  vpc_id                 = data.aws_vpc.default.id
+  vpc_id                 = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
   revoke_rules_on_delete = true
   tags                   = local.db_component_tag
 }
@@ -152,7 +152,7 @@ resource "aws_security_group" "rds-client" {
 resource "aws_security_group" "rds-api" {
   name                   = "rds-api-${var.environment_name}"
   description            = "api rds access"
-  vpc_id                 = data.aws_vpc.default.id
+  vpc_id                 = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
   revoke_rules_on_delete = true
   tags                   = local.db_component_tag
 
