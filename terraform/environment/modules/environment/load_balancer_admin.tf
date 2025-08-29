@@ -22,7 +22,7 @@ resource "aws_lb" "admin" {
   #tfsec:ignore:aws-elb-alb-not-public - public facing load balancer
   internal                   = false
   load_balancer_type         = "application"
-  subnets                    = data.aws_subnets.public.ids
+  subnets                    = var.account_name == "development" ? data.aws_subnet.public[*].id : data.aws_subnets.public.ids
   tags                       = local.admin_component_tag
   drop_invalid_header_fields = true
   security_groups = [

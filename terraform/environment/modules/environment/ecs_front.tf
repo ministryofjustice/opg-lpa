@@ -14,7 +14,7 @@ resource "aws_ecs_service" "front" {
   deployment_maximum_percent         = 200
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
-    subnets          = data.aws_subnets.private.ids
+    subnets          = var.account_name == "development" ? data.aws_subnet.application[*].id : data.aws_subnets.private.ids
     assign_public_ip = false
   }
 
