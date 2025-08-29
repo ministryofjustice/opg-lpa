@@ -27,7 +27,7 @@
         "guzzlehttp/psr7": "^2.4",
         "alphagov/notifications-php-client": "^5.0.0",
         "symfony/validator": "^5.4",
-        "egulias/email-validator": "~1.2"
+        "egulias/email-validator": "^4"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
