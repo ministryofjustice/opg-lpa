@@ -22,25 +22,10 @@ use RuntimeException;
 
 class ServiceTest extends MockeryTestCase
 {
-    /**
-     * @var MockInterface| HttpClient
-     */
-    private $httpClient;
-
-    /**
-     * @var ResponseInterface|MockInterface
-     */
-    private $response;
-
-    /**
-     * @var Service
-     */
-    private $service;
-
-    /**
-     * @var SignatureV4
-     */
-    private $awsSignature;
+    private MockInterface|Client $httpClient;
+    private MockInterface|CredentialsInterface $credentials;
+    private MockInterface|SignatureV4 $awsSignature;
+    private Service $service;
 
     public function setUp(): void
     {
@@ -69,20 +54,20 @@ class ServiceTest extends MockeryTestCase
         $returnStatus = 200,
         $returnBody = '{"status": "Pending","rejectedDate": null}'
     ) {
-        $this->response = Mockery::mock(ResponseInterface::class);
-        $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
+        $response = Mockery::mock(ResponseInterface::class);
+        $response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
 
         if ($returnBody !== null) {
             $mockBody = Mockery::mock(StreamInterface::class);
             $mockBody->shouldReceive('getContents')->andReturn($returnBody);
-            $this->response->shouldReceive('getBody')->andReturn($mockBody);
+            $response->shouldReceive('getBody')->andReturn($mockBody);
         }
-        $this->promise = new Promise();
-        $this->promise->resolve($this->response);
+        $promise = new Promise();
+        $promise->resolve($response);
 
         $this->httpClient->shouldReceive('sendAsync')
             ->once()
-            ->andReturn($this->promise);
+            ->andReturn($promise);
     }
 
     public function testSetConfigBadConfig()

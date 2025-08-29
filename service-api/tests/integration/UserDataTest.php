@@ -14,7 +14,7 @@ final class TestUserData extends MockeryTestCase
 {
     private $userData;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->userData = new UserData(Helpers::getDbAdapter(), []);
     }
