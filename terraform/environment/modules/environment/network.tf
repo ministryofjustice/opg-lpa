@@ -36,7 +36,7 @@ data "aws_vpc" "main" {
   }
   filter {
     name   = "tag:name"
-    values = ["${data.aws_default_tags.current.tags.application}-${data.aws_default_tags.current.tags.account-name}-vpc"]
+    values = ["${replace(data.aws_default_tags.current.tags.application, " ", "")}-${var.account_name}-vpc"]
   }
 }
 
