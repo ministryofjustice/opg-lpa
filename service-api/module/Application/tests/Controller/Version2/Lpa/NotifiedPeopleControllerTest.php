@@ -11,7 +11,7 @@ use Mockery\MockInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
 
-class NotifiedPeopleControllerTest extends AbstractControllerTest
+class NotifiedPeopleControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var Service|MockInterface

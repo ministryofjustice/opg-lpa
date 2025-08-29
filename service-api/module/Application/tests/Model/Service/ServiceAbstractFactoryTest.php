@@ -47,7 +47,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
     /**
      * @return array service to try to create and an array of the dependencies that will be provided by the mock Container
      */
-    public function services()
+    public static function servicesProvider(): array
     {
         return [
             [AccountCleanupService::class,
@@ -102,7 +102,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
     }
 
     /**
-     * @dataProvider services
+     * @dataProvider servicesProvider
      * @param $service string Service class to check
      */
     public function testCanCreate($service)
@@ -113,7 +113,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
     }
 
     /**
-     * @dataProvider services
+     * @dataProvider servicesProvider
      * @param $service string Service class to check
      * @param $dependancies array Dependencies that the mock container will provide
      * @throws ApiProblemException

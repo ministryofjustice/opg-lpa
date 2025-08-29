@@ -5,13 +5,13 @@ namespace ApplicationTest\Model\Service\Authentication;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use DateInterval;
 use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     const TIME_FORMAT = 'Y-m-d\TH:i:s.uO';
 

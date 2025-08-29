@@ -13,7 +13,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
-class AbstractLpaControllerTest extends AbstractControllerTest
+class AbstractLpaControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var AbstractService|MockInterface

@@ -10,7 +10,7 @@ use Mockery\MockInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
 
-class TypeControllerTest extends AbstractControllerTest
+class TypeControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var Service|MockInterface

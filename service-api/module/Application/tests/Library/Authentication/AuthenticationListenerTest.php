@@ -43,6 +43,7 @@ class AuthenticationListenerTest extends MockeryTestCase
      * @var MvcEvent|MockInterface
      */
     private $mvcEvent;
+    private LoggerInterface|MockInterface $logger;
 
     public function setUp(): void
     {
@@ -128,7 +129,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         );
     }
 
-    public function authenticationFailureDataProvider()
+    public static function authenticationFailureDataProvider(): array
     {
         return [
             'Invalid token' => [
