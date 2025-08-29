@@ -1,15 +1,14 @@
 #tfsec:ignore:aws-ec2-add-description-to-security-group - adding a description is a destructive change.
 resource "aws_security_group" "front_cache" {
   name   = "${local.account_name_short}-${local.region_name}-front-cache"
-  vpc_id = aws_default_vpc.default.id
+  vpc_id = data.aws_default_tags.current.tags.environment-name == "development" ? module.network.vpc.id : aws_default_vpc.default.id
   tags   = local.front_component_tag
 }
 
 resource "aws_elasticache_subnet_group" "private_subnets" {
   name       = "${local.account_name_short}-${local.region_name}-elasticache-private-subnets"
-  subnet_ids = aws_subnet.private[*].id
+  subnet_ids = data.aws_default_tags.current.tags.environment-name == "development" ? module.network.application_subnets[*].id : aws_subnet.private[*].id
 }
-
 
 resource "aws_elasticache_replication_group" "front_cache" {
   replication_group_id       = "${local.account_name_short}-${local.region_name}-front-cache-rg"
@@ -30,7 +29,6 @@ resource "aws_elasticache_replication_group" "front_cache" {
 
   tags = local.front_component_tag
 }
-
 
 locals {
   cache_cluster_count   = 2
