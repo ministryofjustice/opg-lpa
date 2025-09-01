@@ -12,8 +12,7 @@
     "Dependencies"
   ],
   "ignoreDeps": [
-    "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list",
-    "github.com/ministryofjustice/terraform-aws-moj-ip-whitelist"
+    "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list"
   ],
   "commitMessageAction": "Renovate update",
   "forkProcessing": "enabled",
@@ -236,7 +235,7 @@
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "minimumReleaseAge": "3 days",
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": [
