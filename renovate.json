@@ -12,7 +12,8 @@
     "Dependencies"
   ],
   "ignoreDeps": [
-    "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list"
+    "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list",
+    "github.com/ministryofjustice/terraform-aws-moj-ip-whitelist"
   ],
   "commitMessageAction": "Renovate update",
   "forkProcessing": "enabled",
@@ -57,7 +58,9 @@
         "Ignore main PHP version in composer",
         "You will need to manually update"
       ],
-      "matchPackageNames": ["!php"]
+      "matchPackageNames": [
+        "!php"
+      ]
     },
     {
       "description": [
