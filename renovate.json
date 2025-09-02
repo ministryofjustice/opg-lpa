@@ -12,12 +12,13 @@
     "Dependencies"
   ],
   "ignoreDeps": [
+    "php",
     "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list"
   ],
   "commitMessageAction": "Renovate update",
   "forkProcessing": "enabled",
   "lockFileMaintenance": {
-    "enabled": false
+    "enabled": true
   },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
@@ -52,14 +53,6 @@
     "pip_setup"
   ],
   "packageRules": [
-    {
-      "description": [
-        "Ignore main PHP version in composer",
-        "You will need to manually update"
-      ],
-      "matchPackageNames": ["php"],
-      "enabled": false
-    },
     {
       "description": [
         "cypress: bundle updates to package.json and dockerfile",
@@ -199,11 +192,12 @@
       ],
       "enabled": false,
       "matchPackageNames": [
-        "!vimeo/psalm",
-        "!phpunit/phpunit",
-        "!/cypress/",
-        "!/locust/"
-      ]
+        "vimeo/psalm",
+        "phpunit/phpunit",
+        "/cypress/",
+        "/locust/"
+      ],
+      "enbabled": false
     },
     {
       "description": [
@@ -230,7 +224,7 @@
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "minimumReleaseAge": "3 days",
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": [
