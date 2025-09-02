@@ -190,13 +190,13 @@
       "matchUpdateTypes": [
         "major"
       ],
-      "enabled": false,
       "matchPackageNames": [
         "vimeo/psalm",
         "phpunit/phpunit",
         "/cypress/",
         "/locust/"
-      ]
+      ],
+      "enabled": false
     },
     {
       "description": [
