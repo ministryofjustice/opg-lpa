@@ -4,11 +4,11 @@ namespace ApplicationTest\Model\Service\Lock;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Lock\Entity;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeSharedTest\DataModel\FixturesData;
 use DateTime;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     public function testCreateAlreadyLocked()
     {

@@ -4,10 +4,10 @@ namespace ApplicationTest\Model\Service\RepeatCaseNumber;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\RepeatCaseNumber\Entity;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeSharedTest\DataModel\FixturesData;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     public function testUpdateValidationFailed()
     {
