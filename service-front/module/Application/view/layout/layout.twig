@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="govuk-template--rebranded">
+<html lang="en" class="govuk-template govuk-template--rebranded">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     {%- set defaultTitle = 'Make a lasting power of attorney' -%}
@@ -35,10 +35,8 @@
 
     <!-- LPA Print styles -->
     <link href="{{ StaticAssetPath( '/assets/v2/css/print.css', { 'minify':true } ) }}" media="print" rel="stylesheet" type="text/css" />
-
 </head>
-
-<body class="no-js">
+<body class="govuk-template__body govuk-frontend-supported">
     <div id="skiplink-container">
         <div><a href="#main-content" class="skiplink" data-cy="skip-link">Skip to main content</a></div>
     </div>
@@ -70,7 +68,7 @@
         </div>
     </div>
 
-    <header role="banner" class="govuk-header" data-module="govuk-header" data-cy="banner">
+    <header role="banner" class="govuk-header govuk-header--full-width-border" data-module="govuk-header" data-cy="banner">
         <div class="govuk-header__container govuk-width-container">
             <div class="govuk-header__logo">
                 <a href="#" class="govuk-header__link govuk-header__link--homepage">
@@ -103,8 +101,10 @@
     </header>
 
     <main id="content" role="main">
-        {{ accountInfo() }}
         <a name="main-content"></a>
+
+        {{ accountInfo() }}
+
         {% block errorSummary %}{% endblock %}
         {% block mainTitle %}
         <h1 class="heading-xlarge" data-cy="main-title">
@@ -247,8 +247,8 @@
     </footer>
 
     <script src="/assets/v2/js/libs/jquery.min.js"></script>
+    <script type="module" src="{{ StaticAssetPath( '/assets/v2/js/govuk-init.js') }}"></script>
     <script src="{{ StaticAssetPath( '/assets/v2/js/application.js', { 'minify':true } ) }}"></script>
-
     {% include 'layout/partials/timeout.twig' %}
 
     {% block scripts %}{% endblock %}
