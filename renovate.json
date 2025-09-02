@@ -17,7 +17,7 @@
   "commitMessageAction": "Renovate update",
   "forkProcessing": "enabled",
   "lockFileMaintenance": {
-    "enabled": false
+    "enabled": true
   },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
@@ -57,8 +57,9 @@
         "Ignore main PHP version in composer",
         "You will need to manually update"
       ],
-      "matchPackageNames": ["php"],
-      "enabled": false
+      "matchPackageNames": [
+        "!php"
+      ]
     },
     {
       "description": [
@@ -228,9 +229,13 @@
       "matchFileNames": [
         "service-admin/composer.json"
       ],
+      "matchPackageNames": [
+        "*",
+        "!php"
+      ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "minimumReleaseAge": "3 days",
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": [
@@ -254,6 +259,10 @@
       ],
       "matchFileNames": [
         "service-front/composer.json"
+      ],
+      "matchPackageNames": [
+        "*",
+        "!php"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
@@ -282,6 +291,10 @@
       "matchFileNames": [
         "service-api/composer.json"
       ],
+      "matchPackageNames": [
+        "*",
+        "!php"
+      ],
       "prCreation": "immediate",
       "prPriority": 4,
       "minimumReleaseAge": "3 days"
@@ -309,6 +322,10 @@
       "matchFileNames": [
         "service-pdf/composer.json"
       ],
+      "matchPackageNames": [
+        "*",
+        "!php"
+      ],
       "prCreation": "immediate",
       "prPriority": 4,
       "minimumReleaseAge": "3 days"
@@ -335,6 +352,10 @@
       ],
       "matchFileNames": [
         "shared/composer.json"
+      ],
+      "matchPackageNames": [
+        "*",
+        "!php"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
