@@ -57,7 +57,9 @@
         "Ignore main PHP version in composer",
         "You will need to manually update"
       ],
-      "matchPackageNames": ["!php"]
+      "matchPackageNames": [
+        "!php"
+      ]
     },
     {
       "description": [
@@ -233,7 +235,7 @@
       ],
       "prCreation": "immediate",
       "prPriority": 4,
-      "minimumReleaseAge": "3 days",
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": [
