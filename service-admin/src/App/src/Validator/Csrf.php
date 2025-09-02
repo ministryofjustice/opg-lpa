@@ -11,6 +11,8 @@ use UnexpectedValueException;
  * Where the secret comes from is beyond the scope of this class
  *
  * @package App\Validator
+ *
+ * @psalm-suppress InvalidExtendClass Will be resolved by LPA-3823
  */
 class Csrf extends ZendCsrf
 {
@@ -32,6 +34,9 @@ class Csrf extends ZendCsrf
      * Csrf constructor
      *
      * @param array<string, mixed> $options
+     *
+     * @psalm-suppress MethodSignatureMismatch Will be resolved by LPA-3823
+     * @psalm-suppress MoreSpecificImplementedParamType Will be resolved by LPA-3823
      */
     public function __construct($options = [])
     {
@@ -48,6 +53,8 @@ class Csrf extends ZendCsrf
      * @param mixed $value
      * @param mixed|null $context
      * @return bool
+     *
+     * @psalm-suppress MethodSignatureMismatch Will be resolved by LPA-3823
      */
     public function isValid($value, $context = null)
     {
@@ -62,6 +69,8 @@ class Csrf extends ZendCsrf
     /**
      * @param bool $regenerate
      * @return string
+     *
+     * @psalm-suppress MethodSignatureMismatch Will be resolved by LPA-3823
      */
     public function getHash($regenerate = false)
     {
