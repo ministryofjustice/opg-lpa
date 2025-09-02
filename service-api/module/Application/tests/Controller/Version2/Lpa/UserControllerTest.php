@@ -13,7 +13,7 @@ use Laminas\ApiTools\ApiProblem\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
 use LmcRbacMvc\Service\AuthorizationService;
 
-class UserControllerTest extends AbstractControllerTest
+class UserControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var Service|MockInterface
