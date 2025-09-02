@@ -6,14 +6,14 @@ use Application\Model\DataAccess\Repository\User\UpdatePasswordUsingTokenError;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Password\Service as PasswordService;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use Application\Model\DataAccess\Postgres\UserModel as User;
 use ApplicationTest\Model\Service\Password\ServiceBuilder;
 use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     /**
      * @var MockInterface|UserRepositoryInterface

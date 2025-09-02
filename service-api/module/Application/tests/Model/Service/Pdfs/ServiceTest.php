@@ -6,7 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Model\Service\Pdfs\Service;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use Aws\Command;
 use Aws\Result;
 use Aws\S3\Exception\S3Exception;
@@ -18,7 +18,7 @@ use Laminas\Crypt\BlockCipher;
 use Laminas\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 use hash;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     private $config = [
         'pdf' => [

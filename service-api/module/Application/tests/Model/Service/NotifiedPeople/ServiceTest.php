@@ -5,11 +5,11 @@ namespace ApplicationTest\Model\Service\NotifiedPeople;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeSharedTest\DataModel\FixturesData;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     public function testCreateValidationFailed()
     {

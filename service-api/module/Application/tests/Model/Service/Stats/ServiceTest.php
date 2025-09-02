@@ -4,11 +4,11 @@ namespace ApplicationTest\Model\Service\Stats;
 
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use DateTime;
 use Mockery;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     public function testFetch()
     {

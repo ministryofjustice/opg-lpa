@@ -4,10 +4,10 @@ namespace ApplicationTest\Model\Service\Instruction;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\Instruction\Entity;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeSharedTest\DataModel\FixturesData;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     public function testUpdateValidationFailed()
     {
