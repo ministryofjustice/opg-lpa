@@ -7,7 +7,7 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInt
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Users\Service as UsersService;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
 use DateInterval;
@@ -17,7 +17,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     /**
      * @var MockInterface|UserRepositoryInterface

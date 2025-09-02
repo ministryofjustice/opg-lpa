@@ -8,7 +8,7 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use EmptyIterator;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Document;
@@ -18,7 +18,7 @@ use MakeShared\DataModel\User\User;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     /**
      * @var MockInterface|ApplicationRepositoryInterface
