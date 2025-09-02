@@ -196,8 +196,7 @@
         "phpunit/phpunit",
         "/cypress/",
         "/locust/"
-      ],
-      "enbabled": false
+      ]
     },
     {
       "description": [
