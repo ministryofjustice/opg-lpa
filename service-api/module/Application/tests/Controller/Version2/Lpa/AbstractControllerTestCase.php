@@ -15,7 +15,7 @@ use Laminas\Router\Http\RouteMatch;
 use Laminas\Stdlib\ParametersInterface;
 use LmcRbacMvc\Service\AuthorizationService;
 
-abstract class AbstractControllerTest extends MockeryTestCase
+abstract class AbstractControllerTestCase extends MockeryTestCase
 {
     /**
      * @var int|null

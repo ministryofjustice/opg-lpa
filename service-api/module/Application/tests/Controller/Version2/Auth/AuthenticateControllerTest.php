@@ -13,7 +13,7 @@ use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
-class AuthenticateControllerTest extends AbstractAuthControllerTest
+class AuthenticateControllerTest extends AbstractAuthControllerTestCase
 {
     public function testAuthenticateActionWithToken()
     {

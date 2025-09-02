@@ -5,10 +5,10 @@ namespace ApplicationTest\Model\Service\System;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use Mockery;
 
-class StatsTest extends AbstractServiceTest
+class StatsTest extends AbstractServiceTestCase
 {
     public function testGenerate()
     {

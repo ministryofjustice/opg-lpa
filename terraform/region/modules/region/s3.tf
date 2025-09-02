@@ -50,6 +50,10 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
 #tfsec:ignore:aws-s3-enable-bucket-logging  #tfsec:ignore:aws-s3-enable-versioning
 resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${local.account_name}-${local.region_name}-lb-access-logs"
+}
+
+resource "aws_s3_bucket_acl" "access_log" {
+  bucket = aws_s3_bucket.access_log.id
   acl    = "private"
 }
 
@@ -81,8 +85,12 @@ resource "aws_s3_bucket_policy" "access_log" {
 #tfsec:ignore:aws-s3-enable-bucket-logging #tfsec:ignore:aws-s3-enable-versioning - no logging or versioning required as a temp cache
 resource "aws_s3_bucket" "lpa_pdf_cache" {
   bucket        = lower("online-lpa-pdf-cache-${local.account_name}-${local.region_name}")
-  acl           = "private"
   force_destroy = local.account_name != "production" ? true : false
+}
+
+resource "aws_s3_bucket_acl" "lpa_pdf_cache" {
+  bucket = aws_s3_bucket.lpa_pdf_cache.id
+  acl    = "private"
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "lpa_pdf_cache" {
@@ -93,6 +101,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "lpa_pdf_cache" {
     expiration {
       days = 1
     }
+    filter {
+      prefix = ""
+    }
+
   }
 }
 
@@ -161,6 +173,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "redacted_logs" {
 
     expiration {
       days = 120
+    }
+
+    filter {
+      prefix = ""
     }
 
 
