@@ -128,7 +128,8 @@ module.exports = function (grunt) {
         src: [
           'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
           'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
-          'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css'
+          'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css',
+          'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css'
         ],
         dest: 'public/assets/v2/css/',
         options: {
@@ -150,6 +151,11 @@ module.exports = function (grunt) {
       jsdev: {
         src: 'public/assets/v2/js/application.js',
         dest: 'public/assets/v2/js/application.min.js'
+      },
+
+      jsdevgovuk: {
+        src: 'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js',
+        dest: 'public/assets/v2/js/govuk-frontend.min.js'
       },
 
       jsdevdashboardstatuses: {

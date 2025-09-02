@@ -60,4 +60,12 @@
 // New OPG styles that can be reused.
 @import 'opg-lpa-dashboard';
 
-html { font-size: 100% !important; }
+html {
+  font-size: 100% !important;
+}
+
+.govuk-service-navigation {
+  width: 100vw !important;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
