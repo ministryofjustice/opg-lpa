@@ -8,7 +8,7 @@ use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Mockery;
 
-class PasswordControllerTest extends AbstractAuthControllerTest
+class PasswordControllerTest extends AbstractAuthControllerTestCase
 {
     public function setUp() : void
     {
