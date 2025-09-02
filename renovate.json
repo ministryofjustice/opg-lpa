@@ -12,6 +12,7 @@
     "Dependencies"
   ],
   "ignoreDeps": [
+    "php",
     "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list"
   ],
   "commitMessageAction": "Renovate update",
@@ -52,15 +53,6 @@
     "pip_setup"
   ],
   "packageRules": [
-    {
-      "description": [
-        "Ignore main PHP version in composer",
-        "You will need to manually update"
-      ],
-      "matchPackageNames": [
-        "!php"
-      ]
-    },
     {
       "description": [
         "cypress: bundle updates to package.json and dockerfile",
@@ -200,11 +192,12 @@
       ],
       "enabled": false,
       "matchPackageNames": [
-        "!vimeo/psalm",
-        "!phpunit/phpunit",
-        "!/cypress/",
-        "!/locust/"
-      ]
+        "vimeo/psalm",
+        "phpunit/phpunit",
+        "/cypress/",
+        "/locust/"
+      ],
+      "enbabled": false
     },
     {
       "description": [
@@ -228,10 +221,6 @@
       ],
       "matchFileNames": [
         "service-admin/composer.json"
-      ],
-      "matchPackageNames": [
-        "*",
-        "!php"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
@@ -260,10 +249,6 @@
       "matchFileNames": [
         "service-front/composer.json"
       ],
-      "matchPackageNames": [
-        "*",
-        "!php"
-      ],
       "prCreation": "immediate",
       "prPriority": 4,
       "minimumReleaseAge": "3 days"
@@ -290,10 +275,6 @@
       ],
       "matchFileNames": [
         "service-api/composer.json"
-      ],
-      "matchPackageNames": [
-        "*",
-        "!php"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
@@ -322,10 +303,6 @@
       "matchFileNames": [
         "service-pdf/composer.json"
       ],
-      "matchPackageNames": [
-        "*",
-        "!php"
-      ],
       "prCreation": "immediate",
       "prPriority": 4,
       "minimumReleaseAge": "3 days"
@@ -352,10 +329,6 @@
       ],
       "matchFileNames": [
         "shared/composer.json"
-      ],
-      "matchPackageNames": [
-        "*",
-        "!php"
       ],
       "prCreation": "immediate",
       "prPriority": 4,
