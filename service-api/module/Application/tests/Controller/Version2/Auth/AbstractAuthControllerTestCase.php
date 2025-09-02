@@ -19,7 +19,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\PluginManager;
 use Psr\Log\LoggerInterface;
 
-abstract class AbstractAuthControllerTest extends MockeryTestCase
+abstract class AbstractAuthControllerTestCase extends MockeryTestCase
 {
     /**
      * @var MockInterface|AuthenticationService
