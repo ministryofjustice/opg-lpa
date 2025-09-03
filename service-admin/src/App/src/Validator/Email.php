@@ -7,12 +7,17 @@ use Laminas\Validator\EmailAddress;
 /**
  * Class Email
  * @package App\Validator
+ *
+ * @psalm-suppress InvalidExtendClass Will be resolved in LPA-3821
  */
 class Email extends EmailAddress
 {
     /**
      * Email constructor.
      * @param array<string, mixed> $options
+     *
+     * @psalm-suppress MethodSignatureMismatch Will be resolved in LPA-3821
+     * @psalm-suppress MoreSpecificImplementedParamType Will be resolved in LPA-3821
      */
     public function __construct($options = [])
     {
