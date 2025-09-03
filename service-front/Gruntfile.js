@@ -320,7 +320,7 @@ module.exports = function (grunt) {
 
   // define tasks
   grunt.registerTask('test', ['scsslint', 'jshint']);
-  grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify']);
+  grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify', 'copy:jsdevgovuk']);
   grunt.registerTask('build_js_dev', [
     'copy:jsenv',
     'handlebars',
@@ -328,8 +328,7 @@ module.exports = function (grunt) {
     'copy:jsdev',
     'copy:jsdevdashboardstatuses',
     'copy:jsdevsessiontimeout',
-    'copy:jsdevinitpolyfill',
-    'copy:jsdevgovuk',
+    'copy:jsdevinitpolyfill'
   ]);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
