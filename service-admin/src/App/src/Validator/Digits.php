@@ -7,6 +7,8 @@ use Laminas\Validator\Digits as ZendDigits;
 /**
  * Class Digits
  * @package App\Validator
+ *
+ * @psalm-suppress InvalidExtendClass Will be resolved in LPA-3822
  */
 class Digits extends ZendDigits
 {

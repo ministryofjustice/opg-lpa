@@ -14,10 +14,8 @@ use Psr\Log\LoggerInterface;
 
 class LpaAuthTest extends MockeryTestCase
 {
-    /**
-     * @var Service|MockInterface
-     */
-    private $authenticationService;
+    private Service|MockInterface $authenticationService;
+    private LoggerInterface|MockInterface $logger;
 
     public function setUp(): void
     {
