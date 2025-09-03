@@ -10,6 +10,8 @@ class GovUkEmail extends Regex
 {
     /**
      * GovUkEmail constructor.
+     *
+     * @psalm-suppress MethodSignatureMismatch Will be resolved by LPA-3819
      */
     public function __construct()
     {
