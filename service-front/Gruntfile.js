@@ -217,7 +217,6 @@ module.exports = function (grunt) {
 
           // LPA Scripts - Templates
           'assets/js/lpa/lpa.templates.js',
-          'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js',
 
           // MoJ Scripts - Modules
           'assets/js/moj/moj.modules/moj.password.js',
