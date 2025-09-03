@@ -24,3 +24,19 @@ $(moj.init);
 
   markSupported();
 })();
+
+(function initGovuk() {
+  function run() {
+    if (
+      window.GOVUKFrontend &&
+      typeof window.GOVUKFrontend.initAll === 'function'
+    ) {
+      window.GOVUKFrontend.initAll();
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run, { once: true });
+  } else {
+    run();
+  }
+})();

@@ -217,6 +217,7 @@ module.exports = function (grunt) {
 
           // LPA Scripts - Templates
           'assets/js/lpa/lpa.templates.js',
+          'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js',
 
           // MoJ Scripts - Modules
           'assets/js/moj/moj.modules/moj.password.js',
@@ -283,7 +284,7 @@ module.exports = function (grunt) {
         dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
       },
       build5: {
-        src: 'public/assets/v2/js/govuk-frontend.min.js',
+        src: 'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js',
         dest: 'public/assets/v2/js/govuk-frontend.min.js'
       },
     },
@@ -331,5 +332,5 @@ module.exports = function (grunt) {
     'copy:jsdevinitpolyfill'
   ]);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
-  grunt.registerTask('build', ['build_js', 'build_css']);
+  grunt.registerTask('build', ['build_js', 'build_css', 'copy:jsdevgovuk']);
 };
