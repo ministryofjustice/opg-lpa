@@ -7,6 +7,8 @@ use Laminas\Validator\Regex as ZendRegex;
 /**
  * Class Regex
  * @package App\Validator
+ *
+ * @psalm-suppress InvalidExtendClass Will be resolved by LPA-3819
  */
 class Regex extends ZendRegex
 {
