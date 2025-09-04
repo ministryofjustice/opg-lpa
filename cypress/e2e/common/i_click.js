@@ -1,12 +1,15 @@
 import { Then } from '@badeball/cypress-cucumber-preprocessor';
 
+const TOGGLE = '[data-cy="service-nav-toggle"]';
+const LIST = '[data-cy="service-nav-list"]';
+
 // should('not.be.disabled') is here because it looks like cypress may choke trying to click a button that has
 // been temporarily disabled while the page is loading. This may need ultimately to be done for more or even all steps here
 
 Then(`I click {string}`, (clickable) => {
-  cy.get('[data-cy=' + clickable + ']')
-    .should('not.be.disabled')
-    .click();
+  const selector = `[data-cy="${clickable}"]`;
+  openServiceNavIfHidden(selector);
+  cy.get(selector).should('not.be.disabled').click();
 });
 
 Then(`I double click {string}`, (clickable) => {
@@ -80,3 +83,20 @@ Then(
       });
   },
 );
+
+function openServiceNavIfHidden(targetSelector) {
+  cy.get('body').then(($body) => {
+    const $target = $body.find(targetSelector);
+    if (!$target.length) {
+      return;
+    }
+    const $list = $target.closest(LIST);
+    if (
+      $list.length &&
+      ($list.is(':hidden') || $list.attr(':hidden') !== undefined)
+    ) {
+      cy.get(TOGGLE).click().should('have.attr', 'aria-expanded', 'true');
+      cy.get(LIST).should('exist').and('not.have.attr', 'hidden');
+    }
+  });
+}
