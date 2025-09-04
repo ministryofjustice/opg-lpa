@@ -9,10 +9,11 @@
                 </a>
               </span>
                 <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
-                    <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle" aria-controls="navigation" hidden>
+                    <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
+                            data-cy="service-nav-toggle" aria-controls="navigation" aria-expanded="false" hidden>
                         Menu
                     </button>
-                    <ul class="govuk-service-navigation__list" id="navigation">
+                    <ul class="govuk-service-navigation__list" id="navigation" data-cy="service-nav-list">
                         {% if name %}
                             <li class="govuk-service-navigation__item {{ route == 'user/about-you' ? 'govuk-service-navigation__item--active' : ''}}">
                                 {% if route == 'user/about-you' %}
