@@ -158,6 +158,11 @@ module.exports = function (grunt) {
         dest: 'public/assets/v2/js/govuk-frontend.min.js'
       },
 
+      jsdevgovukinit: {
+        src: 'public/assets/v2/js/govuk-init.js',
+        dest: 'public/assets/v2/js/govuk-init.js'
+      },
+
       jsdevdashboardstatuses: {
         src: 'assets/js/opg/dashboard-statuses.js',
         dest: 'public/assets/v2/js/opg/dashboard-statuses.min.js'
@@ -283,6 +288,10 @@ module.exports = function (grunt) {
         dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
       },
       build5: {
+        src: 'public/assets/v2/js/govuk-init.js',
+        dest: 'public/assets/v2/js/govuk-init.js'
+      },
+      build6: {
         src: 'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js',
         dest: 'public/assets/v2/js/govuk-frontend.min.js'
       },
@@ -320,7 +329,7 @@ module.exports = function (grunt) {
 
   // define tasks
   grunt.registerTask('test', ['scsslint', 'jshint']);
-  grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify', 'copy:jsdevgovuk']);
+  grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify', 'copy:jsdevgovuk', 'copy:jsdevgovukinit']);
   grunt.registerTask('build_js_dev', [
     'copy:jsenv',
     'handlebars',
