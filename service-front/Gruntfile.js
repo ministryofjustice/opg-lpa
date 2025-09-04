@@ -159,7 +159,7 @@ module.exports = function (grunt) {
       },
 
       jsdevgovukinit: {
-        src: 'public/assets/v2/js/govuk-init.js',
+        src: 'assets/js/opg/govuk-init.js',
         dest: 'public/assets/v2/js/govuk-init.js'
       },
 
@@ -287,14 +287,6 @@ module.exports = function (grunt) {
         src: 'assets/js/opg/init-polyfill.js',
         dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
       },
-      build5: {
-        src: 'public/assets/v2/js/govuk-init.js',
-        dest: 'public/assets/v2/js/govuk-init.js'
-      },
-      build6: {
-        src: 'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js',
-        dest: 'public/assets/v2/js/govuk-frontend.min.js'
-      },
     },
 
     // compile handlebars templates
@@ -340,5 +332,5 @@ module.exports = function (grunt) {
     'copy:jsdevinitpolyfill'
   ]);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
-  grunt.registerTask('build', ['build_js', 'build_css', 'copy:jsdevgovuk']);
+  grunt.registerTask('build', ['build_js', 'build_css']);
 };
