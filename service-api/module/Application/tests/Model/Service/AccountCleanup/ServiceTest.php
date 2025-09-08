@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\AccountCleanup;
 
+use ArrayIterator;
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
@@ -161,7 +162,7 @@ class ServiceTest extends AbstractServiceTestCase
 
         $this->applicationRepository->shouldReceive('fetchByUserId')
             ->with(1)
-            ->andReturn(new \ArrayIterator([]));
+            ->andReturn(new ArrayIterator([]));
 
         $this->applicationRepository->shouldReceive('deleteById')
             ->withArgs([1])
@@ -199,7 +200,7 @@ class ServiceTest extends AbstractServiceTestCase
 
         $this->applicationRepository->shouldReceive('fetchByUserId')
             ->with(1)
-            ->andReturn(new \ArrayIterator([]));
+            ->andReturn(new ArrayIterator([]));
 
         $this->applicationRepository->shouldReceive('deleteById')
             ->withArgs([1])

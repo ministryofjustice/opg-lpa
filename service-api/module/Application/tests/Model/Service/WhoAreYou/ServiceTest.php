@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\WhoAreYou;
 
+use RuntimeException;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
@@ -76,7 +77,7 @@ class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         //So we expect an exception and for no document to be updated
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
         $whoAreYou = new WhoAreYou();
