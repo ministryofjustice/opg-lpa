@@ -6,7 +6,6 @@ use Application\Controller\Version2\Auth\AuthenticateController;
 use DateTime;
 use Mockery;
 use Laminas\Http\Header\HeaderInterface;
-use Laminas\Http\Request;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
 use Laminas\View\Model\JsonModel;

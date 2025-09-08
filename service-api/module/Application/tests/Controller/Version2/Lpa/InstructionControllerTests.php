@@ -12,6 +12,11 @@ use LmcRbacMvc\Exception\UnauthorizedException;
 
 class InstructionControllerTests extends AbstractControllerTestCase
 {
+    public function __construct()
+    {
+        parent::__construct(static::class);
+    }
+
     /**
      * @var Service|MockInterface
      */
