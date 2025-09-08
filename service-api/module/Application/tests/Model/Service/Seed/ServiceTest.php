@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\Seed;
 
+use RuntimeException;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\Service\Seed\Entity;
@@ -202,7 +203,7 @@ class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         //So we expect an exception and for no document to be updated
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
         $service->update($lpa->getId(), ['seed' => $lpa->getId()], $user->getId());

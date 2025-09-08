@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\AttorneyDecisionsReplacement;
 
+use RuntimeException;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
@@ -53,7 +54,7 @@ class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         //So we expect an exception and for no document to be updated
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
         $service->update($lpa->getId(), null);

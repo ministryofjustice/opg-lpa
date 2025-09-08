@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Library\Authentication\Identity;
 
+use RuntimeException;
 use Application\Library\Authentication\Identity\IdentityInterface;
 use Library\Authentication\Identity\TestableIdentityAwareTrait;
 use Mockery;
@@ -11,7 +12,7 @@ class IdentityAwareTraitTest extends MockeryTestCase
 {
     public function testGetIdentityNotSet() : void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('No identity set');
 
         $identityAwareInstance = new TestableIdentityAwareTrait(null);
