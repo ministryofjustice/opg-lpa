@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Set safe branch name
         id: safe_branch_name
-        uses: ministryofjustice/opg-github-actions/.github/actions/branch-name@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/.github/actions/branch-name@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
     if: github.event.pull_request.merged == true
 
   cleanup_workspace:
@@ -52,7 +52,7 @@ jobs:
 
       - name: Get terraform version
         id: set-terraform-version
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/environment"
 

@@ -47,21 +47,21 @@ jobs:
           echo "short_sha=$(git rev-list --no-merges -n 1 HEAD | cut -c1-7)" >> $GITHUB_OUTPUT
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/environment"
       - name : Set terraform version - account
         id: terraform_version_account
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/account"
       - name: Set terraform version - region
         id: terraform_version_region
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/region"
       - name: Bump version and push tag
-        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         id: semver_tag
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
