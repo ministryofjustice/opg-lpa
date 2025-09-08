@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\Lock;
 
+use RuntimeException;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Lock\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
@@ -45,7 +46,7 @@ class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         //So we expect an exception and for no document to be updated
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
         $service->create($lpa->getId());

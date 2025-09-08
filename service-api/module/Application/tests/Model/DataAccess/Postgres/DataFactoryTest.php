@@ -1,6 +1,8 @@
 <?php
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
+use RuntimeException;
+use stdClass;
 use Mockery;
 use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -33,10 +35,10 @@ class DataFactoryTest extends MockeryTestCase
     {
         $factory = new DataFactory();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/cannot be created with this factory/');
 
-        $factory($this->container, \stdClass::class);
+        $factory($this->container, stdClass::class);
     }
 
     public function testWithValidConfiguration()
