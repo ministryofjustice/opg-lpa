@@ -18,7 +18,7 @@
         "firebase/php-jwt": "^6.0",
         "guzzlehttp/guzzle": "^7.0",
         "laminas/laminas-authentication": "^2.8",
-        "laminas/laminas-cache": "^3.9",
+        "laminas/laminas-cache": "^4.0",
         "laminas/laminas-cache-storage-adapter-memory": "^2.2",
         "laminas/laminas-config-aggregator": "^1.7",
         "laminas/laminas-diactoros": "^2.8.0",
