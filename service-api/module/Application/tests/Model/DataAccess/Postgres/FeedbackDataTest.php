@@ -7,7 +7,6 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Application\Model\DataAccess\Postgres\FeedbackData;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 use DateTime;
-use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Insert;

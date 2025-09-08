@@ -8,7 +8,7 @@ error_reporting(E_ALL & ~ (E_DEPRECATED | E_USER_DEPRECATED));
  * Simple autoloader function to dynamically load
  * the required files as they are instantiated
  */
-spl_autoload_register(function ($class) {
+spl_autoload_register(function ($class): void {
 
     //  Base directories where namespaced files reside
     $baseDirs = [

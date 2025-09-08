@@ -8,7 +8,6 @@ use Application\Model\DataAccess\Postgres\DbWrapper;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 

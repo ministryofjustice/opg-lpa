@@ -15,7 +15,6 @@ use Aws\Sqs\SqsClient;
 use Mockery;
 use MakeSharedTest\DataModel\FixturesData;
 use Laminas\Crypt\BlockCipher;
-use Laminas\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 use hash;
 
 class ServiceTest extends AbstractServiceTestCase
