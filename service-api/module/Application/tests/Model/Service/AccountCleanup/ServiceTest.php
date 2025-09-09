@@ -2,12 +2,13 @@
 
 namespace ApplicationTest\Model\Service\AccountCleanup;
 
+use ArrayIterator;
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Users\Service as UsersService;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
 use DateInterval;
@@ -17,7 +18,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     /**
      * @var MockInterface|UserRepositoryInterface
@@ -161,7 +162,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->applicationRepository->shouldReceive('fetchByUserId')
             ->with(1)
-            ->andReturn(new \ArrayIterator([]));
+            ->andReturn(new ArrayIterator([]));
 
         $this->applicationRepository->shouldReceive('deleteById')
             ->withArgs([1])
@@ -199,7 +200,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->applicationRepository->shouldReceive('fetchByUserId')
             ->with(1)
-            ->andReturn(new \ArrayIterator([]));
+            ->andReturn(new ArrayIterator([]));
 
         $this->applicationRepository->shouldReceive('deleteById')
             ->withArgs([1])

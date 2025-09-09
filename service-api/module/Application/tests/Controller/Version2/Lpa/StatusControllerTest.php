@@ -10,11 +10,10 @@ use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
 use Mockery;
-use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 use Psr\Log\LoggerInterface;
 
-class StatusControllerTest extends AbstractControllerTest
+class StatusControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var $service ApplicationsService|MockInterface

@@ -2,14 +2,15 @@
 
 namespace ApplicationTest\Model\Service\AttorneysReplacement;
 
+use RuntimeException;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeSharedTest\DataModel\FixturesData;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     public function testCreateInvalidType()
     {
@@ -22,7 +23,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid type passed');
 
         $attorney = new Human();
@@ -111,7 +112,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid type passed');
 
         $attorney = new Human();

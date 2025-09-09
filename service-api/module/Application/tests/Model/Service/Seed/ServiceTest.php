@@ -2,16 +2,17 @@
 
 namespace ApplicationTest\Model\Service\Seed;
 
+use RuntimeException;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\Service\Seed\Entity;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use ApplicationTest\Model\Service\Applications\ServiceBuilder as ApplicationsServiceBuilder;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     public function testFetchSeedNotFound()
     {
@@ -202,7 +203,7 @@ class ServiceTest extends AbstractServiceTest
             ->build();
 
         //So we expect an exception and for no document to be updated
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
         $service->update($lpa->getId(), ['seed' => $lpa->getId()], $user->getId());

@@ -1,4 +1,4 @@
-FROM bitnami/pgbouncer:1.24.1-debian-12-r8@sha256:823c47c0615eab9575b5e26f5db711571fca011faa577775ffca6008d13e6f25
+FROM bitnamilegacy/pgbouncer:1.24.1-debian-12-r10@sha256:32c2aefdd8c144f08ee8a0776d4a17387e34f1b77dd9ac8ce92af259d4a7c632
 
 ADD --chmod=444 https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/certs/rds-ca-certificates.crt
 

@@ -107,7 +107,7 @@ jobs:
       is_ephemeral: false
       workspace_manager_aws_account_id: "050256574573"
       workspace_manager_aws_iam_role: opg-lpa-ci
-      terraform_apply: true
+      terraform_apply: false
       terraform_directory: ./terraform/account
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -128,7 +128,7 @@ jobs:
       is_ephemeral: false
       workspace_manager_aws_account_id: "050256574573"
       workspace_manager_aws_iam_role: opg-lpa-ci
-      terraform_apply: true
+      terraform_apply: false
       terraform_directory: ./terraform/region
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -272,10 +272,10 @@ jobs:
       front_fqdn: ${{ steps.front_fqdn.outputs.value }}
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: terraform-artifact
           path: /tmp/
@@ -290,7 +290,7 @@ jobs:
           echo "configJson=${content}" >> $GITHUB_OUTPUT
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@50ac8dd1e1b10d09dac7b8727528b91bed831ac0 # v3.0.2
+        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}

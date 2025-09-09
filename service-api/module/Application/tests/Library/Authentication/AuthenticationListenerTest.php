@@ -2,6 +2,8 @@
 
 namespace ApplicationTest\Library\Authentication;
 
+use ApplicationTest\Library\Authentication\Laminas\Authentication\AuthenticationService;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Model\Service\Authentication\Service;
@@ -43,10 +45,11 @@ class AuthenticationListenerTest extends MockeryTestCase
      * @var MvcEvent|MockInterface
      */
     private $mvcEvent;
+    private LoggerInterface|MockInterface $logger;
 
     public function setUp(): void
     {
-        $this->authService = Mockery::mock(Laminas\Authentication\AuthenticationService::class);
+        $this->authService = Mockery::mock(AuthenticationService::class);
 
         $this->serviceManager = Mockery::mock(ServiceLocatorInterface::class);
         $this->serviceManager->shouldReceive('get')->with('Laminas\Authentication\AuthenticationService')
@@ -87,9 +90,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->assertEquals(null, $result);
     }
 
-    /**
-     * @dataProvider authenticationFailureDataProvider
-     */
+    #[DataProvider('authenticationFailureDataProvider')]
     public function testAuthenticationFailed($authenticationResultCode, $expectedStatusCode, $title, $detail): void
     {
         $header = Mockery::mock();
@@ -128,7 +129,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         );
     }
 
-    public function authenticationFailureDataProvider()
+    public static function authenticationFailureDataProvider(): array
     {
         return [
             'Invalid token' => [

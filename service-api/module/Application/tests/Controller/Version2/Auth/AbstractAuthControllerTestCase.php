@@ -8,7 +8,6 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use MakeShared\Logging\Logger;
 use Laminas\EventManager\EventManager;
 use Laminas\EventManager\ResponseCollection;
 use Laminas\Http\Header\ContentType;
@@ -19,7 +18,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\PluginManager;
 use Psr\Log\LoggerInterface;
 
-abstract class AbstractAuthControllerTest extends MockeryTestCase
+abstract class AbstractAuthControllerTestCase extends MockeryTestCase
 {
     /**
      * @var MockInterface|AuthenticationService

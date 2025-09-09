@@ -2,13 +2,14 @@
 
 namespace ApplicationTest\Model\Service\Lock;
 
+use RuntimeException;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Lock\Entity;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeSharedTest\DataModel\FixturesData;
 use DateTime;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     public function testCreateAlreadyLocked()
     {
@@ -45,7 +46,7 @@ class ServiceTest extends AbstractServiceTest
             ->build();
 
         //So we expect an exception and for no document to be updated
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
         $service->create($lpa->getId());

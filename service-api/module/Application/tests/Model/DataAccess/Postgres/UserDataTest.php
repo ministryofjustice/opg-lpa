@@ -2,6 +2,9 @@
 
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
+use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Laminas\Db\Adapter\Driver\Pdo\Statement;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use DateTime;
@@ -27,13 +30,13 @@ use Laminas\Db\Sql\Update;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use ApplicationTest\Helpers;
 
-class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
+class UserDataTest extends MockeryTestCase
 {
     // create a PDO Result mock to test queries which use DbWrapper->select()
     // $isQueryResult: bool
     // $count: int
     // $current: array representing single user result
-    private function makeSelectResult($isQueryResult, $count, $current)
+    private static function makeSelectResult($isQueryResult, $count, $current): Result|MockInterface
     {
         $result = Mockery::mock(Result::class);
 
@@ -73,7 +76,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 
     // data provider for getByUsername, providing the
     // possible result permutations
-    public function getByUsernameDataProvider()
+    public static function getByUsernameDataProvider(): array
     {
         return [
             [['isQueryResult' => false, 'count' => -1]],
@@ -82,9 +85,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         ];
     }
 
-    /**
-     * @dataProvider getByUsernameDataProvider
-     */
+    #[DataProvider('getByUsernameDataProvider')]
     public function testGetByUsername($data): void
     {
         $username = 'VictorFrankenstein';
@@ -603,12 +604,12 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     // $since: ?DateTime
     // $queryResult: mock Result
     // $expected: int; expected return value
-    public function countActivatedAccountsDataProvider()
+    public static function countActivatedAccountsDataProvider(): array
     {
-        $countResultWithFive = $this->makeSelectResult(true, 1, ['count' => 5]);
-        $countResultWithZero = $this->makeSelectResult(true, 1, ['count' => 0]);
-        $countResultNotQueryResult = $this->makeSelectResult(false, -1, []);
-        $countResultNoRecords = $this->makeSelectResult(true, 0, []);
+        $countResultWithFive = self::makeSelectResult(true, 1, ['count' => 5]);
+        $countResultWithZero = self::makeSelectResult(true, 1, ['count' => 0]);
+        $countResultNotQueryResult = self::makeSelectResult(false, -1, []);
+        $countResultNoRecords = self::makeSelectResult(true, 0, []);
 
         return [
             // specify a datetime; 5 rows returned
@@ -631,9 +632,7 @@ class UserDataTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         ];
     }
 
-    /**
-     * @dataProvider countActivatedAccountsDataProvider
-     */
+    #[DataProvider('countActivatedAccountsDataProvider')]
     public function testCountActivatedAccounts($since, $resultMock, $expected)
     {
         // mocks

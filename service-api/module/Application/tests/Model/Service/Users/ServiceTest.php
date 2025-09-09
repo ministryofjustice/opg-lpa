@@ -11,8 +11,7 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\DataModelEntity;
-use ApplicationTest\Helpers;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use ApplicationTest\Model\Service\Users\ServiceBuilder;
 use Mockery;
 use Mockery\MockInterface;
@@ -21,7 +20,7 @@ use MakeSharedTest\DataModel\FixturesData;
 use ArrayObject;
 use DateTime;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     /**
      * @var MockInterface|ApplicationsService

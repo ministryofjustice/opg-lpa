@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-beautifulsoup4==4.13.4
+beautifulsoup4==4.13.5
     # via bs4
 bidict==0.23.1
     # via python-socketio
@@ -14,11 +14,11 @@ brotli==1.1.0
     # via geventhttpclient
 bs4==0.0.2
     # via -r requirements.in
-certifi==2025.7.14
+certifi==2025.8.3
     # via
     #   geventhttpclient
     #   requests
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via requests
 click==8.2.1
     # via flask
@@ -28,7 +28,7 @@ configargparse==1.7.1
     #   locust-cloud
 faker==18.13.0
     # via -r requirements.in
-flask==3.1.1
+flask==3.1.2
     # via
     #   flask-cors
     #   flask-login
@@ -37,14 +37,14 @@ flask-cors==6.0.1
     # via locust
 flask-login==0.6.3
     # via locust
-gevent==25.5.1
+gevent==25.8.2
     # via
     #   geventhttpclient
     #   locust
     #   locust-cloud
 geventhttpclient==2.3.4
     # via locust
-greenlet==3.2.3
+greenlet==3.2.4
     # via gevent
 h11==0.16.0
     # via wsproto
@@ -54,7 +54,7 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-locust==2.37.14
+locust==2.40.0
     # via -r requirements.in
 locust-cloud==1.26.3
     # via locust
@@ -65,7 +65,7 @@ markupsafe==3.0.2
     #   werkzeug
 msgpack==1.1.1
     # via locust
-platformdirs==4.3.8
+platformdirs==4.4.0
     # via locust-cloud
 psutil==7.0.0
     # via locust
@@ -77,9 +77,9 @@ python-engineio==4.12.2
     #   python-socketio
 python-socketio[client]==5.13.0
     # via locust-cloud
-pyzmq==27.0.0
+pyzmq==27.0.2
     # via locust
-requests==2.32.4
+requests==2.32.5
     # via
     #   locust
     #   python-socketio
@@ -87,9 +87,9 @@ simple-websocket==1.1.0
     # via python-engineio
 six==1.17.0
     # via python-dateutil
-soupsieve==2.7
+soupsieve==2.8
     # via beautifulsoup4
-typing-extensions==4.14.1
+typing-extensions==4.15.0
     # via beautifulsoup4
 urllib3==2.5.0
     # via

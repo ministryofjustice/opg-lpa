@@ -11,6 +11,8 @@ use Laminas\View\Model\JsonModel as LaminasJsonModel;
  *
  * Class JsonModel
  * @package Application\Library\View\Model
+ *
+ * @psalm-suppress InvalidExtendClass To be addressed in LPA-3817
  */
 class JsonModel extends LaminasJsonModel {
 
@@ -18,6 +20,8 @@ class JsonModel extends LaminasJsonModel {
      * Serialize to JSON
      *
      * @return string
+     *
+     * @psalm-suppress MethodSignatureMismatch To be addressed in LPA-3817
      */
     public function serialize()
     {

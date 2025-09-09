@@ -2,14 +2,17 @@
 
 namespace ApplicationTest\Model\Service\Applications;
 
+use RuntimeException;
+use ArrayIterator;
+use ArrayObject;
+use DateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
-use ApplicationTest\Model\Service\AbstractServiceTest;
-use EmptyIterator;
+use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Formatter;
@@ -18,7 +21,7 @@ use MakeShared\DataModel\User\User;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends AbstractServiceTestCase
 {
     /**
      * @var MockInterface|ApplicationRepositoryInterface
@@ -100,7 +103,7 @@ class ServiceTest extends AbstractServiceTest
 
 
         //So we expect an exception and for no document to be inserted
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object was created');
 
         $serviceBuilder = new ServiceBuilder();
@@ -217,7 +220,7 @@ class ServiceTest extends AbstractServiceTest
         $lpa->setDocument(new Document());
         $lpa->getDocument()->setType('invalid');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('LPA object is invalid');
 
         $serviceBuilder = new ServiceBuilder();
@@ -469,7 +472,7 @@ class ServiceTest extends AbstractServiceTest
         $this->applicationRepository->shouldReceive('fetchByUserId')
             ->withArgs([$user->getId()])
             ->once()
-            ->andReturn(new \ArrayIterator([['id' => $lpa->getId()]]));
+            ->andReturn(new ArrayIterator([['id' => $lpa->getId()]]));
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -629,7 +632,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->applicationRepository->shouldReceive('getByIdsAndUser')
             ->withArgs([$lpaIds, $userId])
-            ->andReturn(new \ArrayObject());
+            ->andReturn(new ArrayObject());
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -650,7 +653,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->applicationRepository->shouldReceive('getByIdsAndUser')
             ->withArgs([$lpaIds, $userId])
-            ->andReturn(new \ArrayObject([$hwLpa->toArray(), $pfLpa->toArray()]));
+            ->andReturn(new ArrayObject([$hwLpa->toArray(), $pfLpa->toArray()]));
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -687,8 +690,8 @@ class ServiceTest extends AbstractServiceTest
                 /** @var Lpa $lpa */
                 return is_int($lpa->getId())
                     && $lpa->getId() >= 1000000 && $lpa->getId() <= 99999999999
-                    && $lpa->getStartedAt() instanceof \DateTime
-                    && $lpa->getUpdatedAt() instanceof \DateTime
+                    && $lpa->getStartedAt() instanceof DateTime
+                    && $lpa->getUpdatedAt() instanceof DateTime
                     && $lpa->getUser() === $user->getId()
                     && !$lpa->isLocked()
                     && !$lpa->isWhoAreYouAnswered()
@@ -781,7 +784,7 @@ class ServiceTest extends AbstractServiceTest
 
             $this->applicationRepository->shouldReceive('fetch')
                 ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 10]])
-                ->andReturn(new \ArrayIterator($lpasArray));
+                ->andReturn(new ArrayIterator($lpasArray));
         }
     }
 }
