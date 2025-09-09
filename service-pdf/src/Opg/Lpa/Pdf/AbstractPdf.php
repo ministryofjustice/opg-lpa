@@ -105,7 +105,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerA
                 $data = '';
             }
 
-            if (preg_match('/NumberOfPages: (\d+)/', strval($data), $m)) {
+            if (preg_match('/NumberOfPages: (\d+)/', $data, $m)) {
                 $this->numberOfPages = intval($m[1]);
             }
         }
