@@ -64,7 +64,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 # 2.35.4
         with:
-          php-version: "8.1"
+          php-version: "8.3"
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
       - name: Run psalm
