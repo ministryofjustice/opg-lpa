@@ -11,7 +11,7 @@
     "lint:check": "eslint service-front/assets/js cypress/e2e/common"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.19.1",
+    "@babel/eslint-parser": "^7.28.4",
     "@badeball/cypress-cucumber-preprocessor": "^22.0.0",
     "@cypress/browserify-preprocessor": "^3.0.2",
     "axe-core": "^4.1.4",
