@@ -43,7 +43,7 @@ jobs:
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif --no-cache
       - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@2d92b76c45b91eb80fc44c74ce3fce0ee94e8f9d # v3.30.0
+        uses: github/codeql-action/upload-sarif@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
         with:
           sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
   psalm_all_php:
@@ -64,12 +64,12 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 # 2.35.4
         with:
-          php-version: "8.1"
+          php-version: "8.3"
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif
       - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@2d92b76c45b91eb80fc44c74ce3fce0ee94e8f9d # v3.30.0
+        uses: github/codeql-action/upload-sarif@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
         with:
           sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
