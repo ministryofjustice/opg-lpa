@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Library\View\Model;
 
+use ArrayIterator;
 use Application\Library\View\Model\JsonModel;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +35,7 @@ class JsonModelTest extends TestCase
 
     public function testSerializeTraversable() : void
     {
-        $arrayIterator = new \ArrayIterator(['some' => ['nested' => 'data']]);
+        $arrayIterator = new ArrayIterator(['some' => ['nested' => 'data']]);
 
         $jsonModel = new JsonModel($arrayIterator);
 

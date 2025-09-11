@@ -2,6 +2,9 @@
 
 namespace ApplicationTest\Model\Service;
 
+use Aws\Credentials\CredentialsInterface;
+use Aws\Signature\SignatureV4;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Alphagov\Notifications\Client;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
@@ -21,7 +24,6 @@ use Aws\Sqs\SqsClient;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use Psr\Log\LoggerInterface;
 
@@ -93,8 +95,8 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                 [
                     GuzzleHttpClient::class => Mockery::mock(GuzzleHttpClient::class),
                     'config' => ['processing-status' => ['endpoint' => 'test endpoint']],
-                    'AwsCredentials' => Mockery::mock(\Aws\Credentials\CredentialsInterface::class),
-                    'AwsApiGatewaySignature' => Mockery::mock(\Aws\Signature\SignatureV4::class),
+                    'AwsCredentials' => Mockery::mock(CredentialsInterface::class),
+                    'AwsApiGatewaySignature' => Mockery::mock(SignatureV4::class),
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ]
@@ -102,9 +104,9 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
     }
 
     /**
-     * @dataProvider servicesProvider
      * @param $service string Service class to check
      */
+    #[DataProvider('servicesProvider')]
     public function testCanCreate($service)
     {
         $result = $this->factory->canCreate($this->container, $service);
@@ -113,11 +115,11 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
     }
 
     /**
-     * @dataProvider servicesProvider
      * @param $service string Service class to check
      * @param $dependancies array Dependencies that the mock container will provide
      * @throws ApiProblemException
      */
+    #[DataProvider('servicesProvider')]
     public function testInvoke($service, $dependancies)
     {
         foreach($dependancies as $key => $value){

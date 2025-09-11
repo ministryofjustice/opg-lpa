@@ -120,7 +120,7 @@ class FeedbackValidatorTest extends MockeryTestCase
         ];
 
         // optional fields...
-        foreach (FeedbackValidator::OPTIONAL_FIELDS as $key => $fieldName) {
+        foreach (FeedbackValidator::OPTIONAL_FIELDS as $fieldName) {
             $feedbackData = array_merge($feedbackDataPristine, []);
 
             // ...can have an empty string in them and be ignored

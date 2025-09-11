@@ -2,6 +2,8 @@
 
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
+use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -34,7 +36,7 @@ class UserDataTest extends MockeryTestCase
     // $isQueryResult: bool
     // $count: int
     // $current: array representing single user result
-    private static function makeSelectResult($isQueryResult, $count, $current): Result|Mockery\MockInterface
+    private static function makeSelectResult($isQueryResult, $count, $current): Result|MockInterface
     {
         $result = Mockery::mock(Result::class);
 
@@ -83,9 +85,7 @@ class UserDataTest extends MockeryTestCase
         ];
     }
 
-    /**
-     * @dataProvider getByUsernameDataProvider
-     */
+    #[DataProvider('getByUsernameDataProvider')]
     public function testGetByUsername($data): void
     {
         $username = 'VictorFrankenstein';
@@ -632,9 +632,7 @@ class UserDataTest extends MockeryTestCase
         ];
     }
 
-    /**
-     * @dataProvider countActivatedAccountsDataProvider
-     */
+    #[DataProvider('countActivatedAccountsDataProvider')]
     public function testCountActivatedAccounts($since, $resultMock, $expected)
     {
         // mocks
