@@ -12,7 +12,7 @@ Then('I choose Property and Finance', () => {
       cy.get('input[name="isRepeatApplication"][value="is-repeat"]').check({
         force: true,
       });
-      cy.get('#repeat-application-details')
+      cy.get('#conditional-repeat-application')
         .should('exist')
         .and('not.have.class', 'js-hidden')
         .and('not.have.css', 'display', 'none');
@@ -49,7 +49,7 @@ Then('I choose Health and Welfare', () => {
       cy.get('input[name="isRepeatApplication"][value="is-repeat"]').check({
         force: true,
       });
-      cy.get('#repeat-application-details')
+      cy.get('#conditional-repeat-application-details')
         .should('exist')
         .and('not.have.class', 'js-hidden')
         .and('not.have.css', 'display', 'none');
