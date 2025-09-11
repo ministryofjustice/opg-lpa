@@ -11,13 +11,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "service-*/**"
-      - "cypress/**"
-      - "terraform/**"
-      - "scripts/**"
-      - "shared/**"
-      - ".github/workflows/**"
 
 permissions:
   contents: write
