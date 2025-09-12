@@ -6,6 +6,10 @@ data "aws_security_group" "front_cache_region" {
   name = "${local.account_name_short}-${var.region_name}-front-cache"
 }
 
+data "aws_security_group" "new_front_cache_region" {
+  name = "${local.account_name_short}-${var.region_name}-new-front-cache"
+}
+
 data "aws_elasticache_replication_group" "front_cache_region" {
   replication_group_id = "${local.account_name_short}-${var.region_name}-front-cache-rg"
 }

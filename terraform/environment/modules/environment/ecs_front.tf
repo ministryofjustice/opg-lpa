@@ -61,7 +61,7 @@ resource "aws_security_group_rule" "front_ecs_service_elasticache_region_ingress
   from_port                = 0
   to_port                  = 6379
   protocol                 = "tcp"
-  security_group_id        = data.aws_security_group.front_cache_region.id
+  security_group_id        = var.account_name == "development" ? data.aws_security_group.new_front_cache_region.id : data.aws_security_group.front_cache_region.id
   source_security_group_id = aws_security_group.front_ecs_service.id
   description              = "Front ECS to regional Elasticache - Redis"
 }
