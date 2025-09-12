@@ -46,7 +46,7 @@ resource "aws_db_instance" "api" {
   username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   password                            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
   parameter_group_name                = aws_db_parameter_group.postgres13-db-params.name
-  vpc_security_group_ids              = [aws_security_group.rds-api.id]
+  vpc_security_group_ids              = var.account_name == "development" ? [aws_security_group.new_rds_api.id] : [aws_security_group.rds-api.id]
   auto_minor_version_upgrade          = false
   maintenance_window                  = "wed:05:00-wed:09:00"
   multi_az                            = true
@@ -106,7 +106,7 @@ module "api_aurora" {
   kms_key_id                    = data.aws_kms_key.rds.arn
   replication_source_identifier = var.account.always_on ? aws_db_instance.api[0].arn : ""
   skip_final_snapshot           = !var.account.deletion_protection
-  vpc_security_group_ids        = [aws_security_group.rds-api.id]
+  vpc_security_group_ids        = var.account_name == "development" ? [aws_security_group.new_rds_api.id] : [aws_security_group.rds-api.id]
   tags                          = local.db_component_tag
   copy_tags_to_snapshot         = true
 }
@@ -144,7 +144,7 @@ resource "aws_db_parameter_group" "postgres13-db-params" {
 resource "aws_security_group" "rds-client" {
   name                   = "rds-client-${var.environment_name}"
   description            = "rds access for ${var.environment_name}"
-  vpc_id                 = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
+  vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
   tags                   = local.db_component_tag
 }
@@ -152,7 +152,7 @@ resource "aws_security_group" "rds-client" {
 resource "aws_security_group" "rds-api" {
   name                   = "rds-api-${var.environment_name}"
   description            = "api rds access"
-  vpc_id                 = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
+  vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
   tags                   = local.db_component_tag
 
@@ -168,5 +168,35 @@ resource "aws_security_group_rule" "rds-api" {
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.rds-client.id
   security_group_id        = aws_security_group.rds-api.id
+  description              = "RDS client to RDS - Postgres"
+}
+
+resource "aws_security_group" "new_rds_client" {
+  name                   = "rds-client-${var.environment_name}"
+  description            = "rds access for ${var.environment_name}"
+  vpc_id                 = data.aws_vpc.main.id
+  revoke_rules_on_delete = true
+  tags                   = local.db_component_tag
+}
+
+resource "aws_security_group" "new_rds_api" {
+  name                   = "rds-api-${var.environment_name}"
+  description            = "api rds access"
+  vpc_id                 = data.aws_vpc.main.id
+  revoke_rules_on_delete = true
+  tags                   = local.db_component_tag
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group_rule" "new_rds_api" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.new_rds_client.id
+  security_group_id        = aws_security_group.new_rds_api.id
   description              = "RDS client to RDS - Postgres"
 }
