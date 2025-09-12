@@ -2,13 +2,26 @@
 #tfsec:ignore:aws-ec2-add-description-to-security-group - adding a description is a destructive change.
 resource "aws_security_group" "front_cache" {
   name   = "${local.account_name_short}-${local.region_name}-front-cache"
-  vpc_id = data.aws_default_tags.current.tags.environment-name == "development" ? module.network.vpc.id : aws_default_vpc.default.id
+  vpc_id = aws_default_vpc.default.id
   tags   = local.front_component_tag
 }
 
 resource "aws_elasticache_subnet_group" "private_subnets" {
   name       = "${local.account_name_short}-${local.region_name}-elasticache-private-subnets"
-  subnet_ids = data.aws_default_tags.current.tags.environment-name == "development" ? module.network.application_subnets[*].id : aws_subnet.private[*].id
+  subnet_ids = aws_subnet.private[*].id
+}
+
+#New Network
+#tfsec:ignore:aws-ec2-add-description-to-security-group - adding a description is a destructive change.
+resource "aws_security_group" "new_front_cache" {
+  name   = "${local.account_name_short}-${local.region_name}-front-cache"
+  vpc_id = module.network.vpc.id
+  tags   = local.front_component_tag
+}
+
+resource "aws_elasticache_subnet_group" "application_subnets" {
+  name       = "${local.account_name_short}-${local.region_name}-elasticache-application-subnets"
+  subnet_ids = module.network.application_subnets[*].id
 }
 
 #New Network
@@ -38,8 +51,8 @@ resource "aws_elasticache_replication_group" "front_cache" {
   maintenance_window         = "wed:05:00-wed:09:00"
   snapshot_window            = "02:00-04:50"
   notification_topic_arn     = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
-  subnet_group_name          = aws_elasticache_subnet_group.private_subnets.name
-  security_group_ids         = [aws_security_group.front_cache.id]
+  subnet_group_name          = data.aws_default_tags.current.tags.environment-name == "development" ? aws_elasticache_subnet_group.application_subnets.name : aws_elasticache_subnet_group.private_subnets.name
+  security_group_ids         = data.aws_default_tags.current.tags.environment-name == "development" ? [aws_security_group.new_front_cache.id] : [aws_security_group.front_cache.id]
 
   tags = local.front_component_tag
 }
