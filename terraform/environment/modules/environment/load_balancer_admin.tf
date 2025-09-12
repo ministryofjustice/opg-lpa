@@ -25,7 +25,9 @@ resource "aws_lb" "admin" {
   subnets                    = var.account_name == "development" ? data.aws_subnet.public[*].id : data.aws_subnets.public.ids
   tags                       = local.admin_component_tag
   drop_invalid_header_fields = true
-  security_groups = [
+  security_groups = var.account_name == "development" ? [
+    aws_security_group.new_admin_loadbalancer.id,
+    ] : [
     aws_security_group.admin_loadbalancer.id,
   ]
   enable_deletion_protection = var.account_name == "development" ? false : true
@@ -50,6 +52,7 @@ resource "aws_lb_listener" "admin_loadbalancer" {
   }
 }
 
+// Old Network
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "admin_loadbalancer" {
   name        = "${var.environment_name}-admin-loadbalancer"
@@ -76,5 +79,35 @@ resource "aws_security_group_rule" "admin_loadbalancer_egress" {
   #tfsec:ignore:aws-ec2-no-public-egress-sgr - public facing load balancer
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_loadbalancer.id
+  description       = "Admin Loadbalancer to Anywhere - All Traffic"
+}
+
+// New Network
+#tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
+resource "aws_security_group" "new_admin_loadbalancer" {
+  name        = "${var.environment_name}-admin-loadbalancer"
+  description = "Allow inbound traffic"
+  vpc_id      = data.aws_vpc.main.id
+  tags        = local.admin_component_tag
+}
+
+resource "aws_security_group_rule" "new_admin_loadbalancer_ingress" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = module.allowed_ip_list.moj_sites
+  security_group_id = aws_security_group.new_admin_loadbalancer.id
+  description       = "MoJ Sites to Admin ELB - HTTPS"
+}
+
+resource "aws_security_group_rule" "new_admin_loadbalancer_egress" {
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr - public facing load balancer
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.new_admin_loadbalancer.id
   description       = "Admin Loadbalancer to Anywhere - All Traffic"
 }

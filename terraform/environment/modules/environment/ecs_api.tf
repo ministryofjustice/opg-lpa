@@ -13,7 +13,10 @@ resource "aws_ecs_service" "api" {
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
   network_configuration {
-    security_groups = [
+    security_groups = var.account_name == "development" ? [
+      aws_security_group.new_api_ecs_service.id,
+      aws_security_group.new_rds_client.id,
+      ] : [
       aws_security_group.api_ecs_service.id,
       aws_security_group.rds-client.id,
     ]
@@ -84,10 +87,11 @@ locals {
 
 //----------------------------------
 // The Api service's Security Groups
+// Old Network
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
-  vpc_id      = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
+  vpc_id      = data.aws_vpc.default.id
   tags        = local.api_component_tag
 }
 
@@ -119,6 +123,45 @@ resource "aws_security_group_rule" "api_ecs_service_egress" {
   #tfsec:ignore:aws-ec2-no-public-egress-sgr - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.api_ecs_service.id
+  description       = "API ECS to Anywhere - All Traffic"
+}
+
+// New Network
+#tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
+resource "aws_security_group" "new_api_ecs_service" {
+  name_prefix = "${terraform.workspace}-api-ecs-service"
+  vpc_id      = data.aws_vpc.main.id
+  tags        = local.api_component_tag
+}
+
+resource "aws_security_group_rule" "new_api_ecs_service_front_ingress" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.new_api_ecs_service.id
+  source_security_group_id = aws_security_group.new_front_ecs_service.id
+  description              = "Frontend ECS to API ECS - HTTP"
+}
+
+resource "aws_security_group_rule" "new_api_ecs_service_admin_ingress" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.new_api_ecs_service.id
+  source_security_group_id = aws_security_group.new_admin_ecs_service.id
+  description              = "Admin ECS to API ECS - HTTP"
+}
+
+resource "aws_security_group_rule" "new_api_ecs_service_egress" {
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr - anything out
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.new_api_ecs_service.id
   description       = "API ECS to Anywhere - All Traffic"
 }
 

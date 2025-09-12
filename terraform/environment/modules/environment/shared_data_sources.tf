@@ -53,3 +53,8 @@ data "aws_kms_alias" "multi_region_secrets_encryption_alias" {
 data "aws_region" "current" {}
 
 data "aws_caller_identity" "current" {}
+
+data "aws_ip_ranges" "route53_healthchecks" {
+  regions  = ["GLOBAL"]
+  services = ["ROUTE53_HEALTHCHECKS"]
+}

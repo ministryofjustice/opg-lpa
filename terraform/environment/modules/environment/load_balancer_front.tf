@@ -3,7 +3,7 @@ resource "aws_lb_target_group" "front" {
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
-  vpc_id               = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
+  vpc_id               = data.aws_vpc.default.id
   deregistration_delay = 0
   health_check {
     enabled             = true
@@ -22,14 +22,16 @@ resource "aws_lb" "front" {
   #tfsec:ignore:aws-elb-alb-not-public - public facing load balancer
   internal                   = false
   load_balancer_type         = "application"
-  subnets                    = var.account_name == "development" ? data.aws_subnet.public[*].id : data.aws_subnets.public.ids
   tags                       = local.front_component_tag
   drop_invalid_header_fields = true
-
-  security_groups = [
+  security_groups = var.account_name == "development" ? [
+    aws_security_group.new_front_loadbalancer.id,
+    aws_security_group.new_front_loadbalancer_route53.id,
+    ] : [
     aws_security_group.front_loadbalancer.id,
     aws_security_group.front_loadbalancer_route53.id,
   ]
+  subnets                    = var.account_name == "development" ? data.aws_subnet.public[*].id : data.aws_subnets.public.ids
   enable_deletion_protection = var.account_name == "development" ? false : true
   access_logs {
     bucket  = data.aws_s3_bucket.access_log.bucket
@@ -43,8 +45,7 @@ resource "aws_lb_listener" "front_loadbalancer" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-FS-1-2-Res-2020-10"
-
-  certificate_arn = data.aws_acm_certificate.certificate_front.arn
+  certificate_arn   = data.aws_acm_certificate.certificate_front.arn
 
   default_action {
     target_group_arn = aws_lb_target_group.front.arn
@@ -56,7 +57,7 @@ resource "aws_lb_listener" "front_loadbalancer" {
 resource "aws_security_group" "front_loadbalancer_route53" {
   name_prefix = "${var.environment_name}-actor-loadbalancer-route53"
   description = "Allow Route53 healthchecks"
-  vpc_id      = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
+  vpc_id      = data.aws_vpc.default.id
 }
 
 resource "aws_security_group_rule" "actor_loadbalancer_ingress_route53_healthchecks" {
@@ -69,16 +70,11 @@ resource "aws_security_group_rule" "actor_loadbalancer_ingress_route53_healthche
   security_group_id = aws_security_group.front_loadbalancer_route53.id
 }
 
-data "aws_ip_ranges" "route53_healthchecks" {
-  regions  = ["GLOBAL"]
-  services = ["ROUTE53_HEALTHCHECKS"]
-}
-
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "front_loadbalancer" {
   name        = "${var.environment_name}-front-loadbalancer"
   description = "Allow inbound traffic"
-  vpc_id      = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
+  vpc_id      = data.aws_vpc.default.id
   tags        = local.front_component_tag
 
 }
@@ -128,6 +124,81 @@ resource "aws_security_group_rule" "front_loadbalancer_egress" {
   description       = "Front ELB to Anywhere - All Traffic"
 }
 
+# TODO:
+# new network
+resource "aws_security_group" "new_front_loadbalancer_route53" {
+  name_prefix = "${var.environment_name}-actor-loadbalancer-route53"
+  description = "Allow Route53 healthchecks"
+  vpc_id      = data.aws_vpc.default.id
+}
+
+resource "aws_security_group_rule" "new_actor_loadbalancer_ingress_route53_healthchecks" {
+  description       = "Loadbalancer ingresss from Route53 healthchecks"
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = "443"
+  to_port           = "443"
+  cidr_blocks       = data.aws_ip_ranges.route53_healthchecks.cidr_blocks
+  security_group_id = aws_security_group.new_front_loadbalancer_route53.id
+}
+
+#tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
+resource "aws_security_group" "new_front_loadbalancer" {
+  name        = "${var.environment_name}-new-front-loadbalancer"
+  description = "Allow inbound traffic"
+  vpc_id      = data.aws_vpc.default.id
+  tags        = local.front_component_tag
+
+}
+
+resource "aws_security_group_rule" "new_front_loadbalancer_ingress" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = module.allowed_ip_list.moj_sites
+  security_group_id = aws_security_group.new_front_loadbalancer.id
+  description       = "MoJ sites to Front ELB - HTTPS"
+}
+
+#tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
+resource "aws_security_group_rule" "new_front_loadbalancer_ingress_production" {
+  count     = var.environment_name == "production" ? 1 : 0
+  type      = "ingress"
+  from_port = 443
+  to_port   = 443
+  protocol  = "tcp"
+  #tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.new_front_loadbalancer.id
+  description       = "Anywhere to Production Front ELB - HTTPS"
+}
+
+resource "aws_security_group_rule" "new_front_loadbalancer_ingress_http" {
+  type      = "ingress"
+  from_port = 80
+  to_port   = 80
+  protocol  = "tcp"
+  #tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.new_front_loadbalancer.id
+  description       = "Anywhere to Front ELB - HTTP (redirects to HTTPS)"
+}
+
+resource "aws_security_group_rule" "new_front_loadbalancer_egress" {
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr - public facing load balancer
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.new_front_loadbalancer.id
+  description       = "Front ELB to Anywhere - All Traffic"
+}
+
+
+
+# ------
 resource "aws_lb_listener_certificate" "front_loadbalancer_live_service_certificate" {
   listener_arn    = aws_lb_listener.front_loadbalancer.arn
   certificate_arn = data.aws_acm_certificate.public_facing_certificate.arn
