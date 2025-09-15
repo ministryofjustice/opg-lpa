@@ -13,8 +13,8 @@ resource "aws_ecs_service" "admin" {
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
   network_configuration {
-    security_groups  = var.account_name == "development" ? [aws_security_group.new_admin_ecs_service.id] : [aws_security_group.admin_ecs_service.id]
-    subnets          = var.account_name == "development" ? data.aws_subnet.application[*].id : data.aws_subnets.private.ids
+    security_groups  = [aws_security_group.admin_ecs_service.id]
+    subnets          = data.aws_subnets.private.ids
     assign_public_ip = false
   }
 
@@ -37,11 +37,11 @@ resource "aws_ecs_service" "admin" {
 
 //----------------------------------
 // The service's Security Groups
-// Old Network
+
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "admin_ecs_service" {
   name_prefix = "${var.environment_name}-admin-ecs-service"
-  vpc_id      = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
+  vpc_id      = data.aws_vpc.default.id
   tags        = local.admin_component_tag
 }
 
@@ -63,35 +63,6 @@ resource "aws_security_group_rule" "admin_ecs_service_egress" {
   #tfsec:ignore:aws-ec2-no-public-egress-sgr - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.admin_ecs_service.id
-  description       = "Admin ECS to Anywhere - All Traffic"
-}
-
-// New Network
-#tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
-resource "aws_security_group" "new_admin_ecs_service" {
-  name_prefix = "${var.environment_name}-admin-ecs-service"
-  vpc_id      = data.aws_vpc.main.id
-  tags        = local.admin_component_tag
-}
-
-resource "aws_security_group_rule" "new_admin_ecs_service_ingress" {
-  type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.new_admin_ecs_service.id
-  source_security_group_id = aws_security_group.new_admin_loadbalancer.id
-  description              = "Admin Loadbalancer to Admin ECS - HTTP"
-}
-
-resource "aws_security_group_rule" "new_admin_ecs_service_egress" {
-  type      = "egress"
-  from_port = 0
-  to_port   = 0
-  protocol  = "-1"
-  #tfsec:ignore:aws-ec2-no-public-egress-sgr - anything out
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.new_admin_ecs_service.id
   description       = "Admin ECS to Anywhere - All Traffic"
 }
 
