@@ -1,4 +1,4 @@
-# LPA Online Service  
+# LPA Online Service
 
 The Office of the Public Guardian Lasting Power of Attorney online service: Managed by opg-org-infra &amp; Terraform.
 
@@ -137,11 +137,11 @@ Unit tests for the individual components can be run from their individual direct
 
 ```
 cd service-front
-/usr/local/opt/php@8.1/bin/php ./vendor/bin/phpunit
+php ./vendor/bin/phpunit
 ```
 
-NB `shared`, `service-front`, `service-api` and `service-pdf` run using PHP 8.1, while
-`service-admin` uses PHP 8.2. It's important to use the correct PHP version when running
+NB `service-front`, `service-api` and `service-admin` run using PHP 8.2, while
+`service-pdf` uses PHP 8.3. It's important to use the correct PHP version when running
 the unit tests manually, as shown in the example above. Homebrew on mac allows you to install
 different PHP versions in parallel, e.g.
 
