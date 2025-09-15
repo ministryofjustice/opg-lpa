@@ -42,12 +42,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Set safe branch name
         id: safe_branch_name
-<<<<<<< HEAD
         uses: ministryofjustice/opg-github-actions/actions/branch-name@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
-=======
-        uses: ministryofjustice/opg-github-actions/.github/actions/branch-name@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
->>>>>>> d163de1ee (Renovate update ministryofjustice/opg-github-actions action to v4)
-
       - name: Set workspace name
         id: set_workspace_name
         run: |
@@ -61,38 +56,22 @@ jobs:
 
       - name: Set terraform version - environment
         id: terraform_version_environment
-<<<<<<< HEAD
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
-=======
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
->>>>>>> d163de1ee (Renovate update ministryofjustice/opg-github-actions action to v4)
         with:
           terraform_directory: "./terraform/environment"
       - name : Set terraform version - account
         id: terraform_version_account
-<<<<<<< HEAD
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
-=======
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
->>>>>>> d163de1ee (Renovate update ministryofjustice/opg-github-actions action to v4)
         with:
           terraform_directory: "./terraform/account"
       - name: Set terraform version - region
         id: terraform_version_region
-<<<<<<< HEAD
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
-=======
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
->>>>>>> d163de1ee (Renovate update ministryofjustice/opg-github-actions action to v4)
         with:
           terraform_directory: "./terraform/region"
       - name: Set terraform version - email
         id: terraform_version_email
-<<<<<<< HEAD
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
-=======
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
->>>>>>> d163de1ee (Renovate update ministryofjustice/opg-github-actions action to v4)
         with:
           terraform_directory: "./terraform/email"
 
