@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
-      semver_tag: ${{ steps.semver_tag.outputs.created_tag }}
+      semver_tag: ${{ steps.semver_tag.outputs.tag }}
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
       account_terraform_version: ${{ steps.terraform_version_account.outputs.version }}
       region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
