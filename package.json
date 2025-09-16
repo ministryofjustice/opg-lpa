@@ -11,7 +11,7 @@
     "lint:check": "eslint service-front/assets/js cypress/e2e/common"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.19.1",
+    "@babel/eslint-parser": "^7.28.4",
     "@badeball/cypress-cucumber-preprocessor": "^22.0.0",
     "@cypress/browserify-preprocessor": "^3.0.2",
     "axe-core": "^4.1.4",
@@ -20,14 +20,14 @@
     "cypress-failed-log": "^2.9.2",
     "cypress-plugin-tab": "^1.0.5",
     "eslint": "^8.23.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.5",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-promise": "^6.0.1",
     "pdf-lib": "^1.17.1",
-    "prettier": "^2.7.1",
+    "prettier": "^3.6.2",
     "strip-ansi": "^7.0.0"
   },
   "repository": {
