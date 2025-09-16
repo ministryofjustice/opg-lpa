@@ -281,16 +281,16 @@
     },
     {
       "description": [
-        "pdf composer minor and patch updates (PHP 8.1, stable for 3 days)",
+        "pdf composer minor and patch updates (PHP 8.3, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "pdf minor and patch updates (PHP 8.1)",
+      "groupName": "pdf minor and patch updates (PHP 8.3)",
       "groupSlug": "pdf-minor-patch-updates-php81",
       "labels": [
         "Dependencies",
         "Renovate",
-        "PHP 8.1"
+        "PHP 8.3"
       ],
       "matchManagers": [
         "composer"
