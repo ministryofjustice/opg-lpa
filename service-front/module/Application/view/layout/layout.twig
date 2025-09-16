@@ -72,7 +72,7 @@
     <header role="banner" class="govuk-header govuk-header--full-width-border" data-module="govuk-header" data-cy="banner">
         <div class="govuk-header__container govuk-width-container">
             <div class="govuk-header__logo">
-                <a href="#" class="govuk-header__link govuk-header__link--homepage">
+                <a href="https://www.gov.uk/" class="govuk-header__link govuk-header__link--homepage">
                     <svg
                             focusable="false"
                             role="img"
@@ -103,9 +103,26 @@
 
     <main id="content" role="main">
         <a name="main-content"></a>
+        {% set account %}
+            {{ accountInfo() }}
+        {% endset %}
 
-        {{ accountInfo() }}
-
+        {% if account|striptags|trim %}
+            {{ account|raw }}
+        {% else %}
+            <section aria-label="Service information" class="govuk-service-navigation"
+                     data-module="govuk-service-navigation">
+                <div class="govuk-width-container">
+                    <div class="govuk-service-navigation__container">
+                      <span class="govuk-service-navigation__service-name">
+                        <a href="/home" class="govuk-service-navigation__link">
+                          Make a lasting power of attorney
+                        </a>
+                      </span>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
         {% block errorSummary %}{% endblock %}
         {% block mainTitle %}
         <h1 class="heading-xlarge" data-cy="main-title">
