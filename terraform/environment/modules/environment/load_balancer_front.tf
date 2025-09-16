@@ -3,7 +3,7 @@ resource "aws_lb_target_group" "front" {
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
-  vpc_id               = data.aws_vpc.default.id
+  vpc_id               = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
   deregistration_delay = 0
   health_check {
     enabled             = true
@@ -53,7 +53,7 @@ resource "aws_lb_listener" "front_loadbalancer" {
   }
 }
 
-
+# old network
 resource "aws_security_group" "front_loadbalancer_route53" {
   name_prefix = "${var.environment_name}-actor-loadbalancer-route53"
   description = "Allow Route53 healthchecks"
@@ -76,7 +76,6 @@ resource "aws_security_group" "front_loadbalancer" {
   description = "Allow inbound traffic"
   vpc_id      = data.aws_vpc.default.id
   tags        = local.front_component_tag
-
 }
 
 resource "aws_security_group_rule" "front_loadbalancer_ingress" {
@@ -129,7 +128,7 @@ resource "aws_security_group_rule" "front_loadbalancer_egress" {
 resource "aws_security_group" "new_front_loadbalancer_route53" {
   name_prefix = "${var.environment_name}-actor-loadbalancer-route53"
   description = "Allow Route53 healthchecks"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = data.aws_vpc.main.id
 }
 
 resource "aws_security_group_rule" "new_actor_loadbalancer_ingress_route53_healthchecks" {
@@ -146,9 +145,8 @@ resource "aws_security_group_rule" "new_actor_loadbalancer_ingress_route53_healt
 resource "aws_security_group" "new_front_loadbalancer" {
   name        = "${var.environment_name}-new-front-loadbalancer"
   description = "Allow inbound traffic"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = data.aws_vpc.main.id
   tags        = local.front_component_tag
-
 }
 
 resource "aws_security_group_rule" "new_front_loadbalancer_ingress" {

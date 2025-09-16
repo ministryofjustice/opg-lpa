@@ -57,7 +57,7 @@ resource "aws_lb_listener" "admin_loadbalancer" {
 resource "aws_security_group" "admin_loadbalancer" {
   name        = "${var.environment_name}-admin-loadbalancer"
   description = "Allow inbound traffic"
-  vpc_id      = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
+  vpc_id      = data.aws_vpc.default.id
   tags        = local.admin_component_tag
 }
 
