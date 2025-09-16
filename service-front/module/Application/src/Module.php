@@ -6,6 +6,7 @@ use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
+use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use Application\Model\Service\ApiClient\Exception\ApiException;
@@ -234,9 +235,14 @@ class Module implements FormElementProviderInterface
                     $telemetryConfig = $sm->get('config')['telemetry'];
                     return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
                 },
+
+                'Calculator' => function ($sm) {
+                    $fees = $sm->get('config')['fees'] ?? [];
+                    return new Calculator($fees);
+                },
             ], // factories
             'initializers' => [
-                function(ServiceLocatorInterface $container, $instance) {
+                function (ServiceLocatorInterface $container, $instance) {
                     if (! $instance instanceof LoggerAwareInterface) {
                         return;
                     }
