@@ -5,6 +5,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\RepeatApplicationController;
 use Application\Form\Lpa\RepeatApplicationForm;
 use ApplicationTest\Controller\AbstractControllerTestCase;
+use MakeShared\DataModel\Lpa\Payment\Calculator;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -149,7 +150,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs(function ($lpa, $payment) {
                 return $lpa->id === $this->lpa->id
-                    && $payment->amount === 41.0;
+                    && $payment->amount === 41;
             })->andReturn(false)->once();
 
         $this->expectException(RuntimeException::class);
@@ -175,7 +176,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs(function ($lpa, $payment) {
                 return $lpa->id === $this->lpa->id
-                    && $payment->amount === 82.0;
+                    && $payment->amount === 82;
             })->andReturn(true)->once();
         $this->metadata->shouldReceive('setRepeatApplicationConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -185,5 +186,51 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
+    }
+
+    public function testIndexActionPostNoRepeatSuccess_afterGoLive_usesBaseAfter()
+    {
+        Calculator::bootstrap([
+            'timezone'      => 'Europe/London',
+            'effectiveDate' => '2025-11-17T00:00:00',
+            'baseBefore'    => 82,
+            'baseAfter'     => 92,
+        ]);
+        // Freeze now to AFTER the effective date
+        Calculator::setNow(new \DateTimeImmutable('2025-11-17 12:00:00', new \DateTimeZone('Europe/London')));
+
+        $this->lpa->repeatCaseNumber = 12345;
+
+        /** @var RepeatApplicationController $controller */
+        $controller = $this->getController(RepeatApplicationController::class);
+
+        $response = new Response();
+
+        $this->postDataNoRepeat = ['isRepeatApplication' => 'is-new'];
+        $this->setPostValid($this->form, $this->postDataNoRepeat);
+        $this->form->shouldReceive('setValidationGroup')->withArgs([['isRepeatApplication']])->once();
+        $this->form->shouldReceive('getData')->andReturn($this->postDataNoRepeat)->once();
+
+        $this->lpaApplicationService->shouldReceive('deleteRepeatCaseNumber')
+            ->withArgs([$this->lpa])->andReturn(true)->once();
+
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs(function ($lpa, $payment) {
+                $expected = Calculator::getFullFee();
+                return $lpa->id === $this->lpa->id
+                    && (int)$payment->amount === $expected;
+            })
+            ->andReturn(true)
+            ->once();
+
+        $this->metadata->shouldReceive('setRepeatApplicationConfirmed')->withArgs([$this->lpa])->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->setMatchedRouteNameHttp($controller, 'lpa/fee-reduction');
+        $this->setRedirectToRoute('lpa/checkout', $this->lpa, $response);
+
+        $result = $controller->indexAction();
+        $this->assertEquals($response, $result);
+
+        Calculator::setNow(new \DateTimeImmutable('now'));
     }
 }
