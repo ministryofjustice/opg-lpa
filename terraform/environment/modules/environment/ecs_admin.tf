@@ -13,7 +13,7 @@ resource "aws_ecs_service" "admin" {
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
   network_configuration {
-    security_groups = ar.account_name == "development" ? [
+    security_groups = var.account_name == "development" ? [
       aws_security_group.new_admin_ecs_service.id
       ] : [
       aws_security_group.admin_ecs_service.id
