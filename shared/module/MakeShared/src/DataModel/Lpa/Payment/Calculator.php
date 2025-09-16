@@ -92,13 +92,13 @@ class Calculator
         return $isRepeatApplication ? self::repeatApplicationFee() : self::baseFee();
     }
 
-    public static function getLowIncomeFee(bool $isRepeatApplication = false): int
+    public static function getLowIncomeFee(bool $isRepeatApplication = false): float|int
     {
         self::ensureInit();
         return self::getFullFee($isRepeatApplication) / 2;
     }
 
-    public static function getBenefitsFee(): int
+    public static function getBenefitsFee(): float|int
     {
         self::ensureInit();
         return 0.0;
