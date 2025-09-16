@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
-      semver_tag: ${{ steps.semver_tag.outputs.created_tag }}
+      semver_tag: ${{ steps.semver_tag.outputs.tag }}
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
       account_terraform_version: ${{ steps.terraform_version_account.outputs.version }}
       region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
@@ -40,7 +40,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+          fetch-tags: true
       - name: Set output to penultimate short SHA
         id: short_sha
         run: |
@@ -61,11 +62,11 @@ jobs:
         with:
           terraform_directory: "./terraform/region"
       - name: Bump version and push tag
-        uses: ministryofjustice/opg-github-actions/actions/semver-tag@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        uses: ministryofjustice/opg-github-actions/actions/semver@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         id: semver_tag
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          with_v: true
+          prerelease: ${{ github.ref != 'refs/heads/main' }}
           default_bump: minor
 
 

@@ -43,7 +43,6 @@ jobs:
       - name: Set safe branch name
         id: safe_branch_name
         uses: ministryofjustice/opg-github-actions/actions/branch-name@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
-
       - name: Set workspace name
         id: set_workspace_name
         run: |
