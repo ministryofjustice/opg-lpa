@@ -11,13 +11,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "service-*/**"
-      - "cypress/**"
-      - "terraform/**"
-      - "scripts/**"
-      - "shared/**"
-      - ".github/workflows/**"
 
 permissions:
   contents: write
@@ -37,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       short_sha: ${{ steps.short_sha.outputs.short_sha }}
-      semver_tag: ${{ steps.semver_tag.outputs.created_tag }}
+      semver_tag: ${{ steps.semver_tag.outputs.tag }}
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
       account_terraform_version: ${{ steps.terraform_version_account.outputs.version }}
       region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
@@ -47,32 +40,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+          fetch-tags: true
       - name: Set output to penultimate short SHA
         id: short_sha
         run: |
           echo "short_sha=$(git rev-list --no-merges -n 1 HEAD | cut -c1-7)" >> $GITHUB_OUTPUT
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/environment"
       - name : Set terraform version - account
         id: terraform_version_account
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/account"
       - name: Set terraform version - region
         id: terraform_version_region
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/region"
       - name: Bump version and push tag
-        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        uses: ministryofjustice/opg-github-actions/actions/semver@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         id: semver_tag
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          with_v: true
+          prerelease: ${{ github.ref != 'refs/heads/main' }}
           default_bump: minor
 
 
