@@ -43,7 +43,7 @@ jobs:
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif --no-cache
       - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
+        uses: github/codeql-action/upload-sarif@192325c86100d080feab897ff886c34abd4c83a3 # v3.30.3
         with:
           sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
   psalm_all_php:
@@ -70,6 +70,6 @@ jobs:
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif
       - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
+        uses: github/codeql-action/upload-sarif@192325c86100d080feab897ff886c34abd4c83a3 # v3.30.3
         with:
           sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
