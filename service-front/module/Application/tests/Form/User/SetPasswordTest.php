@@ -36,8 +36,8 @@ class SetPasswordTest extends MockeryTestCase
     public function testValidateByModelOK()
     {
         $this->form->setData(array_merge([
-            'password'              => 'P@55word',
-            'password_confirm'      => 'P@55word',
+            'password'              => 'P@55wordword',
+            'password_confirm'      => 'P@55wordword',
             'skip_confirm_password' => '0',
         ], $this->getCsrfData()));
 
