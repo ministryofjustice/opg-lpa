@@ -101,7 +101,7 @@ jobs:
           CYPRESS_RUN_A11Y_TESTS: true
         run: |
           pip install boto3
-          npm install .
+          npm npm ci --ignore-scripts .
           ./cypress/cypress_start.sh
 
       - name: Upload Screenshot Artifact
