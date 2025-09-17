@@ -159,4 +159,11 @@ return [
             'port' => getenv('OPG_LPA_TELEMETRY_PORT') ?: null,
         ],
     ],
+
+    'fees' => [
+        'timezone'      => 'Europe/London',
+        'effectiveDate' => getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-09-17T15:00:00',
+        'baseBefore'    => getenv('LPA_FEE_BEFORE') ?: 82,
+        'baseAfter'     => getenv('LPA_FEE_AFTER') ?: 92,
+    ],
 ];
