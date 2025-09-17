@@ -57,7 +57,7 @@
         </div>
     </section>
 </div>
-<br><br>
 {% if lastLogin %}
-    <p class="lastsigned flush--ends">{{ name }}, last signed in: {{ lastLogin|date('j F Y \a\t g:ia', "Europe/London") }}</p>
+    <p class="lastsigned govuk-!-padding-bottom-2 govuk-!-padding-top-2 flush--ends">Last signed in: {{ lastLogin|date('j F Y \\a\\t g:ia', "Europe/London") }}</p>
 {% endif %}
+<hr class="flush--ends">
