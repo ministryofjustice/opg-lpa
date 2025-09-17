@@ -1,10 +1,9 @@
 <?php
 namespace ApplicationTest\Model\Service\Session;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Application\Model\Service\Session\SessionManager;
-use ApplicationTest\Model\Service\ServiceTestHelper;
 use Laminas\Session\Container;
-use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class SessionManagerTest extends MockeryTestCase
@@ -15,9 +14,8 @@ class SessionManagerTest extends MockeryTestCase
      * started a session, and starting a session manager here will result in a
      * "session_regenerate_id(): Cannot regenerate session id - session is not active"
      * error)
-     *
-     * @runInSeparateProcess
      */
+    #[RunInSeparateProcess]
     public function testSessionManager() : void
     {
         $container = new Container('initialised');

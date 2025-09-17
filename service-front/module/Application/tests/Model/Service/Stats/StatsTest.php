@@ -7,7 +7,6 @@ use Application\Model\Service\Stats\Stats;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use ApplicationTest\Model\Service\ServiceTestHelper;
 use Mockery;
-use Mockery\MockInterface;
 
 class StatsTest extends AbstractServiceTest
 {

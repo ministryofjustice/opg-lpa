@@ -73,3 +73,8 @@ module "vpc_endpoints" {
     aws.region = aws
   }
 }
+
+resource "aws_db_subnet_group" "data" {
+  name       = "data"
+  subnet_ids = module.network.data_subnets[*].id
+}
