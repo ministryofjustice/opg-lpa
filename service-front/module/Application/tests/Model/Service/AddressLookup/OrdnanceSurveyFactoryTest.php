@@ -1,6 +1,7 @@
 <?php
 namespace ApplicationTest\Model\Service\AddressLookup;
 
+use UnexpectedValueException;
 use Mockery;
 use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -36,7 +37,7 @@ class OrdnanceSurveyFactoryTest extends MockeryTestCase
             ->andReturn(['address'=>['ordnancesurvey'=>['endpoint'=>'xxx']]]);
 
         $factory = new OrdnanceSurveyFactory();
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessageMatches('/Ordnance Survey API key not configured/');
 
         $factory($this->container, null);
@@ -50,7 +51,7 @@ class OrdnanceSurveyFactoryTest extends MockeryTestCase
             ->andReturn(['address'=>['ordnancesurvey'=>['key'=>'xxx']]]);
 
         $factory = new OrdnanceSurveyFactory();
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessageMatches('/Ordnance Survey API endpoint not configured/');
 
         $factory($this->container, null);

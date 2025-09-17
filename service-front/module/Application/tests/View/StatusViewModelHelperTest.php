@@ -3,15 +3,12 @@
 namespace ApplicationTest\View;
 
 use Application\View\StatusViewModelHelper;
-use Application\View\Helper\FormatLpaId;
 use ApplicationTest\View\ViewModelRenderer;
 use DateTime;
 use DOMDocument;
 use DOMXpath;
-use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Document\Document;
 

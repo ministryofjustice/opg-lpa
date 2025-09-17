@@ -4,14 +4,12 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DownloadController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use DateTime;
-use Exception;
-use Mockery;
-use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use Laminas\Http\Header\HeaderInterface;
 use Laminas\Http\Headers;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
+use Mockery;
 
 class DownloadControllerTest extends AbstractControllerTestCase
 {
