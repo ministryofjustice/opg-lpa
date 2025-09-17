@@ -21,7 +21,7 @@ class Calculator
 
         self::$timeZone     = $tz;
         self::$effectiveDate = new DateTimeImmutable(
-            $feesconfig['effectiveDate'] ?? '2025-09-17T15:00:00',
+            $feesconfig['effectiveDate'] ?? '2025-11-17T00:00:00',
             $tz
         );
         self::$baseBefore = (int)($feesconfig['baseBefore']);
@@ -47,7 +47,7 @@ class Calculator
         if (self::$now === null || self::$effectiveDate === null || self::$timeZone === null) {
             self::bootstrap([
                 'timezone'      => 'Europe/London',
-                'effectiveDate' => '2025-09-17T15:00:00',
+                'effectiveDate' => '2025-11-17T00:00:00',
                 'baseBefore'    => 82,
                 'baseAfter'     => 92,
             ]);

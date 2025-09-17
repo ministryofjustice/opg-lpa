@@ -192,7 +192,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
     {
         Calculator::bootstrap([
             'timezone'      => 'Europe/London',
-            'effectiveDate' => '2025-09-17T15:00:00',
+            'effectiveDate' => '2025-11-17T00:00:00',
             'baseBefore'    => 82,
             'baseAfter'     => 92,
         ]);
