@@ -2,11 +2,10 @@
 
 namespace ApplicationTest\Model\Service\Session;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Application\Model\Service\Session\SessionFactory;
 use Application\Model\Service\Session\SessionManager;
-use ApplicationTest\Model\Service\ServiceTestHelper;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -19,9 +18,8 @@ class SessionFactoryTest extends MockeryTestCase
     /**
      * Because SessionFactory messes with ini_set, we have to run this test
      * in its own process.
-     *
-     * @runInSeparateProcess
      */
+    #[RunInSeparateProcess]
     public function testSessionFactory() : void
     {
         $uri = Mockery::Mock(Uri::class);
