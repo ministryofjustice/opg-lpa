@@ -6,7 +6,6 @@ use Application\Model\Service\Lpa\Application;
 use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
-use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 
 class MetadataTest extends AbstractServiceTest

@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\ApiClient;
 
+use Http\Client\Exception;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use GuzzleHttp\Psr7\Request;
@@ -97,7 +98,7 @@ class ClientTest extends MockeryTestCase
 
     /**
      *  As the token is private, test that it is updated indirectly by seeing what is added to a request header
-     * @throws \Http\Client\Exception
+     * @throws Exception
      */
     public function testUpdateToken(): void
     {
@@ -116,7 +117,7 @@ class ClientTest extends MockeryTestCase
     }
 
     /**
-     * @throws \Http\Client\Exception
+     * @throws Exception
      */
     public function testHttpGet(): void
     {
@@ -128,7 +129,7 @@ class ClientTest extends MockeryTestCase
     }
 
     /**
-     * @throws \Http\Client\Exception
+     * @throws Exception
      */
     public function testHttpGetWithQuery(): void
     {
@@ -140,7 +141,7 @@ class ClientTest extends MockeryTestCase
     }
 
     /**
-     * @throws \Http\Client\Exception
+     * @throws Exception
      */
     public function testHttpGetJsonFalse(): void
     {
@@ -152,7 +153,7 @@ class ClientTest extends MockeryTestCase
     }
 
     /**
-     * @throws \Http\Client\Exception
+     * @throws Exception
      */
     public function testHttpGetNoContent(): void
     {
@@ -164,7 +165,7 @@ class ClientTest extends MockeryTestCase
     }
 
     /**
-     * @throws \Http\Client\Exception
+     * @throws Exception
      */
     public function testHttpGetNotFound(): void
     {
@@ -187,7 +188,7 @@ class ClientTest extends MockeryTestCase
     }
 
     /**
-     * @throws \Http\Client\Exception
+     * @throws Exception
      */
     public function testHttpError(): void
     {

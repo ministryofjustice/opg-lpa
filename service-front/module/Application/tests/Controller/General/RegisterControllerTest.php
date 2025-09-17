@@ -6,17 +6,16 @@ use Application\Controller\General\RegisterController;
 use Application\Form\User\ConfirmEmail;
 use Application\Form\User\Registration;
 use Application\Model\Service\User\Details;
-use Application\Model\Service\User\Register;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use Mockery;
-use Mockery\MockInterface;
-use Laminas\Http\Headers;
 use Laminas\Http\Header\Referer;
+use Laminas\Http\Headers;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
 use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
+use Mockery;
+use Mockery\MockInterface;
 
 class RegisterControllerTest extends AbstractControllerTestCase
 {

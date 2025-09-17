@@ -2,18 +2,13 @@
 
 namespace ApplicationTest\Model\Service;
 
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Mail\Transport\MailTransport;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use Application\View\Helper\FormatLpaId;
-use Application\View\Helper\LocalViewRenderer;
 use Application\View\Helper\MoneyFormat;
 use Hamcrest\MatcherAssert;
 use Hamcrest\Matchers;
-use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\View\HelperPluginManager;
 use Mockery;
-use Mockery\MockInterface;
 
 class AbstractEmailServiceTest extends AbstractServiceTest
 {
