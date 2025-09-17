@@ -6,7 +6,6 @@ use Application\Controller\Authenticated\DeleteController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Response;
 use Laminas\Session\Container;
-use Laminas\Stdlib\ArrayObject;
 use Laminas\View\Model\ViewModel;
 
 class DeleteControllerTest extends AbstractControllerTestCase
