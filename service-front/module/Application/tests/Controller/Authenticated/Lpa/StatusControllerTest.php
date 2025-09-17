@@ -2,15 +2,12 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
-use Application\Controller\Authenticated\DashboardController;
 use Application\Controller\Authenticated\Lpa\StatusController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use ApplicationTest\Controller\Authenticated\TestableDashboardController;
 use DateTime;
-use MakeShared\DataModel\Lpa\Payment\Payment;
-use Laminas\View\Model\ViewModel;
 use Laminas\Http\Response;
 use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class StatusControllerTest extends AbstractControllerTestCase

@@ -5,9 +5,10 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\StatsController;
 use Application\Model\Service\Stats\Stats as StatsService;
 use ApplicationTest\Controller\AbstractControllerTestCase;
+use DateTime;
+use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\View\Model\ViewModel;
 
 class StatsControllerTest extends AbstractControllerTestCase
 {
@@ -65,10 +66,10 @@ class StatsControllerTest extends AbstractControllerTestCase
 
     private function getLpaStats()
     {
-        $start = new \DateTime('first day of this month');
+        $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
 
-        $end = new \DateTime('last day of this month');
+        $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
         $byMonth = array();
@@ -118,10 +119,10 @@ class StatsControllerTest extends AbstractControllerTestCase
 
     private function getWhoAreYouStats()
     {
-        $start = new \DateTime('first day of this month');
+        $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
 
-        $end = new \DateTime('last day of this month');
+        $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
         $byMonth = array();
@@ -200,10 +201,10 @@ class StatsControllerTest extends AbstractControllerTestCase
 
     private function getCorrespondenceStats()
     {
-        $start = new \DateTime('first day of this month');
+        $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
 
-        $end = new \DateTime('last day of this month');
+        $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
         $stats = array();
@@ -226,10 +227,10 @@ class StatsControllerTest extends AbstractControllerTestCase
 
     private function getPreferencesInstructionsStats()
     {
-        $start = new \DateTime('first day of this month');
+        $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
 
-        $end = new \DateTime('last day of this month');
+        $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
         $stats = array();
