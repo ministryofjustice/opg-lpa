@@ -241,7 +241,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      */
     public function generate($protect = false)
     {
-        $this->fillForm($this->data)
+        $this->fillForm($this->data, 'UTF-8', true, 'fdf')
              ->needAppearances()
              ->flatten()
              ->saveAs($this->pdfFile);

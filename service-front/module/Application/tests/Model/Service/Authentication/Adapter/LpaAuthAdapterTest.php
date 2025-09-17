@@ -10,7 +10,6 @@ use DateTime;
 use Exception;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
 use RuntimeException;
 use Laminas\Authentication\Result;
 
