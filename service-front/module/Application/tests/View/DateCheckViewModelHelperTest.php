@@ -2,16 +2,11 @@
 
 namespace ApplicationTest\View;
 
-use Application\Form\Lpa\DateCheckForm;
-use Application\View\Helper\FormElementErrorsV2;
-use Application\View\Helper\FormErrorTextExchange;
 use Application\View\DateCheckViewModelHelper;
 use ApplicationTest\View\ViewModelRenderer;
 use DOMDocument;
 use DOMXpath;
-use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\View\Model\ViewModel;
-use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;

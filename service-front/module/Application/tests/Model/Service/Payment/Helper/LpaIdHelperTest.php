@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\Payment\Helper;
 
+use Exception;
 use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 
@@ -47,7 +48,7 @@ class LpaIdHelperTest extends AbstractHttpControllerTestCase
         $exceptionThrown = false;
         try {
             $paddedId = LpaIdHelper::padLpaId('123456789011');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $exceptionThrown = true;
         }
 

@@ -9,7 +9,6 @@ use DateTime;
 use Exception;
 use Hamcrest\Matchers;
 use Mockery;
-use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 
