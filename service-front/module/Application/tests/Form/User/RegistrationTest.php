@@ -60,8 +60,8 @@ class RegistrationTest extends MockeryTestCase
             'email'                 => 'a@b.com',
             'email_confirm'         => 'a@b.com',
             'terms'                 => '1',
-            'password'              => '<>P@55word',
-            'password_confirm'      => '<>P@55word',
+            'password'              => '<>P@55wordword',
+            'password_confirm'      => '<>P@55wordword',
             'skip_confirm_password' => '0',
         ], $this->getCsrfData()));
 
@@ -92,7 +92,7 @@ class RegistrationTest extends MockeryTestCase
             'email'                 => 'a@b.com',
             'email_confirm'         => 'a@b.com',
             'terms'                 => '1',
-            'password'              => '<>P@55word',
+            'password'              => '<>P@55wordword',
             'password_confirm'      => '',
             'skip_confirm_password' => '1',
         ], $this->getCsrfData()));
