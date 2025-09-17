@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\View\Helper;
 
+use DateTime;
 use Application\View\Helper\Accordion;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -436,7 +437,7 @@ class AccordionTest extends MockeryTestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        $lpa->createdAt = new \DateTime();
+        $lpa->createdAt = new DateTime();
 
         $expectedTopRoutes = [
             'lpa/form-type',
@@ -466,7 +467,7 @@ class AccordionTest extends MockeryTestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        $lpa->createdAt = new \DateTime();
+        $lpa->createdAt = new DateTime();
 
         $expectedTopRoutes = [
             'lpa/form-type',
@@ -496,7 +497,7 @@ class AccordionTest extends MockeryTestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        $lpa->createdAt = new \DateTime();
+        $lpa->createdAt = new DateTime();
 
         $expectedTopRoutes = [
             'lpa/form-type',
@@ -526,7 +527,7 @@ class AccordionTest extends MockeryTestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        $lpa->createdAt = new \DateTime();
+        $lpa->createdAt = new DateTime();
 
         $expectedTopRoutes = [
             'lpa/form-type',
@@ -556,7 +557,7 @@ class AccordionTest extends MockeryTestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
         $lpa->id = 99999999;
-        $lpa->createdAt = new \DateTime();
+        $lpa->createdAt = new DateTime();
 
         $expectedTopRoutes = [
             'lpa/form-type',
