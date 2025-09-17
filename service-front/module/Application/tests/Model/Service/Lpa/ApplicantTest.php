@@ -6,7 +6,6 @@ use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Application;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
-use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;

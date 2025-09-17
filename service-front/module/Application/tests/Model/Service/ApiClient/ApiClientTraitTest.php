@@ -5,7 +5,6 @@ namespace ApplicationTest\Model\Service\ApiClient;
 use Application\Model\Service\ApiClient\Client;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
 
 class ApiClientTraitTest extends MockeryTestCase
 {

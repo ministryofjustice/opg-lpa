@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\Model;
 
-use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
 use Mockery;
 use Mockery\MockInterface;

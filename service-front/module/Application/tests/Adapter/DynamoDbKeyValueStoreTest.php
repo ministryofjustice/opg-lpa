@@ -8,7 +8,6 @@ use Exception;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use RuntimeException;
 
 class DynamoDbKeyValueStoreTest extends MockeryTestCase
 {

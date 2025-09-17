@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Controller;
 
+use Exception;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
@@ -14,7 +15,6 @@ use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details;
-use Application\View\StatusViewModelHelper;
 use ApplicationTest\Controller\Authenticated\Lpa\CertificateProviderControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\CorrespondentControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\DonorControllerTest;
@@ -450,7 +450,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
 
         $document = $seedLpa->getDocument()->toArray();
 
-        $result = $result + array_intersect_key($document, array_flip([
+        $result += array_intersect_key($document, array_flip([
                 'donor',
                 'correspondent',
                 'certificateProvider',
@@ -732,7 +732,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      *
      * @param bool $newDetails
      * @return User
-     * @throws \Exception
+     * @throws Exception
      */
     private function getUserDetails($newDetails = false)
     {

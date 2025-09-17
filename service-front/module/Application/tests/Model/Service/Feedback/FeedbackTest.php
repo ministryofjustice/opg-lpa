@@ -7,11 +7,9 @@ use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Mail\MailParameters;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
-use Exception;
 use Hamcrest\Matchers;
 use Hamcrest\MatcherAssert;
 use Mockery;
-use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 
 class FeedbackTest extends AbstractEmailServiceTest
