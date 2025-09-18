@@ -20,7 +20,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
+final class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|BlankMainFlowForm

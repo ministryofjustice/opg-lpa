@@ -6,7 +6,7 @@ use Application\Form\Lpa\PeopleToNotifyForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class PeopleToNotifyFormTest extends MockeryTestCase
+final class PeopleToNotifyFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

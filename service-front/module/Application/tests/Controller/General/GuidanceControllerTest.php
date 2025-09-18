@@ -9,7 +9,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Laminas\View\Model\ViewModel;
 
-class GuidanceControllerTest extends AbstractControllerTestCase
+final class GuidanceControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|Guidance

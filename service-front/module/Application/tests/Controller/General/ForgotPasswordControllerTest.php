@@ -12,7 +12,7 @@ use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class ForgotPasswordControllerTest extends AbstractControllerTestCase
+final class ForgotPasswordControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|ConfirmEmail

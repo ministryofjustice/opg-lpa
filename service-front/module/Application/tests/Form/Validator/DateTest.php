@@ -6,7 +6,7 @@ use Application\Form\Validator\Date;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class DateTest extends MockeryTestCase
+final class DateTest extends MockeryTestCase
 {
     #[DataProvider('dataProvider')]
     public function testIsValid($data, array $errors)

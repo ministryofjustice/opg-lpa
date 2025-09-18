@@ -11,7 +11,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class LifeSustainingControllerTest extends AbstractControllerTestCase
+final class LifeSustainingControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|LifeSustainingForm

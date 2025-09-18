@@ -8,7 +8,7 @@ use DateTime;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
-class DateServiceTest extends TestCase
+final class DateServiceTest extends TestCase
 {
     /**
      * @var $dateService DateService
