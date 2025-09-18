@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Mail\Transport;
 
 use Application\Model\Service\Mail\Transport\NotifyMailTransport;
@@ -16,7 +18,6 @@ final class MailTransportFactoryTest extends MockeryTestCase
     /**
      * @throws ContainerException
      */
-
     public function testMailTransportFactoryNotify(): void
     {
         /** @var ContainerInterface|MockInterface $container */

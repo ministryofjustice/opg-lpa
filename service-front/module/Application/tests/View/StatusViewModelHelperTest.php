@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View;
 
 use Application\View\StatusViewModelHelper;
@@ -24,20 +26,14 @@ use MakeShared\DataModel\Lpa\Document\Document;
  */
 final class StatusViewModelHelperTest extends MockeryTestCase
 {
-    /** @var DateTime */
-    private $trackFromDate;
-
-    /** @var int */
-    private $expectedWorkingDaysBeforeReceipt = 15;
-
-    /** @var Document */
-    private $document;
+    private DateTime $trackFromDate;
+    private int $expectedWorkingDaysBeforeReceipt = 15;
+    private Document $document;
 
     /** @var array */
     private const PROGRESS_BAR_STEPS = ['waiting', 'received', 'checking', 'processed'];
 
-    /** @var ViewModelRenderer */
-    private $renderer;
+    private ViewModelRenderer $renderer;
 
     public function setUp(): void
     {
@@ -58,7 +54,7 @@ final class StatusViewModelHelperTest extends MockeryTestCase
         $this->renderer->loadTemplate('application/authenticated/lpa/status/index.twig');
     }
 
-    private $testCases = [
+    private array $testCases = [
         // LPA which has not been received yet displays as "Waiting"
         [
             'lpaId' => '33718377316',
@@ -355,7 +351,7 @@ final class StatusViewModelHelperTest extends MockeryTestCase
         ],
     ];
 
-    private function buildAndTestViewModel($index, $testCase)
+    private function buildAndTestViewModel(string|int $index, array $testCase): void
     {
         $lpaId = $testCase['lpaId'];
         $lpaMetadata = $testCase['lpaMetadata'];

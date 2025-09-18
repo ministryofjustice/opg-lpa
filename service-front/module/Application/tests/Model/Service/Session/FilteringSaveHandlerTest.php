@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Session;
 
 use Application\Model\Service\Redis\RedisClient;
@@ -35,7 +37,7 @@ final class FilteringSaveHandlerTest extends MockeryTestCase
             'bar'
         )->andReturn(true);
 
-        $filter = function () {
+        $filter = function (): false {
             return false;
         };
         $saveHandler = new FilteringSaveHandler($redisMock, [$filter]);
@@ -100,7 +102,7 @@ final class FilteringSaveHandlerTest extends MockeryTestCase
         $redisMock->shouldNotReceive('setEx');
 
         // filter which always returns FALSE - i.e. write should be ignored
-        $filter = function () {
+        $filter = function (): false {
             return false;
         };
         $this->saveHandler->addFilter($filter);
@@ -138,7 +140,7 @@ final class FilteringSaveHandlerTest extends MockeryTestCase
         $this->assertSame($expected, $actual);
     }
 
-    public function testClose()
+    public function testClose(): void
     {
         $redisMock = $this->makeSaveHandlerWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('close')
@@ -146,7 +148,7 @@ final class FilteringSaveHandlerTest extends MockeryTestCase
         $this->assertSame(true, $this->saveHandler->close());
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $redisMock = $this->makeSaveHandlerWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('destroy')
@@ -155,9 +157,9 @@ final class FilteringSaveHandlerTest extends MockeryTestCase
         $this->assertSame(true, $this->saveHandler->destroy('boo'));
     }
 
-    public function testGc()
+    public function testGc(): void
     {
-        $redisMock = $this->makeSaveHandlerWithMock('tcp://barhost:6737');
+        $this->makeSaveHandlerWithMock('tcp://barhost:6737');
         $this->assertSame(1, $this->saveHandler->gc(1));
     }
 }

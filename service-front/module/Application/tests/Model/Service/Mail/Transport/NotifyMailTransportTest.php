@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
@@ -84,7 +86,7 @@ final class NotifyMailTransportTest extends MockeryTestCase
     {
         // No exception means the email was sent OK
         $this->notifyClient->shouldReceive('sendEmail')
-            ->withArgs(function ($email, $templateId, $data) {
+            ->withArgs(function ($email, $templateId, $data): bool {
                 return $email === 'foo@madeupaddress.bar' &&
                     $templateId === '3fb12879-7665-4ffe-a76f-ed90cde7a35d' &&
                     $data == [
