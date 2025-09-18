@@ -15,7 +15,7 @@ apt-get update && apt-get install nodejs-legacy npm ruby-sass
 npm install -g grunt grunt-cli grunt-contrib-sass --save-dev
 
 cd /app
-npm install
+npm ci --ignore-scripts
 
 ```
 
@@ -65,4 +65,3 @@ The coverage reports are available in *build/coverage/index.html*.
 ## License
 
 The Lasting Power of Attorney Data Models are released under the MIT license, a copy of which can be found in [LICENSE](LICENSE).
-
