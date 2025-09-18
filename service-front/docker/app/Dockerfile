@@ -1,3 +1,5 @@
+FROM composer:2.8.11@sha256:6133e78c003c0625fb763aa131622f537cd696ed14d98b5caa108db9be02ae9b AS composer
+
 FROM php:8.2-fpm-alpine3.21@sha256:681c369da9d85525ff8ce081456fa79988e5a0e39fc286a1e59e179cbcb2711c
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
@@ -23,8 +25,8 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 # Install composer dependencies
 COPY --chown=root:root service-front/composer.json /app/composer.json
 COPY --chown=root:root service-front/composer.lock /app/composer.lock
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.8.11 \
-    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app
+COPY --from=composer /usr/bin/composer /usr/bin/
+RUN composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app
 
 # Core files for the application
 COPY --chown=root:root service-front/assets /app/assets
