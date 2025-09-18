@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\User;
 
 use Application\Form\User\ConfirmEmail as ConfirmEmailForm;
@@ -18,7 +20,7 @@ final class ConfirmEmailTest extends MockeryTestCase
         $this->setUpForm(new ConfirmEmailForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\User\ConfirmEmail', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
@@ -26,13 +28,13 @@ final class ConfirmEmailTest extends MockeryTestCase
         $this->assertEquals('confirm-email', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email'));
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email_confirm'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'email'         => 'a@b.com',
@@ -44,7 +46,7 @@ final class ConfirmEmailTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'email'         => '',
