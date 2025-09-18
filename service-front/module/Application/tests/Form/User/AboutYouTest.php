@@ -6,7 +6,7 @@ use Application\Form\User\AboutYou as AboutYouForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class AboutYouTest extends MockeryTestCase
+final class AboutYouTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

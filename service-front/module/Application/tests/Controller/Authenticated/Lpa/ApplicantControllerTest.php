@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\ApplicantController;
@@ -13,12 +15,9 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class ApplicantControllerTest extends AbstractControllerTestCase
+final class ApplicantControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|ApplicantForm
-     */
-    private $form;
+    private MockInterface|ApplicantForm $form;
 
     public function setUp(): void
     {
@@ -29,7 +28,7 @@ class ApplicantControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\ApplicantForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
@@ -46,7 +45,7 @@ class ApplicantControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionGetMultiplePrimaryAttorneysJointly()
+    public function testIndexActionGetMultiplePrimaryAttorneysJointly(): void
     {
         /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
@@ -67,7 +66,7 @@ class ApplicantControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionGetMultiplePrimaryAttorneysJointlyAndSeverally()
+    public function testIndexActionGetMultiplePrimaryAttorneysJointlyAndSeverally(): void
     {
         /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
@@ -90,7 +89,7 @@ class ApplicantControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
@@ -105,7 +104,7 @@ class ApplicantControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostDonorRegisteringValueNotChanged()
+    public function testIndexActionPostDonorRegisteringValueNotChanged(): void
     {
         /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
@@ -130,7 +129,7 @@ class ApplicantControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionPostDonorRegisteringValueChangedException()
+    public function testIndexActionPostDonorRegisteringValueChangedException(): void
     {
         /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
@@ -150,7 +149,7 @@ class ApplicantControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostAttorneyRegisteringJointlyChangedSuccessful()
+    public function testIndexActionPostAttorneyRegisteringJointlyChangedSuccessful(): void
     {
         /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
@@ -180,7 +179,7 @@ class ApplicantControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionPostAttorneyRegisteringJointlyAndSeverallyChangedSuccessful()
+    public function testIndexActionPostAttorneyRegisteringJointlyAndSeverallyChangedSuccessful(): void
     {
         /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);

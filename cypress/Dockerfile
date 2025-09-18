@@ -9,7 +9,7 @@ RUN pip3 install boto3
 
 COPY package.json .
 
-RUN npm install .
+RUN npm ci --ignore-scripts .
 
 ENV CYPRESS_VIDEO=false
 ENV CYPRESS_RUN_A11Y_TESTS=true

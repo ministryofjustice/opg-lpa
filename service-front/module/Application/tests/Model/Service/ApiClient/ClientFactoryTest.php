@@ -12,17 +12,17 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 
-class ClientFactoryTest extends MockeryTestCase
+final class ClientFactoryTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|ContainerInterface
      */
-    protected $container;
+    private $container;
 
     /**
      * @var ClientFactory
      */
-    protected $factory;
+    private $factory;
 
     public function setUp(): void
     {

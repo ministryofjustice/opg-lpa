@@ -14,7 +14,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\ServiceManager\AbstractPluginManager;
 
-class ControllerAbstractFactoryTest extends MockeryTestCase
+final class ControllerAbstractFactoryTest extends MockeryTestCase
 {
     /**
      * @var ControllerAbstractFactory

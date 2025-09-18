@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Service\Guidance;
 use Application\Model\Service\Guidance\Guidance;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 
-class GuidanceTest extends AbstractServiceTest
+final class GuidanceTest extends AbstractServiceTest
 {
     /**
      * @var $cwd string

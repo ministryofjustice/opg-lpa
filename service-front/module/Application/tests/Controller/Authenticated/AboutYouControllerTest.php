@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\AboutYouController;
@@ -13,13 +15,10 @@ use MakeShared\DataModel\User\User;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class AboutYouControllerTest extends AbstractControllerTestCase
+final class AboutYouControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|AboutYou
-     */
-    private $form;
-    private $postData = [];
+    private MockInterface|AboutYou $form;
+    private array $postData = [];
 
     public function setUp(): void
     {
@@ -30,7 +29,7 @@ class AboutYouControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\User\AboutYou'])->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
@@ -56,7 +55,7 @@ class AboutYouControllerTest extends AbstractControllerTestCase
         ];
 
         $this->form->shouldReceive('bind')
-            ->with(Mockery::on(function ($userData) use ($expectedUserData) {
+            ->with(Mockery::on(function ($userData) use ($expectedUserData): true {
                 MatcherAssert::assertThat($expectedUserData, Matchers::equalTo($userData));
                 return true;
             }))
@@ -70,7 +69,7 @@ class AboutYouControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
@@ -93,7 +92,7 @@ class AboutYouControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostValid()
+    public function testIndexActionPostValid(): void
     {
         /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
@@ -120,7 +119,7 @@ class AboutYouControllerTest extends AbstractControllerTestCase
         $this->assertInstanceOf(Response::class, $result);
     }
 
-    public function testNewActionGet()
+    public function testNewActionGet(): void
     {
         /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
@@ -147,7 +146,7 @@ class AboutYouControllerTest extends AbstractControllerTestCase
         ];
 
         $this->form->shouldReceive('bind')
-            ->with(Mockery::on(function ($userData) use ($expectedUserData) {
+            ->with(Mockery::on(function ($userData) use ($expectedUserData): true {
                 MatcherAssert::assertThat($expectedUserData, Matchers::equalTo($userData));
                 return true;
             }))
@@ -161,7 +160,7 @@ class AboutYouControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testNewActionPostValid()
+    public function testNewActionPostValid(): void
     {
         /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
@@ -190,11 +189,8 @@ class AboutYouControllerTest extends AbstractControllerTestCase
 
     /**
      * The data expected to set in the form will be different to the form data
-     *
-     * @param User $user
-     * @return array
      */
-    private function getExpectedDataToSet(User $user)
+    private function getExpectedDataToSet(User $user): array
     {
         //  Get the filtered user data in the same way a controller would
         $userDetails = $user->flatten();

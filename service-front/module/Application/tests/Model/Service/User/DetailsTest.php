@@ -20,7 +20,7 @@ use Hamcrest\Matchers;
 use Mockery;
 use Mockery\MockInterface;
 
-class DetailsTest extends AbstractEmailServiceTest
+final class DetailsTest extends AbstractEmailServiceTest
 {
     /**
      * @var $apiClient Client|MockInterface

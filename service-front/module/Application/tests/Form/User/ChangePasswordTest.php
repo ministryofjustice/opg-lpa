@@ -8,7 +8,7 @@ use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery as m;
 
-class ChangePasswordTest extends MockeryTestCase
+final class ChangePasswordTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -50,9 +50,9 @@ class ChangePasswordTest extends MockeryTestCase
     public function testValidateByModelOK()
     {
         $this->form->setData(array_merge([
-            'password_current'      => 'P@55word',
-            'password'              => 'P@55word',
-            'password_confirm'      => 'P@55word',
+            'password_current'      => 'P@55wordword',
+            'password'              => 'P@55wordword',
+            'password_confirm'      => 'P@55wordword',
             'skip_confirm_password' => '0',
         ], $this->getCsrfData()));
 
@@ -64,9 +64,9 @@ class ChangePasswordTest extends MockeryTestCase
     public function testValidateByModelOKWithHTMLTags()
     {
         $this->form->setData(array_merge([
-            'password_current'      => 'P@55word',
-            'password'              => '<>P@55word',
-            'password_confirm'      => '<>P@55word',
+            'password_current'      => 'P@55wordword',
+            'password'              => '<>P@55wordword',
+            'password_confirm'      => '<>P@55wordword',
             'skip_confirm_password' => '0',
         ], $this->getCsrfData()));
 

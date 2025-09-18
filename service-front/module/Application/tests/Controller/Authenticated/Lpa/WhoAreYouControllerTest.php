@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\WhoAreYouController;
@@ -12,23 +14,12 @@ use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\MockInterface;
 
-class WhoAreYouControllerTest extends AbstractControllerTestCase
+final class WhoAreYouControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|WhoAreYouForm
-     */
-    private $form;
-
-    private $who;
-    /**
-     * @var MockInterface|Select
-     */
-    private $whoOptions;
-    /**
-     * @var MockInterface|Select
-     */
-    private $professionalOptions;
-    private $postData = [
+    private MockInterface|WhoAreYouForm $form;
+    private array $who;
+    private MockInterface|Select $whoOptions;
+    private array $postData = [
         'who' => 'donor'
     ];
 
@@ -57,11 +48,9 @@ class WhoAreYouControllerTest extends AbstractControllerTestCase
 
         $this->whoOptions = Mockery::mock(Select::class);
         $this->whoOptions->shouldReceive('getOptions')->andReturn($this->who);
-
-        $this->professionalOptions = Mockery::mock(Select::class);
     }
 
-    public function testIndexActionGetWhoAreYouAnsweredTrue()
+    public function testIndexActionGetWhoAreYouAnsweredTrue(): void
     {
         $this->lpa->whoAreYouAnswered = true;
 
@@ -79,7 +68,7 @@ class WhoAreYouControllerTest extends AbstractControllerTestCase
         $this->assertEquals($nextUrl, $result->nextUrl);
     }
 
-    public function testIndexActionGetWhoAreYouAnsweredFalse()
+    public function testIndexActionGetWhoAreYouAnsweredFalse(): void
     {
         $this->lpa->whoAreYouAnswered = false;
 
@@ -101,7 +90,7 @@ class WhoAreYouControllerTest extends AbstractControllerTestCase
         $this->assertEquals(10, count($result->getVariable('whoOptions')));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         $this->lpa->whoAreYouAnswered = false;
 
@@ -123,7 +112,7 @@ class WhoAreYouControllerTest extends AbstractControllerTestCase
         $this->assertEquals(10, count($result->getVariable('whoOptions')));
     }
 
-    public function testIndexActionPostFailed()
+    public function testIndexActionPostFailed(): void
     {
         $this->lpa->whoAreYouAnswered = false;
 
@@ -142,7 +131,7 @@ class WhoAreYouControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostSuccess()
+    public function testIndexActionPostSuccess(): void
     {
         $this->lpa->whoAreYouAnswered = false;
 

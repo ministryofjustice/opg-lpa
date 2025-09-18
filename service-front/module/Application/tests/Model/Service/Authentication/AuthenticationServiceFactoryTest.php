@@ -9,7 +9,7 @@ use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class AuthenticationServiceFactoryTest extends MockeryTestCase
+final class AuthenticationServiceFactoryTest extends MockeryTestCase
 {
     public function testInvoke()
     {

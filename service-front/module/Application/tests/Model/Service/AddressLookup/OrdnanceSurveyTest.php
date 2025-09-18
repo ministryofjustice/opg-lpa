@@ -13,7 +13,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 
-class OrdnanceSurveyTest extends MockeryTestCase
+final class OrdnanceSurveyTest extends MockeryTestCase
 {
     /**
      * @var string

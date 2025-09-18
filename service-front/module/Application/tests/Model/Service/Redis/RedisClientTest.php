@@ -11,9 +11,10 @@ use Redis;
 use RedisException;
 use ReflectionProperty;
 
-class RedisClientTest extends MockeryTestCase
+final class RedisClientTest extends MockeryTestCase
 {
-    // returns the mock for setting expectations
+    private RedisClient $redisHandler;
+
     private function makeRedisClientWithMock(string $redisUrl): Redis
     {
         $redisMock = Mockery::Mock(Redis::class);
@@ -26,7 +27,7 @@ class RedisClientTest extends MockeryTestCase
     public function tearDown(): void
     {
         Mockery::close();
-        $this->redisHandler = null;
+        unset($this->redisHandler);
     }
 
     public function testConstructorErrorInvalidUrl(): void
