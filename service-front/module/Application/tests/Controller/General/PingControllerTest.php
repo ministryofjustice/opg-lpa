@@ -22,7 +22,7 @@ final class PingControllerTest extends MockeryTestCase
         'status' => Constants::STATUS_PASS,
     ];
 
-    protected function getController()
+    private function getController()
     {
         /** @var PingController $controller */
         $controller = new PingController();
