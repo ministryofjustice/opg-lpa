@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\ReuseDetailsForm;
@@ -18,7 +20,7 @@ final class ReuseDetailsFormTest extends MockeryTestCase
         $this->setUpForm(new ReuseDetailsForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\ReuseDetailsForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
@@ -27,13 +29,13 @@ final class ReuseDetailsFormTest extends MockeryTestCase
         $this->assertEquals('form-reuse-details', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('reuse-details'));
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('submit'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'reuse-details' => '1',
@@ -43,7 +45,7 @@ final class ReuseDetailsFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'reuse-details' => null,

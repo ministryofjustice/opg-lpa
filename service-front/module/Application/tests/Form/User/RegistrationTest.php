@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\User;
 
 use Application\Form\User\Registration as RegistrationForm;
@@ -18,7 +20,7 @@ final class RegistrationTest extends MockeryTestCase
         $this->setUpForm(new RegistrationForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\User\Registration', $this->form);
         $this->assertInstanceOf('Application\Form\User\SetPassword', $this->form);
@@ -27,7 +29,7 @@ final class RegistrationTest extends MockeryTestCase
         $this->assertEquals('registration', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email'));
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email_confirm'));
@@ -38,7 +40,7 @@ final class RegistrationTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Hidden', $this->form->get('skip_confirm_password'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'email'                 => 'a@b.com',
@@ -54,7 +56,7 @@ final class RegistrationTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelOKWithHTMLTags()
+    public function testValidateByModelOKWithHTMLTags(): void
     {
         $this->form->setData(array_merge([
             'email'                 => 'a@b.com',
@@ -70,7 +72,7 @@ final class RegistrationTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelOKWithTrailingAndLeadingSpaces()
+    public function testValidateByModelOKWithTrailingAndLeadingSpaces(): void
     {
         $this->form->setData(array_merge([
             'email'                 => 'a@b.com',
@@ -86,7 +88,7 @@ final class RegistrationTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelOKWithHTMLTagsAndSkippedConfirm()
+    public function testValidateByModelOKWithHTMLTagsAndSkippedConfirm(): void
     {
         $this->form->setData(array_merge([
             'email'                 => 'a@b.com',
@@ -102,7 +104,7 @@ final class RegistrationTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'email'                 => '',
