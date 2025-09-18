@@ -1,27 +1,26 @@
 // ====================================================================================
 // INITITALISE ALL MOJ MODULES
 $(moj.init);
-
-// ====================================================================================
-// INITITALISE ALL GOVUK MODULES
-
-// Where .block-label uses the data-target attribute
-// to toggle hidden content
-var showHideContent = new GOVUK.ShowHideContent();
-showHideContent.init();
-
 // ====================================================================================
 // SIMPLE UTILITIES
 
-// Remove the no-js class
-$('body').removeClass('no-js');
+(function () {
+  function markSupported() {
+    var b = document.body;
 
-var jsEnabled = function () {
-  document.body.className = document.body.className + ' js-enabled';
-};
+    if (!b) {
+      document.addEventListener('DOMContentLoaded', markSupported, {
+        once: true,
+      });
+      return;
+    }
 
-var inline = function () {
-  jsEnabled();
-};
+    b.classList.add('js-enabled');
 
-$(document).ready(inline);
+    if ('noModule' in HTMLScriptElement.prototype) {
+      b.classList.add('govuk-frontend-supported');
+    }
+  }
+
+  markSupported();
+})();

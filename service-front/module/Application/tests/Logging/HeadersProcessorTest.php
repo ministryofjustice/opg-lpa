@@ -8,7 +8,7 @@ use MakeShared\Logging\HeadersProcessor;
 use Monolog\Level;
 use Monolog\LogRecord;
 
-class HeadersProcessorTest extends MockeryTestCase
+final class HeadersProcessorTest extends MockeryTestCase
 {
     public function testHeadersProcessed()
     {

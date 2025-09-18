@@ -10,7 +10,7 @@ use Laminas\Router\RouteMatch;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
-class PersistentSessionDetailsTest extends TestCase {
+final class PersistentSessionDetailsTest extends TestCase {
 
     #[Test]
     public function testSuccessfullyCreateClass() {

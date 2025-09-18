@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\SessionKeepAliveController;
@@ -7,7 +9,7 @@ use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\View\Model\JsonModel;
 use Laminas\Http\Response;
 
-class SessionKeepAliveControllerTest extends AbstractControllerTestCase
+final class SessionKeepAliveControllerTest extends AbstractControllerTestCase
 {
     public function setUp() : void
     {

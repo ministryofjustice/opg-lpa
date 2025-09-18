@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Service\ApiClient\Response;
 use Application\Model\Service\ApiClient\Response\AuthResponse;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class AuthResponseTest extends MockeryTestCase
+final class AuthResponseTest extends MockeryTestCase
 {
     public function testBuildFromResponse(): void
     {

@@ -11,12 +11,12 @@ use Http\Client\HttpClient as HttpClientInterface;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\AddressLookup\OrdnanceSurveyFactory;
 
-class OrdnanceSurveyFactoryTest extends MockeryTestCase
+final class OrdnanceSurveyFactoryTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|ContainerInterface
      */
-    protected $container;
+    private $container;
 
     protected function setUp() : void
     {

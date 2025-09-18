@@ -11,8 +11,8 @@ class FeeReductionForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'reductionOptions' => [
-            'type'      => 'Radio',
-            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
+            'type'      => 'Laminas\Form\Element\Radio',
+            'attributes' => ['div-attributes' => ['class' => 'govuk-radios__item']],
             'required'  => true,
             'options'   => [
                 'value_options' => [
@@ -22,11 +22,11 @@ class FeeReductionForm extends AbstractMainFlowForm
                     'reducedFeeUniversalCredit' => [
                         'value' => 'reducedFeeUniversalCredit',
                     ],
-                    'reducedFeeLowIncome' =>[
+                    'reducedFeeLowIncome' => [
                         'value' => 'reducedFeeLowIncome',
                     ],
                     'notApply' => [
-                        'value' => 'notApply'
+                        'value' => 'notApply',
                     ],
                 ],
             ],

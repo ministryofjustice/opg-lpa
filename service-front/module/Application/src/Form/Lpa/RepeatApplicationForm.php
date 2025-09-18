@@ -17,7 +17,7 @@ class RepeatApplicationForm extends AbstractMainFlowForm
             'type'      => 'Laminas\Form\Element\Radio',
             'attributes' => [
                 'id' => 'isRepeatApplication',
-                'div-attributes' => ['class' => 'multiple-choice']
+                'div-attributes' => ['class' => 'govuk-radios__item']
             ],
             'required'  => true,
             'options'   => [

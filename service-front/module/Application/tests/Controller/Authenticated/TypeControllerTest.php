@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\TypeController;
@@ -13,13 +15,10 @@ use Mockery;
 use Mockery\MockInterface;
 use RuntimeException;
 
-class TypeControllerTest extends AbstractControllerTestCase
+final class TypeControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|TypeForm
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|TypeForm $form;
+    private array $postData = [
         'type' => 'property-and-financial'
     ];
 
@@ -32,7 +31,7 @@ class TypeControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\TypeForm'])->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
@@ -48,7 +47,7 @@ class TypeControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
@@ -64,7 +63,7 @@ class TypeControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
     }
 
-    public function testIndexActionPostCreationError()
+    public function testIndexActionPostCreationError(): void
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
@@ -82,7 +81,7 @@ class TypeControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionPostSetTypeException()
+    public function testIndexActionPostSetTypeException(): void
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
@@ -100,7 +99,7 @@ class TypeControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);

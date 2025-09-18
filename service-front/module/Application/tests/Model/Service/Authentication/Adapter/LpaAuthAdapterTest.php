@@ -13,7 +13,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use RuntimeException;
 use Laminas\Authentication\Result;
 
-class LpaAuthAdapterTest extends MockeryTestCase
+final class LpaAuthAdapterTest extends MockeryTestCase
 {
     /**
      * @var $client Client|MockInterface

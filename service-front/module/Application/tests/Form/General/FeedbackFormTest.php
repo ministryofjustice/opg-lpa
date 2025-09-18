@@ -6,7 +6,7 @@ use Application\Form\General\FeedbackForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class FeedbackFormTest extends MockeryTestCase
+final class FeedbackFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

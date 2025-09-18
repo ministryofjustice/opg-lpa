@@ -6,7 +6,7 @@ use Application\Form\Lpa\TrustCorporationForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class TrustCorporationFormTest extends MockeryTestCase
+final class TrustCorporationFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

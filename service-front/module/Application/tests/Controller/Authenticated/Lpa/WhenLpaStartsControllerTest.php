@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\WhenLpaStartsController;
@@ -12,13 +14,10 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class WhenLpaStartsControllerTest extends AbstractControllerTestCase
+final class WhenLpaStartsControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|WhenLpaStartsForm
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|WhenLpaStartsForm $form;
+    private array $postData = [
         'when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY
     ];
 
@@ -31,7 +30,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\WhenLpaStartsForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var WhenLpaStartsController $controller */
         $controller = $this->getController(WhenLpaStartsController::class);
@@ -48,7 +47,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var WhenLpaStartsController $controller */
         $controller = $this->getController(WhenLpaStartsController::class);
@@ -63,7 +62,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostFailed()
+    public function testIndexActionPostFailed(): void
     {
         /** @var WhenLpaStartsController $controller */
         $controller = $this->getController(WhenLpaStartsController::class);
@@ -72,7 +71,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
-            ->withArgs(function ($lpa, $primaryAttorneyDecisions) {
+            ->withArgs(function ($lpa, $primaryAttorneyDecisions): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorneyDecisions->when === $this->postData['when'];
             })->andReturn(false)->once();
@@ -83,7 +82,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostSuccess()
+    public function testIndexActionPostSuccess(): void
     {
         /** @var WhenLpaStartsController $controller */
         $controller = $this->getController(WhenLpaStartsController::class);
@@ -93,7 +92,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
-            ->withArgs(function ($lpa, $primaryAttorneyDecisions) {
+            ->withArgs(function ($lpa, $primaryAttorneyDecisions): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorneyDecisions->when === $this->postData['when'];
             })->andReturn(true)->once();

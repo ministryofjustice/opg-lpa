@@ -12,7 +12,7 @@ use Hamcrest\MatcherAssert;
 use Mockery;
 use Psr\Log\LoggerInterface;
 
-class FeedbackTest extends AbstractEmailServiceTest
+final class FeedbackTest extends AbstractEmailServiceTest
 {
     /**
      * @var $apiClient Client|MockInterface

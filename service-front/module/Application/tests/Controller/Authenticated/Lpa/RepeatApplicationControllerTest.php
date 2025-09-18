@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\RepeatApplicationController;
@@ -13,16 +15,13 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class RepeatApplicationControllerTest extends AbstractControllerTestCase
+final class RepeatApplicationControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|RepeatApplicationForm
-     */
-    private $form;
-    private $postDataNoRepeat = [
+    private MockInterface|RepeatApplicationForm $form;
+    private array $postDataNoRepeat = [
         'isRepeatApplication' => 'no-repeat'
     ];
-    private $postDataRepeat = [
+    private array $postDataRepeat = [
         'isRepeatApplication' => 'is-repeat',
         'repeatCaseNumber' => '12345'
     ];
@@ -36,7 +35,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\RepeatApplicationForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    public function testIndexActionGetNotRepeatApplication()
+    public function testIndexActionGetNotRepeatApplication(): void
     {
         unset($this->lpa->metadata[Lpa::REPEAT_APPLICATION_CONFIRMED]);
 
@@ -53,7 +52,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
@@ -72,7 +71,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostNoRepeatInvalid()
+    public function testIndexActionPostNoRepeatInvalid(): void
     {
         /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
@@ -88,7 +87,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostRepeatInvalid()
+    public function testIndexActionPostRepeatInvalid(): void
     {
         /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
@@ -103,7 +102,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostNoRepeatFailed()
+    public function testIndexActionPostNoRepeatFailed(): void
     {
         $this->lpa->repeatCaseNumber = 12345;
 
@@ -122,7 +121,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostRepeatFailed()
+    public function testIndexActionPostRepeatFailed(): void
     {
         /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
@@ -138,7 +137,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostRepeatSetPaymentFailed()
+    public function testIndexActionPostRepeatSetPaymentFailed(): void
     {
         /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
@@ -148,7 +147,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->lpaApplicationService->shouldReceive('setRepeatCaseNumber')
             ->withArgs([$this->lpa, $this->postDataRepeat['repeatCaseNumber']])->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpa, $payment) {
+            ->withArgs(function ($lpa, $payment): bool {
                 return $lpa->id === $this->lpa->id
                     && $payment->amount === 41;
             })->andReturn(false)->once();
@@ -159,7 +158,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostNoRepeatSuccess()
+    public function testIndexActionPostNoRepeatSuccess(): void
     {
         $this->lpa->repeatCaseNumber = 12345;
 
@@ -174,7 +173,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->lpaApplicationService->shouldReceive('deleteRepeatCaseNumber')
             ->withArgs([$this->lpa])->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpa, $payment) {
+            ->withArgs(function ($lpa, $payment): bool {
                 return $lpa->id === $this->lpa->id
                     && $payment->amount === 82;
             })->andReturn(true)->once();

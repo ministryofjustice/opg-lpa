@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DonorController;
@@ -17,13 +19,10 @@ use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class DonorControllerTest extends AbstractControllerTestCase
+final class DonorControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|DonorForm
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|DonorForm $form;
+    private array $postData = [
         'name' => [
             'title' => 'Miss',
             'first' => 'Unit',
@@ -45,7 +44,7 @@ class DonorControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\DonorForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    public function testIndexActionNoDonor()
+    public function testIndexActionNoDonor(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -63,7 +62,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/donor/add', $result->addUrl);
     }
 
-    public function testIndexActionDonor()
+    public function testIndexActionDonor(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -91,7 +90,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/when-lpa-starts', $result->nextUrl);
     }
 
-    public function testAddActionGetReuseDetails()
+    public function testAddActionGetReuseDetails(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -107,7 +106,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionGetDonorAlreadyProvided()
+    public function testAddActionGetDonorAlreadyProvided(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -125,7 +124,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionGetNoDonor()
+    public function testAddActionGetNoDonor(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -149,7 +148,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
 
-    public function testAddActionPostInvalid()
+    public function testAddActionPostInvalid(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -173,7 +172,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
 
-    public function testAddActionPostFailed()
+    public function testAddActionPostFailed(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -187,7 +186,7 @@ class DonorControllerTest extends AbstractControllerTestCase
             ->withArgs(['donor', $controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData);
         $this->lpaApplicationService->shouldReceive('setDonor')
-            ->withArgs(function ($lpa, $donor) {
+            ->withArgs(function ($lpa, $donor): bool {
                 return $lpa->id === $this->lpa->id
                     && $donor->name == new LongName($this->postData['name'])
                     && $donor->email == new EmailAddress($this->postData['email'])
@@ -200,7 +199,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $controller->addAction();
     }
 
-    public function testAddActionPostSuccess()
+    public function testAddActionPostSuccess(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -214,7 +213,7 @@ class DonorControllerTest extends AbstractControllerTestCase
             ->withArgs(['donor', $controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData);
         $this->lpaApplicationService->shouldReceive('setDonor')
-            ->withArgs(function ($lpa, $donor) {
+            ->withArgs(function ($lpa, $donor): bool {
                 return $lpa->id === $this->lpa->id
                     && $donor->name == new LongName($this->postData['name'])
                     && $donor->email == new EmailAddress($this->postData['email'])
@@ -228,7 +227,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('success'));
     }
 
-    public function testEditActionGet()
+    public function testEditActionGet(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -253,7 +252,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
 
-    public function testEditActionPostInvalid()
+    public function testEditActionPostInvalid(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -277,7 +276,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
 
-    public function testEditActionPostFailed()
+    public function testEditActionPostFailed(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -290,7 +289,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('setActorData')
             ->withArgs(['donor', $controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData);
-        $this->lpaApplicationService->shouldReceive('setDonor')->withArgs(function ($lpa, $donor) {
+        $this->lpaApplicationService->shouldReceive('setDonor')->withArgs(function ($lpa, $donor): bool {
             return $lpa->id === $this->lpa->id
                 && $donor->name == new LongName($this->postData['name'])
                 && $donor->email == new EmailAddress($this->postData['email'])
@@ -304,7 +303,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $controller->editAction();
     }
 
-    public function testEditActionPostSuccess()
+    public function testEditActionPostSuccess(): void
     {
         /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
@@ -321,7 +320,7 @@ class DonorControllerTest extends AbstractControllerTestCase
             ->withArgs(['donor', $controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData);
         $this->lpaApplicationService->shouldReceive('setDonor')
-            ->withArgs(function ($lpa, $donor) {
+            ->withArgs(function ($lpa, $donor): bool {
                 return $lpa->id === $this->lpa->id
                     && $donor->name == new LongName($this->postData['name'])
                     && $donor->email == new EmailAddress($this->postData['email'])
@@ -329,7 +328,7 @@ class DonorControllerTest extends AbstractControllerTestCase
                     && $donor->canSign === false;
             })->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpa, $correspondent) {
+            ->withArgs(function ($lpa, $correspondent): bool {
                 return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postData['name']); //Only changes name
             })->andReturn(true)->once();
@@ -341,7 +340,7 @@ class DonorControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('success'));
     }
 
-    private function setDonorBinding()
+    private function setDonorBinding(): void
     {
         $donor = $this->lpa->document->donor->flatten();
         $dob = $this->lpa->document->donor->dob->date;

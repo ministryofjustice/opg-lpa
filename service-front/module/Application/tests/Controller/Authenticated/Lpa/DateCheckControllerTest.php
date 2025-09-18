@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DateCheckController;
@@ -8,15 +10,12 @@ use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use Mockery\MockInterface;
 
-class DateCheckControllerTest extends AbstractControllerTestCase
+final class DateCheckControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|DateCheckForm
-     */
-    private $form;
-
-    private $postData = [
+    private MockInterface|DateCheckForm $form;
+    private array $postData = [
         'sign-date-donor'                 => ['day' => 1, 'month' => 2, 'year' => 2016],
         'sign-date-donor-life-sustaining' => ['day' => 1, 'month' => 2, 'year' => 2016],
         'sign-date-attorney-0'  => ['day' => 1, 'month' => 2, 'year' => 2016],
@@ -35,7 +34,7 @@ class DateCheckControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\DateCheckForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
@@ -55,7 +54,7 @@ class DateCheckControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/complete', $result->getVariable('returnRoute'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
@@ -75,7 +74,7 @@ class DateCheckControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/complete', $result->getVariable('returnRoute'));
     }
 
-    public function testIndexActionPostInvalidDates()
+    public function testIndexActionPostInvalidDates(): void
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
@@ -102,7 +101,7 @@ class DateCheckControllerTest extends AbstractControllerTestCase
         $this->assertEquals(null, $result->dateError);
     }
 
-    public function testIndexActionPostValidDates()
+    public function testIndexActionPostValidDates(): void
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
@@ -129,7 +128,7 @@ class DateCheckControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testValidActionNoReturnRoute()
+    public function testValidActionNoReturnRoute(): void
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
@@ -144,7 +143,7 @@ class DateCheckControllerTest extends AbstractControllerTestCase
         $this->assertEquals('user/dashboard', $result->returnRoute);
     }
 
-    public function testValidActionReturnRoute()
+    public function testValidActionReturnRoute(): void
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);

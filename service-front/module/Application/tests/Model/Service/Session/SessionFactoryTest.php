@@ -13,7 +13,7 @@ use Laminas\Http\Request;
 use Laminas\Http\Uri;
 use Laminas\Session\Exception\RuntimeException;
 
-class SessionFactoryTest extends MockeryTestCase
+final class SessionFactoryTest extends MockeryTestCase
 {
     /**
      * Because SessionFactory messes with ini_set, we have to run this test

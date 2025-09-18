@@ -9,13 +9,13 @@ use Hamcrest\MatcherAssert;
 use Hamcrest\Matchers;
 use Laminas\View\HelperPluginManager;
 use Mockery;
+use Mockery\MockInterface;
 
 class AbstractEmailServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var $mailTransport MailTransportInterface
-     */
-    protected $mailTransport;
+    protected array $config;
+    protected HelperPluginManager|MockInterface $helperPluginManager;
+    protected MailTransportInterface $mailTransport;
 
     public function setUp(): void
     {

@@ -7,9 +7,10 @@ use Application\Model\Service\Session\FilteringSaveHandler;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class FilteringSaveHandlerTest extends MockeryTestCase
+final class FilteringSaveHandlerTest extends MockeryTestCase
 {
-    // returns the mock for setting expectations
+    private FilteringSaveHandler $saveHandler;
+
     private function makeSaveHandlerWithMock(): RedisClient
     {
         $redisMock = Mockery::Mock(RedisClient::class);
@@ -20,7 +21,7 @@ class FilteringSaveHandlerTest extends MockeryTestCase
     public function tearDown(): void
     {
         Mockery::close();
-        $this->saveHandler = null;
+        unset($this->saveHandler);
     }
 
     public function testConstructorWithFiltersCausesIgnore(): void
