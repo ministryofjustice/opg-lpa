@@ -13,7 +13,7 @@ use MakeShared\DataModel\User\User;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class AboutYouControllerTest extends AbstractControllerTestCase
+final class AboutYouControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|AboutYou

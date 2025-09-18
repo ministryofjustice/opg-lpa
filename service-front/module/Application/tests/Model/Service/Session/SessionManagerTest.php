@@ -6,7 +6,7 @@ use Application\Model\Service\Session\SessionManager;
 use Laminas\Session\Container;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class SessionManagerTest extends MockeryTestCase
+final class SessionManagerTest extends MockeryTestCase
 {
     /**
      * (@runInSeparateProcess annotation is required so that session handling is

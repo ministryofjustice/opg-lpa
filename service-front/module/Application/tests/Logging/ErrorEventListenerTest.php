@@ -9,7 +9,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Psr\Log\LoggerInterface;
 
-class ErrorEventListenerTest extends MockeryTestCase
+final class ErrorEventListenerTest extends MockeryTestCase
 {
     public function testMvcEventErrorHanding()
     {

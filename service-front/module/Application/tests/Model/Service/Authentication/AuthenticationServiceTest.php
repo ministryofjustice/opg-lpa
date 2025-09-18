@@ -11,7 +11,7 @@ use Laminas\Authentication\Adapter\AdapterInterface;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Storage\StorageInterface;
 
-class AuthenticationServiceTest extends MockeryTestCase
+final class AuthenticationServiceTest extends MockeryTestCase
 {
     /**
      * @var $storageInterface StorageInterface|MockInterface

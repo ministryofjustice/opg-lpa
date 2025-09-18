@@ -17,7 +17,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
-class ClientTest extends MockeryTestCase
+final class ClientTest extends MockeryTestCase
 {
     /**
      * @var HttpClient|MockInterface

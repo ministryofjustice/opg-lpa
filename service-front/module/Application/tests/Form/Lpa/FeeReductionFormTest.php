@@ -6,7 +6,7 @@ use Application\Form\Lpa\FeeReductionForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class FeeReductionFormTest extends MockeryTestCase
+final class FeeReductionFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

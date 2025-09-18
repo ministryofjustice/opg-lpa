@@ -9,7 +9,7 @@ use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class RouteNameFactoryTest extends MockeryTestCase
+final class RouteNameFactoryTest extends MockeryTestCase
 {
     public function testInvoke():void
     {
