@@ -16,7 +16,7 @@ final class OrdnanceSurveyFactoryTest extends MockeryTestCase
     /**
      * @var MockInterface|ContainerInterface
      */
-    protected $container;
+    private $container;
 
     protected function setUp() : void
     {

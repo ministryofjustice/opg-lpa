@@ -17,12 +17,12 @@ final class ClientFactoryTest extends MockeryTestCase
     /**
      * @var MockInterface|ContainerInterface
      */
-    protected $container;
+    private $container;
 
     /**
      * @var ClientFactory
      */
-    protected $factory;
+    private $factory;
 
     public function setUp(): void
     {
