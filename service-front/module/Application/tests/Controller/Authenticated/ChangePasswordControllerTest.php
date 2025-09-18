@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\ChangePasswordController;
@@ -12,11 +14,8 @@ use Laminas\View\Model\ViewModel;
 
 final class ChangePasswordControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|ChangePassword
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|ChangePassword $form;
+    private array $postData = [
         'password_current' => 'Abcd1234',
         'password'         => 'Abcd1234',
     ];
@@ -33,7 +32,7 @@ final class ChangePasswordControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('setAuthenticationService')->withArgs([$this->authenticationService])->once();
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var ChangePasswordController $controller */
         $controller = $this->getController(ChangePasswordController::class);
@@ -53,7 +52,7 @@ final class ChangePasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Change your password', $result->getVariable('pageTitle'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var ChangePasswordController $controller */
         $controller = $this->getController(ChangePasswordController::class);
@@ -73,7 +72,7 @@ final class ChangePasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Change your password', $result->getVariable('pageTitle'));
     }
 
-    public function testIndexActionPostValid()
+    public function testIndexActionPostValid(): void
     {
         /** @var ChangePasswordController $controller */
         $controller = $this->getController(ChangePasswordController::class);
@@ -100,7 +99,7 @@ final class ChangePasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionUpdateFails()
+    public function testIndexActionUpdateFails(): void
     {
         /** @var ChangePasswordController $controller */
         $controller = $this->getController(ChangePasswordController::class);

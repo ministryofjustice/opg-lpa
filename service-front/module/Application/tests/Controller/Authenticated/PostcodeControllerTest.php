@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\PostcodeController;
@@ -41,7 +43,7 @@ final class PostcodeControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexActionPostcodeNotFound()
+    public function testIndexActionPostcodeNotFound(): void
     {
         $controller = $this->getController(PostcodeController::class);
 
@@ -57,7 +59,7 @@ final class PostcodeControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Page not found', $result->getVariable('content'));
     }
 
-    public function testIndexActionSinglePostcode()
+    public function testIndexActionSinglePostcode(): void
     {
         $controller = $this->getController(PostcodeController::class);
 
