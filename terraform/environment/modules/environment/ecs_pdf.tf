@@ -11,7 +11,7 @@ resource "aws_ecs_service" "pdf" {
   wait_for_steady_state = true
   network_configuration {
     security_groups  = [aws_security_group.pdf_ecs_service.id]
-    subnets          = data.aws_subnets.private.ids
+    subnets          = var.account_name == "development" ? data.aws_subnet.application[*].id : data.aws_subnets.private.ids
     assign_public_ip = false
   }
 
@@ -42,7 +42,7 @@ resource "aws_ecs_service" "pdf" {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "pdf_ecs_service" {
   name_prefix = "${var.environment_name}-pdf-ecs-service"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = var.account_name == "development" ? data.aws_vpc.main.id : data.aws_vpc.default.id
   tags        = local.pdf_component_tag
 }
 

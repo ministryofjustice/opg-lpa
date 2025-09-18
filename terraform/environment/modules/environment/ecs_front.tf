@@ -13,8 +13,8 @@ resource "aws_ecs_service" "front" {
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
   network_configuration {
-    security_groups  = [aws_security_group.front_ecs_service.id]
-    subnets          = data.aws_subnets.private.ids
+    security_groups  = var.account_name == "development" ? [aws_security_group.new_front_ecs_service.id] : [aws_security_group.front_ecs_service.id]
+    subnets          = var.account_name == "development" ? data.aws_subnet.application[*].id : data.aws_subnets.private.ids
     assign_public_ip = false
   }
 
@@ -74,6 +74,44 @@ resource "aws_security_group_rule" "front_ecs_service_egress" {
   #tfsec:ignore:aws-ec2-no-public-egress-sgr - anything out
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_ecs_service.id
+  description       = "Front ECS to Anywhere - All traffic"
+}
+
+# new network
+resource "aws_security_group" "new_front_ecs_service" {
+  name_prefix = "${var.environment_name}-new-front-ecs-service"
+  vpc_id      = data.aws_vpc.main.id
+  tags        = local.front_component_tag
+}
+
+resource "aws_security_group_rule" "new_front_ecs_service_ingress" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.new_front_ecs_service.id
+  source_security_group_id = aws_security_group.new_front_loadbalancer.id
+  description              = "Front ELB to Front ECS - HTTP"
+}
+
+resource "aws_security_group_rule" "new_front_ecs_service_elasticache_region_ingress" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = data.aws_security_group.new_front_cache_region.id
+  source_security_group_id = aws_security_group.new_front_ecs_service.id
+  description              = "Front ECS to regional Elasticache - Redis"
+}
+
+resource "aws_security_group_rule" "new_front_ecs_service_egress" {
+  type      = "egress"
+  from_port = 0
+  to_port   = 0
+  protocol  = "-1"
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr - anything out
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.new_front_ecs_service.id
   description       = "Front ECS to Anywhere - All traffic"
 }
 
