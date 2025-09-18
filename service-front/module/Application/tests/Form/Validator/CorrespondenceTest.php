@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Validator\Correspondence;
@@ -9,7 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 final class CorrespondenceTest extends MockeryTestCase
 {
     #[DataProvider('dataProvider')]
-    public function testIsValid($data, array $errors)
+    public function testIsValid(array $data, array $errors): void
     {
         $validator = new Correspondence();
 
@@ -19,7 +21,7 @@ final class CorrespondenceTest extends MockeryTestCase
         $this->assertEquals($errors, $validator->getMessages());
     }
 
-    static public function dataProvider()
+    static public function dataProvider(): array
     {
         return [
             [

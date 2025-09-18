@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\ApplicantForm;
@@ -30,7 +32,7 @@ final class ApplicantFormTest extends MockeryTestCase
         $this->setUpForm($form);
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\ApplicantForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
@@ -40,12 +42,12 @@ final class ApplicantFormTest extends MockeryTestCase
         $this->assertEquals('form-applicant', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('whoIsRegistering'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'whoIsRegistering' => 'donor',
@@ -55,7 +57,7 @@ final class ApplicantFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(
             array_merge(
