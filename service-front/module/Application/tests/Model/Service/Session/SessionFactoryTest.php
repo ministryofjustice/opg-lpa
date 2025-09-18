@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Session;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
@@ -66,6 +68,6 @@ final class SessionFactoryTest extends MockeryTestCase
         $this->expectExceptionMessage('Session configuration setting not found');
 
         $factory = new SessionFactory();
-        $result = $factory($container, null, null);
+        $factory($container, null, null);
     }
 }

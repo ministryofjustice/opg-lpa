@@ -1,11 +1,6 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: seemamenon
- * Date: 17/02/2019
- * Time: 16:09
- */
+declare(strict_types=1);
 
 namespace ApplicationTest\View\Helper;
 
@@ -26,40 +21,12 @@ use Application\View\Helper\LocalViewRenderer;
 
 final class AccountInfoTest extends MockeryTestCase
 {
-    /**
-     * @var AuthenticationService|MockInterface
-     */
-    private $authenticationService;
-
-    /**
-     * @var Container|MockInterface
-     */
-    private $userDetailSession;
-
-    /**
-     * @var ViewModel|MockInterface
-     */
-    private $viewModel;
-
-    /**
-     * @var RouteMatch|MockInterface
-     */
-    private $routeMatch;
-
-    /**
-     * @var LpaApplicationService|MockInterface
-     */
-    private $lpaApplicationService;
-
-    /**
-     * @var TwigEnvironment|MockInterface
-     */
-    private $viewRenderer;
-
-    /**
-     * @var AuthenticationService|MockInterface
-     */
-    private $identity;
+    private AuthenticationService|MockInterface $authenticationService;
+    private Container $userDetailSession;
+    private ViewModel $viewModel;
+    private RouteMatch|MockInterface $routeMatch;
+    private LpaApplicationService|MockInterface $lpaApplicationService;
+    private TwigEnvironment|MockInterface $viewRenderer;
 
     public function setUp(): void
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\ApiClient;
 
 use Interop\Container\ContainerInterface;

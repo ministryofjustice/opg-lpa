@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model;
 
 use Application\Model\Service\Date\IDateService;
@@ -14,10 +16,7 @@ use DateTime;
  */
 final class DateCheckTest extends AbstractHttpControllerTestCase
 {
-    /**
-     * @var MockInterface|IDateService
-     */
-    private $dateService;
+    private MockInterface|IDateService $dateService;
 
     /**
      * Prepares the environment before running a test.
@@ -28,7 +27,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         $this->dateService = Mockery::mock(IDateService::class);
     }
 
-    public function testAllSignedInCorrectOrder()
+    public function testAllSignedInCorrectOrder(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-14'),
@@ -43,7 +42,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertTrue(DateCheck::checkDates($dates));
     }
 
-    public function testAllSignedInCorrectOrderIncludingApplicant()
+    public function testAllSignedInCorrectOrderIncludingApplicant(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-14'),
@@ -61,7 +60,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertTrue(DateCheck::checkDates($dates));
     }
 
-    public function testDonorSignsOnOrBeforeLifeSustaining()
+    public function testDonorSignsOnOrBeforeLifeSustaining(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-14'),
@@ -96,7 +95,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         ], $errors);
     }
 
-    public function testDonorSignsAfterCertificateProvider()
+    public function testDonorSignsAfterCertificateProvider(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-14'),
@@ -130,7 +129,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         ], $errors);
     }
 
-    public function testCertificateProviderSignsAfterOneOfTheAttorneys()
+    public function testCertificateProviderSignsAfterOneOfTheAttorneys(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-14'),
@@ -164,7 +163,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         ], $errors);
     }
 
-    public function testDonorSignsAfterEveryoneElse()
+    public function testDonorSignsAfterEveryoneElse(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-02-14'),
@@ -233,7 +232,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         ], $errors);
     }
 
-    public function testApplicantSignsBeforeLastAttorney()
+    public function testApplicantSignsBeforeLastAttorney(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-14'),
@@ -263,7 +262,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         ], $errors);
     }
 
-    public function testApplicantsSignBeforeLastAttorney()
+    public function testApplicantsSignBeforeLastAttorney(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-14'),
@@ -298,7 +297,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         ], $errors);
     }
 
-    public function testDatesCannotBeInFuture()
+    public function testDatesCannotBeInFuture(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-15'),
@@ -334,7 +333,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         ], $errors);
     }
 
-    public function testDonorCannotSign()
+    public function testDonorCannotSign(): void
     {
         $dates = [
             'sign-date-donor' => new DateTime('2015-01-20'),
@@ -367,7 +366,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         );
     }
 
-    public function testDonorCannotSignAndIsApplicantFutureDate()
+    public function testDonorCannotSignAndIsApplicantFutureDate(): void
     {
         // signature date of person signing on behalf of donor, who is the applicant,
         // is in the future
@@ -398,7 +397,7 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
         );
     }
 
-    public function testDonorCannotSignAndIsApplicantBeforeAttorneysDate()
+    public function testDonorCannotSignAndIsApplicantBeforeAttorneysDate(): void
     {
         // signature date of person signing on behalf of donor, who is the applicant,
         // is before attorney signing date

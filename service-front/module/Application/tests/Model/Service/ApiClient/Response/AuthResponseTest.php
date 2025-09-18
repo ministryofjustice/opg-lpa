@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\ApiClient\Response;
 
 use Application\Model\Service\ApiClient\Response\AuthResponse;

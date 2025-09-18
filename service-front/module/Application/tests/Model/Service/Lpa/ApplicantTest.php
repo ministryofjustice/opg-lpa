@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Lpa;
 
 use Application\Model\Service\Lpa\Applicant;
@@ -11,18 +13,12 @@ use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mockery\MockInterface;
 
 final class ApplicantTest extends AbstractServiceTest
 {
-    /**
-     * @var $applicationService Application|MockInterface
-     */
-    private $applicationService;
-
-    /**
-     * @var $service Applicant
-     */
-    private $service;
+    private Application|MockInterface $applicationService;
+    private Applicant $service;
 
     public function setUp(): void
     {
