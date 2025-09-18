@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\Model;
 
-use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
 use Mockery;
 use Mockery\MockInterface;
@@ -13,7 +12,7 @@ use DateTime;
 /**
  * FormFlowChecker test case.
  */
-class DateCheckTest extends AbstractHttpControllerTestCase
+final class DateCheckTest extends AbstractHttpControllerTestCase
 {
     /**
      * @var MockInterface|IDateService

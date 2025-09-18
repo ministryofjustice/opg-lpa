@@ -8,7 +8,7 @@ use Laminas\Form\Element\Radio;
 use Laminas\Form\Form;
 use Laminas\View\Renderer\ConsoleRenderer;
 
-class FormRadioTest extends TestCase
+final class FormRadioTest extends TestCase
 {
     protected $form;
 

@@ -4,16 +4,15 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\PingController;
 use Application\Model\Service\System\Status;
-use ApplicationTest\Controller\AbstractControllerTestCase;
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Constants;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 
-class PingControllerTest extends MockeryTestCase
+final class PingControllerTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|Status

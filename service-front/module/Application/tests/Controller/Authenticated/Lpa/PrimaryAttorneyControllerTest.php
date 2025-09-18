@@ -22,7 +22,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
+final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|AttorneyForm

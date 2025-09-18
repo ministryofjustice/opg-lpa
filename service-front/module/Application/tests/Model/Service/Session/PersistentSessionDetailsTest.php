@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Session;
 
+use PHPUnit\Framework\Attributes\Test;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Laminas\Router\RouteMatch;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
-class PersistentSessionDetailsTest extends TestCase {
+final class PersistentSessionDetailsTest extends TestCase {
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testSuccessfullyCreateClass() {
 
         $routeMatch = Mockery::mock(RouteMatch::class);
@@ -24,9 +23,7 @@ class PersistentSessionDetailsTest extends TestCase {
         $this->assertInstanceOf(PersistentSessionDetails::class, $persistentSession);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testExpectedValuesFromCurrentAndPreviousRoutes() {
         $currentRoute = 'lpa/applicant';
 
@@ -39,9 +36,7 @@ class PersistentSessionDetailsTest extends TestCase {
         $this->assertEquals($currentRoute, $persistentSession->getPreviousRoute());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testExpectedValuesFromCurrentAndPreviousRoutesPersists() {
         $currentRoute = 'lpa/primary-attorney/add';
         $previousRoute = 'lpa/applicant';
@@ -58,9 +53,7 @@ class PersistentSessionDetailsTest extends TestCase {
         $this->assertEquals($previousRoute, $persistentSession->getPreviousRoute());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testEmptyValuesFromCurrentRoute() {
         $persistentSession = new PersistentSessionDetails(null);
 

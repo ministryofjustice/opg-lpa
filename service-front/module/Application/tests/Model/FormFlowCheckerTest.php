@@ -3,7 +3,6 @@
 namespace ApplicationTest\Model;
 
 use Application\Model\FormFlowChecker;
-use ApplicationTest\Bootstrap;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
@@ -19,7 +18,6 @@ use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use DateTime;
-use Exception;
 use RuntimeException;
 
 /**
@@ -28,7 +26,7 @@ use RuntimeException;
  * This set of unit tests with execute sequentially starting with a basic LPA datamodel - which will
  * check the correct position in the flow to return the user to
  */
-class FormFlowCheckerTest extends MockeryTestCase
+final class FormFlowCheckerTest extends MockeryTestCase
 {
     /**
      * LPA document to test

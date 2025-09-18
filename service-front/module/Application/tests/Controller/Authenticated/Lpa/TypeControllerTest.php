@@ -12,7 +12,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class TypeControllerTest extends AbstractControllerTestCase
+final class TypeControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|TypeForm

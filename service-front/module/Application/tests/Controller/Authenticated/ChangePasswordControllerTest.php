@@ -10,7 +10,7 @@ use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class ChangePasswordControllerTest extends AbstractControllerTestCase
+final class ChangePasswordControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|ChangePassword

@@ -3,15 +3,12 @@
 namespace ApplicationTest\View;
 
 use Application\View\StatusViewModelHelper;
-use Application\View\Helper\FormatLpaId;
 use ApplicationTest\View\ViewModelRenderer;
 use DateTime;
 use DOMDocument;
 use DOMXpath;
-use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Document\Document;
 
@@ -25,7 +22,7 @@ use MakeShared\DataModel\Lpa\Document\Document;
  * at the top of the status detail page). They also don't check that the expected
  * receipt date is shown in the correct format in the HTML.
  */
-class StatusViewModelHelperTest extends MockeryTestCase
+final class StatusViewModelHelperTest extends MockeryTestCase
 {
     /** @var DateTime */
     private $trackFromDate;

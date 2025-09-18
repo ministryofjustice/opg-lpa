@@ -6,7 +6,7 @@ use Application\Form\Lpa\InstructionsAndPreferencesForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class InstructionsAndPreferencesFormTest extends MockeryTestCase
+final class InstructionsAndPreferencesFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
