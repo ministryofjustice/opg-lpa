@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\User;
 
 use Application\Form\User\ChangeEmailAddress;
@@ -29,7 +31,7 @@ final class ChangeEmailAddressTest extends MockeryTestCase
         $this->setUpForm($form);
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\User\ChangeEmailAddress', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
@@ -37,14 +39,14 @@ final class ChangeEmailAddressTest extends MockeryTestCase
         $this->assertEquals('change-email-address', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password_current'));
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email'));
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email_confirm'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'password_current'  => 'thecurrentpassword',
@@ -57,7 +59,7 @@ final class ChangeEmailAddressTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'password_current'  => '',
