@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\ChangeEmailAddressController;
@@ -11,11 +13,8 @@ use Laminas\View\Model\ViewModel;
 
 final class ChangeEmailAddressControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|ChangeEmailAddress
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|ChangeEmailAddress $form;
+    private array $postData = [
         'email' => 'newunit@test.com'
     ];
 
@@ -31,7 +30,7 @@ final class ChangeEmailAddressControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('setAuthenticationService')->withArgs([$this->authenticationService])->once();
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var ChangeEmailAddressController $controller */
         $controller = $this->getController(ChangeEmailAddressController::class);
@@ -51,7 +50,7 @@ final class ChangeEmailAddressControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->user->email, $result->getVariable('currentEmailAddress'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var ChangeEmailAddressController $controller */
         $controller = $this->getController(ChangeEmailAddressController::class);
@@ -71,7 +70,7 @@ final class ChangeEmailAddressControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->user->email, $result->getVariable('currentEmailAddress'));
     }
 
-    public function testIndexActionPostValid()
+    public function testIndexActionPostValid(): void
     {
         /** @var ChangeEmailAddressController $controller */
         $controller = $this->getController(ChangeEmailAddressController::class);
@@ -91,7 +90,7 @@ final class ChangeEmailAddressControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->postData['email'], $result->getVariable('email'));
     }
 
-    public function testIndexActionPostUpdateFailed()
+    public function testIndexActionPostUpdateFailed(): void
     {
         /** @var ChangeEmailAddressController $controller */
         $controller = $this->getController(ChangeEmailAddressController::class);
