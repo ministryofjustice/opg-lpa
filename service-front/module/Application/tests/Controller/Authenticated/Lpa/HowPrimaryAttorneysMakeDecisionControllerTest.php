@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
@@ -15,11 +17,8 @@ use Laminas\View\Model\ViewModel;
 
 final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|HowAttorneysMakeDecisionForm
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|HowAttorneysMakeDecisionForm $form;
+    private array $postData = [
         'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
         'howDetails' => 'Details'
     ];
@@ -50,7 +49,7 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
         return $controller;
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
 
@@ -66,7 +65,7 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
 
@@ -81,7 +80,7 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostNotChanged()
+    public function testIndexActionPostNotChanged(): void
     {
         $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
 
@@ -99,7 +98,7 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionPostFailed()
+    public function testIndexActionPostFailed(): void
     {
         $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
 
@@ -112,7 +111,7 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
         $this->form->shouldReceive('setValidationGroup')->withArgs([['how']])->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
-            ->withArgs(function ($lpa, $primaryAttorneyDecisions) {
+            ->withArgs(function ($lpa, $primaryAttorneyDecisions): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY
                     && $primaryAttorneyDecisions->howDetails == null;
@@ -126,7 +125,7 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionPostSuccess()
+    public function testIndexActionPostSuccess(): void
     {
         $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
 
@@ -138,7 +137,7 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->twice();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
-            ->withArgs(function ($lpa, $primaryAttorneyDecisions) {
+            ->withArgs(function ($lpa, $primaryAttorneyDecisions): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_DEPENDS
                     && $primaryAttorneyDecisions->howDetails == 'Details';

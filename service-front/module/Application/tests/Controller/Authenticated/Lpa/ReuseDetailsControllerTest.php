@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
@@ -14,11 +16,8 @@ use Laminas\View\Model\ViewModel;
 
 final class ReuseDetailsControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|ReuseDetailsForm
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|ReuseDetailsForm $form;
+    private array $postData = [
         'reuse-details' => 1
     ];
 
@@ -39,7 +38,7 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexActionRequiredDataMissing()
+    public function testIndexActionRequiredDataMissing(): void
     {
         $controller = $this->getController(TestableReuseDetailsController::class);
 
@@ -52,7 +51,7 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionGetMissingParameters()
+    public function testIndexActionGetMissingParameters(): void
     {
         $controller = $this->getController(TestableReuseDetailsController::class);
 
@@ -71,7 +70,7 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         $controller = $this->getController(TestableReuseDetailsController::class);
 
@@ -107,7 +106,7 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
         $this->assertEquals($queryParameters['actor-name'], $result->actorName);
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         $controller = $this->getController(TestableReuseDetailsController::class);
 
@@ -144,7 +143,7 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
         $this->assertEquals($queryParameters['actor-name'], $result->actorName);
     }
 
-    public function testIndexActionPostInvalidRouteMatch()
+    public function testIndexActionPostInvalidRouteMatch(): void
     {
         $controller = $this->getController(TestableReuseDetailsController::class);
 
@@ -186,7 +185,7 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
         $this->assertEquals($queryParameters['actor-name'], $result->actorName);
     }
 
-    public function testIndexActionPostPrimaryAttorneyAdd()
+    public function testIndexActionPostPrimaryAttorneyAdd(): void
     {
         $controller = $this->getController(TestableReuseDetailsController::class);
 
