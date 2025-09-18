@@ -17,7 +17,7 @@ use MakeShared\Constants;
 use Mockery;
 use Mockery\MockInterface;
 
-class StatusTest extends AbstractServiceTest
+final class StatusTest extends AbstractServiceTest
 {
     /**
      * @var Client|MockInterface

@@ -13,7 +13,7 @@ use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\NotifyMailTransport;
 use Psr\Log\LoggerInterface;
 
-class NotifyMailTransportTest extends MockeryTestCase
+final class NotifyMailTransportTest extends MockeryTestCase
 {
     public function setUp(): void
     {

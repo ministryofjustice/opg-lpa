@@ -10,7 +10,7 @@ use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\MockInterface;
 
-class StatsControllerTest extends AbstractControllerTestCase
+final class StatsControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|StatsService

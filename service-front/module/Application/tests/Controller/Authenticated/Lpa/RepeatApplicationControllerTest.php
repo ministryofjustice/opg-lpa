@@ -12,7 +12,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class RepeatApplicationControllerTest extends AbstractControllerTestCase
+final class RepeatApplicationControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|RepeatApplicationForm

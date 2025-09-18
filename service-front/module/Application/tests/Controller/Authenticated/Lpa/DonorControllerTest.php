@@ -17,7 +17,7 @@ use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class DonorControllerTest extends AbstractControllerTestCase
+final class DonorControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|DonorForm

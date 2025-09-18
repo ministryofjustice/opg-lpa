@@ -9,7 +9,7 @@ use Mockery\MockInterface;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Utils;
 
-class ApiExceptionTest extends MockeryTestCase
+final class ApiExceptionTest extends MockeryTestCase
 {
     /**
      * @var ResponseInterface|MockInterface

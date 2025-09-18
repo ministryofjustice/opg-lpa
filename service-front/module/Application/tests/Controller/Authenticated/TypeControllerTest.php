@@ -13,7 +13,7 @@ use Mockery;
 use Mockery\MockInterface;
 use RuntimeException;
 
-class TypeControllerTest extends AbstractControllerTestCase
+final class TypeControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|TypeForm

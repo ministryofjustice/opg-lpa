@@ -6,7 +6,7 @@ use Application\Form\User\Registration as RegistrationForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class RegistrationTest extends MockeryTestCase
+final class RegistrationTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

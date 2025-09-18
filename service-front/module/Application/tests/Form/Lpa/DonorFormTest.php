@@ -6,7 +6,7 @@ use Application\Form\Lpa\DonorForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class DonorFormTest extends MockeryTestCase
+final class DonorFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

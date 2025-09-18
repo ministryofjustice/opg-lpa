@@ -6,7 +6,7 @@ use Application\Form\User\SetPassword as SetPasswordForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class SetPasswordTest extends MockeryTestCase
+final class SetPasswordTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

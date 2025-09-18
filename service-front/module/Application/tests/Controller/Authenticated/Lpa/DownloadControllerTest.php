@@ -11,7 +11,7 @@ use Laminas\View\Model\ViewModel;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use Mockery;
 
-class DownloadControllerTest extends AbstractControllerTestCase
+final class DownloadControllerTest extends AbstractControllerTestCase
 {
     public function testIndexActionNoPdfAvailable()
     {
