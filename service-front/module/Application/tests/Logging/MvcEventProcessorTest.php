@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Logging;
 
 use DateTimeImmutable;
@@ -13,7 +15,7 @@ use Monolog\LogRecord;
 
 final class MvcEventProcessorTest extends MockeryTestCase
 {
-    public function testEventToArray()
+    public function testEventToArray(): void
     {
         $fakeHeadersArray = [
             'Cookie' => 'foo',

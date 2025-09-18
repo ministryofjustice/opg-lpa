@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View\Helper;
 
 use Application\Model\Service\Authentication\AuthenticationService;
@@ -17,7 +19,6 @@ use Twig\Environment as TwigEnvironment;
 
 final class AccountInfoFactoryTest extends MockeryTestCase
 {
-
     public function testInvoke():void
     {
         $routeMatch = Mockery::mock(RouteMatch::class);
