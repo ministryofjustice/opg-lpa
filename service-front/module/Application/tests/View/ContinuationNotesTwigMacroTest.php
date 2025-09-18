@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View;
 
 use ApplicationTest\View\ViewModelRenderer;
@@ -14,8 +16,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
  */
 final class ContinuationNotesTwigMacroTest extends MockeryTestCase
 {
-    /** @var ViewModelRenderer */
-    private $renderer;
+    private ViewModelRenderer $renderer;
 
     public function setUp(): void
     {
@@ -37,7 +38,7 @@ final class ContinuationNotesTwigMacroTest extends MockeryTestCase
 
     // check that the macro correctly renders the notes about
     // continuation sheet 2s
-    private function assertCS2NotesRendered($html)
+    private function assertCS2NotesRendered(string $html): void
     {
         $dom = new DOMDocument();
 
@@ -73,7 +74,7 @@ final class ContinuationNotesTwigMacroTest extends MockeryTestCase
         );
     }
 
-    public function testContinuationNotesCS2WhenHasAttorneyDecisions()
+    public function testContinuationNotesCS2WhenHasAttorneyDecisions(): void
     {
         $viewModel = new ViewModel([
             'continuationNoteKeys' => ['HAS_ATTORNEY_DECISIONS'],
@@ -84,7 +85,7 @@ final class ContinuationNotesTwigMacroTest extends MockeryTestCase
         $this->assertCS2NotesRendered($html);
     }
 
-    public function testContinuationNotesCS2WhenLongPreferencesOrInstructions()
+    public function testContinuationNotesCS2WhenLongPreferencesOrInstructions(): void
     {
         $viewModel = new ViewModel([
             'continuationNoteKeys' => ['LONG_INSTRUCTIONS_OR_PREFERENCES'],

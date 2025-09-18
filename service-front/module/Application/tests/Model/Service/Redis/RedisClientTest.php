@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Redis;
 
 use Application\Model\Service\Redis\RedisClient;
@@ -33,7 +35,7 @@ final class RedisClientTest extends MockeryTestCase
     public function testConstructorErrorInvalidUrl(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $client = new RedisClient('foohost', 100);
+        new RedisClient('foohost', 100);
     }
 
     public function testConstructorInstantiatesRedis(): void
@@ -143,7 +145,7 @@ final class RedisClientTest extends MockeryTestCase
         $this->assertSame($expected, $actual);
     }
 
-    public function testClose()
+    public function testClose(): void
     {
         $redisMock = $this->makeRedisClientWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('close')
@@ -151,7 +153,7 @@ final class RedisClientTest extends MockeryTestCase
         $this->assertSame(true, $this->redisHandler->close());
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $redisMock = $this->makeRedisClientWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('del')

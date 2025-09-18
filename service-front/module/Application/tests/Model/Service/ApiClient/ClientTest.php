@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\ApiClient;
 
 use Http\Client\Exception;
@@ -19,25 +21,10 @@ use Psr\Log\LoggerInterface;
 
 final class ClientTest extends MockeryTestCase
 {
-    /**
-     * @var HttpClient|MockInterface
-     */
-    private $httpClient;
-
-    /**
-     * @var ResponseInterface|MockInterface
-     */
-    private $response;
-
-    /**
-     * @var LoggerInterface|MockInterface
-     */
-    private $logger;
-
-    /**
-     * @var Client
-     */
-    private $client;
+    private HttpClient|MockInterface $httpClient;
+    private ResponseInterface|MockInterface $response;
+    private LoggerInterface|MockInterface $logger;
+    private Client $client;
 
     public function setUp(): void
     {
@@ -56,7 +43,7 @@ final class ClientTest extends MockeryTestCase
         $requestData = null,
         $token = 'test token',
         $additionalHeaders = [],
-    ) {
+    ): void {
         $this->response = Mockery::mock(ResponseInterface::class);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
 

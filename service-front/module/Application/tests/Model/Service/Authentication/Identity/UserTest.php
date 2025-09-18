@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Authentication\Identity;
 
 use Application\Model\Service\Authentication\Identity\User;
@@ -11,10 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 final class UserTest extends TestCase
 {
-    /**
-     * @var $user User
-     */
-    public $user;
+    private User $user;
 
     /**
      * @throws Exception
@@ -43,17 +42,17 @@ final class UserTest extends TestCase
         $this->assertEquals(['user'], $user->roles());
     }
 
-    public function testId()
+    public function testId(): void
     {
         $this->assertEquals('User ID', $this->user->id());
     }
 
-    public function testToken()
+    public function testToken(): void
     {
         $this->assertEquals('test token', $this->user->token());
     }
 
-    public function testSetToken()
+    public function testSetToken(): void
     {
         $this->user->setToken('new token');
 
@@ -63,7 +62,7 @@ final class UserTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testLastLogin()
+    public function testLastLogin(): void
     {
         $this->assertEquals(new DateTime('2019-01-02'), $this->user->lastLogin());
     }
@@ -71,7 +70,7 @@ final class UserTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testTokenExpiresAt()
+    public function testTokenExpiresAt(): void
     {
         ServiceTestHelper::assertTimeNear(
             (new DateTime('now'))->add(new DateInterval('PT1S')),
@@ -79,12 +78,12 @@ final class UserTest extends TestCase
         );
     }
 
-    public function testRoles()
+    public function testRoles(): void
     {
         $this->assertEquals(['user', 'admin'], $this->user->roles());
     }
 
-    public function testIsAdmin()
+    public function testIsAdmin(): void
     {
         $this->assertEquals(true, $this->user->isAdmin());
     }
@@ -92,7 +91,7 @@ final class UserTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testIsAdminFalse()
+    public function testIsAdminFalse(): void
     {
         $user = new User('User ID', 'test token', 1, new DateTime('2010-01-01'));
 
@@ -102,7 +101,7 @@ final class UserTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testTokenExpiresIn()
+    public function testTokenExpiresIn(): void
     {
         $this->user->tokenExpiresIn(30);
 
@@ -114,7 +113,7 @@ final class UserTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testToArray()
+    public function testToArray(): void
     {
         $result = $this->user->toArray();
 

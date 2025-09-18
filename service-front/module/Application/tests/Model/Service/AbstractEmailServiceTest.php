@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service;
 
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
@@ -56,7 +58,7 @@ class AbstractEmailServiceTest extends AbstractServiceTest
         $this->assertEquals($this->mailTransport, $service->getMailTransport());
     }
 
-    public function testPluginProxyMethods()
+    public function testPluginProxyMethods(): void
     {
         // Test methods which proxy onto HelperPluginManager view helpers
         $service = new TestableAbstractEmailService(
@@ -70,7 +72,7 @@ class AbstractEmailServiceTest extends AbstractServiceTest
         // it should be passed to stub out the real view helper
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function ($name, $params, $options) {
+            ->andReturn(function ($name, $params, $options): string {
                 MatcherAssert::assertThat($name, Matchers::equalTo('/a/route'));
                 MatcherAssert::assertThat($params, Matchers::equalTo(['token' => 'foo']));
                 MatcherAssert::assertThat($options, Matchers::equalTo(['force_canonical' => true]));

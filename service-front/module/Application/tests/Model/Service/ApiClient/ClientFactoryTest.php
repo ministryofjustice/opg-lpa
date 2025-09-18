@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\ApiClient;
 
 use Application\Model\Service\ApiClient\Client;
@@ -14,15 +16,8 @@ use Mockery\MockInterface;
 
 final class ClientFactoryTest extends MockeryTestCase
 {
-    /**
-     * @var MockInterface|ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ClientFactory
-     */
-    private $factory;
+    private MockInterface|ContainerInterface $container;
+    private ClientFactory $factory;
 
     public function setUp(): void
     {
