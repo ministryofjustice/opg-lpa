@@ -1,9 +1,13 @@
+// GOVUK Frontend
+@use "../../node_modules/govuk-frontend/dist/govuk/index" with (
+  $govuk-assets-path: "/assets/v2/"
+);
+
 // Settings
 @import 'settings/variables';
 
 // GOVUK Elements
 @import "govuk-elements";
-@import "../../node_modules/govuk-frontend/govuk/all";
 
 // Extensions
 @import 'extensions/elements/elements-typography';
@@ -55,3 +59,13 @@
 
 // New OPG styles that can be reused.
 @import 'opg-lpa-dashboard';
+
+html {
+  font-size: 100% !important;
+}
+
+.govuk-service-navigation {
+  width: 100vw !important;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
