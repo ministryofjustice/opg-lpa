@@ -8,7 +8,7 @@ use ApplicationTest\Model\Service\AbstractServiceTest;
 use ApplicationTest\Model\Service\ServiceTestHelper;
 use Mockery;
 
-class StatsTest extends AbstractServiceTest
+final class StatsTest extends AbstractServiceTest
 {
     /**
      * @var $apiClient Client|MockInterface

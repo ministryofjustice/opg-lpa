@@ -5,7 +5,7 @@ namespace ApplicationTest\View\Helper;
 use Application\View\Helper\MoneyFormat;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class MoneyFormatTest extends MockeryTestCase
+final class MoneyFormatTest extends MockeryTestCase
 {
     public function testInvokeWithWholePoundsAsInt(): void
     {

@@ -10,7 +10,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
 use Laminas\View\Model\ViewModel;
 
-class AbstractLpaControllerTest extends AbstractControllerTestCase
+final class AbstractLpaControllerTest extends AbstractControllerTestCase
 {
     public function testOnDispatchNotAuthenticated()
     {

@@ -6,7 +6,7 @@ use Application\Form\Lpa\BlankMainFlowForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class BlankMainFlowFormTest extends MockeryTestCase
+final class BlankMainFlowFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

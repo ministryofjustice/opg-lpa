@@ -11,7 +11,7 @@ use MakeShared\Logging\MvcEventProcessor;
 use Monolog\Level;
 use Monolog\LogRecord;
 
-class MvcEventProcessorTest extends MockeryTestCase
+final class MvcEventProcessorTest extends MockeryTestCase
 {
     public function testEventToArray()
     {

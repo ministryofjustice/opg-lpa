@@ -17,7 +17,7 @@ use Laminas\View\Model\ViewModel;
 use Alphagov\Pay\Client as GovPayClient;
 use Alphagov\Pay\Response\Payment as GovPayPayment;
 
-class CheckoutControllerTest extends AbstractControllerTestCase
+final class CheckoutControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|Communication

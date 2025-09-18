@@ -7,7 +7,7 @@ use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 use Application\Model\Service\Lpa\ContinuationSheets;
 
-class ContinuationSheetsTest extends AbstractHttpControllerTestCase
+final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
 {
     /**
      * @var $service Applicant

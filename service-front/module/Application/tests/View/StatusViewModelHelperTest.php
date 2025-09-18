@@ -22,7 +22,7 @@ use MakeShared\DataModel\Lpa\Document\Document;
  * at the top of the status detail page). They also don't check that the expected
  * receipt date is shown in the correct format in the HTML.
  */
-class StatusViewModelHelperTest extends MockeryTestCase
+final class StatusViewModelHelperTest extends MockeryTestCase
 {
     /** @var DateTime */
     private $trackFromDate;

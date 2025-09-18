@@ -6,7 +6,7 @@ use Application\Form\Lpa\WhenReplacementAttorneyStepInForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class WhenReplacementAttorneyStepInFormTest extends MockeryTestCase
+final class WhenReplacementAttorneyStepInFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

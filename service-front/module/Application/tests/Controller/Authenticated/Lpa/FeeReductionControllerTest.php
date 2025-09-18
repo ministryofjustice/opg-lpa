@@ -12,7 +12,7 @@ use Laminas\Form\Element\Select;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class FeeReductionControllerTest extends AbstractControllerTestCase
+final class FeeReductionControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|FeeReductionForm

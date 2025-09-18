@@ -12,7 +12,7 @@ use Mockery;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class ReplacementAttorneyCleanupTest extends AbstractServiceTest
+final class ReplacementAttorneyCleanupTest extends AbstractServiceTest
 {
     /**
      * @var $lpaApplicationService LpaApplicationService|MockInterface

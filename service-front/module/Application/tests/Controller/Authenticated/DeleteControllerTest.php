@@ -8,7 +8,7 @@ use Laminas\Http\Response;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 
-class DeleteControllerTest extends AbstractControllerTestCase
+final class DeleteControllerTest extends AbstractControllerTestCase
 {
     public function testIndexAction()
     {
