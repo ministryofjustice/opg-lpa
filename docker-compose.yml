@@ -186,6 +186,8 @@ services:
       AWS_ACCESS_KEY_ID: "devkey"
       AWS_SECRET_ACCESS_KEY: "secretdevkey"
 
+      LPA_FEE_EFFECTIVE_DATE: "2025-11-17T00:00:00"
+
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
@@ -299,6 +301,8 @@ services:
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
       AWS_SECRET_ACCESS_KEY: "secretdevkey"
+
+      LPA_FEE_EFFECTIVE_DATE: "2025-09-17T14:30:00"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
