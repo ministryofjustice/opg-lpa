@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\IndexController;
@@ -9,7 +11,7 @@ use Laminas\Http\Response;
 
 final class IndexControllerTest extends AbstractControllerTestCase
 {
-    public function testIndexActionNoSeed()
+    public function testIndexActionNoSeed(): void
     {
         /** @var IndexController $controller */
         $controller = $this->getController(IndexController::class);
@@ -28,7 +30,7 @@ final class IndexControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionSeed()
+    public function testIndexActionSeed(): void
     {
         /** @var IndexController $controller */
         $controller = $this->getController(IndexController::class);

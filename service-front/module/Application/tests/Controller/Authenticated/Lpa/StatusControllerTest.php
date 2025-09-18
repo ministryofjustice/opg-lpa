@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\StatusController;
@@ -12,7 +14,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 final class StatusControllerTest extends AbstractControllerTestCase
 {
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         /** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
@@ -28,7 +30,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
     }
 
-    public function testIndexActionWithReturnUnpaid()
+    public function testIndexActionWithReturnUnpaid(): void
     {
         /** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
@@ -44,7 +46,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
     }
 
-    public function testIndexActionInvalidStatus()
+    public function testIndexActionInvalidStatus(): void
     {
         /** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
@@ -66,7 +68,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
      * @param $status
      */
     #[DataProvider('statusProvider')]
-    public function testIndexActionWithValidStatuses($status)
+    public function testIndexActionWithValidStatuses(string $status): void
     {
         /** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
@@ -79,7 +81,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
 
         $this->assertInstanceOf(ViewModel::class, $result);
     }
-    static public function statusProvider()
+    static public function statusProvider(): array
     {
         return[
             ['waiting'],
@@ -90,7 +92,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
         ];
     }
 
-    public function testIndexActionResultContainsCanGenerateLPA120()
+    public function testIndexActionResultContainsCanGenerateLPA120(): void
     {
         /** @var StatusController $controller */
         $controller = $this->getController(TestableStatusController::class);
@@ -114,7 +116,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
      *
      */
     #[DataProvider('processedDateFixtureProvider')]
-    public function testIndexActionProcessedDateGeneration($dates, $shouldReceiveByDate)
+    public function testIndexActionProcessedDateGeneration(array $dates, ?string $shouldReceiveByDate): void
     {
         if (!is_null($shouldReceiveByDate)) {
             $shouldReceiveByDate = new DateTime($shouldReceiveByDate);
@@ -165,7 +167,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
         $this->assertEquals($result->shouldReceiveByDate, $shouldReceiveByDate);
     }
 
-    static public function processedDateFixtureProvider()
+    static public function processedDateFixtureProvider(): array
     {
         /*
          * Each element in the returned array represents the data for a test

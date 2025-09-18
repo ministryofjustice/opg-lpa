@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\InstructionsController;
@@ -13,11 +15,8 @@ use Laminas\View\Model\ViewModel;
 
 final class InstructionsControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|InstructionsAndPreferencesForm
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|InstructionsAndPreferencesForm $form;
+    private array $postData = [
         'instruction' => 'Unit test instructions',
         'preference' => 'Unit test preferences'
     ];
@@ -32,7 +31,7 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
             ->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
@@ -48,7 +47,7 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
@@ -63,7 +62,7 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostInstructionsFailed()
+    public function testIndexActionPostInstructionsFailed(): void
     {
         /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
@@ -79,7 +78,7 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostPreferencesFailed()
+    public function testIndexActionPostPreferencesFailed(): void
     {
         /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
@@ -97,7 +96,7 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostSuccess()
+    public function testIndexActionPostSuccess(): void
     {
         /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
@@ -119,7 +118,7 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionPostMetadata()
+    public function testIndexActionPostMetadata(): void
     {
         /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
