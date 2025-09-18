@@ -5,7 +5,7 @@ namespace ApplicationTest\Form\FieldSet;
 use Application\Form\Fieldset\Correspondence;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class CorrespondenceTest extends MockeryTestCase
+final class CorrespondenceTest extends MockeryTestCase
 {
     public function testNameAndInstance()
     {

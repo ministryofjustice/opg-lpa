@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller;
 
 use Application\Model\FormFlowChecker;
@@ -10,9 +12,9 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
 use Laminas\View\Model\ViewModel;
 
-class AbstractLpaControllerTest extends AbstractControllerTestCase
+final class AbstractLpaControllerTest extends AbstractControllerTestCase
 {
-    public function testOnDispatchNotAuthenticated()
+    public function testOnDispatchNotAuthenticated(): void
     {
         $this->setIdentity(null);
 
@@ -30,7 +32,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
         $this->assertEquals($result, $response);
     }
 
-    public function testOnDispatchNoLpaException()
+    public function testOnDispatchNoLpaException(): void
     {
         $this->lpa = false;
 
@@ -51,7 +53,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Page not found', $result->content);
     }
 
-    public function testOnDispatchNoMethod()
+    public function testOnDispatchNoMethod(): void
     {
         $controller = $this->getController(TestableAbstractLpaController::class);
 
@@ -74,7 +76,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
         $this->assertEquals($result, $response);
     }
 
-    public function testOnDispatchCalculatedRouteNotEqual()
+    public function testOnDispatchCalculatedRouteNotEqual(): void
     {
         $controller = $this->getController(TestableAbstractLpaController::class);
 
@@ -99,7 +101,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
         $this->assertEquals($result, $response);
     }
 
-    public function testOnDispatchDownload()
+    public function testOnDispatchDownload(): void
     {
         $controller = $this->getController(TestableAbstractLpaController::class);
 
@@ -131,7 +133,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Placeholder page', $result->content);
     }
 
-    public function testMoveToNextRouteNotRouteMatch()
+    public function testMoveToNextRouteNotRouteMatch(): void
     {
         $controller = $this->getController(TestableAbstractLpaController::class);
 

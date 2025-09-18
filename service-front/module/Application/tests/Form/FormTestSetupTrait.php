@@ -28,7 +28,9 @@ trait FormTestSetupTrait
         $form->init();
 
         $sm = Mockery::mock(ServiceManager::class);
-        $sm->shouldReceive('get')->andReturn(['salt' => 'Rando_Calrissian']);
+        $sm->shouldReceive('get')
+            ->with('config')
+            ->andReturn(['csrf' => ['salt' => 'Rando_Calrissian']]);
         $sm->shouldReceive('build')->andReturn(new Csrf());
 
         $csrfBuilder = new CsrfBuilder($sm);

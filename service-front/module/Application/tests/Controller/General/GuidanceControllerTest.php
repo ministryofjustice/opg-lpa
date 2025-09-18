@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\GuidanceController;
@@ -9,7 +11,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Laminas\View\Model\ViewModel;
 
-class GuidanceControllerTest extends AbstractControllerTestCase
+final class GuidanceControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|Guidance
@@ -27,7 +29,7 @@ class GuidanceControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexActionIsXmlHttpRequestTrue()
+    public function testIndexActionIsXmlHttpRequestTrue(): void
     {
         $controller = $this->getController(GuidanceController::class);
 
@@ -41,7 +43,7 @@ class GuidanceControllerTest extends AbstractControllerTestCase
         $this->assertEquals('guidance/opg-help-content.twig', $result->getTemplate());
     }
 
-    public function testIndexActionIsXmlHttpRequestFalse()
+    public function testIndexActionIsXmlHttpRequestFalse(): void
     {
         $controller = $this->getController(GuidanceController::class);
 

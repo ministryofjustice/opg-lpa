@@ -173,7 +173,7 @@ dc-unit-tests: dc-front-unit-tests
 
 .PHONY: npm-install
 npm-install:
-	npm install
+	npm ci --ignore-scripts
 
 # CYPRESS_RUNNER_* environment variables are used to consolidate setting environment
 # variables detected by cypress (like CYPRESS_baseUrl) and variables which are
