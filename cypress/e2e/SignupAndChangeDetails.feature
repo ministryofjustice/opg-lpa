@@ -7,7 +7,7 @@ Feature: SignupAndChangeDetails
         Given I ignore application exceptions
 
     Scenario: Sign up with automatically generated test username and password
-        Given I sign up "SignupAndChangeDetailsUser" test user with password "Pass1234"
+        Given I sign up "SignupAndChangeDetailsUser" test user with password "Pass12345678"
         When I use activation email for "SignupAndChangeDetailsUser" to visit the link
         Then I see "Account activated" in the title
 

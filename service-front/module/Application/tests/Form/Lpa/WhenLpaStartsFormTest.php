@@ -6,7 +6,7 @@ use Application\Form\Lpa\WhenLpaStartsForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class WhenLpaStartsFormTest extends MockeryTestCase
+final class WhenLpaStartsFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

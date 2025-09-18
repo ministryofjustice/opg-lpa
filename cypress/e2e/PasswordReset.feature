@@ -4,7 +4,7 @@ Feature: PasswordReset
     I want to be able to reset my password
 
     Scenario: Sign up with new user, reset password (LPAL-797)
-      Given I sign up "PasswordResetUser" test user with password "Pass1234"
+      Given I sign up "PasswordResetUser" test user with password "Pass12345678"
       When I use activation email for "PasswordResetUser" to visit the link
       Then I see "Account activated" in the title
 

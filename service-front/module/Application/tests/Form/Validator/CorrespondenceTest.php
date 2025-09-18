@@ -6,7 +6,7 @@ use Application\Form\Validator\Correspondence;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class CorrespondenceTest extends MockeryTestCase
+final class CorrespondenceTest extends MockeryTestCase
 {
     #[DataProvider('dataProvider')]
     public function testIsValid($data, array $errors)

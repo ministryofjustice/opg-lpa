@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\HomeController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\View\Model\ViewModel;
 
-class HomeControllerTest extends AbstractControllerTestCase
+final class HomeControllerTest extends AbstractControllerTestCase
 {
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
@@ -22,7 +24,7 @@ class HomeControllerTest extends AbstractControllerTestCase
         $this->assertEquals('1.2.3.4-test', $result->getVariable('dockerTag'));
     }
 
-    public function testRedirectAction()
+    public function testRedirectAction(): void
     {
         /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
@@ -36,7 +38,7 @@ class HomeControllerTest extends AbstractControllerTestCase
         $this->assertEquals('https://www.gov.uk/power-of-attorney/make-lasting-power', $result);
     }
 
-    public function testCookieAction()
+    public function testCookieAction(): void
     {
         /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
@@ -48,7 +50,7 @@ class HomeControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
     }
 
-    public function testAccessibilityAction()
+    public function testAccessibilityAction(): void
     {
         /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
@@ -60,7 +62,7 @@ class HomeControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
     }
 
-    public function testTermsAction()
+    public function testTermsAction(): void
     {
         /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
@@ -72,7 +74,7 @@ class HomeControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
     }
 
-    public function testContactAction()
+    public function testContactAction(): void
     {
         /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);

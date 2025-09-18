@@ -11,7 +11,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use RuntimeException;
 
-class MailTransportFactoryTest extends MockeryTestCase
+final class MailTransportFactoryTest extends MockeryTestCase
 {
     /**
      * @throws ContainerException

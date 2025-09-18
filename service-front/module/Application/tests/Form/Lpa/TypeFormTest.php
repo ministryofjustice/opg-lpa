@@ -7,7 +7,7 @@ use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Document\Document;
 
-class TypeFormTest extends MockeryTestCase
+final class TypeFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

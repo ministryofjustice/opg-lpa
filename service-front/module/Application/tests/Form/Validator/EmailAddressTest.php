@@ -6,7 +6,7 @@ use Application\Form\Validator\EmailAddress;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class EmailAddressTest extends MockeryTestCase
+final class EmailAddressTest extends MockeryTestCase
 {
     #[DataProvider('dataProvider')]
     public function testIsValid($data, array $errors)

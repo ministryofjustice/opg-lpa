@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\FeeReductionController;
@@ -12,17 +14,11 @@ use Laminas\Form\Element\Select;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class FeeReductionControllerTest extends AbstractControllerTestCase
+final class FeeReductionControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|FeeReductionForm
-     */
-    private $form;
-    private $options;
-    /**
-     * @var MockInterface|Select
-     */
-    private $reductionOptions;
+    private MockInterface|FeeReductionForm $form;
+    private array $options;
+    private MockInterface|Select $reductionOptions;
 
     public function setUp() : void
     {
@@ -45,7 +41,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->reductionOptions->shouldReceive('getOptions')->andReturn($this->options);
     }
 
-    public function testIndexActionGetNoPayment()
+    public function testIndexActionGetNoPayment(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -65,7 +61,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->assertEquals(4, count($result->getVariable('reductionOptions')));
     }
 
-    public function testIndexActionGetExistingPaymentReducedFeeReceivesBenefits()
+    public function testIndexActionGetExistingPaymentReducedFeeReceivesBenefits(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -89,7 +85,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->assertEquals(4, count($result->getVariable('reductionOptions')));
     }
 
-    public function testIndexActionGetExistingPaymentReducedFeeUniversalCredit()
+    public function testIndexActionGetExistingPaymentReducedFeeUniversalCredit(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -112,7 +108,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->assertEquals(4, count($result->getVariable('reductionOptions')));
     }
 
-    public function testIndexActionGetExistingPaymentReducedFeeLowIncome()
+    public function testIndexActionGetExistingPaymentReducedFeeLowIncome(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -135,7 +131,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->assertEquals(4, count($result->getVariable('reductionOptions')));
     }
 
-    public function testIndexActionGetExistingPaymentReducedFeeNotApply()
+    public function testIndexActionGetExistingPaymentReducedFeeNotApply(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -161,7 +157,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->assertEquals(4, count($result->getVariable('reductionOptions')));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -180,7 +176,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->assertEquals(4, count($result->getVariable('reductionOptions')));
     }
 
-    public function testIndexActionPostFailed()
+    public function testIndexActionPostFailed(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -193,7 +189,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpa, $payment) {
+            ->withArgs(function ($lpa, $payment): bool {
                 return $lpa->id === $this->lpa->id
                     && $payment->reducedFeeReceivesBenefits == true
                     && $payment->reducedFeeAwardedDamages == true
@@ -207,7 +203,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionSuccessReducedFeeUniversalCredit()
+    public function testIndexActionSuccessReducedFeeUniversalCredit(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -221,7 +217,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpa, $payment) {
+            ->withArgs(function ($lpa, $payment): bool {
                 return $lpa->id === $this->lpa->id
                     && $payment->reducedFeeReceivesBenefits == false
                     && $payment->reducedFeeAwardedDamages == null
@@ -238,7 +234,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionSuccessReducedFeeLowIncome()
+    public function testIndexActionSuccessReducedFeeLowIncome(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -252,7 +248,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpa, $payment) {
+            ->withArgs(function ($lpa, $payment): bool {
                 return $lpa->id === $this->lpa->id
                     && $payment->reducedFeeReceivesBenefits == false
                     && $payment->reducedFeeAwardedDamages == null
@@ -269,7 +265,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionSuccessNotApply()
+    public function testIndexActionSuccessNotApply(): void
     {
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
@@ -283,7 +279,7 @@ class FeeReductionControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpa, $payment) {
+            ->withArgs(function ($lpa, $payment): bool {
                 return $lpa->id === $this->lpa->id
                     && $payment->reducedFeeReceivesBenefits == null
                     && $payment->reducedFeeAwardedDamages == null

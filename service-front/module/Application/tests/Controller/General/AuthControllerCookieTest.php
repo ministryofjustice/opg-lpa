@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\AuthController;
@@ -10,9 +12,9 @@ use Laminas\Http\Header\Cookie;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class AuthControllerCookieTest extends AbstractControllerTestCase
+final class AuthControllerCookieTest extends AbstractControllerTestCase
 {
-    public function testIndexActionAlreadySignedIn()
+    public function testIndexActionAlreadySignedIn(): void
     {
         /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
@@ -26,7 +28,7 @@ class AuthControllerCookieTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionCheckCookieFails()
+    public function testIndexActionCheckCookieFails(): void
     {
         $this->setIdentity(null);
 
@@ -45,7 +47,7 @@ class AuthControllerCookieTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionCheckCookieRedirect()
+    public function testIndexActionCheckCookieRedirect(): void
     {
         $this->setIdentity(null);
 
@@ -65,7 +67,7 @@ class AuthControllerCookieTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionCheckCookieExistsFalse()
+    public function testIndexActionCheckCookieExistsFalse(): void
     {
         $this->setIdentity(null);
 
@@ -89,7 +91,7 @@ class AuthControllerCookieTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionCheckCookieExists()
+    public function testIndexActionCheckCookieExists(): void
     {
         $this->setIdentity(null);
 
@@ -119,7 +121,7 @@ class AuthControllerCookieTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('isTimeout'));
     }
 
-    public function testIndexActionCheckCookiePost()
+    public function testIndexActionCheckCookiePost(): void
     {
         $this->setIdentity(null);
 

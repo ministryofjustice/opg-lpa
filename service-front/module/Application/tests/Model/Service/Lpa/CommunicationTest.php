@@ -20,7 +20,7 @@ use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
 use Psr\Log\LoggerInterface;
 
-class CommunicationTest extends AbstractEmailServiceTest
+final class CommunicationTest extends AbstractEmailServiceTest
 {
     /**
      * @var $service Communication

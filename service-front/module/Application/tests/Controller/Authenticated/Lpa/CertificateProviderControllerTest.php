@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CertificateProviderController;
@@ -15,16 +17,10 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class CertificateProviderControllerTest extends AbstractControllerTestCase
+final class CertificateProviderControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|BlankMainFlowForm
-     */
-    private $blankMainFlowForm;
-    /**
-     * @var MockInterface|CertificateProviderForm
-     */
-    private $form;
+    private MockInterface|BlankMainFlowForm $blankMainFlowForm;
+    private MockInterface|CertificateProviderForm $form;
 
     public function setUp(): void
     {
@@ -42,7 +38,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])->andReturn($this->blankMainFlowForm);
     }
 
-    public function testIndexActionNoCertificateProvider()
+    public function testIndexActionNoCertificateProvider(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -61,7 +57,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/people-to-notify', $result->nextRoute);
     }
 
-    public function testIndexActionCertificateProvider()
+    public function testIndexActionCertificateProvider(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -81,7 +77,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/people-to-notify', $result->nextRoute);
     }
 
-    public function testAddActionGetCertificateProvider()
+    public function testAddActionGetCertificateProvider(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -98,7 +94,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionGetReuseDetails()
+    public function testAddActionGetReuseDetails(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -116,7 +112,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionGetCertificateProviderJs()
+    public function testAddActionGetCertificateProviderJs(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -133,7 +129,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionGetNoCertificateProvider()
+    public function testAddActionGetNoCertificateProvider(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -160,7 +156,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }
 
-    public function testAddActionPostInvalid()
+    public function testAddActionPostInvalid(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -185,7 +181,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }
 
-    public function testAddActionPostException()
+    public function testAddActionPostException(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -208,7 +204,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $controller->addAction();
     }
 
-    public function testAddActionPostSuccess()
+    public function testAddActionPostSuccess(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -234,7 +230,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionPostReuseDetails()
+    public function testAddActionPostReuseDetails(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -265,7 +261,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    public function testEditActionGet()
+    public function testEditActionGet(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -289,7 +285,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }
 
-    public function testEditActionPostInvalid()
+    public function testEditActionPostInvalid(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -312,7 +308,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }
 
-    public function testEditActionPostException()
+    public function testEditActionPostException(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -334,7 +330,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $controller->editAction();
     }
 
-    public function testEditActionPostSuccess()
+    public function testEditActionPostSuccess(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -359,7 +355,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testConfirmDeleteAction()
+    public function testConfirmDeleteAction(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -387,7 +383,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->isPopup);
     }
 
-    public function testConfirmDeleteActionJs()
+    public function testConfirmDeleteActionJs(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -415,7 +411,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->isPopup);
     }
 
-    public function testDeleteActionException()
+    public function testDeleteActionException(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
@@ -428,7 +424,7 @@ class CertificateProviderControllerTest extends AbstractControllerTestCase
         $controller->deleteAction();
     }
 
-    public function testDeleteActionSuccess()
+    public function testDeleteActionSuccess(): void
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);

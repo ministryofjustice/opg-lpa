@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\WhenReplacementAttorneyStepInController;
@@ -12,20 +14,14 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTestCase
+final class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|WhenReplacementAttorneyStepInForm
-     */
-    private $form;
-    private $postDataDepends = [
+    private MockInterface|WhenReplacementAttorneyStepInForm $form;
+    private array $postDataDepends = [
         'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS,
         'whenDetails' => 'Unit test instruction'
     ];
-    private $postDataFirst = [
-        'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST
-    ];
-    private $postDataLast = [
+    private array $postDataLast = [
         'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
     ];
 
@@ -39,7 +35,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
             ->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var WhenReplacementAttorneyStepInController $controller */
         $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
@@ -56,7 +52,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var WhenReplacementAttorneyStepInController $controller */
         $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
@@ -71,7 +67,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostFailed()
+    public function testIndexActionPostFailed(): void
     {
         /** @var WhenReplacementAttorneyStepInController $controller */
         $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
@@ -80,7 +76,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('setValidationGroup')->withArgs([['when']])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataLast)->once();
         $this->lpaApplicationService->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs(function ($lpa, $replacementAttorneyDecisions) {
+            ->withArgs(function ($lpa, $replacementAttorneyDecisions): bool {
                 return $lpa->id === $this->lpa->id
                     && $replacementAttorneyDecisions->when === $this->postDataLast['when'];
             })->andReturn(false)->once();
@@ -91,7 +87,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $controller->indexAction();
     }
 
-    public function testIndexActionPostSuccess()
+    public function testIndexActionPostSuccess(): void
     {
         /** @var WhenReplacementAttorneyStepInController $controller */
         $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
@@ -102,7 +98,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('setValidationGroup')->withArgs([['when']])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataLast)->once();
         $this->lpaApplicationService->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs(function ($lpa, $replacementAttorneyDecisions) {
+            ->withArgs(function ($lpa, $replacementAttorneyDecisions): bool {
                 return $lpa->id === $this->lpa->id
                     && $replacementAttorneyDecisions->when === $this->postDataLast['when'];
             })->andReturn(true)->once();
@@ -116,7 +112,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionPostSuccessDepends()
+    public function testIndexActionPostSuccessDepends(): void
     {
         /** @var WhenReplacementAttorneyStepInController $controller */
         $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
@@ -127,7 +123,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $this->postDataDepends);
         $this->form->shouldReceive('getData')->andReturn($this->postDataDepends)->twice();
         $this->lpaApplicationService->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs(function ($lpa, $replacementAttorneyDecisions) {
+            ->withArgs(function ($lpa, $replacementAttorneyDecisions): bool {
                 return $lpa->id === $this->lpa->id
                     && $replacementAttorneyDecisions->when === $this->postDataDepends['when']
                     && $replacementAttorneyDecisions->whenDetails === $this->postDataDepends['whenDetails'];

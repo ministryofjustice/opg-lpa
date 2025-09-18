@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CorrespondentController;
@@ -17,13 +19,10 @@ use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class CorrespondentControllerTest extends AbstractControllerTestCase
+final class CorrespondentControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|CorrespondentForm
-     */
-    private $form;
-    private $postDataNoContact = [
+    private MockInterface|CorrespondentForm $form;
+    private array $postDataNoContact = [
         'contactInWelsh' => false,
         'correspondence' => [
             'contactByPost' => false,
@@ -31,7 +30,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
             'contactByPhone' => false,
         ]
     ];
-    private $postDataContact = [
+    private array $postDataContact = [
         'contactInWelsh' => false,
         'correspondence' => [
             'contactByPost' => true,
@@ -41,7 +40,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
             'phone-number' => '0123456789'
         ]
     ];
-    private $postDataCorrespondence = [
+    private array $postDataCorrespondence = [
         'name' => [
             'title' => 'Miss',
             'first' => 'Unit',
@@ -62,7 +61,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\CorrespondenceForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -98,7 +97,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 
-    public function testIndexActionGetCorrespondentTrustCorporation()
+    public function testIndexActionGetCorrespondentTrustCorporation(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -138,7 +137,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('allowEditButton'));
     }
 
-    public function testIndexActionGetNoCorrespondentDonor()
+    public function testIndexActionGetNoCorrespondentDonor(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -176,7 +175,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 
-    public function testIndexActionGetNoCorrespondentAttorney()
+    public function testIndexActionGetNoCorrespondentAttorney(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -214,7 +213,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 
-    public function testIndexActionGetCorrespondentCompany()
+    public function testIndexActionGetCorrespondentCompany(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -245,7 +244,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->allowEditButton);
     }
 
-    public function testIndexActionGetCorrespondentOther()
+    public function testIndexActionGetCorrespondentOther(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -276,7 +275,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->allowEditButton);
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -302,7 +301,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 
-    public function testIndexActionPostFailure()
+    public function testIndexActionPostFailure(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -311,7 +310,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $this->postDataNoContact);
         $this->form->shouldReceive('getData')->andReturn($this->postDataNoContact)->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpa, $correspondent) {
+            ->withArgs(function ($lpa, $correspondent): bool {
                 return $lpa->id === $this->lpa->id
                     && $correspondent->contactInWelsh === false
                     && $correspondent->contactByPost === false;
@@ -323,7 +322,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostSuccess()
+    public function testIndexActionPostSuccess(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -336,7 +335,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $this->postDataContact);
         $this->form->shouldReceive('getData')->andReturn($this->postDataContact)->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpa, $correspondent) {
+            ->withArgs(function ($lpa, $correspondent): bool {
                 return $lpa->id === $this->lpa->id
                     && $correspondent->contactInWelsh === false
                     && $correspondent->contactByPost === true
@@ -352,7 +351,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testEditActionGet()
+    public function testEditActionGet(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -377,7 +376,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 
-    public function testEditActionPostInvalid()
+    public function testEditActionPostInvalid(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -401,7 +400,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 
-    public function testEditActionPostFailed()
+    public function testEditActionPostFailed(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -413,7 +412,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent/edit');
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpa, $correspondent) {
+            ->withArgs(function ($lpa, $correspondent): bool {
                 return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
@@ -426,7 +425,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $controller->editAction();
     }
 
-    public function testEditActionPostSuccess()
+    public function testEditActionPostSuccess(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -438,7 +437,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent/edit');
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpa, $correspondent) {
+            ->withArgs(function ($lpa, $correspondent): bool {
                 return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
@@ -452,7 +451,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('success'));
     }
 
-    public function testEditActionPostSuccessNoJs()
+    public function testEditActionPostSuccessNoJs(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -466,7 +465,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent/edit');
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpa, $correspondent) {
+            ->withArgs(function ($lpa, $correspondent): bool {
                 return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
@@ -479,7 +478,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testEditActionGetReuseDetailsNull()
+    public function testEditActionGetReuseDetailsNull(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -495,7 +494,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testEditActionPostReuseDonorDetailsFormEditable()
+    public function testEditActionPostReuseDonorDetailsFormEditable(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -529,7 +528,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 
-    public function testEditActionPostReuseDonorDetailsFormNotEditable()
+    public function testEditActionPostReuseDonorDetailsFormNotEditable(): void
     {
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
@@ -546,7 +545,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpa, $correspondent) {
+            ->withArgs(function ($lpa, $correspondent): bool {
                 return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])

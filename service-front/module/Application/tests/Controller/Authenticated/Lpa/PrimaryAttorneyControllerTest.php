@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
@@ -22,17 +24,11 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
+final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|AttorneyForm
-     */
-    private $primaryAttorneyForm;
-    /**
-     * @var MockInterface|TrustCorporationForm
-     */
-    private $trustCorporationForm;
-    private $postDataHuman = [
+    private MockInterface|AttorneyForm $primaryAttorneyForm;
+    private MockInterface|TrustCorporationForm $trustCorporationForm;
+    private array $postDataHuman = [
         'name' => [
             'title' => 'Miss',
             'first' => 'Unit',
@@ -46,7 +42,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         ],
         'email' => ['address' => 'unit@test.com']
     ];
-    private $postDataTrust = [
+    private array $postDataTrust = [
         'name' => 'Unit Test Company',
         'number' => '0123456789',
         'address' => [
@@ -89,7 +85,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexActionNoPrimaryAttorneys()
+    public function testIndexActionNoPrimaryAttorneys(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -104,7 +100,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
     }
 
-    public function testIndexActionMultiplePrimaryAttorneys()
+    public function testIndexActionMultiplePrimaryAttorneys(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -139,7 +135,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($expectedPrimaryAttorneysParams, $result->attorneys);
     }
 
-    public function testAddActionGetReuseDetails()
+    public function testAddActionGetReuseDetails(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -156,7 +152,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionGet()
+    public function testAddActionGet(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -176,7 +172,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/primary-attorney/add-trust', $result->switchAttorneyTypeRoute);
     }
 
-    public function testAddActionGetExistingTrust()
+    public function testAddActionGetExistingTrust(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -198,7 +194,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(null, $result->switchAttorneyTypeRoute);
     }
 
-    public function testAddActionGetNoTrustHw()
+    public function testAddActionGetNoTrustHw(): void
     {
         $this->lpa = FixturesData::getHwLpa();
         $this->lpa->seed = null;
@@ -221,7 +217,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(null, $result->switchAttorneyTypeRoute);
     }
 
-    public function testAddActionPostInvalid()
+    public function testAddActionPostInvalid(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -241,7 +237,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/primary-attorney/add-trust', $result->switchAttorneyTypeRoute);
     }
 
-    public function testAddActionPostFailed()
+    public function testAddActionPostFailed(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -252,7 +248,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')
             ->andReturn($this->postDataHuman)->once();
         $this->lpaApplicationService->shouldReceive('addPrimaryAttorney')
-            ->withArgs(function ($lpa, $primaryAttorney) {
+            ->withArgs(function ($lpa, $primaryAttorney): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorney->name == new Name($this->postDataHuman['name'])
                     && $primaryAttorney->address == new Address($this->postDataHuman['address'])
@@ -265,7 +261,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $controller->addAction();
     }
 
-    public function testAddActionPostSuccess()
+    public function testAddActionPostSuccess(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -278,7 +274,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')
             ->andReturn($this->postDataHuman)->once();
         $this->lpaApplicationService->shouldReceive('addPrimaryAttorney')
-            ->withArgs(function ($lpa, $primaryAttorney) {
+            ->withArgs(function ($lpa, $primaryAttorney): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorney->name == new Name($this->postDataHuman['name'])
                     && $primaryAttorney->address == new Address($this->postDataHuman['address'])
@@ -294,7 +290,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionPostUpdateWhoIsRegistering()
+    public function testAddActionPostUpdateWhoIsRegistering(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -310,7 +306,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')
             ->andReturn($this->postDataHuman)->once();
         $this->lpaApplicationService->shouldReceive('addPrimaryAttorney')
-            ->withArgs(function ($lpa, $primaryAttorney) {
+            ->withArgs(function ($lpa, $primaryAttorney): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorney->name == new Name($this->postDataHuman['name'])
                     && $primaryAttorney->address == new Address($this->postDataHuman['address'])
@@ -326,7 +322,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionPostReuseDetails()
+    public function testAddActionPostReuseDetails(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -352,7 +348,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/primary-attorney/add-trust', $result->switchAttorneyTypeRoute);
     }
 
-    public function testAddTrustActionGetRedirectToAddHuman()
+    public function testAddTrustActionGetRedirectToAddHuman(): void
     {
         $this->lpa = FixturesData::getHwLpa();
         $this->lpa->seed = null;
@@ -369,7 +365,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddTrustActionGet()
+    public function testAddTrustActionGet(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -388,7 +384,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/primary-attorney/add', $result->switchAttorneyTypeRoute);
     }
 
-    public function testAddTrustActionPostInvalid()
+    public function testAddTrustActionPostInvalid(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -407,7 +403,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/primary-attorney/add', $result->switchAttorneyTypeRoute);
     }
 
-    public function testAddTrustActionPostFailed()
+    public function testAddTrustActionPostFailed(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -417,7 +413,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->trustCorporationForm->shouldReceive('getModelDataFromValidatedForm')
             ->andReturn($this->postDataTrust)->once();
         $this->lpaApplicationService->shouldReceive('addPrimaryAttorney')
-            ->withArgs(function ($lpa, $primaryAttorney) {
+            ->withArgs(function ($lpa, $primaryAttorney): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorney->name === $this->postDataTrust['name']
                     && $primaryAttorney->number === $this->postDataTrust['number']
@@ -431,7 +427,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $controller->addTrustAction();
     }
 
-    public function testAddTrustActionPostSuccess()
+    public function testAddTrustActionPostSuccess(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -443,7 +439,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->trustCorporationForm->shouldReceive('getModelDataFromValidatedForm')
             ->andReturn($this->postDataTrust)->once();
         $this->lpaApplicationService->shouldReceive('addPrimaryAttorney')
-            ->withArgs(function ($lpa, $primaryAttorney) {
+            ->withArgs(function ($lpa, $primaryAttorney): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorney->name === $this->postDataTrust['name']
                     && $primaryAttorney->number === $this->postDataTrust['number']
@@ -460,7 +456,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddTrustActionPostReuseDetails()
+    public function testAddTrustActionPostReuseDetails(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -485,7 +481,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('lpa/primary-attorney/add', $result->switchAttorneyTypeRoute);
     }
 
-    public function testEditActionInvalidIndex()
+    public function testEditActionInvalidIndex(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -508,7 +504,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Page not found', $result->content);
     }
 
-    public function testEditActionGet()
+    public function testEditActionGet(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -532,7 +528,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    public function testEditActionGetTrust()
+    public function testEditActionGetTrust(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -556,7 +552,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    public function testEditActionPostInvalid()
+    public function testEditActionPostInvalid(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -578,7 +574,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    public function testEditActionPostFailed()
+    public function testEditActionPostFailed(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -592,7 +588,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')
             ->andReturn($this->postDataHuman)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorney')
-            ->withArgs(function ($lpa, $primaryAttorney, $primaryAttorneyId) {
+            ->withArgs(function ($lpa, $primaryAttorney, $primaryAttorneyId): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorney->name == new Name($this->postDataHuman['name'])
                     && $primaryAttorney->address == new Address($this->postDataHuman['address'])
@@ -606,7 +602,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $controller->editAction();
     }
 
-    public function testEditActionPostSuccess()
+    public function testEditActionPostSuccess(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -620,7 +616,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')
             ->andReturn($this->postDataHuman)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorney')
-            ->withArgs(function ($lpa, $primaryAttorney, $primaryAttorneyId) {
+            ->withArgs(function ($lpa, $primaryAttorney, $primaryAttorneyId): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorney->name == new Name($this->postDataHuman['name'])
                     && $primaryAttorney->address == new Address($this->postDataHuman['address'])
@@ -635,7 +631,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('success'));
     }
 
-    public function testEditActionPostCorrespondent()
+    public function testEditActionPostCorrespondent(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -656,7 +652,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')
             ->andReturn($this->postDataHuman)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorney')
-            ->withArgs(function ($lpa, $primaryAttorney, $primaryAttorneyId) {
+            ->withArgs(function ($lpa, $primaryAttorney, $primaryAttorneyId): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorney->name == new Name($this->postDataHuman['name'])
                     && $primaryAttorney->address == new Address($this->postDataHuman['address'])
@@ -665,7 +661,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
             })->andReturn(true)->once();
 
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpa, $correspondent) {
+            ->withArgs(function ($lpa, $correspondent): bool {
                 return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postDataHuman['name'])
                     && $correspondent->address == new Address($this->postDataHuman['address']);
@@ -678,7 +674,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('success'));
     }
 
-    public function testEditActionPostSuccessTrust()
+    public function testEditActionPostSuccessTrust(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -692,7 +688,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->trustCorporationForm->shouldReceive('getModelDataFromValidatedForm')
             ->andReturn($this->postDataTrust)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorney')
-            ->withArgs(function ($lpa, $primaryAttorney, $primaryAttorneyId) {
+            ->withArgs(function ($lpa, $primaryAttorney, $primaryAttorneyId): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorney->name === $this->postDataTrust['name']
                     && $primaryAttorney->number === $this->postDataTrust['number']
@@ -708,7 +704,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('success'));
     }
 
-    public function testConfirmDeleteActionInvalidIndex()
+    public function testConfirmDeleteActionInvalidIndex(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -730,7 +726,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Page not found', $result->content);
     }
 
-    public function testConfirmDeleteActionGetJs()
+    public function testConfirmDeleteActionGetJs(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -754,7 +750,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->isPopup);
     }
 
-    public function testConfirmDeleteActionGetNoJs()
+    public function testConfirmDeleteActionGetNoJs(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -778,7 +774,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->isPopup);
     }
 
-    public function testConfirmDeleteActionTrust()
+    public function testConfirmDeleteActionTrust(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -803,7 +799,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->isPopup);
     }
 
-    public function testDeleteActionInvalidIndex()
+    public function testDeleteActionInvalidIndex(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -825,7 +821,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Page not found', $result->content);
     }
 
-    public function testDeleteActionFailed()
+    public function testDeleteActionFailed(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -844,7 +840,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $controller->deleteAction();
     }
 
-    public function testDeleteActionSuccess()
+    public function testDeleteActionSuccess(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -867,7 +863,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testDeleteActionOneAttorneyRemaining()
+    public function testDeleteActionOneAttorneyRemaining(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -883,7 +879,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
 
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
-            ->withArgs(function ($lpa, $primaryAttorneyDecisions) {
+            ->withArgs(function ($lpa, $primaryAttorneyDecisions): bool {
                 return $lpa->id === $this->lpa->id
                     && $primaryAttorneyDecisions->how === null
                     && $primaryAttorneyDecisions->howDetails === null;
@@ -901,7 +897,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testDeleteActionAttorneyRegistering()
+    public function testDeleteActionAttorneyRegistering(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
@@ -926,7 +922,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testDeleteActionAllAttorneyRegistering()
+    public function testDeleteActionAllAttorneyRegistering(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 

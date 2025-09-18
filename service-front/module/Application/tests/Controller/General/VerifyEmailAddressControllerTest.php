@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\VerifyEmailAddressController;
@@ -7,7 +9,7 @@ use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
+final class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
 {
     protected function getController(string $controllerName)
     {
@@ -19,7 +21,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         /** @var VerifyEmailAddressController $controller */
         $controller = $this->getController(VerifyEmailAddressController::class);
@@ -32,7 +34,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Placeholder page', $result->getVariable('content'));
     }
 
-    public function testVerifyActionInvalidToken()
+    public function testVerifyActionInvalidToken(): void
     {
         /** @var VerifyEmailAddressController $controller */
         $controller = $this->getController(VerifyEmailAddressController::class);
@@ -52,7 +54,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testVerifyActionValidToken()
+    public function testVerifyActionValidToken(): void
     {
         /** @var VerifyEmailAddressController $controller */
         $controller = $this->getController(VerifyEmailAddressController::class);
