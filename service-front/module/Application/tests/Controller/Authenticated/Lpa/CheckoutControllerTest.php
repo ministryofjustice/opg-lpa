@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CheckoutController;
@@ -19,22 +21,10 @@ use Alphagov\Pay\Response\Payment as GovPayPayment;
 
 final class CheckoutControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|Communication
-     */
-    private $communication;
-    /**
-     * @var MockInterface|GovPayClient
-     */
-    private $govPayClient;
-    /**
-     * @var MockInterface|BlankMainFlowForm
-     */
-    private $blankMainFlowForm;
-    /**
-     * @var MockInterface|ElementInterface
-     */
-    private $submitButton;
+    private MockInterface|Communication $communication;
+    private MockInterface|GovPayClient $govPayClient;
+    private MockInterface|BlankMainFlowForm $blankMainFlowForm;
+    private MockInterface|ElementInterface $submitButton;
 
     public function setUp(): void
     {
@@ -45,7 +35,6 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
     }
 
     /**
-     * @param string $controllerName
      * @return CheckoutController
      */
     protected function getController(string $controllerName)
@@ -61,7 +50,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -78,7 +67,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals(82, $result->getVariable('fullFee'));
     }
 
-    public function testIndexActionPostIncompleteLpa()
+    public function testIndexActionPostIncompleteLpa(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -93,7 +82,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testChequeActionIncompleteLpa()
+    public function testChequeActionIncompleteLpa(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -107,7 +96,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testChequeActionFailed()
+    public function testChequeActionFailed(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -122,7 +111,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $controller->chequeAction();
     }
 
-    public function testChequeActionIncorrectAmountFailed()
+    public function testChequeActionIncorrectAmountFailed(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -137,7 +126,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $controller->chequeAction();
     }
 
-    public function testChequeActionSuccess()
+    public function testChequeActionSuccess(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -157,7 +146,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testConfirmActionIncompleteLpa()
+    public function testConfirmActionIncompleteLpa(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -171,7 +160,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testConfirmActionInvalidAmount()
+    public function testConfirmActionInvalidAmount(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -184,7 +173,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $controller->confirmAction();
     }
 
-    public function testConfirmActionSuccess()
+    public function testConfirmActionSuccess(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -204,7 +193,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testPayActionIncompleteLpa()
+    public function testPayActionIncompleteLpa(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -218,7 +207,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testPayActionNoExistingPayment()
+    public function testPayActionNoExistingPayment(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -249,7 +238,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testPayActionExistingPaymentNull()
+    public function testPayActionExistingPaymentNull(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -272,7 +261,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $controller->payAction();
     }
 
-    public function testPayActionExistingPaymentSuccessful()
+    public function testPayActionExistingPaymentSuccessful(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -303,7 +292,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testPayActionExistingPaymentNotFinished()
+    public function testPayActionExistingPaymentNotFinished(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -330,7 +319,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testPayActionExistingPaymentFinishedNotSuccessful()
+    public function testPayActionExistingPaymentFinishedNotSuccessful(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -365,7 +354,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testPayResponseActionNoGatewayReference()
+    public function testPayResponseActionNoGatewayReference(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -377,7 +366,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $controller->payResponseAction();
     }
 
-    public function testPayResponseActionNotSuccessfulCancelled()
+    public function testPayResponseActionNotSuccessfulCancelled(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -397,7 +386,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals('application/authenticated/lpa/checkout/govpay-cancel.twig', $result->getTemplate());
     }
 
-    public function testPayResponseActionNotSuccessfulOther()
+    public function testPayResponseActionNotSuccessfulOther(): void
     {
         $controller = $this->getController(CheckoutController::class);
 
@@ -417,7 +406,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals('application/authenticated/lpa/checkout/govpay-failure.twig', $result->getTemplate());
     }
 
-    private function setPayByCardExpectations($submitButtonValue)
+    private function setPayByCardExpectations(string $submitButtonValue): void
     {
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])

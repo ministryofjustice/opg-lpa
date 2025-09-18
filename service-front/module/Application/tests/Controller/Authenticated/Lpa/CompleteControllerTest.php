@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CompleteController;
@@ -9,7 +11,7 @@ use Laminas\View\Model\ViewModel;
 
 final class CompleteControllerTest extends AbstractControllerTestCase
 {
-    public function testIndexActionGetNotLocked()
+    public function testIndexActionGetNotLocked(): void
     {
         /** @var CompleteController $controller */
         $controller = $this->getController(CompleteController::class);
@@ -40,7 +42,7 @@ final class CompleteControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('isPaymentSkipped'));
     }
 
-    public function testViewDocsActionPeopleToNotifyFeeReduction()
+    public function testViewDocsActionPeopleToNotifyFeeReduction(): void
     {
         /** @var CompleteController $controller */
         $controller = $this->getController(CompleteController::class);

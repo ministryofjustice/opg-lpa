@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\MoreInfoRequiredController;
@@ -8,7 +10,7 @@ use Laminas\View\Model\ViewModel;
 
 final class MoreInfoRequiredControllerTest extends AbstractControllerTestCase
 {
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         /** @var MoreInfoRequiredController $controller */
         $controller = $this->getController(MoreInfoRequiredController::class);

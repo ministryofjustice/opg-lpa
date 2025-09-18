@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\FeedbackController;
@@ -16,12 +18,9 @@ use Laminas\View\Model\ViewModel;
 
 final class FeedbackControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|FeedbackForm
-     */
-    private $form;
+    private MockInterface|FeedbackForm $form;
 
-    private $postData = [
+    private array $postData = [
         'rating' => '5',
         'details' => 'Awesome!',
         'email' => 'unit@test.com',
@@ -55,7 +54,7 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testSendFeedbackFormInvalid()
+    public function testSendFeedbackFormInvalid(): void
     {
         $controller = $this->getController(FeedbackController::class);
 
@@ -69,7 +68,7 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testSendFeedbackFail()
+    public function testSendFeedbackFail(): void
     {
         $controller = $this->getController(FeedbackController::class);
 
@@ -84,7 +83,7 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testSendFeedbackSuccess()
+    public function testSendFeedbackSuccess(): void
     {
         $controller = $this->getController(FeedbackController::class);
 
@@ -101,7 +100,7 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         $this->assertEquals($result, $response);
     }
 
-    public function testSendFeedbackFormGetReferer()
+    public function testSendFeedbackFormGetReferer(): void
     {
         $controller = $this->getController(FeedbackController::class);
 
@@ -121,7 +120,7 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testSendFeedbackFormNoReferer()
+    public function testSendFeedbackFormNoReferer(): void
     {
         $controller = $this->getController(FeedbackController::class);
 

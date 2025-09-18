@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\SummaryController;
@@ -8,7 +10,7 @@ use Laminas\View\Model\ViewModel;
 
 final class SummaryControllerTest extends AbstractControllerTestCase
 {
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         /** @var SummaryController $controller */
         $controller = $this->getController(SummaryController::class);
