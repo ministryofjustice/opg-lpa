@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Validator\Password;
@@ -9,7 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 final class PasswordTest extends MockeryTestCase
 {
     #[DataProvider('dataProvider')]
-    public function testIsValid($data, array $errors)
+    public function testIsValid(string $data, array $errors): void
     {
         $validator = new Password();
 
@@ -19,7 +21,7 @@ final class PasswordTest extends MockeryTestCase
         $this->assertEquals($errors, $validator->getMessages());
     }
 
-    public static function dataProvider()
+    public static function dataProvider(): array
     {
         return [
             [

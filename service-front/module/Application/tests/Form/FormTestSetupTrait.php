@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form;
 
 use Application\Form\AbstractCsrfForm;
@@ -44,10 +46,8 @@ trait FormTestSetupTrait
 
     /**
      * Function to easily enrich the form data with Csrf data
-     *
-     * @return array
      */
-    private function getCsrfData()
+    private function getCsrfData(): array
     {
         if ($this->form instanceof AbstractCsrfForm) {
             return [
