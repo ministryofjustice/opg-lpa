@@ -13,7 +13,7 @@ use Laminas\View\Model\ViewModel;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
 
-class DashboardControllerTest extends AbstractControllerTestCase
+final class DashboardControllerTest extends AbstractControllerTestCase
 {
     public function testIndexActionZeroLpas()
     {

@@ -5,7 +5,7 @@ namespace ApplicationTest\Form\Lpa;
 use Application\Form\Fieldset\Dob as DobFieldset;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class DobTest extends MockeryTestCase
+final class DobTest extends MockeryTestCase
 {
     public function testNameAndInstance()
     {

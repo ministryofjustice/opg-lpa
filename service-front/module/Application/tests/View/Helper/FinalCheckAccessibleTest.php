@@ -6,7 +6,7 @@ use Application\View\Helper\FinalCheckAccessible;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class FinalCheckAccessibleTest extends MockeryTestCase
+final class FinalCheckAccessibleTest extends MockeryTestCase
 {
     public function testInvoke(): void
     {

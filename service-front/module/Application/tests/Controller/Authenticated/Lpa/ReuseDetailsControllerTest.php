@@ -12,7 +12,7 @@ use Laminas\Http\Response;
 use Laminas\Router\RouteMatch;
 use Laminas\View\Model\ViewModel;
 
-class ReuseDetailsControllerTest extends AbstractControllerTestCase
+final class ReuseDetailsControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|ReuseDetailsForm

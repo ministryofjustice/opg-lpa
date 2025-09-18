@@ -12,7 +12,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class WhenLpaStartsControllerTest extends AbstractControllerTestCase
+final class WhenLpaStartsControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|WhenLpaStartsForm

@@ -6,7 +6,7 @@ use Application\Form\Lpa\LifeSustainingForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class LifeSustainingFormTest extends MockeryTestCase
+final class LifeSustainingFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

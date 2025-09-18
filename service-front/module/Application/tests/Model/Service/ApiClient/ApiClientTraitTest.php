@@ -6,7 +6,7 @@ use Application\Model\Service\ApiClient\Client;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class ApiClientTraitTest extends MockeryTestCase
+final class ApiClientTraitTest extends MockeryTestCase
 {
     public function testApiClientTrait() : void
     {
