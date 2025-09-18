@@ -13,7 +13,7 @@ RUN apk update \
 # Install composer dependencies
 COPY --chown=root:root service-pdf/composer.json /app/composer.json
 COPY --chown=root:root service-pdf/composer.lock /app/composer.lock
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.5.1 \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.8.11 \
     && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
     && rm /app/composer.json \
