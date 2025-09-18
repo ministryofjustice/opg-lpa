@@ -5,8 +5,6 @@ namespace ApplicationTest\Model\Service\User;
 use Hamcrest\MatcherAssert;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
-use Exception;
-use MakeShared\Logging\Logger;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Application\Model\Service\ApiClient\Client;
@@ -22,7 +20,7 @@ use Hamcrest\Matchers;
 use Mockery;
 use Mockery\MockInterface;
 
-class DetailsTest extends AbstractEmailServiceTest
+final class DetailsTest extends AbstractEmailServiceTest
 {
     /**
      * @var $apiClient Client|MockInterface

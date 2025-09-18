@@ -6,14 +6,13 @@ use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Application;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
-use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class ApplicantTest extends AbstractServiceTest
+final class ApplicantTest extends AbstractServiceTest
 {
     /**
      * @var $applicationService Application|MockInterface

@@ -5,7 +5,7 @@ namespace ApplicationTest\Form\View\Helper;
 use PHPUnit\Framework\TestCase;
 use Laminas\Form\Element\MultiCheckbox;
 
-class FormMultiCheckboxTest extends TestCase
+final class FormMultiCheckboxTest extends TestCase
 {
     public function testRenderOptions()
     {

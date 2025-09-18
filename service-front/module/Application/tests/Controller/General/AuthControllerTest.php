@@ -17,7 +17,7 @@ use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
 
-class AuthControllerTest extends AbstractControllerTestCase
+final class AuthControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|Login

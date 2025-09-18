@@ -17,7 +17,6 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Twig\Environment as TwigEnvironment;
-use Twig_Template;
 use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
@@ -25,7 +24,7 @@ use Laminas\View\Renderer\RendererInterface;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\View\Helper\LocalViewRenderer;
 
-class AccountInfoTest extends MockeryTestCase
+final class AccountInfoTest extends MockeryTestCase
 {
     /**
      * @var AuthenticationService|MockInterface

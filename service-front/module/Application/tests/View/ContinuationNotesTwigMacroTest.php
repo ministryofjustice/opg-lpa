@@ -2,19 +2,17 @@
 
 namespace ApplicationTest\View;
 
-use Application\Model\Service\Lpa\ContinuationSheets;
 use ApplicationTest\View\ViewModelRenderer;
 use DOMDocument;
 use DOMXpath;
 use Laminas\View\Model\ViewModel;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use MakeShared\DataModel\Lpa\Lpa;
 
 /**
  * Unit tests for the Twig macro which renders continuation sheet prompts
  * for both the "Last steps" and date check pages.
  */
-class ContinuationNotesTwigMacroTest extends MockeryTestCase
+final class ContinuationNotesTwigMacroTest extends MockeryTestCase
 {
     /** @var ViewModelRenderer */
     private $renderer;

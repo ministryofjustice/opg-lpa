@@ -6,7 +6,7 @@ use Application\Form\Lpa\CorrespondenceForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class CorrespondenceFormTest extends MockeryTestCase
+final class CorrespondenceFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

@@ -4,18 +4,16 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\DashboardController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use Mockery;
-use MakeSharedTest\DataModel\FixturesData;
-use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
-use Laminas\Stdlib\ArrayObject;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use MakeSharedTest\DataModel\FixturesData;
+use Mockery;
 
-class DashboardControllerTest extends AbstractControllerTestCase
+final class DashboardControllerTest extends AbstractControllerTestCase
 {
     public function testIndexActionZeroLpas()
     {

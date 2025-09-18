@@ -3,13 +3,11 @@
 namespace ApplicationTest\Model\Service\Lpa;
 
 use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
-use PHPUnit\Framework\TestCase;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 use Application\Model\Service\Lpa\ContinuationSheets;
-use ApplicationTest\Model\Service\AbstractServiceTest;
 
-class ContinuationSheetsTest extends AbstractHttpControllerTestCase
+final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
 {
     /**
      * @var $service Applicant

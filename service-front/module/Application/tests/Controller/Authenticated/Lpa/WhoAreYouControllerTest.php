@@ -6,14 +6,13 @@ use Application\Controller\Authenticated\Lpa\WhoAreYouController;
 use Application\Form\Lpa\WhoAreYouForm;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Exception;
-use Mockery;
-use Mockery\MockInterface;
-use RuntimeException;
 use Laminas\Form\Element\Select;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use Mockery;
+use Mockery\MockInterface;
 
-class WhoAreYouControllerTest extends AbstractControllerTestCase
+final class WhoAreYouControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|WhoAreYouForm

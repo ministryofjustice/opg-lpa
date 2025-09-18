@@ -3,13 +3,12 @@
 namespace ApplicationTest\Logging;
 
 use DateTimeImmutable;
-use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\Logging\HeadersProcessor;
 use Monolog\Level;
 use Monolog\LogRecord;
 
-class HeadersProcessorTest extends MockeryTestCase
+final class HeadersProcessorTest extends MockeryTestCase
 {
     public function testHeadersProcessed()
     {

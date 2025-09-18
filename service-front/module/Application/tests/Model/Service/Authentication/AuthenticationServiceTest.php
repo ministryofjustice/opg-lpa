@@ -6,13 +6,12 @@ use Application\Model\Service\Authentication\Adapter\AdapterInterface as LpaAdap
 use Application\Model\Service\Authentication\AuthenticationService;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
 use RuntimeException;
 use Laminas\Authentication\Adapter\AdapterInterface;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Storage\StorageInterface;
 
-class AuthenticationServiceTest extends MockeryTestCase
+final class AuthenticationServiceTest extends MockeryTestCase
 {
     /**
      * @var $storageInterface StorageInterface|MockInterface

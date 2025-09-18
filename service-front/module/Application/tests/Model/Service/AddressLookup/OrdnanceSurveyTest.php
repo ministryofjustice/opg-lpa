@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\AddressLookup;
 
+use RuntimeException;
 use Mockery;
 use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -12,7 +13,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 
-class OrdnanceSurveyTest extends MockeryTestCase
+final class OrdnanceSurveyTest extends MockeryTestCase
 {
     /**
      * @var string
@@ -97,7 +98,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
 
         $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/bad status code/');
 
         $lookup->lookupPostcode('SW1A 2AA');
@@ -117,7 +118,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
 
         $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/invalid JSON/');
 
         $lookup->lookupPostcode('SW1A 2AA');
