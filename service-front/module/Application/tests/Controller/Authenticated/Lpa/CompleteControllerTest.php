@@ -7,7 +7,7 @@ use ApplicationTest\Controller\AbstractControllerTestCase;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use Laminas\View\Model\ViewModel;
 
-class CompleteControllerTest extends AbstractControllerTestCase
+final class CompleteControllerTest extends AbstractControllerTestCase
 {
     public function testIndexActionGetNotLocked()
     {

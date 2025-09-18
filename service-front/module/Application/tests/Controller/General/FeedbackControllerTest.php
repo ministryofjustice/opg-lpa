@@ -14,7 +14,7 @@ use Laminas\Http\Response;
 use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
 
-class FeedbackControllerTest extends AbstractControllerTestCase
+final class FeedbackControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|FeedbackForm

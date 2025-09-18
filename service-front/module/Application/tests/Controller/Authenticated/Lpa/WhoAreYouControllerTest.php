@@ -12,7 +12,7 @@ use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\MockInterface;
 
-class WhoAreYouControllerTest extends AbstractControllerTestCase
+final class WhoAreYouControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|WhoAreYouForm

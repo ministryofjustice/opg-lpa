@@ -12,7 +12,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 
-class PingControllerTest extends MockeryTestCase
+final class PingControllerTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|Status

@@ -8,7 +8,7 @@ use MakeShared\Logging\TraceIdProcessor;
 use Monolog\Level;
 use Monolog\LogRecord;
 
-class TraceIdProcessorTest extends MockeryTestCase
+final class TraceIdProcessorTest extends MockeryTestCase
 {
     public function testTraceIdProcessed()
     {

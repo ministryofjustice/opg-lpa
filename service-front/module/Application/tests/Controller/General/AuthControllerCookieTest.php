@@ -10,7 +10,7 @@ use Laminas\Http\Header\Cookie;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class AuthControllerCookieTest extends AbstractControllerTestCase
+final class AuthControllerCookieTest extends AbstractControllerTestCase
 {
     public function testIndexActionAlreadySignedIn()
     {

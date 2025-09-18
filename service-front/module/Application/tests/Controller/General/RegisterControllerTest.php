@@ -17,7 +17,7 @@ use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\MockInterface;
 
-class RegisterControllerTest extends AbstractControllerTestCase
+final class RegisterControllerTest extends AbstractControllerTestCase
 {
     public const GA = 987654321987654321;
     /**

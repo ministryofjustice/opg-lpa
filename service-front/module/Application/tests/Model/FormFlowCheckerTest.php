@@ -26,7 +26,7 @@ use RuntimeException;
  * This set of unit tests with execute sequentially starting with a basic LPA datamodel - which will
  * check the correct position in the flow to return the user to
  */
-class FormFlowCheckerTest extends MockeryTestCase
+final class FormFlowCheckerTest extends MockeryTestCase
 {
     /**
      * LPA document to test

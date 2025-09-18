@@ -9,7 +9,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Laminas\View\Model\ViewModel;
 
-class ChangeEmailAddressControllerTest extends AbstractControllerTestCase
+final class ChangeEmailAddressControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|ChangeEmailAddress

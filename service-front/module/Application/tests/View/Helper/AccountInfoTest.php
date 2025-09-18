@@ -24,7 +24,7 @@ use Laminas\View\Renderer\RendererInterface;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\View\Helper\LocalViewRenderer;
 
-class AccountInfoTest extends MockeryTestCase
+final class AccountInfoTest extends MockeryTestCase
 {
     /**
      * @var AuthenticationService|MockInterface

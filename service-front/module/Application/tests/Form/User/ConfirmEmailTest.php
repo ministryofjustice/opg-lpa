@@ -6,7 +6,7 @@ use Application\Form\User\ConfirmEmail as ConfirmEmailForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class ConfirmEmailTest extends MockeryTestCase
+final class ConfirmEmailTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

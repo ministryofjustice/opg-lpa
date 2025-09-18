@@ -7,7 +7,7 @@ use ApplicationTest\Controller\AbstractControllerTestCase;
 use MakeSharedTest\DataModel\FixturesData;
 use Laminas\Http\Response;
 
-class IndexControllerTest extends AbstractControllerTestCase
+final class IndexControllerTest extends AbstractControllerTestCase
 {
     public function testIndexActionNoSeed()
     {

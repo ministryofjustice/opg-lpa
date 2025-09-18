@@ -7,7 +7,7 @@ use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
+final class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
 {
     protected function getController(string $controllerName)
     {

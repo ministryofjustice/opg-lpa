@@ -10,7 +10,7 @@ use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class StatusControllerTest extends AbstractControllerTestCase
+final class StatusControllerTest extends AbstractControllerTestCase
 {
     public function testIndexAction()
     {

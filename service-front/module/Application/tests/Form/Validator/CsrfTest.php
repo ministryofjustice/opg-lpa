@@ -9,7 +9,7 @@ use Laminas\Session\Container;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 
-class CsrfTest extends MockeryTestCase
+final class CsrfTest extends MockeryTestCase
 {
     #[DataProvider('dataProvider')]
     public function testIsValid($data, array $errors)
