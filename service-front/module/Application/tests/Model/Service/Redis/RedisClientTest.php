@@ -11,7 +11,7 @@ use Redis;
 use RedisException;
 use ReflectionProperty;
 
-class RedisClientTest extends MockeryTestCase
+final class RedisClientTest extends MockeryTestCase
 {
     // returns the mock for setting expectations
     private function makeRedisClientWithMock(string $redisUrl): Redis

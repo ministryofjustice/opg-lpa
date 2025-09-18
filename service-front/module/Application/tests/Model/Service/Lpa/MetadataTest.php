@@ -8,7 +8,7 @@ use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class MetadataTest extends AbstractServiceTest
+final class MetadataTest extends AbstractServiceTest
 {
     /**
      * @var $applicationService Application|MockInterface

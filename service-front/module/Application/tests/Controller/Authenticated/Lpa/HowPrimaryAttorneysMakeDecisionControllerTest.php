@@ -13,7 +13,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTestCase
+final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|HowAttorneysMakeDecisionForm

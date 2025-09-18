@@ -15,7 +15,7 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class CertificateProviderControllerTest extends AbstractControllerTestCase
+final class CertificateProviderControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|BlankMainFlowForm

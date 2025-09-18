@@ -12,7 +12,7 @@ use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class DateCheckViewModelHelperTest extends MockeryTestCase
+final class DateCheckViewModelHelperTest extends MockeryTestCase
 {
     /** @var ViewModelRenderer */
     private $renderer;

@@ -12,7 +12,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
  * Unit tests for the Twig macro which renders continuation sheet prompts
  * for both the "Last steps" and date check pages.
  */
-class ContinuationNotesTwigMacroTest extends MockeryTestCase
+final class ContinuationNotesTwigMacroTest extends MockeryTestCase
 {
     /** @var ViewModelRenderer */
     private $renderer;

@@ -6,7 +6,7 @@ use Application\Controller\General\HomeController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\View\Model\ViewModel;
 
-class HomeControllerTest extends AbstractControllerTestCase
+final class HomeControllerTest extends AbstractControllerTestCase
 {
     public function testIndexAction()
     {

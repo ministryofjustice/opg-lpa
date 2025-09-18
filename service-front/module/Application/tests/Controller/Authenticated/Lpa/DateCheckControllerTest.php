@@ -9,7 +9,7 @@ use Mockery;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class DateCheckControllerTest extends AbstractControllerTestCase
+final class DateCheckControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|DateCheckForm
