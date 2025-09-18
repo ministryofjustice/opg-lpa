@@ -15,7 +15,7 @@ use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use Twig\Environment as TwigEnvironment;
 
-class AccountInfoFactoryTest extends MockeryTestCase
+final class AccountInfoFactoryTest extends MockeryTestCase
 {
 
     public function testInvoke():void

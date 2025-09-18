@@ -18,7 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Log\LoggerInterface;
 
-class ApplicationTest extends MockeryTestCase
+final class ApplicationTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|AuthenticationService

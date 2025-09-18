@@ -12,7 +12,7 @@ use Laminas\Router\RouteMatch;
 /**
  * AccordionTest
  */
-class AccordionTest extends MockeryTestCase
+final class AccordionTest extends MockeryTestCase
 {
     public function testLpaType()
     {

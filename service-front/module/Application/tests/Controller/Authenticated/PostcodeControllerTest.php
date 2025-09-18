@@ -13,7 +13,7 @@ use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\MockInterface;
 
-class PostcodeControllerTest extends AbstractControllerTestCase
+final class PostcodeControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|MvcEvent

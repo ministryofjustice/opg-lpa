@@ -9,7 +9,7 @@ use DateTime;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
-class UserTest extends TestCase
+final class UserTest extends TestCase
 {
     /**
      * @var $user User

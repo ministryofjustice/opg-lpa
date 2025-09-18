@@ -8,7 +8,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class DateCheckFormTest extends MockeryTestCase
+final class DateCheckFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

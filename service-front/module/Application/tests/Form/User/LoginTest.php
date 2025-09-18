@@ -6,7 +6,7 @@ use Application\Form\User\Login as LoginForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class LoginTest extends MockeryTestCase
+final class LoginTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

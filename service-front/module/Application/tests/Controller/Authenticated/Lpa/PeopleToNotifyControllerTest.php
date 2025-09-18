@@ -19,7 +19,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-class PeopleToNotifyControllerTest extends AbstractControllerTestCase
+final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|BlankMainFlowForm

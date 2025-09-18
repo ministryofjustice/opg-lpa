@@ -6,7 +6,7 @@ use Application\Form\Lpa\ReuseDetailsForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class ReuseDetailsFormTest extends MockeryTestCase
+final class ReuseDetailsFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

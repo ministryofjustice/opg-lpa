@@ -6,7 +6,7 @@ use Application\Controller\Authenticated\Lpa\SummaryController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\View\Model\ViewModel;
 
-class SummaryControllerTest extends AbstractControllerTestCase
+final class SummaryControllerTest extends AbstractControllerTestCase
 {
     public function testIndexAction()
     {

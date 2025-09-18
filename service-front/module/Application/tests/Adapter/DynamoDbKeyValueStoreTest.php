@@ -9,7 +9,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 
-class DynamoDbKeyValueStoreTest extends MockeryTestCase
+final class DynamoDbKeyValueStoreTest extends MockeryTestCase
 {
     /**
      * @var DynamoDbKeyValueStore

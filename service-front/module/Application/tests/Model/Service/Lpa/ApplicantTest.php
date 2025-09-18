@@ -12,7 +12,7 @@ use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class ApplicantTest extends AbstractServiceTest
+final class ApplicantTest extends AbstractServiceTest
 {
     /**
      * @var $applicationService Application|MockInterface

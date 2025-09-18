@@ -8,7 +8,7 @@ use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery as m;
 
-class ChangeEmailAddressTest extends MockeryTestCase
+final class ChangeEmailAddressTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

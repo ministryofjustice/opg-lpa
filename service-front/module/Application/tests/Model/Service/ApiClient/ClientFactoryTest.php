@@ -12,7 +12,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 
-class ClientFactoryTest extends MockeryTestCase
+final class ClientFactoryTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|ContainerInterface

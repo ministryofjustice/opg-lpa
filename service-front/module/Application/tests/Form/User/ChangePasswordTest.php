@@ -8,7 +8,7 @@ use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery as m;
 
-class ChangePasswordTest extends MockeryTestCase
+final class ChangePasswordTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

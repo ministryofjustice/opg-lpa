@@ -6,7 +6,7 @@ use Application\Form\Lpa\WhoAreYouForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class WhoAreYouFormTest extends MockeryTestCase
+final class WhoAreYouFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

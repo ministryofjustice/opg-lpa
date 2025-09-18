@@ -6,7 +6,7 @@ use Application\Form\Lpa\AttorneyForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class AttorneyFormTest extends MockeryTestCase
+final class AttorneyFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
