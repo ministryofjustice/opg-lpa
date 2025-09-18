@@ -11,10 +11,14 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\NotifyMailTransport;
+use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 
 final class NotifyMailTransportTest extends MockeryTestCase
 {
+    private NotifyClient|MockInterface $notifyClient;
+    private NotifyMailTransport $transport;
+
     public function setUp(): void
     {
         $this->notifyClient = Mockery::mock(NotifyClient::class);

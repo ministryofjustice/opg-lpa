@@ -108,8 +108,9 @@ class LpaAuthAdapter implements AdapterInterface
             ]);
         }
 
+        $lastLogin = $response->getLastLogin();
         // if response lastLogin is null, this returns now as the datetime
-        $lastLogin = new DateTime($response->getLastLogin());
+        $lastLogin = $lastLogin ? new DateTime($lastLogin) : new DateTime();
         $identity = new User($response->getUserId(), $response->getToken(), $response->getExpiresIn(), $lastLogin);
 
         $messages = [];
