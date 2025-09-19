@@ -27,15 +27,20 @@ log_format tracing escape=json '{'
                                '"upstream_status": "$upstream_status"'
                                '}';
 
-# Ensures that the $trace_id always has a value. Typically, this will be
-# included in requests from front-app or admin-app to the API as an X-Trace-Id
-# header. (Originally this will have been derived from X-Amzn-Trace-Id passed
-# in from Amazon load balancers.)
-map $http_x_trace_id $trace_id {
-    "~*Root=" $http_x_trace_id;
+# Ensures that the trace id always has a value. Used mostly for
+# local dev; when on AWS, these ids should be added by the load balancer.
+# To simulate the AWS load balancer in dev, we construct an X-Amzn-Trace-Id
+# in requests proxied from *-ssl containers to the *-web containers.
+# Consequently, the default set here shouldn't be seen in dev. If it
+# is seen in dev, it means the *-ssl container is not mocking out the header
+# as we expect. If seen in pre/prod, it means we are not getting an
+# X-Amzn-Trace-Id header from the AWS load balancer (expected behaviour for
+# health check requests).
+map $http_x_amzn_trace_id $trace_id {
+    "~*Root=" $http_x_amzn_trace_id;
 
-    # If the request has no X-Trace-Id, set a default
-    default "NOT_SUPPLIED_BY_CLIENT";
+    # If the request has no X-Amzn-Trace-Id, set a default of "-"
+    default "-";
 }
 
 server {
@@ -45,7 +50,7 @@ server {
 
     # NB logs are symlinked to stdout/stderr
     access_log /var/log/nginx/access.log tracing;
-    error_log /var/log/nginx/error.log {{ getv "/nginx/log/level" "warn" }};
+    error_log /var/log/nginx/error.log  "warn";
 
     gzip on;
     gzip_min_length 100;
@@ -86,7 +91,7 @@ server {
     # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
     #
     location ~ \.php$ {
-        fastcgi_pass   {{getv "/app/host" }}:{{getv "/app/port" }};
+        fastcgi_pass   ${APP_HOST}:${APP_PORT};
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
 
