@@ -102,7 +102,7 @@ jobs:
         run: |
           pip install boto3
           npm ci --ignore-scripts .
-          npm run cypress install
+          ./node_modules/.bin/cypress install
           ./cypress/cypress_start.sh
 
       - name: Upload Screenshot Artifact
