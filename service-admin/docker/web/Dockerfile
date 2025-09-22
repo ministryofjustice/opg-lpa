@@ -21,8 +21,4 @@ RUN apk upgrade --no-cache
 
 USER nginx
 COPY --chown=nginx:nginx service-admin/public /web
-COPY --chown=nginx:nginx shared/docker/web/etc/confd/conf.d/nginx.toml.service-admin /etc/confd/conf.d/nginx.toml
-COPY --chown=nginx:nginx shared/docker/web/etc/confd/templates/nginx.conf.service-admin /etc/confd/templates/nginx.conf
-
-CMD confd -onetime -backend env \
-  && nginx -g "daemon off;"
+COPY --chown=nginx:nginx service-admin/docker/web/etc /etc
