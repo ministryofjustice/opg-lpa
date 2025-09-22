@@ -85,6 +85,11 @@ api-composer-remove:
 api-composer-outdated:
 	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer outdated
 
+# use make api-composer-why PACKAGE=symfony\/validator\:v5.4.43
+# you'll need to escape the \ and : as above
+.PHONY: api-composer-why
+api-composer-why:
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
 
 .PHONY: dc-up
 dc-up: run-composers
