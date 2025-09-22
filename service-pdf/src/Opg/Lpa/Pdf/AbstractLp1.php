@@ -3,6 +3,8 @@
 namespace Opg\Lpa\Pdf;
 
 use DateTime;
+use DateTimeImmutable;
+use DateTimeZone;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Common\PhoneNumber;
@@ -45,6 +47,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      * @var
      */
     protected $coversheetFileName;
+    protected $coversheetFileNameOld;
 
     /**
      * PDF file name for the draft coversheet
@@ -90,8 +93,11 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     protected function create(Lpa $lpa)
     {
         // Add an appropriate coversheet to the start of the document
+        $feeEffectiveDate = getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00';
+        $timeNow = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/London'));
+        $finalCoversheetFileName = ($timeNow >= $feeEffectiveDate) ? $this->coversheetFileName : $this->coversheetFileNameOld;
         $this->insertStaticPDF(
-            $this->lpaIsComplete ? $this->coversheetFileName : $this->coversheetFileNameDraft,
+            $this->lpaIsComplete ? $finalCoversheetFileName : $this->coversheetFileNameDraft,
             1,
             2,
             'start'
