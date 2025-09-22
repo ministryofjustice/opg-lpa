@@ -145,7 +145,7 @@ services:
     environment:
       APP_HOST: front-app
       APP_PORT: 9000
-      NGINX_LOG_LEVEL: warn
+
 
   front-app:
     container_name: lpa-front-app
@@ -248,7 +248,7 @@ services:
     environment:
       APP_HOST: api-app
       APP_PORT: 9000
-      NGINX_LOG_LEVEL: warn
+
 
   api-app:
     container_name: lpa-api-app
@@ -341,7 +341,7 @@ services:
     environment:
       APP_HOST: admin-app
       APP_PORT: 9000
-      NGINX_LOG_LEVEL: warn
+
 
   admin-app:
     container_name: lpa-admin-app
