@@ -93,8 +93,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     protected function create(Lpa $lpa)
     {
         // Add an appropriate coversheet to the start of the document
-        $feeEffectiveDate = getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00';
-        $timeNow = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/London'));
+        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
+        $timeNow = new DateTimeImmutable('now');
         $finalCoversheetFileName = ($timeNow >= $feeEffectiveDate) ? $this->coversheetFileName : $this->coversheetFileNameOld;
         $this->insertStaticPDF(
             $this->lpaIsComplete ? $finalCoversheetFileName : $this->coversheetFileNameDraft,
