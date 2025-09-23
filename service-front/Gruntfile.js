@@ -128,7 +128,8 @@ module.exports = function (grunt) {
         src: [
           'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
           'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
-          'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css'
+          'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css',
+          'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css'
         ],
         dest: 'public/assets/v2/css/',
         options: {
@@ -150,6 +151,16 @@ module.exports = function (grunt) {
       jsdev: {
         src: 'public/assets/v2/js/application.js',
         dest: 'public/assets/v2/js/application.min.js'
+      },
+
+      jsdevgovuk: {
+        src: 'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js',
+        dest: 'public/assets/v2/js/govuk-frontend.min.js'
+      },
+
+      jsdevgovukinit: {
+        src: 'assets/js/opg/govuk-init.js',
+        dest: 'public/assets/v2/js/govuk-init.js'
       },
 
       jsdevdashboardstatuses: {
@@ -310,7 +321,7 @@ module.exports = function (grunt) {
 
   // define tasks
   grunt.registerTask('test', ['scsslint', 'jshint']);
-  grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify']);
+  grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify', 'copy:jsdevgovuk', 'copy:jsdevgovukinit']);
   grunt.registerTask('build_js_dev', [
     'copy:jsenv',
     'handlebars',
@@ -318,7 +329,7 @@ module.exports = function (grunt) {
     'copy:jsdev',
     'copy:jsdevdashboardstatuses',
     'copy:jsdevsessiontimeout',
-    'copy:jsdevinitpolyfill',
+    'copy:jsdevinitpolyfill'
   ]);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service;
 
 use Application\Model\Service\ApiClient\Exception\ApiException;
@@ -28,9 +30,6 @@ class ServiceTestHelper
     }
 
     /**
-     * @param DateTime $expected
-     * @param DateTime $actual
-     * @param int $secondsOut
      * @throws Exception
      */
     public static function assertTimeNear(DateTime $expected, DateTime $actual, int $secondsOut = 1) : void

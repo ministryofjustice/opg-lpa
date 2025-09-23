@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Payment\Helper;
 
 use Exception;
@@ -11,15 +13,7 @@ use Application\Model\Service\Payment\Helper\LpaIdHelper;
  */
 final class LpaIdHelperTest extends AbstractHttpControllerTestCase
 {
-    /**
-     * Prepares the environment before running a test.
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    public function testPadLpaIdWithStringWhenZeroesNeeded()
+    public function testPadLpaIdWithStringWhenZeroesNeeded(): void
     {
         $this->assertEquals(
             LpaIdHelper::padLpaId('123'),
@@ -27,7 +21,7 @@ final class LpaIdHelperTest extends AbstractHttpControllerTestCase
         );
     }
 
-    public function testPadLpaIdWithIntegerWhenZeroesNeeded()
+    public function testPadLpaIdWithIntegerWhenZeroesNeeded(): void
     {
         $this->assertEquals(
             LpaIdHelper::padLpaId(123),
@@ -35,7 +29,7 @@ final class LpaIdHelperTest extends AbstractHttpControllerTestCase
         );
     }
 
-    public function testPadLpaIdWhenNoZeroesNeeded()
+    public function testPadLpaIdWhenNoZeroesNeeded(): void
     {
         $this->assertEquals(
             LpaIdHelper::padLpaId('12345678901'),
@@ -43,7 +37,7 @@ final class LpaIdHelperTest extends AbstractHttpControllerTestCase
         );
     }
 
-    public function testPadLpaIdWhenLpaIdIsTooBig()
+    public function testPadLpaIdWhenLpaIdIsTooBig(): void
     {
         $exceptionThrown = false;
         try {
@@ -55,7 +49,7 @@ final class LpaIdHelperTest extends AbstractHttpControllerTestCase
         $this->assertTrue($exceptionThrown);
     }
 
-    public function testConstructPaymentTransactionId()
+    public function testConstructPaymentTransactionId(): void
     {
         $id = LpaIdHelper::constructPaymentTransactionId('123');
 

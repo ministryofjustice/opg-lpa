@@ -1,3 +1,5 @@
+FROM composer:2.8.11@sha256:6133e78c003c0625fb763aa131622f537cd696ed14d98b5caa108db9be02ae9b AS composer
+
 FROM php:8.3-cli-alpine3.22@sha256:455b2021cecb70fb7b983cec51b84f0660bc8c3b6aac60d58f3fff3a77689cb6
 
 RUN adduser -D -g '' appuser
@@ -13,8 +15,8 @@ RUN apk update \
 # Install composer dependencies
 COPY --chown=root:root service-pdf/composer.json /app/composer.json
 COPY --chown=root:root service-pdf/composer.lock /app/composer.lock
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version 2.5.1 \
-    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
+COPY --from=composer /usr/bin/composer /usr/bin/
+RUN composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer

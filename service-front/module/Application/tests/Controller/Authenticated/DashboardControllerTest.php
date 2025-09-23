@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\DashboardController;
@@ -15,7 +17,7 @@ use Mockery;
 
 final class DashboardControllerTest extends AbstractControllerTestCase
 {
-    public function testIndexActionZeroLpas()
+    public function testIndexActionZeroLpas(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -39,7 +41,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -76,7 +78,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals(['lastLogin' => $this->userIdentity->lastLogin()], $result->getVariable('user'));
     }
 
-    public function testIndexActionMultiplePages()
+    public function testIndexActionMultiplePages(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -118,7 +120,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals(['lastLogin' => $this->userIdentity->lastLogin()], $result->getVariable('user'));
     }
 
-    public function testIndexActionLastPage()
+    public function testIndexActionLastPage(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -160,7 +162,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals(['lastLogin' => $this->userIdentity->lastLogin()], $result->getVariable('user'));
     }
 
-    public function testCreateActionSeedLpaFailed()
+    public function testCreateActionSeedLpaFailed(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -178,7 +180,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testCreateActionSeedLpaPartialSuccess()
+    public function testCreateActionSeedLpaPartialSuccess(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -199,7 +201,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testDeleteActionLPAAlreadyDeleted()
+    public function testDeleteActionLPAAlreadyDeleted(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -219,7 +221,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $controller->deleteLpaAction();
     }
 
-    public function testDeleteActionSuccess()
+    public function testDeleteActionSuccess(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -241,7 +243,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testConfirmDeleteLpaActionNonJs()
+    public function testConfirmDeleteLpaActionNonJs(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -264,7 +266,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals($lpa->document->donor->name, $lpaOut->document->donor->name);
     }
 
-    public function testConfirmDeleteLpaActionJs()
+    public function testConfirmDeleteLpaActionJs(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -290,7 +292,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals($lpa->document->donor->name, $lpaOut->document->donor->name);
     }
 
-    public function testTermsAction()
+    public function testTermsAction(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
@@ -302,7 +304,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
     }
 
-    public function testCheckAuthenticated()
+    public function testCheckAuthenticated(): void
     {
         $this->setIdentity(null);
         /** @var DashboardController $controller */
@@ -326,7 +328,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testStatusesAction()
+    public function testStatusesAction(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);

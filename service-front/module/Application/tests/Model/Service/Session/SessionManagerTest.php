@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Session;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;

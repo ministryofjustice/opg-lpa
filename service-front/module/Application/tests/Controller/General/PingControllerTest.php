@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\PingController;
@@ -18,11 +20,11 @@ final class PingControllerTest extends MockeryTestCase
      * @var MockInterface|Status
      */
     private $status;
-    private $checkResultOk = [
+    private array $checkResultOk = [
         'status' => Constants::STATUS_PASS,
     ];
 
-    protected function getController()
+    private function getController(): PingController
     {
         /** @var PingController $controller */
         $controller = new PingController();
@@ -34,7 +36,7 @@ final class PingControllerTest extends MockeryTestCase
         return $controller;
     }
 
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         $controller = $this->getController();
 
@@ -48,7 +50,7 @@ final class PingControllerTest extends MockeryTestCase
         $this->assertEquals($this->checkResultOk, $result->getVariable('status'));
     }
 
-    public function testJsonAction()
+    public function testJsonAction(): void
     {
         $controller = $this->getController();
 
@@ -62,7 +64,7 @@ final class PingControllerTest extends MockeryTestCase
         $this->assertEquals('1.2.3.4-test', $result->getVariable('tag'));
     }
 
-    public function testPingdomActionOk()
+    public function testPingdomActionOk(): void
     {
         $controller = $this->getController();
 
@@ -76,7 +78,7 @@ final class PingControllerTest extends MockeryTestCase
         $this->assertStringContainsString('<pingdom_http_custom_check><status>OK</status>', $result->getContent());
     }
 
-    public function testPingdomActionError()
+    public function testPingdomActionError(): void
     {
         $controller = $this->getController();
 

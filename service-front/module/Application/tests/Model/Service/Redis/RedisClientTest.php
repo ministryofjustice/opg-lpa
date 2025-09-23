@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Redis;
 
 use Application\Model\Service\Redis\RedisClient;
@@ -13,7 +15,8 @@ use ReflectionProperty;
 
 final class RedisClientTest extends MockeryTestCase
 {
-    // returns the mock for setting expectations
+    private RedisClient $redisHandler;
+
     private function makeRedisClientWithMock(string $redisUrl): Redis
     {
         $redisMock = Mockery::Mock(Redis::class);
@@ -26,13 +29,13 @@ final class RedisClientTest extends MockeryTestCase
     public function tearDown(): void
     {
         Mockery::close();
-        $this->redisHandler = null;
+        unset($this->redisHandler);
     }
 
     public function testConstructorErrorInvalidUrl(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $client = new RedisClient('foohost', 100);
+        new RedisClient('foohost', 100);
     }
 
     public function testConstructorInstantiatesRedis(): void
@@ -142,7 +145,7 @@ final class RedisClientTest extends MockeryTestCase
         $this->assertSame($expected, $actual);
     }
 
-    public function testClose()
+    public function testClose(): void
     {
         $redisMock = $this->makeRedisClientWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('close')
@@ -150,7 +153,7 @@ final class RedisClientTest extends MockeryTestCase
         $this->assertSame(true, $this->redisHandler->close());
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $redisMock = $this->makeRedisClientWithMock('tcp://barhost:6737');
         $redisMock->shouldReceive('del')

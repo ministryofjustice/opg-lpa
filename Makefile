@@ -14,7 +14,7 @@ NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-va
 # This user is in the test data seeded into the system.
 ADMIN_USERS := "seeded_test_user@digital.justice.gov.uk"
 
-COMPOSER_VERSION := "2.5.5"
+COMPOSER_VERSION := "2.8.11"
 
 # Unique identifier for this version of the application
 APP_VERSION := $(shell echo -n `git rev-parse --short HEAD`)
@@ -173,7 +173,7 @@ dc-unit-tests: dc-front-unit-tests
 
 .PHONY: npm-install
 npm-install:
-	npm install
+	npm ci --ignore-scripts
 
 # CYPRESS_RUNNER_* environment variables are used to consolidate setting environment
 # variables detected by cypress (like CYPRESS_baseUrl) and variables which are

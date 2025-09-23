@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\View\Helper;
 
 use Application\Form\View\Helper\FormMultiCheckbox;
@@ -16,7 +18,7 @@ class TestableFormMultiCheckbox extends FormMultiCheckbox
         return $this->renderOptions($element, $options, $selectedOptions, $attributes);
     }
 
-    public function setViewForTesting()
+    public function setViewForTesting(): void
     {
         $this->view = "Set To Something Non-Null To Allow Unit Testing";
     }

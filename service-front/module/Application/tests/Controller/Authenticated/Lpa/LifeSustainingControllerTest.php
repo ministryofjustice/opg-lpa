@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\LifeSustainingController;
@@ -13,11 +15,8 @@ use Laminas\View\Model\ViewModel;
 
 final class LifeSustainingControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|LifeSustainingForm
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|LifeSustainingForm $form;
+    private array $postData = [
         'canSustainLife' => true
     ];
 
@@ -30,7 +29,7 @@ final class LifeSustainingControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\LifeSustainingForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var LifeSustainingController $controller */
         $controller = $this->getController(LifeSustainingController::class);
@@ -47,7 +46,7 @@ final class LifeSustainingControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var LifeSustainingController $controller */
         $controller = $this->getController(LifeSustainingController::class);
@@ -62,7 +61,7 @@ final class LifeSustainingControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    public function testIndexActionPostFailed()
+    public function testIndexActionPostFailed(): void
     {
         /** @var LifeSustainingController $controller */
         $controller = $this->getController(LifeSustainingController::class);
@@ -80,7 +79,7 @@ final class LifeSustainingControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostSuccess()
+    public function testIndexActionPostSuccess(): void
     {
         /** @var LifeSustainingController $controller */
         $controller = $this->getController(LifeSustainingController::class);
@@ -92,7 +91,7 @@ final class LifeSustainingControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
-            ->withArgs(function ($lpa, $primaryAttorneyDecisions) {
+            ->withArgs(function ($lpa, $primaryAttorneyDecisions): bool {
                 return $lpa->id === $this->lpa->id
                         && $primaryAttorneyDecisions->canSustainLife === true;
             })->andReturn(true)->once();
