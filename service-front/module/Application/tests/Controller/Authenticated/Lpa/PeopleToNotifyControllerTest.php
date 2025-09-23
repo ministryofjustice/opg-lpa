@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\PeopleToNotifyController;
@@ -21,15 +23,9 @@ use Laminas\View\Model\ViewModel;
 
 final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|BlankMainFlowForm
-     */
-    private $blankMainFlowForm;
-    /**
-     * @var MockInterface|PeopleToNotifyForm
-     */
-    private $peopleToNotifyForm;
-    private $postData = [
+    private MockInterface|BlankMainFlowForm $blankMainFlowForm;
+    private MockInterface|PeopleToNotifyForm $peopleToNotifyForm;
+    private array $postData = [
         'name' => [
             'title' => 'Miss',
             'first' => 'Unit',
@@ -74,7 +70,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\PeopleToNotifyForm'])->andReturn($this->peopleToNotifyForm);
     }
 
-    public function testIndexActionGetNoPeopleToNotify()
+    public function testIndexActionGetNoPeopleToNotify(): void
     {
         $this->lpa->document->peopleToNotify = [];
 
@@ -96,7 +92,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals([], $result->getVariable('peopleToNotify'));
     }
 
-    public function testIndexActionGetMultiplePeopleToNotify()
+    public function testIndexActionGetMultiplePeopleToNotify(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -119,7 +115,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($expectedPeopleToNotifyParams, $result->getVariable('peopleToNotify'));
     }
 
-    public function testIndexActionGetFivePeopleToNotify()
+    public function testIndexActionGetFivePeopleToNotify(): void
     {
         while (count($this->lpa->document->peopleToNotify) < 5) {
             $this->lpa->document->peopleToNotify[] = FixturesData::getNotifiedPerson();
@@ -146,7 +142,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($expectedPeopleToNotifyParams, $result->getVariable('peopleToNotify'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         $this->lpa->document->peopleToNotify = [];
 
@@ -168,7 +164,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals([], $result->getVariable('peopleToNotify'));
     }
 
-    public function testIndexActionPostUpdateMetadata()
+    public function testIndexActionPostUpdateMetadata(): void
     {
         $this->lpa->document->peopleToNotify = [];
 
@@ -188,7 +184,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionGetReuseDetails()
+    public function testAddActionGetReuseDetails(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -206,7 +202,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionGetFivePeopleToNotify()
+    public function testAddActionGetFivePeopleToNotify(): void
     {
         while (count($this->lpa->document->peopleToNotify) < 5) {
             $this->lpa->document->peopleToNotify[] = FixturesData::getNotifiedPerson();
@@ -226,7 +222,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionGet()
+    public function testAddActionGet(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -246,7 +242,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    public function testAddActionPostInvalid()
+    public function testAddActionPostInvalid(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -266,7 +262,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    public function testAddActionPostFailed()
+    public function testAddActionPostFailed(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -277,7 +273,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
-            ->withArgs(function ($lpa, $notifiedPerson) {
+            ->withArgs(function ($lpa, $notifiedPerson): bool {
                 return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
@@ -289,7 +285,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $controller->addAction();
     }
 
-    public function testAddActionPostSuccess()
+    public function testAddActionPostSuccess(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -302,7 +298,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
-            ->withArgs(function ($lpa, $notifiedPerson) {
+            ->withArgs(function ($lpa, $notifiedPerson): bool {
                 return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
@@ -315,7 +311,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testAddActionPostMetadata()
+    public function testAddActionPostMetadata(): void
     {
         unset($this->lpa->metadata[Lpa::PEOPLE_TO_NOTIFY_CONFIRMED]);
 
@@ -328,7 +324,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
-            ->withArgs(function ($lpa, $notifiedPerson) {
+            ->withArgs(function ($lpa, $notifiedPerson): bool {
                 return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
@@ -342,7 +338,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('success'));
     }
 
-    public function testAddActionPostReuseDetails()
+    public function testAddActionPostReuseDetails(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -369,7 +365,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    public function testEditActionInvalidIndex()
+    public function testEditActionInvalidIndex(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -393,7 +389,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Page not found', $result->content);
     }
 
-    public function testEditActionGet()
+    public function testEditActionGet(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -418,7 +414,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    public function testEditActionPostInvalid()
+    public function testEditActionPostInvalid(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -441,7 +437,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    public function testEditActionPostFailed()
+    public function testEditActionPostFailed(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -455,7 +451,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setNotifiedPerson')
-            ->withArgs(function ($lpa, $notifiedPerson) {
+            ->withArgs(function ($lpa, $notifiedPerson): bool {
                 return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
@@ -467,7 +463,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $controller->editAction();
     }
 
-    public function testEditActionPostSuccess()
+    public function testEditActionPostSuccess(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -481,7 +477,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setNotifiedPerson')
-            ->withArgs(function ($lpa, $notifiedPerson) {
+            ->withArgs(function ($lpa, $notifiedPerson): bool {
                 return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
@@ -494,7 +490,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('success'));
     }
 
-    public function testConfirmDeleteActionInvalidIndex()
+    public function testConfirmDeleteActionInvalidIndex(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -517,7 +513,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Page not found', $result->content);
     }
 
-    public function testConfirmDeleteActionGetJs()
+    public function testConfirmDeleteActionGetJs(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -541,7 +537,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->isPopup);
     }
 
-    public function testConfirmDeleteActionGetNoJs()
+    public function testConfirmDeleteActionGetNoJs(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -565,7 +561,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->isPopup);
     }
 
-    public function testDeleteActionInvalidIndex()
+    public function testDeleteActionInvalidIndex(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -588,7 +584,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Page not found', $result->content);
     }
 
-    public function testDeleteActionFailed()
+    public function testDeleteActionFailed(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -606,7 +602,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $controller->deleteAction();
     }
 
-    public function testDeleteActionSuccess()
+    public function testDeleteActionSuccess(): void
     {
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
@@ -626,10 +622,7 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    /**
-     * @return array
-     */
-    private function getExpectedPeopleToNotifyParams()
+    private function getExpectedPeopleToNotifyParams(): array
     {
         $expectedPeopleToNotifyParams = [];
         foreach ($this->lpa->document->peopleToNotify as $idx => $peopleToNotify) {

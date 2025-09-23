@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\User;
 
 use Application\Form\User\ChangePassword as ChangePasswordForm;
@@ -29,7 +31,7 @@ final class ChangePasswordTest extends MockeryTestCase
         $this->setUpForm($form);
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\User\ChangePassword', $this->form);
         $this->assertInstanceOf('Application\Form\User\SetPassword', $this->form);
@@ -38,7 +40,7 @@ final class ChangePasswordTest extends MockeryTestCase
         $this->assertEquals('change-password', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password_current'));
         //  From SetPassword
@@ -47,12 +49,12 @@ final class ChangePasswordTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Hidden', $this->form->get('skip_confirm_password'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
-            'password_current'      => 'P@55word',
-            'password'              => 'P@55word',
-            'password_confirm'      => 'P@55word',
+            'password_current'      => 'P@55wordword',
+            'password'              => 'P@55wordword',
+            'password_confirm'      => 'P@55wordword',
             'skip_confirm_password' => '0',
         ], $this->getCsrfData()));
 
@@ -61,12 +63,12 @@ final class ChangePasswordTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelOKWithHTMLTags()
+    public function testValidateByModelOKWithHTMLTags(): void
     {
         $this->form->setData(array_merge([
-            'password_current'      => 'P@55word',
-            'password'              => '<>P@55word',
-            'password_confirm'      => '<>P@55word',
+            'password_current'      => 'P@55wordword',
+            'password'              => '<>P@55wordword',
+            'password_confirm'      => '<>P@55wordword',
             'skip_confirm_password' => '0',
         ], $this->getCsrfData()));
 
@@ -75,7 +77,7 @@ final class ChangePasswordTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelOKWithLeadingAndTrailingSpaces()
+    public function testValidateByModelOKWithLeadingAndTrailingSpaces(): void
     {
         $this->form->setData(array_merge([
             'password_current'      => 'P@55word',
@@ -89,7 +91,7 @@ final class ChangePasswordTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'password_current'      => '',

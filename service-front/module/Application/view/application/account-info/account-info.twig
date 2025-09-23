@@ -1,43 +1,63 @@
-<div class="global-nav js-toggle-nav">
-    <div class="inner">
-        <nav role="navigation" class="content">
+<div class="inner">
+    <section aria-label="Service information" class="govuk-service-navigation"
+             data-module="govuk-service-navigation">
+        <div class="govuk-width-container">
+            <div class="govuk-service-navigation__container">
+              <span class="govuk-service-navigation__service-name">
+                <a href="/home" class="govuk-service-navigation__link">
+                  Make a lasting power of attorney
+                </a>
+              </span>
+                <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
+                    <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
+                            data-cy="service-nav-toggle" aria-controls="navigation" aria-expanded="false" hidden>
+                        Menu
+                    </button>
+                    <ul class="govuk-service-navigation__list" id="navigation" data-cy="service-nav-list">
+                        {% if name %}
+                            <li class="govuk-service-navigation__item {{ route == 'user/about-you' ? 'govuk-service-navigation__item--active' : ''}}">
+                                {% if route == 'user/about-you' %}
+                                    <a class="govuk-service-navigation__link" href="{{ view.url('user/about-you') }}" aria-current="true">
+                                        <strong class="govuk-service-navigation__active-fallback">Your details</strong>
+                                    </a>
+                                {% else %}
+                                    <a class="govuk-service-navigation__link" href="{{ view.url('user/about-you') }}">
+                                        Your details
+                                    </a>
+                                {% endif %}
+                            </li>
 
-            <ul class="navigation">
-
-                {% if name %}
-                    <li class="user navigation-item">{{ name ~ ':' }} </li>
-
-                    <li class="navigation-item">
-                        {% if route == 'user/about-you' %}
-                            <span>Your details</span>
-                        {% else %}
-                            <a href="{{ view.url('user/about-you') }}">Your details</a>
+                            <li class="govuk-service-navigation__item {{ route == 'user/dashboard' ? 'govuk-service-navigation__item--active' : ''}}">
+                                {% if (route == 'lpa-type-no-id' and hasOneOrMoreLPAs == false) or (route == 'user/dashboard') %}
+                                    <a class="govuk-service-navigation__link" href="{{ view.url('user/dashboard') }}" aria-current="true">
+                                        <strong class="govuk-service-navigation__active-fallback">Your LPAs</strong>
+                                    </a>
+                                {% else %}
+                                    <a class="govuk-service-navigation__link" href="{{ view.url('user/dashboard') }}">
+                                        Your LPAs
+                                    </a>
+                                {% endif %}
+                            </li>
                         {% endif %}
-                    </li>
 
+                        <li class="govuk-service-navigation__item">
+                            <a class="govuk-service-navigation__link js-guidance" data-cy="guidance" href="/guide#topic-how-to-make-an-lpa-online">
+                                Help
+                            </a>
+                        </li>
 
-                    <li class="navigation-item">
-                        {% if route == 'lpa-type-no-id' and hasOneOrMoreLPAs == false %}
-                            <span>Your LPAs</span>
-                        {% elseif route == 'user/dashboard' %}
-                            <span>Your LPAs</span>
-                        {% else %}
-                            <a href="{{ view.url('user/dashboard') }}">Your LPAs</a>
-                        {% endif %}
-                    </li>
-
-                {% endif %}
-
-                <li class="navigation-item"><a href="/guide#topic-how-to-make-an-lpa-online" class="js-guidance" data-cy="guidance">Help</a></li>
-
-                <li class="navigation-item"><a href="{{ view.url('logout') }}" data-cy="sign-out">Sign out</a></li>
-
-            </ul>
-
-            {% if lastLogin %}
-                <p class="lastsigned flush--ends">Last signed in: {{ lastLogin|date('j F Y \a\t g:ia', "Europe/London") }}</p>
-            {% endif %}
-
-        </nav>
-    </div>
+                        <li class="govuk-service-navigation__item">
+                            <a class="govuk-service-navigation__link" href="{{ view.url('logout') }}" data-cy="sign-out">
+                                Sign Out
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </section>
 </div>
+{% if lastLogin %}
+    <p class="lastsigned govuk-!-padding-bottom-2 govuk-!-padding-top-2 flush--ends">Last signed in: {{ lastLogin|date('j F Y \\a\\t g:ia', "Europe/London") }}</p>
+{% endif %}
+<hr class="flush--ends">

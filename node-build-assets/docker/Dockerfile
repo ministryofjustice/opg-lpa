@@ -4,7 +4,6 @@ FROM node:20-alpine3.21@sha256:f838a8eabffcfbdf4276294401a56e6e1ce02a638865a1f6e
 
 RUN apk upgrade --no-cache
 RUN apk add --no-cache ruby
-RUN npm install -g npm
 
 WORKDIR /service-front
 

@@ -3,7 +3,7 @@ Feature: AdminUserAccount
 
   Scenario: Delete user from user-facing site
     # Sign up new user on user-facing site
-    Given I sign up "SignupAndDeleteUser" test user with password "Pass1234"
+    Given I sign up "SignupAndDeleteUser" test user with password "Pass12345678"
     When I use activation email for "SignupAndDeleteUser" to visit the link
     Then I see "Account activated" in the title
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller;
 
 use Application\Form\Lpa\AbstractActorForm;
@@ -10,7 +12,7 @@ use RuntimeException;
 
 final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
 {
-    public function testReuseActorDetailsHttpOneOption()
+    public function testReuseActorDetailsHttpOneOption(): void
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
@@ -25,7 +27,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $this->assertTrue($result);
     }
 
-    public function testGetActorReuseDetailsCorrespondentOther()
+    public function testGetActorReuseDetailsCorrespondentOther(): void
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
@@ -42,7 +44,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
 
     // Test that the correspondent from the reused (seed) LPA appears in the
     // reusable actors list when on the correspondent page
-    public function testGetActorReuseDetailsWasCorrespondentForCorrespondentPopup()
+    public function testGetActorReuseDetailsWasCorrespondentForCorrespondentPopup(): void
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
@@ -57,7 +59,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $this->assertNotNull($reuseDetails);
     }
 
-    public function testGetActorReuseDetailsTrustNotIncluded()
+    public function testGetActorReuseDetailsTrustNotIncluded(): void
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
@@ -73,7 +75,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $this->assertNull($reuseDetails);
     }
 
-    public function testGetActorReuseDetailsTrustIncluded()
+    public function testGetActorReuseDetailsTrustIncluded(): void
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
@@ -92,7 +94,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $this->assertEquals($reuseDetails, $reuseDetailsTrust);
     }
 
-    public function testGetActorReuseDetailsUserDetailsAlreadyUsedAsDonor()
+    public function testGetActorReuseDetailsUserDetailsAlreadyUsedAsDonor(): void
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
@@ -111,13 +113,13 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $this->assertNull($reuseDetails);
     }
 
-    public function testUpdateCorrespondentDataTrust()
+    public function testUpdateCorrespondentDataTrust(): void
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
         $this->lpa->document->correspondent->who = Correspondence::WHO_ATTORNEY;
 
-        $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpa, $correspondent) {
+        $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpa, $correspondent): bool {
             return $lpa->id === $this->lpa->id && $correspondent->company === FixturesData::getAttorneyTrust()->name;
         })->andReturn(true)->once();
 
@@ -127,7 +129,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $this->assertNull($result);
     }
 
-    public function testUpdateCorrespondentDataFailed()
+    public function testUpdateCorrespondentDataFailed(): void
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
@@ -142,7 +144,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $controller->testUpdateCorrespondentData($trust);
     }
 
-    public function testUpdateCorrespondentDataFailedOnDelete()
+    public function testUpdateCorrespondentDataFailedOnDelete(): void
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
@@ -160,7 +162,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $controller->testUpdateCorrespondentData($trust, $isDelete);
     }
 
-    private function getReuseDetailsByLabelContains($actorReuseDetails, $label)
+    private function getReuseDetailsByLabelContains(array $actorReuseDetails, $label)
     {
         $index = null;
         foreach ($actorReuseDetails as $key => $value) {

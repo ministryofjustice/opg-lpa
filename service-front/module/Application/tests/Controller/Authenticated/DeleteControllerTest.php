@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\DeleteController;
@@ -10,7 +12,7 @@ use Laminas\View\Model\ViewModel;
 
 final class DeleteControllerTest extends AbstractControllerTestCase
 {
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         /** @var DeleteController $controller */
         $controller = $this->getController(TestableDeleteController::class);
@@ -21,7 +23,7 @@ final class DeleteControllerTest extends AbstractControllerTestCase
         $this->assertInstanceOf(ViewModel::class, $result);
     }
 
-    public function testConfirmActionFailed()
+    public function testConfirmActionFailed(): void
     {
         /** @var DeleteController $controller */
         $controller = $this->getController(TestableDeleteController::class);
@@ -35,7 +37,7 @@ final class DeleteControllerTest extends AbstractControllerTestCase
         $this->assertEquals('error/500.twig', $result->getTemplate());
     }
 
-    public function testConfirmAction()
+    public function testConfirmAction(): void
     {
         /** @var DeleteController $controller */
         $controller = $this->getController(TestableDeleteController::class);
@@ -50,7 +52,7 @@ final class DeleteControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testCheckAuthenticated()
+    public function testCheckAuthenticated(): void
     {
         /** @var DeleteController $controller */
         $this->setIdentity(null);

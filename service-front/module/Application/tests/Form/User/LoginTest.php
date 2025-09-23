@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\User;
 
 use Application\Form\User\Login as LoginForm;
@@ -18,20 +20,20 @@ final class LoginTest extends MockeryTestCase
         $this->setUpForm(new LoginForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\User\Login', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
         $this->assertEquals('login', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email'));
         $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'email'     => 'a@b.com',
@@ -43,7 +45,7 @@ final class LoginTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'email'     => '',

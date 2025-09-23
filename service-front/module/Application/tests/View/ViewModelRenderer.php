@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View;
 
 use Laminas\View\Model\ViewModel;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
+use Twig\TemplateWrapper;
 use Twig\TwigFunction;
 
 /**
@@ -27,15 +30,9 @@ use Twig\TwigFunction;
  */
 class ViewModelRenderer
 {
-    /** @var Environment */
-    private $renderer;
+    private Environment $renderer;
+    private TemplateWrapper $template;
 
-    /** @var Template */
-    private $template;
-
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->renderer = new Environment(
@@ -51,7 +48,7 @@ class ViewModelRenderer
      * @param string $templatePath Path to the Twig template,
      *     relative to module/Application/view/
      */
-    public function loadTemplate(string $templatePath)
+    public function loadTemplate(string $templatePath): void
     {
         $this->template = $this->renderer->load($templatePath);
     }
@@ -62,7 +59,7 @@ class ViewModelRenderer
      *
      * @param string $template Template to load.
      */
-    public function loadTemplateString(string $template)
+    public function loadTemplateString(string $template): void
     {
         $this->template = $this->renderer->createTemplate($template);
     }
@@ -77,7 +74,7 @@ class ViewModelRenderer
     public function addFunction(string $name, mixed $callable = null): void
     {
         if (is_null($callable)) {
-            $callable = function () {
+            $callable = function (): string {
                 return 'noop';
             };
         }

@@ -95,7 +95,7 @@ jobs:
         if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
         run: |
           pushd service-front/
-          npm ci -y && npm install -g sass
+          npm ci --ignore-scripts && npm install -g --ignore-scripts sass
           node_modules/grunt-cli/bin/grunt build
           popd
 

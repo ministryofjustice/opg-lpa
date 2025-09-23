@@ -58,7 +58,8 @@
 	},
 	'depends' : {
 		attributes: {
-			'data-cy': 'how-depends'
+			'data-cy': 'how-depends',
+			'data-aria-controls': 'decisions-details'
 		},
 		label: '<strong class="text bold-small">Jointly for some decisions, and jointly and severally for other decisions</strong>
 			<span class="text form-hint form-hint--strong">
@@ -101,20 +102,22 @@
 
 		{{ macros.formErrorSummary(error,form) }}
 
-		<div class="form-group {{ how.getMessages|length > 0 ? 'form-group-error'}}">
-			<fieldset>
+		<div class="govuk-form-group {{ how.getMessages|length > 0 ? 'form-group-error'}}">
+			<fieldset class="govuk-fieldset">
 	            <legend class="visually-hidden">How should the attorneys make decisions?</legend>
 
 	            <h2 class="heading-medium flush--top">How should the attorneys make decisions?</h2>
 
                 {{ formElementErrorsV2(how) }}
-                {{ formRadio(how) }}
-                <div id="decisions-details" class="panel panel-border-narrow js-hidden">
-                    <p class="text">
-						Please tell us which decisions the donor wants to be made jointly. These decisions will be printed on a extra sheet that the donor will need to sign and date. <a class="js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-analytics-click="page:link:help: Take a look at the guidance">Take a look at the guidance</a> for examples of how the donor can make their wishes clear.
-                    </p>
-                    {{ macros.formGroup(howDetails) }}
-                </div>
+				<div data-module="govuk-radios">
+					{{ formRadio(how) }}
+					<div id="decisions-details" class="govuk-radios__conditional govuk-radios__conditional--hidden panel panel-border-narrow">
+						<p class="text">
+							Please tell us which decisions the donor wants to be made jointly. These decisions will be printed on a extra sheet that the donor will need to sign and date. <a class="js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-analytics-click="page:link:help: Take a look at the guidance">Take a look at the guidance</a> for examples of how the donor can make their wishes clear.
+						</p>
+						{{ macros.formGroup(howDetails) }}
+					</div>
+				</div>
 	        </fieldset>
 	    </div>
 
