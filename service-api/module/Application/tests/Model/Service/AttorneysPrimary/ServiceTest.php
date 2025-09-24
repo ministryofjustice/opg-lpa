@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\AttorneysPrimary;
 
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use RuntimeException;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeSharedTest\DataModel\FixturesData;
+use RuntimeException;
 
 final class ServiceTest extends AbstractServiceTestCase
 {

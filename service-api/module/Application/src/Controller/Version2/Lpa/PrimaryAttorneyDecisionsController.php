@@ -2,10 +2,10 @@
 
 namespace Application\Controller\Version2\Lpa;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Model\Service\AttorneyDecisionsPrimary\Service;
 use Application\Model\Service\EntityInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class PrimaryAttorneyDecisionsController extends AbstractLpaController
 {

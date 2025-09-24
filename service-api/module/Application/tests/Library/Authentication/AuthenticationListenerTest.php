@@ -2,21 +2,21 @@
 
 namespace ApplicationTest\Library\Authentication;
 
-use ApplicationTest\Library\Authentication\Laminas\Authentication\AuthenticationService;
-use PHPUnit\Framework\Attributes\DataProvider;
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Model\Service\Authentication\Service;
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
+use ApplicationTest\Library\Authentication\Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Storage\StorageInterface;
 use Laminas\Http\Request;
 use Laminas\Mvc\ApplicationInterface;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 
 class AuthenticationListenerTest extends MockeryTestCase

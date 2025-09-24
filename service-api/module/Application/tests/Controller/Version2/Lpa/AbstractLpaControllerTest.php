@@ -3,15 +3,15 @@
 namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Library\ApiProblem\ApiProblemException;
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\AbstractService;
-use Mockery;
-use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Mockery;
+use Mockery\MockInterface;
 
 class AbstractLpaControllerTest extends AbstractControllerTestCase
 {
