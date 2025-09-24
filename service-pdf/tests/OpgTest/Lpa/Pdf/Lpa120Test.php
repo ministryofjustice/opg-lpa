@@ -13,7 +13,7 @@ class Lpa120Test extends AbstractPdfTestCase
     private function verifyPdf($lpa, $data, $pageShift)
     {
         $constituentPdfs = [];
-        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
+        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2024-11-17T00:00:00');
         $timeNow = new DateTimeImmutable('now');
         $templateFileName = ($timeNow >= $feeEffectiveDate) ? 'LPA120_2025_fee.pdf' : 'LPA120.pdf';
 
