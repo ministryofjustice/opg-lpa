@@ -8,7 +8,7 @@ use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\Applications\Service;
 use Application\Model\Service\EntityInterface;
 use Laminas\Paginator\Paginator;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 
 class ApplicationController extends AbstractLpaController
 {

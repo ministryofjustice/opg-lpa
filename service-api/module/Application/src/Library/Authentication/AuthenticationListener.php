@@ -6,8 +6,8 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Authentication\Result as AuthenticationResult;
 use Laminas\Mvc\MvcEvent;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Application\Library\ApiProblem;
+use Application\Library\ApiProblemResponse;
 use Psr\Log\LoggerAwareInterface;
 
 /**

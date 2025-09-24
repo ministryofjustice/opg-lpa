@@ -8,7 +8,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Seed\Service;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
 
 class SeedControllerTest extends AbstractControllerTestCase

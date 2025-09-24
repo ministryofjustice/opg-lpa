@@ -5,7 +5,7 @@ namespace Application\Controller\Version2\Lpa;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Model\Service\Donor\Service;
 use Application\Model\Service\EntityInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 
 class DonorController extends AbstractLpaController
 {

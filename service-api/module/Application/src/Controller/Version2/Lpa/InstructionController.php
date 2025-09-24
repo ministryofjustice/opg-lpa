@@ -5,7 +5,7 @@ namespace Application\Controller\Version2\Lpa;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Model\Service\EntityInterface;
 use Application\Model\Service\Instruction\Service;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 
 class InstructionController extends AbstractLpaController
 {

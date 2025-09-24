@@ -1,6 +1,7 @@
 <?php
 namespace ApplicationTest\Controller;
 
+use Application\Library\ApiProblemResponse;
 use DateTime;
 use Application\Controller\FeedbackController;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -11,7 +12,6 @@ use Laminas\Mvc\Controller\PluginManager;
 use LmcRbacMvc\Service\AuthorizationService;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Application\Library\Http\Response\Json;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\NoContent;
 use Psr\Log\LoggerInterface;
 

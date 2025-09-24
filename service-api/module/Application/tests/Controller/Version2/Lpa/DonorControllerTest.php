@@ -7,7 +7,7 @@ use Application\Library\Http\Response\Json;
 use Application\Model\Service\Donor\Service;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
 
 class DonorControllerTest extends AbstractControllerTestCase

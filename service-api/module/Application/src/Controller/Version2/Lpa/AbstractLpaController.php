@@ -10,8 +10,8 @@ use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
 use LmcRbacMvc\Exception\UnauthorizedException as LaminasUnauthorizedException;
 use LmcRbacMvc\Service\AuthorizationService;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Application\Library\ApiProblem;
+use Application\Library\ApiProblemResponse;
 
 abstract class AbstractLpaController extends AbstractRestfulController
 {

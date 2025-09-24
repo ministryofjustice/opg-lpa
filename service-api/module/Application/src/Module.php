@@ -21,7 +21,7 @@ use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
 use Http\Adapter\Guzzle7\Client as Guzzle7Client;
 use Http\Client\HttpClient;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Application\Library\ApiProblemResponse;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;

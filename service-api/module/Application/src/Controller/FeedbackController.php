@@ -2,14 +2,14 @@
 
 namespace Application\Controller;
 
+use Application\Library\ApiProblem;
+use Application\Library\ApiProblemResponse;
 use DateTime;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\Feedback\Service as FeedbackService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use LmcRbacMvc\Service\AuthorizationService;
 use Psr\Log\LoggerAwareInterface;
 

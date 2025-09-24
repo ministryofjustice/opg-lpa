@@ -7,7 +7,7 @@ use Application\Model\Service\Lock\Service;
 use Application\Library\Http\Response\Json;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
 
 class LockControllerTest extends AbstractControllerTestCase

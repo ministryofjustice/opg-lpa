@@ -3,14 +3,14 @@
 namespace ApplicationTest\Controller\Version2\Auth;
 
 use Application\Controller\Version2\Auth\AuthenticateController;
+use Application\Library\ApiProblem;
+use Application\Library\ApiProblemResponse;
 use DateTime;
 use Mockery;
 use Laminas\Http\Header\HeaderInterface;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
 use Laminas\View\Model\JsonModel;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 class AuthenticateControllerTest extends AbstractAuthControllerTestCase
 {

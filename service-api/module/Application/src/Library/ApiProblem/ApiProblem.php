@@ -1,7 +1,8 @@
 <?php
+
 namespace Application\Library\ApiProblem;
 
-use Laminas\ApiTools\ApiProblem\ApiProblem as LaminasApiProblem;
+use Application\Library\ApiProblem as LaminasApiProblem;
 
 /**
  * While this class superficially duplicates LaminasApiProblem, the difference

@@ -14,7 +14,7 @@ use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusServic
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Application\Library\ApiProblemResponse;
 use LmcRbacMvc\Service\AuthorizationService;
 use Psr\Log\LoggerAwareInterface;
 

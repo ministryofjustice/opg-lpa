@@ -16,7 +16,7 @@ use Laminas\Http\Request;
 use Laminas\Mvc\ApplicationInterface;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Application\Library\ApiProblemResponse;
 use Psr\Log\LoggerInterface;
 
 class AuthenticationListenerTest extends MockeryTestCase

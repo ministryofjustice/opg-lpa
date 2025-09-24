@@ -7,7 +7,7 @@ use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\EntityInterface;
 use Application\Model\Service\Users\Service;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 
 class UserController extends AbstractLpaController
 {

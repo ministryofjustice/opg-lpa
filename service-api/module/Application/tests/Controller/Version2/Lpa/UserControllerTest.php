@@ -9,7 +9,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Users\Service;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
 use LmcRbacMvc\Service\AuthorizationService;
 

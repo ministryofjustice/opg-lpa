@@ -11,7 +11,7 @@ use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use Application\Library\ApiProblemResponse;
 
 class AbstractLpaControllerTest extends AbstractControllerTestCase
 {

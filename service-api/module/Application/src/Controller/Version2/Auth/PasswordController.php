@@ -3,7 +3,7 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Model\Service\Password\Service;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 use Laminas\View\Model\JsonModel;
 use DateTime;
 use MakeShared\Logging\LoggerTrait;

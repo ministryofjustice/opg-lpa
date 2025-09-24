@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Version2\Auth;
 use Application\Controller\Version2\Auth\UsersController;
 use Application\Model\Service\Users\Service;
 use Laminas\View\Model\JsonModel;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 use Mockery;
 
 class UsersControllerTest extends AbstractAuthControllerTestCase

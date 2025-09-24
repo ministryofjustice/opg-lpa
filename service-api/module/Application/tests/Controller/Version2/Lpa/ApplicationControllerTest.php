@@ -8,7 +8,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Applications\Service;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
 
 class ApplicationControllerTest extends AbstractControllerTestCase

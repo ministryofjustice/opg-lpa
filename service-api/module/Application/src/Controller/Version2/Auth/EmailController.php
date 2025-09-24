@@ -2,9 +2,9 @@
 
 namespace Application\Controller\Version2\Auth;
 
+use Application\Library\ApiProblem;
 use Application\Model\Service\Email\Service;
 use Laminas\View\Model\JsonModel;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\Logging\LoggerTrait;
 
 class EmailController extends AbstractAuthController
