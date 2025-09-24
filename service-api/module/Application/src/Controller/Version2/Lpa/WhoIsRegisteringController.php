@@ -2,10 +2,10 @@
 
 namespace Application\Controller\Version2\Lpa;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Model\Service\EntityInterface;
 use Application\Model\Service\WhoIsRegistering\Service;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class WhoIsRegisteringController extends AbstractLpaController
 {
