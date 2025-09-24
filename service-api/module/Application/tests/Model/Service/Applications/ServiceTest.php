@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Applications;
 
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use RuntimeException;
-use ArrayIterator;
-use ArrayObject;
-use DateTime;
-use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
-use Mockery\MockInterface;
+use ArrayIterator;
+use ArrayObject;
+use DateTime;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Formatter;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
+use Mockery\MockInterface;
+use RuntimeException;
 
 final class ServiceTest extends AbstractServiceTestCase
 {

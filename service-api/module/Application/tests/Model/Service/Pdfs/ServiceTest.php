@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Pdfs;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Model\Service\Pdfs\Service;
@@ -13,10 +14,9 @@ use Aws\Result;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Mockery;
-use MakeSharedTest\DataModel\FixturesData;
 use Laminas\Crypt\BlockCipher;
+use MakeSharedTest\DataModel\FixturesData;
+use Mockery;
 
 final class ServiceTest extends AbstractServiceTestCase
 {

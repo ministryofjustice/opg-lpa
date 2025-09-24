@@ -2,11 +2,11 @@
 
 namespace Application\Model\Service\AttorneysPrimary;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\DataModel\Lpa\Document\Attorneys;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
