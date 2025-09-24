@@ -12,7 +12,7 @@
     "require": {
         "php": ">=8.2 <8.3.0",
         "egulias/email-validator": "~1.2",
-        "laminas/laminas-diactoros": "^2.23",
+        "laminas/laminas-diactoros": "^3.0",
         "laminas/laminas-eventmanager": "^3.5",
         "monolog/monolog": "^3.9",
         "laminas/laminas-mvc": "^3.5",
