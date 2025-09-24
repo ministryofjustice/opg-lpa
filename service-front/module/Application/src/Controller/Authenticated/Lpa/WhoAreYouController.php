@@ -155,6 +155,7 @@ class WhoAreYouController extends AbstractLpaController
             'type' => 'radio',
             'id' => 'who-other',
             'data-cy' => 'who-other',
+            'data-aria-controls' => 'other-input',
             'value' => $who->getOptions()['value_options']['other']['value'],
             'checked' => (($who->getValue() == 'other') ? 'checked' : null),
         ]);
