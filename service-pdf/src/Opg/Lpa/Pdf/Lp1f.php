@@ -22,7 +22,8 @@ class Lp1f extends AbstractLp1
      *
      * @var
      */
-    protected $coversheetFileName = 'LP1F_CoversheetRegistration.pdf';
+    protected $coversheetFileNameOld = 'LP1F_CoversheetRegistration.pdf';
+    protected $coversheetFileName = 'LP1F_CoversheetRegistration2025fee.pdf';
 
     /**
      * PDF file name for the draft coversheet
