@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Pdfs;
 
 use Application\Library\ApiProblem\ApiProblem;
@@ -17,9 +19,9 @@ use MakeSharedTest\DataModel\FixturesData;
 use Laminas\Crypt\BlockCipher;
 use hash;
 
-class ServiceTest extends AbstractServiceTestCase
+final class ServiceTest extends AbstractServiceTestCase
 {
-    private $config = [
+    private array $config = [
         'pdf' => [
             'docIdSuffix' => 'MrFoo',
             'cache' => [
@@ -80,7 +82,7 @@ class ServiceTest extends AbstractServiceTestCase
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
-        $lpa->setUser(3);
+        $lpa->setUser('3');
 
         $user = FixturesData::getUser();
 
@@ -92,19 +94,18 @@ class ServiceTest extends AbstractServiceTestCase
         $validationError = $service->fetch($lpa->getId(), -1);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->getStatus());
         $this->assertEquals(
-            'Your request could not be processed due to validation error',
-            $validationError->getDetail()
+            [
+                'type' => 'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
+                'title' => 'Bad Request',
+                'status' => 400,
+                'detail' => 'Your request could not be processed due to validation error',
+                'validation' => [
+                    'user' => ['value' => '3', 'messages' => ['length-must-equal:32']],
+                ]
+            ],
+            $validationError->toArray()
         );
-        $this->assertEquals(
-            'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
-            $validationError->getType()
-        );
-        $this->assertEquals('Bad Request', $validationError->getTitle());
-        $validation = $validationError->validation;
-        $this->assertEquals(1, count($validation));
-        $this->assertTrue(array_key_exists('user', $validation));
 
         $serviceBuilder->verify();
     }
