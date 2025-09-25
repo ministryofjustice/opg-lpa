@@ -2,6 +2,7 @@
 
 namespace Application\Library\ApiProblem;
 
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\DataModel\Validator\ValidatorResponseInterface;
 
 /**
