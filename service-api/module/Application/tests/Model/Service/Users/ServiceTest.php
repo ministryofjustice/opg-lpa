@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Users;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
@@ -12,7 +14,6 @@ use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
-use ApplicationTest\Model\Service\Users\ServiceBuilder;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\User\User as ProfileUserModel;
@@ -20,28 +21,13 @@ use MakeSharedTest\DataModel\FixturesData;
 use ArrayObject;
 use DateTime;
 
-class ServiceTest extends AbstractServiceTestCase
+final class ServiceTest extends AbstractServiceTestCase
 {
-    /**
-     * @var MockInterface|ApplicationsService
-     */
-    private $applicationsService;
-
-    /**
-     * @var MockInterface|LogRepositoryInterface
-     */
-    private $authLogRepository;
-
-    /**
-     * @var MockInterface|UserRepositoryInterface
-     */
-    private $authUserRepository;
-
-    /** @var UsersService */
-    private $service;
-
-    /** @var ServiceBuilder */
-    private $serviceBuilder;
+    private MockInterface|ApplicationsService $applicationsService;
+    private MockInterface|LogRepositoryInterface $authLogRepository;
+    private MockInterface|UserRepositoryInterface $authUserRepository;
+    private UsersService $service;
+    private ServiceBuilder $serviceBuilder;
 
     protected function setUp(): void
     {
@@ -49,9 +35,7 @@ class ServiceTest extends AbstractServiceTestCase
 
         //  Set up the services so they can be enhanced for each test
         $this->applicationsService = Mockery::mock(ApplicationsService::class);
-
         $this->authLogRepository = Mockery::mock(LogRepositoryInterface::class);
-
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
 
         $this->serviceBuilder = new ServiceBuilder();
@@ -270,13 +254,18 @@ class ServiceTest extends AbstractServiceTestCase
         $validationError = $this->service->update($userUpdate->toArray(), $user->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->getStatus());
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
-        $this->assertEquals('Bad Request', $validationError->getTitle());
-        $validation = $validationError->validation;
-        $this->assertEquals(1, count($validation));
-        $this->assertTrue(array_key_exists('name.title', $validation));
+        $this->assertEquals(
+            [
+                'type' => 'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
+                'title' => 'Bad Request',
+                'status' => 400,
+                'detail' => 'Your request could not be processed due to validation error',
+                'validation' => [
+                    'name.title' => ['value' => 'TooLong', 'messages' => ['must-be-less-than-or-equal:5']],
+                ]
+            ],
+            $validationError->toArray()
+        );
 
         $this->serviceBuilder->verify();
     }
