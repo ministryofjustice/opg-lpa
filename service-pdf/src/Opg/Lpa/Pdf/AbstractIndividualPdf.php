@@ -69,7 +69,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     public function __construct(Lpa $lpa = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
     {
         if ($this instanceof Lpa120) {
-            $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2024-11-17T00:00:00');
+            $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
             $timeNow = new DateTimeImmutable('now');
             $this->templateFileName = ($timeNow >= $feeEffectiveDate) ? $this->newTemplateFileName : $this->templateFileName;
         }
