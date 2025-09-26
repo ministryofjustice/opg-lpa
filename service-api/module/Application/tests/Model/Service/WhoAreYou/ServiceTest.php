@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\WhoAreYou;
 
-use RuntimeException;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\Service\WhoAreYou\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Mockery;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use MakeSharedTest\DataModel\FixturesData;
+use Mockery;
+use RuntimeException;
 
 final class ServiceTest extends AbstractServiceTestCase
 {

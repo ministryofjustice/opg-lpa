@@ -2,10 +2,10 @@
 
 namespace Application\Controller\Version2\Auth;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Password\Service;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Laminas\View\Model\JsonModel;
 use DateTime;
+use Laminas\View\Model\JsonModel;
 use MakeShared\Logging\LoggerTrait;
 
 class PasswordController extends AbstractAuthController

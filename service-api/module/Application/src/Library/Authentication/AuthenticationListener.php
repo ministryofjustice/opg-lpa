@@ -2,12 +2,12 @@
 
 namespace Application\Library\Authentication;
 
+use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use MakeShared\Logging\LoggerTrait;
 use Laminas\Authentication\Result as AuthenticationResult;
 use Laminas\Mvc\MvcEvent;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 
 /**

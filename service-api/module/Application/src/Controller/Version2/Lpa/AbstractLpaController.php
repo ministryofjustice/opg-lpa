@@ -2,16 +2,16 @@
 
 namespace Application\Controller\Version2\Lpa;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authorization\UnauthorizedException;
-use Application\Model\Service\AbstractService;
 use Application\Model\DataAccess\Repository\Application\LockedException;
+use Application\Model\Service\AbstractService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
 use LmcRbacMvc\Exception\UnauthorizedException as LaminasUnauthorizedException;
 use LmcRbacMvc\Service\AuthorizationService;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 abstract class AbstractLpaController extends AbstractRestfulController
 {

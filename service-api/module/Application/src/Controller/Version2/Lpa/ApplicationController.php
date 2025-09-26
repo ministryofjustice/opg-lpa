@@ -2,13 +2,13 @@
 
 namespace Application\Controller\Version2\Lpa;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\Applications\Service;
 use Application\Model\Service\EntityInterface;
 use Laminas\Paginator\Paginator;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class ApplicationController extends AbstractLpaController
 {
