@@ -8,7 +8,7 @@ return
     ],
     'environments' => [
         'default_migration_table' => 'phinxlog',
-        'default_database' => 'default',
+        'default_environment' => 'default',
         'default' => [
             'adapter' => 'pgsql',
             'host' => getenv('OPG_LPA_POSTGRES_HOSTNAME'),
