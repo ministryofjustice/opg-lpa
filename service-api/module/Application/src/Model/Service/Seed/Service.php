@@ -2,11 +2,11 @@
 
 namespace Application\Model\Service\Seed;
 
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\Applications\Service as ApplicationService;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
