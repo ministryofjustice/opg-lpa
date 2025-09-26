@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Seed;
 
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 use RuntimeException;
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\Service\Seed\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
@@ -12,7 +14,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
 
-class ServiceTest extends AbstractServiceTestCase
+final class ServiceTest extends AbstractServiceTestCase
 {
     public function testFetchSeedNotFound()
     {
@@ -41,8 +43,15 @@ class ServiceTest extends AbstractServiceTestCase
         $entity = $service->fetch($lpa->getId(), $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
-        $this->assertEquals(404, $entity->getStatus());
-        $this->assertEquals('Invalid LPA identifier to seed from', $entity->getDetail());
+        $this->assertEquals(
+            [
+                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title' => 'Not Found',
+                'status' => 404,
+                'detail' => 'Invalid LPA identifier to seed from',
+            ],
+            $entity->toArray()
+        );
 
         $serviceBuilder->verify();
     }
@@ -50,7 +59,7 @@ class ServiceTest extends AbstractServiceTestCase
     public function testFetchUserDoesNotMatch()
     {
         $seedLpa = FixturesData::getPfLpa();
-        $seedLpa->setUser(-1);
+        $seedLpa->setUser('-1');
 
         $lpa = FixturesData::getHwLpa();
         $lpa->setSeed($seedLpa->getId());
@@ -71,8 +80,15 @@ class ServiceTest extends AbstractServiceTestCase
         $entity = $service->fetch($lpa->getId(), $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
-        $this->assertEquals(400, $entity->getStatus());
-        $this->assertEquals('LPA user does not match fetched LPA\'s user', $entity->getDetail());
+        $this->assertEquals(
+            [
+                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title' => 'Bad Request',
+                'status' => 400,
+                'detail' => 'LPA user does not match fetched LPA\'s user',
+            ],
+            $entity->toArray()
+        );
 
         $serviceBuilder->verify();
     }
@@ -118,8 +134,15 @@ class ServiceTest extends AbstractServiceTestCase
         $entity = $service->update($lpa->getId(), ['seed' => 'Invalid'], $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
-        $this->assertEquals(400, $entity->getStatus());
-        $this->assertEquals('Invalid LPA identifier to seed from', $entity->getDetail());
+        $this->assertEquals(
+            [
+                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title' => 'Bad Request',
+                'status' => 400,
+                'detail' => 'Invalid LPA identifier to seed from',
+            ],
+            $entity->toArray()
+        );
 
         $serviceBuilder->verify();
     }
@@ -147,8 +170,15 @@ class ServiceTest extends AbstractServiceTestCase
         $entity = $service->update($lpa->getId(), ['seed' => $seedLpa->getId()], $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
-        $this->assertEquals(400, $entity->getStatus());
-        $this->assertEquals('Invalid LPA identifier to seed from', $entity->getDetail());
+        $this->assertEquals(
+            [
+                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title' => 'Bad Request',
+                'status' => 400,
+                'detail' => 'Invalid LPA identifier to seed from',
+            ],
+            $entity->toArray()
+        );
 
         $serviceBuilder->verify();
     }
@@ -156,7 +186,7 @@ class ServiceTest extends AbstractServiceTestCase
     public function testUpdateUserDoesNotMatch()
     {
         $seedLpa = FixturesData::getPfLpa();
-        $seedLpa->setUser(-1);
+        $seedLpa->setUser('-1');
 
         $lpa = FixturesData::getHwLpa();
         $lpa->setSeed($seedLpa->getId());
@@ -177,8 +207,15 @@ class ServiceTest extends AbstractServiceTestCase
         $entity = $service->update($lpa->getId(), ['seed' => $seedLpa->getId()], $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
-        $this->assertEquals(400, $entity->getStatus());
-        $this->assertEquals('Invalid LPA identifier to seed from', $entity->getDetail());
+        $this->assertEquals(
+            [
+                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title' => 'Bad Request',
+                'status' => 400,
+                'detail' => 'Invalid LPA identifier to seed from',
+            ],
+            $entity->toArray()
+        );
 
         $serviceBuilder->verify();
     }
@@ -187,7 +224,7 @@ class ServiceTest extends AbstractServiceTestCase
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
-        $lpa->setUser(3);
+        $lpa->setUser('3');
 
         $user = FixturesData::getUser();
 
