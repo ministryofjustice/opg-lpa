@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View\Helper;
 
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
 use Application\View\Helper\Traits\ConcatNamesTrait;
 
-class ApplicantNamesTest extends MockeryTestCase
+final class ApplicantNamesTest extends MockeryTestCase
 {
     use ConcatNamesTrait;
 

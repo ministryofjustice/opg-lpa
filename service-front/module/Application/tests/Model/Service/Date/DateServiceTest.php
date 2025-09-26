@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Date;
 
 use Application\Model\Service\Date\DateService;
@@ -8,13 +10,9 @@ use DateTime;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
-class DateServiceTest extends TestCase
+final class DateServiceTest extends TestCase
 {
-    /**
-     * @var $dateService DateService
-     */
-    private $dateService;
-
+    private DateService $dateService;
 
     public function setUp() : void
     {

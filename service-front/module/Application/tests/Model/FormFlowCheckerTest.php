@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model;
 
 use Application\Model\FormFlowChecker;
-use ApplicationTest\Bootstrap;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
@@ -19,7 +20,6 @@ use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use DateTime;
-use Exception;
 use RuntimeException;
 
 /**
@@ -28,33 +28,20 @@ use RuntimeException;
  * This set of unit tests with execute sequentially starting with a basic LPA datamodel - which will
  * check the correct position in the flow to return the user to
  */
-class FormFlowCheckerTest extends MockeryTestCase
+final class FormFlowCheckerTest extends MockeryTestCase
 {
-    /**
-     * LPA document to test
-     *
-     * @var Lpa
-     */
-    private $lpa;
-
-    /**
-     * @var FormFlowChecker
-     */
-    private $checker;
+    private Lpa $lpa;
+    private FormFlowChecker $checker;
 
     /**
      * Available routes concerning an LPA document
-     *
-     * @var array
      */
-    private $lpaRoutes = [];
+    private array $lpaRoutes = [];
 
     /**
      * Next route
-     *
-     * @var array
      */
-    private $nextRouteDestinations = [
+    private array $nextRouteDestinations = [
         'lpa-type-no-id'                                => 'lpa/donor',
         'lpa/form-type'                                 => 'lpa/donor',
         'lpa/donor'                                     => [
@@ -135,7 +122,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->checker = new FormFlowChecker($this->lpa);
     }
 
-    private function extractRoutes(array $routesData, $parentRoute = '')
+    private function extractRoutes(array $routesData, string $parentRoute = ''): void
     {
         foreach ($routesData as $routeName => $routeData) {
             $thisRouteName = $parentRoute . $routeName;
@@ -151,7 +138,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         }
     }
 
-    public function testRouteRedirectToDashboardNoLPA()
+    public function testRouteRedirectToDashboardNoLPA(): void
     {
         $checker = new FormFlowChecker();
 
@@ -161,14 +148,14 @@ class FormFlowCheckerTest extends MockeryTestCase
         }
     }
 
-    public function testRouteException()
+    public function testRouteException(): void
     {
         $this->expectException('RuntimeException');
 
         $this->checker->getNearestAccessibleRoute('invalid-current-route-name');
     }
 
-    public function testRouteRedirectLockedLpa()
+    public function testRouteRedirectLockedLpa(): void
     {
         $lockedLpaPermittedPages = [
             'lpa/complete',
@@ -192,7 +179,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         }
     }
 
-    public function testRouteRedirectToDashboard()
+    public function testRouteRedirectToDashboard(): void
     {
         $lpa = new Lpa();
         $this->checker = new FormFlowChecker($lpa);
@@ -200,7 +187,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('user/dashboard');
     }
 
-    public function testRouteRedirectToType()
+    public function testRouteRedirectToType(): void
     {
         $permittedRoutes = [
             'lpa',
@@ -211,7 +198,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/form-type', $permittedRoutes);
     }
 
-    public function testRouteRedirectToDonor()
+    public function testRouteRedirectToDonor(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF();
@@ -229,7 +216,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/donor', $permittedRoutes);
     }
 
-    public function testRouteRedirectToWhenLpaStarts()
+    public function testRouteRedirectToWhenLpaStarts(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -249,7 +236,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/when-lpa-starts', $permittedRoutes);
     }
 
-    public function testRouteRedirectToLifeSustainingTreatment()
+    public function testRouteRedirectToLifeSustainingTreatment(): void
     {
         //  Set up the LPA
         $this->setLpaTypeHW()
@@ -269,7 +256,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/life-sustaining', $permittedRoutes);
     }
 
-    public function testRouteRedirectToPrimaryAttorneyPF()
+    public function testRouteRedirectToPrimaryAttorneyPF(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -293,7 +280,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/primary-attorney', $permittedRoutes);
     }
 
-    public function testRouteRedirectToPrimaryAttorneyHW()
+    public function testRouteRedirectToPrimaryAttorneyHW(): void
     {
         //  Set up the LPA
         $this->setLpaTypeHW()
@@ -317,7 +304,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/primary-attorney', $permittedRoutes);
     }
 
-    public function testRouteRedirectToPrimaryAttorneyWhenTrustAdded()
+    public function testRouteRedirectToPrimaryAttorneyWhenTrustAdded(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -329,7 +316,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/primary-attorney', $this->checker->getNearestAccessibleRoute('lpa/primary-attorney/add-trust'));
     }
 
-    public function testRouteRedirectToHowPrimaryAttorneysMakeDecisions()
+    public function testRouteRedirectToHowPrimaryAttorneysMakeDecisions(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -358,7 +345,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/how-primary-attorneys-make-decision', $permittedRoutes);
     }
 
-    public function testRouteRedirectToReplacementAttorney()
+    public function testRouteRedirectToReplacementAttorney(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -395,7 +382,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/replacement-attorney', $permittedRoutes, $specialCases);
     }
 
-    public function testRouteRedirectToReplacementAttorneyWhenTrustAdded()
+    public function testRouteRedirectToReplacementAttorneyWhenTrustAdded(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -408,7 +395,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/replacement-attorney/add-trust'));
     }
 
-    public function testRouteRedirectToReplacementAttorneyWhenMultiplePrimaryAttorneysDoNotMakeDecisionsJointlyAndSeverally()
+    public function testRouteRedirectToReplacementAttorneyWhenMultiplePrimaryAttorneysDoNotMakeDecisionsJointlyAndSeverally(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -424,7 +411,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/replacement-attorney', $this->checker->getNearestAccessibleRoute('lpa/how-replacement-attorneys-make-decision'));
     }
 
-    public function testRouteRedirectToWhenReplacementAttorneysStepIn()
+    public function testRouteRedirectToWhenReplacementAttorneysStepIn(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -463,7 +450,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/when-replacement-attorney-step-in', $permittedRoutes);
     }
 
-    public function testRouteRedirectToHowReplacementAttorneysMakeDecisions()
+    public function testRouteRedirectToHowReplacementAttorneysMakeDecisions(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -505,7 +492,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/how-replacement-attorneys-make-decision', $permittedRoutes);
     }
 
-    public function testRouteRedirectToCertificateProvider()
+    public function testRouteRedirectToCertificateProvider(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -550,7 +537,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/certificate-provider', $permittedRoutes);
     }
 
-    public function testRouteRedirectToPeopleToNotify()
+    public function testRouteRedirectToPeopleToNotify(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -601,7 +588,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/people-to-notify', $permittedRoutes);
     }
 
-    public function testRouteRedirectToInstructionsAndPreferences()
+    public function testRouteRedirectToInstructionsAndPreferences(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -657,7 +644,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/instructions', $permittedRoutes);
     }
 
-    public function testRouteRedirectToApplicant()
+    public function testRouteRedirectToApplicant(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -718,7 +705,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/applicant', $permittedRoutes);
     }
 
-    public function testRouteRedirectToCorrespondent()
+    public function testRouteRedirectToCorrespondent(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -783,7 +770,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/correspondent', $permittedRoutes);
     }
 
-    public function testRouteRedirectToWhoAreYou()
+    public function testRouteRedirectToWhoAreYou(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -849,7 +836,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/who-are-you', $permittedRoutes);
     }
 
-    public function testRouteRedirectToRepeatApplication()
+    public function testRouteRedirectToRepeatApplication(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -917,7 +904,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/repeat-application', $permittedRoutes);
     }
 
-    public function testRouteRedirectToFeeReduction()
+    public function testRouteRedirectToFeeReduction(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -987,7 +974,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/fee-reduction', $permittedRoutes);
     }
 
-    public function testRouteRedirectToCheckout()
+    public function testRouteRedirectToCheckout(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1063,7 +1050,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/checkout', $permittedRoutes);
     }
 
-    public function testRouteRedirectToComplete()
+    public function testRouteRedirectToComplete(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1144,7 +1131,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->runAssertions('lpa/complete', $permittedRoutes);
     }
 
-    private function runAssertions($earliestRedirectRoute, array $permittedRoutes = [], array $specialCases = [])
+    private function runAssertions(string $earliestRedirectRoute, array $permittedRoutes = [], array $specialCases = []): void
     {
         //  Set up any routes that are always permitted
         $permittedRoutes = array_merge($permittedRoutes, [
@@ -1182,7 +1169,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         }
     }
 
-    public function testNextRoutesForAllRoutes()
+    public function testNextRoutesForAllRoutes(): void
     {
         foreach ($this->lpaRoutes as $lpaRoute) {
             //  Based on this route determine which route should come next
@@ -1202,7 +1189,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         }
     }
 
-    public function testNextRoutesFromDonorToWhenLpaStarts()
+    public function testNextRoutesFromDonorToWhenLpaStarts(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1211,7 +1198,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/when-lpa-starts', $this->checker->nextRoute('lpa/donor'));
     }
 
-    public function testNextRoutesFromDonorToLifeSustainingTreatment()
+    public function testNextRoutesFromDonorToLifeSustainingTreatment(): void
     {
         //  Set up the LPA
         $this->setLpaTypeHW()
@@ -1220,7 +1207,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/life-sustaining', $this->checker->nextRoute('lpa/donor'));
     }
 
-    public function testNextRoutesFromPrimaryAttorneysToHowMakeDecisions()
+    public function testNextRoutesFromPrimaryAttorneysToHowMakeDecisions(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1232,7 +1219,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/how-primary-attorneys-make-decision', $this->checker->nextRoute('lpa/primary-attorney'));
     }
 
-    public function testNextRoutesFromPrimaryAttorneysToReplacementAttorneys()
+    public function testNextRoutesFromPrimaryAttorneysToReplacementAttorneys(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1243,7 +1230,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/replacement-attorney', $this->checker->nextRoute('lpa/primary-attorney'));
     }
 
-    public function testNextRoutesFromReplacementAttorneysToWhenStepIn()
+    public function testNextRoutesFromReplacementAttorneysToWhenStepIn(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1258,7 +1245,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/when-replacement-attorney-step-in', $this->checker->nextRoute('lpa/replacement-attorney'));
     }
 
-    public function testNextRoutesFromReplacementAttorneysToHowMakeDecisions()
+    public function testNextRoutesFromReplacementAttorneysToHowMakeDecisions(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1271,7 +1258,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->nextRoute('lpa/replacement-attorney'));
     }
 
-    public function testNextRoutesFromReplacementAttorneysToCertificateProvider()
+    public function testNextRoutesFromReplacementAttorneysToCertificateProvider(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1283,7 +1270,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/certificate-provider', $this->checker->nextRoute('lpa/replacement-attorney'));
     }
 
-    public function testNextRoutesFromWhenStepInToHowMakeDecisions()
+    public function testNextRoutesFromWhenStepInToHowMakeDecisions(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1299,7 +1286,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/how-replacement-attorneys-make-decision', $this->checker->nextRoute('lpa/when-replacement-attorney-step-in'));
     }
 
-    public function testNextRoutesFromWhenStepInToCertificateProvider()
+    public function testNextRoutesFromWhenStepInToCertificateProvider(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1314,7 +1301,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/certificate-provider', $this->checker->nextRoute('lpa/when-replacement-attorney-step-in'));
     }
 
-    public function testNextRoutesToFinalCheckForCompletedLpa()
+    public function testNextRoutesToFinalCheckForCompletedLpa(): void
     {
         //  Set up the LPA
         $this->setLpaTypePF()
@@ -1338,7 +1325,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         }
     }
 
-    public function testBackToFormPF()
+    public function testBackToFormPF(): void
     {
         //  Gradually build up a P&F LPA (as would happen if it was being filled in online)
         //  and keep checking the back to form result
@@ -1418,7 +1405,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
     }
 
-    public function testBackToFormHW()
+    public function testBackToFormHW(): void
     {
         //  Gradually build up a H&W LPA (as would happen if it was being filled in online)
         //  and keep checking the back to form result
@@ -1498,7 +1485,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/view-docs', $this->checker->backToForm());
     }
 
-    public function testBackToFormAccessNAResponses()
+    public function testBackToFormAccessNAResponses(): void
     {
         //  This test is to access the NA responses in the returnToWhenReplacementAttorneyStepIn and returnToHowReplacementAttorneysMakeDecision functions
         $this->setLpaTypeHW()
@@ -1514,14 +1501,14 @@ class FormFlowCheckerTest extends MockeryTestCase
         $this->assertEquals('lpa/replacement-attorney', $this->checker->backToForm());
     }
 
-    public function testFinalCheckAccessibleNoLpa()
+    public function testFinalCheckAccessibleNoLpa(): void
     {
         $checker = new FormFlowChecker();
 
         $this->assertFalse($checker->finalCheckAccessible());
     }
 
-    public function testFinalCheckAccessible()
+    public function testFinalCheckAccessible(): void
     {
         //  Gradually build up a P&F LPA (as would happen if it was being filled in online)
         //  and keep checking the final check accessible result
@@ -1585,28 +1572,28 @@ class FormFlowCheckerTest extends MockeryTestCase
      * ####################################
      */
 
-    private function setLpaTypePF()
+    private function setLpaTypePF(): self
     {
         $this->lpa->document->type = Document::LPA_TYPE_PF;
 
         return $this;
     }
 
-    private function setLpaTypeHW()
+    private function setLpaTypeHW(): self
     {
         $this->lpa->document->type = Document::LPA_TYPE_HW;
 
         return $this;
     }
 
-    private function setLpaDonor()
+    private function setLpaDonor(): self
     {
         $this->lpa->document->donor = new Donor();
 
         return $this;
     }
 
-    private function setLpaStartsWhenNoCapacity()
+    private function setLpaStartsWhenNoCapacity(): self
     {
         $this->setPrimaryAttorneyDecisions([
             'when'  => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY,
@@ -1615,7 +1602,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setLpaLifeSustainingTreatment()
+    private function setLpaLifeSustainingTreatment(): self
     {
         $this->setPrimaryAttorneyDecisions([
             'canSustainLife' => true,
@@ -1624,14 +1611,14 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function addPrimaryAttorney($isHuman = true)
+    private function addPrimaryAttorney(bool $isHuman = true): self
     {
         $this->lpa->document->primaryAttorneys[] = ($isHuman ? new Human() : new TrustCorporation());
 
         return $this;
     }
 
-    private function setPrimaryAttorneysMakeDecisionDepends()
+    private function setPrimaryAttorneysMakeDecisionDepends(): self
     {
         $this->setPrimaryAttorneyDecisions([
             'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
@@ -1640,7 +1627,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setPrimaryAttorneysMakeDecisionJointlySeverally()
+    private function setPrimaryAttorneysMakeDecisionJointlySeverally(): self
     {
         $this->setPrimaryAttorneyDecisions([
             'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
@@ -1649,7 +1636,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setPrimaryAttorneyDecisions($params)
+    private function setPrimaryAttorneyDecisions(array $params): self
     {
         //  If the primary attorney decisions have not yet been set do that now
         if (!$this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
@@ -1667,7 +1654,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function addReplacementAttorney($isHuman = true)
+    private function addReplacementAttorney(bool $isHuman = true): self
     {
         $this->lpa->document->replacementAttorneys[] = ($isHuman ? new Human() : new TrustCorporation());
         $this->lpa->metadata[Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED] = 1;
@@ -1675,7 +1662,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setReplacementAttorneysMakeDecisionJointlySeverally()
+    private function setReplacementAttorneysMakeDecisionJointlySeverally(): self
     {
         $this->setReplacementAttorneyDecisions([
             'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
@@ -1684,7 +1671,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setReplacementAttorneysStepInWhenLastPrimaryUnableAct()
+    private function setReplacementAttorneysStepInWhenLastPrimaryUnableAct(): self
     {
         $this->setReplacementAttorneyDecisions([
             'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
@@ -1693,7 +1680,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setReplacementAttorneyDecisions($params)
+    private function setReplacementAttorneyDecisions(array $params): self
     {
         //  If the replacement attorney decisions have not yet been set do that now
         if (!$this->lpa->document->replacementAttorneyDecisions instanceof ReplacementAttorneyDecisions) {
@@ -1711,14 +1698,14 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function addCertificateProvider()
+    private function addCertificateProvider(): self
     {
         $this->lpa->document->certificateProvider = new CertificateProvider();
 
         return $this;
     }
 
-    private function addPersonToNotify()
+    private function addPersonToNotify(): self
     {
         $this->lpa->document->peopleToNotify[] = new NotifiedPerson();
         $this->lpa->metadata[Lpa::PEOPLE_TO_NOTIFY_CONFIRMED] = 1;
@@ -1726,42 +1713,42 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setInstructons()
+    private function setInstructons(): self
     {
         $this->lpa->document->instruction = '...instructions...';
 
         return $this;
     }
 
-    private function setLpaCreated()
+    private function setLpaCreated(): self
     {
         $this->lpa->createdAt = new DateTime();
 
         return $this;
     }
 
-    private function setApplicant()
+    private function setApplicant(): self
     {
         $this->lpa->document->whoIsRegistering = 'donor';
 
         return $this;
     }
 
-    private function setCorrespondent()
+    private function setCorrespondent(): self
     {
         $this->lpa->document->correspondent = new Correspondence();
 
         return $this;
     }
 
-    private function setWhoAreYou()
+    private function setWhoAreYou(): self
     {
         $this->lpa->whoAreYouAnswered = true;
 
         return $this;
     }
 
-    private function setRepeatApplication()
+    private function setRepeatApplication(): self
     {
         $this->lpa->repeatCaseNumber = '123456';
         $this->lpa->metadata[Lpa::REPEAT_APPLICATION_CONFIRMED] = 1;
@@ -1769,7 +1756,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setFeeReduction()
+    private function setFeeReduction(): self
     {
         if (!$this->lpa->payment instanceof Payment) {
             $this->lpa->payment = new Payment();
@@ -1786,7 +1773,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setPayment()
+    private function setPayment(): self
     {
         if (!$this->lpa->payment instanceof Payment) {
             $this->lpa->payment = new Payment();
@@ -1801,7 +1788,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         return $this;
     }
 
-    private function setLpaCompleted()
+    private function setLpaCompleted(): self
     {
         $this->lpa->completedAt = new DateTime();
 

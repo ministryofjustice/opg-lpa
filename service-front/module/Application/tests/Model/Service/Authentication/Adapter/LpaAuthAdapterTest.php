@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Authentication\Adapter;
 
 use Application\Model\Service\ApiClient\Client;
@@ -14,17 +16,10 @@ use Mockery\MockInterface;
 use RuntimeException;
 use Laminas\Authentication\Result;
 
-class LpaAuthAdapterTest extends MockeryTestCase
+final class LpaAuthAdapterTest extends MockeryTestCase
 {
-    /**
-     * @var $client Client|MockInterface
-     */
-    private $client;
-
-    /**
-     * @var $adapter LpaAuthAdapter
-     */
-    private $adapter;
+    private Client|MockInterface $client;
+    private LpaAuthAdapter $adapter;
 
     public function setUp(): void
     {

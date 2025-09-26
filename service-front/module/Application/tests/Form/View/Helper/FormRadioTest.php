@@ -1,23 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\View\Helper;
 
 use Application\Form\View\Helper\FormRadio;
 use PHPUnit\Framework\TestCase;
 use Laminas\Form\Element\Radio;
-use Laminas\Form\Form;
 use Laminas\View\Renderer\ConsoleRenderer;
 
-class FormRadioTest extends TestCase
+final class FormRadioTest extends TestCase
 {
-    protected $form;
-
     protected function setUp(): void
     {
-        $this->form = new Form();
     }
 
-    public function testRender()
+    public function testRender(): void
     {
         $options = [
             1 => 'Option value 1',
@@ -65,7 +63,7 @@ class FormRadioTest extends TestCase
         $this->assertEquals($expected, $html);
     }
 
-    public function testRenderWithAttributes()
+    public function testRenderWithAttributes(): void
     {
         $options = [
             1 => 'Option value 1',
@@ -114,7 +112,7 @@ class FormRadioTest extends TestCase
         $this->assertEquals($expected, $html);
     }
 
-    public function testRenderGroupAndIndividualDivAttributes()
+    public function testRenderGroupAndIndividualDivAttributes(): void
     {
         $options = [
             'first'  => [
@@ -167,7 +165,7 @@ class FormRadioTest extends TestCase
         $this->assertEquals($expected, $html);
     }
 
-    public function testOutputOption()
+    public function testOutputOption(): void
     {
         $options = [
             1 => 'Option value 1',

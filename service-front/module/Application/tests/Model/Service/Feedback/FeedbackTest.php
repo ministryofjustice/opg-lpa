@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Feedback;
 
 use Application\Model\Service\ApiClient\Client;
@@ -7,24 +9,16 @@ use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Mail\MailParameters;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
-use Exception;
 use Hamcrest\Matchers;
 use Hamcrest\MatcherAssert;
 use Mockery;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 
-class FeedbackTest extends AbstractEmailServiceTest
+final class FeedbackTest extends AbstractEmailServiceTest
 {
-    /**
-     * @var $apiClient Client|MockInterface
-     */
-    private $apiClient;
-
-    /**
-     * @var $service Feedback
-     */
-    private $service;
+    private Client|MockInterface $apiClient;
+    private Feedback $service;
 
     public function setUp(): void
     {
@@ -68,7 +62,7 @@ class FeedbackTest extends AbstractEmailServiceTest
 
         // Check the data we interpolate into the template looks right
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($mailParams) use ($expectedData) {
+            ->with(Mockery::on(function ($mailParams) use ($expectedData): true {
                 $actualData = $mailParams->getData();
 
                 foreach ($expectedData as $key => $matcher) {

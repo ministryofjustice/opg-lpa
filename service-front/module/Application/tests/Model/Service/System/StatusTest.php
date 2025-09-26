@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\System;
 
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
@@ -17,49 +19,15 @@ use MakeShared\Constants;
 use Mockery;
 use Mockery\MockInterface;
 
-class StatusTest extends AbstractServiceTest
+final class StatusTest extends AbstractServiceTest
 {
-    /**
-     * @var Client|MockInterface
-     */
-    private $apiClient;
-
-    /**
-     * @var DynamoDbClient|MockInterface
-     */
-    private $dynamoDbSessionClient;
-
-    /**
-     * @var DynamoDbClient|MockInterface
-     */
-    private $dynamoDbClient;
-
-    /**
-     * @var SaveHandlerInterface|MockInterface
-     */
-    private $sessionSaveHandler;
-
-    /**
-     * @var RedisClient|MockInterface
-     */
-    private $redisClient;
-
-
-    /**
-     * @var OrdnanceSurvey|MockInterface
-     */
-    private $ordnanceSurveyClient;
-
-    /**
-     * @var MailTransportInterface|MockInterface
-     */
-    private $mailTransport;
-
-
-    /**
-     * @var $service Status
-     */
-    private $service;
+    private Client|MockInterface $apiClient;
+    private DynamoDbClient|MockInterface $dynamoDbClient;
+    private SaveHandlerInterface|MockInterface $sessionSaveHandler;
+    private RedisClient|MockInterface $redisClient;
+    private OrdnanceSurvey|MockInterface $ordnanceSurveyClient;
+    private MailTransportInterface|MockInterface $mailTransport;
+    private Status $service;
 
     public function setUp(): void
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form;
 
 use Application\Form\AbstractCsrfForm;
@@ -28,7 +30,9 @@ trait FormTestSetupTrait
         $form->init();
 
         $sm = Mockery::mock(ServiceManager::class);
-        $sm->shouldReceive('get')->andReturn(['salt' => 'Rando_Calrissian']);
+        $sm->shouldReceive('get')
+            ->with('config')
+            ->andReturn(['csrf' => ['salt' => 'Rando_Calrissian']]);
         $sm->shouldReceive('build')->andReturn(new Csrf());
 
         $csrfBuilder = new CsrfBuilder($sm);
@@ -42,10 +46,8 @@ trait FormTestSetupTrait
 
     /**
      * Function to easily enrich the form data with Csrf data
-     *
-     * @return array
      */
-    private function getCsrfData()
+    private function getCsrfData(): array
     {
         if ($this->form instanceof AbstractCsrfForm) {
             return [

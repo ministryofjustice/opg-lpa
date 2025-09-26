@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\BlankMainFlowForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class BlankMainFlowFormTest extends MockeryTestCase
+final class BlankMainFlowFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,7 +20,7 @@ class BlankMainFlowFormTest extends MockeryTestCase
         $this->setUpForm(new BlankMainFlowForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\BlankMainFlowForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
@@ -27,12 +29,12 @@ class BlankMainFlowFormTest extends MockeryTestCase
         $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData($this->getCsrfData());
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View\Helper;
 
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -7,7 +9,7 @@ use Application\View\Helper\SystemMessage;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class SystemMessageTest extends MockeryTestCase
+final class SystemMessageTest extends MockeryTestCase
 {
     public function testInvokeEmptySystemMessage(): void
     {

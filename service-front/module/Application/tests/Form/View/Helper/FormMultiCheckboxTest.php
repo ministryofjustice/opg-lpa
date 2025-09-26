@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\View\Helper;
 
 use PHPUnit\Framework\TestCase;
 use Laminas\Form\Element\MultiCheckbox;
 
-class FormMultiCheckboxTest extends TestCase
+final class FormMultiCheckboxTest extends TestCase
 {
-    public function testRenderOptions()
+    public function testRenderOptions(): void
     {
         $options = [
             1 => 'Option value 1',
@@ -34,7 +36,7 @@ class FormMultiCheckboxTest extends TestCase
         $this->assertEquals($expected, $html);
     }
 
-    public function testRenderWithAttributes()
+    public function testRenderWithAttributes(): void
     {
         $options = [
             'value_options' => [

@@ -157,4 +157,10 @@ return [
         'environment_options' => ['cache' => getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR') ?: '/tmp/twig_cache'],
     ],
 
+    'fees' => [
+        'timezone'      => 'Europe/London',
+        'effectiveDate' => getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00',
+        'baseBefore'    => getenv('LPA_FEE_BEFORE') ?: 82,
+        'baseAfter'     => getenv('LPA_FEE_AFTER') ?: 92,
+    ],
 ];

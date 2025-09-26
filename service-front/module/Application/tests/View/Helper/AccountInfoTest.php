@@ -1,11 +1,6 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: seemamenon
- * Date: 17/02/2019
- * Time: 16:09
- */
+declare(strict_types=1);
 
 namespace ApplicationTest\View\Helper;
 
@@ -17,7 +12,6 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Twig\Environment as TwigEnvironment;
-use Twig_Template;
 use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
@@ -25,42 +19,14 @@ use Laminas\View\Renderer\RendererInterface;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\View\Helper\LocalViewRenderer;
 
-class AccountInfoTest extends MockeryTestCase
+final class AccountInfoTest extends MockeryTestCase
 {
-    /**
-     * @var AuthenticationService|MockInterface
-     */
-    private $authenticationService;
-
-    /**
-     * @var Container|MockInterface
-     */
-    private $userDetailSession;
-
-    /**
-     * @var ViewModel|MockInterface
-     */
-    private $viewModel;
-
-    /**
-     * @var RouteMatch|MockInterface
-     */
-    private $routeMatch;
-
-    /**
-     * @var LpaApplicationService|MockInterface
-     */
-    private $lpaApplicationService;
-
-    /**
-     * @var TwigEnvironment|MockInterface
-     */
-    private $viewRenderer;
-
-    /**
-     * @var AuthenticationService|MockInterface
-     */
-    private $identity;
+    private AuthenticationService|MockInterface $authenticationService;
+    private Container $userDetailSession;
+    private ViewModel $viewModel;
+    private RouteMatch|MockInterface $routeMatch;
+    private LpaApplicationService|MockInterface $lpaApplicationService;
+    private TwigEnvironment|MockInterface $viewRenderer;
 
     public function setUp(): void
     {

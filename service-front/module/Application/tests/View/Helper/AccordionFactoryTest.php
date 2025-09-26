@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View\Helper;
 
 use Application\Model\Service\Lpa\Application;
@@ -10,7 +12,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Laminas\Router\RouteMatch;
 
-class AccordionFactoryTest extends MockeryTestCase
+final class AccordionFactoryTest extends MockeryTestCase
 {
     public function testInvoke() : void
     {

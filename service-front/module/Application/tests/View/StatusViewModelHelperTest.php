@@ -1,17 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View;
 
 use Application\View\StatusViewModelHelper;
-use Application\View\Helper\FormatLpaId;
 use ApplicationTest\View\ViewModelRenderer;
 use DateTime;
 use DOMDocument;
 use DOMXpath;
-use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Document\Document;
 
@@ -25,22 +24,16 @@ use MakeShared\DataModel\Lpa\Document\Document;
  * at the top of the status detail page). They also don't check that the expected
  * receipt date is shown in the correct format in the HTML.
  */
-class StatusViewModelHelperTest extends MockeryTestCase
+final class StatusViewModelHelperTest extends MockeryTestCase
 {
-    /** @var DateTime */
-    private $trackFromDate;
-
-    /** @var int */
-    private $expectedWorkingDaysBeforeReceipt = 15;
-
-    /** @var Document */
-    private $document;
+    private DateTime $trackFromDate;
+    private int $expectedWorkingDaysBeforeReceipt = 15;
+    private Document $document;
 
     /** @var array */
     private const PROGRESS_BAR_STEPS = ['waiting', 'received', 'checking', 'processed'];
 
-    /** @var ViewModelRenderer */
-    private $renderer;
+    private ViewModelRenderer $renderer;
 
     public function setUp(): void
     {
@@ -61,7 +54,7 @@ class StatusViewModelHelperTest extends MockeryTestCase
         $this->renderer->loadTemplate('application/authenticated/lpa/status/index.twig');
     }
 
-    private $testCases = [
+    private array $testCases = [
         // LPA which has not been received yet displays as "Waiting"
         [
             'lpaId' => '33718377316',
@@ -358,7 +351,7 @@ class StatusViewModelHelperTest extends MockeryTestCase
         ],
     ];
 
-    private function buildAndTestViewModel($index, $testCase)
+    private function buildAndTestViewModel(string|int $index, array $testCase): void
     {
         $lpaId = $testCase['lpaId'];
         $lpaMetadata = $testCase['lpaMetadata'];

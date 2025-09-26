@@ -19,7 +19,6 @@ Feature: Add a correspondent to a Property and Finance LPA
         And I can find "contactByPost"
         And I can find "contactByPhone"
         And I can find hidden "phone-number"
-        And I can find hidden "email-address"
         And I can find "change-correspondent" with data-inited
         When I click "change-correspondent"
         Then I can find "form-reuse-details"
@@ -27,6 +26,7 @@ Feature: Add a correspondent to a Property and Finance LPA
         # donor is correspondent as default
         And I see "Mrs Nancy Garrison" in the page text
         And "contactByEmail" is checked
+        And I can find "email-address" and it is visible
         # choose new correspondent
         When I opt not to re-use details
         Then I can find "form-correspondent"

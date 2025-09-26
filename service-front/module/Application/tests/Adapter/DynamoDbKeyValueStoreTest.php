@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Adapter;
 
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -8,19 +10,11 @@ use Exception;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use RuntimeException;
 
-class DynamoDbKeyValueStoreTest extends MockeryTestCase
+final class DynamoDbKeyValueStoreTest extends MockeryTestCase
 {
-    /**
-     * @var DynamoDbKeyValueStore
-     */
-    private $dynamoDbKeyValueStore;
-
-    /**
-     * @var MockInterface|DynamoDbClient
-     */
-    private $dynamoDbClient;
+    private DynamoDbKeyValueStore $dynamoDbKeyValueStore;
+    private MockInterface|DynamoDbClient $dynamoDbClient;
 
     public function setUp() : void
     {
@@ -33,7 +27,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
         $this->dynamoDbKeyValueStore->setDynamoDbClient($this->dynamoDbClient);
     }
 
-    public function testSetItemPopulatedValue()
+    public function testSetItemPopulatedValue(): void
     {
         $this->dynamoDbClient->expects('putItem')->withArgs([[
             'TableName' => 'test_table',
@@ -45,7 +39,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
         $this->dynamoDbKeyValueStore->setItem('test key', 'test value');
     }
 
-    public function testSetItemEmptyValue()
+    public function testSetItemEmptyValue(): void
     {
         $this->dynamoDbClient->expects('putItem')->withArgs([[
             'TableName' => 'test_table',
@@ -57,7 +51,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
         $this->dynamoDbKeyValueStore->setItem('test key', '');
     }
 
-    public function testRemoveItem()
+    public function testRemoveItem(): void
     {
         $this->dynamoDbClient->expects('deleteItem')->withArgs([[
             'TableName' => 'test_table',
@@ -68,7 +62,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
         $this->dynamoDbKeyValueStore->removeItem('test key');
     }
 
-    public function testGetItemSuccess()
+    public function testGetItemSuccess(): void
     {
         $returnedItem['Item']['value']['B'] = 'test token';
 
@@ -88,7 +82,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
         $this->assertEquals('unmodified token', $casToken);
     }
 
-    public function testGetItemFailed()
+    public function testGetItemFailed(): void
     {
         $this->dynamoDbClient->expects('getItem')->andThrow(Exception::class)->once();
 

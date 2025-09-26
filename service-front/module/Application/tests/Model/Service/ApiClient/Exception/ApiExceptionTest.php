@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\ApiClient\Exception;
 
 use Application\Model\Service\ApiClient\Exception\ApiException;
@@ -9,12 +11,9 @@ use Mockery\MockInterface;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Utils;
 
-class ApiExceptionTest extends MockeryTestCase
+final class ApiExceptionTest extends MockeryTestCase
 {
-    /**
-     * @var ResponseInterface|MockInterface
-     */
-    private $response;
+    private ResponseInterface|MockInterface $response;
 
     public function setUp(): void
     {

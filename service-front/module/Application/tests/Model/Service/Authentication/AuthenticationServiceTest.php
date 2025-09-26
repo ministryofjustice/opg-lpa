@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Authentication;
 
 use Application\Model\Service\Authentication\Adapter\AdapterInterface as LpaAdapterInterface;
@@ -12,22 +14,11 @@ use Laminas\Authentication\Adapter\AdapterInterface;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Storage\StorageInterface;
 
-class AuthenticationServiceTest extends MockeryTestCase
+final class AuthenticationServiceTest extends MockeryTestCase
 {
-    /**
-     * @var $storageInterface StorageInterface|MockInterface
-     */
-    private $storageInterface;
-
-    /**
-     * @var $adapterInterface AdapterInterface|MockInterface
-     */
-    private $adapterInterface;
-
-    /**
-     * @var $service AuthenticationService
-     */
-    private $service;
+    private StorageInterface|MockInterface $storageInterface;
+    private AdapterInterface|MockInterface $adapterInterface;
+    private AuthenticationService $service;
 
     public function setUp() : void
     {

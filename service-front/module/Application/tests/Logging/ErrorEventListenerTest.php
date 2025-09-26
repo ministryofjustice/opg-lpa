@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Logging;
 
 use MakeShared\Logging\ErrorEventListener;
@@ -9,9 +11,9 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Psr\Log\LoggerInterface;
 
-class ErrorEventListenerTest extends MockeryTestCase
+final class ErrorEventListenerTest extends MockeryTestCase
 {
-    public function testMvcEventErrorHanding()
+    public function testMvcEventErrorHanding(): void
     {
         // stub event manager; mocking this out proved too circuitous
         $eventManager = new EventManager();

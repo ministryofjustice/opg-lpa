@@ -14,7 +14,7 @@ NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-va
 # This user is in the test data seeded into the system.
 ADMIN_USERS := "seeded_test_user@digital.justice.gov.uk"
 
-COMPOSER_VERSION := "2.5.5"
+COMPOSER_VERSION := "2.8.11"
 
 # Unique identifier for this version of the application
 APP_VERSION := $(shell echo -n `git rev-parse --short HEAD`)
@@ -69,6 +69,27 @@ front-composer-remove:
 front-composer-outdated:
 	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer outdated
 
+# use make api-composer-update PACKAGE=symfony\/validator\:v5.4.43
+# you'll need to escape the \ and : as above
+.PHONY: api-composer-update
+api-composer-update:
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+
+# remove a package, same format for PACKAGE= as above
+.PHONY: api-composer-remove
+api-composer-remove:
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer remove $(PACKAGE)  --ignore-platform-reqs --no-install
+
+#run composer outdated in front container
+.PHONY: api-composer-outdated
+api-composer-outdated:
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer outdated
+
+# use make api-composer-why PACKAGE=symfony\/validator\:v5.4.43
+# you'll need to escape the \ and : as above
+.PHONY: api-composer-why
+api-composer-why:
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
 
 .PHONY: dc-up
 dc-up: run-composers
@@ -173,7 +194,7 @@ dc-unit-tests: dc-front-unit-tests
 
 .PHONY: npm-install
 npm-install:
-	npm install
+	npm ci --ignore-scripts
 
 # CYPRESS_RUNNER_* environment variables are used to consolidate setting environment
 # variables detected by cypress (like CYPRESS_baseUrl) and variables which are

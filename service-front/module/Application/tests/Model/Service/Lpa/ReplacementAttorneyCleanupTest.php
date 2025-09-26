@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Lpa;
 
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
@@ -9,21 +11,14 @@ use DateTime;
 use Exception;
 use Hamcrest\Matchers;
 use Mockery;
-use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mockery\MockInterface;
 
-class ReplacementAttorneyCleanupTest extends AbstractServiceTest
+final class ReplacementAttorneyCleanupTest extends AbstractServiceTest
 {
-    /**
-     * @var $lpaApplicationService LpaApplicationService|MockInterface
-     */
-    private $lpaApplicationService;
-
-    /**
-     * @var $service ReplacementAttorneyCleanup
-     */
-    private $service;
+    private LpaApplicationService|MockInterface $lpaApplicationService;
+    private ReplacementAttorneyCleanup $service;
 
     public function setUp(): void
     {

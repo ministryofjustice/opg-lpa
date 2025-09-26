@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\TypeController;
@@ -12,13 +14,10 @@ use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
-class TypeControllerTest extends AbstractControllerTestCase
+final class TypeControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|TypeForm
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|TypeForm $form;
+    private array $postData = [
         'type' => Document::LPA_TYPE_HW
     ];
 
@@ -31,7 +30,7 @@ class TypeControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\Lpa\TypeForm'])->andReturn($this->form);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
@@ -56,7 +55,7 @@ class TypeControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getVariable('isChangeAllowed'));
     }
 
-    public function testIndexActionGetNoType()
+    public function testIndexActionGetNoType(): void
     {
         $this->lpa->document = new Document();
 
@@ -83,7 +82,7 @@ class TypeControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
@@ -107,7 +106,7 @@ class TypeControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
     }
 
-    public function testIndexActionPostFailed()
+    public function testIndexActionPostFailed(): void
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
@@ -123,7 +122,7 @@ class TypeControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
-    public function testIndexActionPostSuccess()
+    public function testIndexActionPostSuccess(): void
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);

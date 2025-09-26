@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
@@ -9,10 +11,7 @@ use Mockery\MockInterface;
 
 class AbstractServiceTest extends MockeryTestCase
 {
-    /**
-     * @var $authenticationService AuthenticationService|MockInterface
-     */
-    protected $authenticationService;
+    protected AuthenticationService|MockInterface $authenticationService;
 
     public function setUp() : void
     {

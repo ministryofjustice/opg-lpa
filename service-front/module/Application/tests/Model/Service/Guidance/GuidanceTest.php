@@ -1,21 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Guidance;
 
 use Application\Model\Service\Guidance\Guidance;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 
-class GuidanceTest extends AbstractServiceTest
+final class GuidanceTest extends AbstractServiceTest
 {
-    /**
-     * @var $cwd string
-     */
-    private $cwd;
-
-    /**
-     * @var $service Guidance
-     */
-    private $service;
+    private string $cwd;
+    private Guidance $service;
 
     public function setUp() : void
     {

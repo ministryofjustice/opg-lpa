@@ -1,20 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\StatsController;
 use Application\Model\Service\Stats\Stats as StatsService;
 use ApplicationTest\Controller\AbstractControllerTestCase;
+use DateTime;
+use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\View\Model\ViewModel;
 
-class StatsControllerTest extends AbstractControllerTestCase
+final class StatsControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|StatsService
-     */
-    private $statsService;
+    private MockInterface|StatsService $statsService;
 
     public function setUp() : void
     {
@@ -34,7 +34,7 @@ class StatsControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         /** @var StatsController $controller */
         $controller = $this->getController(StatsController::class);
@@ -51,7 +51,7 @@ class StatsControllerTest extends AbstractControllerTestCase
         $this->assertEquals($this->getPreferencesInstructionsStats(), $result->getVariable('preferencesInstructions'));
     }
 
-    private function getApiStats()
+    private function getApiStats(): array
     {
         return [
             'generated'               => '01/02/2017 14:22:11',
@@ -63,12 +63,12 @@ class StatsControllerTest extends AbstractControllerTestCase
         ];
     }
 
-    private function getLpaStats()
+    private function getLpaStats(): array
     {
-        $start = new \DateTime('first day of this month');
+        $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
 
-        $end = new \DateTime('last day of this month');
+        $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
         $byMonth = array();
@@ -83,7 +83,7 @@ class StatsControllerTest extends AbstractControllerTestCase
             $end->modify("last day of -1 month");
         }
 
-        $stats = [
+        return [
             'all' => [
                 'started' => 2,
                 'created' => 2,
@@ -102,11 +102,9 @@ class StatsControllerTest extends AbstractControllerTestCase
             ],
             'by-month' => $byMonth
         ];
-
-        return $stats;
     }
 
-    private function getAuthStats()
+    private function getAuthStats(): array
     {
         return [
             'total' => 1,
@@ -116,12 +114,12 @@ class StatsControllerTest extends AbstractControllerTestCase
         ];
     }
 
-    private function getWhoAreYouStats()
+    private function getWhoAreYouStats(): array
     {
-        $start = new \DateTime('first day of this month');
+        $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
 
-        $end = new \DateTime('last day of this month');
+        $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
         $byMonth = array();
@@ -161,7 +159,7 @@ class StatsControllerTest extends AbstractControllerTestCase
             $end->modify("last day of -1 month");
         }
 
-        $stats = [
+        return [
             'all' => [
                 'professional' => [
                     'count' => 1,
@@ -194,16 +192,17 @@ class StatsControllerTest extends AbstractControllerTestCase
             ],
             'by-month' => $byMonth
         ];
-
-        return $stats;
     }
 
-    private function getCorrespondenceStats()
+    /**
+     * @return mixed[]
+     */
+    private function getCorrespondenceStats(): array
     {
-        $start = new \DateTime('first day of this month');
+        $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
 
-        $end = new \DateTime('last day of this month');
+        $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
         $stats = array();
@@ -224,12 +223,15 @@ class StatsControllerTest extends AbstractControllerTestCase
         return $stats;
     }
 
-    private function getPreferencesInstructionsStats()
+    /**
+     * @return mixed[]
+     */
+    private function getPreferencesInstructionsStats(): array
     {
-        $start = new \DateTime('first day of this month');
+        $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
 
-        $end = new \DateTime('last day of this month');
+        $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
         $stats = array();

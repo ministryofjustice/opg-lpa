@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractEmailService;
@@ -20,7 +22,7 @@ use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Laminas\Session\Container;
 use Psr\Log\LoggerInterface;
 
-class CommunicationTest extends AbstractEmailServiceTest
+final class CommunicationTest extends AbstractEmailServiceTest
 {
     /**
      * @var $service Communication
@@ -641,7 +643,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
+            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
             }));
@@ -703,7 +705,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
+            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
             }));
@@ -774,7 +776,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
+            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
             }));
@@ -836,7 +838,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
+            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
             }));
@@ -899,7 +901,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
+            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
             }));
@@ -954,7 +956,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
+            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
             }));
@@ -1018,7 +1020,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
+            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
             }));
@@ -1073,7 +1075,7 @@ class CommunicationTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams) {
+            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
                 MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
                 return true;
             }));

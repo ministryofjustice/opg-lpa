@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\TrustCorporationForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class TrustCorporationFormTest extends MockeryTestCase
+final class TrustCorporationFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,7 +20,7 @@ class TrustCorporationFormTest extends MockeryTestCase
         $this->setUpForm(new TrustCorporationForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\TrustCorporationForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractActorForm', $this->form);
@@ -28,7 +30,7 @@ class TrustCorporationFormTest extends MockeryTestCase
         $this->assertEquals('form-trust-corporation', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('number'));
@@ -40,7 +42,7 @@ class TrustCorporationFormTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('submit'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'name'             => 'Some Inc.',
@@ -54,7 +56,7 @@ class TrustCorporationFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'name'             => '',

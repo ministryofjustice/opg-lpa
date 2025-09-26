@@ -1,20 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated;
 
-use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Controller\Authenticated\PostcodeController;
-use Application\Model\Service\AddressLookup\PostcodeInfo;
+use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use Mockery;
-use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use Mockery;
+use Mockery\MockInterface;
 
-class PostcodeControllerTest extends AbstractControllerTestCase
+final class PostcodeControllerTest extends AbstractControllerTestCase
 {
     /**
      * @var MockInterface|MvcEvent
@@ -42,7 +43,7 @@ class PostcodeControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexActionPostcodeNotFound()
+    public function testIndexActionPostcodeNotFound(): void
     {
         $controller = $this->getController(PostcodeController::class);
 
@@ -58,7 +59,7 @@ class PostcodeControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Page not found', $result->getVariable('content'));
     }
 
-    public function testIndexActionSinglePostcode()
+    public function testIndexActionSinglePostcode(): void
     {
         $controller = $this->getController(PostcodeController::class);
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\AbstractCsrfForm;
@@ -10,11 +12,11 @@ use MakeShared\DataModel\Lpa\Lpa;
 use ReflectionClass;
 use function PHPUnit\Framework\assertEquals;
 
-class FormTest extends MockeryTestCase
+final class FormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
-    public function testAllFormsHaveCsrfCheck()
+    public function testAllFormsHaveCsrfCheck(): void
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
 

@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Session;
 
+use PHPUnit\Framework\Attributes\Test;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Laminas\Router\RouteMatch;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
-class PersistentSessionDetailsTest extends TestCase {
+final class PersistentSessionDetailsTest extends TestCase {
 
-    /**
-     * @test
-     */
-    public function testSuccessfullyCreateClass() {
+    #[Test]
+    public function testSuccessfullyCreateClass(): void {
 
         $routeMatch = Mockery::mock(RouteMatch::class);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/applicant');
@@ -24,10 +23,8 @@ class PersistentSessionDetailsTest extends TestCase {
         $this->assertInstanceOf(PersistentSessionDetails::class, $persistentSession);
     }
 
-    /**
-     * @test
-     */
-    public function testExpectedValuesFromCurrentAndPreviousRoutes() {
+    #[Test]
+    public function testExpectedValuesFromCurrentAndPreviousRoutes(): void {
         $currentRoute = 'lpa/applicant';
 
         $routeMatch = Mockery::mock(RouteMatch::class);
@@ -39,10 +36,8 @@ class PersistentSessionDetailsTest extends TestCase {
         $this->assertEquals($currentRoute, $persistentSession->getPreviousRoute());
     }
 
-    /**
-     * @test
-     */
-    public function testExpectedValuesFromCurrentAndPreviousRoutesPersists() {
+    #[Test]
+    public function testExpectedValuesFromCurrentAndPreviousRoutesPersists(): void {
         $currentRoute = 'lpa/primary-attorney/add';
         $previousRoute = 'lpa/applicant';
 
@@ -58,10 +53,8 @@ class PersistentSessionDetailsTest extends TestCase {
         $this->assertEquals($previousRoute, $persistentSession->getPreviousRoute());
     }
 
-    /**
-     * @test
-     */
-    public function testEmptyValuesFromCurrentRoute() {
+    #[Test]
+    public function testEmptyValuesFromCurrentRoute(): void {
         $persistentSession = new PersistentSessionDetails(null);
 
         $this->assertEquals('', $persistentSession->getCurrentRoute());

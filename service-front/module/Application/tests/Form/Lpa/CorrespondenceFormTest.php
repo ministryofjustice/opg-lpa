@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\CorrespondenceForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class CorrespondenceFormTest extends MockeryTestCase
+final class CorrespondenceFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,7 +20,7 @@ class CorrespondenceFormTest extends MockeryTestCase
         $this->setUpForm(new CorrespondenceForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\CorrespondenceForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
@@ -28,14 +30,14 @@ class CorrespondenceFormTest extends MockeryTestCase
         $this->assertEquals('form-correspondence', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('contactInWelsh'));
         $this->assertInstanceOf('Application\Form\Fieldset\Correspondence', $this->form->get('correspondence'));
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'contactInWelsh' => '0',
@@ -52,7 +54,7 @@ class CorrespondenceFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'contactInWelsh' => '',

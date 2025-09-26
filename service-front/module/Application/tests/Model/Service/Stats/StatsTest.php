@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Stats;
 
 use Application\Model\Service\ApiClient\Client;
@@ -9,17 +11,10 @@ use ApplicationTest\Model\Service\ServiceTestHelper;
 use Mockery;
 use Mockery\MockInterface;
 
-class StatsTest extends AbstractServiceTest
+final class StatsTest extends AbstractServiceTest
 {
-    /**
-     * @var $apiClient Client|MockInterface
-     */
-    private $apiClient;
-
-    /**
-     * @var $service Stats
-     */
-    private $service;
+    private Client|MockInterface $apiClient;
+    private Stats $service;
 
     public function setUp() : void
     {

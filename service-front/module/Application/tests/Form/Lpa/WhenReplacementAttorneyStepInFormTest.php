@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\WhenReplacementAttorneyStepInForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class WhenReplacementAttorneyStepInFormTest extends MockeryTestCase
+final class WhenReplacementAttorneyStepInFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,7 +20,7 @@ class WhenReplacementAttorneyStepInFormTest extends MockeryTestCase
         $this->setUpForm(new WhenReplacementAttorneyStepInForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\WhenReplacementAttorneyStepInForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
@@ -28,14 +30,14 @@ class WhenReplacementAttorneyStepInFormTest extends MockeryTestCase
         $this->assertEquals('form-when-replacement-attonrey-step-in', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('when'));
         $this->assertInstanceOf('Laminas\Form\Element\Textarea', $this->form->get('whenDetails'));
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'when'        => 'first',
@@ -46,7 +48,7 @@ class WhenReplacementAttorneyStepInFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'when'        => '',

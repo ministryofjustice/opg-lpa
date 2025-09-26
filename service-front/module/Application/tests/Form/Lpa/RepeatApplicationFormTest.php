@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\RepeatApplicationForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class RepeatApplicationFormTest extends MockeryTestCase
+final class RepeatApplicationFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,7 +20,7 @@ class RepeatApplicationFormTest extends MockeryTestCase
         $this->setUpForm(new RepeatApplicationForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\RepeatApplicationForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
@@ -28,14 +30,14 @@ class RepeatApplicationFormTest extends MockeryTestCase
         $this->assertEquals('form-repeat-application', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('isRepeatApplication'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('repeatCaseNumber'));
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'isRepeatApplication' => 'is-repeat',
@@ -46,7 +48,7 @@ class RepeatApplicationFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'isRepeatApplication' => '',

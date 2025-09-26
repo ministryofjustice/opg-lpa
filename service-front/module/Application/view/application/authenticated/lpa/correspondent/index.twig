@@ -42,7 +42,8 @@
 
 {{ contactByPhone.setAttributes({
     id: 'contactByPhone',
-    'data-cy' : 'contactByPhone'
+    'data-cy' : 'contactByPhone',
+    'data-aria-controls': 'contact-by-phone'
 }) ? '' }}
 
 {{ contactByPhone.setOptions({
@@ -51,7 +52,8 @@
 
 {{ contactByEmail.setAttributes({
     id: 'contactByEmail',
-    'data-cy' : 'contactByEmail'
+    'data-cy' : 'contactByEmail',
+    'data-aria-controls': 'contact-by-email'
 }) ? '' }}
 
 {{ contactByEmail.setOptions({
@@ -140,9 +142,9 @@
 
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="form-group {{ topLevelError ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ topLevelError ? 'form-group-error'}}">
 
-            <fieldset id="{{ correspondence.getAttribute('name') }}">
+            <fieldset class="govuk-fieldset" id="{{ correspondence.getAttribute('name') }}">
                 <legend class="visually-hidden">Contact options</legend>
                 <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
 
@@ -151,55 +153,55 @@
                 {% if topLevelError %}
                     {{ formElementErrorsV2(correspondence) }}
                 {% endif %}
+                <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                    <div class="multiple-choice">
+                        {{ formElement(contactByPost) }}
+                        <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
+                            {{ contactByPost.getOption('label')|raw }}
+                        </label>
+                    </div>
 
-                <div class="multiple-choice">
-                    {{ formElement(contactByPost) }}
-                    <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
-                        {{ contactByPost.getOption('label')|raw }}
-                    </label>
+                    {#
+                    For anyone attempting to resolve Axe a11y warnings:
+
+                    The ShowHideContent function in govuk_frontend_toolkit incorrectly appends an
+                    aria-expanded attribute on the phone checkbox (as part of the JS which toggles
+                    the phone number text input).
+
+                    This causes an Axe warning:
+                    "Ensure ARIA attributes are allowed for an element's role"
+
+                    aria-expanded is not a valid aria attribute for a checkbox and should only
+                    be used on the expandable content it controls, i.e. the text input for the
+                    phone number.
+
+                    It's not possible to remove the aria-expanded attribute without modifying the
+                    frontend toolkit, which we're not going to do.
+
+                    See service-front/node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js
+                    for the offending code which applies the attribute.
+                    #}
+                    <div class="multiple-choice" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
+                        {{ formElement(contactByPhone) }}
+                        <label class="text block-label" for="{{ contactByPhone.getAttribute('id') }}">
+                        {{ contactByPhone.getOption('label')|raw }}
+                        </label>
+                    </div>
+
+                    <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden panel panel-border-narrow" id="contact-by-phone">
+                        {{ macros.formGroup(phone) }}
+                    </div>
+
+                    <div class="multiple-choice" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
+                        {{ formElement(contactByEmail) }}
+                        <label class="text block-label" for="{{ contactByEmail.getAttribute('id') }}">
+                        {{ contactByEmail.getOption('label')|raw }}</label>
+                    </div>
+
+                    <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden panel panel-border-narrow" id="contact-by-email">
+                        {{ macros.formGroup(email) }}
+                    </div>
                 </div>
-
-                {#
-                For anyone attempting to resolve Axe a11y warnings:
-
-                The ShowHideContent function in govuk_frontend_toolkit incorrectly appends an
-                aria-expanded attribute on the phone checkbox (as part of the JS which toggles
-                the phone number text input).
-
-                This causes an Axe warning:
-                "Ensure ARIA attributes are allowed for an element's role"
-
-                aria-expanded is not a valid aria attribute for a checkbox and should only
-                be used on the expandable content it controls, i.e. the text input for the
-                phone number.
-
-                It's not possible to remove the aria-expanded attribute without modifying the
-                frontend toolkit, which we're not going to do.
-
-                See service-front/node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js
-                for the offending code which applies the attribute.
-                #}
-                <div class="multiple-choice" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
-                    {{ formElement(contactByPhone) }}
-                    <label class="text block-label" for="{{ contactByPhone.getAttribute('id') }}">
-                    {{ contactByPhone.getOption('label')|raw }}
-                    </label>
-                </div>
-
-                <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
-                    {{ macros.formGroup(phone) }}
-                </div>
-
-                <div class="multiple-choice" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
-                    {{ formElement(contactByEmail) }}
-                    <label class="text block-label" for="{{ contactByEmail.getAttribute('id') }}">
-                    {{ contactByEmail.getOption('label')|raw }}</label>
-                </div>
-
-                <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
-                    {{ macros.formGroup(email) }}
-                </div>
-
             </fieldset>
         </div>
 

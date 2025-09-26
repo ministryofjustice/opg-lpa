@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Validator\Csrf;
@@ -9,10 +11,10 @@ use Laminas\Session\Container;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 
-class CsrfTest extends MockeryTestCase
+final class CsrfTest extends MockeryTestCase
 {
     #[DataProvider('dataProvider')]
-    public function testIsValid($data, array $errors)
+    public function testIsValid(string $data, array $errors): void
     {
         $validator = new Csrf();
         $validator->setLogger(Mockery::spy(LoggerInterface::class));
@@ -28,7 +30,7 @@ class CsrfTest extends MockeryTestCase
         $this->assertEquals($errors, $validator->getMessages());
     }
 
-    static public function dataProvider()
+    static public function dataProvider(): array
     {
         return [
             [

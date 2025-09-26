@@ -1,25 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Lpa;
 
 use Application\Model\Service\Lpa\Application;
 use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
-use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class MetadataTest extends AbstractServiceTest
+final class MetadataTest extends AbstractServiceTest
 {
-    /**
-     * @var $applicationService Application|MockInterface
-     */
-    private $applicationService;
-
-    /**
-     * @var $service Metadata
-     */
-    private $service;
+    private Application|MockInterface $applicationService;
+    private Metadata $service;
 
     public function setUp(): void
     {
@@ -105,7 +99,7 @@ class MetadataTest extends AbstractServiceTest
         $this->assertTrue($result);
     }
 
-    public function testRemoveMetadata()
+    public function testRemoveMetadata(): void
     {
         $lpa = new Lpa(['metadata' => ['test-data' => 'Test Value', 'other-data' => 'Leave this']]);
 
@@ -119,7 +113,7 @@ class MetadataTest extends AbstractServiceTest
         $this->assertEquals(['other-data' => 'Leave this'], $lpa->getMetadata());
     }
 
-    public function testRemoveMetadataNotInArray()
+    public function testRemoveMetadataNotInArray(): void
     {
         $lpa = new Lpa(['metadata' => ['test-data' => 'Test Value']]);
 

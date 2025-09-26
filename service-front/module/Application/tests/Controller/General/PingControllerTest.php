@@ -1,29 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\PingController;
 use Application\Model\Service\System\Status;
-use ApplicationTest\Controller\AbstractControllerTestCase;
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Constants;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 
-class PingControllerTest extends MockeryTestCase
+final class PingControllerTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|Status
      */
     private $status;
-    private $checkResultOk = [
+    private array $checkResultOk = [
         'status' => Constants::STATUS_PASS,
     ];
 
-    protected function getController()
+    private function getController(): PingController
     {
         /** @var PingController $controller */
         $controller = new PingController();
@@ -35,7 +36,7 @@ class PingControllerTest extends MockeryTestCase
         return $controller;
     }
 
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         $controller = $this->getController();
 
@@ -49,7 +50,7 @@ class PingControllerTest extends MockeryTestCase
         $this->assertEquals($this->checkResultOk, $result->getVariable('status'));
     }
 
-    public function testJsonAction()
+    public function testJsonAction(): void
     {
         $controller = $this->getController();
 
@@ -63,7 +64,7 @@ class PingControllerTest extends MockeryTestCase
         $this->assertEquals('1.2.3.4-test', $result->getVariable('tag'));
     }
 
-    public function testPingdomActionOk()
+    public function testPingdomActionOk(): void
     {
         $controller = $this->getController();
 
@@ -77,7 +78,7 @@ class PingControllerTest extends MockeryTestCase
         $this->assertStringContainsString('<pingdom_http_custom_check><status>OK</status>', $result->getContent());
     }
 
-    public function testPingdomActionError()
+    public function testPingdomActionError(): void
     {
         $controller = $this->getController();
 

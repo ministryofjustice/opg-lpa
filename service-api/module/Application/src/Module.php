@@ -7,7 +7,6 @@ use Application\Handler\PingHandlerFactory;
 use ArrayIterator;
 use GuzzleHttp\Client;
 use Alphagov\Notifications\Client as NotifyClient;
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Model\DataAccess\Postgres;
@@ -21,6 +20,7 @@ use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
 use Http\Adapter\Guzzle7\Client as Guzzle7Client;
 use Http\Client\HttpClient;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
@@ -31,6 +31,7 @@ use Laminas\Http\Response as LaminasResponse;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
@@ -180,6 +181,11 @@ class Module
                 'TelemetryTracer' => function ($sm) {
                     $telemetryConfig = $sm->get('config')['telemetry'];
                     return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
+                },
+
+                'Calculator' => function ($sm) {
+                    $fees = $sm->get('config')['fees'] ?? [];
+                    return new Calculator($fees);
                 },
 
                 PingHandler::class => PingHandlerFactory::class,

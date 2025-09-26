@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Session;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Application\Model\Service\Session\SessionFactory;
 use Application\Model\Service\Session\SessionManager;
-use ApplicationTest\Model\Service\ServiceTestHelper;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -14,14 +15,13 @@ use Laminas\Http\Request;
 use Laminas\Http\Uri;
 use Laminas\Session\Exception\RuntimeException;
 
-class SessionFactoryTest extends MockeryTestCase
+final class SessionFactoryTest extends MockeryTestCase
 {
     /**
      * Because SessionFactory messes with ini_set, we have to run this test
      * in its own process.
-     *
-     * @runInSeparateProcess
      */
+    #[RunInSeparateProcess]
     public function testSessionFactory() : void
     {
         $uri = Mockery::Mock(Uri::class);
@@ -68,6 +68,6 @@ class SessionFactoryTest extends MockeryTestCase
         $this->expectExceptionMessage('Session configuration setting not found');
 
         $factory = new SessionFactory();
-        $result = $factory($container, null, null);
+        $factory($container, null, null);
     }
 }

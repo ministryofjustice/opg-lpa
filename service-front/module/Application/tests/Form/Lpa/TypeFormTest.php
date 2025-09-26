@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\TypeForm;
@@ -7,7 +9,7 @@ use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Document\Document;
 
-class TypeFormTest extends MockeryTestCase
+final class TypeFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -19,7 +21,7 @@ class TypeFormTest extends MockeryTestCase
         $this->setUpForm(new TypeForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\TypeForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
@@ -29,12 +31,12 @@ class TypeFormTest extends MockeryTestCase
         $this->assertEquals('form-type', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'type' => Document::LPA_TYPE_HW,
@@ -44,7 +46,7 @@ class TypeFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'type' => 'invalid-lpa-type',

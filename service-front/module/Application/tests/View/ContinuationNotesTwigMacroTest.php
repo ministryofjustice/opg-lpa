@@ -1,23 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View;
 
-use Application\Model\Service\Lpa\ContinuationSheets;
 use ApplicationTest\View\ViewModelRenderer;
 use DOMDocument;
 use DOMXpath;
 use Laminas\View\Model\ViewModel;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use MakeShared\DataModel\Lpa\Lpa;
 
 /**
  * Unit tests for the Twig macro which renders continuation sheet prompts
  * for both the "Last steps" and date check pages.
  */
-class ContinuationNotesTwigMacroTest extends MockeryTestCase
+final class ContinuationNotesTwigMacroTest extends MockeryTestCase
 {
-    /** @var ViewModelRenderer */
-    private $renderer;
+    private ViewModelRenderer $renderer;
 
     public function setUp(): void
     {
@@ -39,7 +38,7 @@ class ContinuationNotesTwigMacroTest extends MockeryTestCase
 
     // check that the macro correctly renders the notes about
     // continuation sheet 2s
-    private function assertCS2NotesRendered($html)
+    private function assertCS2NotesRendered(string $html): void
     {
         $dom = new DOMDocument();
 
@@ -75,7 +74,7 @@ class ContinuationNotesTwigMacroTest extends MockeryTestCase
         );
     }
 
-    public function testContinuationNotesCS2WhenHasAttorneyDecisions()
+    public function testContinuationNotesCS2WhenHasAttorneyDecisions(): void
     {
         $viewModel = new ViewModel([
             'continuationNoteKeys' => ['HAS_ATTORNEY_DECISIONS'],
@@ -86,7 +85,7 @@ class ContinuationNotesTwigMacroTest extends MockeryTestCase
         $this->assertCS2NotesRendered($html);
     }
 
-    public function testContinuationNotesCS2WhenLongPreferencesOrInstructions()
+    public function testContinuationNotesCS2WhenLongPreferencesOrInstructions(): void
     {
         $viewModel = new ViewModel([
             'continuationNoteKeys' => ['LONG_INSTRUCTIONS_OR_PREFERENCES'],

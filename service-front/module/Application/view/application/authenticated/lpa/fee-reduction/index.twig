@@ -17,8 +17,37 @@
 
 {# Set form fields variables #}
 {% set reductionOptionsElement = form.get('reductionOptions') %}
+{% set reductionOptionsElementOptions = reductionOptionsElement.getOptions()['value_options'] %}
 
-<li id="fee-reduction-section" class="section current" data-cy="section-current">
+
+{% set reductionOptionsElementOptions = {
+    'reducedFeeReceivesBenefits': {
+        value: reductionOptionsElementOptions['reducedFeeReceivesBenefits'].value,
+        attributes: {
+            class: 'govuk-radios__input',
+            'data-aria-controls': 'conditional-repeat-application'
+        }
+    },
+    'reducedFeeUniversalCredit': {
+        value: reductionOptionsElementOptions['reducedFeeUniversalCredit'].value,
+    },
+    'reducedFeeLowIncome': {
+        value: reductionOptionsElementOptions['reducedFeeLowIncome'].value,
+    },
+    'notApply': {
+        value: reductionOptionsElementOptions['notApply'].value,
+    },
+} %}
+{% set name = reductionOptionsElement.getName() %}
+{% set currentValue = reductionOptionsElement.getValue() %}
+{% set valOptions = reductionOptionsElement.getOption('value_options') %}
+
+{# form fields config #}
+{{ reductionOptionsElement.setOptions({
+    value_options: reductionOptionsElementOptions
+}) ? '' }}
+
+    <li id="fee-reduction-section" class="section current" data-cy="section-current">
     <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
     	<div class="text">
@@ -39,63 +68,104 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'form-group-error'}}">
-            <fieldset>
+        <div class="govuk-form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'form-group-error'}}">
+            <fieldset class="govuk-fieldset">
                 <legend class="visually-hidden">Reduced fee options</legend>
                 <h2 class="heading-medium flush--top">Reduced fee options</h2>
 
                 {{ formElementErrorsV2(reductionOptionsElement) }}
 
-                <div class="multiple-choice" data-target="receives-benefits">
-                    {{ formInput(reductionOptions['reducedFeeReceivesBenefits']) }}
-                    <label class="block-label" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
-                        {{ reductionOptions['reducedFeeReceivesBenefits'].getOption('label')|raw }}
-                    </label>
-                </div>
-                <div id="receives-benefits" class="panel panel-border-narrow js-hidden">
-                    <p>To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
+                <div class="govuk-radios" data-module="govuk-radios">
+                    <div class="govuk-radios__item">
+                        <input
+                                type="radio"
+                                name="reductionOptions"
+                                id="reducedFeeReceivesBenefits"
+                                class="govuk-radios__input"
+                                value="reducedFeeReceivesBenefits"
+                                data-cy="reducedFeeReceivesBenefits"
+                                data-aria-controls="receives-benefits"
+                                {% if currentValue is not null and currentValue == valOptions['reducedFeeReceivesBenefits'].value %} checked="checked"{% endif %}
+                        />
 
-                    <p>You can download the form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
+                        <label class="govuk-label govuk-radios__label" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
+                            {{ reductionOptions['reducedFeeReceivesBenefits'].getOption('label')|raw }}
+                        </label>
+                    </div>
+                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="receives-benefits">
+                        <div class="govuk-form-group govuk-form-group--error">
+                            <p>To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
 
-                    <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee.</p>
-                </div>
-                <div class="multiple-choice" data-target="universal-credit">
-                    {{ formInput(reductionOptions['reducedFeeUniversalCredit']) }}
-                    <label class="text block-label" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
-                        {{ reductionOptions['reducedFeeUniversalCredit'].getOption('label')|raw }}
-                    </label>
-                </div>
-                <div id="universal-credit" class="panel panel-border-narrow js-hidden">
-                    <p>Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis.</p>
+                            <p>You can download the form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
 
-                    <p>This means <strong class="bold-small">you will not be charged for this LPA now</strong>.</p>
+                            <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee.</p>
+                        </div>
+                    </div>
+                    <div class="govuk-radios__item">
+                        <input
+                                type="radio"
+                                name="reductionOptions"
+                                id="reducedFeeUniversalCredit"
+                                class="govuk-radios__input"
+                                value="reducedFeeUniversalCredit"
+                                data-cy="reducedFeeUniversalCredit"
+                                data-aria-controls="universal-credit"
+                                {% if currentValue is not null and currentValue == valOptions['reducedFeeUniversalCredit'].value %} checked="checked"{% endif %}
+                        />
 
-                    <p>To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and a copy of the donor's benefit award letter.</p>
+                        <label class="govuk-label govuk-radios__label" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
+                            {{ reductionOptions['reducedFeeUniversalCredit'].getOption('label')|raw }}
+                        </label>
+                    </div>
+                    <div id="universal-credit" class="govuk-radios__conditional govuk-radios__conditional--hidden">
+                        <p>Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis.</p>
 
-                    <p>You can download the form on the last page of this service. Sign and date the form and send it to us, along with the award letter and completed LPA.</p>
+                        <p>This means <strong class="bold-small">you will not be charged for this LPA now</strong>.</p>
 
-                    <p>Once we receive your application, we’ll contact you to let you know how much the fee will be and to arrange payment.</p>
-                </div>
-                <div class="multiple-choice" data-target="reduced-fee-low-income">
-                    {{ formInput(reductionOptions['reducedFeeLowIncome']) }}
-                    <label class="text block-label" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
-                        {{ reductionOptions['reducedFeeLowIncome'].getOption('label')|raw }}
-                    </label>
-                </div>
-                <div id="reduced-fee-low-income" class="panel panel-border-narrow js-hidden">
-                    <p>To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and documents that prove the donor has a low income.</p>
+                        <p>To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and a copy of the donor's benefit award letter.</p>
 
-                    <p>The documents must have the donor’s title, full name, address and postcode printed on them and they must be from the current tax year. Tax years run from 6 April one year to 5 April the next year. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
+                        <p>You can download the form on the last page of this service. Sign and date the form and send it to us, along with the award letter and completed LPA.</p>
 
-                    <p>You can download the fee remissions and exemptions form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
+                        <p>Once we receive your application, we’ll contact you to let you know how much the fee will be and to arrange payment.</p>
+                    </div>
+                    <div class="govuk-radios__item" >
+                        <input
+                                type="radio"
+                                name="reductionOptions"
+                                id="reducedFeeLowIncome"
+                                class="govuk-radios__input"
+                                value="reducedFeeLowIncome"
+                                data-cy="reducedFeeLowIncome"
+                                data-aria-controls="reduced-fee-low-income"
+                                {% if currentValue is not null and currentValue == valOptions['reducedFeeLowIncome'].value %} checked="checked"{% endif %}
+                        />
+                        <label class="govuk-label govuk-radios__label" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
+                            {{ reductionOptions['reducedFeeLowIncome'].getOption('label')|raw }}
+                        </label>
+                    </div>
+                    <div id="reduced-fee-low-income" class="govuk-radios__conditional govuk-radios__conditional--hidden">
+                        <p>To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and documents that prove the donor has a low income.</p>
 
-                    <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee</p>
-                </div>
-                <div class="multiple-choice">
-                    {{ formInput(reductionOptions['notApply']) }}
-                    <label class="text block-label" for="{{ reductionOptions['notApply'].getAttribute('id') }}">
-                        {{ reductionOptions['notApply'].getOption('label')|raw }}
-                    </label>
+                        <p>The documents must have the donor’s title, full name, address and postcode printed on them and they must be from the current tax year. Tax years run from 6 April one year to 5 April the next year. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
+
+                        <p>You can download the fee remissions and exemptions form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
+
+                        <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee</p>
+                    </div>
+                    <div class="govuk-radios__item">
+                        <input
+                                type="radio"
+                                name="reductionOptions"
+                                id="notApply"
+                                class="govuk-radios__input"
+                                value="notApply"
+                                data-cy="notApply"
+                                {% if currentValue is not null and currentValue == valOptions['notApply'].value %} checked="checked"{% endif %}
+                        />
+                        <label class="govuk-label govuk-radios__label" for="{{ reductionOptions['notApply'].getAttribute('id') }}">
+                            {{ reductionOptions['notApply'].getOption('label')|raw }}
+                        </label>
+                    </div>
                 </div>
 	       </fieldset>
         </div>

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\AddressLookup;
 
+use RuntimeException;
 use Mockery;
 use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -12,27 +15,12 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 
-class OrdnanceSurveyTest extends MockeryTestCase
+final class OrdnanceSurveyTest extends MockeryTestCase
 {
-    /**
-     * @var string
-     */
-    private $apiKey;
-
-    /**
-     * @var string
-     */
-    private $endpoint;
-
-    /**
-     * @var MockInterface|HttpClientInterface
-     */
-    private $httpClient;
-
-    /**
-     * @var MockInterface|ResponseInterface
-     */
-    private $response;
+    private string $apiKey;
+    private string $endpoint;
+    private MockInterface|HttpClientInterface $httpClient;
+    private MockInterface|ResponseInterface $response;
 
     protected function setUp(): void
     {
@@ -48,7 +36,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
     //------------------------------------------------------------------------------------
     // Lookup Tests
 
-    public function testHttpLookupUrl()
+    public function testHttpLookupUrl(): void
     {
         $postcode = 'SW1A2AA';
 
@@ -58,7 +46,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         ])));
 
         $this->httpClient->shouldReceive('sendRequest')
-            ->withArgs(function ($arg) use ($postcode) {
+            ->withArgs(function ($arg) use ($postcode): bool {
 
                 // It should be an instance of Request...
                 if (!($arg instanceof Request)) {
@@ -87,7 +75,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
     }
 
 
-    public function testInvalidHttpLookupResponseCode()
+    public function testInvalidHttpLookupResponseCode(): void
     {
         $this->response->shouldReceive('getStatusCode')->andReturn(500);
 
@@ -97,13 +85,13 @@ class OrdnanceSurveyTest extends MockeryTestCase
 
         $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/bad status code/');
 
         $lookup->lookupPostcode('SW1A 2AA');
     }
 
-    public function testInvalidHttpLookupResponseBody()
+    public function testInvalidHttpLookupResponseBody(): void
     {
         $this->response->shouldReceive('getStatusCode')->andReturn(200);
 
@@ -117,13 +105,13 @@ class OrdnanceSurveyTest extends MockeryTestCase
 
         $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/invalid JSON/');
 
         $lookup->lookupPostcode('SW1A 2AA');
     }
 
-    public function testValidHttpLookupResponse()
+    public function testValidHttpLookupResponse(): void
     {
         $this->response->shouldReceive('getStatusCode')->andReturn(200);
         $this->response->shouldReceive('getBody')->andReturn(Utils::streamFor(json_encode([
@@ -146,7 +134,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
     //------------------------------------------------------------------------------------
     // Formatting Tests
 
-    private $testData = [
+    private array $testData = [
         [
             'address' => 'GOOD PUB, 10, DRINKING LANE, LONDON', 'postcode' => 'X1 3XX',
             'formatted' => ['GOOD PUB', '10 DRINKING LANE', 'LONDON', 'X1 3XX'],
@@ -165,7 +153,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         ],
     ];
 
-    private function setupResponse()
+    private function setupResponse(): void
     {
         $results = [];
         foreach ($this->testData as $address) {
@@ -181,7 +169,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         ])));
     }
 
-    public function testFormatting()
+    public function testFormatting(): void
     {
         $this->setupResponse();
         $this->httpClient->shouldReceive('sendRequest')->once()->andReturn($this->response);

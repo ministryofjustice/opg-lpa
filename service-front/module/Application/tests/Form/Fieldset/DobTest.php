@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Fieldset\Dob as DobFieldset;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class DobTest extends MockeryTestCase
+final class DobTest extends MockeryTestCase
 {
-    public function testNameAndInstance()
+    public function testNameAndInstance(): void
     {
         $fieldSet = new DobFieldset();
 
@@ -15,7 +17,7 @@ class DobTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Fieldset', $fieldSet);
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $fieldSet = new DobFieldset();
 
@@ -24,7 +26,7 @@ class DobTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Text', $fieldSet->get('year'));
     }
 
-    public function testSetAndGetMessages()
+    public function testSetAndGetMessages(): void
     {
         $testMessages = [
             'some-field' => 'A big error message',

@@ -1,21 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DownloadController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use DateTime;
-use Exception;
-use Mockery;
-use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use Laminas\Http\Header\HeaderInterface;
 use Laminas\Http\Headers;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
+use Mockery;
 
-class DownloadControllerTest extends AbstractControllerTestCase
+final class DownloadControllerTest extends AbstractControllerTestCase
 {
-    public function testIndexActionNoPdfAvailable()
+    public function testIndexActionNoPdfAvailable(): void
     {
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
@@ -30,7 +30,7 @@ class DownloadControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
     }
 
-    public function testIndexActionInQueue()
+    public function testIndexActionInQueue(): void
     {
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
@@ -47,7 +47,7 @@ class DownloadControllerTest extends AbstractControllerTestCase
         $this->assertFalse($result);
     }
 
-    public function testIndexActionLp1Ready()
+    public function testIndexActionLp1Ready(): void
     {
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
@@ -71,7 +71,7 @@ class DownloadControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionDraftLp1Ready()
+    public function testIndexActionDraftLp1Ready(): void
     {
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
@@ -98,7 +98,7 @@ class DownloadControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionLp3Ready()
+    public function testIndexActionLp3Ready(): void
     {
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
@@ -126,7 +126,7 @@ class DownloadControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testDownloadActionInQueue()
+    public function testDownloadActionInQueue(): void
     {
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
@@ -151,7 +151,7 @@ class DownloadControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testDownloadActionReady()
+    public function testDownloadActionReady(): void
     {
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
@@ -199,7 +199,7 @@ class DownloadControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    private function setPdfType($controller, $lpa, $pdfType)
+    private function setPdfType($controller, $lpa, string $pdfType): void
     {
         $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn($pdfType)->once();

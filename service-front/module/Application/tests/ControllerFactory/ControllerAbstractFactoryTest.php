@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\ControllerFactory;
 
 use Application\Controller\General\HomeController;
@@ -14,17 +16,10 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\ServiceManager\AbstractPluginManager;
 
-class ControllerAbstractFactoryTest extends MockeryTestCase
+final class ControllerAbstractFactoryTest extends MockeryTestCase
 {
-    /**
-     * @var ControllerAbstractFactory
-     */
-    private $factory;
-
-    /**
-     * @var MockInterface|ContainerInterface
-     */
-    private $container;
+    private ControllerAbstractFactory $factory;
+    private MockInterface|ContainerInterface $container;
 
     public function setUp() : void
     {
@@ -32,21 +27,21 @@ class ControllerAbstractFactoryTest extends MockeryTestCase
         $this->container = Mockery::mock(ContainerInterface::class);
     }
 
-    public function testCanCreateServiceWithNameInvalid()
+    public function testCanCreateServiceWithNameInvalid(): void
     {
         $result = $this->factory->canCreate($this->container, 'Invalid');
 
         $this->assertFalse($result);
     }
 
-    public function testCanCreateServiceWithName()
+    public function testCanCreateServiceWithName(): void
     {
         $result = $this->factory->canCreate($this->container, 'General\HomeController');
 
         $this->assertTrue($result);
     }
 
-    public function testCreateServiceWithName()
+    public function testCreateServiceWithName(): void
     {
         $routeMatch = Mockery::mock(RouteMatch::class);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/applicant');

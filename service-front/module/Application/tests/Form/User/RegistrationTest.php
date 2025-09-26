@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\User;
 
 use Application\Form\User\Registration as RegistrationForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class RegistrationTest extends MockeryTestCase
+final class RegistrationTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,7 +20,7 @@ class RegistrationTest extends MockeryTestCase
         $this->setUpForm(new RegistrationForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\User\Registration', $this->form);
         $this->assertInstanceOf('Application\Form\User\SetPassword', $this->form);
@@ -27,7 +29,7 @@ class RegistrationTest extends MockeryTestCase
         $this->assertEquals('registration', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email'));
         $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email_confirm'));
@@ -38,14 +40,14 @@ class RegistrationTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Hidden', $this->form->get('skip_confirm_password'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'email'                 => 'a@b.com',
             'email_confirm'         => 'a@b.com',
             'terms'                 => '1',
-            'password'              => 'P@55word',
-            'password_confirm'      => 'P@55word',
+            'password'              => 'P@55wordword',
+            'password_confirm'      => 'P@55wordword',
             'skip_confirm_password' => '0',
         ], $this->getCsrfData()));
 
@@ -54,14 +56,14 @@ class RegistrationTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelOKWithHTMLTags()
+    public function testValidateByModelOKWithHTMLTags(): void
     {
         $this->form->setData(array_merge([
             'email'                 => 'a@b.com',
             'email_confirm'         => 'a@b.com',
             'terms'                 => '1',
-            'password'              => '<>P@55word',
-            'password_confirm'      => '<>P@55word',
+            'password'              => '<>P@55wordword',
+            'password_confirm'      => '<>P@55wordword',
             'skip_confirm_password' => '0',
         ], $this->getCsrfData()));
 
@@ -70,7 +72,7 @@ class RegistrationTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelOKWithTrailingAndLeadingSpaces()
+    public function testValidateByModelOKWithTrailingAndLeadingSpaces(): void
     {
         $this->form->setData(array_merge([
             'email'                 => 'a@b.com',
@@ -86,13 +88,13 @@ class RegistrationTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelOKWithHTMLTagsAndSkippedConfirm()
+    public function testValidateByModelOKWithHTMLTagsAndSkippedConfirm(): void
     {
         $this->form->setData(array_merge([
             'email'                 => 'a@b.com',
             'email_confirm'         => 'a@b.com',
             'terms'                 => '1',
-            'password'              => '<>P@55word',
+            'password'              => '<>P@55wordword',
             'password_confirm'      => '',
             'skip_confirm_password' => '1',
         ], $this->getCsrfData()));
@@ -102,7 +104,7 @@ class RegistrationTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'email'                 => '',

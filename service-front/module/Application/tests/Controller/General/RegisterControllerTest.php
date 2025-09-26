@@ -1,36 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\RegisterController;
 use Application\Form\User\ConfirmEmail;
 use Application\Form\User\Registration;
 use Application\Model\Service\User\Details;
-use Application\Model\Service\User\Register;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use Mockery;
-use Mockery\MockInterface;
-use Laminas\Http\Headers;
 use Laminas\Http\Header\Referer;
+use Laminas\Http\Headers;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
 use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
+use Mockery;
+use Mockery\MockInterface;
 
-class RegisterControllerTest extends AbstractControllerTestCase
+final class RegisterControllerTest extends AbstractControllerTestCase
 {
     public const GA = 987654321987654321;
-    /**
-     * @var MockInterface|Registration
-     */
-    private $form;
+    private MockInterface|Registration $form;
     /**
      * @var MockInterface|MvcEvent
      */
     private $event;
 
-    private $postData = [
+    private array $postData = [
         'email' => 'unit@test.com',
         'password' => 'password'
     ];
@@ -44,7 +42,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\User\Registration'])->andReturn($this->form);
     }
 
-    private function makeMockReferer($url)
+    private function makeMockReferer(string $url)
     {
         $uri = new Uri($url);
         $referer = Mockery::mock(Referer::class);
@@ -68,7 +66,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexActionRefererGovUk()
+    public function testIndexActionRefererGovUk(): void
     {
         $controller = $this->getController(RegisterController::class);
 
@@ -89,7 +87,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionAlreadyLoggedIn()
+    public function testIndexActionAlreadyLoggedIn(): void
     {
         $controller = $this->getController(RegisterController::class);
 
@@ -119,7 +117,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(RegisterController::class);
@@ -144,7 +142,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
     // this mirrors the case where the referer is not a valid URI, e.g.
     // if it is set to android-app://com.google.android.gm/ when clicking
     // a link in GMail; see LPAL-1151
-    public function testIndexActionBadReferer()
+    public function testIndexActionBadReferer(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(RegisterController::class);
@@ -170,7 +168,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('strictVars'));
     }
 
-    public function testIndexActionPostInvalid()
+    public function testIndexActionPostInvalid(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(RegisterController::class);
@@ -192,7 +190,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('strictVars'));
     }
 
-    public function testIndexActionPostError()
+    public function testIndexActionPostError(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(RegisterController::class);
@@ -217,12 +215,10 @@ class RegisterControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Unit test error', $result->getVariable('error'));
     }
 
-    public function testIndexActionPostSuccess()
+    public function testIndexActionPostSuccess(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(RegisterController::class);
-
-        $response = new Response();
 
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
 
@@ -256,7 +252,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
         $this->assertInstanceOf(ViewModel::class, $result);
     }
 
-    public function testConfirmActionNoToken()
+    public function testConfirmActionNoToken(): void
     {
         $controller = $this->getController(RegisterController::class);
 
@@ -269,7 +265,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
         $this->assertEquals('invalid-token', $result->getVariable('error'));
     }
 
-    public function testConfirmActionAccountDoesNotExist()
+    public function testConfirmActionAccountDoesNotExist(): void
     {
         $controller = $this->getController(RegisterController::class);
 
@@ -285,7 +281,7 @@ class RegisterControllerTest extends AbstractControllerTestCase
         $this->assertEquals('account-missing', $result->getVariable('error'));
     }
 
-    public function testConfirmActionSuccess()
+    public function testConfirmActionSuccess(): void
     {
         $controller = $this->getController(RegisterController::class);
 

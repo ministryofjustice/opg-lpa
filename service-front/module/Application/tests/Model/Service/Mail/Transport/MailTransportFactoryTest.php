@@ -1,26 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Mail\Transport;
 
 use Application\Model\Service\Mail\Transport\NotifyMailTransport;
 use Application\Model\Service\Mail\Transport\MailTransportFactory;
-use Hamcrest\Matchers;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use RuntimeException;
-use Twig\Environment;
 
-use function random_bytes;
-
-class MailTransportFactoryTest extends MockeryTestCase
+final class MailTransportFactoryTest extends MockeryTestCase
 {
     /**
      * @throws ContainerException
      */
-
     public function testMailTransportFactoryNotify(): void
     {
         /** @var ContainerInterface|MockInterface $container */

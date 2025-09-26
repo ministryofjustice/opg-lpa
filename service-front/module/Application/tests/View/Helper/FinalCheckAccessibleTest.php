@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View\Helper;
 
 use Application\View\Helper\FinalCheckAccessible;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class FinalCheckAccessibleTest extends MockeryTestCase
+final class FinalCheckAccessibleTest extends MockeryTestCase
 {
     public function testInvoke(): void
     {

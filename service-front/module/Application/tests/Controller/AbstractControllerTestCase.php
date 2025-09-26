@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller;
 
+use Exception;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
@@ -14,7 +17,6 @@ use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details;
-use Application\View\StatusViewModelHelper;
 use ApplicationTest\Controller\Authenticated\Lpa\CertificateProviderControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\CorrespondentControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\DonorControllerTest;
@@ -143,11 +145,11 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     /**
      * @var User
      */
-    protected $user = null;
+    protected $user;
     /**
      * @var UserIdentity
      */
-    protected $userIdentity = null;
+    protected $userIdentity;
     /**
      * @var MockInterface|ReplacementAttorneyCleanup
      */
@@ -305,7 +307,6 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     }
 
     /**
-     * @param string $controllerName
      * @return AbstractBaseController
      */
     protected function getController(string $controllerName)
@@ -424,7 +425,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         return $routeMatch;
     }
 
-    public function setSeedLpa($lpa, $seedLpa)
+    public function setSeedLpa($lpa, $seedLpa): void
     {
         $lpa->seed = $seedLpa->id;
         $this->lpaApplicationService->shouldReceive('getSeedDetails')
@@ -450,7 +451,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
 
         $document = $seedLpa->getDocument()->toArray();
 
-        $result = $result + array_intersect_key($document, array_flip([
+        $result += array_intersect_key($document, array_flip([
                 'donor',
                 'correspondent',
                 'certificateProvider',
@@ -459,20 +460,16 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                 'peopleToNotify'
             ]));
 
-        $result = array_filter($result, function ($v) {
+        return array_filter($result, function ($v): bool {
             return !empty($v);
         });
-
-        return $result;
     }
 
     /**
      * @param MockInterface $form
-     * @param array $postData
-     * @param null $dataToSet
      * @param int $expectedPostTimes
      */
-    public function setPostInvalid($form, array $postData = [], $dataToSet = null, $expectedPostTimes = 1)
+    public function setPostInvalid($form, array $postData = [], $dataToSet = null, $expectedPostTimes = 1): void
     {
         //  Post data is got from the form it will be a Parameters object
         $postData = (is_array($postData) ? new Parameters($postData) : $postData);
@@ -490,8 +487,6 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
 
     /**
      * @param MockInterface $form
-     * @param array $postData
-     * @param null $dataToSet
      * @param int $expectedPostTimes
      * @param int $expectedGetPostTimes
      */
@@ -501,7 +496,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $dataToSet = null,
         $expectedPostTimes = 1,
         $expectedGetPostTimes = 1
-    ) {
+    ): void {
         //  Post data is got from the form it will be a Parameters object
         $postData = (is_array($postData) ? new Parameters($postData) : $postData);
 
@@ -516,7 +511,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $form->shouldReceive('isValid')->andReturn(true)->once();
     }
 
-    public function setRedirectToRoute($route, $lpa, $response)
+    public function setRedirectToRoute($route, $lpa, $response): void
     {
         $args = [$route, ['lpa-id' => $lpa->id]];
         $args[] = $this->getExpectedRouteOptions($route);
@@ -529,7 +524,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      * @param string $lpaRoute e.g. lpa/certificate-provider/edit
      * @param Response $response
      */
-    public function setRedirectToReuseDetails($user, $lpa, $lpaRoute, $response)
+    public function setRedirectToReuseDetails($user, $lpa, $lpaRoute, $response): void
     {
         $this->userDetailsSession->user = $user;
 
@@ -564,7 +559,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
             'actor-name'     => $actorName,
         ];
 
-        $reuseDetailsUrl = "lpa/{$lpa->getId()}/reuse-details?" . implode('&', array_map(function ($value, $key) {
+        $reuseDetailsUrl = "lpa/{$lpa->getId()}/reuse-details?" . implode('&', array_map(function ($value, $key): string {
             $valueString = is_bool($value) ? $value === true ? '1' : '0' : $value;
             return "$key=$valueString";
         }, $queryParams, array_keys($queryParams)));
@@ -699,11 +694,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     /**
      * @param $lpa
      * @param $route
-     * @param null $queryParameters
-     * @param null $fragment
-     * @return mixed
      */
-    private function getLpaUrl($lpa, $route, $queryParameters = null, $fragment = null)
+    private function getLpaUrl($lpa, $route, $queryParameters = null, $fragment = null): array|string
     {
         $url = str_replace('lpa/', "lpa/{$lpa->id}/", $route);
         $queryParams = [];
@@ -714,7 +706,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
             $queryParams = array_merge($queryParams, $fragment);
         }
         if (count($queryParams) > 0) {
-            $url .= '?' . implode('&', array_map(function ($value, $key) {
+            $url .= '?' . implode('&', array_map(function ($value, $key): string {
                 $valueString = is_bool($value) ? $value === true ? '1' : '0' : $value;
                 return "$key=$valueString";
             }, $queryParams, array_keys($queryParams)));
@@ -731,10 +723,9 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      * Get sample user details
      *
      * @param bool $newDetails
-     * @return User
-     * @throws \Exception
+     * @throws Exception
      */
-    private function getUserDetails($newDetails = false)
+    private function getUserDetails($newDetails = false): User
     {
         $user = new User();
 

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\PeopleToNotifyForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class PeopleToNotifyFormTest extends MockeryTestCase
+final class PeopleToNotifyFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,7 +20,7 @@ class PeopleToNotifyFormTest extends MockeryTestCase
         $this->setUpForm(new PeopleToNotifyForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\PeopleToNotifyForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractActorForm', $this->form);
@@ -28,7 +30,7 @@ class PeopleToNotifyFormTest extends MockeryTestCase
         $this->assertEquals('form-people-to-notify', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-title'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-first'));
@@ -40,7 +42,7 @@ class PeopleToNotifyFormTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('submit'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'name-title'       => 'Mr',
@@ -54,7 +56,7 @@ class PeopleToNotifyFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'name-title'       => '',

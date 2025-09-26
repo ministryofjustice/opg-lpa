@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View\Helper;
 
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -8,7 +10,7 @@ use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class SystemMessageFactoryTest extends MockeryTestCase
+final class SystemMessageFactoryTest extends MockeryTestCase
 {
     public function testInvoke(): void
     {

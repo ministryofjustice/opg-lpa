@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\ApiClient;
 
 use Application\Model\Service\ApiClient\Client;
@@ -7,24 +9,15 @@ use Application\Model\Service\ApiClient\ClientFactory;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Http\Client\HttpClient;
 use Interop\Container\ContainerInterface;
-use Laminas\Http\Header\HeaderInterface;
-use Laminas\Http\Request;
 use MakeShared\Telemetry\Tracer;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 
-class ClientFactoryTest extends MockeryTestCase
+final class ClientFactoryTest extends MockeryTestCase
 {
-    /**
-     * @var MockInterface|ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var ClientFactory
-     */
-    protected $factory;
+    private MockInterface|ContainerInterface $container;
+    private ClientFactory $factory;
 
     public function setUp(): void
     {

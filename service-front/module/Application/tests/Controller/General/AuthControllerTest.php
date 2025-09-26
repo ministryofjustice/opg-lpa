@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\AuthController;
@@ -17,13 +19,10 @@ use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
 
-class AuthControllerTest extends AbstractControllerTestCase
+final class AuthControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|Login
-     */
-    private $form;
-    private $postData = [
+    private MockInterface|Login $form;
+    private array $postData = [
         'email' => 'unit@test.com',
         'password' => 'unitTest'
     ];
@@ -59,7 +58,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexActionFormInvalid()
+    public function testIndexActionFormInvalid(): void
     {
         $controller = $this->getController(AuthController::class);
 
@@ -75,7 +74,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('isTimeout'));
     }
 
-    public function testIndexActionFormAuthenticationFailed()
+    public function testIndexActionFormAuthenticationFailed(): void
     {
         $controller = $this->getController(AuthController::class);
 
@@ -108,7 +107,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('isTimeout'));
     }
 
-    public function testIndexActionFormAuthenticationSuccessfulDashboard()
+    public function testIndexActionFormAuthenticationSuccessfulDashboard(): void
     {
         $controller = $this->getController(AuthController::class);
 
@@ -138,7 +137,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionFormAuthenticationSuccessfulRedirect()
+    public function testIndexActionFormAuthenticationSuccessfulRedirect(): void
     {
         $controller = $this->getController(AuthController::class);
 
@@ -174,7 +173,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionFormAuthenticationSuccessfulRedirectLpa()
+    public function testIndexActionFormAuthenticationSuccessfulRedirectLpa(): void
     {
         $controller = $this->getController(AuthController::class);
 
@@ -216,7 +215,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testSessionExpiryAction()
+    public function testSessionExpiryAction(): void
     {
         $controller = $this->getController(AuthController::class);
 
@@ -229,7 +228,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->assertEquals('{"remainingSeconds":100}', $result->serialize());
     }
 
-    public function testSessionExpiryActionExpired()
+    public function testSessionExpiryActionExpired(): void
     {
         $controller = $this->getController(AuthController::class);
 
@@ -249,7 +248,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getBody());
     }
 
-    public function testLogoutAction()
+    public function testLogoutAction(): void
     {
         $controller = $this->getController(AuthController::class);
 
@@ -265,7 +264,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testDeletedAction()
+    public function testDeletedAction(): void
     {
         $controller = $this->getController(AuthController::class);
 
@@ -279,7 +278,7 @@ class AuthControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('strictVars'));
     }
 
-    private function setPreAuthRequestUrl($url)
+    private function setPreAuthRequestUrl(string $url): void
     {
         $this->sessionManager->shouldReceive('start')->once();
         $this->storage->offsetSet('PreAuthRequest', new ArrayObject(['url' => $url]));

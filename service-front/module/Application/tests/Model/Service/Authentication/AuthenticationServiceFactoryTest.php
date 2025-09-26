@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Authentication;
 
 use Application\Model\Service\Authentication\Adapter\AdapterInterface;
@@ -9,9 +11,9 @@ use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class AuthenticationServiceFactoryTest extends MockeryTestCase
+final class AuthenticationServiceFactoryTest extends MockeryTestCase
 {
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $authenticationService = Mockery::mock(AdapterInterface::class);
 

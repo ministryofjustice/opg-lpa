@@ -2,13 +2,13 @@
 
 namespace Application\Controller;
 
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\Http\Response\Json;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Exception;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\DataModel\Lpa\Lpa;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
 use MakeShared\Logging\LoggerTrait;

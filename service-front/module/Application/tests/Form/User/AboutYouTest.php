@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\User;
 
 use Application\Form\User\AboutYou as AboutYouForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class AboutYouTest extends MockeryTestCase
+final class AboutYouTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,7 +20,7 @@ class AboutYouTest extends MockeryTestCase
         $this->setUpForm(new AboutYouForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\User\AboutYou', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractActorForm', $this->form);
@@ -28,7 +30,7 @@ class AboutYouTest extends MockeryTestCase
         $this->assertEquals('about-you', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-title'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-first'));
@@ -40,7 +42,7 @@ class AboutYouTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-postcode'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'id' => '854c71a05f3eed0788c127783b435e8c',
@@ -63,7 +65,7 @@ class AboutYouTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             //  No id, createdAt or updatedAt

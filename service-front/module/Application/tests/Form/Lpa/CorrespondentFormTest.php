@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\CorrespondentForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class CorrespondentFormTest extends MockeryTestCase
+final class CorrespondentFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,7 +20,7 @@ class CorrespondentFormTest extends MockeryTestCase
         $this->setUpForm(new CorrespondentForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\CorrespondentForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractActorForm', $this->form);
@@ -28,7 +30,7 @@ class CorrespondentFormTest extends MockeryTestCase
         $this->assertEquals('form-correspondent', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Hidden', $this->form->get('who'));
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-title'));
@@ -43,7 +45,7 @@ class CorrespondentFormTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('phone-number'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'who'              => 'donor',
@@ -60,7 +62,7 @@ class CorrespondentFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'who'              => '',

@@ -1,26 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View;
 
-use Application\Form\Lpa\DateCheckForm;
-use Application\View\Helper\FormElementErrorsV2;
-use Application\View\Helper\FormErrorTextExchange;
 use Application\View\DateCheckViewModelHelper;
 use ApplicationTest\View\ViewModelRenderer;
 use DOMDocument;
 use DOMXpath;
-use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\View\Model\ViewModel;
-use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class DateCheckViewModelHelperTest extends MockeryTestCase
+final class DateCheckViewModelHelperTest extends MockeryTestCase
 {
-    /** @var ViewModelRenderer */
-    private $renderer;
+    private ViewModelRenderer $renderer;
 
     public function setUp(): void
     {
@@ -31,9 +27,8 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
         $this->renderer->addFunction('formElement');
     }
 
-    /** @var array */
     /* The keys correspond to the tests that check specific twig blocks in the given template */
-    private $templates = [
+    private array $templates = [
         'donor' => [
             'block' => 'donorGuidance',
             'path' => 'application/authenticated/lpa/date-check/index.twig'
@@ -46,7 +41,7 @@ class DateCheckViewModelHelperTest extends MockeryTestCase
 
     // test cases for cs2 reference criteria used in the ContinuationSheets class to determine
     // whether a cs2 will be produced for a particular LPA
-    private $testCases = [
+    private array $testCases = [
         // Continuation sheet 1
         // 0. LPA has more than 4 primary attorneys (generates CS1)
         [

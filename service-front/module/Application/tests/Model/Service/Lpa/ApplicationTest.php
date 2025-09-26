@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Lpa;
 
 use Application\Model\Service\ApiClient\Client;
@@ -18,24 +20,13 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Log\LoggerInterface;
 
-class ApplicationTest extends MockeryTestCase
+final class ApplicationTest extends MockeryTestCase
 {
-    /**
-     * @var MockInterface|AuthenticationService
-     */
-    private $authenticationService;
+    private MockInterface|AuthenticationService $authenticationService;
+    private MockInterface|Client $apiClient;
+    private Application $service;
 
-    /**
-     * @var MockInterface|Client
-     */
-    private $apiClient;
-
-    /**
-     * @var Application
-     */
-    private $service;
-
-    private function modifiedLPA($id = 5531003157, $completedAt = null, $processingStatus = null, $rejectedDate = null)
+    private function modifiedLPA(int $id = 5531003157, $completedAt = null, $processingStatus = null, $rejectedDate = null)
     {
         $decodeJsonAsArray = true;
         $arr = json_decode(FixturesData::getHwLpaJson(), $decodeJsonAsArray);
@@ -75,7 +66,7 @@ class ApplicationTest extends MockeryTestCase
         $this->service->setLogger($logger);
     }
 
-    public function testGetApplication()
+    public function testGetApplication(): void
     {
         $this->apiClient->shouldReceive('httpGet')->andReturn([])->once();
 
@@ -86,7 +77,7 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testGetApplicationWithNewToken()
+    public function testGetApplicationWithNewToken(): void
     {
         $this->apiClient->shouldReceive('httpGet')->andReturn([])->once();
         $this->apiClient->shouldReceive('updateToken')->withArgs(['new token'])->once();
@@ -98,7 +89,7 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testGetApplicationFailure()
+    public function testGetApplicationFailure(): void
     {
         $mockResponse = Mockery::mock(ResponseInterface::class);
         $mockResponse->shouldReceive('getStatusCode')->andReturn(400);
@@ -111,7 +102,7 @@ class ApplicationTest extends MockeryTestCase
         $this->assertFalse($result);
     }
 
-    public function testGetStatuses()
+    public function testGetStatuses(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->once()
@@ -122,7 +113,7 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals(['4321' => ['found' => true, 'status' => 'Concluded']], $result);
     }
 
-    public function testGetStatusesNull()
+    public function testGetStatusesNull(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->once()
@@ -133,7 +124,7 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals(['4321' => ['found' => false]], $result);
     }
 
-    public function testGetStatusesException()
+    public function testGetStatusesException(): void
     {
         $mockResponse = Mockery::mock(ResponseInterface::class);
         $mockResponse->shouldReceive('getStatusCode')->andReturn(400);
@@ -150,7 +141,7 @@ class ApplicationTest extends MockeryTestCase
     /**
      * @throws Exception
      */
-    public function testGetLpaSummariesNoApplications()
+    public function testGetLpaSummariesNoApplications(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/4321/applications', ['search' => null]])
@@ -165,7 +156,7 @@ class ApplicationTest extends MockeryTestCase
     /**
      * @throws Exception
      */
-    public function testGetLpaSummariesMultipleApplications()
+    public function testGetLpaSummariesMultipleApplications(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/4321/applications', ['search' => null]])
@@ -203,7 +194,7 @@ class ApplicationTest extends MockeryTestCase
     /**
      * @throws Exception
      */
-    public function testGetLpaSummariesCanTrackWithNoTrackingStatus()
+    public function testGetLpaSummariesCanTrackWithNoTrackingStatus(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/4321/applications', ['search' => null]])
@@ -230,7 +221,7 @@ class ApplicationTest extends MockeryTestCase
     /**
      * @throws Exception
      */
-    public function testGetLpaSummariesCanTrackWithTrackingStatus()
+    public function testGetLpaSummariesCanTrackWithTrackingStatus(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/4321/applications', ['search' => null]])
@@ -254,7 +245,7 @@ class ApplicationTest extends MockeryTestCase
         ], 'trackingEnabled' => true], $result);
     }
 
-    public function testAttorneyOverflowGetContinuationNoteKeys()
+    public function testAttorneyOverflowGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -274,7 +265,7 @@ class ApplicationTest extends MockeryTestCase
         );
     }
 
-    public function testAnyOverflowGetContinuationNoteKeys()
+    public function testAnyOverflowGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -288,7 +279,7 @@ class ApplicationTest extends MockeryTestCase
         );
     }
 
-    public function testLongInstructionGetContinuationNoteKeys()
+    public function testLongInstructionGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -304,7 +295,7 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals(['LONG_INSTRUCTIONS_OR_PREFERENCES'], $this->service->getContinuationNoteKeys($mockLpa));
     }
 
-    public function testCantSignGetContinuationNoteKeys()
+    public function testCantSignGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -317,7 +308,7 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals(['CANT_SIGN'], $this->service->getContinuationNoteKeys($mockLpa));
     }
 
-    public function testTrustAttorneyGetContinuationNoteKeys()
+    public function testTrustAttorneyGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -330,7 +321,7 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals(['HAS_TRUST_CORP'], $this->service->getContinuationNoteKeys($mockLpa));
     }
 
-    public function testCombinationsGetContinuationNoteKeys()
+    public function testCombinationsGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [

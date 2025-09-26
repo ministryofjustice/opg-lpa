@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\General;
 
 use Application\Form\General\FeedbackForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class FeedbackFormTest extends MockeryTestCase
+final class FeedbackFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -18,14 +20,14 @@ class FeedbackFormTest extends MockeryTestCase
         $this->setUpForm(new FeedbackForm());
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\General\FeedbackForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
         $this->assertEquals('send-feedback', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('rating'));
         $this->assertInstanceOf('Laminas\Form\Element\Textarea', $this->form->get('details'));
@@ -33,7 +35,7 @@ class FeedbackFormTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('phone'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'rating' => 'very-satisfied',
@@ -46,7 +48,7 @@ class FeedbackFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $message = '';
         for ($i = 0; $i < 100; $i++) {

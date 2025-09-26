@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Logging;
 
 use DateTimeImmutable;
@@ -8,9 +10,9 @@ use MakeShared\Logging\TraceIdProcessor;
 use Monolog\Level;
 use Monolog\LogRecord;
 
-class TraceIdProcessorTest extends MockeryTestCase
+final class TraceIdProcessorTest extends MockeryTestCase
 {
-    public function testTraceIdProcessed()
+    public function testTraceIdProcessed(): void
     {
         $expectedTraceId = 'foo';
 
