@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\RepeatCaseNumber;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
@@ -7,7 +9,7 @@ use Application\Model\Service\RepeatCaseNumber\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeSharedTest\DataModel\FixturesData;
 
-class ServiceTest extends AbstractServiceTestCase
+final class ServiceTest extends AbstractServiceTestCase
 {
     public function testUpdateValidationFailed()
     {
@@ -23,13 +25,18 @@ class ServiceTest extends AbstractServiceTestCase
         $validationError = $service->update($lpa->getId(), ['repeatCaseNumber' => 'Invalid']);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->getStatus());
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
-        $this->assertEquals('Bad Request', $validationError->getTitle());
-        $validation = $validationError->validation;
-        $this->assertEquals(1, count($validation));
-        $this->assertTrue(array_key_exists('repeatCaseNumber', $validation));
+        $this->assertEquals(
+            [
+                'type' => 'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
+                'title' => 'Bad Request',
+                'status' => 400,
+                'detail' => 'Your request could not be processed due to validation error',
+                'validation' => [
+                    'repeatCaseNumber' => ['value' => 'Invalid', 'messages' => ['expected-type:int']],
+                ]
+            ],
+            $validationError->toArray()
+        );
 
         $serviceBuilder->verify();
     }
@@ -68,13 +75,18 @@ class ServiceTest extends AbstractServiceTestCase
         $validationError = $service->delete($lpa->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->getStatus());
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
-        $this->assertEquals('Bad Request', $validationError->getTitle());
-        $validation = $validationError->validation;
-        $this->assertEquals(1, count($validation));
-        $this->assertTrue(array_key_exists('document.whoIsRegistering', $validation));
+        $this->assertEquals(
+            [
+                'type' => 'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
+                'title' => 'Bad Request',
+                'status' => 400,
+                'detail' => 'Your request could not be processed due to validation error',
+                'validation' => [
+                    'document.whoIsRegistering' => ['value' => '1,2', 'messages' => ['allowed-values:']],
+                ]
+            ],
+            $validationError->toArray()
+        );
 
         $serviceBuilder->verify();
     }
