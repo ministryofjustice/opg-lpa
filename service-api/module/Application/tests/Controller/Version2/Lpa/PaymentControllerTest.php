@@ -3,12 +3,12 @@
 namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\Version2\Lpa\PaymentController;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Payment\Service;
+use LmcRbacMvc\Exception\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use LmcRbacMvc\Exception\UnauthorizedException;
 
 class PaymentControllerTest extends AbstractControllerTestCase
 {

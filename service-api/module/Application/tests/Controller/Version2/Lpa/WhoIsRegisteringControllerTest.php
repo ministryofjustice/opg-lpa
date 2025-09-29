@@ -3,12 +3,12 @@
 namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\Version2\Lpa\WhoIsRegisteringController;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\WhoIsRegistering\Service;
+use LmcRbacMvc\Exception\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use LmcRbacMvc\Exception\UnauthorizedException;
 
 class WhoIsRegisteringControllerTest extends AbstractControllerTestCase
 {

@@ -3,15 +3,15 @@
 namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\Version2\Lpa\UserController;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Users\Service;
-use Mockery;
-use Mockery\MockInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 use LmcRbacMvc\Exception\UnauthorizedException;
 use LmcRbacMvc\Service\AuthorizationService;
+use Mockery;
+use Mockery\MockInterface;
 
 class UserControllerTest extends AbstractControllerTestCase
 {
