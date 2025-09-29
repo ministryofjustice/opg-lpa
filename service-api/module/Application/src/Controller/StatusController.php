@@ -4,18 +4,18 @@ namespace Application\Controller;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\Http\Response\Json;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\Applications\Service as ApplicationsService;
-use Exception;
-use MakeShared\DataModel\Lpa\Lpa;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
-use MakeShared\Logging\LoggerTrait;
+use Exception;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use LmcRbacMvc\Service\AuthorizationService;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 
 class StatusController extends AbstractRestfulController implements LoggerAwareInterface

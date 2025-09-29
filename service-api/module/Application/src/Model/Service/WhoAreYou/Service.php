@@ -4,8 +4,8 @@ namespace Application\Model\Service\WhoAreYou;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use MakeShared\Logging\LoggerTrait;

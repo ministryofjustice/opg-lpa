@@ -2,10 +2,10 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use DateTime;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\AbstractService;
+use DateTime;
 use Laminas\View\Model\JsonModel;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\TelemetryEventManager;
 use RuntimeException;

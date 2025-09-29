@@ -2,11 +2,11 @@
 
 namespace Application\Controller\Version2\Lpa;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Pdfs\Service;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class PdfController extends AbstractLpaController
 {
