@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Seed;
 
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use RuntimeException;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\Service\Seed\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
@@ -13,6 +12,7 @@ use ApplicationTest\Model\Service\Applications\ServiceBuilder as ApplicationsSer
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
+use RuntimeException;
 
 final class ServiceTest extends AbstractServiceTestCase
 {

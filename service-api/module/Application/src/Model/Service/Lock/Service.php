@@ -2,10 +2,10 @@
 
 namespace Application\Model\Service\Lock;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
