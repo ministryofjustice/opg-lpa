@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "24c2c8a4057f7af76ec149464c47848d",
+    "content-hash": "9e6f99183247259e489ab3c0c8ff36fb",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -1250,80 +1250,6 @@
                 }
             ],
             "time": "2025-08-23T21:21:41+00:00"
-        },
-        {
-            "name": "laminas-api-tools/api-tools-api-problem",
-            "version": "1.6.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas-api-tools/api-tools-api-problem.git",
-                "reference": "ae6c8d3b063fc8adc3db6d8e5b80ffec2b4614d5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas-api-tools/api-tools-api-problem/zipball/ae6c8d3b063fc8adc3db6d8e5b80ffec2b4614d5",
-                "reference": "ae6c8d3b063fc8adc3db6d8e5b80ffec2b4614d5",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "laminas/laminas-eventmanager": "^2.6.3 || ^3.0.1",
-                "laminas/laminas-http": "^2.15.1",
-                "laminas/laminas-json": "^2.6.1 || ^3.0",
-                "laminas/laminas-mvc": "^2.7.15 || ^3.0.4",
-                "laminas/laminas-view": "^2.8.1",
-                "laminas/laminas-zendframework-bridge": "^1.0",
-                "php": "~8.0.0 || ~8.1.0 || ~8.2.0"
-            },
-            "replace": {
-                "zfcampus/zf-api-problem": "^1.3.0"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "~2.3.0",
-                "phpspec/prophecy-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.5.27",
-                "psalm/plugin-phpunit": "^0.16.1",
-                "vimeo/psalm": "^4.30"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "module": "Laminas\\ApiTools\\ApiProblem"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\ApiTools\\ApiProblem\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Laminas Module providing API-Problem assets and rendering",
-            "homepage": "https://api-tools.getlaminas.org",
-            "keywords": [
-                "api-problem",
-                "api-tools",
-                "laminas",
-                "module",
-                "rest"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://api-tools.getlaminas.org/documentation",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas-api-tools/api-tools-api-problem/issues",
-                "rss": "https://github.com/laminas-api-tools/api-tools-api-problem/releases.atom",
-                "source": "https://github.com/laminas-api-tools/api-tools-api-problem"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2023-01-09T21:28:28+00:00"
         },
         {
             "name": "laminas/laminas-authentication",
@@ -3514,69 +3440,6 @@
                 }
             ],
             "time": "2025-08-07T08:55:27+00:00"
-        },
-        {
-            "name": "laminas/laminas-zendframework-bridge",
-            "version": "1.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-zendframework-bridge.git",
-                "reference": "eb0d96c708b92177a92bc2239543d3ed523452c6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-zendframework-bridge/zipball/eb0d96c708b92177a92bc2239543d3ed523452c6",
-                "reference": "eb0d96c708b92177a92bc2239543d3ed523452c6",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^10.4",
-                "psalm/plugin-phpunit": "^0.18.0",
-                "squizlabs/php_codesniffer": "^3.7.1",
-                "vimeo/psalm": "^5.16.0"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "module": "Laminas\\ZendFrameworkBridge"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/autoload.php"
-                ],
-                "psr-4": {
-                    "Laminas\\ZendFrameworkBridge\\": "src//"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Alias legacy ZF class names to Laminas Project equivalents.",
-            "keywords": [
-                "ZendFramework",
-                "autoloading",
-                "laminas",
-                "zf"
-            ],
-            "support": {
-                "forum": "https://discourse.laminas.dev/",
-                "issues": "https://github.com/laminas/laminas-zendframework-bridge/issues",
-                "rss": "https://github.com/laminas/laminas-zendframework-bridge/releases.atom",
-                "source": "https://github.com/laminas/laminas-zendframework-bridge"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "abandoned": true,
-            "time": "2023-11-24T13:56:19+00:00"
         },
         {
             "name": "lm-commons/lmc-rbac-mvc",
@@ -9165,12 +9028,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2 <8.3.0"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

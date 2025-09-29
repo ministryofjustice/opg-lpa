@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\NotifiedPeople;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeSharedTest\DataModel\FixturesData;
 

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Lock;
 
-use RuntimeException;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Lock\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use MakeSharedTest\DataModel\FixturesData;
 use DateTime;
+use MakeSharedTest\DataModel\FixturesData;
+use RuntimeException;
 
 final class ServiceTest extends AbstractServiceTestCase
 {

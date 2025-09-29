@@ -2,11 +2,11 @@
 
 namespace Application\Model\Service\NotifiedPeople;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\Logging\LoggerTrait;
 
