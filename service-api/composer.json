@@ -12,7 +12,6 @@
         "laminas/laminas-authentication": "^2.8",
         "laminas/laminas-cache": "^3.1.2",
         "laminas/laminas-cache-storage-adapter-memory": "2.2.0",
-        "laminas/laminas-crypt": "^3.4",
         "laminas/laminas-filter": "^2.12.0",
         "monolog/monolog": "^3.9",
         "laminas/laminas-mvc": "^3.2",
