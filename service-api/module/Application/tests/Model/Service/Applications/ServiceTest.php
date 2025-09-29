@@ -1,37 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Applications;
 
-use RuntimeException;
-use ArrayIterator;
-use ArrayObject;
-use DateTime;
-use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
-use Mockery\MockInterface;
+use ArrayIterator;
+use ArrayObject;
+use DateTime;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Formatter;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
+use Mockery\MockInterface;
+use RuntimeException;
 
-class ServiceTest extends AbstractServiceTestCase
+final class ServiceTest extends AbstractServiceTestCase
 {
-    /**
-     * @var MockInterface|ApplicationRepositoryInterface
-     */
-    private $applicationRepository;
-
-    /**
-     * @var TestableService
-     */
-    private $service;
+    private MockInterface|ApplicationRepositoryInterface $applicationRepository;
 
     protected function setUp(): void
     {
@@ -58,8 +52,15 @@ class ServiceTest extends AbstractServiceTestCase
         $entity = $service->fetch(-1, $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
-        $this->assertEquals(404, $entity->getStatus());
-        $this->assertEquals('Document -1 not found for user e551d8b14c408f7efb7358fb258f1b12', $entity->getDetail());
+        $this->assertEquals(
+            [
+                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title' => 'Not Found',
+                'status' => 404,
+                'detail' => 'Document -1 not found for user e551d8b14c408f7efb7358fb258f1b12',
+            ],
+            $entity->toArray()
+        );
     }
 
     public function testFetchHwLpa()
@@ -195,19 +196,19 @@ class ServiceTest extends AbstractServiceTestCase
         $validationError = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->getStatus());
         $this->assertEquals(
-            'Your request could not be processed due to validation error',
-            $validationError->getDetail()
+            [
+                'validation' => ['document.type' => [
+                    'value' => 'invalid',
+                    'messages' => ['allowed-values:property-and-financial,health-and-welfare']
+                ]],
+                'type' => 'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
+                'title' => 'Bad Request',
+                'status' => 400,
+                'detail' => 'Your request could not be processed due to validation error',
+            ],
+            $validationError->toArray()
         );
-        $this->assertEquals(
-            'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
-            $validationError->getType()
-        );
-        $this->assertEquals('Bad Request', $validationError->getTitle());
-        $validation = $validationError->validation;
-        $this->assertEquals(1, count($validation));
-        $this->assertTrue(array_key_exists('document.type', $validation));
     }
 
     public function testUpdateLpaValidationError()
@@ -439,8 +440,15 @@ class ServiceTest extends AbstractServiceTestCase
         $response = $service->delete(-1, $user->getId());
 
         $this->assertTrue($response instanceof ApiProblem);
-        $this->assertEquals(404, $response->getStatus());
-        $this->assertEquals('Document not found', $response->getDetail());
+        $this->assertEquals(
+            [
+                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title' => 'Not Found',
+                'status' => 404,
+                'detail' => 'Document not found',
+            ],
+            $response->toArray()
+        );
     }
 
     public function testDelete()

@@ -69,6 +69,27 @@ front-composer-remove:
 front-composer-outdated:
 	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer outdated
 
+# use make api-composer-update PACKAGE=symfony\/validator\:v5.4.43
+# you'll need to escape the \ and : as above
+.PHONY: api-composer-update
+api-composer-update:
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+
+# remove a package, same format for PACKAGE= as above
+.PHONY: api-composer-remove
+api-composer-remove:
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer remove $(PACKAGE)  --ignore-platform-reqs --no-install
+
+#run composer outdated in front container
+.PHONY: api-composer-outdated
+api-composer-outdated:
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer outdated
+
+# use make api-composer-why PACKAGE=symfony\/validator\:v5.4.43
+# you'll need to escape the \ and : as above
+.PHONY: api-composer-why
+api-composer-why:
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
 
 .PHONY: dc-up
 dc-up: run-composers

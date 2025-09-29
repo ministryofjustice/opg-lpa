@@ -3,14 +3,14 @@
 namespace ApplicationTest\Controller;
 
 use Application\Controller\StatsController;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Stats\Service as StatsService;
+use MakeShared\Logging\Logger;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use MakeShared\Logging\Logger;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class StatsControllerTest extends MockeryTestCase
 {

@@ -2,26 +2,26 @@
 
 namespace Application;
 
+use Alphagov\Notifications\Client as NotifyClient;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerFactory;
-use ArrayIterator;
-use GuzzleHttp\Client;
-use Alphagov\Notifications\Client as NotifyClient;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Model\DataAccess\Postgres;
 use Application\Model\DataAccess\Repository;
 use Application\Model\Service\Authentication\Service as AppAuthenticationService;
 use Application\Model\Service\Feedback\FeedbackValidator;
+use ArrayIterator;
 use Aws\Credentials\CredentialProvider;
-use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
-use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
+use Aws\Sns\SnsClient;
+use Aws\Sqs\SqsClient;
+use GuzzleHttp\Client;
 use Http\Adapter\Guzzle7\Client as Guzzle7Client;
 use Http\Client\HttpClient;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;

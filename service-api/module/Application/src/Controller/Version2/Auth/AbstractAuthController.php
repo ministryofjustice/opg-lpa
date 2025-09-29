@@ -2,15 +2,15 @@
 
 namespace Application\Controller\Version2\Auth;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use MakeShared\Logging\LoggerTrait;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 
 abstract class AbstractAuthController extends AbstractRestfulController implements LoggerAwareInterface
