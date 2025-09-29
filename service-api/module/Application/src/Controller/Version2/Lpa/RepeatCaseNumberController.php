@@ -2,11 +2,11 @@
 
 namespace Application\Controller\Version2\Lpa;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\EntityInterface;
 use Application\Model\Service\RepeatCaseNumber\Service;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class RepeatCaseNumberController extends AbstractLpaController
 {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Pdfs;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Model\Service\Pdfs\Service;
@@ -13,10 +14,8 @@ use Aws\Result;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use Mockery;
 use MakeSharedTest\DataModel\FixturesData;
-use Laminas\Crypt\BlockCipher;
+use Mockery;
 
 final class ServiceTest extends AbstractServiceTestCase
 {
@@ -289,15 +288,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $encryptionConfig = $this->config['pdf']['encryption'];
-        $blockCipher = BlockCipher::factory('openssl', $encryptionConfig['options']);
-        $blockCipher->setKey($encryptionConfig['keys']['document']);
-        $blockCipher->setBinaryOutput(true);
-        $encryptedData = $blockCipher->encrypt('test');
-
         $s3Client = Mockery::mock(S3Client::class);
         $s3ResultBody = Mockery::mock();
-        $s3ResultBody->shouldReceive('getContents')->andReturn($encryptedData)->once();
+        $s3ResultBody->shouldReceive('getContents')->andReturn('<<pdf-file-contents>>')->once();
         $s3Result = new Result();
         $s3Result['Body'] = $s3ResultBody;
 
@@ -322,6 +315,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $fileResponse = $service->fetch($lpa->getId(), 'lp1.pdf');
 
         $this->assertTrue($fileResponse instanceof FileResponse);
+        $this->assertEquals('<<pdf-file-contents>>', $fileResponse->getContent());
 
         $serviceBuilder->verify();
     }

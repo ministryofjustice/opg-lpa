@@ -1,15 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Application\Library\ApiProblem;
 
-use Laminas\ApiTools\ApiProblem\ApiProblem;
 use MakeShared\DataModel\Validator\ValidatorResponseInterface;
 
 /**
  * Special case API problem for LPA Data Model validation errors.
- *
- * Class ValidationApiProblem
- * @package Application\Library\ApiProblem
  */
 class ValidationApiProblem extends ApiProblem
 {
@@ -24,10 +22,6 @@ class ValidationApiProblem extends ApiProblem
 
         $validationResult = ['validation' => $response->getArrayCopy()];
 
-        if (!is_array($this->additionalDetails)) {
-            $this->additionalDetails = $validationResult;
-        } else {
-            $this->additionalDetails = array_merge($validationResult, $this->additionalDetails);
-        }
+        $this->additionalDetails = array_merge($validationResult, $this->additionalDetails);
     }
 }

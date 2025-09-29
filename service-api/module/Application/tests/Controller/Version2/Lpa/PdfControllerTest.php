@@ -3,13 +3,13 @@
 namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\Version2\Lpa\PdfController;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Pdfs\Service;
+use LmcRbacMvc\Exception\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\ApiTools\ApiProblem\ApiProblem;
-use LmcRbacMvc\Exception\UnauthorizedException;
 
 class PdfControllerTest extends AbstractControllerTestCase
 {
