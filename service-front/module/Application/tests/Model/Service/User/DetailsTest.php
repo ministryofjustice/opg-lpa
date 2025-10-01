@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\User;
 
 use Hamcrest\MatcherAssert;
@@ -22,16 +24,9 @@ use Mockery\MockInterface;
 
 final class DetailsTest extends AbstractEmailServiceTest
 {
-    /**
-     * @var $apiClient Client|MockInterface
-     */
-    private $apiClient;
-
-    /**
-     * @var $service Details
-     */
-    private $service;
-    private $logger;
+    private Client|MockInterface $apiClient;
+    private LoggerInterface|MockInterface $logger;
+    private Details $service;
 
     public function setUp(): void
     {
@@ -214,7 +209,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $verifyEmailUrl = 'https://verify.email.url';
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () use ($verifyEmailUrl) {
+            ->andReturn(function () use ($verifyEmailUrl): string {
                 return $verifyEmailUrl;
             });
 
@@ -266,13 +261,13 @@ final class DetailsTest extends AbstractEmailServiceTest
         // Stub out the url() view helper
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () {
+            ->andReturn(function (): string {
                 return 'https://foo.bar';
             });
 
         // Email to the old address fails
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($mailParameters) {
+            ->with(Mockery::on(function ($mailParameters): bool {
                 return $mailParameters->getToAddresses() === ['old@email.address'];
             }))
             ->once()
@@ -280,7 +275,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
         // Email to new address succeeds
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($mailParameters) {
+            ->with(Mockery::on(function ($mailParameters): bool {
                 return $mailParameters->getToAddresses() === ['new@email.address'];
             }))
             ->once();
@@ -304,20 +299,20 @@ final class DetailsTest extends AbstractEmailServiceTest
         // Stub out the url() view helper
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () {
+            ->andReturn(function (): string {
                 return 'https://verify.email.url/';
             });
 
         // Email to the old address succeeds
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($mailParameters) {
+            ->with(Mockery::on(function ($mailParameters): bool {
                 return $mailParameters->getToAddresses() === ['old@email.address'];
             }))
             ->once();
 
         // Email to new address fails
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($mailParameters) {
+            ->with(Mockery::on(function ($mailParameters): bool {
                 return $mailParameters->getToAddresses() === ['new@email.address'];
             }))
             ->once()
@@ -568,7 +563,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $forgotPasswordUrl = 'https://forgot.password.url/';
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () use ($forgotPasswordUrl) {
+            ->andReturn(function () use ($forgotPasswordUrl): string {
                 return $forgotPasswordUrl;
             });
 
@@ -610,7 +605,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $activateAccountUrl = 'https://activate.account.url/';
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () use ($activateAccountUrl) {
+            ->andReturn(function () use ($activateAccountUrl): string {
                 return $activateAccountUrl;
             });
 
@@ -651,7 +646,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         // stub out the url() view helper
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () {
+            ->andReturn(function (): string {
                 return 'https://foo.bar/';
             });
 
@@ -674,7 +669,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         // stub out the url() view helper
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () {
+            ->andReturn(function (): string {
                 return 'https://foo.bar/';
             });
 
@@ -698,7 +693,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         // stub out the url() view helper
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () {
+            ->andReturn(function (): string {
                 return 'https://foo.bar/';
             });
 
@@ -722,7 +717,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         // stub out the url() view helper
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () {
+            ->andReturn(function (): string {
                 return 'https://foo.bar/';
             });
 
@@ -795,7 +790,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         // stub out the url() view helper
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () use ($activateAccountUrl) {
+            ->andReturn(function () use ($activateAccountUrl): string {
                 return $activateAccountUrl;
             });
 
@@ -837,7 +832,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $activateAccountUrl = 'https://activate.account.url/';
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () use ($activateAccountUrl) {
+            ->andReturn(function () use ($activateAccountUrl): string {
                 return $activateAccountUrl;
             });
 
@@ -907,7 +902,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $activateAccountUrl = 'https://activate.account.url/';
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
-            ->andReturn(function () use ($activateAccountUrl) {
+            ->andReturn(function () use ($activateAccountUrl): string {
                 return $activateAccountUrl;
             });
 

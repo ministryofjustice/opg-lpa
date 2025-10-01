@@ -55,7 +55,7 @@ class SetPassword extends AbstractCsrfForm
                     'name'    => 'StringLength',
                     'options' => [
                         'encoding' => 'UTF-8',
-                        'min'      => 8,
+                        'min'      => 12,
                         'messages' => [
                             StringLength::TOO_SHORT => 'min-length-%min%',
                         ],

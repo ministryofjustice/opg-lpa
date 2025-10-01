@@ -2,10 +2,10 @@
 
 namespace ApplicationTest;
 
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Module;
-use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
-use Laminas\Http\Headers;
 use Laminas\Http\Header\Accept as AcceptHeader;
+use Laminas\Http\Headers;
 use Laminas\Http\Request as LaminasRequest;
 use Laminas\Http\Response as LaminasResponse;
 use Laminas\Mvc\MvcEvent;

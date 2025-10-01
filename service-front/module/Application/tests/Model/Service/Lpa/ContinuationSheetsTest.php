@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Lpa;
 
 use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
@@ -9,10 +11,7 @@ use Application\Model\Service\Lpa\ContinuationSheets;
 
 final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
 {
-    /**
-     * @var $service Applicant
-     */
-    private $service;
+    private ContinuationSheets $service;
 
     public function setUp(): void
     {
@@ -21,7 +20,7 @@ final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
         $this->service = new ContinuationSheets();
     }
 
-    public function testAttorneyOverflowGetContinuationNoteKeys()
+    public function testAttorneyOverflowGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -41,7 +40,7 @@ final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
         );
     }
 
-    public function testAnyOverflowGetContinuationNoteKeys()
+    public function testAnyOverflowGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -55,7 +54,7 @@ final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
         );
     }
 
-    public function testLongInstructionGetContinuationNoteKeys()
+    public function testLongInstructionGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -71,7 +70,7 @@ final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
         $this->assertEquals(['LONG_INSTRUCTIONS_OR_PREFERENCES'], $this->service->getContinuationNoteKeys($mockLpa));
     }
 
-    public function testCantSignGetContinuationNoteKeys()
+    public function testCantSignGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -84,7 +83,7 @@ final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
         $this->assertEquals(['CANT_SIGN'], $this->service->getContinuationNoteKeys($mockLpa));
     }
 
-    public function testTrustAttorneyGetContinuationNoteKeys()
+    public function testTrustAttorneyGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [
@@ -97,7 +96,7 @@ final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
         $this->assertEquals(['HAS_TRUST_CORP'], $this->service->getContinuationNoteKeys($mockLpa));
     }
 
-    public function testCombinationsGetContinuationNoteKeys()
+    public function testCombinationsGetContinuationNoteKeys(): void
     {
         $mockLpa = new Lpa([
             'document' => [

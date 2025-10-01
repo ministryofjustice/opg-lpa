@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\View;
 
 use Application\View\DateCheckViewModelHelper;
@@ -14,8 +16,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 
 final class DateCheckViewModelHelperTest extends MockeryTestCase
 {
-    /** @var ViewModelRenderer */
-    private $renderer;
+    private ViewModelRenderer $renderer;
 
     public function setUp(): void
     {
@@ -26,9 +27,8 @@ final class DateCheckViewModelHelperTest extends MockeryTestCase
         $this->renderer->addFunction('formElement');
     }
 
-    /** @var array */
     /* The keys correspond to the tests that check specific twig blocks in the given template */
-    private $templates = [
+    private array $templates = [
         'donor' => [
             'block' => 'donorGuidance',
             'path' => 'application/authenticated/lpa/date-check/index.twig'
@@ -41,7 +41,7 @@ final class DateCheckViewModelHelperTest extends MockeryTestCase
 
     // test cases for cs2 reference criteria used in the ContinuationSheets class to determine
     // whether a cs2 will be produced for a particular LPA
-    private $testCases = [
+    private array $testCases = [
         // Continuation sheet 1
         // 0. LPA has more than 4 primary attorneys (generates CS1)
         [

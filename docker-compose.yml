@@ -145,7 +145,7 @@ services:
     environment:
       APP_HOST: front-app
       APP_PORT: 9000
-      NGINX_LOG_LEVEL: warn
+
 
   front-app:
     container_name: lpa-front-app
@@ -185,6 +185,8 @@ services:
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
       AWS_SECRET_ACCESS_KEY: "secretdevkey"
+
+      LPA_FEE_EFFECTIVE_DATE: "2025-11-17T00:00:00"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
@@ -246,7 +248,7 @@ services:
     environment:
       APP_HOST: api-app
       APP_PORT: 9000
-      NGINX_LOG_LEVEL: warn
+
 
   api-app:
     container_name: lpa-api-app
@@ -300,6 +302,8 @@ services:
       AWS_ACCESS_KEY_ID: "devkey"
       AWS_SECRET_ACCESS_KEY: "secretdevkey"
 
+      LPA_FEE_EFFECTIVE_DATE: "2025-09-17T14:30:00"
+
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
@@ -337,7 +341,7 @@ services:
     environment:
       APP_HOST: admin-app
       APP_PORT: 9000
-      NGINX_LOG_LEVEL: warn
+
 
   admin-app:
     container_name: lpa-admin-app

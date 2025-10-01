@@ -85,7 +85,7 @@ server {
 
     # NB logs are symlinked to stdout/stderr
     access_log /var/log/nginx/access.log tracing;
-    error_log /var/log/nginx/error.log {{ getv "/nginx/log/level" "warn" }};
+    error_log /var/log/nginx/error.log  "warn" ;
 
     gzip on;
     gzip_min_length 100;
@@ -141,7 +141,7 @@ server {
     # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
     #
     location ~ \.php$ {
-        fastcgi_pass   {{getv "/app/host" }}:{{getv "/app/port" }};
+        fastcgi_pass   ${APP_HOST}:${APP_PORT};
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
 

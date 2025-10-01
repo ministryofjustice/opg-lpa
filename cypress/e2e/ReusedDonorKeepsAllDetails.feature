@@ -8,7 +8,7 @@ Feature: ReusedDonorKeepsAllDetails
 
     Scenario: Create LPA with donor who can't sign; on reuse, donor "can't sign" checkbox is ticked
         # Sign up with automatically generated test username and password
-        Given I sign up "ReusedDonorKeepsAllDetailsUser" test user with password "Pass1234"
+        Given I sign up "ReusedDonorKeepsAllDetailsUser" test user with password "Pass12345678"
         When I use activation email for "ReusedDonorKeepsAllDetailsUser" to visit the link
         Then I see "Account activated" in the title
 

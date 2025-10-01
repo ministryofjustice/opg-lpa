@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Lock;
 
-use RuntimeException;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Lock\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
-use MakeSharedTest\DataModel\FixturesData;
 use DateTime;
+use MakeSharedTest\DataModel\FixturesData;
+use RuntimeException;
 
-class ServiceTest extends AbstractServiceTestCase
+final class ServiceTest extends AbstractServiceTestCase
 {
     public function testCreateAlreadyLocked()
     {
@@ -26,8 +28,15 @@ class ServiceTest extends AbstractServiceTestCase
         $apiProblem = $service->create($lpa->getId());
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
-        $this->assertEquals(403, $apiProblem->getStatus());
-        $this->assertEquals('LPA already locked', $apiProblem->getDetail());
+        $this->assertEquals(
+            [
+                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title' => 'Forbidden',
+                'status' => 403,
+                'detail' => 'LPA already locked',
+            ],
+            $apiProblem->toArray()
+        );
 
         $serviceBuilder->verify();
     }
@@ -36,7 +45,7 @@ class ServiceTest extends AbstractServiceTestCase
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
-        $lpa->setUser(3);
+        $lpa->setUser('3');
 
         $user = FixturesData::getUser();
 

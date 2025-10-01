@@ -2,6 +2,7 @@
 
 namespace OpgTest\Lpa\Pdf;
 
+use DateTimeImmutable;
 use MakeShared\DataModel\Common\Address;
 use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
@@ -37,9 +38,13 @@ class Lp1fTest extends AbstractPdfTestCase
 
         $blankTargets = [];
 
+        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
+        $timeNow = new DateTimeImmutable('now');
+        $coversheetFileName = ($timeNow >= $feeEffectiveDate) ? 'LP1F_CoversheetRegistration2025fee.pdf' :'LP1F_CoversheetRegistration.pdf' ;
+
         $constituentPdfs = [
             'start' => [
-                $this->getFullTemplatePath('LP1F_CoversheetRegistration.pdf'),
+                $this->getFullTemplatePath($coversheetFileName),
             ],
             15 => [
                 [

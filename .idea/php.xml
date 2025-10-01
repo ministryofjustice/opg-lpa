@@ -227,8 +227,6 @@
       <path value="$PROJECT_DIR$/service-api/vendor/phar-io/manifest" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-loader" />
       <path value="$PROJECT_DIR$/service-api/vendor/mockery/mockery" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-crypt" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-math" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-paginator" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-db" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-stdlib" />

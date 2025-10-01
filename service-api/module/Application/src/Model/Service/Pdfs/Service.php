@@ -9,8 +9,8 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTra
 use Application\Model\Service\AbstractService;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
-use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Filter\Compress;
+use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
 
 class Service extends AbstractService

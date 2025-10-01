@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\ForgotPasswordController;
@@ -14,15 +16,9 @@ use Laminas\View\Model\ViewModel;
 
 final class ForgotPasswordControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var MockInterface|ConfirmEmail
-     */
-    private $resetPasswordEmailForm;
-    /**
-     * @var MockInterface|SetPassword
-     */
-    private $setPasswordForm;
-    private $postData = [
+    private MockInterface|ConfirmEmail $resetPasswordEmailForm;
+    private MockInterface|SetPassword $setPasswordForm;
+    private array $postData = [
         'token' => 'unitTest',
         'email' => 'unit@test.com',
         'password' => 'newPassword'
@@ -53,7 +49,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
-    public function testIndexActionAlreadyLoggedIn()
+    public function testIndexActionAlreadyLoggedIn(): void
     {
         $controller = $this->getController(ForgotPasswordController::class);
 
@@ -66,7 +62,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGet(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
@@ -84,7 +80,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals(null, $result->getVariable('error'));
     }
 
-    public function testIndexActionFormInvalid()
+    public function testIndexActionFormInvalid(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
@@ -102,7 +98,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals(null, $result->getVariable('error'));
     }
 
-    public function testIndexActionPostError()
+    public function testIndexActionPostError(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
@@ -126,7 +122,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals(false, $result->getVariable('accountNotActivated'));
     }
 
-    public function testIndexActionPostAccountNotActivated()
+    public function testIndexActionPostAccountNotActivated(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
@@ -149,7 +145,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals(true, $result->getVariable('accountNotActivated'));
     }
 
-    public function testResetPasswordActionEmptyToken()
+    public function testResetPasswordActionEmptyToken(): void
     {
         $controller = $this->getController(ForgotPasswordController::class);
 
@@ -162,7 +158,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals('application/general/forgot-password/invalid-reset-token.twig', $result->getTemplate());
     }
 
-    public function testResetPasswordActionAlreadyLoggedIn()
+    public function testResetPasswordActionAlreadyLoggedIn(): void
     {
         $controller = $this->getController(ForgotPasswordController::class);
 
@@ -179,7 +175,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testResetPasswordActionGet()
+    public function testResetPasswordActionGet(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
@@ -200,7 +196,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals(null, $result->getVariable('error'));
     }
 
-    public function testResetPasswordActionPostInvalid()
+    public function testResetPasswordActionPostInvalid(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
@@ -221,7 +217,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals(null, $result->getVariable('error'));
     }
 
-    public function testResetPasswordActionPostError()
+    public function testResetPasswordActionPostError(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
@@ -249,7 +245,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals('Password change failed', $result->getVariable('error'));
     }
 
-    public function testResetPasswordActionPostInvalidToken()
+    public function testResetPasswordActionPostInvalidToken(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
@@ -275,7 +271,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->assertEquals('application/general/forgot-password/invalid-reset-token.twig', $result->getTemplate());
     }
 
-    public function testResetPasswordActionPostSuccess()
+    public function testResetPasswordActionPostSuccess(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
