@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\FieldSet;
 
 use Application\Form\Fieldset\Correspondence;
@@ -7,7 +9,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 final class CorrespondenceTest extends MockeryTestCase
 {
-    public function testNameAndInstance()
+    public function testNameAndInstance(): void
     {
         $fieldSet = new Correspondence();
 
@@ -15,7 +17,7 @@ final class CorrespondenceTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Fieldset', $fieldSet);
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $fieldSet = new Correspondence();
 
@@ -26,7 +28,7 @@ final class CorrespondenceTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Text', $fieldSet->get('phone-number'));
     }
 
-    public function testSetAndGetMessages()
+    public function testSetAndGetMessages(): void
     {
         $testMessages = [
             'some-field' => 'A big error message',

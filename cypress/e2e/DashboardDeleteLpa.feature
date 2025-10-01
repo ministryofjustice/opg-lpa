@@ -7,7 +7,7 @@ Feature: DashboardDeleteLpa
         Given I ignore application exceptions
 
     Scenario: Sign up with new user, create LPA, delete LPA (LPAL-840)
-        Given I sign up "DashboardDeleteLpaUser" test user with password "Pass1234"
+        Given I sign up "DashboardDeleteLpaUser" test user with password "Pass12345678"
         When I use activation email for "DashboardDeleteLpaUser" to visit the link
         Then I see "Account activated" in the title
 

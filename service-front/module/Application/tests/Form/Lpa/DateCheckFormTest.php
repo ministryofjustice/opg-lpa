@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\DateCheckForm;
@@ -32,7 +34,7 @@ final class DateCheckFormTest extends MockeryTestCase
         $this->setUpForm($form);
     }
 
-    public function testNameAndInstances()
+    public function testNameAndInstances(): void
     {
         $this->assertInstanceOf('Application\Form\Lpa\DateCheckForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
@@ -40,7 +42,7 @@ final class DateCheckFormTest extends MockeryTestCase
         $this->assertEquals('form-date-checker', $this->form->getName());
     }
 
-    public function testElements()
+    public function testElements(): void
     {
         $this->assertInstanceOf('Application\Form\Fieldset\Dob', $this->form->get('sign-date-donor-life-sustaining'));
         $this->assertInstanceOf('Application\Form\Fieldset\Dob', $this->form->get('sign-date-donor'));
@@ -48,7 +50,7 @@ final class DateCheckFormTest extends MockeryTestCase
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('submit'));
     }
 
-    public function testValidateByModelOK()
+    public function testValidateByModelOK(): void
     {
         $this->form->setData(array_merge([
             'sign-date-donor-life-sustaining' => [
@@ -72,7 +74,7 @@ final class DateCheckFormTest extends MockeryTestCase
         $this->assertEquals([], $this->form->getMessages());
     }
 
-    public function testValidateByModelInvalid()
+    public function testValidateByModelInvalid(): void
     {
         $this->form->setData(array_merge([
             'sign-date-donor-life-sustaining' => 'not-date',

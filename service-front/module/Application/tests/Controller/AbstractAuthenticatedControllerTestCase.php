@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Controller;
 
 use DateTime;
@@ -14,7 +16,7 @@ use Laminas\View\Model\ViewModel;
 
 class AbstractAuthenticatedControllerTestCase extends AbstractControllerTestCase
 {
-    public function testOnDispatchNotAuthenticated()
+    public function testOnDispatchNotAuthenticated(): void
     {
         $this->setIdentity(null);
         $controller = $this->getController(TestableAbstractAuthenticatedController::class);
@@ -31,7 +33,7 @@ class AbstractAuthenticatedControllerTestCase extends AbstractControllerTestCase
         $this->assertEquals($result, $response);
     }
 
-    public function testOnDispatchRedirectToTermsChanged()
+    public function testOnDispatchRedirectToTermsChanged(): void
     {
         $now = new DateTime();
         $this->config['terms']['lastUpdated'] = $now->format('Y-m-d H:i T');
@@ -53,7 +55,7 @@ class AbstractAuthenticatedControllerTestCase extends AbstractControllerTestCase
         $this->assertEquals($result, $response);
     }
 
-    public function testOnDispatchBadUserData()
+    public function testOnDispatchBadUserData(): void
     {
         $this->user = Mockery::mock(User::class);
         $this->user->shouldReceive('get')->andReturn('name');
@@ -79,7 +81,7 @@ class AbstractAuthenticatedControllerTestCase extends AbstractControllerTestCase
         $this->assertEquals($result, $response);
     }
 
-    public function testOnDispatchRedirectToNewUser()
+    public function testOnDispatchRedirectToNewUser(): void
     {
         $this->user = new User();
 
@@ -99,7 +101,7 @@ class AbstractAuthenticatedControllerTestCase extends AbstractControllerTestCase
         $this->assertEquals($result, $response);
     }
 
-    public function testOnDispatchLoadUser()
+    public function testOnDispatchLoadUser(): void
     {
         $controller = $this->getController(TestableAbstractAuthenticatedController::class);
 
@@ -124,7 +126,7 @@ class AbstractAuthenticatedControllerTestCase extends AbstractControllerTestCase
         $this->assertEquals('Placeholder page', $result->content);
     }
 
-    public function testOnDispatchDatabaseDown()
+    public function testOnDispatchDatabaseDown(): void
     {
         // Simulate the database being unavailable, which results in a marker in the session;
         // see Module.php, where this marker is added before the session is handed over to the controller
@@ -156,12 +158,12 @@ class AbstractAuthenticatedControllerTestCase extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testResetSessionCloneData()
+    public function testResetSessionCloneData(): void
     {
         $controller = $this->getController(TestableAbstractAuthenticatedController::class);
 
         $this->sessionManager->shouldReceive('start')->once();
-        $seedId = new ArrayObject(['12345' => '12345']);
+        new ArrayObject(['12345' => '12345']);
 
         Container::setDefaultManager($this->sessionManager);
         $result = $controller->testResetSessionCloneData('12345');
