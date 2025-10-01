@@ -49,6 +49,6 @@ When making decisions, the attorneys or doctors should consider any preferences 
 
 The donor may want to get legal advice, particularly if their advance decision and their LPA say very different things.
 
-NHS Choices has <a "https://www.nhs.uk/tests-and-treatments/end-of-life-care/planning-ahead/advance-decision-to-refuse-treatment/" rel="noreferrer noopener" target="_blank">more information about advance decisions (opens in new tab)</a>.
+NHS Choices has <a href="http://www.nhs.uk/tests-and-treatments/end-of-life-care/planning-ahead/advance-decision-to-refuse-treatment" rel="noreferrer noopener" target="_blank">more information about advance decisions (opens in new tab)</a>.
 
 There's more about life-sustaining treatment, advance decisions and how health professionals must respond to someone's written wishes in chapter 9 of the <a href="http://www.justice.gov.uk/protecting-the-vulnerable/mental-capacity-act" rel="noreferrer noopener" target="_blank">Mental Capacity Act 2005 Code of Practice (opens in new tab)</a>.
