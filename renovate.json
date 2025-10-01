@@ -145,7 +145,7 @@
         "No updates to postgres, redis, php or python docker images",
         "postgres: keep in sync with live",
         "redis: keep in sync with live",
-        "php: 8.2 upgrade needs to be managed manually"
+        "php: upgrade needs to be managed manually"
       ],
       "matchUpdateTypes": [
         "major",
@@ -200,16 +200,16 @@
     },
     {
       "description": [
-        "admin composer minor and patch updates (PHP 8.2, stable for 3 days)",
+        "admin composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "admin minor and patch updates (PHP 8.2)",
-      "groupSlug": "admin-minor-patch-updates-php82",
+      "groupName": "admin minor and patch updates (PHP)",
+      "groupSlug": "admin-minor-patch-updates-php",
       "labels": [
         "Dependencies",
         "Renovate",
-        "PHP 8.2"
+        "PHP"
       ],
       "matchManagers": [
         "composer"
@@ -227,16 +227,16 @@
     },
     {
       "description": [
-        "front composer minor and patch updates (PHP 8.2, stable for 3 days)",
+        "front composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "front minor and patch updates (PHP 8.2)",
-      "groupSlug": "front-minor-patch-updates-php82",
+      "groupName": "front minor and patch updates (PHP)",
+      "groupSlug": "front-minor-patch-updates-php",
       "labels": [
         "Dependencies",
         "Renovate",
-        "PHP 8.2"
+        "PHP"
       ],
       "matchManagers": [
         "composer"
@@ -254,16 +254,16 @@
     },
     {
       "description": [
-        "api composer minor and patch updates (PHP 8.2, stable for 3 days)",
+        "api composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "api minor and patch updates (PHP 8.2)",
-      "groupSlug": "api-minor-patch-updates-php82",
+      "groupName": "api minor and patch updates (PHP)",
+      "groupSlug": "api-minor-patch-updates-php",
       "labels": [
         "Dependencies",
         "Renovate",
-        "PHP 8.2"
+        "PHP"
       ],
       "matchManagers": [
         "composer"
@@ -281,16 +281,16 @@
     },
     {
       "description": [
-        "pdf composer minor and patch updates (PHP 8.3, stable for 3 days)",
+        "pdf composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "pdf minor and patch updates (PHP 8.3)",
-      "groupSlug": "pdf-minor-patch-updates-php81",
+      "groupName": "pdf minor and patch updates (PHP)",
+      "groupSlug": "pdf-minor-patch-updates-php",
       "labels": [
         "Dependencies",
         "Renovate",
-        "PHP 8.3"
+        "PHP"
       ],
       "matchManagers": [
         "composer"
@@ -308,16 +308,16 @@
     },
     {
       "description": [
-        "shared composer minor and patch updates (PHP 8.2, stable for 3 days)",
+        "shared composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
       "automerge": false,
-      "groupName": "shared minor and patch updates (PHP 8.2)",
-      "groupSlug": "shared-minor-patch-updates-php82",
+      "groupName": "shared minor and patch updates (PHP)",
+      "groupSlug": "shared-minor-patch-updates-php",
       "labels": [
         "Dependencies",
         "Renovate",
-        "PHP 8.2"
+        "PHP"
       ],
       "matchManagers": [
         "composer"
