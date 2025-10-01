@@ -263,7 +263,7 @@
       "labels": [
         "Dependencies",
         "Renovate",
-        "PHP 8.2"
+        "PHP"
       ],
       "matchManagers": [
         "composer"
@@ -290,7 +290,7 @@
       "labels": [
         "Dependencies",
         "Renovate",
-        "PHP 8.3"
+        "PHP"
       ],
       "matchManagers": [
         "composer"
@@ -317,7 +317,7 @@
       "labels": [
         "Dependencies",
         "Renovate",
-        "PHP 8.2"
+        "PHP"
       ],
       "matchManagers": [
         "composer"
