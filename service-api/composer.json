@@ -7,11 +7,11 @@
     "repositories": [
     ],
     "require": {
-        "php": ">=8.2 <8.3.0",
+        "php": "^8.3",
         "aws/aws-sdk-php": "^3.204.5",
         "laminas/laminas-authentication": "^2.8",
         "laminas/laminas-cache": "^3.1.2",
-        "laminas/laminas-cache-storage-adapter-memory": "2.2.0",
+        "laminas/laminas-cache-storage-adapter-memory": "2.4.0",
         "laminas/laminas-filter": "^2.12.0",
         "monolog/monolog": "^3.9",
         "laminas/laminas-mvc": "^3.2",
