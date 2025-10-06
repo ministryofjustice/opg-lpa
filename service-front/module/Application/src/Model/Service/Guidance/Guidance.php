@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Guidance;
 
 use Application\Model\Service\AbstractService;
+use DateTimeImmutable;
 use Michelf\Markdown;
 
 class Guidance extends AbstractService
@@ -18,7 +19,10 @@ class Guidance extends AbstractService
     function parseMarkdown()
     {
         $sectionArray = [];
-        $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . '/order.md');
+        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
+        $timeNow = new DateTimeImmutable('now');
+        $orderFileName = ($timeNow >= $feeEffectiveDate) ? '/order.md' : '/order_old.md';
+        $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . $orderFileName);
 
         foreach ($lines as $line) {
             if (preg_match('/^\*\w*(.*)/', $line, $matches)) {
