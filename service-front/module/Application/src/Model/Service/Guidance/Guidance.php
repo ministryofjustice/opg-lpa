@@ -22,7 +22,8 @@ class Guidance extends AbstractService
         $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
         //$feeEffectiveDate = new DateTimeImmutable('2024-11-17T00:00:00');
         $timeNow = new DateTimeImmutable('now');
-        $orderFileName = ($timeNow >= $feeEffectiveDate) ? '/order.md' : '/oldorder.md';
+        $orderFileName = ($timeNow >= $feeEffectiveDate) ? '/order.md' : '/orderPreNov25fee.md';
+        $guidancedir = scandir(self::GUIDANCE_MARKDOWN_FOLDER );
         $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . $orderFileName);
 
         foreach ($lines as $line) {

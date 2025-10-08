@@ -41,6 +41,6 @@
 * Correspondent
 	* People_Correspondent.md
 * Fees, reductions and exemptions
-	* Process_Fees_reductions_and_exemptions_old.md
+	* Process_Fees_reductions_and_exemptions_PreNov25fee.md
 * Glossary
 	* About LPAs_Glossary.md
