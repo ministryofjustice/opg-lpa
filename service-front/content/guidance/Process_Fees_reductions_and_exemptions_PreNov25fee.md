@@ -1,6 +1,6 @@
 ## Fees, reductions and exemptions
 
-It costs £92 to apply to register an LPA. This can be paid by cheque or online by card.
+It costs £82 to apply to register an LPA. This can be paid by cheque or online by card.
 
 This fee covers the cost of processing your application, not just registering the LPA.
 

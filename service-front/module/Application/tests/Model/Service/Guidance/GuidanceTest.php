@@ -19,55 +19,39 @@ final class GuidanceTest extends AbstractServiceTest
         $this->service = new Guidance($this->authenticationService, []);
 
         $this->cwd = getcwd();
-
-        chdir(__DIR__);
     }
 
     public function tearDown() : void
     {
         parent::tearDown();
-
-        chdir($this->cwd);
     }
 
     public function testParseMarkdown() : void
     {
         $result = $this->service->parseMarkdown();
 
-        $this->assertEquals(['sections' => [
-            [
-                'id' => 'topic-1',
-                'title' => 'Topic 1',
-                'html' => "<article id=\"topic-topic-1\"><h1>Content title</h1>\n" .
-                    "\n" .
-                    "<p>Here are some words (in parentheses), with punctuation!</p>\n" .
-                    "\n" .
-                    "<p><strong>Sub title</strong></p>\n" .
-                    "\n" .
-                    "<p>More words</p>\n" .
-                    "</article>",
-                'url' => '/guide#topic-topic-1',
-                'dataJourney' => 'guidance:link:navigation: Topic 1',
-                'dataCy' => 'topic-1-nav-link',
-            ],
-            [
-                'id' => 'topic-2',
-                'title' => 'Topic 2',
-                'html' => "<article id=\"topic-topic-2\">\n</article>",
-                'url' => '/guide#topic-topic-2',
-                'dataJourney' => 'guidance:link:navigation: Topic 2',
-                'dataCy' => 'topic-2-nav-link',
-            ]]], $result);
+        $this->assertStringContainsString('A lasting power of attorney (LPA) is a legal document that lets someone', $result['sections'][0]['html']);
+        $this->assertEquals('what-is-an-lpa', $result['sections'][0]['id']);
+        $this->assertEquals('What is an LPA?', $result['sections'][0]['title']);
+        $this->assertEquals('/guide#topic-what-is-an-lpa', $result['sections'][0]['url']);
+        $this->assertEquals('guidance:link:navigation: What is an LPA?', $result['sections'][0]['dataJourney']);
+        $this->assertEquals('what-is-an-lpa-nav-link', $result['sections'][0]['dataCy']);
+
+        $this->assertStringContainsString('A person with mental capacity is able to make a specific decision ', $result['sections'][1]['html']);
+        $this->assertEquals('mental-capacity', $result['sections'][1]['id']);
+        $this->assertEquals('Mental capacity', $result['sections'][1]['title']);
+        $this->assertEquals('/guide#topic-mental-capacity', $result['sections'][1]['url']);
+        $this->assertEquals('guidance:link:navigation: Mental capacity', $result['sections'][1]['dataJourney']);
+        $this->assertEquals('mental-capacity-nav-link', $result['sections'][1]['dataCy']);
     }
 
     public function testProcessSection() : void
     {
-        $result = $this->service->processSection('1.md', 1);
-
-        $this->assertEquals("<article id=\"topic-1\"><h1>Content title</h1>\n\n" .
-            "<p>Here are some words (in parentheses), with punctuation!</p>\n\n" .
-            "<p><strong>Sub title</strong></p>\n\n" .
-            "<p>More words</p>\n" .
-            "</article>", $result);
+        $result = $this->service->processSection('People_Donor.md', 1);
+        $this->assertStringContainsString('<article id="topic-1"><h2>The donor</h2>', $result);
+        $this->assertStringContainsString("<p>This will help attorneys deal with banks and other organisations on the donor’s behalf.</p>", $result);
+        $this->assertStringContainsString("<li>the donor has property outside England and Wales</li>\n", $result);
+        $this->assertStringContainsString("<h3>If the donor lives outside England and Wales, or has property outside England and Wales</h3>", $result);
+        $this->assertStringContainsString('</article>', $result);
     }
 }
