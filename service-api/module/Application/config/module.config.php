@@ -477,26 +477,12 @@ return [
             'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
             'Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory',
         ],
-        'aliases' => [
-            'translator' => 'MvcTranslator',
-        ],
         'factories' => [
             'Application\Command\GenerateStatsCommand' => 'Application\Command\GenerateStatsCommand',
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
         ],
     ], // service_manager
-
-    'translator' => [
-        'locale' => 'en_US',
-        'translation_file_patterns' => [
-            [
-                'type'     => 'gettext',
-                'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.mo',
-            ],
-        ],
-    ],
 
     'view_manager' => [
         'display_not_found_reason' => true,
