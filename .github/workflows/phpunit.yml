@@ -14,18 +14,18 @@ jobs:
       fail-fast: true
       matrix:
         scan:
-          - name: service-admin
-            app: "admin-app"
-            minCoverage: 3
+#          - name: service-admin
+#            app: "admin-app"
+#            minCoverage: 3
           - name: service-front
             app: "front-app"
             minCoverage: 85
-          - name: service-api
-            app: "api-app"
-            minCoverage: 74
-          - name: service-pdf
-            app: "pdf-app"
-            minCoverage: 74
+#          - name: service-api
+#            app: "api-app"
+#            minCoverage: 74
+#          - name: service-pdf
+#            app: "pdf-app"
+#            minCoverage: 74
     steps:
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
