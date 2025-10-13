@@ -26,9 +26,6 @@ jobs:
           - name: service-pdf
             app: "pdf-app"
             minCoverage: 74
-    defaults:
-      run:
-        working-directory: ${{ matrix.scan.path }}
     steps:
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -37,7 +34,7 @@ jobs:
         with:
           php-version: "8.2"
       - name: Run phpunit
-        run: XDEBUG_MODE=coverage php docker compose run admin-app /app/vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
+        run: XDEBUG_MODE=coverage php docker compose run ${{ matrix.scan.app }} /app/vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
       - name: Check coverage
         run: php ../scripts/pipeline/php_coverage/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
       - name: Upload Coverage Artifacts
