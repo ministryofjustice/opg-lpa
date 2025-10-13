@@ -171,4 +171,4 @@ jobs:
                                            --slack_token ${{ secrets.SLACK_BOT_TOKEN }}
 
       - name: PHPUnit tests
-        run: /app/vendor/bin/phpunit 
+        run: docker run ${{ matrix.image_name }} /app/vendor/bin/phpunit 
