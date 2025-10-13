@@ -1,8 +1,5 @@
 name: "[Workflow] PR Environment"
 
-concurrency:
-  group: ${{ github.ref }}-${{ github.workflow }}
-
 defaults:
   run:
     shell: bash
@@ -99,7 +96,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - terraform_lint
       - workflow_variables
@@ -120,7 +117,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - terraform_lint
       - workflow_variables
@@ -141,7 +138,7 @@ jobs:
 
   terraform_email_development:
     name: TF Development - Email
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - terraform_lint
       - workflow_variables
@@ -162,7 +159,7 @@ jobs:
 
   terraform_environment_development:
     name: TF Development - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - docker_build_scan_push
       - phpunit_tests
@@ -190,7 +187,7 @@ jobs:
 
   terraform_account_preproduction:
     name: TF Preproduction Plan - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - workflow_variables
       - terraform_lint
@@ -211,7 +208,7 @@ jobs:
 
   terraform_region_preproduction:
     name: TF Preproduction Plan - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - workflow_variables
       - terraform_lint
@@ -232,7 +229,7 @@ jobs:
 
   terraform_environment_preproduction:
     name: TF Preproduction Plan - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - workflow_variables
       - terraform_lint
