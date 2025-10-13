@@ -169,3 +169,6 @@ jobs:
                                            --tag ${IMAGE_TAG} \
                                            --slack_channel CAMB46M6Y \
                                            --slack_token ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: PHPUnit tests
+        run: /app/vendor/bin/phpunit 
