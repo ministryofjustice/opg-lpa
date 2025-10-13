@@ -24,6 +24,7 @@ variable "account" {
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
     rds_instance_type                      = string
+    rds_proxy_enabled                      = bool
     regions = map(
       object({
         region     = string
