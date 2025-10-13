@@ -1,6 +1,6 @@
 resource "aws_db_proxy" "rds_proxy" {
   count               = var.account.rds_proxy_enabled ? 1 : 0
-  name                = "${var.environment_name}-proxy"
+  name                = lower("proxy-${var.account_name}")
   debug_logging       = true # this may uncover sensitive information in the logs - but it shouldn't
   engine_family       = "POSTGRESQL"
   idle_client_timeout = 1800
@@ -19,7 +19,7 @@ resource "aws_db_proxy" "rds_proxy" {
 
 resource "aws_iam_role" "rds_proxy" {
   count              = var.account.rds_proxy_enabled ? 1 : 0
-  name               = "${var.environment_name}-proxy-role"
+  name               = lower("proxy-role-${var.environment_name}")
   assume_role_policy = data.aws_iam_policy_document.rds_proxy.json
 }
 
