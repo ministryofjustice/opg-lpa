@@ -34,7 +34,7 @@ jobs:
         with:
           php-version: "8.2"
       - name: Run phpunit
-        run: XDEBUG_MODE=coverage php docker compose run ${{ matrix.scan.app }} /app/vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
+        run: XDEBUG_MODE=coverage docker compose run ${{ matrix.scan.app }} /app/vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
       - name: Check coverage
         run: php ../scripts/pipeline/php_coverage/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
       - name: Upload Coverage Artifacts
