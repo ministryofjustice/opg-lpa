@@ -376,73 +376,12 @@ jobs:
       cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
     secrets: inherit
 
-  post_tests_slack_msg:
-    name: Post-Tests Slack message
-    runs-on: ubuntu-latest
-    needs:
-      - terraform_outputs
-      - workflow_variables
-      - post_deployment_slack_msg
-      - cypress_tests_Remaining
-      - cypress_tests_SignupIncluded
-      - cypress_tests_Signup_StichedClone
-      - cypress_tests_Signup_StichedHW
-      - cypress_tests_Signup_StichedPF
-    env:
-      FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
-      ADMIN_URL: ${{ needs.terraform_outputs.outputs.admin_fqdn }}
-    steps:
-      - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
-        with:
-          channel-id: "CAMB46M6Y"
-          update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Make - development deployment",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Front URL:* https://${{ env.FRONT_URL }}/home\n*Admin URL:* https://${{ env.ADMIN_URL }}"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": ":white_check_mark: <https://github.com/${{ github.payload.repository.full_name }}/actions/runs/${{ github.runId }}|Success>"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": ":astronaut: ${{ github.triggering_actor }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
-                    }
-                  ]
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
   end_of_workflow:
     name: End of Workflow
     runs-on: ubuntu-latest
     needs:
       - terraform_outputs
       - workflow_variables
-      - post_tests_slack_msg
     environment:
       name: "dev_${{ needs.workflow_variables.outputs.workspace_name }}"
       url: "https://${{ env.FRONT_URL }}/home"
@@ -451,7 +390,7 @@ jobs:
     steps:
       - name: End of Workflow
         run: |
-          if ${{ contains(needs.terraform_outputs.result, 'success') && contains(needs.post_tests_slack_msg.result, 'success') }}; then
+          if ${{ contains(needs.terraform_outputs.result, 'success')}}; then
             echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
             echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
             echo "URL: https://${{ env.FRONT_URL }}/home"
