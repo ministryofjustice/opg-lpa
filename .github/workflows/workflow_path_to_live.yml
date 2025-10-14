@@ -131,7 +131,7 @@ jobs:
           channel-id: "C09M1LWJ2G0"
           payload: |
             {
-             "icon_emoji": ":robot_face:",
+              "icon_emoji": ":robot_face:",
               "blocks": [
                 {
                   "type": "header",
