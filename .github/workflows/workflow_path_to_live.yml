@@ -78,6 +78,43 @@ jobs:
       tag: main-${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit
 
+  terraform_account_development:
+    name: TF Development - Account
+    needs:
+      - set_variables
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    with:
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_workspace: development
+      is_ephemeral: false
+      terraform_apply: true
+      terraform_directory: ./terraform/account
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_region_development:
+    name: TF Development - Region
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    needs:
+      - set_variables
+      - terraform_account_development
+    with:
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: development
+      is_ephemeral: false
+      terraform_apply: true
+      terraform_directory: ./terraform/region
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
   slack_msg_production_deploy_begin:
     name: Annouce Production Deployment
     runs-on: ubuntu-latest
