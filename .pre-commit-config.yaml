@@ -42,3 +42,8 @@ repos:
     rev: 40.32.7
     hooks:
       - id: renovate-config-validator
+  - repo: https://github.com/tekwizely/pre-commit-golang
+    rev: v1.0.0-rc.2
+    hooks:
+      - id: go-imports # replaces go-fmt
+      - id: go-mod-tidy
