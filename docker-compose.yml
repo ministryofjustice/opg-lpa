@@ -35,7 +35,7 @@ services:
 
   postgres:
     container_name: lpa-postgres
-    image: postgres:13.7@sha256:03652c675ae177af98ddd50f9f4b4b2cf8ad38d0e116aa68fe670fbc2cf250fc
+    image: postgres:14.18@sha256:90da0743e4ed7939b08e2945e0451401b4d7abd792530c7d3cc2da82ed534f08
     ports:
       - 5434:5432
     environment:
@@ -151,7 +151,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: 0
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
       - ./service-front:/app
@@ -254,7 +254,7 @@ services:
     build:
       context: ./
       args:
-        # ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: 0
         OPG_LPA_COMMON_APP_VERSION: "${OPG_LPA_COMMON_APP_VERSION}"
       dockerfile: service-api/docker/app/Dockerfile
     volumes:

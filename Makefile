@@ -184,19 +184,19 @@ dc-down:
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
-	@docker compose run --no-deps front-app /app/vendor/bin/phpunit 
+	@docker compose run --no-deps front-app /app/vendor/bin/phpunit
 
 .PHONY: dc-admin-unit-tests
 dc-admin-unit-tests:
-	@docker compose run --no-deps admin-app /app/vendor/bin/phpunit 
+	@docker compose run --no-deps admin-app /app/vendor/bin/phpunit
 
 .PHONY: dc-api-unit-tests
 dc-api-unit-tests:
-	@docker compose run --no-deps api-app /app/vendor/bin/phpunit 
+	@docker compose run --no-deps api-app /app/vendor/bin/phpunit
 
 .PHONY: dc-pdf-unit-tests
 dc-pdf-unit-tests:
-	@docker compose run --no-deps pdf-app /app/vendor/bin/phpunit 
+	@docker compose run --no-deps pdf-app /app/vendor/bin/phpunit
 
 .PHONY: dc-unit-tests
 dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-unit-tests
@@ -212,16 +212,17 @@ npm-install:
 # all variables as CYPRESS_RUNNER_* env vars, picked up by the cypress_runner.py script,
 # we can apply any logic about how to set vars for cypress, as well as provide
 # reasonable defaults (e.g. for CYPRESS_baseUrl), in one location.
-.PHONY: cypress-local
-cypress-local: npm-install
-	docker rm -f cypress_tests || true
-	docker build -f ./cypress/Dockerfile  -t cypress:local .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
-		-e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_BASE_URL="https://localhost:7002" \
-		-e CYPRESS_RUNNER_ADMIN_URL="https://localhost:7003" \
-		-e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" \
-		-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests \
-		--entrypoint ./cypress/cypress_start.sh cypress:local
+#.PHONY: cypress-local
+# TODO: decide if we want to keep this and run cypress in Docker - https://opgtransform.atlassian.net/browse/LPAL-1510
+#cypress-local: npm-install
+#	docker rm -f cypress_tests || true
+#	docker build -f ./cypress/Dockerfile -t cypress:local .; \
+#	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
+#		-e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_BASE_URL="https://localhost:7002" \
+#		-e CYPRESS_RUNNER_ADMIN_URL="https://localhost:7003" \
+#		-e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" \
+#		-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests \
+#		--entrypoint ./cypress/cypress_start.sh cypress:local
 
 .PHONY: s3-monitor
 s3-monitor:
