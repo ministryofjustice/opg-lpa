@@ -256,7 +256,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        # ENABLE_XDEBUG: 1
         OPG_LPA_COMMON_APP_VERSION: "${OPG_LPA_COMMON_APP_VERSION}"
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
