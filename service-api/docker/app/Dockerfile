@@ -27,7 +27,8 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 COPY --chown=root:root service-api/composer.json /app/composer.json
 COPY --chown=root:root service-api/composer.lock /app/composer.lock
 COPY --from=composer /usr/bin/composer /usr/bin/
-RUN composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
+RUN composer check-platform-reqs --no-dev -d /app \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer

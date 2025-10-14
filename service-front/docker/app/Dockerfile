@@ -26,7 +26,8 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 COPY --chown=root:root service-front/composer.json /app/composer.json
 COPY --chown=root:root service-front/composer.lock /app/composer.lock
 COPY --from=composer /usr/bin/composer /usr/bin/
-RUN composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app
+RUN composer check-platform-reqs --no-dev -d /app \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app
 
 # Core files for the application
 COPY --chown=root:root service-front/assets /app/assets
