@@ -42,6 +42,9 @@ brew install eslint
 brew install php-code-sniffer
 brew install php-cs-fixer
 
+# Go code fortmatting/tidying
+brew install go
+
 brew install pre-commit
 
 pre-commit install
@@ -55,6 +58,7 @@ Pre-commit hooks run any time you add a commit. They cover:
 * Terraform
 * Secrets commit detection (AWS, general secrets)
 * Whitespace and end of file fixers
+* Go code formatting, sorting imports and tidying dependencies
 
 Add more as needed to the `.pre-commit-config.yaml`.
 
