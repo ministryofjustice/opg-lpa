@@ -312,6 +312,11 @@ jobs:
     needs:
       - terraform_outputs
       - workflow_variables
+      - cypress_tests_Signup_StichedPF
+      - cypress_tests_Signup_StichedHW
+      - cypress_tests_Signup_StichedClone
+      - cypress_tests_SignupIncluded
+      - cypress_tests_Remaining
     environment:
       name: "dev_${{ needs.workflow_variables.outputs.workspace_name }}"
       url: "https://${{ env.FRONT_URL }}/home"
