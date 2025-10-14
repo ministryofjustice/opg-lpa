@@ -27,10 +27,10 @@ graph TD
     BUILDS -->|No| TRIVIAL{Is it a trivial fix?}
     TRIVIAL --> |Yes| FIX[Fix it]
         FIX --> MERGE
-    TRIVIAL --> |No| NOFIX{Is it not fixable right now?}
-    NOFIX --> |Yes| IGNORE[Ignore in renovate.json with explanation]
+    TRIVIAL --> |No| CANFIX{Is it possible to fix?}
+    CANFIX --> |No| IGNORE[Ignore in renovate.json with explanation]
         IGNORE --> END
-    NOFIX --> |No| JIRA[Create ticket in Jira]
+    CANFIX --> |Yes| JIRA[Create ticket in Jira]
         JIRA --> PR_LINK[Add link to Jira ticket on PR]
         PR_LINK --> PR_LABEL[Add 'stop-updating' label to PR]
         PR_LABEL --> END
