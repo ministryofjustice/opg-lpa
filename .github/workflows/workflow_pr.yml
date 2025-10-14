@@ -332,8 +332,7 @@ jobs:
             ${{ contains(needs.cypress_tests_Signup_StichedHW.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_Signup_StichedClone.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_SignupIncluded.result, 'success')}} &&
-            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}
-          ; then
+            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}; then
             echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
             echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
             echo "URL: https://${{ env.FRONT_URL }}/home"
