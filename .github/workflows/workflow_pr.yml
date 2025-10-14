@@ -22,7 +22,6 @@ permissions:
   statuses: none
 
 jobs:
-
   workflow_variables:
     name: Output workflow variables
     runs-on: ubuntu-latest
@@ -56,7 +55,7 @@ jobs:
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/environment"
-      - name : Set terraform version - account
+      - name: Set terraform version - account
         id: terraform_version_account
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
@@ -158,7 +157,7 @@ jobs:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_environment_development:
-    name: TF Development - Environment
+    name: TF ${{ needs.workflow_variables.outputs.workspace_name }} Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - docker_build_scan_push
@@ -178,71 +177,6 @@ jobs:
       terraform_directory: ./terraform/environment
       terraform_variables: "-var container_version=${{ needs.workflow_variables.outputs.short_sha }}"
       persist_artifacts: true
-    secrets:
-      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-  terraform_account_preproduction:
-    name: TF Preproduction Plan - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
-    needs:
-      - workflow_variables
-      - terraform_lint
-    with:
-      terraform_version: ${{ needs.workflow_variables.outputs.account_terraform_version }}
-      terraform_workspace: preproduction
-      is_ephemeral: false
-      workspace_manager_aws_account_id: "987830934591"
-      workspace_manager_aws_iam_role: opg-lpa-ci
-      terraform_apply: false
-      terraform_directory: ./terraform/account
-    secrets:
-      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-  terraform_region_preproduction:
-    name: TF Preproduction Plan - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
-    needs:
-      - workflow_variables
-      - terraform_lint
-    with:
-      terraform_version: ${{ needs.workflow_variables.outputs.region_terraform_version }}
-      terraform_workspace: preproduction
-      is_ephemeral: false
-      workspace_manager_aws_account_id: "987830934591"
-      workspace_manager_aws_iam_role: opg-lpa-ci
-      terraform_apply: false
-      terraform_directory: ./terraform/region
-    secrets:
-      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-  terraform_environment_preproduction:
-    name: TF Preproduction Plan - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
-    needs:
-      - workflow_variables
-      - terraform_lint
-    with:
-      terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
-      use_ssh_private_key: true
-      terraform_workspace: preproduction
-      is_ephemeral: false
-      workspace_manager_aws_account_id: "987830934591"
-      workspace_manager_aws_iam_role: opg-lpa-ci
-      terraform_apply: false
-      terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=${{ needs.workflow_variables.outputs.short_sha }}"
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -322,11 +256,11 @@ jobs:
       FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
       ADMIN_URL: ${{ needs.terraform_outputs.outputs.admin_fqdn }}
     steps:
-    - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
-      id: slack
-      with:
-        channel-id: "CAMB46M6Y"
-        payload: |
+      - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
+        id: slack
+        with:
+          channel-id: "C09M1LWJ2G0"
+          payload: |
             {
               "icon_emoji": ":robot_face:",
               "blocks": [
@@ -377,8 +311,8 @@ jobs:
 
               ]
             }
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   cypress_tests_Signup_StichedPF:
     name: Run Cypress tests - @Signup,@StitchedPF
@@ -458,12 +392,11 @@ jobs:
       FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
       ADMIN_URL: ${{ needs.terraform_outputs.outputs.admin_fqdn }}
     steps:
-
-    - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
-      with:
-        channel-id: "CAMB46M6Y"
-        update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
-        payload: |
+      - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
+        with:
+          channel-id: "CAMB46M6Y"
+          update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
+          payload: |
             {
               "blocks": [
                 {
@@ -500,9 +433,8 @@ jobs:
                 }
               ]
             }
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   end_of_workflow:
     name: End of Workflow
