@@ -12,7 +12,6 @@ resource "aws_db_proxy" "rds_proxy" {
     auth_scheme = "SECRETS"
     description = "Authentication for RDS Proxy"
     iam_auth    = "DISABLED"
-    username    = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
     secret_arn  = data.aws_secretsmanager_secret_version.api_rds_password.arn
   }
 }
@@ -43,8 +42,7 @@ data "aws_iam_policy_document" "rds_proxy_role" {
     sid    = "RDSSecretsManagerAccess"
     effect = "Allow"
     actions = [
-      "secretsmanager:GetSecretValue",
-      "kms:Decrypt"
+      "secretsmanager:GetSecretValue"
     ]
 
     resources = [
@@ -63,15 +61,8 @@ data "aws_iam_policy_document" "rds_proxy_role" {
   }
 }
 
-data "aws_iam_policy_document" "combined_iam_role_policy" {
-  source_policy_documents = [
-    data.aws_iam_policy_document.rds_proxy_assume.json,
-    data.aws_iam_policy_document.rds_proxy_role.json
-  ]
-}
-
 resource "aws_iam_role_policy" "rds_proxy" {
   name   = lower("rds-proxy-role-policy-${var.environment_name}")
   role   = aws_iam_role.rds_proxy_role[0].id
-  policy = data.aws_iam_policy_document.combined_iam_role_policy.json
+  policy = data.aws_iam_policy_document.rds_proxy_role.json
 }
