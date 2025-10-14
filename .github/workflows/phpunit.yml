@@ -7,7 +7,7 @@ on:
   workflow_call
 
 jobs:
-  phpunit_all_services_php_8_2:
+  phpunit:
     name: phpunit
     runs-on: ubuntu-latest
     strategy:
@@ -17,35 +17,33 @@ jobs:
           - name: service-admin
             path: "./service-admin"
             minCoverage: 3
+            phpVersion: "8.4"
           - name: service-front
             path: "./service-front"
             minCoverage: 85
+            phpVersion: "8.4"
           - name: service-api
             path: "./service-api"
             minCoverage: 74
+            phpVersion: "8.3"
           - name: shared
             path: "./shared"
             minCoverage: 90
+            phpVersion: "8.3"
+          - name: service-pdf
+            path: "./service-pdf"
+            minCoverage: 85
+            phpVersion: "8.3"
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
     steps:
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - name: Configure AWS Credentials
-        if: matrix.scan.path == './service-api' # aws creds currently needed for service-api but dependency will be removed in LPAL-1075
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
-          role-duration-seconds: 1800
-          role-session-name: OPGMakeaLPAECRGithubAction
       - name: Setup PHP
         uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 # 2.35.4
         with:
-          php-version: "8.2"
+          php-version: ${{ matrix.scan.phpVersion }}
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |
@@ -61,52 +59,5 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ${{ matrix.scan.name }}-coverage-html
-          path: ${{ matrix.scan.path }}/coverage-html/
-          overwrite: true
-  phpunit_all_services:
-    name: phpunit
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        scan:
-          - name: service-pdf
-            path: "./service-pdf"
-            minCoverage: 85
-    defaults:
-      run:
-        working-directory: ${{ matrix.scan.path }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - name: Configure AWS Credentials
-        if: matrix.scan.path == './service-api' # aws creds currently needed for service-api but dependency will be removed in LPAL-1075
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
-          role-duration-seconds: 1800
-          role-session-name: OPGMakeaLPAECRGithubAction
-      - name: Setup PHP
-        uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 # 2.35.4
-        with:
-          php-version: "8.3"
-      - name: pdftk install
-        if: matrix.scan.path == './service-pdf'
-        run: |
-          sudo apt-get update --allow-releaseinfo-change
-          sudo apt-get install pdftk-java
-      - name: Composer install
-        run: composer install --prefer-dist --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs
-      - name: Run phpunit
-        run: XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
-      - name: Check coverage
-        run: php ../scripts/pipeline/php_coverage/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
-      - name: Upload Coverage Artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: coverage-html
           path: ${{ matrix.scan.path }}/coverage-html/
           overwrite: true
