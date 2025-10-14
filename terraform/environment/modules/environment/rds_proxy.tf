@@ -57,7 +57,6 @@ data "aws_iam_policy_document" "rds_proxy_role" {
     sid    = "AllowRDSKMS"
     effect = "Allow"
     actions = [
-      "kms:DescribeKey",
       "kms:Decrypt"
     ]
     resources = [data.aws_kms_alias.secrets_encryption_alias.target_key_arn]
