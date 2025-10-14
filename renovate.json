@@ -55,6 +55,61 @@
   "packageRules": [
     {
       "description": [
+        "We are investigating replacing Grunt with esbuild (LPAL-1501) so ignore these major updates for now",
+        "TODO: Review this decision from November 2025"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchDepNames": [
+        "grunt-contrib-concat",
+        "grunt-contrib-cssmin",
+        "grunt-contrib-handlebars"
+      ],
+      "enabled": false
+    },
+    {
+      "description": [
+        "Lock versions of managed services",
+        "Our local images need to match the managed services that we have in AWS"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchDepNames": [
+        "redis",
+        "postgres"
+      ],
+      "enabled": false
+    },
+    {
+      "description": [
+        "laminas-servicemanager network blockages",
+        "None of these packages can be (major) upgraded until everything supports laminas-servicemanager v4",
+        "Some of them do already support servicemanager v4, but Composer doesn't support multiple dependency versions"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchDatasources": [
+        "packagist"
+      ],
+      "matchDepNames": [
+        "laminas/laminas-servicemanager",
+        "laminas/laminas-cache",
+        "laminas/laminas-cache-storage-adapter-memory",
+        "laminas/laminas-filter"
+      ],
+      "enabled": false
+    },
+    {
+      "description": [
         "cypress: bundle updates to package.json and dockerfile",
         "allow major version updates"
       ],
