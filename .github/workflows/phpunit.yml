@@ -17,15 +17,19 @@ jobs:
           - name: service-admin
             path: "./service-admin"
             minCoverage: 3
+            phpVersion: "8.2"
           - name: service-front
             path: "./service-front"
             minCoverage: 85
+            phpVersion: "8.2"
           - name: service-api
             path: "./service-api"
             minCoverage: 74
+            phpVersion: "8.2"
           - name: shared
             path: "./shared"
             minCoverage: 90
+            phpVersion: "8.2"
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
@@ -35,7 +39,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 # 2.35.4
         with:
-          php-version: "8.2"
+          php-version: ${{ matrix.scan.phpVersion }}
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |
@@ -63,6 +67,7 @@ jobs:
           - name: service-pdf
             path: "./service-pdf"
             minCoverage: 85
+            phpVersion: "8.3"
     defaults:
       run:
         working-directory: ${{ matrix.scan.path }}
@@ -72,7 +77,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 # 2.35.4
         with:
-          php-version: "8.3"
+          php-version: ${{ matrix.scan.phpVersion }}
       - name: pdftk install
         if: matrix.scan.path == './service-pdf'
         run: |
