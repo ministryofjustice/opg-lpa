@@ -6,7 +6,7 @@ resource "aws_db_proxy" "rds_proxy" {
   idle_client_timeout = 1800
   require_tls         = true
   vpc_subnet_ids      = data.aws_subnets.private.ids
-  role_arn            = aws_iam_role.rds_proxy[0].arn
+  role_arn            = aws_iam_role.rds_proxy_role[0].arn
 
   auth {
     auth_scheme = "SECRETS"
@@ -17,13 +17,13 @@ resource "aws_db_proxy" "rds_proxy" {
   }
 }
 
-resource "aws_iam_role" "rds_proxy" {
+resource "aws_iam_role" "rds_proxy_role" {
   count              = var.account.rds_proxy_enabled ? 1 : 0
-  name               = lower("proxy-role-${var.environment_name}")
-  assume_role_policy = data.aws_iam_policy_document.rds_proxy.json
+  name               = lower("proxy-assume-role-${var.environment_name}")
+  assume_role_policy = data.aws_iam_policy_document.rds_proxy_assume.json
 }
 
-data "aws_iam_policy_document" "rds_proxy" {
+data "aws_iam_policy_document" "rds_proxy_assume" {
   statement {
     sid = "AllowRDSServiceAssumeRole"
 
@@ -36,15 +36,43 @@ data "aws_iam_policy_document" "rds_proxy" {
       identifiers = ["rds.amazonaws.com"]
     }
   }
+}
 
+data "aws_iam_policy_document" "rds_proxy_role" {
   statement {
-    sid = "RDSSecretsManagerAccess"
-
-    actions = ["secretsmanager:GetSecretValue"]
+    sid    = "RDSSecretsManagerAccess"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+      "kms:Decrypt"
+    ]
 
     resources = [
       data.aws_secretsmanager_secret.api_rds_username.arn,
       data.aws_secretsmanager_secret.api_rds_password.arn
     ]
   }
+
+  statement {
+    sid    = "AllowRDSKMS"
+    effect = "Allow"
+    actions = [
+      "kms:DescribeKey",
+      "kms:Decrypt"
+    ]
+    resources = [data.aws_kms_alias.secrets_encryption_alias.target_key_arn]
+  }
+}
+
+data "aws_iam_policy_document" "combined_iam_role_policy" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.rds_proxy_assume.json,
+    data.aws_iam_policy_document.rds_proxy_role.json
+  ]
+}
+
+resource "aws_iam_role_policy" "rds_proxy" {
+  name   = lower("rds-proxy-role-policy-${var.environment_name}")
+  role   = aws_iam_role.rds_proxy_role[0].id
+  policy = data.aws_iam_policy_document.combined_iam_role_policy.json
 }
