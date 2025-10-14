@@ -184,25 +184,25 @@ dc-down:
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
-	@docker compose run front-app /app/vendor/bin/phpunit
+	@docker compose run front-app /app/vendor/bin/phpunit --no-deps
 
 .PHONY: dc-admin-unit-tests
 dc-admin-unit-tests:
-	@docker compose run admin-app /app/vendor/bin/phpunit
+	@docker compose run admin-app /app/vendor/bin/phpunit --no-deps
 
 .PHONY: dc-api-unit-tests
 dc-api-unit-tests:
-	@docker compose run api-app /app/vendor/bin/phpunit
+	@docker compose run api-app /app/vendor/bin/phpunit --no-deps
 
 .PHONY: dc-pdf-unit-tests
 dc-pdf-unit-tests:
-	@docker compose run pdf-app /app/vendor/bin/phpunit
+	@docker compose run pdf-app /app/vendor/bin/phpunit --no-deps
 
 .PHONY: dc-unit-tests
 dc-unit-tests: dc-front-unit-tests
-	@docker compose run admin-app /app/vendor/bin/phpunit
-	@docker compose run api-app /app/vendor/bin/phpunit
-	@docker compose run pdf-app /app/vendor/bin/phpunit
+	@docker compose run admin-app /app/vendor/bin/phpunit --no-deps
+	@docker compose run api-app /app/vendor/bin/phpunit --no-deps
+	@docker compose run pdf-app /app/vendor/bin/phpunit --no-deps
 
 .PHONY: npm-install
 npm-install:
