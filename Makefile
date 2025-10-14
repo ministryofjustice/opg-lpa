@@ -199,10 +199,7 @@ dc-pdf-unit-tests:
 	@docker compose run --no-deps pdf-app /app/vendor/bin/phpunit 
 
 .PHONY: dc-unit-tests
-dc-unit-tests: dc-front-unit-tests
-	@docker compose run --no-deps admin-app /app/vendor/bin/phpunit 
-	@docker compose run --no-deps api-app /app/vendor/bin/phpunit 
-	@docker compose run --no-deps pdf-app /app/vendor/bin/phpunit 
+dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-unit-tests
 
 .PHONY: npm-install
 npm-install:
