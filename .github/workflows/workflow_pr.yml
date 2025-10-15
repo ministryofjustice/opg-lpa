@@ -82,7 +82,7 @@ jobs:
   phpunit_tests:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit.yml
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
@@ -91,7 +91,7 @@ jobs:
       - workflow_variables
     with:
       tag: ${{ needs.workflow_variables.outputs.short_sha }}
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   terraform_account_development:
     name: TF Development - Account
@@ -192,7 +192,7 @@ jobs:
       task_name: "seeding"
     needs:
       - terraform_environment_development
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   terraform_outputs:
     name: Render terraform outputs
@@ -254,7 +254,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,@StitchedPF"
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   cypress_tests_Signup_StichedHW:
     name: Run Cypress tests - @Signup,@StitchedHW
@@ -266,7 +266,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,@StitchedHW"
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   cypress_tests_Signup_StichedClone:
     name: Run Cypress tests - @Signup,@StitchedClone
@@ -278,7 +278,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,@StitchedClone"
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   cypress_tests_SignupIncluded:
     name: Run Cypress tests - @SignupIncluded
@@ -290,7 +290,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@SignupIncluded"
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
   # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
@@ -304,7 +304,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   end_of_workflow:
     name: End of Workflow
