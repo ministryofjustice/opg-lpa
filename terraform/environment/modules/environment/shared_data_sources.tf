@@ -6,6 +6,10 @@ data "aws_security_group" "front_cache_region" {
   name = "${local.account_name_short}-${var.region_name}-front-cache"
 }
 
+data "aws_security_group" "new_front_cache_region" {
+  name = "${local.account_name_short}-${var.region_name}-new-front-cache"
+}
+
 data "aws_elasticache_replication_group" "front_cache_region" {
   replication_group_id = "${local.account_name_short}-${var.region_name}-front-cache-rg"
 }
@@ -49,3 +53,8 @@ data "aws_kms_alias" "multi_region_secrets_encryption_alias" {
 data "aws_region" "current" {}
 
 data "aws_caller_identity" "current" {}
+
+data "aws_ip_ranges" "route53_healthchecks" {
+  regions  = ["GLOBAL"]
+  services = ["ROUTE53_HEALTHCHECKS"]
+}
