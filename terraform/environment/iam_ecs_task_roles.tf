@@ -1,6 +1,3 @@
-locals {
-  api_task_definition_arns = local.dr_enabled ? [module.eu-west-1.aws_ecs_task_definition_api_arn] : compact(concat([module.eu-west-1.aws_ecs_task_definition_api_arn], try([module.eu-west-2[0].aws_ecs_task_definition_api_arn], [])))
-}
 //----------------
 // API IAM ECS task role
 
@@ -72,9 +69,12 @@ resource "aws_iam_role" "cloudwatch_events_ecs_role" {
 
 data "aws_iam_policy_document" "cloudwatch_events_role_policy" {
   statement {
-    effect    = "Allow"
-    actions   = ["ecs:RunTask"]
-    resources = local.api_task_definition_arns
+    effect  = "Allow"
+    actions = ["ecs:RunTask"]
+    resources = [
+      "arn:aws:ecs:eu-west-1:${data.aws_caller_identity.current.account_id}:task-definition/${local.environment_name}-api:*",
+      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/${local.environment_name}-api:*"
+    ]
   }
   statement {
     effect  = "Allow"
