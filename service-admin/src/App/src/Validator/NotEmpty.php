@@ -34,9 +34,6 @@ final class NotEmpty extends AbstractValidator
 
     private LaminasNotEmpty $inner;
 
-    /**
-     * @param array{type?: int} $options
-     */
     public function __construct(array $options = [])
     {
         $defaultType =
