@@ -1,5 +1,3 @@
-version: "3.7"
-
 # Copy these pieces into docker-compose.yml in the main opg-lpa
 # project to set up a mock Sirius; note that the api-app section
 # contains a single env var which must be modified; the gateway
