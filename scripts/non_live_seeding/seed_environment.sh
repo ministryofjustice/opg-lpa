@@ -88,7 +88,7 @@ if [ "$OPG_LPA_STACK_ENVIRONMENT" == "production" ]; then
 fi
 
 echo "Waiting for postgres to be ready"
-timeout 600s sh -c 'pgready=1; until [ ${pgready} -eq 0 ]; do pg_isready -h ${OPG_LPA_POSTGRES_HOSTNAME} -d ${OPG_LPA_POSTGRES_NAME}; pgready=$? ; sleep 5 ; done'
+timeout 600s sh -c 'pgready=1; until [ ${pgready} -eq 0 ]; do pg_isready -h ${OPG_LPA_POSTGRES_HOSTNAME} -d ${OPG_LPA_POSTGRES_NAME} -U ${OPG_LPA_POSTGRES_USERNAME}; pgready=$? ; sleep 5 ; done'
 
 echo "Checking database exists"
 check_db_exists
