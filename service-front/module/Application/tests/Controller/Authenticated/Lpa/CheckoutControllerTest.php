@@ -8,6 +8,7 @@ use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Model\Service\Lpa\Communication;
 use ApplicationTest\Controller\AbstractControllerTestCase;
+use DateTimeImmutable;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -32,6 +33,9 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
 
         $this->blankMainFlowForm = Mockery::mock(BlankMainFlowForm::class);
         $this->submitButton = Mockery::mock(ElementInterface::class);
+        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
+        $timeNow = new DateTimeImmutable('now');
+        $this->fee = ($timeNow >= $feeEffectiveDate) ? 92 : 82;
     }
 
     /**
@@ -64,7 +68,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->blankMainFlowForm, $result->getVariable('form'));
         $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
-        $this->assertEquals(82, $result->getVariable('fullFee'));
+        $this->assertEquals($this->fee, $result->getVariable('fullFee'));
     }
 
     public function testIndexActionPostIncompleteLpa(): void
@@ -101,7 +105,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $controller = $this->getController(CheckoutController::class);
 
         $this->lpa->payment->method = null;
-        $this->lpa->payment->amount = 82;
+        $this->lpa->payment->amount = $this->fee;
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(false)->once();
 
@@ -116,7 +120,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $controller = $this->getController(CheckoutController::class);
 
         $this->lpa->payment->method = null;
-        $this->lpa->payment->amount = 182;
+        $this->lpa->payment->amount = $this->fee + 100;
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(false)->once();
 
@@ -165,7 +169,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $controller = $this->getController(CheckoutController::class);
 
         $this->lpa->payment->method = null;
-        $this->lpa->payment->amount = 82;
+        $this->lpa->payment->amount = $this->fee;
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid option');
