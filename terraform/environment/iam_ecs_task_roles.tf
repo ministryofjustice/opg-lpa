@@ -1,6 +1,6 @@
 locals {
   # for an arn like arn:aws:ecs:eu-west-1:<account-id>:task-definition/<environment>-api:1510, replace :1510 with :*
-  aws_ecs_task_definition_api_arn = "${trimsuffix(module.eu-west-1.aws_ecs_task_definition_api_arn, regex(module.eu-west-1.aws_ecs_task_definition_api_arn, "/^:\\d{4}$/"))}:*"
+  aws_ecs_task_definition_api_arn = "${trimsuffix(module.eu-west-1.aws_ecs_task_definition_api_arn, regex(module.eu-west-1.aws_ecs_task_definition_api_arn, "/^:\\d{*}$/"))}:*"
   api_task_definition_arns        = local.dr_enabled ? [local.aws_ecs_task_definition_api_arn] : compact(concat([local.aws_ecs_task_definition_api_arn], try([module.eu-west-2[0].aws_ecs_task_definition_api_arn], [])))
 }
 //----------------
