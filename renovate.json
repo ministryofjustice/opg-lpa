@@ -92,7 +92,8 @@
       "description": [
         "laminas-servicemanager network blockages",
         "None of these packages can be (major) upgraded until everything supports laminas-servicemanager v4",
-        "Some of them do already support servicemanager v4, but Composer doesn't support multiple dependency versions"
+        "Some of them do already support servicemanager v4, but Composer doesn't support multiple dependency versions",
+        "robmorgan/phinx is include because it has a nested dependency on pst/simple-cache:^2.0, which requires laminas-cache v4"
       ],
       "matchUpdateTypes": [
         "major"
@@ -104,7 +105,8 @@
         "laminas/laminas-servicemanager",
         "laminas/laminas-cache",
         "laminas/laminas-cache-storage-adapter-memory",
-        "laminas/laminas-filter"
+        "laminas/laminas-filter",
+        "robmorgan/phinx"
       ],
       "enabled": false
     },
