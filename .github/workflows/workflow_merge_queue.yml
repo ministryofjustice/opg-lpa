@@ -87,6 +87,7 @@ jobs:
     uses: ./.github/workflows/docker_job.yml
     needs:
       - set_variables
+      - phpunit_tests
     with:
       tag: integration-${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit #pragma: allowlist secret
