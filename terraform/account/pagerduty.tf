@@ -22,7 +22,7 @@ resource "pagerduty_service_integration" "cloudwatch_integration" {
 }
 
 resource "pagerduty_service_integration" "db_alerts_integration" {
-  count   = local.account_name != "development" ? 1 : 0
+  count   = local.account_name == "production" ? 1 : 0
   name    = "${local.account_name} Account DB Alerts"
   service = data.pagerduty_service.pagerduty_db_alerts.id
   vendor  = data.pagerduty_vendor.custom_events.id
