@@ -5,6 +5,10 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+
+permissions:
+  security-events: write
+
 jobs:
   psalm:
     name: psalm-scan
@@ -43,7 +47,12 @@ jobs:
         run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif --no-cache
+      - name: Add prefix to Psalm paths
+        if: always()
+        run: |
+          sed -i 's|"uri":"|"uri":"${{ matrix.scan.name }}\/|g' psalm-results.sarif
       - name: Upload Security Analysis results to GitHub
         uses: github/codeql-action/upload-sarif@192325c86100d080feab897ff886c34abd4c83a3 # v3.30.3
+        if: always()
         with:
           sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
