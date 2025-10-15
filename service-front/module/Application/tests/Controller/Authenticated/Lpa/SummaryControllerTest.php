@@ -6,6 +6,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\SummaryController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
+use DateTimeImmutable;
 use Laminas\View\Model\ViewModel;
 
 final class SummaryControllerTest extends AbstractControllerTestCase
@@ -24,7 +25,10 @@ final class SummaryControllerTest extends AbstractControllerTestCase
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals('lpa/applicant', $result->getVariable('returnRoute'));
-        $this->assertEquals(82, $result->getVariable('fullFee'));
-        $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
+        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
+        $timeNow = new DateTimeImmutable('now');
+        $fee = ($timeNow >= $feeEffectiveDate) ? 92 : 82;
+        $this->assertEquals($fee, $result->getVariable('fullFee'));
+        $this->assertEquals($fee/2, $result->getVariable('lowIncomeFee'));
     }
 }
