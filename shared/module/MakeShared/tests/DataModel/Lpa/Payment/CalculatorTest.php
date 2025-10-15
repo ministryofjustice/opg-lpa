@@ -2,12 +2,22 @@
 
 namespace MakeSharedTest\DataModel\Lpa\Payment;
 
+use DateTimeImmutable;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeSharedTest\DataModel\FixturesData;
 use PHPUnit\Framework\TestCase;
 
 class CalculatorTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
+        $timeNow = new DateTimeImmutable('now');
+        $this->fee = ($timeNow >= $feeEffectiveDate) ? 92 : 82;
+    }
+
     public function testCalculateNullPayment()
     {
         $lpa = FixturesData::getPfLpa();
@@ -49,7 +59,7 @@ class CalculatorTest extends TestCase
         $payment = Calculator::calculate($lpa);
 
         $this->assertEquals('cheque', $payment->get('method'));
-        $this->assertEquals(41, $payment->get('amount'));
+        $this->assertEquals($this->fee/2, $payment->get('amount'));
     }
 
     public function testCalculateFullFee()
@@ -59,35 +69,35 @@ class CalculatorTest extends TestCase
         $payment = Calculator::calculate($lpa);
 
         $this->assertEquals('cheque', $payment->get('method'));
-        $this->assertEquals(82, $payment->get('amount'));
+        $this->assertEquals($this->fee, $payment->get('amount'));
     }
 
     public function testGetFullFee()
     {
         $fee = Calculator::getFullFee();
 
-        $this->assertEquals(82, $fee);
+        $this->assertEquals($this->fee, $fee);
     }
 
     public function testGetFullFeeRepeatApplication()
     {
         $fee = Calculator::getFullFee(true);
 
-        $this->assertEquals(41, $fee);
+        $this->assertEquals($this->fee/2, $fee);
     }
 
     public function testGetLowIncomeFee()
     {
         $fee = Calculator::getLowIncomeFee();
 
-        $this->assertEquals(41, $fee);
+        $this->assertEquals($this->fee/2, $fee);
     }
 
     public function testGetLowIncomeFeeRepeatApplication()
     {
         $fee = Calculator::getLowIncomeFee(true);
 
-        $this->assertEquals(20.5, $fee);
+        $this->assertEquals($this->fee/4, $fee);
     }
 
     public function testGetBenefitsFee()
