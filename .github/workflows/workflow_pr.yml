@@ -22,7 +22,6 @@ permissions:
   statuses: none
 
 jobs:
-
   workflow_variables:
     name: Output workflow variables
     runs-on: ubuntu-latest
@@ -56,7 +55,7 @@ jobs:
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/environment"
-      - name : Set terraform version - account
+      - name: Set terraform version - account
         id: terraform_version_account
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
@@ -83,7 +82,7 @@ jobs:
   phpunit_tests:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit.yml
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
@@ -92,7 +91,7 @@ jobs:
       - workflow_variables
     with:
       tag: ${{ needs.workflow_variables.outputs.short_sha }}
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   terraform_account_development:
     name: TF Development - Account
@@ -158,7 +157,7 @@ jobs:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_environment_development:
-    name: TF Development - Environment
+    name: TF ${{ needs.workflow_variables.outputs.workspace_name }} Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - docker_build_scan_push
@@ -185,71 +184,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-  terraform_account_preproduction:
-    name: TF Preproduction Plan - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
-    needs:
-      - workflow_variables
-      - terraform_lint
-    with:
-      terraform_version: ${{ needs.workflow_variables.outputs.account_terraform_version }}
-      terraform_workspace: preproduction
-      is_ephemeral: false
-      workspace_manager_aws_account_id: "987830934591"
-      workspace_manager_aws_iam_role: opg-lpa-ci
-      terraform_apply: false
-      terraform_directory: ./terraform/account
-    secrets:
-      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-  terraform_region_preproduction:
-    name: TF Preproduction Plan - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
-    needs:
-      - workflow_variables
-      - terraform_lint
-    with:
-      terraform_version: ${{ needs.workflow_variables.outputs.region_terraform_version }}
-      terraform_workspace: preproduction
-      is_ephemeral: false
-      workspace_manager_aws_account_id: "987830934591"
-      workspace_manager_aws_iam_role: opg-lpa-ci
-      terraform_apply: false
-      terraform_directory: ./terraform/region
-    secrets:
-      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-  terraform_environment_preproduction:
-    name: TF Preproduction Plan - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
-    needs:
-      - workflow_variables
-      - terraform_lint
-    with:
-      terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
-      use_ssh_private_key: true
-      terraform_workspace: preproduction
-      is_ephemeral: false
-      workspace_manager_aws_account_id: "987830934591"
-      workspace_manager_aws_iam_role: opg-lpa-ci
-      terraform_apply: false
-      terraform_directory: ./terraform/environment
-      terraform_variables: "-var container_version=${{ needs.workflow_variables.outputs.short_sha }}"
-    secrets:
-      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
   run_dev_seed_db_task:
     name: Run development DB seeding
     uses: ./.github/workflows/workflow_start_task.yml
@@ -258,7 +192,7 @@ jobs:
       task_name: "seeding"
     needs:
       - terraform_environment_development
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   terraform_outputs:
     name: Render terraform outputs
@@ -310,76 +244,6 @@ jobs:
         run: |
           echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
 
-  post_deployment_slack_msg:
-    name: Post-Deployment Slack message
-    runs-on: ubuntu-latest
-    outputs:
-      ts: ${{ steps.slack.outputs.ts }}
-    needs:
-      - terraform_outputs
-      - workflow_variables
-    env:
-      FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
-      ADMIN_URL: ${{ needs.terraform_outputs.outputs.admin_fqdn }}
-    steps:
-    - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
-      id: slack
-      with:
-        channel-id: "CAMB46M6Y"
-        payload: |
-            {
-              "icon_emoji": ":robot_face:",
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Development Environment Deployment",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Status:*\nDeployed (Tests running)"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Front URL:* https://${{ env.FRONT_URL }}/home\n*Admin URL:* https://${{ env.ADMIN_URL }}"
-                  }
-                }
-
-              ]
-            }
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
   cypress_tests_Signup_StichedPF:
     name: Run Cypress tests - @Signup,@StitchedPF
     uses: ./.github/workflows/cypress_tests.yml
@@ -390,7 +254,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,@StitchedPF"
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   cypress_tests_Signup_StichedHW:
     name: Run Cypress tests - @Signup,@StitchedHW
@@ -402,7 +266,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,@StitchedHW"
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   cypress_tests_Signup_StichedClone:
     name: Run Cypress tests - @Signup,@StitchedClone
@@ -414,7 +278,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,@StitchedClone"
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   cypress_tests_SignupIncluded:
     name: Run Cypress tests - @SignupIncluded
@@ -426,7 +290,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@SignupIncluded"
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
   # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
@@ -440,77 +304,20 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
-    secrets: inherit
-
-  post_tests_slack_msg:
-    name: Post-Tests Slack message
-    runs-on: ubuntu-latest
-    needs:
-      - terraform_outputs
-      - workflow_variables
-      - post_deployment_slack_msg
-      - cypress_tests_Remaining
-      - cypress_tests_SignupIncluded
-      - cypress_tests_Signup_StichedClone
-      - cypress_tests_Signup_StichedHW
-      - cypress_tests_Signup_StichedPF
-    env:
-      FRONT_URL: ${{ needs.terraform_outputs.outputs.front_fqdn }}
-      ADMIN_URL: ${{ needs.terraform_outputs.outputs.admin_fqdn }}
-    steps:
-
-    - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
-      with:
-        channel-id: "CAMB46M6Y"
-        update-ts: ${{ needs.post_deployment_slack_msg.outputs.ts }}
-        payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Make - development deployment",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Front URL:* https://${{ env.FRONT_URL }}/home\n*Admin URL:* https://${{ env.ADMIN_URL }}"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": ":white_check_mark: <https://github.com/${{ github.payload.repository.full_name }}/actions/runs/${{ github.runId }}|Success>"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": ":astronaut: ${{ github.triggering_actor }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
-                    }
-                  ]
-                }
-              ]
-            }
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
+    secrets: inherit #pragma: allowlist secret
 
   end_of_workflow:
     name: End of Workflow
     runs-on: ubuntu-latest
     needs:
+      - terraform_environment_development
       - terraform_outputs
       - workflow_variables
-      - post_tests_slack_msg
+      - cypress_tests_Signup_StichedPF
+      - cypress_tests_Signup_StichedHW
+      - cypress_tests_Signup_StichedClone
+      - cypress_tests_SignupIncluded
+      - cypress_tests_Remaining
     environment:
       name: "dev_${{ needs.workflow_variables.outputs.workspace_name }}"
       url: "https://${{ env.FRONT_URL }}/home"
@@ -519,7 +326,13 @@ jobs:
     steps:
       - name: End of Workflow
         run: |
-          if ${{ contains(needs.terraform_outputs.result, 'success') && contains(needs.post_tests_slack_msg.result, 'success') }}; then
+          if ${{ contains(needs.terraform_environment_development.result, 'success')}} &&
+            ${{ contains(needs.terraform_outputs.result, 'success')}} &&
+            ${{ contains(needs.cypress_tests_Signup_StichedPF.result, 'success')}} &&
+            ${{ contains(needs.cypress_tests_Signup_StichedHW.result, 'success')}} &&
+            ${{ contains(needs.cypress_tests_Signup_StichedClone.result, 'success')}} &&
+            ${{ contains(needs.cypress_tests_SignupIncluded.result, 'success')}} &&
+            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}; then
             echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
             echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
             echo "URL: https://${{ env.FRONT_URL }}/home"
