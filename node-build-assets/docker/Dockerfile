@@ -3,6 +3,7 @@
 FROM node:20-alpine3.21@sha256:f838a8eabffcfbdf4276294401a56e6e1ce02a638865a1f6ef1e9556f3bd0786
 
 RUN apk upgrade --no-cache
+# hadolint ignore=DL3018
 RUN apk add --no-cache ruby
 
 WORKDIR /service-front
