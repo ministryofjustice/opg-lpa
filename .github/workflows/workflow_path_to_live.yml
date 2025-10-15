@@ -76,7 +76,7 @@ jobs:
       - set_variables
     with:
       tag: main-${{ needs.set_variables.outputs.semver_tag }}
-    secrets: inherit
+    secrets: inherit #pragma: allowlist secret
 
   terraform_account_development:
     name: TF Development - Account

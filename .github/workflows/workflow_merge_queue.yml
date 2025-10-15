@@ -69,6 +69,19 @@ jobs:
           create_release: false
           default_bump: minor
 
+  terraform_lint:
+    name: TF - Lint
+    needs:
+      - set_variables
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    with:
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+
+  phpunit_tests:
+    name: Run PHPUnit tests
+    uses: ./.github/workflows/phpunit.yml
+    secrets: inherit #pragma: allowlist secret
+
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
