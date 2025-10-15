@@ -13,7 +13,7 @@
         }
     },
     "require": {
-        "php": "8.4.*",
+        "php": "^8.4",
         "aws/aws-sdk-php": "^3.81",
         "firebase/php-jwt": "^6.0",
         "guzzlehttp/guzzle": "^7.0",
@@ -38,8 +38,7 @@
         "psr/http-server-middleware": "^1.0",
         "slim/flash": "^0.4.0",
         "tuupola/callable-handler": "^0.3.0|^0.4.0|^1.0",
-        "tuupola/http-factory": "^0.4.0|^1.0.2",
-        "vimeo/psalm": "6.0.0"
+        "tuupola/http-factory": "^0.4.0|^1.0.2"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
@@ -60,7 +59,8 @@
         "phpspec/prophecy-phpunit": "^2.0.1",
         "phpunit/phpunit": "^9.5.10",
         "roave/security-advisories": "dev-master",
-        "squizlabs/php_codesniffer": "^4.0.0"
+        "squizlabs/php_codesniffer": "^4.0.0",
+        "vimeo/psalm": "^5.0.0"
     },
     "autoload": {
         "psr-4": {
