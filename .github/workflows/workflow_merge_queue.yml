@@ -1,0 +1,267 @@
+name: "[Merge Queue] Preproduction Integration"
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  merge_group:
+    types: [checks_requested]
+
+permissions:
+  contents: write
+  security-events: write
+  pull-requests: read
+  actions: none
+  checks: none
+  deployments: none
+  issues: none
+  packages: none
+  repository-projects: none
+  statuses: none
+
+jobs:
+  set_variables:
+    name: Set variables
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.short_sha.outputs.short_sha }}
+      semver_tag: ${{ steps.semver_tag.outputs.tag }}
+      environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
+      account_terraform_version: ${{ steps.terraform_version_account.outputs.version }}
+      region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Set output to penultimate short SHA
+        id: short_sha
+        run: |
+          echo "short_sha=$(git rev-list --no-merges -n 1 HEAD | cut -c1-7)" >> $GITHUB_OUTPUT
+      - name: Set terraform version - environment
+        id: terraform_version_environment
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        with:
+          terraform_directory: "./terraform/environment"
+      - name: Set terraform version - account
+        id: terraform_version_account
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        with:
+          terraform_directory: "./terraform/account"
+      - name: Set terraform version - region
+        id: terraform_version_region
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        with:
+          terraform_directory: "./terraform/region"
+      - name: Bump version and push tag
+        uses: ministryofjustice/opg-github-actions/actions/semver@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        id: semver_tag
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          create_release: false
+          default_bump: minor
+
+  terraform_lint:
+    name: TF - Lint
+    needs:
+      - set_variables
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    with:
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+
+  phpunit_tests:
+    name: Run PHPUnit tests
+    uses: ./.github/workflows/phpunit.yml
+    secrets: inherit #pragma: allowlist secret
+
+  docker_build_scan_push:
+    name: Docker Build, Scan and Push
+    uses: ./.github/workflows/docker_job.yml
+    needs:
+      - set_variables
+      - phpunit_tests
+    with:
+      tag: integration-${{ needs.set_variables.outputs.semver_tag }}
+    secrets: inherit #pragma: allowlist secret
+
+  terraform_account_preproduction:
+    name: TF Preproduction - Account
+    needs:
+      - set_variables
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    with:
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_workspace: preproduction
+      is_ephemeral: false
+      terraform_apply: true
+      terraform_directory: ./terraform/account
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_region_preproduction:
+    name: TF Preproduction - Region
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    needs:
+      - set_variables
+    with:
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: preproduction
+      is_ephemeral: false
+      terraform_apply: true
+      terraform_directory: ./terraform/region
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  terraform_environment_preproduction:
+    name: TF Preproduction - Environment
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    with:
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: preproduction
+      is_ephemeral: false
+      terraform_apply: true
+      use_ssh_private_key: true
+      terraform_directory: ./terraform/environment
+      terraform_variables: "-var container_version=integration-${{ needs.set_variables.outputs.semver_tag }}"
+      persist_artifacts: true
+    needs:
+      - docker_build_scan_push
+      - set_variables
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  run_preproduction_seed_db_task:
+    name: Run preproduction DB seeding
+    uses: ./.github/workflows/workflow_start_task.yml
+    with:
+      account_id: "987830934591"
+      task_name: "seeding"
+    needs:
+      - terraform_environment_preproduction
+      - terraform_region_preproduction
+      - terraform_account_preproduction
+    secrets: inherit #pragma: allowlist secret
+
+  preprod_terraform_outputs:
+    name: Render terraform outputs
+    runs-on: ubuntu-latest
+    outputs:
+      admin_fqdn: ${{ steps.admin_fqdn.outputs.value }}
+      front_fqdn: ${{ steps.front_fqdn.outputs.value }}
+    needs:
+      - terraform_environment_preproduction
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Download Terraform Task definition
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          name: terraform-artifact
+          path: /tmp/
+
+      - name: Terraform Outputs from JSON
+        id: set_var
+        run: |
+          content=$(cat /tmp/environment_pipeline_tasks_config.json)
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          echo "configJson=${content}" >> $GITHUB_OUTPUT
+
+      - name: Extract Admin FQDN from JSON
+        id: admin_fqdn
+        env:
+          configJson: ${{steps.set_var.outputs.configJson}}
+        run: |
+          echo "value=${{ fromJson(env.configJson).admin_fqdn }}" >> $GITHUB_OUTPUT
+
+      - name: Extract Front FQDN from JSON
+        id: front_fqdn
+        run: |
+          echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
+
+  cypress_tests_Signup_StichedPF:
+    name: Run Cypress tests - @Signup,@StitchedPF
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
+    with:
+      admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
+      account_id: "987830934591"
+      cypress_tags: "@Signup,@StitchedPF"
+    secrets: inherit #pragma: allowlist secret
+
+  cypress_tests_Signup_StichedHW:
+    name: Run Cypress tests - @Signup,@StitchedHW
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
+    with:
+      admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
+      account_id: "987830934591"
+      cypress_tags: "@Signup,@StitchedHW"
+    secrets: inherit #pragma: allowlist secret
+
+  cypress_tests_SignupIncluded:
+    name: Run Cypress tests - @SignupIncluded
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
+    with:
+      admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
+      account_id: "987830934591"
+      cypress_tags: "@SignupIncluded"
+    secrets: inherit #pragma: allowlist secret
+
+  # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
+  # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
+  cypress_tests_Remaining:
+    name: Run Cypress tests - Remaining
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
+    with:
+      admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
+      account_id: "987830934591"
+      cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
+    secrets: inherit #pragma: allowlist secret
+
+  locust_tests:
+    name: Run locust tests
+    uses: ./.github/workflows/locust_tests.yml
+    needs:
+      - preprod_terraform_outputs
+      - run_preproduction_seed_db_task
+    with:
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
+      account_id: "987830934591"
+    secrets: inherit #pragma: allowlist secret
