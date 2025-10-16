@@ -2,15 +2,28 @@
 
 namespace Application\Form\Validator;
 
+use Laminas\Validator\AbstractValidator;
 use Laminas\Validator\EmailAddress as LaminasEmailAddressValidator;
 
-/**
- * Psalm rightly objects to overriding final but we cannot fix this right now
- * @psalm-suppress InvalidExtendClass, MethodSignatureMismatch
- */
-
-class EmailAddress extends LaminasEmailAddressValidator
+class EmailAddress extends AbstractValidator
 {
+    private LaminasEmailAddressValidator $validator;
+
+    public const string INVALID_EMAIL  = 'invalidEmailAddress';
+
+    protected $messageTemplates = [
+        self::INVALID_EMAIL => 'Enter a valid email address',
+    ];
+
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options = [])
+    {
+        parent::__construct($options);
+        $this->validator = new LaminasEmailAddressValidator();
+    }
+
     /**
      * Overridden function to translate error messages
      *
@@ -19,12 +32,10 @@ class EmailAddress extends LaminasEmailAddressValidator
      */
     public function isValid($value)
     {
-        $valid = parent::isValid($value);
+        $valid = $this->validator->isValid($value);
 
-        if ($valid === false && count($this->getMessages()) > 0) {
-            $this->abstractOptions['messages'] = [
-                'invalidEmailAddress' => 'Enter a valid email address'
-            ];
+        if ($valid === false && count($this->validator->getMessages()) > 0) {
+            $this->abstractOptions['messages'] = $this->messageTemplates;
         }
 
         return $valid;
