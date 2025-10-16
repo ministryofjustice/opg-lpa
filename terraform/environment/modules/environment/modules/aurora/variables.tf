@@ -50,7 +50,6 @@ variable "engine" {
   type        = string
 }
 variable "engine_version" {
-  default     = "13.6"
   description = "The version number of the database engine to use"
   type        = string
 }
@@ -140,11 +139,13 @@ variable "iam_database_authentication_enabled" {
   description = "Specifies whether IAM Database authentication is enabled"
   type        = bool
 }
+
 variable "psql_aurora_parameter_group_family" {
-  default     = "aurora-postgresql13"
+  # default     = "aurora-postgresql13"
   description = "The family of the DB parameter group"
   type        = string
 }
+
 variable "ca_cert_identifier" {
   default     = "rds-ca-rsa2048-g1"
   description = "Specifies the identifier of the CA certificate for the DB instance"
