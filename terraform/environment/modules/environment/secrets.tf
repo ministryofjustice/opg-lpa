@@ -65,7 +65,7 @@ data "aws_secretsmanager_secret" "api_rds_credentials" {
   name = "${var.account_name}/api_rds_credentials"
 }
 
-data "aws_secretsmanager_secret_version" "api_rds_credentials" {
+resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
   secret_id = data.aws_secretsmanager_secret.api_rds_credentials.id
   secret_string = jsonencode({
     username = local.db_username,
