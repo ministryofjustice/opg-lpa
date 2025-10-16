@@ -6,6 +6,7 @@ namespace App\Validator;
 
 use Laminas\Validator\AbstractValidator;
 use Laminas\Validator\NotEmpty as LaminasNotEmpty;
+use Traversable;
 
 final class NotEmpty extends AbstractValidator
 {
@@ -34,8 +35,14 @@ final class NotEmpty extends AbstractValidator
 
     private LaminasNotEmpty $inner;
 
-    public function __construct(array $options = [])
+    public function __construct(int|array|Traversable $options = [])
     {
+        if (is_int($options)) {
+            $options = ['type' => $options];
+        } elseif ($options instanceof Traversable) {
+            $options = iterator_to_array($options);
+        }
+
         $defaultType =
             self::BOOLEAN |
             self::STRING |
