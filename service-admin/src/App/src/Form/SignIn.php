@@ -8,6 +8,7 @@ use Laminas\Filter;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Password;
 use Laminas\InputFilter\Input;
+use Laminas\Validator\Regex;
 
 /**
  * @template T
@@ -37,7 +38,12 @@ class SignIn extends AbstractForm
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(), true)
-            ->attach(new Validator\GovUkEmail());
+            ->attach(new Validator\Regex([
+                'pattern'  => '/^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@.*?(gov.uk)/',
+                'messages' => [
+                    Regex::NOT_MATCH => 'Please use a GOV.UK email address',
+                ],
+            ]));
 
         $input->setRequired(true);
 
