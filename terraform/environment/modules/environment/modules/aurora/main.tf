@@ -11,7 +11,7 @@ resource "aws_rds_cluster" "cluster" {
   engine_version                      = var.engine_version
   enabled_cloudwatch_logs_exports     = ["postgresql"]
   final_snapshot_identifier           = "${var.database_name}-${var.environment}-final-snapshot"
-  db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.postgres-aurora-params.name
+  db_cluster_parameter_group_name     = var.psql_aurora_parameter_group_family == "postgres13" ? aws_rds_cluster_parameter_group.postgres13-aurora-params.name : aws_rds_cluster_parameter_group.postgres14-aurora-params.name
   kms_key_id                          = var.kms_key_id
   master_username                     = var.master_username
   master_password                     = var.master_password
@@ -84,7 +84,7 @@ resource "aws_rds_cluster" "cluster_serverless" {
   master_password                 = var.master_password
   preferred_backup_window         = "00:20-00:50"
   preferred_maintenance_window    = "sun:01:00-sun:01:30"
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.postgres-aurora-params.name
+  db_cluster_parameter_group_name = var.psql_aurora_parameter_group_family == "postgres13" ? aws_rds_cluster_parameter_group.postgres13-aurora-params.name : aws_rds_cluster_parameter_group.postgres14-aurora-params.name
   storage_encrypted               = var.storage_encrypted
   skip_final_snapshot             = var.skip_final_snapshot
   vpc_security_group_ids          = var.vpc_security_group_ids
@@ -132,10 +132,10 @@ resource "aws_rds_cluster_instance" "serverless_instances" {
   }
 }
 
-resource "aws_rds_cluster_parameter_group" "postgres-aurora-params" {
+resource "aws_rds_cluster_parameter_group" "postgres13-aurora-params" {
   name        = lower("postgres13-db-params-${var.environment}")
   description = "default postgres13 aurora parameter group"
-  family      = var.psql_aurora_parameter_group_family
+  family      = "aurora-postgresql13"
   parameter {
     name         = "log_min_duration_statement"
     value        = "500"
@@ -157,6 +157,35 @@ resource "aws_rds_cluster_parameter_group" "postgres-aurora-params" {
   parameter {
     name         = "rds.log_retention_period"
     value        = "1440"
+    apply_method = "immediate"
+  }
+}
+
+resource "aws_rds_cluster_parameter_group" "postgres14-aurora-params" {
+  name        = lower("postgres14-db-params-${var.environment}")
+  description = "default postgres14 aurora parameter group"
+  family      = "aurora-postgresql14"
+  parameter {
+    name         = "log_min_duration_statement"
+    value        = "500"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "log_statement"
+    value        = "none"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "rds.log_retention_period"
+    value        = "1440"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "log_duration"
+    value        = "1"
     apply_method = "immediate"
   }
 }
