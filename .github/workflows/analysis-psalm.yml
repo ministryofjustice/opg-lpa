@@ -40,7 +40,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup PHP
-        uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 # 2.35.4
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
         with:
           php-version: ${{ matrix.scan.phpVersion }}
       - name: Composer install
@@ -52,7 +52,7 @@ jobs:
         run: |
           sed -i 's|"uri":"|"uri":"${{ matrix.scan.name }}\/|g' psalm-results.sarif
       - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@192325c86100d080feab897ff886c34abd4c83a3 # v3.30.3
+        uses: github/codeql-action/upload-sarif@755f44910c12a3d7ca0d8c6e42c048b3362f7cec # v3.30.8
         if: always()
         with:
           sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif

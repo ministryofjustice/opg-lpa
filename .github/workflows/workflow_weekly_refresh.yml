@@ -45,17 +45,17 @@ jobs:
           echo "short_sha=$(git rev-list --no-merges -n 1 HEAD | cut -c1-7)" >> $GITHUB_OUTPUT
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@4f345be3f706950d1fdc05bc86383967a149bd99 # v4.3.4
         with:
           terraform_directory: "./terraform/environment"
       - name : Set terraform version - account
         id: terraform_version_account
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@4f345be3f706950d1fdc05bc86383967a149bd99 # v4.3.4
         with:
           terraform_directory: "./terraform/account"
       - name: Set terraform version - region
         id: terraform_version_region
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@4f345be3f706950d1fdc05bc86383967a149bd99 # v4.3.4
         with:
           terraform_directory: "./terraform/region"
 
@@ -127,7 +127,7 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
@@ -146,7 +146,7 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
@@ -165,7 +165,7 @@ jobs:
 
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     needs:
       - docker_build_scan_push
       - slack_msg_production_deploy_begin
@@ -208,7 +208,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
-          python-version: '3.13'
+          python-version: '3.14'
 
       - name: Install dependencies
         run: |
