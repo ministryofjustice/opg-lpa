@@ -60,3 +60,20 @@ data "aws_secretsmanager_secret" "performance_platform_db_username" {
 data "aws_secretsmanager_secret" "performance_platform_db_password" {
   name = "${var.account_name}/performance_platform_db_password"
 }
+
+data "aws_secretsmanager_secret" "api_rds_credentials" {
+  name = "${var.account_name}/api_rds_credentials"
+}
+
+data "aws_secretsmanager_secret_version" "api_rds_credentials" {
+  secret_id = data.aws_secretsmanager_secret.api_rds_credentials.id
+  secret_string = jsonencode({
+    username = local.db_username,
+    password = local.db_password
+  })
+}
+
+locals {
+  db_username = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
+  db_password = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
+}
