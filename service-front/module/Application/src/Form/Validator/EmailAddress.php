@@ -9,7 +9,7 @@ class EmailAddress extends AbstractValidator
 {
     private LaminasEmailAddressValidator $validator;
 
-    public const INVALID_EMAIL  = 'invalidEmailAddress';
+    public const string INVALID_EMAIL  = 'invalidEmailAddress';
 
     protected $messageTemplates = [
         self::INVALID_EMAIL => 'Enter a valid email address',
