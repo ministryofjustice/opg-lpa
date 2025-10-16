@@ -12,7 +12,7 @@ resource "aws_db_proxy" "rds_proxy" {
     auth_scheme = "SECRETS"
     description = "Authentication for RDS Proxy"
     iam_auth    = "DISABLED"
-    secret_arn  = data.aws_secretsmanager_secret_version.api_rds_credentials.arn
+    secret_arn  = aws_secretsmanager_secret_version.api_rds_credentials.arn
   }
 }
 
