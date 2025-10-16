@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   tfsec_pr_commenter:
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/analysis-infrastructure-tfsec-pr-feedback.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/analysis-infrastructure-tfsec-pr-feedback.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
     with:
       terraform_path: "['terraform/account', 'terraform/region', 'terraform/environment']"
     secrets:
