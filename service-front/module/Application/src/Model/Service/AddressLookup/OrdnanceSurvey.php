@@ -102,7 +102,7 @@ class OrdnanceSurvey
             throw new \RuntimeException('Error retrieving address details: bad status code');
         }
 
-        $body = json_decode('' . $response->getBody(), true);
+        $body = json_decode(strval($response->getBody()), true);
 
         if (isset($body['header']['totalresults']) && $body['header']['totalresults'] === 0) {
             return [];
@@ -165,7 +165,7 @@ class OrdnanceSurvey
              * i.e. Line 2 will always have the same or same + 1 number of fields then line 1.
              * And Line 3 will always have the same or same + 1 number of fields then line 2.
              */
-            $numOnLine[1] = floor($count / 3);
+            $numOnLine[1] = intval(floor($count / 3));
 
             $numOnLine[2] = $numOnLine[1];
             if (($count % 3) == 2) {

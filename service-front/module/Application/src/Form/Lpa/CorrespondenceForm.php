@@ -2,6 +2,8 @@
 
 namespace Application\Form\Lpa;
 
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\Common\PhoneNumber;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 
 /**
@@ -73,15 +75,15 @@ class CorrespondenceForm extends AbstractMainFlowForm
         ]);
 
         if ($correspondenceData['contactByPhone'] == '1') {
-            $correspondent->phone = [
+            $correspondent->setPhone(new PhoneNumber([
                 'number' => $correspondenceData['phone-number']
-            ];
+            ]));
         }
 
         if ($correspondenceData['contactByEmail'] == '1') {
-            $correspondent->email = [
+            $correspondent->setEmail(new EmailAddress([
                 'address' => $correspondenceData['email-address']
-            ];
+            ]));
         }
 
         $validation = $correspondent->validate([

@@ -255,7 +255,7 @@ However, if you upgrade a package in composer.json for one or more services, you
 This can be done with:
 
 ```bash
-docker run -v `pwd`/service-front/:/app/ composer update --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+docker run -v `pwd`/service-front/:/app/ composer update --prefer-dist --no-interaction --no-scripts
 ```
 
 (replacing `service-front` with the path to the application component you are adding a package to; note that you'll need to do this for the following commands as well)
@@ -263,13 +263,13 @@ docker run -v `pwd`/service-front/:/app/ composer update --prefer-dist --no-inte
 Packages can be added with:
 
 ```bash
-docker run -v `pwd`/service-front/:/app/ composer require author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+docker run -v `pwd`/service-front/:/app/ composer require author/package --prefer-dist --no-interaction --no-scripts
 ```
 
 Packages can be removed with:
 
 ```bash
-docker run -v `pwd`/service-front/:/app/ composer remove author/package --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+docker run -v `pwd`/service-front/:/app/ composer remove author/package --prefer-dist --no-interaction --no-scripts
 ```
 
 There are additional make shortcuts of:

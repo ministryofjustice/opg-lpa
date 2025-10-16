@@ -33,5 +33,10 @@
             "MakeSharedTest\\": "../shared/module/MakeShared/tests/"
         }
     },
-    "include-path": ["config/"]
+    "include-path": ["config/"],
+    "config": {
+        "platform": {
+            "php": "8.3"
+        }
+    }
 }
