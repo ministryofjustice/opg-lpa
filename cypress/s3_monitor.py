@@ -192,7 +192,7 @@ class S3Monitor:
                     key = s3obj["Key"]
 
                     if key in seenkeys:
-                        self.logger.debug(f"✘ IGNORING {key} - already seen")
+                        #                         self.logger.debug(f"✘ IGNORING {key} - already seen")
                         continue
 
                     seenkeys.add(key)
