@@ -196,7 +196,7 @@ class CheckoutController extends AbstractLpaController
 
             // If this payment id is still in play, direct the user back...
             if (!$payment->isFinished()) {
-                $this->redirect()->toUrl('' . $payment->getPaymentPageUrl());
+                $this->redirect()->toUrl(strval($payment->getPaymentPageUrl()));
                 return $this->getResponse();
             }
 
@@ -218,7 +218,7 @@ class CheckoutController extends AbstractLpaController
         );
 
         $payment = $paymentClient->createPayment(
-            (int)($lpa->payment->amount * 100), // amount in pence,
+            (int)($lpa->payment->amount * 100.0), // amount in pence,
             $ref,
             $description,
             new \GuzzleHttp\Psr7\Uri($callback)
@@ -229,7 +229,7 @@ class CheckoutController extends AbstractLpaController
 
         $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
-        $this->redirect()->toUrl('' . $payment->getPaymentPageUrl());
+        $this->redirect()->toUrl(strval($payment->getPaymentPageUrl()));
 
         return $this->getResponse();
     }

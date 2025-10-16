@@ -10,6 +10,9 @@
         "sort-packages": true,
         "allow-plugins": {
             "laminas/laminas-component-installer": true
+        },
+        "platform": {
+            "php": "8.4.12"
         }
     },
     "require": {
@@ -54,13 +57,14 @@
         "laminas/laminas-cache-storage-adapter-zend-server": "*"
     },
     "require-dev": {
+        "brick/varexporter": "^0.5",
         "filp/whoops": "^2.14.4",
         "laminas/laminas-development-mode": "^3.5.0",
         "phpspec/prophecy-phpunit": "^2.0.1",
         "phpunit/phpunit": "^9.5.10",
         "roave/security-advisories": "dev-master",
         "squizlabs/php_codesniffer": "^4.0.0",
-        "vimeo/psalm": "^5.0.0"
+        "vimeo/psalm": "^6.0.0"
     },
     "autoload": {
         "psr-4": {

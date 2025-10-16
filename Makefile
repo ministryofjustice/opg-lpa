@@ -30,23 +30,23 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
-	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: run-api-composer
 run-api-composer:
-	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: run-shared-composer
 run-shared-composer:
-	@docker run --rm -v `pwd`/shared/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/shared/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: run-composers
 run-composers:
@@ -57,12 +57,12 @@ run-composers:
 # you'll need to escape the \ and : as above
 .PHONY: front-composer-update
 front-composer-update:
-	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
 
 # remove a package, same format for PACKAGE= as above
 .PHONY: front-composer-remove
 front-composer-remove:
-	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer remove $(PACKAGE)  --ignore-platform-reqs --no-install
+	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer remove $(PACKAGE)  --no-install
 
 #run composer outdated in front container
 .PHONY: front-composer-outdated
@@ -73,12 +73,12 @@ front-composer-outdated:
 # you'll need to escape the \ and : as above
 .PHONY: api-composer-update
 api-composer-update:
-	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
 
 # remove a package, same format for PACKAGE= as above
 .PHONY: api-composer-remove
 api-composer-remove:
-	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer remove $(PACKAGE)  --ignore-platform-reqs --no-install
+	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer remove $(PACKAGE)  --no-install
 
 #run composer outdated in front container
 .PHONY: api-composer-outdated

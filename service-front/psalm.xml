@@ -5,6 +5,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    ensureOverrideAttribute="false"
+    findUnusedCode="false"
 >
     <projectFiles>
         <directory name="module/Application/src" />
@@ -12,4 +14,16 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+
+    <issueHandlers>
+        <!--
+            AbstractData defines properties as protected then adds getters for them. This means
+            they're available publicly, but Psalm can't understand that.
+        -->
+        <InaccessibleProperty errorLevel="suppress" />
+
+        <!-- We magically assign properties to Laminas\Session\Container and Laminas\View\Model\ViewModel -->
+        <UndefinedMagicPropertyAssignment errorLevel="suppress" />
+        <UndefinedMagicPropertyFetch errorLevel="suppress" />
+    </issueHandlers>
 </psalm>

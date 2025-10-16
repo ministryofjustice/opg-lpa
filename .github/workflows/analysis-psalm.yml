@@ -44,7 +44,7 @@ jobs:
         with:
           php-version: ${{ matrix.scan.phpVersion }}
       - name: Composer install
-        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts --ignore-platform-reqs
+        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif --no-cache
       - name: Add prefix to Psalm paths
