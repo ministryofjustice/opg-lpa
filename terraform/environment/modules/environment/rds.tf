@@ -45,7 +45,7 @@ resource "aws_db_instance" "api" {
   kms_key_id                          = local.is_primary_region ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
   username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   password                            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  parameter_group_name                = aws_db_parameter_group.postgres13-db-params.name
+  parameter_group_name                = var.account.psql_parameter_group_family == "postgres13" ? aws_db_parameter_group.postgres13-db-params.name : aws_db_parameter_group.postgres14-db-params.name
   vpc_security_group_ids              = [aws_security_group.rds-api.id]
   auto_minor_version_upgrade          = false
   maintenance_window                  = "wed:05:00-wed:09:00"
@@ -86,35 +86,65 @@ module "aws_rds_api_alarms" {
 }
 
 module "api_aurora" {
-  auto_minor_version_upgrade    = true
-  source                        = "./modules/aurora"
-  count                         = var.account.aurora_enabled ? 1 : 0
-  aurora_serverless             = var.account.aurora_serverless
-  account_id                    = data.aws_caller_identity.current.account_id
-  availability_zones            = data.aws_availability_zones.aws_zones.names
-  apply_immediately             = !var.account.deletion_protection
-  cluster_identifier            = "api2"
-  db_subnet_group_name          = "data-persistence-subnet-default"
-  deletion_protection           = var.account.deletion_protection
-  database_name                 = "api2"
-  engine_version                = var.account.psql_engine_version
-  environment                   = var.environment_name
-  master_username               = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
-  master_password               = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  instance_count                = var.account.aurora_instance_count
-  instance_class                = "db.t3.medium"
-  kms_key_id                    = data.aws_kms_key.rds.arn
-  replication_source_identifier = var.account.always_on ? aws_db_instance.api[0].arn : ""
-  skip_final_snapshot           = !var.account.deletion_protection
-  vpc_security_group_ids        = [aws_security_group.rds-api.id]
-  tags                          = local.db_component_tag
-  copy_tags_to_snapshot         = true
+  auto_minor_version_upgrade         = true
+  source                             = "./modules/aurora"
+  count                              = var.account.aurora_enabled ? 1 : 0
+  aurora_serverless                  = var.account.aurora_serverless
+  account_id                         = data.aws_caller_identity.current.account_id
+  availability_zones                 = data.aws_availability_zones.aws_zones.names
+  apply_immediately                  = !var.account.deletion_protection
+  cluster_identifier                 = "api2"
+  db_subnet_group_name               = "data-persistence-subnet-default"
+  deletion_protection                = var.account.deletion_protection
+  database_name                      = "api2"
+  engine_version                     = var.account.psql_engine_version
+  environment                        = var.environment_name
+  psql_aurora_parameter_group_family = var.account.psql_parameter_group_family
+  master_username                    = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
+  master_password                    = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
+  instance_count                     = var.account.aurora_instance_count
+  instance_class                     = "db.t3.medium"
+  kms_key_id                         = data.aws_kms_key.rds.arn
+  replication_source_identifier      = var.account.always_on ? aws_db_instance.api[0].arn : ""
+  skip_final_snapshot                = !var.account.deletion_protection
+  vpc_security_group_ids             = [aws_security_group.rds-api.id]
+  tags                               = local.db_component_tag
+  copy_tags_to_snapshot              = true
 }
 
 resource "aws_db_parameter_group" "postgres13-db-params" {
   name        = lower("postgres13-db-params-${var.environment_name}")
   description = "default postgres13 rds parameter group"
-  family      = var.account.psql13_parameter_group_family
+  family      = "postgres13"
+  parameter {
+    name         = "log_min_duration_statement"
+    value        = "500"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "log_statement"
+    value        = "none"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "rds.log_retention_period"
+    value        = "1440"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "log_duration"
+    value        = "1"
+    apply_method = "immediate"
+  }
+}
+
+resource "aws_db_parameter_group" "postgres14-db-params" {
+  name        = lower("postgres14-db-params-${var.environment_name}")
+  description = "default postgres14 rds parameter group"
+  family      = "postgres14"
   parameter {
     name         = "log_min_duration_statement"
     value        = "500"
