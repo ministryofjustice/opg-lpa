@@ -46,8 +46,7 @@ data "aws_iam_policy_document" "rds_proxy_role" {
     ]
 
     resources = [
-      data.aws_secretsmanager_secret.api_rds_username.arn,
-      data.aws_secretsmanager_secret.api_rds_password.arn
+      data.aws_secretsmanager_secret.api_rds_credentials.arn
     ]
   }
 
@@ -57,7 +56,7 @@ data "aws_iam_policy_document" "rds_proxy_role" {
     actions = [
       "kms:Decrypt"
     ]
-    resources = [data.aws_kms_alias.secrets_encryption_alias.target_key_arn]
+    resources = [data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn]
   }
 }
 
