@@ -57,7 +57,6 @@
         "laminas/laminas-cache-storage-adapter-zend-server": "*"
     },
     "require-dev": {
-        "brick/varexporter": "^0.5",
         "filp/whoops": "^2.14.4",
         "laminas/laminas-development-mode": "^3.5.0",
         "phpspec/prophecy-phpunit": "^2.0.1",
