@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class JsonModelTest extends TestCase
 {
-    public function testSerialize() : void
+    public function testSerialize(): void
     {
         // Note: Arrays do not implement Traversable, despite working in a foreach
         $jsonModel = new JsonModel(['some' => ['nested' => 'data']]);
@@ -20,10 +20,12 @@ class JsonModelTest extends TestCase
             . "    \"some\": {\n"
             . "        \"nested\": \"data\"\n"
             . "    }\n"
-            . "}", $result);
+            . "}",
+            $result
+        );
     }
 
-    public function testSerializeWithCallback() : void
+    public function testSerializeWithCallback(): void
     {
         $jsonModel = new JsonModel(['some' => 'data']);
         $jsonModel->setJsonpCallback('testCallback');
@@ -33,7 +35,7 @@ class JsonModelTest extends TestCase
         $this->assertEquals('testCallback({"some":"data"});', $result);
     }
 
-    public function testSerializeTraversable() : void
+    public function testSerializeTraversable(): void
     {
         $arrayIterator = new ArrayIterator(['some' => ['nested' => 'data']]);
 
@@ -46,6 +48,8 @@ class JsonModelTest extends TestCase
             . "    \"some\": {\n"
             . "        \"nested\": \"data\"\n"
             . "    }\n"
-            . "}", $result);
+            . "}",
+            $result
+        );
     }
 }

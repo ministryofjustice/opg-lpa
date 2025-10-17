@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Library\Authentication\Identity;
 
 use RuntimeException;
@@ -10,8 +11,8 @@ use RuntimeException;
  * Class IdentityAwareTrait
  * @package Application\Library\Authentication\Identity
  */
-trait IdentityAwareTrait {
-
+trait IdentityAwareTrait
+{
     /**
      * @var IdentityInterface The current user's identity.
      */
@@ -20,7 +21,8 @@ trait IdentityAwareTrait {
     /**
      * @param IdentityInterface $identity Set the current user's identity.
      */
-    public function setIdentity( IdentityInterface $identity ){
+    public function setIdentity(IdentityInterface $identity)
+    {
         $this->identity = $identity;
     }
 
@@ -28,14 +30,13 @@ trait IdentityAwareTrait {
      * @return IdentityInterface Get the current user's identity.
      * @throws RuntimeException If identity is not set.
      */
-    public function getIdentity(){
+    public function getIdentity()
+    {
 
-        if( !isset($this->identity) || !( $this->identity instanceof IdentityInterface ) ){
+        if (!isset($this->identity) || !( $this->identity instanceof IdentityInterface )) {
             throw new RuntimeException('No identity set');
         }
 
         return $this->identity;
-
     }
-
 } // trait

@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Library\ApiProblem;
 
 /**
@@ -7,9 +8,8 @@ namespace Application\Library\ApiProblem;
  * Interface ApiProblemExceptionInterface
  * @package Application\Library\ApiProblem
  */
-interface ApiProblemExceptionInterface {
-
+interface ApiProblemExceptionInterface
+{
     public function getCode();
     public function getMessage();
-
 }

@@ -12,6 +12,7 @@ use MakeShared\Logging\LoggerTrait;
 class DownloadController extends AbstractLpaController
 {
     use LoggerTrait;
+
     /**
      * @psalm-suppress ImplementedReturnTypeMismatch
      * @return ViewModel|HttpResponse|false

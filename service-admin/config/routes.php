@@ -32,7 +32,8 @@ use Mezzio\MiddlewareFactory;
  *     'contact'
  * );
  */
-return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container) : void {
+
+return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
     $app->get('/', App\Handler\HomeHandler::class, 'home');
     $app->route('/sign-in', App\Handler\SignInHandler::class, ['GET', 'POST'], 'sign.in');
     $app->get('/sign-out', App\Handler\SignOutHandler::class, 'sign.out');

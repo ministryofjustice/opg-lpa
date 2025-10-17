@@ -33,7 +33,7 @@ class Guidance extends AbstractService
                 $sectionFilename = trim($matches[1]);
 
                 // Cleaning out characters that won't play nicely in a url
-                $sectionTitleClean = str_replace(array('?',','), '', $sectionTitle);
+                $sectionTitleClean = str_replace(['?',','], '', $sectionTitle);
 
                 $sectionId = trim(strtolower(str_replace(' ', '-', $sectionTitleClean)));
 

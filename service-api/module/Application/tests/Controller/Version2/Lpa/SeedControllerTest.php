@@ -18,7 +18,7 @@ class SeedControllerTest extends AbstractControllerTestCase
      */
     private $service;
 
-    public function getController(Array $parameters = []) : SeedController
+    public function getController(array $parameters = []): SeedController
     {
         $this->service = Mockery::mock(Service::class);
 
@@ -65,13 +65,12 @@ class SeedControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
-        ), $response->toArray());
-
+        ], $response->toArray());
     }
 
     public function testGetUnexpectedResponse()
@@ -84,12 +83,12 @@ class SeedControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'Unable to process request'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testGetUnauthorised()
@@ -106,10 +105,10 @@ class SeedControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some'=>'data'], $this->userId])
+        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data'], $this->userId])
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
-        $response = $controller->update(10, ['some'=>'data']);
+        $response = $controller->update(10, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(Json::class, $response);
@@ -120,39 +119,38 @@ class SeedControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some'=>'data'], $this->userId])
+        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data'], $this->userId])
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
-        $response = $controller->update(10, ['some'=>'data']);
+        $response = $controller->update(10, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
-        ), $response->toArray());
-
+        ], $response->toArray());
     }
 
     public function testUpdateUnexpectedResponse()
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some'=>'data'], $this->userId])
+        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data'], $this->userId])
             ->andReturn('unexpected type')->once();
 
-        $response = $controller->update(10, ['some'=>'data']);
+        $response = $controller->update(10, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'Unable to process request'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testUpdateUnauthorised()

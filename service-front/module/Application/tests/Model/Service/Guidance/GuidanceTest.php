@@ -12,7 +12,7 @@ final class GuidanceTest extends AbstractServiceTest
     private string $cwd;
     private Guidance $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -21,12 +21,12 @@ final class GuidanceTest extends AbstractServiceTest
         $this->cwd = getcwd();
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         parent::tearDown();
     }
 
-    public function testParseMarkdown() : void
+    public function testParseMarkdown(): void
     {
         $result = $this->service->parseMarkdown();
 
@@ -45,7 +45,7 @@ final class GuidanceTest extends AbstractServiceTest
         $this->assertEquals('mental-capacity-nav-link', $result['sections'][1]['dataCy']);
     }
 
-    public function testProcessSection() : void
+    public function testProcessSection(): void
     {
         $result = $this->service->processSection('People_Donor.md', 1);
         $this->assertStringContainsString('<article id="topic-1"><h2>The donor</h2>', $result);

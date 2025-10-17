@@ -29,6 +29,6 @@ final class SummaryControllerTest extends AbstractControllerTestCase
         $timeNow = new DateTimeImmutable('now');
         $fee = ($timeNow >= $feeEffectiveDate) ? 92 : 82;
         $this->assertEquals($fee, $result->getVariable('fullFee'));
-        $this->assertEquals($fee/2, $result->getVariable('lowIncomeFee'));
+        $this->assertEquals($fee / 2, $result->getVariable('lowIncomeFee'));
     }
 }

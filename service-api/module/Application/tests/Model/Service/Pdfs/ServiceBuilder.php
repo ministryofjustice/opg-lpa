@@ -76,5 +76,4 @@ class ServiceBuilder extends AbstractServiceBuilder
         $this->sqsClient = $sqsClient;
         return $this;
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
 use DateTime;
@@ -7,7 +8,6 @@ use Application\Model\DataAccess\Postgres\UserModel as User;
 
 class UserModelTest extends MockeryTestCase
 {
-
     public function testReturnDateFieldKeyNotFound()
     {
         $user = new User([]);
@@ -69,5 +69,4 @@ class UserModelTest extends MockeryTestCase
         $this->assertEquals('auth-token', $user->authToken()->id());
         $this->assertEquals(null, $user->numberOfLpas());
     }
-
 }

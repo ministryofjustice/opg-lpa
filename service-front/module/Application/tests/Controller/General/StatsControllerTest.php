@@ -16,7 +16,7 @@ final class StatsControllerTest extends AbstractControllerTestCase
 {
     private MockInterface|StatsService $statsService;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -71,8 +71,8 @@ final class StatsControllerTest extends AbstractControllerTestCase
         $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
-        $byMonth = array();
-        for ($i = 1; $i <=4; $i++) {
+        $byMonth = [];
+        for ($i = 1; $i <= 4; $i++) {
             $byMonth[date('Y-m', $start->getTimestamp())] = [
                 'started' => 1,
                 'created' => 1,
@@ -122,8 +122,8 @@ final class StatsControllerTest extends AbstractControllerTestCase
         $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
-        $byMonth = array();
-        for ($i = 1; $i <=4; $i++) {
+        $byMonth = [];
+        for ($i = 1; $i <= 4; $i++) {
             $byMonth[date('Y-m', $start->getTimestamp())] = [
                 'professional' => [
                     'count' => 1,
@@ -205,8 +205,8 @@ final class StatsControllerTest extends AbstractControllerTestCase
         $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
-        $stats = array();
-        for ($i = 1; $i <=4; $i++) {
+        $stats = [];
+        for ($i = 1; $i <= 4; $i++) {
             $stats[date('Y-m', $start->getTimestamp())] = [
                 'completed' => 1,
                 'contactByEmail' => 1,
@@ -234,7 +234,7 @@ final class StatsControllerTest extends AbstractControllerTestCase
         $end = new DateTime('last day of this month');
         $end->setTime(23, 59, 59);
 
-        $stats = array();
+        $stats = [];
 
         for ($i = 1; $i <= 4; $i++) {
             $stats[date('Y-m', $start->getTimestamp())] = [

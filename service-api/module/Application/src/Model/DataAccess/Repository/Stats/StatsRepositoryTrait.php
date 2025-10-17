@@ -1,8 +1,9 @@
 <?php
+
 namespace Application\Model\DataAccess\Repository\Stats;
 
-trait StatsRepositoryTrait {
-
+trait StatsRepositoryTrait
+{
     /**
      * @var StatsRepositoryInterface
      */
@@ -19,7 +20,7 @@ trait StatsRepositoryTrait {
     /**
      * @return StatsRepositoryInterface
      */
-    private function getStatsRepository() : StatsRepositoryInterface
+    private function getStatsRepository(): StatsRepositoryInterface
     {
         if (!($this->statsRepository instanceof StatsRepositoryInterface)) {
             throw new \RuntimeException("Instance of StatsRepository not set");
@@ -27,5 +28,4 @@ trait StatsRepositoryTrait {
 
         return $this->statsRepository;
     }
-
 }

@@ -11,6 +11,7 @@ use MakeShared\Logging\LoggerTrait;
 class PasswordController extends AbstractAuthController
 {
     use LoggerTrait;
+
     /**
      * Get the service to use
      *
