@@ -19,7 +19,7 @@ use Twig\Environment as TwigEnvironment;
 
 final class AccountInfoFactoryTest extends MockeryTestCase
 {
-    public function testInvoke():void
+    public function testInvoke(): void
     {
         $routeMatch = Mockery::mock(RouteMatch::class);
         $mvcEvent = Mockery::mock(RouteMatch::class);

@@ -14,7 +14,7 @@ final class DateServiceTest extends TestCase
 {
     private DateService $dateService;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->dateService = new DateService();
     }
@@ -22,7 +22,7 @@ final class DateServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetNow() : void
+    public function testGetNow(): void
     {
         $result = $this->dateService->getNow();
 
@@ -33,7 +33,7 @@ final class DateServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetToday() : void
+    public function testGetToday(): void
     {
         $this->assertEquals(new DateTime('today'), $this->dateService->getToday());
     }

@@ -13,7 +13,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 final class RouteNameFactoryTest extends MockeryTestCase
 {
-    public function testInvoke():void
+    public function testInvoke(): void
     {
         $persistentSession = Mockery::mock(PersistentSessionDetails::class);
         $persistentSession->shouldReceive('getCurrentRoute')

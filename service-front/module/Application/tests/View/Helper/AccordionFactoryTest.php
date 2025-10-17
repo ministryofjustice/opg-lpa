@@ -14,7 +14,7 @@ use Laminas\Router\RouteMatch;
 
 final class AccordionFactoryTest extends MockeryTestCase
 {
-    public function testInvoke() : void
+    public function testInvoke(): void
     {
         $routeMatch = Mockery::mock(RouteMatch::class);
 

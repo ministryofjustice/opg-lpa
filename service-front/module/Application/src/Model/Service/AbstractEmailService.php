@@ -22,7 +22,7 @@ abstract class AbstractEmailService extends AbstractService
 
     /**
      * Email template references. Individual MailTransportInterface
-     * implementations may map these to appropriate rendering mechanisms (e.g. 
+     * implementations may map these to appropriate rendering mechanisms (e.g.
      * 3rd party identifiers (e.g. Notify template IDs)
      */
     public const EMAIL_ACCOUNT_ACTIVATE                      = 'email-account-activate';

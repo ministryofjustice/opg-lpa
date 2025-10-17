@@ -1,10 +1,10 @@
 <?php
+
 namespace Application\ControllerFactory;
 
 use Application\Controller\General\PingController;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-
 
 class PingControllerFactory implements FactoryInterface
 {
@@ -13,7 +13,7 @@ class PingControllerFactory implements FactoryInterface
      *
      * @param  ContainerInterface $container
      */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = NULL)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $controller = new PingController();
         $controller->setStatusService($container->get('SiteStatus'));

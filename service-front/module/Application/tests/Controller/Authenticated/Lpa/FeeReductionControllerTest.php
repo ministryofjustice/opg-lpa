@@ -20,7 +20,7 @@ final class FeeReductionControllerTest extends AbstractControllerTestCase
     private array $options;
     private MockInterface|Select $reductionOptions;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

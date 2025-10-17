@@ -10,7 +10,6 @@ use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Interop\Container\ContainerInterface;
 use Http\Client\HttpClient as HttpClientInterface;
-
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\AddressLookup\OrdnanceSurveyFactory;
 
@@ -18,7 +17,7 @@ final class OrdnanceSurveyFactoryTest extends MockeryTestCase
 {
     private MockInterface|ContainerInterface $container;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->container = Mockery::mock(ContainerInterface::class);
     }
@@ -34,7 +33,7 @@ final class OrdnanceSurveyFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')
             ->withArgs(['config'])
             ->once()
-            ->andReturn(['address'=>['ordnancesurvey'=>['endpoint'=>'xxx']]]);
+            ->andReturn(['address' => ['ordnancesurvey' => ['endpoint' => 'xxx']]]);
 
         $factory = new OrdnanceSurveyFactory();
         $this->expectException(UnexpectedValueException::class);
@@ -48,7 +47,7 @@ final class OrdnanceSurveyFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')
             ->withArgs(['config'])
             ->once()
-            ->andReturn(['address'=>['ordnancesurvey'=>['key'=>'xxx']]]);
+            ->andReturn(['address' => ['ordnancesurvey' => ['key' => 'xxx']]]);
 
         $factory = new OrdnanceSurveyFactory();
         $this->expectException(UnexpectedValueException::class);
@@ -63,7 +62,7 @@ final class OrdnanceSurveyFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')
             ->withArgs(['config'])
             ->once()
-            ->andReturn(['address'=>['ordnancesurvey'=>['key'=>'xxx', 'endpoint'=> 'http://yyyy.example.com']]]);
+            ->andReturn(['address' => ['ordnancesurvey' => ['key' => 'xxx', 'endpoint' => 'http://yyyy.example.com']]]);
 
         $this->container->shouldReceive('get')
             ->withArgs(['HttpClient'])

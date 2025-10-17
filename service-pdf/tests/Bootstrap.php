@@ -4,6 +4,7 @@
  * Simple autoloader function to dynamically load
  * the required files as they are instantiated
  */
+
 spl_autoload_register(function ($class) {
 
     //  Base directories where namespaced files reside

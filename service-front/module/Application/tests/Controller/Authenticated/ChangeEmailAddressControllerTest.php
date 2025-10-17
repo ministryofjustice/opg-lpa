@@ -18,7 +18,7 @@ final class ChangeEmailAddressControllerTest extends AbstractControllerTestCase
         'email' => 'newunit@test.com'
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

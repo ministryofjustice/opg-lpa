@@ -20,7 +20,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
      */
     private $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -87,6 +87,8 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
             '{"type":"http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html",' .
             '"title":"Forbidden",' .
             '"status":403,' .
-            '"detail":"LPA has been locked"}', $result->getContent());
+            '"detail":"LPA has been locked"}',
+            $result->getContent()
+        );
     }
 }

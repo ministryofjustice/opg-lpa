@@ -25,7 +25,7 @@ class StatusControllerFactoryTest extends MockeryTestCase
      */
     private $container;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->factory = new StatusControllerFactory();
         $this->container = Mockery::mock(ContainerInterface::class);

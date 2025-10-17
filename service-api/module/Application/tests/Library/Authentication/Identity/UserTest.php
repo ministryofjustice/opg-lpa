@@ -12,18 +12,18 @@ class UserTest extends TestCase
      */
     private $user;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->user = new User('ID', 'email@email.com');
     }
 
 
-    public function testEmail() : void
+    public function testEmail(): void
     {
         $this->assertEquals('email@email.com', $this->user->email());
     }
 
-    public function testSetAsAdmin() : void
+    public function testSetAsAdmin(): void
     {
         $this->user->setAsAdmin();
         $this->assertEquals([0 => 'user', 1 => 'admin'], $this->user->getRoles());

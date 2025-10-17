@@ -142,7 +142,7 @@ abstract class AbstractBaseController extends AbstractActionController implement
                 // (which will set one), ready to check again.
                 return $this->redirect()->toRoute(
                     $routeName,
-                    array(),
+                    [],
                     ['query' => ['cookie' => '1']]
                 );
             } else {

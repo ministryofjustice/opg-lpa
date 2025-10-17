@@ -11,12 +11,12 @@ use Laminas\Http\Response;
 
 final class SessionKeepAliveControllerTest extends AbstractControllerTestCase
 {
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
     }
 
-    public function testIndexActionValidSession() : void
+    public function testIndexActionValidSession(): void
     {
         /** @var SessionKeepAliveController $controller */
         $controller = $this->getController(SessionKeepAliveController::class);
@@ -28,7 +28,7 @@ final class SessionKeepAliveControllerTest extends AbstractControllerTestCase
         $this->assertEquals(['refreshed' => true], $result->getVariables());
     }
 
-    public function testIndexActionInvalidSession() : void
+    public function testIndexActionInvalidSession(): void
     {
         /** @var SessionKeepAliveController $controller */
         $controller = $this->getController(SessionKeepAliveController::class);
@@ -40,7 +40,7 @@ final class SessionKeepAliveControllerTest extends AbstractControllerTestCase
         $this->assertEquals(['refreshed' => false], $result->getVariables());
     }
 
-    public function testSetExpiryAction() : void
+    public function testSetExpiryAction(): void
     {
         $expireInSeconds = 500;
 
@@ -65,7 +65,7 @@ final class SessionKeepAliveControllerTest extends AbstractControllerTestCase
         $this->assertEquals(['remainingSeconds' => $expireInSeconds], $result->getVariables());
     }
 
-    public function testSetExpiryActionMissingPOSTVariable() : void
+    public function testSetExpiryActionMissingPOSTVariable(): void
     {
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
 
@@ -83,7 +83,7 @@ final class SessionKeepAliveControllerTest extends AbstractControllerTestCase
         $this->assertEquals($result->getStatusCode(), 400);
     }
 
-    public function testSetExpiryActionWithInvalidPostReceives400() : void
+    public function testSetExpiryActionWithInvalidPostReceives400(): void
     {
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
 
@@ -100,7 +100,7 @@ final class SessionKeepAliveControllerTest extends AbstractControllerTestCase
         $this->assertEquals($result->getStatusCode(), 400);
     }
 
-    public function testSetExpiryActionWithGETReceives405() : void
+    public function testSetExpiryActionWithGETReceives405(): void
     {
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 

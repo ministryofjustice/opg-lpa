@@ -1,11 +1,11 @@
 <?php
+
 namespace Application\Model\DataAccess\Postgres;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Postgres\DbWrapper;
-
 
 /**
  * Used to instantiate any class that extents Application\Model\DataAccess\Postgres\AbstractBase

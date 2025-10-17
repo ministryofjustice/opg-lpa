@@ -22,7 +22,7 @@ class ApplicantNames extends AbstractHelper
         }
 
         if (is_array($lpa->document->whoIsRegistering) && is_array($lpa->document->primaryAttorneys)) {
-            $humans = array();
+            $humans = [];
 
 
             foreach ($lpa->document->primaryAttorneys as $attorney) {
