@@ -60,8 +60,32 @@ data "aws_iam_policy_document" "rds_proxy_role" {
   }
 }
 
-resource "aws_iam_role_policy" "rds_proxy" {
-  name   = lower("rds-proxy-role-policy-${var.environment_name}")
-  role   = aws_iam_role.rds_proxy_role[0].id
-  policy = data.aws_iam_policy_document.rds_proxy_role.json
+resource "aws_security_group" "rds_proxy_ingress" {
+  name_prefix = "${var.environment_name}-rds-proxy-ingress"
+  vpc_id      = data.aws_vpc.default.id
+  tags        = local.pdf_component_tag
+}
+
+resource "aws_security_group_rule" "proxy_ingress_from_ecs" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rds_proxy_client.id
+  source_security_group_id = aws_security_group.rds-client.id
+}
+
+resource "aws_security_group" "rds_proxy_to_rds" {
+  name_prefix = "${var.environment_name}-rds-proxy-to-rds"
+  vpc_id      = data.aws_vpc.default.id
+  tags        = local.pdf_component_tag
+}
+
+resource "aws_security_group_rule" "rds_proxy" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.rds-api.id
+  security_group_id        = aws_security_group.rds_proxy_to_rds.id
 }
