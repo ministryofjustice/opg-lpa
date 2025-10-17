@@ -7,9 +7,9 @@ use Laminas\Validator\Regex;
 
 class Password extends AbstractValidator
 {
-    const MUST_INCLUDE_DIGIT      = 'mustIncludeDigit';
-    const MUST_INCLUDE_LOWER_CASE = 'mustIncludeLowerCase';
-    const MUST_INCLUDE_UPPER_CASE = 'mustIncludeUpperCase';
+    public const MUST_INCLUDE_DIGIT      = 'mustIncludeDigit';
+    public const MUST_INCLUDE_LOWER_CASE = 'mustIncludeLowerCase';
+    public const MUST_INCLUDE_UPPER_CASE = 'mustIncludeUpperCase';
 
     protected $messageTemplates = [
         self::MUST_INCLUDE_DIGIT      => 'must-include-digit',

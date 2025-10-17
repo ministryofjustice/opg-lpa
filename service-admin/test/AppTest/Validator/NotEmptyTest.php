@@ -31,14 +31,14 @@ final class NotEmptyTest extends TestCase
     }
 
     /** @dataProvider validProvider */
-    public function test_it_accepts_expected_values(mixed $value): void
+    public function testItAcceptsExpectedValues(mixed $value): void
     {
         $validator = new NotEmpty();
         self::assertTrue($validator->isValid($value), 'Expected value to be considered NOT empty');
     }
 
     /** @dataProvider invalidProvider */
-    public function test_it_rejects_expected_values(mixed $value): void
+    public function testItRejectsExpectedValues(mixed $value): void
     {
         $validator = new NotEmpty();
         self::assertFalse($validator->isValid($value), 'Expected value to be considered empty');

@@ -14,4 +14,4 @@ interface IdentityAwareInterface
      * @throws \RuntimeException If identity is not set.
      */
     public function getIdentity();
-} // interface
+}

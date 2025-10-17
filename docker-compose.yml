@@ -477,3 +477,17 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+
+  phpcs:
+    container_name: lpa-phpcs
+    image: lpa-phpcs
+    build:
+      context: ./
+      dockerfile: phpcs/docker/Dockerfile
+    volumes:
+      - ./service-api:/app/service-api
+      - ./service-front:/app/service-front
+      - ./service-admin:/app/service-admin
+      - ./service-pdf:/app/service-pdf
+      - ./shared:/app/shared
+      - ./phpcs.xml.dist:/app/config/phpcs.xml.dist

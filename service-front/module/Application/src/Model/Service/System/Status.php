@@ -29,11 +29,11 @@ class Status extends AbstractService implements ApiClientAwareInterface
     // if any of these have a status of 'fail', the service
     // is considered down; if any is 'warn', the service
     // is degraded
-    const SERVICES_REQUIRED = ['api', 'sessionSaveHandler', 'mail'];
+    public const SERVICES_REQUIRED = ['api', 'sessionSaveHandler', 'mail'];
 
     // if any of these have a status of 'fail' or 'warn', the service
     // is considered up, but running at a degraded level
-    const SERVICES_OPTIONAL = ['dynamo', 'ordnanceSurvey'];
+    public const SERVICES_OPTIONAL = ['dynamo', 'ordnanceSurvey'];
 
     /** @var DynamoDbClient */
     private $dynamoDbClient;

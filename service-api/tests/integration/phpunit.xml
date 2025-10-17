@@ -1,5 +1,0 @@
-<phpunit bootstrap="./Bootstrap.php" colors="true">
-    <testsuite name="APIFunctional">
-        <directory>.</directory>
-    </testsuite>
-</phpunit>

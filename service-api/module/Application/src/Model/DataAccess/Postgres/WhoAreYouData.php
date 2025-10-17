@@ -12,7 +12,7 @@ use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 
 class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
 {
-    const WHO_TABLE = 'who_are_you';
+    public const WHO_TABLE = 'who_are_you';
 
     /**
      * Insert a new 'Who Are You' response.

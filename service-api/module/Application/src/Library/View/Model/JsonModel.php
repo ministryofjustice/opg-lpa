@@ -38,4 +38,4 @@ class JsonModel extends LaminasJsonModel
         // Using PHP's inbuilt function. Always return pretty.
         return json_encode($variables, JSON_PRETTY_PRINT);
     }
-} // class
+}

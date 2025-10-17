@@ -8,7 +8,7 @@ use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 
 class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryInterface
 {
-    const STATS_TABLE = 'stats';
+    public const STATS_TABLE = 'stats';
 
     /**
      * Insert a new set of stats into the cache.

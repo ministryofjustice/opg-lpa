@@ -160,7 +160,9 @@ class UserDataTest extends MockeryTestCase
         $subselectMock = Mockery::mock(Select::class);
         $selectMock = Mockery::mock(Select::class);
         $statementMock = Mockery::mock(StatementInterface::class);
-        $resultMock = $resultMock = Helpers::makePdoResultMock([[]]);
+        $resultMock = $resultMock = Helpers::makePdoResultMock([
+            [],
+        ]);
 
         // expectations
         $dbWrapperMock->shouldReceive('createSql')
