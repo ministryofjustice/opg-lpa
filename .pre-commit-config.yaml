@@ -19,13 +19,28 @@ repos:
     hooks:
     -   id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
-  # - repo: https://github.com/digitalpulp/pre-commit-php.git
-  #   rev: 1.4.0
-  #   hooks:
-  #   - id: php-lint-all
-  #   - id: php-cbf
-  #     files: \.(php)$
-  #     args: [--standard=PSR12 -p]
+  - repo: local
+    hooks:
+    - name: php-cbf (admin)
+      id: php-cbf (admin)
+      language: system
+      entry: make dc-phpcs-fix-admin
+      files: ^service-admin\/.+\.(php)$
+    - name: php-cbf (api)
+      id: php-cbf (api)
+      language: system
+      entry: make dc-phpcs-fix-api
+      files: ^service-api\/.+\.(php)$
+    - name: php-cbf (front)
+      id: php-cbf (front)
+      language: system
+      entry: make dc-phpcs-fix-front
+      files: ^service-front\/.+\.(php)$
+    - name: php-cbf (php)
+      id: php-cbf (php)
+      language: system
+      entry: make dc-phpcs-fix-php
+      files: ^service-php\/.+\.(php)$
   - repo: https://github.com/psf/black
     rev: 23.1.0
     hooks:

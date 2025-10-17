@@ -9,7 +9,7 @@ use Application\Model\DataAccess\Repository\User as UserRepository;
 
 class LogData extends AbstractBase implements UserRepository\LogRepositoryInterface
 {
-    const DELETION_LOG_TABLE = 'deletion_log';
+    public const DELETION_LOG_TABLE = 'deletion_log';
 
     /**
      * Add a document to the log collection.

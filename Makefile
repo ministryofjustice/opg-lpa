@@ -239,15 +239,15 @@ cypress-gui: npm-install
 cypress-open:
 	${MAKE} -j s3-monitor cypress-gui
 
-dc-phpcs-check-api: SERVICE := api-app
 dc-phpcs-check-admin: SERVICE := admin-app
+dc-phpcs-check-api: SERVICE := api-app
 dc-phpcs-check-front: SERVICE := front-app
 dc-phpcs-check-pdf: SERVICE := pdf-app
 dc-phpcs-check-admin dc-phpcs-check-api dc-phpcs-check-front dc-phpcs-check-pdf:
 	docker compose run --rm --no-deps ${SERVICE} ./vendor/bin/phpcs
 
-dc-phpcs-fix-api: SERVICE := api-app
 dc-phpcs-fix-admin: SERVICE := admin-app
+dc-phpcs-fix-api: SERVICE := api-app
 dc-phpcs-fix-front: SERVICE := front-app
 dc-phpcs-fix-pdf: SERVICE := pdf-app
 dc-phpcs-fix-shared: SERVICE := shared

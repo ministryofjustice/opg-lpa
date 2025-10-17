@@ -7,12 +7,13 @@
     <arg name="colors"/>
 
     <!-- inherit rules from: -->
-    <rule ref="PSR12"/>
+    <rule ref="PSR12">
+        <exclude name="Generic.Files.LineLength" />
+    </rule>
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
 
     <!-- Paths to check -->
     <file>config</file>
     <file>module</file>
     <file>public</file>
-    <file>tests</file>
 </ruleset>

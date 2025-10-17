@@ -8,14 +8,14 @@ class Payment extends AbstractData
 {
     use IncludeResponseTrait;
 
-    const STATUS_CREATED    = 'created';
-    const STATUS_STARTED    = 'started';
-    const STATUS_SUBMITTED  = 'submitted';
-    const STATUS_SUCCESS    = 'success';
+    public const STATUS_CREATED    = 'created';
+    public const STATUS_STARTED    = 'started';
+    public const STATUS_SUBMITTED  = 'submitted';
+    public const STATUS_SUCCESS    = 'success';
 
-    const STATUS_FAILED     = 'failed';
-    const STATUS_CANCELLED  = 'cancelled';
-    const STATUS_ERROR      = 'error';
+    public const STATUS_FAILED     = 'failed';
+    public const STATUS_CANCELLED  = 'cancelled';
+    public const STATUS_ERROR      = 'error';
 
     /**
      * Check is the payment has process has finished.
