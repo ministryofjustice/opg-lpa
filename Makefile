@@ -19,6 +19,8 @@ COMPOSER_VERSION := "2.8.11"
 # Unique identifier for this version of the application
 APP_VERSION := $(shell echo -n `git rev-parse --short HEAD`)
 
+PHPCS_REPORT ?= full
+
 .PHONY: all
 all:
 	@${MAKE} dc-up
@@ -239,17 +241,8 @@ cypress-gui: npm-install
 cypress-open:
 	${MAKE} -j s3-monitor cypress-gui
 
-dc-phpcs-check-admin: SERVICE := admin-app
-dc-phpcs-check-api: SERVICE := api-app
-dc-phpcs-check-front: SERVICE := front-app
-dc-phpcs-check-pdf: SERVICE := pdf-app
-dc-phpcs-check-admin dc-phpcs-check-api dc-phpcs-check-front dc-phpcs-check-pdf:
-	docker compose run --rm --no-deps ${SERVICE} ./vendor/bin/phpcs
+dc-phpcs-check:
+	@docker compose run --rm --no-deps -q phpcs --report=${PHPCS_REPORT}
 
-dc-phpcs-fix-admin: SERVICE := admin-app
-dc-phpcs-fix-api: SERVICE := api-app
-dc-phpcs-fix-front: SERVICE := front-app
-dc-phpcs-fix-pdf: SERVICE := pdf-app
-dc-phpcs-fix-shared: SERVICE := shared
-dc-phpcs-fix-admin dc-phpcs-fix-api dc-phpcs-fix-front dc-phpcs-fix-pdf dc-phpcs-fix-shared:
-	docker compose run --rm --no-deps ${SERVICE} ./vendor/bin/phpcbf
+dc-phpcs-fix:
+	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcbf --standard=/app/config/phpcs.xml.dist" phpcs

@@ -1,6 +1,5 @@
 q<?php
 
-
 use Phinx\Seed\AbstractSeed;
 
 class ApplicationsSeeder extends AbstractSeed
@@ -12,9 +11,15 @@ class ApplicationsSeeder extends AbstractSeed
         ];
     }
 
-    private function createApplication($id, $user, $email, $title, $firstName, $lastName,
-                                       $completedAt='2019-03-08 11:59:20.804744+00')
-    {
+    private function createApplication(
+        $id,
+        $user,
+        $email,
+        $title,
+        $firstName,
+        $lastName,
+        $completedAt = '2019-03-08 11:59:20.804744+00'
+    ) {
         $application = [
             'id' => $id,
             'user' => $user,
@@ -92,14 +97,39 @@ class ApplicationsSeeder extends AbstractSeed
     public function run()
     {
         $data = [
-            $this->createApplication('100','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
-                'Mr', 'Old', 'Oldson', '2018-01-01 11:59:20.804744+00'),
-            $this->createApplication('1','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
-                'Mrs', 'Anne', 'Anneson'),
-            $this->createApplication('2','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
-                'Mr', 'Bob', 'Bobson'),
-            $this->createApplication('3','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
-                'Mr', 'Carl', 'Carlson'),
+            $this->createApplication(
+                '100',
+                '90e60becf3d5f385a9c07691109701f6',
+                'opgcasper@gmail.com',
+                'Mr',
+                'Old',
+                'Oldson',
+                '2018-01-01 11:59:20.804744+00'
+            ),
+            $this->createApplication(
+                '1',
+                '90e60becf3d5f385a9c07691109701f6',
+                'opgcasper@gmail.com',
+                'Mrs',
+                'Anne',
+                'Anneson'
+            ),
+            $this->createApplication(
+                '2',
+                '90e60becf3d5f385a9c07691109701f6',
+                'opgcasper@gmail.com',
+                'Mr',
+                'Bob',
+                'Bobson'
+            ),
+            $this->createApplication(
+                '3',
+                '90e60becf3d5f385a9c07691109701f6',
+                'opgcasper@gmail.com',
+                'Mr',
+                'Carl',
+                'Carlson'
+            ),
         ];
 
         $users = $this->table('applications');
