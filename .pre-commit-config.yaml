@@ -19,13 +19,13 @@ repos:
     hooks:
     -   id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
-  - repo: https://github.com/digitalpulp/pre-commit-php.git
-    rev: 1.4.0
-    hooks:
-    - id: php-lint-all
-    - id: php-cbf
-      files: \.(php)$
-      args: [--standard=PSR12 -p]
+  # - repo: https://github.com/digitalpulp/pre-commit-php.git
+  #   rev: 1.4.0
+  #   hooks:
+  #   - id: php-lint-all
+  #   - id: php-cbf
+  #     files: \.(php)$
+  #     args: [--standard=PSR12 -p]
   - repo: https://github.com/psf/black
     rev: 23.1.0
     hooks:

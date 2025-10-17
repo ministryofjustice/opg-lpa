@@ -12,7 +12,6 @@
 
     <!-- Paths to check -->
     <file>config</file>
+    <file>module</file>
     <file>public</file>
-    <file>src</file>
-    <file>test</file>
 </ruleset>
