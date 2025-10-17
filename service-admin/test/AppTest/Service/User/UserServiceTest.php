@@ -22,6 +22,8 @@ class UserServiceTest extends TestCase
 
         $client = $this->prophesize(ApiClient::class);
 
+        $var = TRUE;
+
         // initial search
         $query = ['email' => $email];
         $client->httpGet('/v2/users/search', $query)->willReturn([
