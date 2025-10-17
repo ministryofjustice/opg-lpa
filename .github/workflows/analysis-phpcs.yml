@@ -14,41 +14,24 @@ jobs:
   phpcs:
     name: phpcs
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        scan:
-          - path: "./service-admin"
-            phpVersion: "8.4"
-          - path: "./service-front"
-            phpVersion: "8.4"
-          - path: "./service-api"
-            phpVersion: "8.3"
-          - path: "./service-pdf"
-            phpVersion: "8.3"
-    defaults:
-      run:
-        working-directory: ${{ matrix.scan.path }}
     steps:
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup PHP
         uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
         with:
-          php-version: ${{ matrix.scan.phpVersion }}
+          php-version: 8.4
           coverage: none # disable xdebug, pcov
           tools: cs2pr
-      - name: Composer install
-        run: composer install --prefer-dist --no-interaction --no-scripts
-      - name: ls
-        run: ls
       - name: Run phpcs
         id: phpcs
-        run: ./vendor/bin/phpcs --report-full --report-checkstyle=./phpcs-report.xml
+        env:
+          PHPCS_REPORT: checkstyle
+        run: make dc-phpcs-check > phpcs-report.xml
       - name: Fix paths in PHPCS report
         if: ${{ always() && steps.phpcs.outcome == 'failure' }}
         run: |
-          sed -i 's|name="${{ github.workspace }}/|name="|g' phpcs-report.xml
+          sed -i 's|name="/app/|name="|g' phpcs-report.xml
       - name: Publish PHPCS as PR annotations
         if: ${{ always() && steps.phpcs.outcome == 'failure' }}
         run: cs2pr ./phpcs-report.xml
