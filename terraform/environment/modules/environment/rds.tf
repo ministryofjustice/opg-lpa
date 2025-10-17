@@ -141,3 +141,5 @@ resource "aws_security_group_rule" "rds-api" {
   security_group_id        = aws_security_group.rds-api.id
   description              = "RDS client to RDS - Postgres"
 }
+
+
