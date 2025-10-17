@@ -97,7 +97,7 @@ class RedisClient implements LoggerAwareInterface
 
         // Redis returns FALSE if a key doesn't exist, but
         // PHP expects an empty string to be returned in that situation
-        if ($data === false || !is_string($data)) {
+        if ($data === false) {
             $data = '';
         }
 

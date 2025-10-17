@@ -7,6 +7,9 @@
         "sort-packages": true,
         "allow-plugins": {
             "laminas/laminas-component-installer": true
+        },
+        "platform": {
+            "php": "8.2"
         }
     },
     "require": {

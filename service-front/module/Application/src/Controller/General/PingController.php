@@ -42,7 +42,7 @@ class PingController extends AbstractActionController
 
     public function pingdomAction()
     {
-        $start = round(microtime(true) * 1000);
+        $start = round(microtime(true) * 1000.0);
 
         $response = new \Laminas\Http\Response();
         $response->getHeaders()->addHeaderLine('Content-Type', 'text/xml; charset=utf-8');
@@ -66,10 +66,10 @@ class PingController extends AbstractActionController
             $xml->status = 'ERROR';
         }
 
-        $end = round(microtime(true) * 1000);
+        $end = round(microtime(true) * 1000.0);
 
         /** @psalm-suppress UndefinedPropertyAssignment */
-        $xml->response_time = ($end - $start) / 1000;
+        $xml->response_time = ($end - $start) / 1000.0;
 
         $response->setContent($xml->asXML());
 
