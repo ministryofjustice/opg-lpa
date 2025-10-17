@@ -92,16 +92,16 @@ class CorrespondentController extends AbstractLpaActorController
                 $correspondent->contactByPost = (bool)$correspondenceFormData['contactByPost'];
 
                 if ($correspondenceFormData['contactByEmail']) {
-                    $correspondent->email = [
+                    $correspondent->setEmail(new EmailAddress([
                         'address' => $correspondenceFormData['email-address']
-                    ];
+                    ]));
                 }
 
                 // Populate the phone details
                 if ($correspondenceFormData['contactByPhone']) {
-                    $correspondent->phone = [
+                    $correspondent->setPhone(new PhoneNumber([
                         'number' => $correspondenceFormData['phone-number']
-                    ];
+                    ]));
                 }
 
                 if (!$this->getLpaApplicationService()->setCorrespondent($lpa, $correspondent)) {

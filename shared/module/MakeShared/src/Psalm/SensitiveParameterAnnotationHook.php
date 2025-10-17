@@ -101,7 +101,7 @@ class SensitiveParameterAnnotationHook implements PluginEntryPointInterface, Aft
             $hasAnnotation = false;
             foreach ($param->attrGroups as $attrGroup) {
                 foreach ($attrGroup->attrs as $attr) {
-                    if (in_array('SensitiveParameter', $attr->name->parts)) {
+                    if (in_array('SensitiveParameter', $attr->name->getParts())) {
                         $hasAnnotation = true;
                         break;
                     }

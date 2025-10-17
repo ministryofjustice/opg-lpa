@@ -58,6 +58,10 @@
     "config": {
         "allow-plugins": {
             "laminas/laminas-component-installer": true
+        },
+        "platform": {
+            "php": "8.3",
+            "ext-intl": "1"
         }
     }
 }

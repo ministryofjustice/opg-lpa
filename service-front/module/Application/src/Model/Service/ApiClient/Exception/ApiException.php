@@ -25,7 +25,7 @@ class ApiException extends RuntimeException
      */
     public function __construct(ResponseInterface $response, string $message = null)
     {
-        $this->body = json_decode('' . $response->getBody(), true);
+        $this->body = json_decode(strval($response->getBody()), true);
         $this->statusCode = $response->getStatusCode();
 
         //  If no message was provided create one from the response data

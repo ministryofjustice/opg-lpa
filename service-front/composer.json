@@ -46,7 +46,7 @@
         "phpunit/phpunit": "^10.0.0",
         "mockery/mockery": "^1.4.4",
         "laminas/laminas-test": "4.12.0",
-        "vimeo/psalm": "^5.0.0"
+        "vimeo/psalm": "^6.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -60,6 +60,11 @@
     "config": {
         "allow-plugins": {
             "laminas/laminas-component-installer": true
+        },
+        "platform": {
+            "php": "8.4.12",
+            "ext-intl": "1",
+            "ext-redis": "1"
         }
     }
 }
