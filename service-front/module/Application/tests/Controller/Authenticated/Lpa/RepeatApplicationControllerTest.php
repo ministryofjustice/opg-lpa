@@ -187,7 +187,7 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->assertEquals($response, $result);
     }
 
-    public function testIndexActionPostNoRepeatSuccess_afterGoLive_usesBaseAfter()
+    public function testIndexActionPostNoRepeatSuccessAfterGoLiveUsesBaseAfter()
     {
         Calculator::bootstrap([
             'timezone'      => 'Europe/London',

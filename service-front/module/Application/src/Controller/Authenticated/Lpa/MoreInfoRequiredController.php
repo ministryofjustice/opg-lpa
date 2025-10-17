@@ -12,6 +12,6 @@ class MoreInfoRequiredController extends AbstractLpaController
 
     public function indexAction()
     {
-        return new ViewModel(['lpaId' => $this->getLpa()->id],);;
+        return new ViewModel(['lpaId' => $this->getLpa()->id]);
     }
 }

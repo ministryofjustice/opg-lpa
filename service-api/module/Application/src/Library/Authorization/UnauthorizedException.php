@@ -21,4 +21,4 @@ class UnauthorizedException extends LmcRbacUnauthorizedException implements ApiP
 
         parent::__construct($message, $code, $previous);
     }
-} // class
+}
