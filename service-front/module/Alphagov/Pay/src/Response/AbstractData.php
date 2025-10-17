@@ -1,12 +1,12 @@
 <?php
+
 namespace Alphagov\Pay\Response;
 
-abstract class AbstractData extends \ArrayObject {
+abstract class AbstractData extends \ArrayObject
+{
+    public function __construct(array $details)
+    {
 
-    public function __construct( Array $details ){
-
-        parent::__construct( $details, self::ARRAY_AS_PROPS );
-
+        parent::__construct($details, self::ARRAY_AS_PROPS);
     }
-
 }

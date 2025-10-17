@@ -18,7 +18,7 @@ final class ApplicantNamesTest extends MockeryTestCase
         $lpa->document->whoIsRegistering = ["donor"];
 
         if (is_array($lpa->document->whoIsRegistering) && is_array($lpa->document->primaryAttorneys)) {
-            $humans = array();
+            $humans = [];
             $expectedHumans = "Dr Lilly Simpson, Mr Marcel Tanner and Mrs Annabella Collier";
 
 

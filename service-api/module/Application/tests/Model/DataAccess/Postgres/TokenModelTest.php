@@ -1,4 +1,5 @@
 <?php
+
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
 use DateTime;

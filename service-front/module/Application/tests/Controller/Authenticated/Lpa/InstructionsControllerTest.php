@@ -21,7 +21,7 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
         'preference' => 'Unit test preferences'
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

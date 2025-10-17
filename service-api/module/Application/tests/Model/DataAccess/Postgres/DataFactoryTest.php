@@ -1,4 +1,5 @@
 <?php
+
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
 use RuntimeException;
@@ -7,9 +8,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Interop\Container\ContainerInterface;
-
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
-
 use Application\Model\DataAccess\Postgres\DataFactory;
 use Application\Model\DataAccess\Postgres\UserData;
 
@@ -20,7 +19,7 @@ class DataFactoryTest extends MockeryTestCase
      */
     protected $container;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->container = Mockery::mock(ContainerInterface::class);
     }
@@ -51,7 +50,7 @@ class DataFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')
             ->withArgs(['ZendDbAdapter'])
             ->once()
-            ->andReturn($zendDbAdapter );
+            ->andReturn($zendDbAdapter);
 
         $this->container->shouldReceive('get')
             ->withArgs(['Config'])

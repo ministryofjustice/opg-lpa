@@ -10,6 +10,7 @@ use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
 use ReflectionClass;
+
 use function PHPUnit\Framework\assertEquals;
 
 final class FormTest extends MockeryTestCase

@@ -10,10 +10,11 @@ use Laminas\Router\RouteMatch;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
-final class PersistentSessionDetailsTest extends TestCase {
-
+final class PersistentSessionDetailsTest extends TestCase
+{
     #[Test]
-    public function testSuccessfullyCreateClass(): void {
+    public function testSuccessfullyCreateClass(): void
+    {
 
         $routeMatch = Mockery::mock(RouteMatch::class);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/applicant');
@@ -24,7 +25,8 @@ final class PersistentSessionDetailsTest extends TestCase {
     }
 
     #[Test]
-    public function testExpectedValuesFromCurrentAndPreviousRoutes(): void {
+    public function testExpectedValuesFromCurrentAndPreviousRoutes(): void
+    {
         $currentRoute = 'lpa/applicant';
 
         $routeMatch = Mockery::mock(RouteMatch::class);
@@ -37,7 +39,8 @@ final class PersistentSessionDetailsTest extends TestCase {
     }
 
     #[Test]
-    public function testExpectedValuesFromCurrentAndPreviousRoutesPersists(): void {
+    public function testExpectedValuesFromCurrentAndPreviousRoutesPersists(): void
+    {
         $currentRoute = 'lpa/primary-attorney/add';
         $previousRoute = 'lpa/applicant';
 
@@ -54,11 +57,10 @@ final class PersistentSessionDetailsTest extends TestCase {
     }
 
     #[Test]
-    public function testEmptyValuesFromCurrentRoute(): void {
+    public function testEmptyValuesFromCurrentRoute(): void
+    {
         $persistentSession = new PersistentSessionDetails(null);
 
         $this->assertEquals('', $persistentSession->getCurrentRoute());
     }
-
-
 }

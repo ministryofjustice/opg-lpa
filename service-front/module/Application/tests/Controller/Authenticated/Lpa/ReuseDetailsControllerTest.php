@@ -21,7 +21,7 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
         'reuse-details' => 1
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

@@ -19,6 +19,7 @@ use RuntimeException;
 class Service extends AbstractService
 {
     use LoggerTrait;
+
     private const SIRIUS_STATUS_TO_LPA = [
         'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
         'Payment Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,

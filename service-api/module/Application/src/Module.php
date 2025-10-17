@@ -62,8 +62,8 @@ class Module
         // Register error handler for dispatch and render errors;
         // priority is set to 100 here so that the global MvcEventListener
         // has a chance to log it before it's converted into an API exception
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'), 100);
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'), 100);
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError'], 100);
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, [$this, 'handleError'], 100);
     }
 
     public function getServiceConfig()

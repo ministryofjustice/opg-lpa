@@ -16,7 +16,7 @@ class Correspondence extends AbstractValidator
     {
         $this->setValue($value);
 
-        if (($value['contactByPost']|$value['contactByPhone']|$value['contactByEmail']) == false) {
+        if (($value['contactByPost'] | $value['contactByPhone'] | $value['contactByEmail']) == false) {
             $this->error(self::AT_LEAST_ONE_SELECTED);
             return false;
         }
