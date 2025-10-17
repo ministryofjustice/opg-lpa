@@ -12,7 +12,7 @@ class CsrfBuilder
     {
     }
 
-    public function __invoke(string $name) : Csrf
+    public function __invoke(string $name): Csrf
     {
         $csrfName = 'secret_' . md5($name);
         $csrf = new Csrf($csrfName);
@@ -22,7 +22,7 @@ class CsrfBuilder
                 'name' => $csrf->getName(),
                 'salt' => $csrfSalt,
             ]
-        ] );
+        ]);
 
         $csrf->setCsrfValidator($csrfValidator);
         return $csrf;

@@ -18,7 +18,7 @@ class PdfControllerTest extends AbstractControllerTestCase
      */
     private $service;
 
-    public function getController(Array $parameters = []) : PdfController
+    public function getController(array $parameters = []): PdfController
     {
         $this->service = Mockery::mock(Service::class);
 
@@ -65,13 +65,12 @@ class PdfControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
-        ), $response->toArray());
-
+        ], $response->toArray());
     }
 
     public function testGetUnexpectedResponse()
@@ -84,12 +83,12 @@ class PdfControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'Unable to process request'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testGetUnauthorised()

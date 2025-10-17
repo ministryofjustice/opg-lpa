@@ -13,6 +13,7 @@ use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRepositoryInterface
 {
     use LoggerTrait;
+
     public const FEEDBACK_TABLE = 'feedback';
 
     /**

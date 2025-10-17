@@ -2,7 +2,6 @@
 
 namespace Application\ControllerFactory;
 
-
 use Application\Controller\StatusController;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;

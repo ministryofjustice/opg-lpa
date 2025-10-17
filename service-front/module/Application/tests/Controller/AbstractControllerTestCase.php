@@ -443,7 +443,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      */
     public function getSeedData($seedLpa)
     {
-        $result = array('seed' => $seedLpa->getId());
+        $result = ['seed' => $seedLpa->getId()];
 
         if ($seedLpa->getDocument() == null) {
             return $result;

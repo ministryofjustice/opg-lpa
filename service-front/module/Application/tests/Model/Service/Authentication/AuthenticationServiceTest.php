@@ -20,7 +20,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
     private AdapterInterface|MockInterface $adapterInterface;
     private AuthenticationService $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -31,13 +31,13 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->service = new AuthenticationService($this->storageInterface, $this->adapterInterface);
     }
 
-    public function testConstructor() : void
+    public function testConstructor(): void
     {
         $this->assertEquals($this->storageInterface, $this->service->getStorage());
         $this->assertEquals($this->adapterInterface, $this->service->getAdapter());
     }
 
-    public function testConstructorRequiresLpaAdapterInterface() : void
+    public function testConstructorRequiresLpaAdapterInterface(): void
     {
         /** @var AdapterInterface $adapterInterface */
         $adapterInterface = Mockery::mock(AdapterInterface::class);
@@ -51,7 +51,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->expectException(RuntimeException::class);
     }
 
-    public function testVerify() : void
+    public function testVerify(): void
     {
         $authenticated = Mockery::mock(Result::class);
         $authenticated->shouldReceive('isValid')->times(2)->andReturn(true);
@@ -66,7 +66,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertTrue($result);
     }
 
-    public function testVerifyInvalid() : void
+    public function testVerifyInvalid(): void
     {
         $authenticated = Mockery::mock(Result::class);
         $authenticated->shouldReceive('isValid')->times(2)->andReturn(false);
@@ -78,7 +78,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertFalse($result);
     }
 
-    public function testSetEmail() : void
+    public function testSetEmail(): void
     {
         $this->adapterInterface->shouldReceive('setEmail')->withArgs(['test@email.com'])->once();
 
@@ -87,7 +87,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals($this->service, $result);
     }
 
-    public function testSetPassword() : void
+    public function testSetPassword(): void
     {
         $this->adapterInterface->shouldReceive('setPassword')->withArgs(['test-password'])->once();
 
@@ -96,7 +96,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals($this->service, $result);
     }
 
-    public function testGetSessionExpiry() : void
+    public function testGetSessionExpiry(): void
     {
         $identity = Mockery::mock();
         $identity->shouldReceive('token')->andReturn('4321');
@@ -114,7 +114,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals(1234, $result);
     }
 
-    public function testGetSessionExpiryNoIdentity() : void
+    public function testGetSessionExpiryNoIdentity(): void
     {
         $this->storageInterface->shouldReceive('isEmpty')->once()->andReturn(false);
         $this->storageInterface->shouldReceive('read')->once()->andReturn(null);
@@ -124,7 +124,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testGetSessionExpiryNoToken() : void
+    public function testGetSessionExpiryNoToken(): void
     {
         $identity = Mockery::mock();
         $identity->shouldReceive('token')->andReturn(null);
@@ -137,7 +137,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testGetSessionExpirySessionNotValid() : void
+    public function testGetSessionExpirySessionNotValid(): void
     {
         $identity = Mockery::mock();
         $identity->shouldReceive('token')->andReturn('4321');
@@ -155,7 +155,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testGetSessionExpirySessionReturnsUnexpectedValues() : void
+    public function testGetSessionExpirySessionReturnsUnexpectedValues(): void
     {
         $identity = Mockery::mock();
         $identity->shouldReceive('token')->andReturn('4321');
@@ -173,7 +173,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testSetSessionExpiry() : void
+    public function testSetSessionExpiry(): void
     {
         $identity = Mockery::mock();
         $identity->shouldReceive('token')->andReturn('4321');
@@ -191,7 +191,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals(20, $result);
     }
 
-    public function testSetSessionExpiryNoToken() : void
+    public function testSetSessionExpiryNoToken(): void
     {
         $identity = Mockery::mock();
         $identity->shouldReceive('token')->andReturn(null);
@@ -204,7 +204,7 @@ final class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testSetSessionExpiryAdapterFail() : void
+    public function testSetSessionExpiryAdapterFail(): void
     {
         $identity = Mockery::mock();
         $identity->shouldReceive('token')->andReturn('4321');

@@ -11,7 +11,7 @@ class TestableApiClientTrait
 {
     use ApiClientTrait;
 
-    public function getApiClient() : Client
+    public function getApiClient(): Client
     {
         return $this->apiClient;
     }

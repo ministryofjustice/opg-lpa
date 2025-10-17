@@ -1,8 +1,8 @@
 <?php
+
 namespace Application\Adapter;
 
 use Exception;
-
 use RuntimeException;
 use Aws\DynamoDb\DynamoDbClient;
 
@@ -11,7 +11,6 @@ use Aws\DynamoDb\DynamoDbClient;
  */
 class DynamoDbKeyValueStore
 {
-
     /**
      * The AWS client
      *
@@ -74,21 +73,21 @@ class DynamoDbKeyValueStore
      */
     public function setItem($key, $value)
     {
-        $key = array('S' => $this->formatKey($key));
+        $key = ['S' => $this->formatKey($key)];
 
         if (empty($value)) {
-            $value = array('NULL' => true);
+            $value = ['NULL' => true];
         } else {
-            $value = array('B' => $value);
+            $value = ['B' => $value];
         }
 
-        $this->client->putItem(array(
+        $this->client->putItem([
             'TableName' => $this->tableName,
-            'Item' => array(
+            'Item' => [
                 'id'      => $key,
                 'value'   => $value,
-            )
-        ));
+            ]
+        ]);
     }
 
     /* (non-PHPdoc)
@@ -96,28 +95,28 @@ class DynamoDbKeyValueStore
      */
     public function removeItem($key)
     {
-        $key = array('S' => $this->formatKey($key));
+        $key = ['S' => $this->formatKey($key)];
 
-        $this->client->deleteItem(array(
+        $this->client->deleteItem([
             'TableName' => $this->tableName,
-            'Key' => array(
+            'Key' => [
                 'id'      => $key,
-            )
-        ));
+            ]
+        ]);
     }
 
     /* (non-PHPdoc)
      * @see \Laminas\Cache\Storage\StorageInterface::getItem()
      */
-    public function getItem($key, & $success = null, & $casToken = null)
+    public function getItem($key, &$success = null, &$casToken = null)
     {
         try {
-            $result = $this->client->getItem(array(
+            $result = $this->client->getItem([
                 'TableName' => $this->tableName,
-                'Key' => array(
-                    'id'      => array('S' => $this->formatKey($key)),
-                )
-            ));
+                'Key' => [
+                    'id'      => ['S' => $this->formatKey($key)],
+                ]
+            ]);
 
             $success = true;
 

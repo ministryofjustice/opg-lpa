@@ -47,7 +47,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      */
     protected $mvcEvent;
 
-    public function setUp() : void {
+    public function setUp(): void
+    {
         $this->userId = 12345;
         $this->lpaId = 98765;
 
@@ -107,7 +108,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      * @param null $array
      * @return EntityInterface|MockInterface
      */
-    protected function createEntity($array = null) : EntityInterface
+    protected function createEntity($array = null): EntityInterface
     {
         $entity = Mockery::mock(EntityInterface::class);
         $entity->shouldReceive('toArray')->andReturn($array);
@@ -125,7 +126,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $this->authorizationService->mockery_findExpectation('isGranted', ['admin'])->andReturn($authorised);
     }
 
-    protected function callDispatch(AbstractLpaController $abstractController, Array $parameters = [])
+    protected function callDispatch(AbstractLpaController $abstractController, array $parameters = [])
     {
         $abstractController->setEventManager($this->eventManager);
 
@@ -136,12 +137,10 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $request->shouldReceive('getQuery')->andReturn($params);
 
         $abstractController->dispatch($request);
-
     }
 
     protected function callOnDispatch(AbstractLpaController $abstractController)
     {
         return $abstractController->onDispatch($this->mvcEvent);
     }
-
 }

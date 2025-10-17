@@ -81,7 +81,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
 
         $this->assertInstanceOf(ViewModel::class, $result);
     }
-    static public function statusProvider(): array
+    public static function statusProvider(): array
     {
         return[
             ['waiting'],
@@ -167,7 +167,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
         $this->assertEquals($result->shouldReceiveByDate, $shouldReceiveByDate);
     }
 
-    static public function processedDateFixtureProvider(): array
+    public static function processedDateFixtureProvider(): array
     {
         /*
          * Each element in the returned array represents the data for a test

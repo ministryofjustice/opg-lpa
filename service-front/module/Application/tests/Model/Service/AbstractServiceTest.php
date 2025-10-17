@@ -13,12 +13,12 @@ class AbstractServiceTest extends MockeryTestCase
 {
     protected AuthenticationService|MockInterface $authenticationService;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
     }
 
-    public function testConstructor() : void
+    public function testConstructor(): void
     {
         $service = new TestableAbstractService(
             $this->authenticationService,

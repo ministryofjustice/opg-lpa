@@ -40,9 +40,9 @@ class Module implements FormElementProviderInterface
         $moduleRouteListener->attach($eventManager);
 
         // Register error handler for dispatch and render errors
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER, array($this, 'preRender'));
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError']);
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, [$this, 'handleError']);
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER, [$this, 'preRender']);
 
         register_shutdown_function(function () {
             $error = error_get_last();
@@ -254,14 +254,14 @@ class Module implements FormElementProviderInterface
 
     public function getViewHelperConfig()
     {
-        return array(
-            'factories' => array(
+        return [
+            'factories' => [
                 'StaticAssetPath' => function ($sm) {
                     $config = $sm->get('Config');
                     return new \Application\View\Helper\StaticAssetPath($config['version']['cache']);
                 },
-            ),
-        );
+            ],
+        ];
     }
 
     public function getConfig()
@@ -271,7 +271,7 @@ class Module implements FormElementProviderInterface
             __DIR__ . '/../config/module.routes.php',
         ];
 
-        $config = array();
+        $config = [];
 
         // Merge all module config options
         foreach ($configFiles as $configFile) {

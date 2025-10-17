@@ -1,4 +1,5 @@
 <?php
+
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 
 class Helpers
@@ -18,7 +19,7 @@ class Helpers
         if (self::$config == null) {
             // build config from JSON file
             $json_str = file_get_contents(__DIR__ . '/config.json');
-            self::$config = json_decode($json_str, TRUE);
+            self::$config = json_decode($json_str, true);
         }
 
         if ($scope !== null) {
