@@ -550,6 +550,23 @@
       <path value="$PROJECT_DIR$/service-front/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-intl-grapheme" />
       <path value="$PROJECT_DIR$/service-front/vendor/alphagov/notifications-php-client" />
+      <path value="$PROJECT_DIR$/shared/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/shared/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/service-api/vendor/lm-commons/rbac" />
+      <path value="$PROJECT_DIR$/service-api/vendor/psr/http-server-middleware" />
+      <path value="$PROJECT_DIR$/service-api/vendor/psr/http-server-handler" />
+      <path value="$PROJECT_DIR$/service-api/vendor/fig/http-message-util" />
+      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-mvc-middleware" />
+      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-translator" />
+      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-stratigility" />
+      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-psr7bridge" />
+      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-diactoros" />
+      <path value="$PROJECT_DIR$/service-api/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/service-api/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/service-api/vendor/symfony/polyfill-intl-idn" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -812,7 +829,7 @@
       </server>
     </servers>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.3">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpRuntimeConfiguration">

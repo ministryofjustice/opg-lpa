@@ -15,6 +15,11 @@ class Entity implements EntityInterface
         $this->lpa = $lpa;
     }
 
+    /**
+     * @return (bool|null|string)[]
+     *
+     * @psalm-return array{locked?: bool, lockedAt?: null|string}
+     */
     public function toArray()
     {
         if (is_bool($this->lpa->locked)) {

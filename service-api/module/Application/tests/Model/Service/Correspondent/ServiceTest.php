@@ -27,7 +27,7 @@ final class ServiceTest extends AbstractServiceTestCase
         //Make sure the correspondent is invalid
         $correspondent = new Correspondence();
 
-        $validationError = $service->update($lpa->getId(), $correspondent->toArray());
+        $validationError = $service->update(strval($lpa->getId()), $correspondent->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -68,7 +68,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->update($lpa->getId(), $lpa->getDocument()->getCorrespondent()->toArray());
+        $service->update(strval($lpa->getId()), $lpa->getDocument()->getCorrespondent()->toArray());
 
         $serviceBuilder->verify();
     }
@@ -87,7 +87,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $correspondent = new Correspondence($lpa->getDocument()->getCorrespondent()->toArray());
         $correspondent->getName()->setFirst('Edited');
 
-        $entity = $service->update($lpa->getId(), $correspondent->toArray());
+        $entity = $service->update(strval($lpa->getId()), $correspondent->toArray());
 
         $this->assertEquals(new DataModelEntity($correspondent), $entity);
 
@@ -107,7 +107,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $validationError = $service->delete($lpa->getId());
+        $validationError = $service->delete(strval($lpa->getId()));
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -146,7 +146,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->delete($lpa->getId());
+        $service->delete(strval($lpa->getId()));
 
         $serviceBuilder->verify();
     }
@@ -162,7 +162,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
-        $response = $service->delete($lpa->getId());
+        $response = $service->delete(strval($lpa->getId()));
 
         $this->assertTrue($response);
 

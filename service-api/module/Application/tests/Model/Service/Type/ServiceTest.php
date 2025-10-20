@@ -23,7 +23,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $validationError = $service->update($lpa->getId(), ['type' => 'Invalid']);
+        $validationError = $service->update(strval($lpa->getId()), ['type' => 'Invalid']);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -59,7 +59,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->update($lpa->getId(), []);
+        $service->update(strval($lpa->getId()), []);
 
         $serviceBuilder->verify();
     }
@@ -75,7 +75,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
-        $entity = $service->update($lpa->getId(), ['type' => 'property-and-financial']);
+        $entity = $service->update(strval($lpa->getId()), ['type' => 'property-and-financial']);
 
         $this->assertEquals(new Entity('property-and-financial'), $entity);
 

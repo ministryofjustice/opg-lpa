@@ -12,4 +12,19 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+    <issueHandlers>
+        <UnusedClass>
+            <errorLevel type="suppress">
+                <directory name="module/Application/src/Controller" />
+                <directory name="module/Application/src/Controller/Version2" />
+                <directory name="module/Application/src/ControllerFactory" />
+            </errorLevel>
+        </UnusedClass>
+        <PossiblyUnusedMethod>
+            <errorLevel type="suppress">
+                <file name="module/Application/src/Controller/**/*Controller.php" />
+                <referencedMethod name="*::*Action" />
+            </errorLevel>
+        </PossiblyUnusedMethod>
+    </issueHandlers>
 </psalm>

@@ -14,7 +14,7 @@ use DateTimeZone;
  */
 class MillisecondDateTime extends \DateTime
 {
-    public function __construct($time = 'now', DateTimeZone $timezone = null)
+    public function __construct($time = 'now', DateTimeZone|null $timezone = null)
     {
         if ($time == 'now' && (is_null($timezone) || $timezone->getName() == 'UTC')) {
             $t = microtime(true);
