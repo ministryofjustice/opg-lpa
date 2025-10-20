@@ -12,11 +12,11 @@ class FeedbackControllerFactory implements FactoryInterface
 {
     /**
      * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array|null $options
+     * @param string $_requestedName
+     * @param array|null $_options
      * @return FeedbackController
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $_requestedName, array|null $_options = null)
     {
         return new FeedbackController(
             $container->get(FeedbackService::class),

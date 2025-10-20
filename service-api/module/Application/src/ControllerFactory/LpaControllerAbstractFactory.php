@@ -4,10 +4,12 @@ namespace Application\ControllerFactory;
 
 use Application\Controller\Version2\Lpa as LpaControllers;
 use Application\Model\Service;
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class LpaControllerAbstractFactory implements AbstractFactoryInterface
 {
@@ -42,8 +44,7 @@ class LpaControllerAbstractFactory implements AbstractFactoryInterface
     /**
      * Can the factory create an instance for the service?
      *
-     * @param  ContainerInterface $container
-     * @param  string $requestedName
+     * @param string $requestedName
      * @return bool
      */
     public function canCreate(ContainerInterface $container, $requestedName)
@@ -55,12 +56,13 @@ class LpaControllerAbstractFactory implements AbstractFactoryInterface
     }
 
     /**
-     * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
      * @return object
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array|null $options = null)
     {
         if (!$this->canCreate($container, $requestedName)) {
             throw new ServiceNotFoundException(sprintf(

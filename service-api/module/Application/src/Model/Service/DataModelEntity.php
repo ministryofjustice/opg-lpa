@@ -13,11 +13,14 @@ class DataModelEntity implements EntityInterface
         $this->data = $data;
     }
 
-    public function getData()
+    public function getData(): AbstractData
     {
         return $this->data;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return $this->data->toArray();
