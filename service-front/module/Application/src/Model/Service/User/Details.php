@@ -12,6 +12,7 @@ use Laminas\Session\Container;
 use Exception;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
+
 class Details extends AbstractEmailService implements ApiClientAwareInterface
 {
     use ApiClientTrait;

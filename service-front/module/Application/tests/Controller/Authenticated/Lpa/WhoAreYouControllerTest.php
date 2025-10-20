@@ -23,7 +23,7 @@ final class WhoAreYouControllerTest extends AbstractControllerTestCase
         'who' => 'donor'
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

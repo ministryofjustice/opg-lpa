@@ -18,7 +18,7 @@ class ServiceTest extends AbstractServiceTestCase
      */
     private $authUserRepository;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 

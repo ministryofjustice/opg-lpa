@@ -18,7 +18,8 @@ class Stats extends AbstractService implements ApiClientAwareInterface
     {
         try {
             return $this->apiClient->httpGet('/stats/all');
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }

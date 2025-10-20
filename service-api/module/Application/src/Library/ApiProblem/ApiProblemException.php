@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Library\ApiProblem;
 
 use Exception;
@@ -10,12 +11,11 @@ use Exception;
  * Class ApiProblemException
  * @package Application\Library\ApiProblem
  */
-class ApiProblemException extends Exception implements ApiProblemExceptionInterface {
+class ApiProblemException extends Exception implements ApiProblemExceptionInterface
+{
+    public function __construct($message = "", $code = 500, Exception $previous = null)
+    {
 
-    public function __construct($message = "", $code = 500, Exception $previous = null) {
-
-        parent::__construct( $message, $code, $previous );
-
+        parent::__construct($message, $code, $previous);
     }
-
-} // class
+}

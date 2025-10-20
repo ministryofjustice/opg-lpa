@@ -17,7 +17,7 @@ class WhoAreYouControllerTest extends AbstractControllerTestCase
      */
     private $service;
 
-    public function getController(array $parameters = []) : WhoAreYouController
+    public function getController(array $parameters = []): WhoAreYouController
     {
         $this->service = Mockery::mock(Service::class);
 
@@ -32,10 +32,10 @@ class WhoAreYouControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some'=>'data']])
+        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data']])
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
-        $response = $controller->update($this->lpaId, ['some'=>'data']);
+        $response = $controller->update($this->lpaId, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(Json::class, $response);
@@ -46,10 +46,10 @@ class WhoAreYouControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some'=>'data']])
+        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data']])
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
-        $response = $controller->update($this->lpaId, ['some'=>'data']);
+        $response = $controller->update($this->lpaId, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
@@ -65,10 +65,10 @@ class WhoAreYouControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some'=>'data']])
+        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data']])
             ->andReturn('unexpected type')->once();
 
-        $response = $controller->update($this->lpaId, ['some'=>'data']);
+        $response = $controller->update($this->lpaId, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);

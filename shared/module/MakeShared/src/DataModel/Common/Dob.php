@@ -31,7 +31,7 @@ class Dob extends AbstractData
             //  Split the array into components
             $timeIndex = strpos($v, 'T');
             $dateArr = explode('-', $v);
-            $defaultTimeArr = array('00', '00', '00.000000+0000');
+            $defaultTimeArr = ['00', '00', '00.000000+0000'];
             $timeArr = $defaultTimeArr;
             if ($timeIndex) {
                 $dateArr = explode('-', substr($v, 0, $timeIndex));

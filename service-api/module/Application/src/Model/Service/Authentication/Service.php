@@ -92,7 +92,7 @@ class Service extends AbstractService
             $this->getUserRepository()->resetFailedLoginCounter($user->id());
         }
 
-        $tokenDetails = array();
+        $tokenDetails = [];
 
         if ($createToken) {
             $expires = new DateTime("+" . $this->tokenTtl . " seconds");

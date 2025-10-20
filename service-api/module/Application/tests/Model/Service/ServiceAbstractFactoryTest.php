@@ -39,7 +39,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
      */
     private $factory;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->container = Mockery::mock(ContainerInterface::class);
 
@@ -122,11 +122,10 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
     #[DataProvider('servicesProvider')]
     public function testInvoke($service, $dependancies)
     {
-        foreach($dependancies as $key => $value){
+        foreach ($dependancies as $key => $value) {
             $this->container->shouldReceive('get')->withArgs([$key])->once()->andReturn($value);
         }
 
         $this->factory->__invoke($this->container, $service);
     }
-
 }

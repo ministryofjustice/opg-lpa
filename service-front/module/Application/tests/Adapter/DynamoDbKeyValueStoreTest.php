@@ -16,7 +16,7 @@ final class DynamoDbKeyValueStoreTest extends MockeryTestCase
     private DynamoDbKeyValueStore $dynamoDbKeyValueStore;
     private MockInterface|DynamoDbClient $dynamoDbClient;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $config['settings']['table_name'] = 'test_table';
         $config['keyPrefix'] = 'key_prefix';

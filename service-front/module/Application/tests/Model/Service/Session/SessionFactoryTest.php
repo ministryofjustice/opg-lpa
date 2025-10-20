@@ -22,7 +22,7 @@ final class SessionFactoryTest extends MockeryTestCase
      * in its own process.
      */
     #[RunInSeparateProcess]
-    public function testSessionFactory() : void
+    public function testSessionFactory(): void
     {
         $uri = Mockery::Mock(Uri::class);
         $uri->shouldReceive('getHost')->andReturn('foo');
@@ -56,7 +56,7 @@ final class SessionFactoryTest extends MockeryTestCase
         $this->assertEquals(ini_get('session.name'), 'foo');
     }
 
-    public function testSessionFactoryNoSessionConfig() : void
+    public function testSessionFactoryNoSessionConfig(): void
     {
         /** @var ContainerInterface|MockInterface $container */
         $container = Mockery::Mock(ContainerInterface::class);
