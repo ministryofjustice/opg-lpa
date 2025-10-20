@@ -15,12 +15,12 @@ class Formatter
     /**
      * Number of characters that fit on a single row, in an instructions or preferences box.
      */
-    const INSTRUCTIONS_PREFERENCES_ROW_WIDTH = 84;
+    public const INSTRUCTIONS_PREFERENCES_ROW_WIDTH = 84;
 
     /**
      * Number of rows of characters that fit in the (non-continuation) instructions or preferences box.
      */
-    const INSTRUCTIONS_PREFERENCES_ROW_COUNT = 6;
+    public const INSTRUCTIONS_PREFERENCES_ROW_COUNT = 6;
 
 
     /**

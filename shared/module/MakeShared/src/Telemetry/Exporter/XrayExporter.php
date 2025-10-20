@@ -21,6 +21,7 @@ use trigger_error;
 class XrayExporter implements ExporterInterface, LoggerAwareInterface
 {
     use LoggerTrait;
+
     public const MAX_PAYLOAD_LEN = 64000;
 
     public Socket|false $socket;
