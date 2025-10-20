@@ -8,10 +8,10 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 abstract class AbstractDecisions extends AbstractData
 {
-    const LPA_DECISION_HOW_DEPENDS = 'depends';
-    const LPA_DECISION_HOW_JOINTLY = 'jointly';
-    const LPA_DECISION_HOW_SINGLE_ATTORNEY = 'single-attorney';
-    const LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY = 'jointly-attorney-severally';
+    public const LPA_DECISION_HOW_DEPENDS = 'depends';
+    public const LPA_DECISION_HOW_JOINTLY = 'jointly';
+    public const LPA_DECISION_HOW_SINGLE_ATTORNEY = 'single-attorney';
+    public const LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY = 'jointly-attorney-severally';
 
     /**
      * @var string Represents how decisions will be made.

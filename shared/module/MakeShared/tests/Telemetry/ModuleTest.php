@@ -2,6 +2,7 @@
 
 namespace MakeSharedTest\Telemetry;
 
+use Hamcrest\Core\IsInstanceOf;
 use Laminas\EventManager\EventManager;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
@@ -17,8 +18,6 @@ use MakeShared\Telemetry\TelemetryEventManager;
 use MakeShared\Telemetry\Tracer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-
-\Hamcrest\Util::registerGlobalFunctions();
 
 class ModuleTest extends TestCase
 {
@@ -39,7 +38,7 @@ class ModuleTest extends TestCase
 
         $rootSegment = Mockery::mock(Segment::class);
         $rootSegment->shouldReceive('setAttribute')
-            ->with('http', anInstanceOf(Http::class));
+            ->with('http', IsInstanceOf::anInstanceOf(Http::class));
 
         $tracer = Mockery::mock(Tracer::class);
         $tracer->shouldReceive('startRootSegment')->once();

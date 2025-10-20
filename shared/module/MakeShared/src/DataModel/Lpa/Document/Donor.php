@@ -22,8 +22,8 @@ class Donor extends AbstractData
     /**
      * Field length constants
      */
-    const OTHER_NAMES_MIN_LENGTH = 0;
-    const OTHER_NAMES_MAX_LENGTH = 50;
+    private const OTHER_NAMES_MIN_LENGTH = 0;
+    private const OTHER_NAMES_MAX_LENGTH = 50;
 
     /**
      * @var LongName Their name.

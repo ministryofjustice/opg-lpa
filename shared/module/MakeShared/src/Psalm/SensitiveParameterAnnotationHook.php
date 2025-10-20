@@ -6,15 +6,12 @@ namespace MakeShared\Psalm;
 
 use PhpParser\Node\Expr\Error as PhpParserError;
 use Psalm\CodeLocation;
-use Psalm\Issue\PluginIssue;
 use Psalm\IssueBuffer;
 use Psalm\Plugin\EventHandler\AfterFunctionLikeAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterFunctionLikeAnalysisEvent;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
-use json_decode;
-use json_encode;
 
 /**
  * Example configuration in psalm.xml:
@@ -126,8 +123,4 @@ class SensitiveParameterAnnotationHook implements PluginEntryPointInterface, Aft
 
         return null;
     }
-}
-
-class SensitiveParameterAnnotation extends PluginIssue
-{
 }
