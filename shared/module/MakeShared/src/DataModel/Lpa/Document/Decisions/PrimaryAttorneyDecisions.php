@@ -7,8 +7,8 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class PrimaryAttorneyDecisions extends AbstractDecisions
 {
-    const LPA_DECISION_WHEN_NOW = 'now';
-    const LPA_DECISION_WHEN_NO_CAPACITY = 'no-capacity';
+    public const LPA_DECISION_WHEN_NOW = 'now';
+    public const LPA_DECISION_WHEN_NO_CAPACITY = 'no-capacity';
 
     /**
      * @var bool Represents whether this LPA allows Attorneys to make life sustaining decisions. True = yes; false = no.

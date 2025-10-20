@@ -25,7 +25,7 @@ class AuthControllerAbstractFactoryTest extends MockeryTestCase
      */
     private $container;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->factory = new AuthControllerAbstractFactory();
         $this->container = Mockery::mock(ContainerInterface::class);

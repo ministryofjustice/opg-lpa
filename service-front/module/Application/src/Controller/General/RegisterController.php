@@ -13,6 +13,7 @@ use MakeShared\Logging\LoggerTrait;
 class RegisterController extends AbstractBaseController
 {
     use LoggerTrait;
+
     /**
      * @var UserService
      */

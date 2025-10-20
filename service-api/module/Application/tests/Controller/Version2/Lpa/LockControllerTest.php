@@ -17,7 +17,7 @@ class LockControllerTest extends AbstractControllerTestCase
      */
     private $service;
 
-    public function getController(Array $parameters = []) : LockController
+    public function getController(array $parameters = []): LockController
     {
         $this->service = Mockery::mock(Service::class);
 
@@ -35,7 +35,7 @@ class LockControllerTest extends AbstractControllerTestCase
         $this->service->shouldReceive('create')->withArgs([$this->lpaId])
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
-        $response = $controller->create(['some'=>'data']);
+        $response = $controller->create(['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(Json::class, $response);
@@ -49,17 +49,16 @@ class LockControllerTest extends AbstractControllerTestCase
         $this->service->shouldReceive('create')->withArgs([$this->lpaId])
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
-        $response = $controller->create(['some'=>'data']);
+        $response = $controller->create(['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
-        ), $response->toArray());
-
+        ], $response->toArray());
     }
 
     public function testCreateUnexpectedResponse()
@@ -69,16 +68,16 @@ class LockControllerTest extends AbstractControllerTestCase
         $this->service->shouldReceive('create')->withArgs([$this->lpaId])
             ->andReturn('unexpected type')->once();
 
-        $response = $controller->create(['some'=>'data']);
+        $response = $controller->create(['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'Unable to process request'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testCreateUnauthorised()

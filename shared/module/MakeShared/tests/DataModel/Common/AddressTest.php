@@ -59,7 +59,7 @@ class AddressTest extends TestCase
         $this->assertNotNull($errors['postcode']);
     }
 
-     public function testLine1And2IsValid()
+    public function testLine1And2IsValid()
     {
         $address = new Address();
         $address->set('address1', FixturesData::generateRandomString(20));

@@ -6,7 +6,7 @@ use Laminas\Validator\AbstractValidator;
 
 class Correspondence extends AbstractValidator
 {
-    const AT_LEAST_ONE_SELECTED = 'at-least-one-option-needs-to-be-selected';
+    public const AT_LEAST_ONE_SELECTED = 'at-least-one-option-needs-to-be-selected';
 
     protected $messageTemplates = [
         self::AT_LEAST_ONE_SELECTED => 'at-least-one-option-needs-to-be-selected',
@@ -16,7 +16,7 @@ class Correspondence extends AbstractValidator
     {
         $this->setValue($value);
 
-        if (($value['contactByPost']|$value['contactByPhone']|$value['contactByEmail']) == false) {
+        if (($value['contactByPost'] | $value['contactByPhone'] | $value['contactByEmail']) == false) {
             $this->error(self::AT_LEAST_ONE_SELECTED);
             return false;
         }

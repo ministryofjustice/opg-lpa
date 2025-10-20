@@ -22,7 +22,7 @@ class InstructionControllerTests extends AbstractControllerTestCase
      */
     private $service;
 
-    public function getController(Array $parameters = []) : InstructionController
+    public function getController(array $parameters = []): InstructionController
     {
 
 
@@ -39,10 +39,10 @@ class InstructionControllerTests extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some'=>'data']])
+        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data']])
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
-        $response = $controller->update(10, ['some'=>'data']);
+        $response = $controller->update(10, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(Json::class, $response);
@@ -53,39 +53,38 @@ class InstructionControllerTests extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some'=>'data']])
+        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data']])
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
-        $response = $controller->update(10, ['some'=>'data']);
+        $response = $controller->update(10, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
-        ), $response->toArray());
-
+        ], $response->toArray());
     }
 
     public function testUpdateUnexpectedResponse()
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some'=>'data']])
+        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data']])
             ->andReturn('unexpected type')->once();
 
-        $response = $controller->update(10, ['some'=>'data']);
+        $response = $controller->update(10, ['some' => 'data']);
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(Array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'Unable to process request'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testUpdateUnauthorised()

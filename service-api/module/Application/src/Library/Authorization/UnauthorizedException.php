@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Library\Authorization;
 
 use Exception;
@@ -13,12 +14,11 @@ use Application\Library\ApiProblem\ApiProblemExceptionInterface;
  * Class UnauthorizedException
  * @package Application\Library\Authorization
  */
-class UnauthorizedException extends LmcRbacUnauthorizedException implements ApiProblemExceptionInterface {
+class UnauthorizedException extends LmcRbacUnauthorizedException implements ApiProblemExceptionInterface
+{
+    public function __construct($message = "", $code = 401, Exception $previous = null)
+    {
 
-    public function __construct($message = "", $code = 401, Exception $previous = null) {
-
-        parent::__construct( $message, $code, $previous );
-
+        parent::__construct($message, $code, $previous);
     }
-
-} // class
+}

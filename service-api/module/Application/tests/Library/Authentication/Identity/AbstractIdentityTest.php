@@ -13,17 +13,17 @@ class AbstractIdentityTest extends TestCase
      */
     private $abstractIdentity;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->abstractIdentity = new TestableAbstractIdentity('ID', [0 => 'A role', 1 => 'Another role']);
     }
 
-    public function testId() : void
+    public function testId(): void
     {
         $this->assertEquals('ID', $this->abstractIdentity->id());
     }
 
-    public function testGetRoles() : void
+    public function testGetRoles(): void
     {
         $this->assertEquals([0 => 'A role', 1 => 'Another role'], $this->abstractIdentity->getRoles());
     }

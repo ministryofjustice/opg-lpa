@@ -63,7 +63,7 @@ services:
 
   govpaystub:
     container_name: lpa-govpaystub
-    image: bbyars/mountebank@sha256:a770f137a004b47317a9748c343208299d224dbd81a9214b5084634020df7ba2
+    image: bbyars/mountebank@sha256:054aefd743cb43677236ad83f42d54a7e7a4e7bdb2714ecde335ff4b69dff000
     ports:
       - 2527:2525
       - 4547:4545
@@ -477,3 +477,17 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+
+  phpcs:
+    container_name: lpa-phpcs
+    image: lpa-phpcs
+    build:
+      context: ./
+      dockerfile: phpcs/docker/Dockerfile
+    volumes:
+      - ./service-api:/app/service-api
+      - ./service-front:/app/service-front
+      - ./service-admin:/app/service-admin
+      - ./service-pdf:/app/service-pdf
+      - ./shared:/app/shared
+      - ./phpcs.xml.dist:/app/config/phpcs.xml.dist
