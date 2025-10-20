@@ -17,8 +17,8 @@ use DateTime;
  */
 class Payment extends AbstractData
 {
-    const PAYMENT_TYPE_CARD = 'card';
-    const PAYMENT_TYPE_CHEQUE = 'cheque';
+    public const PAYMENT_TYPE_CARD = 'card';
+    public const PAYMENT_TYPE_CHEQUE = 'cheque';
 
     /**
      * @var string The payment method used (or that will be used).

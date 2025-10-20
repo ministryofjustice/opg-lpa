@@ -1,20 +1,18 @@
 <?php
+
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-
 use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Postgres\DbWrapper;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Sql\Predicate\In as InPredicate;
-
 use ApplicationTest\Helpers;
-
 
 class ApplicationDataTest extends MockeryTestCase
 {
-    public function testCount() : void
+    public function testCount(): void
     {
         $expectedCount = 10;
         $criteria = [
@@ -39,7 +37,7 @@ class ApplicationDataTest extends MockeryTestCase
             ->andReturn($resultMock);
 
         $resultMock->shouldReceive('isQueryResult')
-            ->andReturn(TRUE);
+            ->andReturn(true);
         $resultMock->shouldReceive('count')
             ->andReturn(1);
         $resultMock->shouldReceive('current')
@@ -53,7 +51,7 @@ class ApplicationDataTest extends MockeryTestCase
         $this->assertEquals($expectedCount, $count);
     }
 
-    public function testGetByIdsAndUser() : void
+    public function testGetByIdsAndUser(): void
     {
         $userId = '2';
         $lpaIds = ['90', '91', '92'];

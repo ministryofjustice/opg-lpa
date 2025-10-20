@@ -1,11 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-use Psr\Container\ContainerInterface;
-use Mezzio\Application;
-use Mezzio\MiddlewareFactory;
-
 /**
  * Setup routes with a single request method:
  *
@@ -32,7 +26,14 @@ use Mezzio\MiddlewareFactory;
  *     'contact'
  * );
  */
-return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container) : void {
+
+declare(strict_types=1);
+
+use Psr\Container\ContainerInterface;
+use Mezzio\Application;
+use Mezzio\MiddlewareFactory;
+
+return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
     $app->get('/', App\Handler\HomeHandler::class, 'home');
     $app->route('/sign-in', App\Handler\SignInHandler::class, ['GET', 'POST'], 'sign.in');
     $app->get('/sign-out', App\Handler\SignOutHandler::class, 'sign.out');

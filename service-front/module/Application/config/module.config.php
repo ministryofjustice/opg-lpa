@@ -72,11 +72,11 @@ return [
         ],
     ],
 
-    'email_view_manager' => array(
-        'template_path_stack' => array(
+    'email_view_manager' => [
+        'template_path_stack' => [
             'emails' => __DIR__ . '/../view/email',
-        ),
-    ),
+        ],
+    ],
 
     'view_helpers' => [
         'invokables' => [

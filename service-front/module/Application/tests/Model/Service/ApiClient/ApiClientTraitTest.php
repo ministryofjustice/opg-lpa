@@ -10,7 +10,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 final class ApiClientTraitTest extends MockeryTestCase
 {
-    public function testApiClientTrait() : void
+    public function testApiClientTrait(): void
     {
         /** @var $client Client|MockInterface */
         $client = Mockery::mock(Client::class);

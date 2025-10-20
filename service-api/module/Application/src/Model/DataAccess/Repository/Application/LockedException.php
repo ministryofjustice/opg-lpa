@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\DataAccess\Repository\Application;
 
 /**
@@ -8,4 +9,5 @@ namespace Application\Model\DataAccess\Repository\Application;
  * @package Application\Model\DataAccess\Repository\Application
  */
 class LockedException extends \RuntimeException
-{}
+{
+}

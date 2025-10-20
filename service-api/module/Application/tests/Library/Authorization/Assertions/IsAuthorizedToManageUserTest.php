@@ -21,14 +21,14 @@ class IsAuthorizedToManageUserTest extends MockeryTestCase
      */
     private $authorisationService;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->isAuthorisedToManageUser = new IsAuthorizedToManageUser();
 
         $this->authorisationService = Mockery::mock(AuthorizationService::class);
     }
 
-    public function testAssertValid() : void
+    public function testAssertValid(): void
     {
         $userIdentity = Mockery::mock(IdentityInterface::class);
         $userIdentity->shouldReceive('id')->andReturn('route user id')->once();
@@ -39,13 +39,13 @@ class IsAuthorizedToManageUserTest extends MockeryTestCase
         $this->assertTrue($result);
     }
 
-    public function testAssertNoRouteUserId() : void
+    public function testAssertNoRouteUserId(): void
     {
         $result = $this->isAuthorisedToManageUser->assert($this->authorisationService, null);
         $this->assertFalse($result);
     }
 
-    public function testAssertTokenUserHasNoIdMethod() : void
+    public function testAssertTokenUserHasNoIdMethod(): void
     {
         $this->authorisationService->shouldReceive('getIdentity')->andReturn([])->once();
 
@@ -53,7 +53,7 @@ class IsAuthorizedToManageUserTest extends MockeryTestCase
         $this->assertFalse($result);
     }
 
-    public function testAssertRouteUserIdDoesNotMatch() : void
+    public function testAssertRouteUserIdDoesNotMatch(): void
     {
         $userIdentity = Mockery::mock(IdentityInterface::class);
         $userIdentity->shouldReceive('id')->andReturn('not route user id')->once();
@@ -63,5 +63,4 @@ class IsAuthorizedToManageUserTest extends MockeryTestCase
         $result = $this->isAuthorisedToManageUser->assert($this->authorisationService, 'route user id');
         $this->assertFalse($result);
     }
-
 }

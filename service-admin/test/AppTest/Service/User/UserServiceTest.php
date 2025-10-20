@@ -26,7 +26,7 @@ class UserServiceTest extends TestCase
         $query = ['email' => $email];
         $client->httpGet('/v2/users/search', $query)->willReturn([
             'userId' => $id,
-            'isActive' => TRUE
+            'isActive' => true
         ]);
 
         // lpa lookup
@@ -39,7 +39,7 @@ class UserServiceTest extends TestCase
         $actual = $userService->search($email);
 
         $this->assertEquals($id, $actual['userId']);
-        $this->assertEquals(TRUE, $actual['isActive']);
+        $this->assertEquals(true, $actual['isActive']);
         $this->assertEquals($numLpas, $actual['numberOfLpas']);
     }
 
@@ -61,7 +61,7 @@ class UserServiceTest extends TestCase
 
         $client->httpGet('/v2/users/match', $params)->willReturn([[
             'userId' => $id,
-            'isActive' => TRUE,
+            'isActive' => true,
             'numberOfLpas' => $numLpas,
             'activatedAt' => [
                 'date' => '2020-01-21T15:16:02.000000+0000',
@@ -74,7 +74,7 @@ class UserServiceTest extends TestCase
         $actual = $userService->match($params);
 
         $this->assertEquals($id, $actual[0]['userId']);
-        $this->assertEquals(TRUE, $actual[0]['isActive']);
+        $this->assertEquals(true, $actual[0]['isActive']);
         $this->assertEquals($numLpas, $actual[0]['numberOfLpas']);
         $this->assertInstanceOf(DateTime::class, $actual[0]['activatedAt']);
     }

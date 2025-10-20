@@ -24,7 +24,7 @@ class LpaControllerAbstractFactoryTest extends MockeryTestCase
      */
     private $container;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->factory = new LpaControllerAbstractFactory();
         $this->container = Mockery::mock(ContainerInterface::class);

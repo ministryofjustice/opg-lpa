@@ -60,7 +60,7 @@ class Accordion extends AbstractHelper
      */
     public function top()
     {
-        $barsInPlay = array();
+        $barsInPlay = [];
 
         if ($this->lpa instanceof Lpa) {
             $flowChecker = new FormFlowChecker($this->lpa);
@@ -106,7 +106,7 @@ class Accordion extends AbstractHelper
      */
     public function bottom()
     {
-        $barsInPlay = array();
+        $barsInPlay = [];
 
         if ($this->lpa instanceof Lpa) {
             $flowChecker = new FormFlowChecker($this->lpa);
