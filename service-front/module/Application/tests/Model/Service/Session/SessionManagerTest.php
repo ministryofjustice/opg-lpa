@@ -19,7 +19,7 @@ final class SessionManagerTest extends MockeryTestCase
      * error)
      */
     #[RunInSeparateProcess]
-    public function testSessionManager() : void
+    public function testSessionManager(): void
     {
         $container = new Container('initialised');
 
@@ -30,7 +30,7 @@ final class SessionManagerTest extends MockeryTestCase
 
         $sessionManager->initialise();
 
-        $this->assertEquals($container->init, TRUE);
+        $this->assertEquals($container->init, true);
         $this->assertNotSame($origId, $sessionManager->getId());
     }
 }

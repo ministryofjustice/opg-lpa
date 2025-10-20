@@ -72,7 +72,7 @@ class DbWrapperTest extends MockeryTestCase
         // patch the createSql() and quoteValue() methods of class under test;
         // $dbWrapper is a partial mock which defers all methods except the patched ones
         // to real methods; the array passed here contains constructor arguments
-        $dbWrapper = Mockery::Mock(DbWrapper::class, array($adapterMock))->makePartial();
+        $dbWrapper = Mockery::Mock(DbWrapper::class, [$adapterMock])->makePartial();
 
         $dbWrapper->shouldReceive('createSql')
             ->once()

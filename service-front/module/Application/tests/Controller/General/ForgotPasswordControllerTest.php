@@ -24,7 +24,7 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         'password' => 'newPassword'
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

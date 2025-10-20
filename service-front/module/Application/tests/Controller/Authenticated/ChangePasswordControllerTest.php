@@ -20,7 +20,7 @@ final class ChangePasswordControllerTest extends AbstractControllerTestCase
         'password'         => 'Abcd1234',
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

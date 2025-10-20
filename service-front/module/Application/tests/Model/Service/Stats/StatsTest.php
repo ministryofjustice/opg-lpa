@@ -16,17 +16,17 @@ final class StatsTest extends AbstractServiceTest
     private Client|MockInterface $apiClient;
     private Stats $service;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->apiClient = Mockery::mock(Client::class);
-        
+
         $this->service = new Stats($this->authenticationService, []);
         $this->service->setApiClient($this->apiClient);
     }
 
-    public function testGetApiStats() : void
+    public function testGetApiStats(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/stats/all'])
@@ -38,7 +38,7 @@ final class StatsTest extends AbstractServiceTest
         $this->assertEquals(['test' => 'stats'], $result);
     }
 
-    public function testGetApiStatsApiException() : void
+    public function testGetApiStatsApiException(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/stats/all'])

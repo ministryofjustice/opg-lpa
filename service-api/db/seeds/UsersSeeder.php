@@ -1,6 +1,5 @@
 <?php
 
-
 use Phinx\Seed\AbstractSeed;
 
 class UsersSeeder extends AbstractSeed

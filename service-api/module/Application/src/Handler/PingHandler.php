@@ -23,13 +23,13 @@ readonly class PingHandler implements RequestHandlerInterface
 {
     public function __construct(
         private CredentialsInterface $awsCredentials,
-        private SignatureV4          $signer,
-        private DbAdapter            $database,
-        private SqsClient            $sqsClient,
-        private string               $sqsQueueUrl,
-        private string               $trackMyLpaEndpoint,
-        private HttpClient           $httpClient,
-        private LoggerInterface      $logger,
+        private SignatureV4 $signer,
+        private DbAdapter $database,
+        private SqsClient $sqsClient,
+        private string $sqsQueueUrl,
+        private string $trackMyLpaEndpoint,
+        private HttpClient $httpClient,
+        private LoggerInterface $logger,
     ) {
     }
 

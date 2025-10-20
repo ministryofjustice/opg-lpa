@@ -152,7 +152,7 @@ class ContinuationSheets
     public function getContinuationNoteKeys(Lpa $lpa): array
     {
         //Array of keys to know which extra notes to show in template for continuation sheets
-        $continuationNoteKeys = array();
+        $continuationNoteKeys = [];
         $extraBlockPeople = null;
         $paCount = count($lpa->document->primaryAttorneys);
         $raCount = count($lpa->document->replacementAttorneys);

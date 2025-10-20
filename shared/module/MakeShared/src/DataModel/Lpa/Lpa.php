@@ -31,29 +31,29 @@ class Lpa extends AbstractData
     /**
      * Metadata constants
      */
-    const REPLACEMENT_ATTORNEYS_CONFIRMED = 'replacement-attorneys-confirmed';
-    const CERTIFICATE_PROVIDER_SKIPPED = 'certificate-provider-skipped';
+    public const REPLACEMENT_ATTORNEYS_CONFIRMED = 'replacement-attorneys-confirmed';
+    public const CERTIFICATE_PROVIDER_SKIPPED = 'certificate-provider-skipped';
     // Used to record that the certificate provider was skipped during the creation of the LPA. For stats use
-    const CERTIFICATE_PROVIDER_WAS_SKIPPED = 'certificate-provider-was-skipped';
-    const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
-    const REPEAT_APPLICATION_CONFIRMED = 'repeat-application-confirmed';
-    const APPLY_FOR_FEE_REDUCTION = 'apply-for-fee-reduction';
-    const INSTRUCTION_CONFIRMED = 'instruction-confirmed';
-    const ANALYTICS_RETURN_COUNT = 'analyticsReturnCount';
-    const SIRIUS_PROCESSING_STATUS = 'sirius-processing-status';
-    const APPLICATION_REJECTED_DATE = 'application-rejected-date';
-    const APPLICATION_RECEIPT_DATE = 'application-receipt-date';
-    const APPLICATION_REGISTRATION_DATE = 'application-registration-date';
-    const APPLICATION_INVALID_DATE = 'application-invalid-date';
-    const APPLICATION_WITHDRAWN_DATE = 'application-withdrawn-date';
+    public const CERTIFICATE_PROVIDER_WAS_SKIPPED = 'certificate-provider-was-skipped';
+    public const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
+    public const REPEAT_APPLICATION_CONFIRMED = 'repeat-application-confirmed';
+    public const APPLY_FOR_FEE_REDUCTION = 'apply-for-fee-reduction';
+    public const INSTRUCTION_CONFIRMED = 'instruction-confirmed';
+    public const ANALYTICS_RETURN_COUNT = 'analyticsReturnCount';
+    public const SIRIUS_PROCESSING_STATUS = 'sirius-processing-status';
+    public const APPLICATION_REJECTED_DATE = 'application-rejected-date';
+    public const APPLICATION_RECEIPT_DATE = 'application-receipt-date';
+    public const APPLICATION_REGISTRATION_DATE = 'application-registration-date';
+    public const APPLICATION_INVALID_DATE = 'application-invalid-date';
+    public const APPLICATION_WITHDRAWN_DATE = 'application-withdrawn-date';
 
 
     /**
      * LPA naming of Sirius processing status
      */
-    const SIRIUS_PROCESSING_STATUS_RECEIVED = 'Received';
-    const SIRIUS_PROCESSING_STATUS_CHECKING = 'Checking';
-    const SIRIUS_PROCESSING_STATUS_RETURNED = 'Returned';
+    public const SIRIUS_PROCESSING_STATUS_RECEIVED = 'Received';
+    public const SIRIUS_PROCESSING_STATUS_CHECKING = 'Checking';
+    public const SIRIUS_PROCESSING_STATUS_RETURNED = 'Returned';
 
     /**
      * @var int The LPA identifier.

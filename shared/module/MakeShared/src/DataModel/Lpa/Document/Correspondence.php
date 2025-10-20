@@ -24,13 +24,13 @@ class Correspondence extends AbstractData
     /**
      * Field length constants
      */
-    const COMPANY_MIN_LENGTH = 0;
-    const COMPANY_MAX_LENGTH = 75;
+    private const COMPANY_MIN_LENGTH = 0;
+    private const COMPANY_MAX_LENGTH = 75;
 
-    const WHO_DONOR = 'donor';
-    const WHO_ATTORNEY = 'attorney';
-    const WHO_CERTIFICATE_PROVIDER = 'certificateProvider';
-    const WHO_OTHER = 'other';
+    public const WHO_DONOR = 'donor';
+    public const WHO_ATTORNEY = 'attorney';
+    public const WHO_CERTIFICATE_PROVIDER = 'certificateProvider';
+    public const WHO_OTHER = 'other';
 
     /**
      * @var string The person's role within this LPA.

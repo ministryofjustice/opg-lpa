@@ -1,5 +1,7 @@
 <?php
 
+namespace OpgTest;
+
 use Opg\Lpa\Pdf\Config\Config;
 
 class ConfigSetUp
@@ -15,7 +17,7 @@ class ConfigSetUp
         $serviceConfig = $config['service'];
         $serviceConfig['disable_strike_through_lines'] = false;
         $serviceConfig['disable_blanks'] = false;
-        $serviceConfig['assets']['template_path_on_ram_disk'] = __DIR__ . '/../assets/v2';
+        $serviceConfig['assets']['template_path_on_ram_disk'] = __DIR__ . '/../../assets/v2';
         $serviceConfig['assets']['intermediate_file_path'] = '/tmp';
 
         $config->offsetSet('service', $serviceConfig);

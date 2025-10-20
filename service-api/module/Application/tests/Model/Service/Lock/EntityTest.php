@@ -38,6 +38,6 @@ class EntityTest extends TestCase
     {
         $lpa = new Lpa();
         $entity = new Entity($lpa);
-        $this->assertEquals(array(), $entity->toArray());
+        $this->assertEquals([], $entity->toArray());
     }
 }

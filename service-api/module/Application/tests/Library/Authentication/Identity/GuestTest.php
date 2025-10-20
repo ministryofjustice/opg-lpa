@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class GuestTest extends TestCase
 {
-    public function testGuestDefaultRole() : void
+    public function testGuestDefaultRole(): void
     {
         $guest = new Guest();
         $this->assertEquals([0 => 'guest'], $guest->getRoles());

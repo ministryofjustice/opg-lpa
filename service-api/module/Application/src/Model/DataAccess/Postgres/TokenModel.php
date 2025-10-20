@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
@@ -6,7 +7,6 @@ use Application\Model\DataAccess\Repository\User as UserRepository;
 
 class TokenModel implements UserRepository\TokenInterface
 {
-
     /**
      * The token's data.
      *
@@ -45,7 +45,7 @@ class TokenModel implements UserRepository\TokenInterface
      *
      * @return string
      */
-    public function id() : ?string
+    public function id(): ?string
     {
         return (isset($this->data['token'])) ? $this->data['token'] : null;
     }
@@ -55,7 +55,7 @@ class TokenModel implements UserRepository\TokenInterface
      *
      * @return DateTime
      */
-    public function expiresAt() : ?DateTime
+    public function expiresAt(): ?DateTime
     {
         return $this->returnDateField('expiresAt');
     }
@@ -65,7 +65,7 @@ class TokenModel implements UserRepository\TokenInterface
      *
      * @return DateTime
      */
-    public function updatedAt() : ?DateTime
+    public function updatedAt(): ?DateTime
     {
         return $this->returnDateField('updatedAt');
     }
@@ -75,9 +75,8 @@ class TokenModel implements UserRepository\TokenInterface
      *
      * @return DateTime
      */
-    public function createdAt() : ?DateTime
+    public function createdAt(): ?DateTime
     {
         return $this->returnDateField('createdAt');
     }
-
 }

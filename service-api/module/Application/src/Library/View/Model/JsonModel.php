@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Library\View\Model;
 
 use Traversable;
@@ -14,8 +15,8 @@ use Laminas\View\Model\JsonModel as LaminasJsonModel;
  *
  * @psalm-suppress InvalidExtendClass To be addressed in LPA-3817
  */
-class JsonModel extends LaminasJsonModel {
-
+class JsonModel extends LaminasJsonModel
+{
     /**
      * Serialize to JSON
      *
@@ -31,11 +32,10 @@ class JsonModel extends LaminasJsonModel {
         }
         if (null !== $this->jsonpCallback) {
             // Leave jsonpCallback as default. i.e. Json::encode
-            return $this->jsonpCallback.'('.Json::encode($variables).');';
+            return $this->jsonpCallback . '(' . Json::encode($variables) . ');';
         }
 
         // Using PHP's inbuilt function. Always return pretty.
-        return json_encode( $variables, JSON_PRETTY_PRINT );
+        return json_encode($variables, JSON_PRETTY_PRINT);
     }
-
-} // class
+}

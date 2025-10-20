@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class UnauthorizedExceptionTest extends TestCase
 {
-    public function testConstructor() : void
+    public function testConstructor(): void
     {
         $unauthorizedException = new UnauthorizedException();
 

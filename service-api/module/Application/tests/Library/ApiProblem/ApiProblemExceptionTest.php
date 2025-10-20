@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class ApiProblemExceptionTest extends TestCase
 {
-    public function testConstructor() : void
+    public function testConstructor(): void
     {
         $apiProblemException = new ApiProblemException();
 

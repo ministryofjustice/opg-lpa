@@ -12,7 +12,7 @@ class Service extends AbstractService
 {
     use UserRepositoryTrait;
 
-    const TOKEN_TTL = 86400; // 24 hours
+    public const TOKEN_TTL = 86400; // 24 hours
 
     //-------------
 

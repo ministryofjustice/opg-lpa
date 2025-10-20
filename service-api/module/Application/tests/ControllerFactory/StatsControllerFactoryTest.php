@@ -22,7 +22,7 @@ class StatsControllerFactoryTest extends MockeryTestCase
      */
     private $container;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->factory = new StatsControllerFactory();
         $this->container = Mockery::mock(ContainerInterface::class);
