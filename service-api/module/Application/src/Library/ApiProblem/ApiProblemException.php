@@ -18,4 +18,4 @@ class ApiProblemException extends Exception implements ApiProblemExceptionInterf
 
         parent::__construct($message, $code, $previous);
     }
-} // class
+}

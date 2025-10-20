@@ -4,7 +4,7 @@ namespace Application\View\Helper\Traits;
 
 trait ConcatNamesTrait
 {
-    function concatNames($nameList)
+    public function concatNames($nameList)
     {
         $count = count($nameList);
         if ($count == 0) {

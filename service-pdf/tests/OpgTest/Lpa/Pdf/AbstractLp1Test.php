@@ -36,7 +36,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
     use LongContentTrait;
 
     // data for testing populatePageTwoThreeFour()
-    private function populatePageTwoThreeFour_singlePrimaryAttorneyData($data)
+    private function populatePageTwoThreeFourSinglePrimaryAttorneyData($data)
     {
         // Modify LPA data so it has a single primary attorney
         $primaryAttorneys = $data["document"]["primaryAttorneys"];
@@ -50,7 +50,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
     }
 
     // assertions about data and strikethroughs added by populatePageTwoThreeFour()
-    private function populatePageTwoThreeFour_singlePrimaryAttorneyAssertions($actualData, $actualStrikeThroughs)
+    private function populatePageTwoThreeFourSinglePrimaryAttorneyAssertions($actualData, $actualStrikeThroughs)
     {
         /* DATA */
         $expectedData = [
@@ -89,7 +89,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
     }
 
     // data for testing populatePageFive()
-    private function populatePageFive_SingleTrustCorporationReplacementAttorneyData($data)
+    private function populatePageFiveSingleTrustCorporationReplacementAttorneyData($data)
     {
         // Modify LPA data so it has a trust corporation as its single
         // replacement attorney
@@ -116,7 +116,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
     }
 
     // assertions about data and strikethroughs added by populatePageFive()
-    private function populatePageFive_SingleTrustCorporationReplacementAttorneyAssertions($actualData, $actualStrikeThroughs)
+    private function populatePageFiveSingleTrustCorporationReplacementAttorneyAssertions($actualData, $actualStrikeThroughs)
     {
         /* DATA */
         $expectedData = [
@@ -145,7 +145,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
     }
 
     // data for testing populatePageSeven()
-    private function populatePageSeven_SinglePersonToNotifyData($data)
+    private function populatePageSevenSinglePersonToNotifyData($data)
     {
         // Set a single person to notify so we get three strikethroughs
         // on page 7
@@ -156,7 +156,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
     }
 
     // assertions about data and strikethroughs added by populatePageSeven()
-    private function populatePageSeven_SinglePersonToNotifyAssertions($actualData, $actualStrikeThroughs)
+    private function populatePageSevenSinglePersonToNotifyAssertions($actualData, $actualStrikeThroughs)
     {
         /* DATA */
         $expectedData = [
@@ -179,7 +179,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
         $this->assertArrayIsSubArrayOf($expectedStrikeThroughs, $actualStrikeThroughs);
     }
 
-    private function populatePageEight_NoPreferencesAndLongInstructionsData($data)
+    private function populatePageEightNoPreferencesAndLongInstructionsData($data)
     {
         // Set empty preferences
         $data['document']['preference'] = '';
@@ -191,7 +191,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
         return $data;
     }
 
-    private function populatePageEight_NoPreferencesAndLongInstructionsAssertions($actualData, $actualStrikeThroughs)
+    private function populatePageEightNoPreferencesAndLongInstructionsAssertions($actualData, $actualStrikeThroughs)
     {
         /* DATA */
         // Should see check in "has more instructions" checkbox
@@ -204,7 +204,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
         $this->assertArrayIsSubArrayOf($expectedStrikeThroughs, $actualStrikeThroughs);
     }
 
-    private function populatePageEighteen_CertificateProviderCorrespondentData($data)
+    private function populatePageEighteenCertificateProviderCorrespondentData($data)
     {
         // Set certificate provider as correspondent
         $data['document']['correspondent']['who'] = Correspondence::WHO_CERTIFICATE_PROVIDER;
@@ -213,7 +213,7 @@ class AbstractLp1Test extends AbstractPdfTestCase
         return $data;
     }
 
-    private function populatePageEighteen_CertificateProviderCorrespondentAssertions($actualData)
+    private function populatePageEighteenCertificateProviderCorrespondentAssertions($actualData)
     {
         /* DATA */
         $expectedData = [
@@ -237,11 +237,11 @@ class AbstractLp1Test extends AbstractPdfTestCase
         $data = $this->getPfLpaJSON();
 
         // Modify the LPA data to produce what we need for our test cases
-        $data = $this->populatePageTwoThreeFour_SinglePrimaryAttorneyData($data);
-        $data = $this->populatePageFive_SingleTrustCorporationReplacementAttorneyData($data);
-        $data = $this->populatePageSeven_SinglePersonToNotifyData($data);
-        $data = $this->populatePageEight_NoPreferencesAndLongInstructionsData($data);
-        $data = $this->populatePageEighteen_CertificateProviderCorrespondentData($data);
+        $data = $this->populatePageTwoThreeFourSinglePrimaryAttorneyData($data);
+        $data = $this->populatePageFiveSingleTrustCorporationReplacementAttorneyData($data);
+        $data = $this->populatePageSevenSinglePersonToNotifyData($data);
+        $data = $this->populatePageEightNoPreferencesAndLongInstructionsData($data);
+        $data = $this->populatePageEighteenCertificateProviderCorrespondentData($data);
 
         // Load the data to make our amended LPA
         $lpa = $this->buildLpaFromJSON($data);
@@ -255,11 +255,11 @@ class AbstractLp1Test extends AbstractPdfTestCase
         $actualStrikeThroughs = $this->getReflectionPropertyValue('strikeThroughTargets', $pdf);
 
         // Perform assertions
-        $this->populatePageTwoThreeFour_SinglePrimaryAttorneyAssertions($actualData, $actualStrikeThroughs);
-        $this->populatePageFive_SingleTrustCorporationReplacementAttorneyAssertions($actualData, $actualStrikeThroughs);
-        $this->populatePageSeven_SinglePersonToNotifyAssertions($actualData, $actualStrikeThroughs);
-        $this->populatePageEight_NoPreferencesAndLongInstructionsAssertions($actualData, $actualStrikeThroughs);
-        $this->populatePageEighteen_CertificateProviderCorrespondentAssertions($actualData);
+        $this->populatePageTwoThreeFourSinglePrimaryAttorneyAssertions($actualData, $actualStrikeThroughs);
+        $this->populatePageFiveSingleTrustCorporationReplacementAttorneyAssertions($actualData, $actualStrikeThroughs);
+        $this->populatePageSevenSinglePersonToNotifyAssertions($actualData, $actualStrikeThroughs);
+        $this->populatePageEightNoPreferencesAndLongInstructionsAssertions($actualData, $actualStrikeThroughs);
+        $this->populatePageEighteenCertificateProviderCorrespondentAssertions($actualData);
     }
 
     // Additional tests which can't be performed in testPopulatePages(), as they

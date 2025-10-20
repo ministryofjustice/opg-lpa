@@ -8,7 +8,7 @@ class ApiException extends PayException
 {
     private $response;
 
-    public function __construct($message = "", $code = 0, ResponseInterface $response)
+    public function __construct($message, $code, ResponseInterface $response)
     {
 
         $this->response = $response;

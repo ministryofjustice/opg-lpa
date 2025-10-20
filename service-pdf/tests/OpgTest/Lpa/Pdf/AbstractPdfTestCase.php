@@ -4,10 +4,10 @@ namespace OpgTest\Lpa\Pdf;
 
 use Opg\Lpa\Pdf\AbstractIndividualPdf;
 use MakeShared\DataModel\Lpa\Lpa;
-use ConfigSetUp;
 use Opg\Lpa\Pdf\Aggregator\AbstractAggregator;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdftkFactory;
+use OpgTest\ConfigSetUp;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractPdfTestCase extends TestCase

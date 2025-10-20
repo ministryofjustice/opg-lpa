@@ -26,23 +26,23 @@ class Client
      * @const string Current version of this client.
      * This follows Semantic Versioning (http://semver.org/)
      */
-    const VERSION = '1.0.0';
+    public const VERSION = '1.0.0';
 
     /**
      * @const string The API endpoint for Pay production.
      */
-    const BASE_URL_PRODUCTION = 'https://publicapi.payments.service.gov.uk';
+    public const BASE_URL_PRODUCTION = 'https://publicapi.payments.service.gov.uk';
 
     /**
      * Paths for API endpoints.
      */
-    const PATH_PAYMENT_LIST     = '/v1/payments';
-    const PATH_PAYMENT_CREATE   = '/v1/payments';
-    const PATH_PAYMENT_LOOKUP   = '/v1/payments/%s';
-    const PATH_PAYMENT_EVENTS   = '/v1/payments/%s/events';
-    const PATH_PAYMENT_CANCEL   = '/v1/payments/%s/cancel';
-    const PATH_PAYMENT_REFUND   = '/v1/payments/%s/refunds/%s';
-    const PATH_PAYMENT_REFUNDS  = '/v1/payments/%s/refunds';
+    public const PATH_PAYMENT_LIST     = '/v1/payments';
+    public const PATH_PAYMENT_CREATE   = '/v1/payments';
+    public const PATH_PAYMENT_LOOKUP   = '/v1/payments/%s';
+    public const PATH_PAYMENT_EVENTS   = '/v1/payments/%s/events';
+    public const PATH_PAYMENT_CANCEL   = '/v1/payments/%s/cancel';
+    public const PATH_PAYMENT_REFUND   = '/v1/payments/%s/refunds/%s';
+    public const PATH_PAYMENT_REFUNDS  = '/v1/payments/%s/refunds';
 
 
     /**

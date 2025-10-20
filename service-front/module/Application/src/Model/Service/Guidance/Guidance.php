@@ -8,15 +8,15 @@ use Michelf\Markdown;
 
 class Guidance extends AbstractService
 {
-    const GUIDANCE_MARKDOWN_FOLDER = 'content/guidance';
-    const GUIDANCE_ROUTE = 'guide';
+    public const GUIDANCE_MARKDOWN_FOLDER = 'content/guidance';
+    public const GUIDANCE_ROUTE = 'guide';
 
     /**
      * Generate guidance sections and navigation from the guidance markdown files
      *
      * @return array An array of guidance section details
      */
-    function parseMarkdown()
+    public function parseMarkdown()
     {
         $sectionArray = [];
         $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
@@ -61,7 +61,7 @@ class Guidance extends AbstractService
      *
      * @return string The generated HTML
      */
-    function processSection($filename, $sectionId)
+    public function processSection($filename, $sectionId)
     {
         $md = Markdown::defaultTransform(file_get_contents(self::GUIDANCE_MARKDOWN_FOLDER . '/' . $filename));
 

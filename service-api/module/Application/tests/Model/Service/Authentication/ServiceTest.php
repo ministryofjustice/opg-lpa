@@ -13,7 +13,7 @@ use Mockery\MockInterface;
 
 class ServiceTest extends AbstractServiceTestCase
 {
-    const TIME_FORMAT = 'Y-m-d\TH:i:s.uO';
+    public const TIME_FORMAT = 'Y-m-d\TH:i:s.uO';
 
     /**
      * @var MockInterface|UserRepositoryInterface
