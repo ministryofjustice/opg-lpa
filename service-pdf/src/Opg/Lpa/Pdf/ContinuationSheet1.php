@@ -17,7 +17,7 @@ class ContinuationSheet1 extends AbstractContinuationSheet
     /**
      * Constants
      */
-    const MAX_ACTORS_CONTINUATION_SHEET_1 = 2;
+    public const MAX_ACTORS_CONTINUATION_SHEET_1 = 2;
 
     /**
      * PDF template file name (without path) for this PDF object

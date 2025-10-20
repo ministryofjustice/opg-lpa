@@ -60,7 +60,7 @@ final class AuthControllerCookieTest extends AbstractControllerTestCase
         $this->request->shouldReceive('getCookie')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['cookie'])->andReturn(null)->once();
         $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', array(), ['query' => ['cookie' => '1']]])->andReturn($response)->once();
+            ->withArgs(['login', [], ['query' => ['cookie' => '1']]])->andReturn($response)->once();
 
         $result = $controller->indexAction();
 
@@ -79,7 +79,7 @@ final class AuthControllerCookieTest extends AbstractControllerTestCase
 
         $this->params->shouldReceive('fromQuery')->withArgs(['cookie'])->andReturn(null)->once();
         $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', array(), ['query' => ['cookie' => '1']]])->andReturn($response)->once();
+            ->withArgs(['login', [], ['query' => ['cookie' => '1']]])->andReturn($response)->once();
 
         $cookie->shouldReceive('offsetExists')->withArgs(['lpa'])->andReturn(false)->once();
 

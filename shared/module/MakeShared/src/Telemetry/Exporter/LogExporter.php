@@ -13,7 +13,7 @@ use Psr\Log\LoggerAwareInterface;
  * NB this ignores the Sampled flag on segments
  * and exports everything by default.
  */
-class LogExporter implements ExporterInterface , LoggerAwareInterface
+class LogExporter implements ExporterInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 

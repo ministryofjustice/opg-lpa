@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\Service\AddressLookup;
 
 use Interop\Container\ContainerInterface;
@@ -6,7 +7,6 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class OrdnanceSurveyFactory implements FactoryInterface
 {
-
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->get('config');
@@ -25,5 +25,4 @@ class OrdnanceSurveyFactory implements FactoryInterface
             $config['address']['ordnancesurvey']['endpoint']
         );
     }
-
 }

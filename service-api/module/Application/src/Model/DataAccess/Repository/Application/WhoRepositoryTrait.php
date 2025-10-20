@@ -1,8 +1,9 @@
 <?php
+
 namespace Application\Model\DataAccess\Repository\Application;
 
-trait WhoRepositoryTrait {
-
+trait WhoRepositoryTrait
+{
     /**
      * @var WhoRepositoryInterface
      */
@@ -19,7 +20,7 @@ trait WhoRepositoryTrait {
     /**
      * @return WhoRepositoryInterface
      */
-    private function getWhoRepository() : WhoRepositoryInterface
+    private function getWhoRepository(): WhoRepositoryInterface
     {
         if (!($this->whoRepository instanceof WhoRepositoryInterface)) {
             throw new \RuntimeException("Instance of WhoRepository not set");

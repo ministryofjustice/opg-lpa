@@ -1,4 +1,5 @@
 <?php
+
 namespace ApplicationTest\Controller;
 
 use Application\Controller\FeedbackController;
@@ -38,7 +39,7 @@ class FeedbackControllerTest extends MockeryTestCase
     private $pluginManager;
 
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->feedbackService = Mockery::mock(FeedbackService::class);
         $this->authorizationServiceService = Mockery::mock(AuthorizationService::class);
@@ -70,7 +71,7 @@ class FeedbackControllerTest extends MockeryTestCase
         //----------------------------------
 
         $this->feedbackService->shouldReceive('get');
-        $this->feedbackService->shouldReceive('getPruneDate')->andReturn(new DateTime);
+        $this->feedbackService->shouldReceive('getPruneDate')->andReturn(new DateTime());
 
 
         $result = $this->controller->getList();

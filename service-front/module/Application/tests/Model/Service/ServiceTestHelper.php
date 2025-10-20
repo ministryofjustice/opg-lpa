@@ -20,7 +20,7 @@ class ServiceTestHelper
         string $message = 'Test error',
         int $status = 500,
         $body = '{}'
-    ) : ApiException {
+    ): ApiException {
         /** @var ResponseInterface|MockInterface $response */
         $response = Mockery::mock(ResponseInterface::class);
         $response->shouldReceive('getBody')->andReturn(Utils::streamFor($body));
@@ -32,7 +32,7 @@ class ServiceTestHelper
     /**
      * @throws Exception
      */
-    public static function assertTimeNear(DateTime $expected, DateTime $actual, int $secondsOut = 1) : void
+    public static function assertTimeNear(DateTime $expected, DateTime $actual, int $secondsOut = 1): void
     {
         $upperLimit = (clone $expected)->add(new DateInterval('PT' . $secondsOut . 'S'));
         Assert::assertLessThanOrEqual($upperLimit, $actual);

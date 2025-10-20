@@ -89,7 +89,7 @@ trait LongContentTrait
     {
         $flatContent = $this->flattenTextContent($content);
 
-        if ($flatContent === ''){
+        if ($flatContent === '') {
             return "\r\n";
         }
 

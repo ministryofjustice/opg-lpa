@@ -21,7 +21,7 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
     private ControllerAbstractFactory $factory;
     private MockInterface|ContainerInterface $container;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->factory = new ControllerAbstractFactory();
         $this->container = Mockery::mock(ContainerInterface::class);

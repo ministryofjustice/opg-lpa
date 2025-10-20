@@ -19,9 +19,9 @@ class Address extends AbstractData
     /**
      * Field length constants
      */
-    const ADDRESS_LINE_MAX_LENGTH = 50;//40;
-    const POSTCODE_MIN_LENGTH = 1;
-    const POSTCODE_MAX_LENGTH = 8;
+    private const ADDRESS_LINE_MAX_LENGTH = 50;//40;
+    private const POSTCODE_MIN_LENGTH = 1;
+    private const POSTCODE_MAX_LENGTH = 8;
 
     /**
      * @var string First line of the address.

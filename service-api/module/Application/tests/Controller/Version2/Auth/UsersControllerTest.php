@@ -10,7 +10,7 @@ use Mockery;
 
 class UsersControllerTest extends AbstractAuthControllerTestCase
 {
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->service = Mockery::mock(Service::class);
 

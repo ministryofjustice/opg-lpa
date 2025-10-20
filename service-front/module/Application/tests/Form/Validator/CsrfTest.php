@@ -30,7 +30,7 @@ final class CsrfTest extends MockeryTestCase
         $this->assertEquals($errors, $validator->getMessages());
     }
 
-    static public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [

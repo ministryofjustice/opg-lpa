@@ -19,6 +19,8 @@ COMPOSER_VERSION := "2.8.11"
 # Unique identifier for this version of the application
 APP_VERSION := $(shell echo -n `git rev-parse --short HEAD`)
 
+PHPCS_REPORT ?= full
+
 .PHONY: all
 all:
 	@${MAKE} dc-up
@@ -238,3 +240,9 @@ cypress-gui: npm-install
 .PHONY: cypress-open
 cypress-open:
 	${MAKE} -j s3-monitor cypress-gui
+
+dc-phpcs-check:
+	@docker compose run --rm --no-deps -q phpcs --report=${PHPCS_REPORT}
+
+dc-phpcs-fix:
+	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcbf --standard=/app/config/phpcs.xml.dist" phpcs

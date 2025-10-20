@@ -55,6 +55,6 @@ class EntityTest extends TestCase
     public function testToArrayNull()
     {
         $entity = new Entity(null);
-        $this->assertEquals(array(), $entity->toArray());
+        $this->assertEquals([], $entity->toArray());
     }
 }

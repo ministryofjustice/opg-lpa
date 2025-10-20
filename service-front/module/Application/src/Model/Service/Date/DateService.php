@@ -7,7 +7,6 @@ use Exception;
 
 class DateService implements IDateService
 {
-
     /**
      * @return DateTime
      * @throws Exception

@@ -15,7 +15,7 @@ final class LoginTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->setUpForm(new LoginForm());
     }

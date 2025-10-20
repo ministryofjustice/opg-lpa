@@ -10,6 +10,7 @@ use MakeShared\Logging\LoggerTrait;
 class EmailController extends AbstractAuthController
 {
     use LoggerTrait;
+
     /**
      * Get the service to use
      *

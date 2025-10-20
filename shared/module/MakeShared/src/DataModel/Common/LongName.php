@@ -17,10 +17,10 @@ class LongName extends AbstractData
     /**
      * Field length constants
      */
-    const TITLE_MIN_LENGTH = 1;
-    const TITLE_MAX_LENGTH = 5;
-    const FIRST_NAME_MAX_LENGTH = 53;
-    const LAST_NAME_MAX_LENGTH = 61;
+    public const TITLE_MIN_LENGTH = 1;
+    public const TITLE_MAX_LENGTH = 5;
+    public const FIRST_NAME_MAX_LENGTH = 53;
+    public const LAST_NAME_MAX_LENGTH = 61;
 
     /**
      * @var string A person's title. E.g. Mr, Miss, Mrs, etc.

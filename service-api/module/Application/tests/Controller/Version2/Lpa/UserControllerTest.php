@@ -98,12 +98,12 @@ class UserControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testGetUnexpectedResponse()
@@ -116,12 +116,12 @@ class UserControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'Unable to process request'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testGetUnauthorised()
@@ -159,12 +159,12 @@ class UserControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testUpdateUnexpectedResponse()
@@ -178,12 +178,12 @@ class UserControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'Unable to process request'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testUpdateUnauthorised()
@@ -220,12 +220,12 @@ class UserControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'error'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testDeleteFailed()
@@ -239,12 +239,12 @@ class UserControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals(array (
+        $this->assertEquals([
             'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
             'title' => 'Internal Server Error',
             'status' => 500,
             'detail' => 'Unable to process request'
-        ), $response->toArray());
+        ], $response->toArray());
     }
 
     public function testDeleteUnauthorised()

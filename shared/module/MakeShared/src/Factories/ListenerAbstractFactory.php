@@ -43,6 +43,5 @@ class ListenerAbstractFactory implements AbstractFactoryInterface
             $listener->setLogger($container->get('Logger'));
         }
         return $listener;
-
     }
 }

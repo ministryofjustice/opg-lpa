@@ -103,7 +103,7 @@ class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterfac
             // - Alphagov\Notifications\Exception\NotifyException
             // - Alphagov\Notifications\Exception\ApiException
             // ApiException extends NotifyException, so we can just catch that
-            // and turn it into an instance of a use Application\Model\Service\Mail\Exception\InvalidArgumentException 
+            // and turn it into an instance of a use Application\Model\Service\Mail\Exception\InvalidArgumentException
             try {
                 $this->client->sendEmail($toAddress, $notifyTemplateId, $data);
             } catch (NotifyException $ex) {

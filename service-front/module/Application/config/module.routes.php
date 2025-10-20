@@ -815,15 +815,15 @@ return [
                                 ],
                                 'may_terminate' => true,
                                 'child_routes' => [
-                                    'response' => array(
+                                    'response' => [
                                         'type'    => 'Literal',
-                                        'options' => array(
+                                        'options' => [
                                             'route'    => '/response',
-                                            'defaults' => array(
+                                            'defaults' => [
                                                 'action' => 'payResponse',
-                                            ),
-                                        ),
-                                    ),
+                                            ],
+                                        ],
+                                    ],
                                 ],
                             ],
                             'confirm' => [
