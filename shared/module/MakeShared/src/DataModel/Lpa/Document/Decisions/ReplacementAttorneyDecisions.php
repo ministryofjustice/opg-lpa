@@ -7,9 +7,9 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class ReplacementAttorneyDecisions extends AbstractDecisions
 {
-    const LPA_DECISION_WHEN_FIRST = 'first';
-    const LPA_DECISION_WHEN_LAST = 'last';
-    const LPA_DECISION_WHEN_DEPENDS = 'depends';
+    public const LPA_DECISION_WHEN_FIRST = 'first';
+    public const LPA_DECISION_WHEN_LAST = 'last';
+    public const LPA_DECISION_WHEN_DEPENDS = 'depends';
 
     /**
      * @var string Additional free text details relating to this 'when' decision.
