@@ -1,11 +1,11 @@
 <?php
 
-use Laminas\Mvc\Application;
-
 /**
  * This makes our life easier when dealing with paths. Everything is relative
  * to the application root now.
  */
+
+use Laminas\Mvc\Application;
 
 chdir(dirname(__DIR__));
 
