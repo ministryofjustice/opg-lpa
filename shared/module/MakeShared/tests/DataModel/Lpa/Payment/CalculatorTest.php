@@ -59,7 +59,7 @@ class CalculatorTest extends TestCase
         $payment = Calculator::calculate($lpa);
 
         $this->assertEquals('cheque', $payment->get('method'));
-        $this->assertEquals($this->fee/2, $payment->get('amount'));
+        $this->assertEquals($this->fee / 2, $payment->get('amount'));
     }
 
     public function testCalculateFullFee()
@@ -83,21 +83,21 @@ class CalculatorTest extends TestCase
     {
         $fee = Calculator::getFullFee(true);
 
-        $this->assertEquals($this->fee/2, $fee);
+        $this->assertEquals($this->fee / 2, $fee);
     }
 
     public function testGetLowIncomeFee()
     {
         $fee = Calculator::getLowIncomeFee();
 
-        $this->assertEquals($this->fee/2, $fee);
+        $this->assertEquals($this->fee / 2, $fee);
     }
 
     public function testGetLowIncomeFeeRepeatApplication()
     {
         $fee = Calculator::getLowIncomeFee(true);
 
-        $this->assertEquals($this->fee/4, $fee);
+        $this->assertEquals($this->fee / 4, $fee);
     }
 
     public function testGetBenefitsFee()

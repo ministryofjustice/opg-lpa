@@ -13,8 +13,8 @@ class TestHelper
     public static function assertNoDuplicateErrorMessages($errors, $testCase)
     {
         $duplicatesFound = false;
-        $duplicates = array();
-        $messages = array();
+        $duplicates = [];
+        $messages = [];
         foreach ($errors as $errorKey => $errorValue) {
             $error = $errors[$errorKey];
             foreach ($error['messages'] as $messageIndex => $messageValue) {

@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Document extends AbstractData
 {
-    const LPA_TYPE_PF = 'property-and-financial';
-    const LPA_TYPE_HW = 'health-and-welfare';
+    public const LPA_TYPE_PF = 'property-and-financial';
+    public const LPA_TYPE_HW = 'health-and-welfare';
 
     /**
      * The LPA type. One of the constants under Document::LPA_TYPE_*

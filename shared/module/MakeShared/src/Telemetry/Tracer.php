@@ -24,7 +24,6 @@ use RuntimeException;
  */
 class Tracer
 {
-
     private string $serviceName;
 
     // fraction of requests we will sample; if a random number 0-1
