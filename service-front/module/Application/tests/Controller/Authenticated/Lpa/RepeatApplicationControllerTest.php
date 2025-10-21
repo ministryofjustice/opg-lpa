@@ -176,7 +176,7 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs(function ($lpa, $payment): bool {
                 return $lpa->id === $this->lpa->id
-                    && $payment->amount === 82;
+                    && $payment->amount === Calculator::getFullFee();
             })->andReturn(true)->once();
         $this->metadata->shouldReceive('setRepeatApplicationConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
