@@ -8,7 +8,7 @@ This runbook is based on the following AWS documentation;
 - [Switching blue/green deployments](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/blue-green-deployments-switching.html)
 - [Deleting blue/green deployments](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/blue-green-deployments-deleting.html)
 
-This guide focusses on using the AWS console to upgrade from postgres 14 to 15. This guide and images reference a development environment, but this guide works for any environment.
+This guide focusses on using the AWS console to upgrade a develpment environment from postgres 14 to 15. This guide works for any environment.
 
 ## Prerequisites
 
@@ -17,9 +17,9 @@ You must be able to assume the correct roles for this activity.
 Development and Preproduction requires the `breakglass` role.
 Production requires the `data-access` role.
 
-## Use terraform to create new parameter groups
+## Update terraform to support an upgrade
 
-Create a new db parameter group in `terraform/environment/modules/environment/rds.tf`
+1. Update the instance and cluster configuration in `terraform/environment/modules/environment/rds.tf` support a switchover
 
 Example
 
@@ -83,3 +83,31 @@ Aurora blue/green deployments use switchover guardrails, checks prior to startin
 1. In the Delete instance screen, type `delete me` to permanently delete the instance and click `Delete`
 
 1. Choose the old cluster, click `Actions`, then `Delete`
+
+## Merge infrastructure changes into main
+
+The last task to perform is updating terraform so that it matches the database changes made int he console.
+
+1. Update `terraform/environment/terraform.tfvars.json` to configure an environment to use the new `psql_engine_version` and `psql_parameter_group_family`.
+
+Example
+
+```json
+{
+  "account_mapping": {
+    "development": "development",
+    "preproduction": "preproduction",
+    "production": "production"
+  },
+  "accounts": {
+    "development": {
+      ...
+      "psql_engine_version": "15",
+      "psql_parameter_group_family": "postgres15",
+      ...
+      }
+    },
+
+```
+
+Push this change and merge the pull request
