@@ -8,7 +8,7 @@ This runbook is based on the following AWS documentation;
 - [Switching blue/green deployments](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/blue-green-deployments-switching.html)
 - [Deleting blue/green deployments](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/blue-green-deployments-deleting.html)
 
-This guide focusses on using the AWS console for this activity. This guide and images reference a development environment, but this guide works for any environment.
+This guide focusses on using the AWS console to upgrade from postgres14 to 15. This guide and images reference a development environment, but this guide works for any environment.
 
 ## Prerequisites
 
@@ -47,7 +47,7 @@ module "api_aurora" {
 }
 ```
 
-Merge these changes to the main branch using a pull request.
+Start a pull request with this change. After the upgrade, this wil be modified and merged in.
 
 ## Creating a blue/green deployment
 
@@ -68,4 +68,16 @@ Merge these changes to the main branch using a pull request.
 
 ## Switching to green deployment
 
-1. Choose the blue/green deployment, click `Actions`, then `Switch over`
+1. Choose the blue/green deployment, click `Actions`, then `Switch over` After the switch over, the old databases will be renamed with `old`.
+
+## Deleting the deployment after switching over
+
+1. Choose the blue/green deployment, click `Actions`, then `Delete`
+
+1. In the Delete Blue/Green Deployment screen, type `delete me` to permanently delete the deployment and click `Delete`
+
+1. Choose the old instances in the old cluster, click `Actions`, then `Delete`.
+
+1. In the Delete instance screen, type `delete me` to permanently delete the instance and click `Delete`
+
+1. Choose the old cluster, click `Actions`, then `Delete`
