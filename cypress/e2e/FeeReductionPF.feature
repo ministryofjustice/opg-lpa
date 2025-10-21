@@ -42,7 +42,7 @@ Feature: Fee Reduction for a Property and Finance LPA
         When I check "notApply"
         When I click "save"
         Then I am taken to the checkout page
-        And I see "Application fee: £41 as you are not claiming a reduction" in the page text
+        And I see "Application fee: £46 as you are not claiming a reduction" in the page text
 
         When I click the last occurrence of "cya-change"
         When I check "reducedFeeLowIncome"
