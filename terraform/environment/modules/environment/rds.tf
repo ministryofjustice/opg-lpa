@@ -46,7 +46,7 @@ resource "aws_db_instance" "api" {
   username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   password                            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
   parameter_group_name                = data.aws_db_parameter_group.postgres_db_params[var.account.psql_parameter_group_family].name
-  vpc_security_group_ids              = [aws_security_group.rds-api.id]
+  vpc_security_group_ids              = [aws_security_group.rds-api.id, aws_security_group.rds_proxy_ingress]
   auto_minor_version_upgrade          = false
   maintenance_window                  = "wed:05:00-wed:09:00"
   multi_az                            = true
@@ -142,4 +142,19 @@ resource "aws_security_group_rule" "rds-api" {
   description              = "RDS client to RDS - Postgres"
 }
 
+resource "aws_security_group" "rds_proxy" {
+  name                   = "rds-proxy-${var.environment_name}"
+  description            = "RDS access from RDS Proxy"
+  vpc_id                 = data.aws_vpc.default.id
+  revoke_rules_on_delete = true
+}
 
+resource "aws_security_group_rule" "rds_proxy_ingress" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.rds_proxy_egress.id
+  security_group_id        = aws_security_group.rds_proxy.id
+  description              = "Ingess from RDS Proxy"
+}
