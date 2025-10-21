@@ -53,7 +53,7 @@ Merge these changes to the main branch using a pull request.
 
 1. Sign in to the AWS console, assume the correct role into the account requiring the upgrade, navigate to `Aurora and RDS`
 
-1. Choose the Aurora cluster to upgrade, click `Actions`, then `Create blue/gree deployment`
+1. Choose the Aurora cluster to upgrade, click `Actions`, then `Create blue/green deployment`
 
 1. In the Create screen
     - name the deployment (optional)
