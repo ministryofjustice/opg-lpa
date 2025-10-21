@@ -47,10 +47,7 @@ class UserSearchHandler extends AbstractHandler
 
             if (isset($params['email'])) {
                 $email = $params['email'];
-                $form->setData([
-                    'email' => $email,
-                    'secret' => $params['secret']
-                ]);
+                $form->setData($params);
             }
         }
 
