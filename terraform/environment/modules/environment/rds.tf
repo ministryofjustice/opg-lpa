@@ -45,7 +45,7 @@ resource "aws_db_instance" "api" {
   kms_key_id                          = local.is_primary_region ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
   username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   password                            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  parameter_group_name                = aws_db_parameter_group.postgres-db-params[var.account.psql_parameter_group_family]
+  parameter_group_name                = aws_db_parameter_group.postgres-db-params[var.account.psql_parameter_group_family].name
   vpc_security_group_ids              = [aws_security_group.rds-api.id]
   auto_minor_version_upgrade          = false
   maintenance_window                  = "wed:05:00-wed:09:00"
@@ -99,7 +99,7 @@ module "api_aurora" {
   database_name                   = "api2"
   engine_version                  = var.account.psql_engine_version
   environment                     = var.environment_name
-  aws_rds_cluster_parameter_group = aws_rds_cluster_parameter_group.postgresql-aurora-params[var.account.psql_parameter_group_family]
+  aws_rds_cluster_parameter_group = aws_rds_cluster_parameter_group.postgresql-aurora-params[var.account.psql_parameter_group_family].name
   master_username                 = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   master_password                 = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
   instance_count                  = var.account.aurora_instance_count
