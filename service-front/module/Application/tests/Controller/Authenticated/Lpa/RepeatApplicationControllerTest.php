@@ -148,8 +148,9 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
             ->withArgs([$this->lpa, $this->postDataRepeat['repeatCaseNumber']])->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs(function ($lpa, $payment): bool {
+                $expected = Calculator::halfFee();
                 return $lpa->id === $this->lpa->id
-                    && $payment->amount === 41;
+                    && $payment->amount === $expected;
             })->andReturn(false)->once();
 
         $this->expectException(RuntimeException::class);
@@ -191,7 +192,7 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
     {
         Calculator::bootstrap([
             'timezone'      => 'Europe/London',
-            'effectiveDate' => '2025-11-17T00:00:00',
+            'effectiveDate' => '2024-11-17T00:00:00',
             'baseBefore'    => 82,
             'baseAfter'     => 92,
         ]);
