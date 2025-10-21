@@ -18,9 +18,9 @@ resource "aws_db_proxy" "rds_proxy" {
 }
 
 resource "aws_db_proxy_target" "rds" {
-  db_proxy_name     = aws_db_proxy.rds_proxy.name
-  target_group_name = "default"
-
+  db_proxy_name         = aws_db_proxy.rds_proxy.name
+  target_group_name     = "default"
+  db_cluster_identifier = module.aurora.cluster.id
 }
 
 resource "aws_iam_role" "rds_proxy_role" {
