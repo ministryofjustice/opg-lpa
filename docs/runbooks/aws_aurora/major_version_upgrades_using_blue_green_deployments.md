@@ -8,7 +8,7 @@ This runbook is based on the following AWS documentation;
 - [Switching blue/green deployments](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/blue-green-deployments-switching.html)
 - [Deleting blue/green deployments](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/blue-green-deployments-deleting.html)
 
-This guide focusses on using the AWS console to upgrade from postgres14 to 15. This guide and images reference a development environment, but this guide works for any environment.
+This guide focusses on using the AWS console to upgrade from postgres 14 to 15. This guide and images reference a development environment, but this guide works for any environment.
 
 ## Prerequisites
 
@@ -67,6 +67,8 @@ Start a pull request with this change. After the upgrade, this wil be modified a
 1. Review and confirm the deployment, and click `Reboot and create`
 
 ## Switching to green deployment
+
+Aurora blue/green deployments use switchover guardrails, checks prior to starting switchover prevent unecesseary downtime. See more at [Switchover Guardrails](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/blue-green-deployments-switching.html#blue-green-deployments-switching-guardrails).
 
 1. Choose the blue/green deployment, click `Actions`, then `Switch over` After the switch over, the old databases will be renamed with `old`.
 
