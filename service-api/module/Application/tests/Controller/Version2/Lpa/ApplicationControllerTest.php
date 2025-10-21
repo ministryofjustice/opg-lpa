@@ -7,7 +7,9 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Applications\Service;
+use Laminas\Paginator\Paginator;
 use LmcRbacMvc\Exception\UnauthorizedException;
+use MakeShared\DataModel\Lpa\Lpa;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -105,37 +107,54 @@ class ApplicationControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $entity = $this->createEntity([
+        $lpa = Mockery::mock(Lpa::class);
+        $lpa->shouldReceive('toArray')->once()->andReturn([
             'key1' => 'value1',
-            'key2' => 'value 2']);
-        $entity->shouldReceive('setCurrentPageNumber')->withArgs([1])->once();
+            'key2' => 'value 2'
+        ]);
 
-        $this->service->shouldReceive('fetchAll')->withArgs([$this->userId, []])->andReturn($entity);
+        $paginator = Mockery::mock(Paginator::class);
+        $paginator->shouldReceive('setCurrentPageNumber')->withArgs([1])->once();
+        $paginator->shouldReceive('getCurrentItems')->once()->andReturn([$lpa]);
+        $paginator->shouldReceive('getTotalItemCount')->once()->andReturn(1);
+
+        $this->service->shouldReceive('fetchAll')->withArgs([$this->userId, []])->andReturn($paginator);
 
         $response = $controller->getList();
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(Json::class, $response);
-        $this->assertEquals('{"key1":"value1","key2":"value 2"}', $response->getContent());
+        $this->assertEquals('{"applications":[{"key1":"value1","key2":"value 2"}],"total":1}', $response->getContent());
     }
 
     public function testGetListSuccessPaged()
     {
-        $controller = $this->getController(['page' => 2,'perPage' => 100,'misc' => 'value']);
+        $controller = $this->getController(['page' => 5,'perPage' => 2,'misc' => 'value']);
 
-        $entity = $this->createEntity([
+        $lpa1 = Mockery::mock(Lpa::class);
+        $lpa1->shouldReceive('toArray')->once()->andReturn([
             'key1' => 'value1',
-            'key2' => 'value 2']);
-        $entity->shouldReceive('setCurrentPageNumber')->withArgs([2])->once();
-        $entity->shouldReceive('setItemCountPerPage')->withArgs([100])->once();
+            'key2' => 'value 2',
+        ]);
 
-        $this->service->shouldReceive('fetchAll')->withArgs([$this->userId, ['misc' => 'value']])->andReturn($entity);
+        $lpa2 = Mockery::mock(Lpa::class);
+        $lpa2->shouldReceive('toArray')->once()->andReturn([
+            'lpa2' => 'value 3',
+        ]);
+
+        $paginator = Mockery::mock(Paginator::class);
+        $paginator->shouldReceive('setCurrentPageNumber')->withArgs([5])->once();
+        $paginator->shouldReceive('setItemCountPerPage')->withArgs([2])->once();
+        $paginator->shouldReceive('getCurrentItems')->once()->andReturn([$lpa1, $lpa2]);
+        $paginator->shouldReceive('getTotalItemCount')->once()->andReturn(260);
+
+        $this->service->shouldReceive('fetchAll')->withArgs([$this->userId, ['misc' => 'value']])->andReturn($paginator);
 
         $response = $controller->getList();
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(Json::class, $response);
-        $this->assertEquals('{"key1":"value1","key2":"value 2"}', $response->getContent());
+        $this->assertEquals('{"applications":[{"key1":"value1","key2":"value 2"},{"lpa2":"value 3"}],"total":260}', $response->getContent());
     }
 
     public function testGetListSuccessNoContent()
