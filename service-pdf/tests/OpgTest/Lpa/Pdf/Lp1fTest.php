@@ -38,7 +38,7 @@ class Lp1fTest extends AbstractPdfTestCase
 
         $blankTargets = [];
 
-        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
+        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2024-11-17T00:00:00');
         $timeNow = new DateTimeImmutable('now');
         $coversheetFileName = ($timeNow >= $feeEffectiveDate) ? 'LP1F_CoversheetRegistration2025fee.pdf' : 'LP1F_CoversheetRegistration.pdf' ;
 
