@@ -22,16 +22,17 @@ final class Email extends AbstractValidator
 
     /** @var array<string,string> */
     protected $messageTemplates = [
-        self::INVALID            => 'invalid-email',
-        self::INVALID_FORMAT     => 'invalid-email',
-        self::INVALID_HOSTNAME   => 'invalid-email',
-        self::INVALID_MX_RECORD  => 'invalid-email',
-        self::INVALID_SEGMENT    => 'invalid-email',
-        self::DOT_ATOM           => 'invalid-email',
-        self::QUOTED_STRING      => 'invalid-email',
-        self::INVALID_LOCAL_PART => 'invalid-email',
-        self::LENGTH_EXCEEDED    => 'invalid-email',
-        self::INVALID_TYPE       => 'invalid-email',
+        EmailAddress::INVALID            => 'invalid-email',
+        EmailAddress::INVALID_FORMAT     => 'invalid-email',
+        EmailAddress::INVALID_HOSTNAME   => 'invalid-email',
+        EmailAddress::INVALID_MX_RECORD  => 'invalid-email',
+        EmailAddress::INVALID_SEGMENT    => 'invalid-email',
+        EmailAddress::DOT_ATOM           => 'invalid-email',
+        EmailAddress::QUOTED_STRING      => 'invalid-email',
+        EmailAddress::INVALID_LOCAL_PART => 'invalid-email',
+        EmailAddress::LENGTH_EXCEEDED    => 'invalid-email',
+        self::INVALID                    => 'invalid-email',
+        self::INVALID_TYPE               => 'invalid-email',
     ];
     private EmailAddress $emailValidator;
 
