@@ -8,8 +8,9 @@ use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
+use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Adapter\Callback as PaginatorCallback;
-use Laminas\Paginator\Adapter\NullFill as PaginatorNull;
+use Laminas\Paginator\Paginator;
 use MakeShared\DataModel\Lpa\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
@@ -150,7 +151,7 @@ class Service extends AbstractService
     /**
      * @param $userId
      * @param array $params
-     * @return Collection
+     * @return Paginator<int, Lpa>
      */
     public function fetchAll($userId, $params = [])
     {
@@ -187,7 +188,7 @@ class Service extends AbstractService
 
         // If there are no records, just return an empty paginator...
         if ($count == 0) {
-            return new Collection(new PaginatorNull());
+            return new Paginator(new ArrayAdapter());
         }
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
@@ -219,7 +220,7 @@ class Service extends AbstractService
             }
         );
 
-        return new Collection($callback);
+        return new Paginator($callback);
     }
 
     /**

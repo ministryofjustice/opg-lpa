@@ -5,10 +5,11 @@ namespace Application\Controller\Version2\Lpa;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\Applications\Service;
 use Application\Model\Service\EntityInterface;
 use Laminas\Paginator\Paginator;
+use MakeShared\DataModel\Lpa\Lpa;
+use Traversable;
 
 class ApplicationController extends AbstractLpaController
 {
@@ -83,7 +84,6 @@ class ApplicationController extends AbstractLpaController
         }
 
         // The applications collection was a success - it will be a paginator
-        /* @var Collection $result */
 
         //  Set the page number and per page count (if valid)
         $result->setCurrentPageNumber($page);
@@ -92,7 +92,15 @@ class ApplicationController extends AbstractLpaController
             $result->setItemCountPerPage(intval($perPage));
         }
 
-        return new JsonResponse($result->toArray());
+        /** @var Traversable<int, Lpa> $items */
+        $items = $result->getCurrentItems();
+
+        $response = [
+            'applications' => array_map(fn (Lpa $lpa) => $lpa->toArray(), iterator_to_array($items)),
+            'total'        => $result->getTotalItemCount(),
+        ];
+
+        return new JsonResponse($response);
     }
 
     /**
