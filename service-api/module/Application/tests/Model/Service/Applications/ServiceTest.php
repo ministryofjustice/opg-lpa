@@ -8,7 +8,6 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
-use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use ArrayIterator;
@@ -503,7 +502,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        /** @var Collection $response */
         $response = $service->fetchAll($user->getId());
 
         $this->assertEquals(0, $response->count());
@@ -522,17 +520,10 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        /** @var Collection $response */
         $response = $service->fetchAll($user->getId());
 
         $this->assertEquals(1, $response->count());
-        $apiLpaCollection = $response->toArray();
-
-        $this->assertEquals(1, $apiLpaCollection['total']);
-        $applications = $apiLpaCollection['applications'];
-        $this->assertEquals(1, count($applications));
-
-        $this->assertEquals(($lpas[0])->toArray(), $applications[0]);
+        $this->assertEquals($lpas[0], $response->getCurrentItems()[0]);
     }
 
     public function testFetchAllSearchById()
@@ -548,17 +539,10 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        /** @var Collection $response */
         $response = $service->fetchAll($user->getId(), ['search' => $lpas[1]->id]);
 
         $this->assertEquals(1, $response->count());
-        $apiLpaCollection = $response->toArray();
-
-        $this->assertEquals(1, $apiLpaCollection['total']);
-        $applications = $apiLpaCollection['applications'];
-        $this->assertEquals(1, count($applications));
-
-        $this->assertEquals(($lpas[1])->toArray(), $applications[0]);
+        $this->assertEquals($lpas[1], $response->getCurrentItems()[0]);
     }
 
     public function testFetchAllSearchByIdAndFilter()
@@ -579,7 +563,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        /** @var Collection $response */
         $response = $service->fetchAll($user->getId(), ['search' => $lpas[1]->id, 'filter' => ['user' => 'missing']]);
 
         $this->assertEquals(0, $response->count());
@@ -598,17 +581,10 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        /** @var Collection $response */
         $response = $service->fetchAll($user->getId(), ['search' => Formatter::id($lpas[0]->id)]);
 
         $this->assertEquals(1, $response->count());
-        $apiLpaCollection = $response->toArray();
-
-        $this->assertEquals(1, $apiLpaCollection['total']);
-        $applications = $apiLpaCollection['applications'];
-        $this->assertEquals(1, count($applications));
-
-        $this->assertEquals(($lpas[0])->toArray(), $applications[0]);
+        $this->assertEquals($lpas[0], $response->getCurrentItems()[0]);
     }
 
     public function testFetchAllSearchByName()
@@ -627,7 +603,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        /** @var Collection $response */
         $response = $service->fetchAll($user->getId(), ['search' => $name]);
 
         $this->assertEquals(0, $response->count());
