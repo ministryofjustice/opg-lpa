@@ -48,4 +48,4 @@ Feature: Fee Reduction for a Property and Finance LPA
         When I check "reducedFeeLowIncome"
         And I click "save"
         Then I am taken to the checkout page
-        And I see "Application fee: £20.50 as the donor has an income of less than £12,000" in the page text
+        And I see "Application fee: £23 as the donor has an income of less than £12,000" in the page text
