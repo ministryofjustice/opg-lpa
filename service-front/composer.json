@@ -26,7 +26,9 @@
         "guzzlehttp/psr7": "^2.4",
         "alphagov/notifications-php-client": "^5.0.0",
         "symfony/validator": "^5.4",
-        "egulias/email-validator": "^4"
+        "egulias/email-validator": "^4",
+        "ext-redis": "*"
+
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
@@ -53,7 +55,9 @@
             "ApplicationTest\\": "module/Application/tests/",
             "MakeShared\\": "../shared/module/MakeShared/src/",
             "MakeSharedTest\\": "../shared/module/MakeShared/tests/",
-            "Alphagov\\Pay\\": "module/Alphagov/Pay/src/"
+            "Alphagov\\Pay\\": "module/Alphagov/Pay/src/",
+            "Laminas\\I18n\\": "module/Application/src/view/"
+
         }
     },
     "config": {

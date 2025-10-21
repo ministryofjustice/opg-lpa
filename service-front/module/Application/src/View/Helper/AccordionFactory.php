@@ -15,7 +15,7 @@ class AccordionFactory implements FactoryInterface
      * @param array|null $options
      * @return Accordion
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         /** @var Application $application */
         $application = $container->get('Application');

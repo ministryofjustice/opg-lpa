@@ -162,13 +162,6 @@ class FormRadio extends LaminasFormRadioHelper
                 $closingBracket
             );
 
-            if (null !== ($translator = $this->getTranslator())) {
-                $label = $translator->translate(
-                    $label,
-                    $this->getTranslatorTextDomain()
-                );
-            }
-
             if (! $element instanceof LabelAwareInterface || ! $element->getLabelOption('disable_html_escape')) {
                 $label = $escapeHtmlHelper($label);
             }

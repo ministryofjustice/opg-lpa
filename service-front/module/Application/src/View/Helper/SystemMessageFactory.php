@@ -14,7 +14,7 @@ class SystemMessageFactory implements FactoryInterface
      * @param array|null $options
      * @return SystemMessage
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface|\Psr\Container\ContainerInterface $container, $requestedName, ?array $options = null)
     {
         return new SystemMessage($container->get('DynamoDbSystemMessageCache'));
     }

@@ -26,6 +26,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
     private MockInterface|GovPayClient $govPayClient;
     private MockInterface|BlankMainFlowForm $blankMainFlowForm;
     private MockInterface|ElementInterface $submitButton;
+    private float $fee;
 
     public function setUp(): void
     {

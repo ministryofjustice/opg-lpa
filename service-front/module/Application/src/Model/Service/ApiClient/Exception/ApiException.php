@@ -23,7 +23,7 @@ class ApiException extends RuntimeException
      * @param ResponseInterface $response
      * @param string|null $message
      */
-    public function __construct(ResponseInterface $response, string $message = null)
+    public function __construct(ResponseInterface $response, ?string $message = null)
     {
         $this->body = json_decode(strval($response->getBody()), true);
         $this->statusCode = $response->getStatusCode();
@@ -57,7 +57,7 @@ class ApiException extends RuntimeException
      * @param string|null $key
      * @return array|mixed
      */
-    public function getData(string $key = null)
+    public function getData(?string $key = null)
     {
         $data = $this->getBodyData('data');
 

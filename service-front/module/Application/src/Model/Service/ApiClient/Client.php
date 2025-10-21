@@ -40,7 +40,7 @@ class Client implements LoggerAwareInterface
         HttpClientInterface $httpClient,
         string $apiBaseUri,
         array $defaultHeaders = [],
-        Tracer $tracer = null,
+        ?Tracer $tracer = null,
     ) {
         $this->httpClient = $httpClient;
         $this->apiBaseUri = $apiBaseUri;

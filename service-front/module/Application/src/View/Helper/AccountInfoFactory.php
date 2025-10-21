@@ -22,7 +22,7 @@ class AccountInfoFactory implements FactoryInterface
      * @param array|null $options
      * @return AccountInfo
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         /** @var AuthenticationService $authenticationService */
         $authenticationService = $container->get('AuthenticationService');

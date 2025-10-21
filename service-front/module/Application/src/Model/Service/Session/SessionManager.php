@@ -15,7 +15,7 @@ class SessionManager extends LaminasSessionManager
      * @param SaveHandlerInterface $saveHandler If defaults to null, the SessionManager is
      * constructed with the default save handler
      */
-    public function __construct(Container $container = null, SaveHandlerInterface $saveHandler = null)
+    public function __construct(?Container $container = null, ?SaveHandlerInterface $saveHandler = null)
     {
         // parent constructor has to be called first, in case we have to
         // make a container within this constructor;

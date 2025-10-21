@@ -17,7 +17,7 @@ class ClientFactory implements FactoryInterface
      * @param array|null $options
      * @return Client
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         /** @var HttpClientInterface $httpClient */
         $httpClient = $container->get('HttpClient');
