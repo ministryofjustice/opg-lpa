@@ -24,13 +24,6 @@ class Csrf extends ZendCsrf
     protected $name = null;
 
     /**
-     * @var array<string, string>
-     */
-    protected $messageTemplates = [
-        self::NOT_SAME => 'csrf',
-    ];
-
-    /**
      * Csrf constructor
      *
      * @param array<string, mixed> $options
