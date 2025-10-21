@@ -1,12 +1,13 @@
 resource "aws_db_proxy" "rds_proxy" {
-  count               = var.account.rds_proxy_enabled ? 1 : 0
-  name                = lower("proxy-${var.account_name}")
-  debug_logging       = true # this may uncover sensitive information in the logs - but it shouldn't
-  engine_family       = "POSTGRESQL"
-  idle_client_timeout = 1800
-  require_tls         = true
-  vpc_subnet_ids      = data.aws_subnets.private.ids
-  role_arn            = aws_iam_role.rds_proxy_role[0].arn
+  count                  = var.account.rds_proxy_enabled ? 1 : 0
+  name                   = lower("proxy-${var.account_name}")
+  debug_logging          = true # this may uncover sensitive information in the logs - but it shouldn't
+  engine_family          = "POSTGRESQL"
+  idle_client_timeout    = 1800
+  require_tls            = true
+  vpc_subnet_ids         = data.aws_subnets.private.ids
+  vpc_security_group_ids = [aws_security_group.rds_proxy_ingress, aws_security_group.rds_proxy_egress]
+  role_arn               = aws_iam_role.rds_proxy_role[0].arn
 
   auth {
     auth_scheme = "SECRETS"
@@ -14,6 +15,12 @@ resource "aws_db_proxy" "rds_proxy" {
     iam_auth    = "DISABLED"
     secret_arn  = aws_secretsmanager_secret_version.api_rds_credentials.arn
   }
+}
+
+resource "aws_db_proxy_target" "rds" {
+  db_proxy_name     = aws_db_proxy.rds_proxy.name
+  target_group_name = "default"
+
 }
 
 resource "aws_iam_role" "rds_proxy_role" {
@@ -80,18 +87,8 @@ resource "aws_security_group_rule" "proxy_ingress_from_ecs" {
   source_security_group_id = aws_security_group.rds-client.id
 }
 
-resource "aws_security_group" "rds_proxy_to_rds" {
-  name_prefix = "${var.environment_name}-rds-proxy-to-rds"
+resource "aws_security_group" "rds_proxy_egress" {
+  name_prefix = "${var.environment_name}-rds-proxy-egress"
   vpc_id      = data.aws_vpc.default.id
   tags        = local.pdf_component_tag
-}
-
-
-resource "aws_security_group_rule" "rds_proxy" {
-  type                     = "ingress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.rds-api.id
-  security_group_id        = aws_security_group.rds_proxy_to_rds.id
 }
