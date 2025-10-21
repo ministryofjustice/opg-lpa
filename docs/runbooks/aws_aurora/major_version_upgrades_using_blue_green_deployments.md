@@ -17,38 +17,6 @@ You must be able to assume the correct roles for this activity.
 Development and Preproduction requires the `breakglass` role.
 Production requires the `data-access` role.
 
-## Update terraform to support an upgrade
-
-1. Update the instance and cluster configuration in `terraform/environment/modules/environment/rds.tf` support a switchover
-
-Example
-
-Update the conditions used to select the db parameter group based on environment's `var.account.psql_parameter_group_family` value
-
-```hcl
-resource "aws_db_instance" "api" {
-  count                               = var.account.always_on ? 1 : 0
-  identifier                          = lower("api-${var.environment_name}")
-  parameter_group_name                = var.account.psql_parameter_group_family == "postgres14" ? aws_db_parameter_group.postgres14-db-params.name : aws_db_parameter_group.postgres15-db-params.name
-  vpc_security_group_ids              = [aws_security_group.rds-api.id]
-  ...
-}
-```
-
-Update the conditions used to select the cluster parameter group based on environment's `var.account.psql_parameter_group_family` value
-
-```hcl
-module "api_aurora" {
-  auto_minor_version_upgrade      = true
-  source                          = "./modules/aurora"
-  ...
-  aws_rds_cluster_parameter_group = var.account.psql_parameter_group_family == "postgres14" ? aws_rds_cluster_parameter_group.postgresql14-aurora-params.name : aws_rds_cluster_parameter_group.postgresql15-aurora-params.name
-  ...
-}
-```
-
-Start a pull request with this change. After the upgrade, this wil be modified and merged in.
-
 ## Creating a blue/green deployment
 
 1. Sign in to the AWS console, assume the correct role into the account requiring the upgrade, navigate to `Aurora and RDS`
@@ -82,7 +50,7 @@ Aurora blue/green deployments use switchover guardrails, checks prior to startin
 
 1. In the Delete instance screen, type `delete me` to permanently delete the instance and click `Delete`
 
-1. Choose the old cluster, click `Actions`, then `Delete`
+1. Choose the old cluster, click `Actions`, then `Delete DB Cluster`
 
 ## Merge infrastructure changes into main
 
@@ -110,4 +78,4 @@ Example
 
 ```
 
-Push this change and merge the pull request
+Create a pull request with this change and merge it.
