@@ -1,6 +1,6 @@
 resource "aws_db_proxy" "rds_proxy" {
   count                  = var.account.rds_proxy_enabled ? 1 : 0
-  name                   = lower("proxy-${var.account_name}")
+  name                   = lower("proxy-${var.environment_name}")
   debug_logging          = true # this may uncover sensitive information in the logs - but it shouldn't
   engine_family          = "POSTGRESQL"
   idle_client_timeout    = 1800
@@ -75,7 +75,6 @@ resource "aws_iam_role_policy" "rds_proxy" {
 resource "aws_security_group" "rds_proxy_ingress" {
   name_prefix = "${var.environment_name}-rds-proxy-ingress"
   vpc_id      = data.aws_vpc.default.id
-  tags        = local.pdf_component_tag
 }
 
 resource "aws_security_group_rule" "proxy_ingress_from_ecs" {
@@ -90,5 +89,4 @@ resource "aws_security_group_rule" "proxy_ingress_from_ecs" {
 resource "aws_security_group" "rds_proxy_egress" {
   name_prefix = "${var.environment_name}-rds-proxy-egress"
   vpc_id      = data.aws_vpc.default.id
-  tags        = local.pdf_component_tag
 }
