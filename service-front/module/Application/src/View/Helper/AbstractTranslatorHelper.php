@@ -6,9 +6,10 @@ namespace Laminas\I18n\View\Helper;
 
 use Laminas\I18n\Translator\TranslatorAwareInterface;
 use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\View\Helper\AbstractHelper as ViewAbstractHelper;
 
 if (!\class_exists(AbstractTranslatorHelper::class)) {
-    abstract class AbstractTranslatorHelper implements TranslatorAwareInterface
+    abstract class AbstractTranslatorHelper extends ViewAbstractHelper implements TranslatorAwareInterface
     {
         protected ?TranslatorInterface $translator = null;
         protected bool $translatorEnabled = true;
