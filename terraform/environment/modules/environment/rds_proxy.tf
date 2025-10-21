@@ -6,7 +6,7 @@ resource "aws_db_proxy" "rds_proxy" {
   idle_client_timeout    = 1800
   require_tls            = true
   vpc_subnet_ids         = data.aws_subnets.private.ids
-  vpc_security_group_ids = [aws_security_group.rds_proxy_ingress, aws_security_group.rds_proxy_egress]
+  vpc_security_group_ids = [aws_security_group.rds_proxy_ingress.id, aws_security_group.rds_proxy_egress.id]
   role_arn               = aws_iam_role.rds_proxy_role[0].arn
 
   auth {
@@ -18,9 +18,9 @@ resource "aws_db_proxy" "rds_proxy" {
 }
 
 resource "aws_db_proxy_target" "rds" {
-  db_proxy_name         = aws_db_proxy.rds_proxy.name
+  db_proxy_name         = aws_db_proxy.rds_proxy[0].name
   target_group_name     = "default"
-  db_cluster_identifier = module.aurora.cluster.id
+  db_cluster_identifier = module.api_aurora[0].cluster.id
 }
 
 resource "aws_iam_role" "rds_proxy_role" {
