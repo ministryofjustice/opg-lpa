@@ -140,10 +140,9 @@ variable "iam_database_authentication_enabled" {
   type        = bool
 }
 
-variable "psql_aurora_parameter_group_family" {
-  # default     = "aurora-postgresql13"
-  description = "The family of the DB parameter group"
-  type        = string
+variable "aws_rds_cluster_parameter_group" {
+  description = "Information about an RDS cluster parameter group."
+  type        = any
 }
 
 variable "ca_cert_identifier" {
