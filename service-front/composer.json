@@ -54,8 +54,8 @@
             "MakeShared\\": "../shared/module/MakeShared/src/",
             "MakeSharedTest\\": "../shared/module/MakeShared/tests/",
             "Alphagov\\Pay\\": "module/Alphagov/Pay/src/",
-            "Laminas\\I18n\\Translator\\": "module/Application/src/view/Translator/",
-            "Laminas\\I18n\\View\\Helper\\": "module/Application/src/view/Helper/"
+            "Laminas\\I18n\\Translator\\": "module/Application/src/View/Translator/",
+            "Laminas\\I18n\\View\\Helper\\": "module/Application/src/View/Helper/"
         }
     },
     "config": {
