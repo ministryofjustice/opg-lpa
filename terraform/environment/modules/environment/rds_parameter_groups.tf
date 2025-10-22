@@ -10,6 +10,17 @@ locals {
   ]
 }
 
+# tflint-ignore: terraform_unused_declarations
+data "aws_db_parameter_group" "postgres_db_params" {
+  for_each = toset(local.psql_parameter_group_family_list)
+  name     = lower("${each.value}-db-params")
+}
+# tflint-ignore: terraform_unused_declarations
+data "aws_rds_cluster_parameter_group" "postgresql_aurora_params" {
+  for_each = toset(local.psql_parameter_group_family_list)
+  name     = lower("${each.value}-cluster-params")
+}
+
 resource "aws_db_parameter_group" "postgres_db_params" {
   for_each    = toset(local.psql_parameter_group_family_list)
   name        = lower("${each.value}-db-params-${var.environment_name}")
@@ -66,6 +77,66 @@ resource "aws_rds_cluster_parameter_group" "postgresql_aurora_params" {
   parameter {
     name         = "rds.log_retention_period"
     value        = "1440"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.capture_plan_baselines"
+    value        = "off"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.explain_hashes"
+    value        = "0"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.log_plan_enforcement_result"
+    value        = "none"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.max_databases"
+    value        = "10"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.max_plans"
+    value        = "10000"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.plan_capture_threshold"
+    value        = "0"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.plan_hash_version"
+    value        = "1"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.plan_retention_period"
+    value        = "32"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.unapproved_plan_execution_threshold"
+    value        = "0"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.use_plan_baselines"
+    value        = "false"
     apply_method = "immediate"
   }
 }
