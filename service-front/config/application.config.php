@@ -3,7 +3,6 @@
 return [
     // This should be an array of module namespaces used in the application.
     'modules' => [
-        'Laminas\Mvc\I18n',
         'Laminas\I18n',
         'Laminas\Mvc\Plugin\FlashMessenger',
         'Laminas\Form',
