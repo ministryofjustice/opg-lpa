@@ -142,7 +142,7 @@ variable "iam_database_authentication_enabled" {
 
 variable "aws_rds_cluster_parameter_group" {
   description = "Information about an RDS cluster parameter group."
-  type        = any
+  type        = string
 }
 
 variable "ca_cert_identifier" {
