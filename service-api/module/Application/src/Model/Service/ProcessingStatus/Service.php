@@ -46,17 +46,32 @@ class Service extends AbstractService
     /* @var $awsSignature SignatureV4 */
     private $awsSignature;
 
-    public function setClient(HttpClient $httpClient)
+    /**
+     * @param HttpClient $httpClient
+     * @return void
+     * @psalm-api
+     */
+    public function setClient(HttpClient $httpClient): void
     {
         $this->httpClient = $httpClient;
     }
 
-    public function setCredentials(CredentialsInterface $credentials)
+    /**
+     * @param CredentialsInterface $credentials
+     * @return void
+     * @psalm-api
+     */
+    public function setCredentials(CredentialsInterface $credentials): void
     {
         $this->credentials = $credentials;
     }
 
-    public function setConfig(array $config)
+    /**
+     * @param array $config
+     * @return void
+     * @psalm-api
+     */
+    public function setConfig(array $config): void
     {
         if (!isset($config['processing-status']['endpoint'])) {
             throw new RuntimeException("Missing config: ['processing-status']['endpoint']");
@@ -66,18 +81,27 @@ class Service extends AbstractService
         $this->processingStatusServiceUri .= '/lpa-online-tool/lpas/';
     }
 
-    public function setAwsSignatureV4(SignatureV4 $awsSignature)
+    /**
+     * @param SignatureV4 $awsSignature
+     * @return void
+     * @psalm-api
+     */
+    public function setAwsSignatureV4(SignatureV4 $awsSignature): void
     {
         $this->awsSignature = $awsSignature;
     }
 
     /**
-     * @param $ids
+     * @param string[] $ids
+     *
      * @return mixed
+     *
      * @throws ApiProblemException
      * @throws HttpException
+     *
+     * @psalm-param non-empty-list<string> $ids
      */
-    public function getStatuses($ids)
+    public function getStatuses(array $ids)
     {
         // build request loop
         $requests = [];
@@ -184,7 +208,12 @@ class Service extends AbstractService
         ];
     }
 
-    private function handleResponse(string $responseBodyString)
+    /**
+     * @return (mixed|null|string|true)[]|null
+     *
+     * @psalm-return array{registrationDate?: mixed, receiptDate?: mixed, rejectedDate?: mixed, invalidDate?: mixed, withdrawnDate?: mixed, dispatchDate?: mixed|null, returnUnpaid?: true, status?: 'Checking'|'Processed'|'Received'}|null
+     */
+    private function handleResponse(string $responseBodyString): array|null
     {
         $responseBody = json_decode($responseBodyString, true);
 

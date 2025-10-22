@@ -5,14 +5,15 @@ namespace Application\Model\DataAccess\Repository\Application;
 trait WhoRepositoryTrait
 {
     /**
-     * @var WhoRepositoryInterface
+     * @var ?WhoRepositoryInterface
      */
-    private $whoRepository;
+    private ?WhoRepositoryInterface $whoRepository;
 
     /**
      * @param WhoRepositoryInterface $repo
+     * @psalm-api
      */
-    public function setWhoRepository(WhoRepositoryInterface $repo)
+    public function setWhoRepository(WhoRepositoryInterface $repo): void
     {
         $this->whoRepository = $repo;
     }

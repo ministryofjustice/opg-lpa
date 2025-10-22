@@ -125,8 +125,9 @@ class Service extends AbstractService
 
     /**
      * @param AuthenticationService $authenticationService
+     * @psalm-api
      */
-    public function setAuthenticationService(AuthenticationService $authenticationService)
+    public function setAuthenticationService(AuthenticationService $authenticationService): void
     {
         $this->authenticationService = $authenticationService;
     }

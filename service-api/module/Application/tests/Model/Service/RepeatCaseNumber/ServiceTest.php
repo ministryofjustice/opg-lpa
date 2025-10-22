@@ -22,7 +22,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $validationError = $service->update($lpa->getId(), ['repeatCaseNumber' => 'Invalid']);
+        $validationError = $service->update(strval($lpa->getId()), ['repeatCaseNumber' => 'Invalid']);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -52,7 +52,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
-        $entity = $service->update($lpa->getId(), ['repeatCaseNumber' => '123456789']);
+        $entity = $service->update(strval($lpa->getId()), ['repeatCaseNumber' => '123456789']);
 
         $this->assertEquals(new Entity('123456789'), $entity);
 
@@ -72,7 +72,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $validationError = $service->delete($lpa->getId());
+        $validationError = $service->delete(strval($lpa->getId()));
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -102,7 +102,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
-        $response = $service->delete($lpa->getId());
+        $response = $service->delete(strval($lpa->getId()));
 
         $this->assertTrue($response);
         $this->assertNull($lpa->getRepeatCaseNumber());

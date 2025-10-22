@@ -28,9 +28,9 @@ class Json extends Response
     /**
      * Get the body of the response in a JSON string
      *
-     * @return string
+     * @return false|string
      */
-    public function getContent()
+    public function getContent(): string|false
     {
         return json_encode($this->content);
     }

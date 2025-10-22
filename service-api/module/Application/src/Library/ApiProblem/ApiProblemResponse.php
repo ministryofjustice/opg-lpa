@@ -30,15 +30,10 @@ class ApiProblemResponse extends Response
         $this->jsonFlags = JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR;
     }
 
-    public function getApiProblem(): ApiProblem
-    {
-        return $this->apiProblem;
-    }
-
     /**
      * Serializes the composed ApiProblem instance to JSON.
      */
-    public function getContent(): string
+    public function getContent(): string|false
     {
         return json_encode($this->apiProblem->toArray(), $this->jsonFlags);
     }

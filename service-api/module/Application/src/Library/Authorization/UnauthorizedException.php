@@ -16,9 +16,8 @@ use Application\Library\ApiProblem\ApiProblemExceptionInterface;
  */
 class UnauthorizedException extends LmcRbacUnauthorizedException implements ApiProblemExceptionInterface
 {
-    public function __construct($message = "", $code = 401, Exception $previous = null)
+    public function __construct($message = "", $code = 401, Exception|null $previous = null)
     {
-
         parent::__construct($message, $code, $previous);
     }
 }

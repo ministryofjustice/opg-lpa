@@ -16,8 +16,9 @@ trait ApplicationRepositoryTrait
 
     /**
      * @param ApplicationRepositoryInterface $repo
+     * @psalm-api
      */
-    public function setApplicationRepository(ApplicationRepositoryInterface $repo)
+    public function setApplicationRepository(ApplicationRepositoryInterface $repo): void
     {
         $this->applicationRepository = $repo;
     }
@@ -34,9 +35,9 @@ trait ApplicationRepositoryTrait
         return $this->applicationRepository;
     }
 
-    protected function getLpa(int $lpaId): ?Lpa
+    protected function getLpa(string $lpaId): ?Lpa
     {
-        $result = $this->getApplicationRepository()->getById($lpaId);
+        $result = $this->getApplicationRepository()->getById(intval($lpaId));
 
         if (is_null($result)) {
             return null;
@@ -45,7 +46,7 @@ trait ApplicationRepositoryTrait
         return new Lpa($result);
     }
 
-    protected function updateLpa(Lpa $lpa): bool
+    protected function updateLpa(Lpa $lpa): void
     {
         $this->getLogger()->info('Updating LPA', [
             'lpaid' => $lpa->id
@@ -56,13 +57,11 @@ trait ApplicationRepositoryTrait
             throw new RuntimeException('LPA object is invalid');
         }
 
-        $result = $this->getApplicationRepository()->update($lpa);
+        $this->getApplicationRepository()->update($lpa);
 
         $this->getLogger()->info('LPA updated successfully', [
             'lpaid' => $lpa->id,
             'updatedAt' => $lpa->updatedAt,
         ]);
-
-        return $result;
     }
 }

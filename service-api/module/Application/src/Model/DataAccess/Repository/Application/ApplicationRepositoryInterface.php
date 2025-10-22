@@ -58,16 +58,14 @@ interface ApplicationRepositoryInterface
      * Update the LPA
      *
      * @param Lpa $lpa
-     * @return bool
      */
-    public function update(Lpa $lpa): bool;
+    public function update(Lpa $lpa): void;
 
     /**
      * @param int $lpaId
      * @param string $userId
-     * @return bool
      */
-    public function deleteById(int $lpaId, string $userId): bool;
+    public function deleteById(int $lpaId, string $userId): void;
 
     /**
      * Get the count of LPAs between two dates for the timestamp field name provided

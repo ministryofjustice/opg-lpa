@@ -96,7 +96,7 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
     // $lpaId: ID of LPA to update
     // $metaData: existing metadata for the LPA; [] if no metadata exists yet
     // $data: data to use to update the existing metadata
-    private function updateMetadata($lpaId, $metaData, $data)
+    private function updateMetadata(string $lpaId, $metaData, array $data): void
     {
         // Update metadata in DB
         $newMeta[LPA::SIRIUS_PROCESSING_STATUS] = $data['status'];
@@ -117,14 +117,20 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
         }
     }
 
-    private function getValue($array, $key, $default = null)
+    /**
+     * @param array<string, mixed> $array
+     */
+    private function getValue(array|null $array, string $key, array|null $default = null)
     {
-        return (isset($array[$key]) ? $array[$key] : $default);
+        return ($array[$key] ?? $default);
     }
 
     // returns true if the value of at least one key in $array1 is different
     // from that key in $array2
-    private function hasDifference($array1, $array2): bool
+    /**
+     * @param array<string, mixed> $array1
+     */
+    private function hasDifference(array $array1, $array2): bool
     {
         foreach ($array1 as $key => $array1Value) {
             $array2Value = $this->getValue($array2, $key);
