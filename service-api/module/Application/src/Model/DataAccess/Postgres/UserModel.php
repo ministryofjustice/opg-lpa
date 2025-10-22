@@ -2,6 +2,7 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
+use DateMalformedStringException;
 use DateTime;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
@@ -30,10 +31,11 @@ class UserModel implements UserRepository\UserInterface
     /**
      * Returns a DateTime for a given key from a range of time formats.
      *
-     * @param $key
+     * @param string $key
      * @return DateTime|null
+     * @throws DateMalformedStringException
      */
-    private function returnDateField($key)
+    private function returnDateField(string $key)
     {
         if (!isset($this->data[$key])) {
             return null;
@@ -74,7 +76,7 @@ class UserModel implements UserRepository\UserInterface
     /**
      * Returns the user's id.
      *
-     * @return string
+     * @return string|null
      */
     public function id(): ?string
     {
@@ -84,7 +86,7 @@ class UserModel implements UserRepository\UserInterface
     /**
      * Returns the user's username (email address).
      *
-     * @return string
+     * @return string|null
      */
     public function username(): ?string
     {
@@ -107,7 +109,7 @@ class UserModel implements UserRepository\UserInterface
     /**
      * The user's hashed password
      *
-     * @return string
+     * @return string|null
      */
     public function password(): ?string
     {
@@ -117,7 +119,7 @@ class UserModel implements UserRepository\UserInterface
     /**
      * The date the user's account was created.
      *
-     * @return DateTime
+     * @return DateTime|null
      */
     public function createdAt(): ?DateTime
     {
@@ -127,7 +129,7 @@ class UserModel implements UserRepository\UserInterface
     /**
      * The date the user's account was last updated.
      *
-     * @return DateTime
+     * @return DateTime|null
      */
     public function updatedAt(): ?DateTime
     {
@@ -137,7 +139,8 @@ class UserModel implements UserRepository\UserInterface
     /**
      * The date the user's account is set to be deleted.
      *
-     * @return DateTime
+     * @return DateTime|null
+     * @psalm-api
      */
     public function deleteAt(): ?DateTime
     {
@@ -147,7 +150,7 @@ class UserModel implements UserRepository\UserInterface
     /**
      * The date the user's account was last successfully logged into.
      *
-     * @return DateTime
+     * @return DateTime|null
      */
     public function lastLoginAt(): ?DateTime
     {
@@ -157,7 +160,8 @@ class UserModel implements UserRepository\UserInterface
     /**
      * The date the user's account was activated.
      *
-     * @return DateTime
+     * @return DateTime|null
+     * @throws DateMalformedStringException
      */
     public function activatedAt(): ?DateTime
     {
@@ -167,7 +171,8 @@ class UserModel implements UserRepository\UserInterface
     /**
      * The date the user's account was last unsuccessfully tied to be logged in to.
      *
-     * @return DateTime
+     * @return DateTime|null
+     * @throws DateMalformedStringException
      */
     public function lastFailedLoginAttemptAt(): ?DateTime
     {
@@ -187,7 +192,7 @@ class UserModel implements UserRepository\UserInterface
     /**
      * The user's activation token.
      *
-     * @return string
+     * @return string|null
      */
     public function activationToken(): ?string
     {
@@ -225,6 +230,8 @@ class UserModel implements UserRepository\UserInterface
     /**
      * Sets the failed login attempts to zero in this instance.
      * NOTE - this does not change the value in the database!
+     *
+     * @return void
      */
     public function resetFailedLoginAttempts()
     {

@@ -48,7 +48,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        $entity = $service->fetch(-1, $user->getId());
+        $entity = $service->fetch(strval(-1), $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -75,7 +75,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        $entity = $service->fetch($lpa->getId(), $user->getId());
+        $entity = $service->fetch(strval($lpa->getId()), $user->getId());
         $this->assertTrue($entity instanceof DataModelEntity);
         $this->assertEquals($lpa, $entity->getData());
     }
@@ -192,7 +192,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        $validationError = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
+        $validationError = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -245,7 +245,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         /* @var DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
 
         $this->assertNotNull($patchedEntity);
 
@@ -271,7 +271,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
 
         $this->assertNotNull($patchedEntity);
         //Updated date should have changed as the LPA document hasn't changed
@@ -297,7 +297,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -321,7 +321,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -347,7 +347,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -373,7 +373,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -404,7 +404,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
 
         $patchedLpa = $patchedEntity->getData();
 
@@ -463,7 +463,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        $response = $service->delete($lpa->getId(), $user->getId());
+        $response = $service->delete(strval($lpa->getId()), $user->getId());
 
         $this->assertTrue($response);
     }
@@ -486,9 +486,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->applicationRepository)
             ->build();
 
-        $response = $service->deleteAll($user->getId());
-
-        $this->assertTrue($response);
+        $service->deleteAll($user->getId());
     }
 
     public function testFetchAllNoRecords()

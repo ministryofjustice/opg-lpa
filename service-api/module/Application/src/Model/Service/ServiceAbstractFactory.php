@@ -2,27 +2,27 @@
 
 namespace Application\Model\Service;
 
-use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use Application\Model\Service\Feedback\FeedbackValidator;
 use Application\Model\Service\Users\Service as UsersService;
 use GuzzleHttp\Client;
-use Http\Client\HttpClient;
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Exception;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Creates a service and injects the required dependencies
  *
  * Class ServiceAbstractFactory
  * @package Application\Model\Service
+ * @psalm-api
  */
 class ServiceAbstractFactory implements AbstractFactoryInterface
 {
@@ -65,7 +65,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
     /**
      * Can the factory create an instance for the service?
      *
-     * @param  ContainerInterface $container
      * @param  string $requestedName
      * @return bool
      */
@@ -82,10 +81,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @param string $requestedName
      * @param array|null $options
      * @return object
-     * @throws ApiProblemException
-     * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array|null $options = null)
     {
         if (!$this->canCreate($container, $requestedName)) {
             throw new Exception(

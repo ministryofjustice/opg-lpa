@@ -2,10 +2,8 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Application\Model\DataAccess\Postgres\AbstractBase;
-use Application\Model\DataAccess\Postgres\DbWrapper;
+use Psr\Container\ContainerInterface;
 
 /**
  * Used to instantiate any class that extents Application\Model\DataAccess\Postgres\AbstractBase
@@ -14,7 +12,7 @@ use Application\Model\DataAccess\Postgres\DbWrapper;
  */
 class DataFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array|null $options = null)
     {
         // Ensure that the requested class exists
         if (!class_exists($requestedName)) {

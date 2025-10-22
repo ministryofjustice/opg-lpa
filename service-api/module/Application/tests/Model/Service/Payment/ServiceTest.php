@@ -28,7 +28,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $payment = new Payment();
         $payment->setMethod('Invalid');
 
-        $validationError = $service->update($lpa->getId(), $payment->toArray());
+        $validationError = $service->update(strval($lpa->getId()), $payment->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -64,7 +64,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->update($lpa->getId(), $lpa->getPayment()->toArray());
+        $service->update(strval($lpa->getId()), $lpa->getPayment()->toArray());
 
         $serviceBuilder->verify();
     }
@@ -83,7 +83,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $payment = new Payment($lpa->getPayment()->toArray());
         $payment->setReference('Edited');
 
-        $entity = $service->update($lpa->getId(), $payment->toArray());
+        $entity = $service->update(strval($lpa->getId()), $payment->toArray());
 
         $this->assertEquals(new DataModelEntity($payment), $entity);
 

@@ -94,9 +94,8 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      * Delete all feedback received before the passed date.
      *
      * @param DateTime $before
-     * @return bool
      */
-    public function prune(DateTime $before): bool
+    public function prune(DateTime $before): void
     {
         $sql = $this->dbWrapper->createSql();
         $delete = $sql->delete(self::FEEDBACK_TABLE);
@@ -106,7 +105,5 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
         ]);
 
         $sql->prepareStatementForSqlObject($delete)->execute();
-
-        return true;
     }
 }

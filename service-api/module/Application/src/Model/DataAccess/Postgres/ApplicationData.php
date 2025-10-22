@@ -185,9 +185,8 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * Update the LPA
      *
      * @param Lpa $lpa
-     * @return bool
      */
-    public function update(Lpa $lpa): bool
+    public function update(Lpa $lpa): void
     {
         // Check to ensure the LPA isn't locked.
         $inDbLpa = $this->getById($lpa->getId());
@@ -266,17 +265,14 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $update->set($data);
 
         $statement = $sql->prepareStatementForSqlObject($update);
-        $results = $statement->execute();
-
-        return $results->getAffectedRows() === 1;
+        $statement->execute();
     }
 
     /**
      * @param int $lpaId
      * @param string $userId
-     * @return bool
      */
-    public function deleteById(int $lpaId, string $userId): bool
+    public function deleteById(int $lpaId, string $userId): void
     {
         $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::APPLICATIONS_TABLE);
@@ -310,9 +306,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $update->set($data);
 
         $statement = $sql->prepareStatementForSqlObject($update);
-        $results = $statement->execute();
-
-        return $results->getAffectedRows() === 1;
+        $statement->execute();
     }
 
     /**

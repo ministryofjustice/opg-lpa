@@ -66,7 +66,7 @@ class LpaAuthTest extends MockeryTestCase
     public function testAuthenticateFailedToken(): void
     {
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)
-            ->andReturn(null);
+            ->andReturn('Invalid token');
 
         $lpaAuth = new LpaAuth($this->authenticationService, 'Token', ['user name']);
         $lpaAuth->setLogger($this->logger);

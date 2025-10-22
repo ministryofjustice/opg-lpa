@@ -25,7 +25,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         $person = new NotifiedPerson();
-        $validationError = $service->create($lpa->getId(), $person->toArray());
+        $validationError = $service->create(strval($lpa->getId()), $person->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -58,7 +58,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
         $person->id = null;
-        $entity = $service->create($lpa->getId(), $person->toArray());
+        $entity = $service->create(strval($lpa->getId()), $person->toArray());
 
         //  We expect an ID value to have been added
         $person->setId(1);
@@ -79,7 +79,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $apiProblem = $service->update($lpa->getId(), null, -1);
+        $apiProblem = $service->update(strval($lpa->getId()), null, -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -107,7 +107,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         $person = new NotifiedPerson();
-        $validationError = $service->update($lpa->getId(), $person->toArray(), $lpa->getDocument()->getPeopleToNotify()[0]->id);
+        $validationError = $service->update(strval($lpa->getId()), $person->toArray(), $lpa->getDocument()->getPeopleToNotify()[0]->id);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -140,7 +140,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
         $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;
-        $entity = $service->update($lpa->getId(), $person->toArray(), $id);
+        $entity = $service->update(strval($lpa->getId()), $person->toArray(), $id);
 
         //Id will have been set to passed in id
         $person->setId($id);
@@ -161,7 +161,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $apiProblem = $service->delete($lpa->getId(), -1);
+        $apiProblem = $service->delete(strval($lpa->getId()), -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -189,7 +189,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->build();
 
         $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;
-        $result = $service->delete($lpa->getId(), $id);
+        $result = $service->delete(strval($lpa->getId()), $id);
 
         $this->assertTrue($result);
 

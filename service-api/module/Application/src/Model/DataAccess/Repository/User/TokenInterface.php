@@ -26,11 +26,4 @@ interface TokenInterface
      * @return DateTime
      */
     public function updatedAt(): ?DateTime;
-
-    /**
-     * Date the token was created.
-     *
-     * @return DateTime
-     */
-    public function createdAt(): ?DateTime;
 }
