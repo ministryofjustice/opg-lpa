@@ -118,8 +118,8 @@ class ApiProblem
     public function __construct(
         int|string $status,
         string|Exception|Throwable $detail,
-        string $type = null,
-        string $title = null,
+        string|null $type = null,
+        string|null $title = null,
         array $additional = []
     ) {
         // Ensure a valid HTTP status
@@ -182,17 +182,6 @@ class ApiProblem
         ];
         // Required fields should always overwrite additional fields
         return array_merge($this->additionalDetails, $problem);
-    }
-
-    /**
-     * Set the flag indicating whether an exception detail should include a
-     * stack trace and previous exception information.
-     */
-    public function setDetailIncludesStackTrace(bool $flag): static
-    {
-        $this->detailIncludesStackTrace = $flag;
-
-        return $this;
     }
 
     /**

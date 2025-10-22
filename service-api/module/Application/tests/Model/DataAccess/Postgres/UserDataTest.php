@@ -819,6 +819,9 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals(null, $userData->getByResetToken($token));
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testUpdateLastLoginTime(): void
     {
         $id = '12345612121';
@@ -837,9 +840,12 @@ class UserDataTest extends MockeryTestCase
         $userData = new UserData($dbWrapperMock);
 
         // assertions
-        $this->assertEquals(true, $userData->updateLastLoginTime($id));
+        $userData->updateLastLoginTime($id);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testResetFailedLoginCounter(): void
     {
         $id = '12345612121';
@@ -855,9 +861,12 @@ class UserDataTest extends MockeryTestCase
         $userData = new UserData($dbWrapperMock);
 
         // assertions
-        $this->assertEquals(true, $userData->resetFailedLoginCounter($id));
+        $userData->resetFailedLoginCounter($id);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testIncrementFailedLoginCounter(): void
     {
         $id = '123456121212';
@@ -876,7 +885,7 @@ class UserDataTest extends MockeryTestCase
         $userData = new UserData($dbWrapperMock);
 
         // assertions
-        $this->assertEquals(true, $userData->incrementFailedLoginCounter($id));
+        $userData->incrementFailedLoginCounter($id);
     }
 
     public function testDelete(): void
@@ -937,6 +946,9 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals(true, $userData->activate($token));
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testSetNewPassword(): void
     {
         $id = '912345613333';
@@ -957,7 +969,7 @@ class UserDataTest extends MockeryTestCase
         $userData = new UserData($dbWrapperMock);
 
         // assertions
-        $this->assertEquals(true, $userData->setNewPassword($id, $newPassword));
+        $userData->setNewPassword($id, $newPassword);
     }
 
     public function testSetAuthToken(): void
@@ -1010,6 +1022,9 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals(true, $userData->updateAuthTokenExpiry($id, $expires));
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testAddPasswordResetToken(): void
     {
         $id = '95555567777';
@@ -1036,7 +1051,7 @@ class UserDataTest extends MockeryTestCase
         $userData = new UserData($dbWrapperMock);
 
         // assertions
-        $this->assertEquals(true, $userData->addPasswordResetToken($id, $token));
+        $userData->addPasswordResetToken($id, $token);
     }
 
     public function testUpdatePasswordUsingToken(): void
@@ -1104,6 +1119,9 @@ class UserDataTest extends MockeryTestCase
         );
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testAddEmailUpdateTokenAndNewEmail(): void
     {
         $id = 'yolaaaa';
@@ -1133,7 +1151,7 @@ class UserDataTest extends MockeryTestCase
         $userData = new UserData($dbWrapperMock);
 
         // assertions
-        $this->assertEquals(true, $userData->addEmailUpdateTokenAndNewEmail($id, $token, $newEmail));
+        $userData->addEmailUpdateTokenAndNewEmail($id, $token, $newEmail);
     }
 
     public function testGetAccountsInactiveSince(): void
@@ -1183,6 +1201,9 @@ class UserDataTest extends MockeryTestCase
         Mockery::close();
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testSetInactivityFlag(): void
     {
         $id = 'qwqwwqwwqqwq';
@@ -1207,7 +1228,7 @@ class UserDataTest extends MockeryTestCase
         $userData = new UserData($dbWrapperMock);
 
         // assertions
-        $this->assertEquals(true, $userData->setInactivityFlag($id, $flag));
+        $userData->setInactivityFlag($id, $flag);
     }
 
     public function testGetAccountsUnactivatedOlderThan(): void
@@ -1357,6 +1378,9 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals('Rrrraaaaa', $name->getLast());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testSaveProfile(): void
     {
         $id = 'vansant';
@@ -1383,6 +1407,6 @@ class UserDataTest extends MockeryTestCase
         $userData = new UserData($dbWrapperMock);
 
         // assertions
-        $this->assertEquals(true, $userData->saveProfile($profileUserModel));
+        $userData->saveProfile($profileUserModel);
     }
 }

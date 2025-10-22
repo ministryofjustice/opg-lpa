@@ -58,13 +58,6 @@ interface UserInterface
     public function updatedAt(): ?DateTime;
 
     /**
-     * The date the user's account is set to be deleted.
-     *
-     * @return DateTime
-     */
-    public function deleteAt(): ?DateTime;
-
-    /**
      * The date the user's account was last successfully logged into.
      *
      * @return DateTime

@@ -25,9 +25,9 @@ use Http\Client\HttpClient;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
-use Laminas\Http\Header\Accept as AcceptHeader;
-use Laminas\Http\Request as LaminasRequest;
-use Laminas\Http\Response as LaminasResponse;
+use Laminas\Http\Header\Accept;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Http\Response;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -39,13 +39,15 @@ use PDO;
 use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-api
+ */
 class Module
 {
     public const VERSION = '3.0.3-dev';
 
-    public function onBootstrap(MvcEvent $e)
+    public function onBootstrap(MvcEvent $e): void
     {
-
         $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
@@ -58,15 +60,17 @@ class Module
         $auth = $sm->get(AuthenticationListener::class);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$auth, 'authenticate'], 500);
 
-
         // Register error handler for dispatch and render errors;
         // priority is set to 100 here so that the global MvcEventListener
         // has a chance to log it before it's converted into an API exception
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError'], 100);
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, [$this, 'handleError'], 100);
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError'], 100);
+        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'handleError'], 100);
     }
 
-    public function getServiceConfig()
+    /**
+     * @return array
+     */
+    public function getServiceConfig(): array
     {
         // calls to $sm->get('config') return the array in
         // service-api/config/autoload/global.php
@@ -129,7 +133,7 @@ class Module
                     ]);
                 },
 
-                'Laminas\Authentication\AuthenticationService' => function ($sm) {
+                'Laminas\Authentication\AuthenticationService' => function () {
                     // NonPersistent persists only for the life of the request...
                     return new AuthenticationService(new NonPersistent());
                 },
@@ -161,12 +165,12 @@ class Module
                     return new SqsClient($config['pdf']['queue']['sqs']['client']);
                 },
 
-                'AwsCredentials' => function ($sm) {
+                'AwsCredentials' => function () {
                     $provider = CredentialProvider::defaultProvider();
                     return $provider()->wait();
                 },
 
-                'AwsApiGatewaySignature' => function ($sm) {
+                'AwsApiGatewaySignature' => function () {
                     return new SignatureV4('execute-api', 'eu-west-1');
                 },
 
@@ -194,7 +198,10 @@ class Module
         ];
     }
 
-    public function getConfig()
+    /**
+     * @return array
+     */
+    public function getConfig(): array
     {
         return include __DIR__ . '/../config/module.config.php';
     }
@@ -214,7 +221,7 @@ class Module
 
         if ($exception instanceof ApiProblemExceptionInterface) {
             $problem = new ApiProblem($exception->getCode(), $exception->getMessage());
-            $response = new ApiProblemResponse($problem);
+            new ApiProblemResponse($problem);
 
             $e->stopPropagation();
             $response = new ApiProblemResponse($problem);
@@ -224,18 +231,28 @@ class Module
         return $response;
     }
 
-    // if the client's Accept header doesn't match the content type on
-    // the response, send a `406 Not acceptable` response
-    public function negotiateContent(MvcEvent $e)
+    /**
+     * if the client's Accept header doesn't match the content type on
+     * the response, send a `406 Not acceptable` response
+     *
+     * @param MvcEvent $e
+     **/
+    public function negotiateContent(MvcEvent $e): void
     {
-        /** @var LaminasRequest */
         $request = $e->getRequest();
-
-        /** @var LaminasResponse */
         $response = $e->getResponse();
 
-        /** @var AcceptHeader */
+        // Type guard for HTTP requests/Responses only
+        if (!$request instanceof HttpRequest || !$response instanceof Response) {
+            return;
+        }
+
         $requestAcceptHeader = $request->getHeader('accept');
+
+        // Check if Accept header exists and is the correct type
+        if (!$requestAcceptHeader instanceof Accept) {
+            return;
+        }
 
         // typically a response will only have one content-type header,
         // but just in case something weird happens we'll loop over the values;

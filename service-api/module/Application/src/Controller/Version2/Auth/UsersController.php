@@ -6,6 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Users\Service;
 use Laminas\View\Model\JsonModel;
 use MakeShared\Logging\LoggerTrait;
+use Random\RandomException;
 
 class UsersController extends AbstractAuthController
 {
@@ -40,8 +41,9 @@ class UsersController extends AbstractAuthController
      * @param $username
      * @param $password
      * @return JsonModel|ApiProblem
+     * @throws RandomException
      */
-    private function createAccount($username, $password)
+    private function createAccount(string $username, $password)
     {
         $result = $this->getService()->create($username, $password);
 
@@ -58,7 +60,7 @@ class UsersController extends AbstractAuthController
      * @param $activationToken
      * @return JsonModel|ApiProblem
      */
-    private function activateAccount($activationToken)
+    private function activateAccount(string $activationToken)
     {
         $result = $this->getService()->activate($activationToken);
 

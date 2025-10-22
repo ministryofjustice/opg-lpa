@@ -27,10 +27,9 @@ class LockCommand extends Command
     /**
      * Factory method
      *
-     * @param ServiceManager $sm
      * @return LockCommand
      */
-    public function __invoke(ServiceManager $sm)
+    public function __invoke()
     {
         return $this;
     }

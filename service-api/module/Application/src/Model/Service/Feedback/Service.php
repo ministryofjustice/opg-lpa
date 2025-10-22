@@ -90,7 +90,12 @@ class Service extends AbstractService
         return $this->pruneBeforeDate;
     }
 
-    public function setFeedbackValidator(FeedbackValidator $feedbackValidator)
+    /**
+     * @param FeedbackValidator $feedbackValidator
+     * @return void
+     * @psalm-api
+     */
+    public function setFeedbackValidator(FeedbackValidator $feedbackValidator): void
     {
         $this->feedbackValidator = $feedbackValidator;
     }

@@ -2,6 +2,7 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
+use DateMalformedStringException;
 use DateTime;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
@@ -22,10 +23,13 @@ class TokenModel implements UserRepository\TokenInterface
     /**
      * Returns a DateTime for a given key from a range of time formats.
      *
-     * @param $key
+     * @param string $key
+     *
      * @return DateTime|null
+     *
+     * @throws DateMalformedStringException
      */
-    private function returnDateField($key)
+    private function returnDateField(string $key)
     {
         if (!isset($this->data[$key])) {
             return null;
@@ -43,7 +47,7 @@ class TokenModel implements UserRepository\TokenInterface
     /**
      * Returns the token's id.
      *
-     * @return string
+     * @return string|null
      */
     public function id(): ?string
     {
@@ -53,7 +57,7 @@ class TokenModel implements UserRepository\TokenInterface
     /**
      * Date the token will current expire.
      *
-     * @return DateTime
+     * @return DateTime|null
      */
     public function expiresAt(): ?DateTime
     {
@@ -63,7 +67,7 @@ class TokenModel implements UserRepository\TokenInterface
     /**
      * Date the token was last updated (extended).
      *
-     * @return DateTime
+     * @return DateTime|null
      */
     public function updatedAt(): ?DateTime
     {
@@ -73,7 +77,9 @@ class TokenModel implements UserRepository\TokenInterface
     /**
      * Date the token was created.
      *
-     * @return DateTime
+     * @return DateTime|null
+     * @throws DateMalformedStringException
+     * @psalm-api
      */
     public function createdAt(): ?DateTime
     {

@@ -27,7 +27,7 @@ final class ServiceTest extends AbstractServiceTestCase
         //Make sure the donor is invalid
         $donor = new Donor();
 
-        $validationError = $service->update($lpa->getId(), $donor->toArray());
+        $validationError = $service->update(strval($lpa->getId()), $donor->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -66,7 +66,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->update($lpa->getId(), $lpa->getDocument()->getDonor()->toArray());
+        $service->update(strval($lpa->getId()), $lpa->getDocument()->getDonor()->toArray());
 
         $serviceBuilder->verify();
     }
@@ -85,7 +85,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $donor = new Donor($lpa->getDocument()->getDonor()->toArray());
         $donor->getName()->setFirst('Edited');
 
-        $entity = $service->update($lpa->getId(), $donor->toArray());
+        $entity = $service->update(strval($lpa->getId()), $donor->toArray());
 
         $this->assertEquals(new DataModelEntity($donor), $entity);
 

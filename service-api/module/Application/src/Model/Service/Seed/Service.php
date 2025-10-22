@@ -26,7 +26,7 @@ class Service extends AbstractService
      * @param $userId
      * @return ApiProblem|Entity
      */
-    public function fetch($lpaId, $userId)
+    public function fetch(string $lpaId, string $userId)
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -52,14 +52,14 @@ class Service extends AbstractService
      * @param $userId
      * @return ApiProblem|Entity
      */
-    public function update($lpaId, $data, $userId)
+    public function update(string $lpaId, $data, string $userId)
     {
         if (!isset($data['seed']) || !is_numeric($data['seed'])) {
             return new ApiProblem(400, 'Invalid LPA identifier to seed from');
         }
 
         //  TODO - Change this to just use the getLpa method in the parent abstract controller?
-        $lpaEntity = $this->applicationsService->fetch($data['seed'], $userId);
+        $lpaEntity = $this->applicationsService->fetch(strval($data['seed']), $userId);
 
         if (!($lpaEntity instanceof DataModelEntity)) {
             return new ApiProblem(400, 'Invalid LPA identifier to seed from');
@@ -88,8 +88,9 @@ class Service extends AbstractService
 
     /**
      * @param ApplicationService $applicationsService
+     * @psalm-api
      */
-    public function setApplicationsService(ApplicationService $applicationsService)
+    public function setApplicationsService(ApplicationService $applicationsService): void
     {
         $this->applicationsService = $applicationsService;
     }

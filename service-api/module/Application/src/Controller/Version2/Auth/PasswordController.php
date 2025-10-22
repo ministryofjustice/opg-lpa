@@ -7,6 +7,7 @@ use Application\Model\Service\Password\Service;
 use DateTime;
 use Laminas\View\Model\JsonModel;
 use MakeShared\Logging\LoggerTrait;
+use Random\RandomException;
 
 class PasswordController extends AbstractAuthController
 {
@@ -29,7 +30,7 @@ class PasswordController extends AbstractAuthController
      */
     public function changeAction()
     {
-        $userId = $userId = $this->params()->fromRoute('userId');
+        $userId = $this->params()->fromRoute('userId');
 
         $newPassword = $this->getBodyContent('newPassword');
 
@@ -130,6 +131,7 @@ class PasswordController extends AbstractAuthController
 
     /**
      * @return JsonModel|ApiProblem
+     * @throws RandomException
      */
     public function resetAction()
     {

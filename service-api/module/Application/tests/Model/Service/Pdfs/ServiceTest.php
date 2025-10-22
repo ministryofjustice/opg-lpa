@@ -67,7 +67,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $entity = $service->fetch($lpa->getId(), -1);
+        $entity = $service->fetch(strval($lpa->getId()), -1);
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -96,7 +96,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $validationError = $service->fetch($lpa->getId(), -1);
+        $validationError = $service->fetch(strval($lpa->getId()), -1);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -125,7 +125,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $service = $serviceBuilder
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))->build();
 
-        $data = $service->fetch($lpa->getId(), 'lpa120');
+        $data = $service->fetch(strval($lpa->getId()), 'lpa120');
 
         $this->assertEquals([
             'type' => 'lpa120',
@@ -147,7 +147,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $data = $service->fetch($lpa->getId(), 'lp3');
+        $data = $service->fetch(strval($lpa->getId()), 'lp3');
 
         $this->assertEquals([
             'type' => 'lp3',
@@ -178,7 +178,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withS3Client($s3Client)
             ->build();
 
-        $data = $service->fetch($lpa->getId(), 'lp1');
+        $data = $service->fetch(strval($lpa->getId()), 'lp1');
 
         $this->assertEquals([
             'type' => 'lp1',
@@ -208,7 +208,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withS3Client($s3Client)
             ->build();
 
-        $data = $service->fetch($lpa->getId(), 'lp1');
+        $data = $service->fetch(strval($lpa->getId()), 'lp1');
 
         $this->assertEquals([
             'type' => 'lp1',
@@ -239,7 +239,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withS3Client($s3Client)
             ->build();
 
-        $data = $service->fetch($lpa->getId(), 'lp1');
+        $data = $service->fetch(strval($lpa->getId()), 'lp1');
 
         $this->assertEquals([
             'type' => 'lp1',
@@ -266,7 +266,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withS3Client($s3Client)
             ->build();
 
-        $entity = $service->fetch($lpa->getId(), 'lpa120.pdf');
+        $entity = $service->fetch(strval($lpa->getId()), 'lpa120.pdf');
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -312,7 +312,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withS3Client($s3Client)
             ->build();
 
-        $fileResponse = $service->fetch($lpa->getId(), 'lp1.pdf');
+        $fileResponse = $service->fetch(strval($lpa->getId()), 'lp1.pdf');
 
         $this->assertTrue($fileResponse instanceof FileResponse);
         $this->assertEquals('<<pdf-file-contents>>', $fileResponse->getContent());
