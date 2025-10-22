@@ -203,7 +203,7 @@ locals {
         "startPeriod" : 90,
         "interval" : 10,
         "timeout" : 15,
-        "retries" : 3
+        "retries" : 6
       },
       "portMappings" : [
         {
