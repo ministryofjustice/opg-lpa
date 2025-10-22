@@ -883,8 +883,6 @@ class StatusControllerTest extends AbstractControllerTestCase
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
             ]]);
 
-        $dataModel = new DataModelEntity($lpa);
-
         $this->applicationsService->shouldReceive('filterByIdsAndUser')
             ->withArgs([['98765'], '12345'])
             ->once()

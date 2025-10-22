@@ -13,9 +13,8 @@ use Exception;
  */
 class ApiProblemException extends Exception implements ApiProblemExceptionInterface
 {
-    public function __construct($message = "", $code = 500, Exception $previous = null)
+    public function __construct($message = "", $code = 500, Exception|null $previous = null)
     {
-
         parent::__construct($message, $code, $previous);
     }
 }

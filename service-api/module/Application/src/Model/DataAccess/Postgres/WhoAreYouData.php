@@ -18,9 +18,8 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
      * Insert a new 'Who Are You' response.
      *
      * @param WhoAreYou $answer
-     * @return bool
      */
-    public function insert(WhoAreYou $answer): bool
+    public function insert(WhoAreYou $answer): void
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::WHO_TABLE);
@@ -36,9 +35,7 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
 
         $statement = $sql->prepareStatementForSqlObject($insert);
 
-        $result = $statement->execute();
-
-        return $result->getAffectedRows() === 1;
+        $statement->execute();
     }
 
     /**
@@ -75,7 +72,7 @@ class WhoAreYouData extends AbstractBase implements WhoRepositoryInterface
          */
 
         // Gives us an array with the 'who' options as keys, and the count value all set to 0.
-        foreach ($options as $key => &$value) {
+        foreach ($options as &$value) {
             $value = [ 'count' => 0 ];
         }
 

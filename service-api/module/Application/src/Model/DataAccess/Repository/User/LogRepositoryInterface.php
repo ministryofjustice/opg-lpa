@@ -8,9 +8,8 @@ interface LogRepositoryInterface
      * Add a document to the log collection.
      *
      * @param array $details
-     * @return bool
      */
-    public function addLog(array $details): bool;
+    public function addLog(array $details): void;
 
     /**
      * Retrieve a log document based on the identity hash stored against it

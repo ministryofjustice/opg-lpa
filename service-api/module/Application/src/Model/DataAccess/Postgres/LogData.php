@@ -2,6 +2,7 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
+use DateMalformedStringException;
 use DateTime;
 use Laminas\Db\Sql\Sql;
 use Application\Model\DataAccess\Postgres\AbstractBase;
@@ -15,9 +16,8 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
      * Add a document to the log collection.
      *
      * @param array $details
-     * @return bool
      */
-    public function addLog(array $details): bool
+    public function addLog(array $details): void
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::DELETION_LOG_TABLE);
@@ -30,25 +30,18 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         ];
 
         $insert->columns(array_keys($data));
-
         $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
-
-        try {
-            $statement->execute();
-        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e) {
-            return false;
-        }
-
-        return true;
+        $statement->execute();
     }
 
     /**
      * Retrieve a log document based on the identity hash stored against it
      *
      * @param string $identityHash
-     * @return array
+     * @return array|null
+     * @throws DateMalformedStringException
      */
     public function getLogByIdentityHash(string $identityHash): ?array
     {

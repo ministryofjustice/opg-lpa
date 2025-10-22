@@ -8,9 +8,8 @@ interface StatsRepositoryInterface
      * Insert a new set of stats into the cache.
      *
      * @param array $stats
-     * @return bool
      */
-    public function insert(array $stats): bool;
+    public function insert(array $stats): void;
 
     /**
      * Returns the current set of cached stats.
@@ -22,5 +21,5 @@ interface StatsRepositoryInterface
     /**
      * Delete all previously cached stats.
      */
-    public function delete(): bool;
+    public function delete(): void;
 }
