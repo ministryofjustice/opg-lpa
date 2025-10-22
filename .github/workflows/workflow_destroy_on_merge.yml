@@ -22,13 +22,6 @@ on:
       - main
     types:
       - closed
-    paths:
-      - "service-*/**"
-      - "cypress/**"
-      - "terraform/**"
-      - "scripts/**"
-      - ".github/workflows/**"
-      - "locust/**"
 
 jobs:
   workspace_name:
