@@ -47,11 +47,11 @@ class UserSearchHandler extends AbstractHandler
 
             if (isset($params['email'])) {
                 $email = $params['email'];
-                $form->setData(['email' => $email]);
+                $form->setData($params);
             }
         }
 
-        if (!is_null($email)) {
+        if (!is_null($email) && $form->isValid()) {
             $result = $this->userService->search($email);
 
             if ($result === false) {
