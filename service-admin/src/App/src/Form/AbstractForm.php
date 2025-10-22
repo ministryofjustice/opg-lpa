@@ -22,17 +22,19 @@ abstract class AbstractForm extends Form
     {
         $options = $this->getOptions();
 
-        $field = new Csrf('secret');
-
-        $field->setCsrfValidator(new Validator\Csrf([
+        $csrfValidator = new Validator\Csrf([
             'name' => $this->getName(),
             'secret' => $options['csrf']
-        ]));
+        ]);
+
+        $field = new Csrf('secret');
+        $field->setCsrfValidator($csrfValidator);
 
         $input = new Input($field->getName());
 
         $input->getValidatorChain()
-              ->attach(new Validator\NotEmpty());
+              ->attach(new Validator\NotEmpty())
+              ->attach($csrfValidator);
 
         $this->add($field);
 
