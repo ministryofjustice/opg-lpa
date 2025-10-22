@@ -6,16 +6,16 @@ namespace ApplicationTest\Model\Service\Lpa;
 
 use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Application;
-use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 
-final class ApplicantTest extends AbstractServiceTest
+final class ApplicantTest extends MockeryTestCase
 {
     private Application|MockInterface $applicationService;
     private Applicant $service;
@@ -26,8 +26,7 @@ final class ApplicantTest extends AbstractServiceTest
 
         $this->applicationService = Mockery::mock(Application::class);
 
-        $this->service = new Applicant($this->authenticationService, []);
-        $this->service->setLpaApplicationService($this->applicationService);
+        $this->service = new Applicant($this->applicationService);
     }
 
     public function testRemoveAttorney(): void

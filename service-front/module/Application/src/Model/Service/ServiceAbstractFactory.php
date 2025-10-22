@@ -4,7 +4,6 @@ namespace Application\Model\Service;
 
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
@@ -24,9 +23,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
-        Applicant::class => [
-            'setLpaApplicationService' => 'LpaApplicationService',
-        ],
         Communication::class => [
             'setUserDetailsSession' => 'UserDetailsSession'
         ],

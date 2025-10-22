@@ -2,10 +2,9 @@
 
 namespace Application\Model\Service\Lpa;
 
-use Application\Model\Service\AbstractService;
-use Application\Model\Service\ApiClient\ApiClientAwareInterface;
-use Application\Model\Service\ApiClient\ApiClientTrait;
+use Application\Model\Service\ApiClient\Client as ApiClient;
 use Application\Model\Service\ApiClient\Exception\ApiException;
+use Application\Model\Service\Authentication\AuthenticationService;
 use Http\Client\Exception;
 use MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
@@ -23,13 +22,27 @@ use MakeShared\DataModel\Lpa\Formatter as LpaFormatter;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use ArrayObject;
-use MakeShared\Logging\LoggerTrait;
-use RuntimeException;
+use Psr\Log\LoggerInterface;
 
-class Application extends AbstractService implements ApiClientAwareInterface
+class Application
 {
-    use ApiClientTrait;
-    use LoggerTrait;
+    public function __construct(
+        private readonly ApiClient $apiClient,
+        private readonly AuthenticationService $authenticationService,
+        private readonly LoggerInterface $logger,
+        private readonly array $config,
+    ) {
+    }
+
+    private function getLogger(): LoggerInterface
+    {
+        return $this->logger;
+    }
+
+    private function getUserId()
+    {
+        return $this->authenticationService->getIdentity()->id();
+    }
 
     /**
      * Get an application by lpaId
@@ -176,7 +189,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $this->getLogger()->error('ApiException thrown when fetching LPA application summaries');
         }
 
-        $trackFromDate = new DateTime($this->getConfig()['processing-status']['track-from-date']);
+        $trackFromDate = new DateTime($this->config['processing-status']['track-from-date']);
         $trackingEnabled = $trackFromDate <= new DateTime('now');
 
         $result['trackingEnabled'] = $trackingEnabled;

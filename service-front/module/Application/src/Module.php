@@ -17,6 +17,7 @@ use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManager;
 use Alphagov\Pay\Client as GovPayClient;
+use Application\Model\Service\Lpa\Application;
 use Aws\DynamoDb\DynamoDbClient;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
@@ -26,6 +27,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Redis;
 use Twig\Loader\FilesystemLoader;
@@ -240,6 +242,13 @@ class Module implements FormElementProviderInterface
                     $fees = $sm->get('config')['fees'] ?? [];
                     return new Calculator($fees);
                 },
+
+                Application::class => fn (ContainerInterface $sm) => new Application(
+                    $sm->get('ApiClient'),
+                    $sm->get('AuthenticationService'),
+                    $sm->get('Logger'),
+                    $sm->get('config'),
+                ),
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

@@ -2,17 +2,16 @@
 
 namespace Application\Model\Service\Lpa;
 
-use Application\Model\Service\AbstractService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class Applicant extends AbstractService
+class Applicant
 {
-    /**
-     * @var LpaApplicationService
-     */
-    private $lpaApplicationService;
+    public function __construct(
+        private readonly LpaApplicationService $lpaApplicationService,
+    ) {
+    }
 
     /**
      * Remove an attorney from the applicants array
@@ -65,10 +64,5 @@ class Applicant extends AbstractService
                 $this->lpaApplicationService->setWhoIsRegistering($lpa, $newApplicants);
             }
         }
-    }
-
-    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
-    {
-        $this->lpaApplicationService = $lpaApplicationService;
     }
 }

@@ -59,11 +59,14 @@ final class ApplicationTest extends MockeryTestCase
 
         $this->apiClient = Mockery::mock(Client::class);
 
-        $this->service = new Application($this->authenticationService, [
-            'processing-status' => ['track-from-date' => '2019-01-01']
-        ]);
-        $this->service->setApiClient($this->apiClient);
-        $this->service->setLogger($logger);
+        $this->service = new Application(
+            $this->apiClient,
+            $this->authenticationService,
+            $logger,
+            [
+                'processing-status' => ['track-from-date' => '2019-01-01']
+            ],
+        );
     }
 
     public function testGetApplication(): void
