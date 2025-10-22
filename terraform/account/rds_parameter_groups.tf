@@ -66,4 +66,65 @@ resource "aws_rds_cluster_parameter_group" "postgresql_aurora_params" {
     value        = "1440"
     apply_method = "immediate"
   }
+
+  # for blue/green deployments
+  parameter {
+    name         = "apg_plan_mgmt.capture_plan_baselines"
+    value        = "off"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.explain_hashes"
+    value        = "0"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.log_plan_enforcement_result"
+    value        = "none"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.max_databases"
+    value        = "10"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.max_plans"
+    value        = "10000"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.plan_capture_threshold"
+    value        = "0"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.plan_hash_version"
+    value        = "1"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.plan_retention_period"
+    value        = "32"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.unapproved_plan_execution_threshold"
+    value        = "0"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "apg_plan_mgmt.use_plan_baselines"
+    value        = "false"
+    apply_method = "immediate"
+  }
 }
