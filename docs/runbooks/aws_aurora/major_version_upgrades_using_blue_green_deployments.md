@@ -54,7 +54,7 @@ Aurora blue/green deployments use switchover guardrails, checks prior to startin
 
 ## Merge infrastructure changes into main
 
-The last task to perform is updating terraform so that it matches the database changes made int he console.
+The last task to perform is updating terraform so that it matches the database changes made in the console.
 
 1. Update `terraform/environment/terraform.tfvars.json` to configure an environment to use the new `psql_engine_version` and `psql_parameter_group_family`.
 
