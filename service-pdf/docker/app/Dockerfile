@@ -3,10 +3,11 @@ FROM composer:2.8.12@sha256:3ca62a8176c743eebef305ac2b93094a733dd5a34b5c1e3d3cf6
 FROM php:8.3-cli-alpine3.22@sha256:455b2021cecb70fb7b983cec51b84f0660bc8c3b6aac60d58f3fff3a77689cb6
 
 RUN adduser -D -g '' appuser
-
+# hadolint ignore=DL3018
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
+# hadolint ignore=DL3018
 RUN apk update \
     && apk add --no-cache openjdk8-jre libpng \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS autoconf gcc make musl-dev pkgconfig zlib-dev libpng-dev linux-headers\

@@ -5,11 +5,13 @@ FROM php:8.4-fpm-alpine3.22@sha256:999f910cc872e4930d2d5c4b91d80ed712e8cf77ba173
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
 RUN adduser -D -g '' appuser
+# hadolint ignore=DL3018
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
 # The --virtual flag puts build dependencies into their own
 # directory to make them easier to remove en masse
+# hadolint ignore=DL3018
 RUN apk add --no-cache icu fcgi \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \
     && pecl install redis \
