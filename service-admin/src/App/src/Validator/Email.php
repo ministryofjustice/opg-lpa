@@ -10,14 +10,6 @@ use Laminas\Validator\EmailAddress;
 final class Email extends AbstractValidator
 {
     public const INVALID             = 'invalid';
-    public const INVALID_FORMAT      = 'invalid-format';
-    public const INVALID_HOSTNAME    = 'invalid-hostname';
-    public const INVALID_MX_RECORD   = 'invalid-mx-record';
-    public const INVALID_SEGMENT     = 'invalid-segment';
-    public const DOT_ATOM            = 'dot-atom';
-    public const QUOTED_STRING       = 'quoted-string';
-    public const INVALID_LOCAL_PART  = 'invalid-local-part';
-    public const LENGTH_EXCEEDED     = 'length-exceeded';
     public const INVALID_TYPE        = 'invalid-type';
 
     /** @var array<string,string> */
