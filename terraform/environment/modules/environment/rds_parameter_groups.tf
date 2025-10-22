@@ -10,17 +10,6 @@ locals {
   ]
 }
 
-# tflint-ignore: terraform_unused_declarations
-data "aws_db_parameter_group" "postgres_db_params" {
-  for_each = toset(local.psql_parameter_group_family_list)
-  name     = lower("${each.value}-db-params")
-}
-# tflint-ignore: terraform_unused_declarations
-data "aws_rds_cluster_parameter_group" "postgresql_aurora_params" {
-  for_each = toset(local.psql_parameter_group_family_list)
-  name     = lower("${each.value}-cluster-params")
-}
-
 resource "aws_db_parameter_group" "postgres_db_params" {
   for_each    = toset(local.psql_parameter_group_family_list)
   name        = lower("${each.value}-db-params-${var.environment_name}")
