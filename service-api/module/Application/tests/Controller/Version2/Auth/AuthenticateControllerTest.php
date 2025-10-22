@@ -279,7 +279,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             'detail' => 'No CheckedToken was specified in the header'], $result->toArray());
     }
 
-    public function testSessionExpiryActionAuthenticationServiceApiProblem()
+    public function testSessionExpiryActionAuthenticationServiceErrorWhenWithTokenCalled()
     {
         $header = Mockery::mock(HeaderInterface::class);
         $header->shouldReceive('getFieldValue')->once()->andReturn('asdfgh123456');
@@ -289,14 +289,13 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
         $this->authenticationService->shouldReceive('withToken')
             ->once()
             ->withArgs(['asdfgh123456', false])
-            ->andReturn(new ApiProblem(500, 'Test problem'));
+            ->andReturn('Test problem');
 
         $controller = $this->getController(AuthenticateController::class);
 
         $result = $controller->sessionExpiryAction();
 
-        $this->assertInstanceOf(ApiProblem::class, $result);
-        $this->assertEquals((new ApiProblem(500, 'Test problem'))->toArray(), $result->toArray());
+        $this->assertEquals(new JsonModel(['valid' => false, 'problem' => 'Test problem']), $result);
     }
 
     public function testSetSessionExpiryActionNoCheckedTokenReceives400()

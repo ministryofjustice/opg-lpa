@@ -10,6 +10,7 @@ use LmcRbacMvc\Service\AuthorizationService;
  *
  * Class IsAuthorizedToManageUser
  * @package Application\Library\Authorization\Assertions
+ * @psalm-api
  */
 class IsAuthorizedToManageUser implements AssertionInterface
 {

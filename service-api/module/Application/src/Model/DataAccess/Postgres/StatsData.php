@@ -14,9 +14,8 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
      * Insert a new set of stats into the cache.
      *
      * @param array $stats
-     * @return bool
      */
-    public function insert(array $stats): bool
+    public function insert(array $stats): void
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::STATS_TABLE);
@@ -30,9 +29,7 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
 
         $statement = $sql->prepareStatementForSqlObject($insert);
 
-        $result = $statement->execute();
-
-        return $result->getAffectedRows() === 1;
+        $statement->execute();
     }
 
     /**
@@ -62,9 +59,8 @@ class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryI
      * i.e. truncate table
      *
      */
-    public function delete(): bool
+    public function delete(): void
     {
         $this->dbWrapper->rawQuery('TRUNCATE TABLE ' . self::STATS_TABLE);
-        return true;
     }
 }

@@ -27,7 +27,7 @@ final class ServiceTest extends AbstractServiceTestCase
         //Make sure the certificate provider is invalid
         $certificateProvider = new CertificateProvider();
 
-        $validationError = $service->update($lpa->getId(), $certificateProvider->toArray());
+        $validationError = $service->update(strval($lpa->getId()), $certificateProvider->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -64,7 +64,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->update($lpa->getId(), $lpa->getDocument()->getCertificateProvider()->toArray());
+        $service->update(strval($lpa->getId()), $lpa->getDocument()->getCertificateProvider()->toArray());
 
         $serviceBuilder->verify();
     }
@@ -83,7 +83,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $certificateProvider = new CertificateProvider($lpa->getDocument()->getCertificateProvider()->toArray());
         $certificateProvider->getName()->setFirst('Edited');
 
-        $entity = $service->update($lpa->getId(), $certificateProvider->toArray());
+        $entity = $service->update(strval($lpa->getId()), $certificateProvider->toArray());
 
         $this->assertEquals(new DataModelEntity($certificateProvider), $entity);
 
@@ -103,7 +103,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $validationError = $service->delete($lpa->getId());
+        $validationError = $service->delete(strval($lpa->getId()));
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -139,7 +139,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->delete($lpa->getId());
+        $service->delete(strval($lpa->getId()));
 
         $serviceBuilder->verify();
     }
@@ -155,7 +155,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
-        $response = $service->delete($lpa->getId());
+        $response = $service->delete(strval($lpa->getId()));
 
         $this->assertTrue($response);
 

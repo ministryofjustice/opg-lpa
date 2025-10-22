@@ -2,6 +2,9 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
+use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
+use DateMalformedStringException;
+use Exception;
 use PDOException;
 use DateTime;
 use Laminas\Db\Sql\Expression as SqlExpression;
@@ -212,12 +215,11 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * @param $id
-     * @return bool
+     * @param string $id
      */
-    public function updateLastLoginTime(string $id): bool
+    public function updateLastLoginTime(string $id): void
     {
-        return $this->updateRow(
+        $this->updateRow(
             ['id' => $id],
             [
                 'last_login' => gmdate(DbWrapper::TIME_FORMAT),
@@ -229,12 +231,11 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Resets the user's failed login counter to zero.
      *
-     * @param $id
-     * @return bool
+     * @param string $id
      */
-    public function resetFailedLoginCounter(string $id): bool
+    public function resetFailedLoginCounter(string $id): void
     {
-        return $this->updateRow(
+        $this->updateRow(
             ['id' => $id],
             [
                 'failed_login_attempts' => 0,
@@ -245,12 +246,11 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Increments the user's failed login counter by 1.
      *
-     * @param $id
-     * @return bool
+     * @param string $id
      */
-    public function incrementFailedLoginCounter(string $id): bool
+    public function incrementFailedLoginCounter(string $id): void
     {
-        return $this->updateRow(
+        $this->updateRow(
             ['id' => $id],
             [
                 'last_failed_login' => gmdate(DbWrapper::TIME_FORMAT),
@@ -264,10 +264,10 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      *
      * If false is returned, we will try again with different userId and activation token.
      *
-     * @param $id
+     * @param string $id
      * @param array $details
-     * @throws \Exception
      * @return bool
+     * @throws Exception
      */
     public function create(string $id, array $details): bool
     {
@@ -317,7 +317,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      *
      * NB: When an account is deleted, the document it kept, leaving only _id and a new deletedAt field.
      *
-     * @param $id
+     * @param string $id
      * @return bool
      */
     public function delete(string $id): bool
@@ -348,7 +348,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Activates a user account
      *
-     * @param $token
+     * @param string $token
      * @return bool
      */
     public function activate(string $token): bool
@@ -367,13 +367,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Updates a user's password.
      *
-     * @param $userId
-     * @param $passwordHash
-     * @return bool
+     * @param string $userId
+     * @param string $passwordHash
      */
-    public function setNewPassword(string $userId, string $passwordHash): bool
+    public function setNewPassword(string $userId, string $passwordHash): void
     {
-        return $this->updateRow(
+        $this->updateRow(
             ['id' => $userId],
             [
                 'password_hash' => $passwordHash,
@@ -386,9 +385,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Sets a new auth token.
      *
-     * @param $userId
+     * @param string $userId
      * @param DateTime $expires
-     * @param $token
+     * @param string $token
      * @return bool
      */
     public function setAuthToken(string $userId, DateTime $expires, string $token): bool
@@ -427,18 +426,17 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param array $token
-     * @return bool
      */
-    public function addPasswordResetToken(string $id, array $token): bool
+    public function addPasswordResetToken(string $id, array $token): void
     {
         // Map DateTimes to Strings
         $token = array_map(function ($v) {
             return ($v instanceof DateTime) ? $v->format(DbWrapper::TIME_FORMAT) : $v;
         }, $token);
 
-        return $this->updateRow(
+        $this->updateRow(
             ['id' => $id],
             [
                 'password_reset_token' => json_encode($token),
@@ -474,19 +472,18 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param array $token
-     * @param $newEmail
-     * @return bool
+     * @param string $newEmail
      */
-    public function addEmailUpdateTokenAndNewEmail(string $id, array $token, string $newEmail): bool
+    public function addEmailUpdateTokenAndNewEmail(string $id, array $token, string $newEmail): void
     {
         // Map DateTimes to Strings
         $token = array_map(function ($v) {
             return ($v instanceof DateTime) ? $v->format(DbWrapper::TIME_FORMAT) : $v;
         }, $token);
 
-        return $this->updateRow(
+        $this->updateRow(
             ['id' => $id],
             [
                 'email_update_request' => json_encode([
@@ -498,8 +495,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * @param $token
-     * @return UserRepository\UpdateEmailUsingTokenResponse
+     * @param string $token
+     * @return UpdateEmailUsingTokenResponse
+     * @throws DateMalformedStringException
      */
     public function updateEmailUsingToken(string $token): UserRepository\UpdateEmailUsingTokenResponse
     {
@@ -552,7 +550,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * If $excludeFlag is set, accounts that contain the passed flag will be excluded.
      *
      * @param DateTime $since
-     * @param string $excludeFlag
+     * @param string|null $excludeFlag
      * @return iterable
      */
     public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null): iterable
@@ -576,13 +574,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Adds a new inactivity flag to an account.
      *
-     * @param $userId
-     * @param $flag
-     * @return bool
+     * @param string $userId
+     * @param string $flag
      */
-    public function setInactivityFlag(string $userId, string $flag): bool
+    public function setInactivityFlag(string $userId, string $flag): void
     {
-        return $this->updateRow(
+        $this->updateRow(
             ['id' => $userId],
             [
                 'inactivity_flags' => new Expression(
@@ -631,7 +628,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param DateTime|null $since only include accounts activated $since
      * @return int Account count
      */
-    public function countActivatedAccounts(DateTime $since = null): int
+    public function countActivatedAccounts(DateTime|null $since = null): int
     {
         if (is_null($since)) {
             // All activated accounts have an activation date.
@@ -688,16 +685,15 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * Updates a user's profile. If it doesn't already exist, it's created.
      *
      * @param ProfileUserModel $data
-     * @return bool
      */
-    public function saveProfile(ProfileUserModel $data): bool
+    public function saveProfile(ProfileUserModel $data): void
     {
         $user = $data->toArray();
 
         // Remove unwarned fields
         unset($user['id'], $user['createdAt'], $user['updatedAt']);
 
-        return $this->updateRow(
+        $this->updateRow(
             ['id' => $data->getId()],
             [
                 'profile' => json_encode($user),

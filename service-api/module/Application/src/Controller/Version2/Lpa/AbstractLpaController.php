@@ -98,6 +98,8 @@ abstract class AbstractLpaController extends AbstractRestfulController
 
     /**
      * TODO - Move this code into the dispatch above? Need to make sure that the correct results are returned or thrown
+     *
+     * @return void
      */
     protected function checkAccess()
     {

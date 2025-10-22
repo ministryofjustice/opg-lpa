@@ -25,7 +25,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $apiProblem = $service->create($lpa->getId());
+        $apiProblem = $service->create(strval($lpa->getId()));
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -58,7 +58,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->create($lpa->getId());
+        $service->create(strval($lpa->getId()));
 
         $serviceBuilder->verify();
     }
@@ -76,7 +76,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
-        $entity = $service->create($lpa->getId());
+        $entity = $service->create(strval($lpa->getId()));
 
         $lockData = $entity->toArray();
 

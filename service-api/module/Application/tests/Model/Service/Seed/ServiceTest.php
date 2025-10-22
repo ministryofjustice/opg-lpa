@@ -40,7 +40,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationsService($applicationsService)
             ->build();
 
-        $entity = $service->fetch($lpa->getId(), $user->getId());
+        $entity = $service->fetch(strval($lpa->getId()), $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -77,7 +77,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationsService($applicationsService)
             ->build();
 
-        $entity = $service->fetch($lpa->getId(), $user->getId());
+        $entity = $service->fetch(strval($lpa->getId()), $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -113,7 +113,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationsService($applicationsService)
             ->build();
 
-        $entity = $service->fetch($lpa->getId(), $user->getId());
+        $entity = $service->fetch(strval($lpa->getId()), $user->getId());
 
         $this->assertEquals(new Entity($seedLpa), $entity);
 
@@ -131,7 +131,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $entity = $service->update($lpa->getId(), ['seed' => 'Invalid'], $user->getId());
+        $entity = $service->update(strval($lpa->getId()), ['seed' => 'Invalid'], $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -167,7 +167,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationsService($applicationsService)
             ->build();
 
-        $entity = $service->update($lpa->getId(), ['seed' => $seedLpa->getId()], $user->getId());
+        $entity = $service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -204,7 +204,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationsService($applicationsService)
             ->build();
 
-        $entity = $service->update($lpa->getId(), ['seed' => $seedLpa->getId()], $user->getId());
+        $entity = $service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -243,7 +243,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->update($lpa->getId(), ['seed' => $lpa->getId()], $user->getId());
+        $service->update(strval($lpa->getId()), ['seed' => $lpa->getId()], $user->getId());
 
         $serviceBuilder->verify();
     }
@@ -268,7 +268,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->withApplicationsService($applicationsService)
             ->build();
 
-        $entity = $service->update($lpa->getId(), ['seed' => $seedLpa->getId()], $user->getId());
+        $entity = $service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
 
         $this->assertEquals(new Entity($seedLpa), $entity);
 

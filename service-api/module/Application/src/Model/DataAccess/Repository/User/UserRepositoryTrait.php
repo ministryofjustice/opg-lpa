@@ -11,8 +11,9 @@ trait UserRepositoryTrait
 
     /**
      * @param UserRepositoryInterface $repo
+     * @psalm-api
      */
-    public function setUserRepository(UserRepositoryInterface $repo)
+    public function setUserRepository(UserRepositoryInterface $repo): void
     {
         $this->userRepository = $repo;
     }

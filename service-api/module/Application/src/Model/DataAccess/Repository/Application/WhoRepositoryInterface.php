@@ -11,9 +11,8 @@ interface WhoRepositoryInterface
      * Insert a new 'Who Are You' response.
      *
      * @param WhoAreYou $answer
-     * @return bool
      */
-    public function insert(WhoAreYou $answer): bool;
+    public function insert(WhoAreYou $answer): void;
 
     /**
      * Return the WhoAreYou values for a specific date range.

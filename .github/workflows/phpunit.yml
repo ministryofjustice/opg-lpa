@@ -25,7 +25,7 @@ jobs:
           - name: service-api
             path: "./service-api"
             minCoverage: 74
-            phpVersion: "8.3"
+            phpVersion: "8.4"
           - name: shared
             path: "./shared"
             minCoverage: 90

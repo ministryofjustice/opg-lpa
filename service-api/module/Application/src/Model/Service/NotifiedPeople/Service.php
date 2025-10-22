@@ -20,7 +20,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function create($lpaId, $data)
+    public function create(string $lpaId, $data)
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -56,7 +56,7 @@ class Service extends AbstractService
      * @param $id
      * @return ApiProblem|ValidationApiProblem|DataModelEntity
      */
-    public function update($lpaId, $data, $id)
+    public function update(string $lpaId, $data, $id)
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -88,7 +88,7 @@ class Service extends AbstractService
      * @param $id
      * @return ApiProblem|bool
      */
-    public function delete($lpaId, $id)
+    public function delete(string $lpaId, $id)
     {
         $lpa = $this->getLpa($lpaId);
 

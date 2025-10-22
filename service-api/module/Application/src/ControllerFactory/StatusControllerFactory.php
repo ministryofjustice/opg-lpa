@@ -12,11 +12,11 @@ class StatusControllerFactory
 {
     /**
      * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array|null $options
+     * @param string $_requestedName
+     * @param array|null $_options
      * @return StatusController
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, string $_requestedName, array|null $_options = null)
     {
         $authorizationService = $container->get('LmcRbacMvc\Service\AuthorizationService');
         $applicationsService = $container->get(ApplicationService::class);
