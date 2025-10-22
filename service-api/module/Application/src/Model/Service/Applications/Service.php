@@ -26,7 +26,7 @@ class Service extends AbstractService
      * @param $userId
      * @return DataModelEntity
      */
-    public function create($data, $userId)
+    public function create($data, string $userId)
     {
         // If no data was passed, represent with an empty array.
         if (is_null($data)) {
@@ -82,12 +82,15 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $data
+     * @param array[] $data
      * @param $id
      * @param $userId
+     *
      * @return ValidationApiProblem|DataModelEntity
+     *
+     * @psalm-param array{metadata: array} $data
      */
-    public function patch($data, $id, $userId)
+    public function patch(array $data, string $id, string $userId)
     {
 
         /** @var Lpa $lpa */
@@ -115,7 +118,7 @@ class Service extends AbstractService
      * @param $userId
      * @return ApiProblem|DataModelEntity
      */
-    public function fetch($id, $userId)
+    public function fetch(string $id, string $userId)
     {
         // Note: user has to match
         $result = $this->getApplicationRepository()->getById((int) $id, $userId);
@@ -153,7 +156,7 @@ class Service extends AbstractService
      * @param array $params
      * @return Paginator<int, Lpa>
      */
-    public function fetchAll($userId, $params = [])
+    public function fetchAll(string $userId, $params = [])
     {
         $filter = [
             'user' => $userId
@@ -228,7 +231,7 @@ class Service extends AbstractService
      * @param $userId
      * @return ApiProblem|bool
      */
-    public function delete($id, $userId)
+    public function delete($id, string $userId)
     {
         $result = $this->getApplicationRepository()->getById((int) $id, $userId);
 
@@ -243,16 +246,13 @@ class Service extends AbstractService
 
     /**
      * @param $userId
-     * @return bool
      */
-    public function deleteAll($userId)
+    public function deleteAll($userId): void
     {
         $lpas = $this->getApplicationRepository()->fetchByUserId($userId);
 
         foreach ($lpas as $lpa) {
             $this->delete($lpa['id'], $userId);
         }
-
-        return true;
     }
 }

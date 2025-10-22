@@ -28,7 +28,6 @@ interface FeedbackRepositoryInterface
      * Delete all feedback received before teh passed date.
      *
      * @param DateTime $before
-     * @return bool
      */
-    public function prune(DateTime $before): bool;
+    public function prune(DateTime $before): void;
 }

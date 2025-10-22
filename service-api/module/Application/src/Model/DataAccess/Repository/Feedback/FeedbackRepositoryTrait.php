@@ -11,8 +11,9 @@ trait FeedbackRepositoryTrait
 
     /**
      * @param FeedbackRepositoryInterface $repo
+     * @psalm-api
      */
-    public function setFeedbackRepository(FeedbackRepositoryInterface $repo)
+    public function setFeedbackRepository(FeedbackRepositoryInterface $repo): void
     {
         $this->feedbackRepository = $repo;
     }

@@ -8,6 +8,8 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Laminas\Authentication\Result as AuthenticationResult;
 use Laminas\Mvc\MvcEvent;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
 
 /**
@@ -22,6 +24,13 @@ class AuthenticationListener implements LoggerAwareInterface
 {
     use LoggerTrait;
 
+    /**
+     * @param MvcEvent $e
+     * @return ApiProblemResponse|null
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @psalm-api
+     */
     public function authenticate(MvcEvent $e)
     {
         $serviceManager = $e->getApplication()->getServiceManager();

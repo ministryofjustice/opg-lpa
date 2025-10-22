@@ -6,6 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Email\Service;
 use Laminas\View\Model\JsonModel;
 use MakeShared\Logging\LoggerTrait;
+use Random\RandomException;
 
 class EmailController extends AbstractAuthController
 {
@@ -28,6 +29,7 @@ class EmailController extends AbstractAuthController
      * It will set the new value in an unverified state, then the function below must be called to complete the change
      *
      * @return JsonModel|ApiProblem
+     * @throws RandomException
      */
     public function changeAction()
     {

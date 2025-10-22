@@ -11,8 +11,9 @@ trait StatsRepositoryTrait
 
     /**
      * @param StatsRepositoryInterface $repo
+     * @psalm-api
      */
-    public function setStatsRepository(StatsRepositoryInterface $repo)
+    public function setStatsRepository(StatsRepositoryInterface $repo): void
     {
         $this->statsRepository = $repo;
     }

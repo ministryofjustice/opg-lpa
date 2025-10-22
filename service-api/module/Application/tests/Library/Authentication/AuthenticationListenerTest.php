@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Library\Authentication;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Library\Authentication\Identity\Guest;
@@ -117,15 +118,9 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->assertInstanceOf(ApiProblemResponse::class, $result);
         $this->assertEquals($expectedStatusCode, $result->getStatusCode());
 
-        $apiProblem = $result->getApiProblem();
         $this->assertEquals(
-            [
-                'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                'title' => $title,
-                'status' => $expectedStatusCode,
-                'detail' => $detail
-            ],
-            $apiProblem->toArray()
+            $result,
+            new ApiProblemResponse(new ApiProblem($expectedStatusCode, $detail, 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html'))
         );
     }
 
