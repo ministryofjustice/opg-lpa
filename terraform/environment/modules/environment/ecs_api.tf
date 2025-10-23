@@ -200,7 +200,7 @@ locals {
       "mountPoints" : [],
       "healthCheck" : {
         "command" : ["CMD", "bash", "-c", "echo -n > /dev/tcp/127.0.0.1/6432 || exit 1"]
-        "startPeriod" : 90,
+        "startPeriod" : 120,
         "interval" : 10,
         "timeout" : 15,
         "retries" : 6
@@ -256,7 +256,7 @@ locals {
       ],
       "healthCheck" : {
         "command" : ["CMD", "/usr/local/bin/health-check.sh"],
-        "startPeriod" : 90,
+        "startPeriod" : 120,
         "interval" : 10,
         "timeout" : 15,
         "retries" : 3
