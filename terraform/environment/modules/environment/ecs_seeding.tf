@@ -43,6 +43,7 @@ data "aws_ecr_repository" "lpa_seeding_app" {
 data "aws_ecr_image" "lpa_seeding_app" {
   repository_name = data.aws_ecr_repository.lpa_seeding_app.name
   image_tag       = var.container_version
+  provider        = aws.management
 }
 
 //-----------------------------------------------

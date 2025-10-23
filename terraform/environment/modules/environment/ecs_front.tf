@@ -103,6 +103,7 @@ data "aws_ecr_repository" "lpa_front_web" {
 data "aws_ecr_image" "lpa_front_web" {
   repository_name = data.aws_ecr_repository.lpa_front_web.name
   image_tag       = var.container_version
+  provider        = aws.management
 }
 
 data "aws_ecr_repository" "lpa_front_app" {
@@ -113,6 +114,7 @@ data "aws_ecr_repository" "lpa_front_app" {
 data "aws_ecr_image" "lpa_front_app" {
   repository_name = data.aws_ecr_repository.lpa_front_app.name
   image_tag       = var.container_version
+  provider        = aws.management
 }
 
 
