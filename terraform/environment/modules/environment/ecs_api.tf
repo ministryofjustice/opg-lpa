@@ -294,7 +294,6 @@ locals {
         { "name" : "OPG_LPA_POSTGRES_NAME", "value" : module.api_aurora[0].name },
         { "name" : "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value" : var.account.sirius_api_gateway_endpoint },
         { "name" : "OPG_LPA_API_TRACK_FROM_DATE", "value" : local.track_from_date },
-        { "name" : "OPG_LPA_SEED_DATA", "value" : "true" },
         { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
