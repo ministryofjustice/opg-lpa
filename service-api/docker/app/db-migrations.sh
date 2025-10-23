@@ -2,8 +2,6 @@
 
 cd /app
 
-seedData="${OPG_LPA_SEED_DATA:-false}"
-
 COUNTER=0
 
 while : ; do
@@ -33,10 +31,6 @@ while : ; do
         then
             echo "Migrating API data to postgres db via phinx"
             vendor/robmorgan/phinx/bin/phinx migrate
-
-            if ${seedData}; then
-                vendor/robmorgan/phinx/bin/phinx seed:run
-            fi
 
             retval=0
         else
