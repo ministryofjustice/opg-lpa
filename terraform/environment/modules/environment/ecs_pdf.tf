@@ -83,6 +83,7 @@ data "aws_ecr_repository" "lpa_pdf_app" {
 data "aws_ecr_image" "lpa_pdf_app" {
   repository_name = data.aws_ecr_repository.lpa_pdf_app.name
   image_tag       = var.container_version
+  provider        = aws.management
 }
 
 //-----------------------------------------------
