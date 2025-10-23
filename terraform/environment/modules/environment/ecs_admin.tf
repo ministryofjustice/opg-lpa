@@ -89,10 +89,23 @@ data "aws_ecr_repository" "lpa_admin_web" {
   name     = "online-lpa/admin_web"
 }
 
+data "aws_ecr_image" "lpa_admin_web" {
+  repository_name = data.aws_ecr_repository.lpa_admin_web.name
+  image_tag       = var.container_version
+  provider        = aws.management
+}
+
 data "aws_ecr_repository" "lpa_admin_app" {
   provider = aws.management
   name     = "online-lpa/admin_app"
 }
+
+data "aws_ecr_image" "lpa_admin_app" {
+  repository_name = data.aws_ecr_repository.lpa_admin_app.name
+  image_tag       = var.container_version
+  provider        = aws.management
+}
+
 
 //-----------------------------------------------
 // admin ECS Service Task Container level config
@@ -102,7 +115,7 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      "image" : "${data.aws_ecr_repository.lpa_admin_web.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_admin_web.repository_url}@${data.aws_ecr_image.lpa_admin_web.image_digest}",
       "mountPoints" : [],
       "name" : "web",
       "portMappings" : [
@@ -135,7 +148,7 @@ locals {
       "cpu" : 1,
       "essential" : true,
       "readonlyRootFilesystem" : true,
-      "image" : "${data.aws_ecr_repository.lpa_admin_app.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_admin_app.repository_url}@${data.aws_ecr_image.lpa_admin_app.image_digest}",
       "mountPoints" : [
         {
           "containerPath" : "/tmp",
