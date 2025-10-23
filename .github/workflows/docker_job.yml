@@ -89,7 +89,7 @@ jobs:
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
 
       - name: Install Dependencies
         if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
@@ -146,6 +146,8 @@ jobs:
           docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:main-$IMAGE_TAG
+            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:latest
           fi
           docker push --all-tags $ECR_REGISTRY/$IMAGE_NAME
 
@@ -164,8 +166,8 @@ jobs:
           ECR_REGISTRY_ALIAS: online-lpa
           IMAGE_TAG: ${{ inputs.tag }}
         run: |
-            cd scripts/pipeline/check_ecr_scan_results/
-            python aws_ecr_scan_results.py  --search ${ECR_REGISTRY_ALIAS} \
-                                           --tag ${IMAGE_TAG} \
-                                           --slack_channel CAMB46M6Y \
-                                           --slack_token ${{ secrets.SLACK_BOT_TOKEN }}
+          cd scripts/pipeline/check_ecr_scan_results/
+          python aws_ecr_scan_results.py  --search ${ECR_REGISTRY_ALIAS} \
+                                         --tag ${IMAGE_TAG} \
+                                         --slack_channel CAMB46M6Y \
+                                         --slack_token ${{ secrets.SLACK_BOT_TOKEN }}
