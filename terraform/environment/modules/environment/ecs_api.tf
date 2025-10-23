@@ -145,14 +145,29 @@ data "aws_ecr_repository" "lpa_api_web" {
   name     = "online-lpa/api_web"
 }
 
+data "aws_ecr_image" "lpa_api_web" {
+  repository_name = data.aws_ecr_repository.lpa_api_web.name
+  image_tag       = var.container_version
+}
+
 data "aws_ecr_repository" "lpa_api_app" {
   provider = aws.management
   name     = "online-lpa/api_app"
 }
 
+data "aws_ecr_image" "lpa_api_app" {
+  repository_name = data.aws_ecr_repository.lpa_api_app.name
+  image_tag       = var.container_version
+}
+
 data "aws_ecr_repository" "lpa_pgbouncer" {
   provider = aws.management
   name     = "online-lpa/pgbouncer"
+}
+
+data "aws_ecr_image" "lpa_pgbouncer" {
+  repository_name = data.aws_ecr_repository.lpa_pgbouncer.name
+  image_tag       = var.container_version
 }
 
 //-----------------------------------------------
@@ -163,7 +178,7 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      "image" : "${data.aws_ecr_repository.lpa_api_web.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
       "mountPoints" : [],
       "name" : "web",
       "portMappings" : [
@@ -195,7 +210,7 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      "image" : "${data.aws_ecr_repository.lpa_pgbouncer.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_pgbouncer.repository_url}@${data.aws_ecr_image.lpa_pgbouncer.image_digest}",
       "name" : "pgbouncer",
       "mountPoints" : [],
       "healthCheck" : {
@@ -239,7 +254,7 @@ locals {
       "cpu" : 1,
       "essential" : true,
       "readonlyRootFilesystem" : true,
-      "image" : "${data.aws_ecr_repository.lpa_api_app.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_api_app.repository_url}@${data.aws_ecr_image.lpa_api_app.image_digest}",
       "name" : "app",
       "mountPoints" : [
         {

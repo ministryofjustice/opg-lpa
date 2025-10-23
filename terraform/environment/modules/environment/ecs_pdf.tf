@@ -80,6 +80,11 @@ data "aws_ecr_repository" "lpa_pdf_app" {
   name     = "online-lpa/pdf_app"
 }
 
+data "aws_ecr_image" "lpa_pdf_app" {
+  repository_name = data.aws_ecr_repository.lpa_pdf_app.name
+  image_tag       = var.container_version
+}
+
 //-----------------------------------------------
 // pdf ECS Service Task Container level config
 
@@ -90,7 +95,7 @@ locals {
       "cpu" : 1,
       "essential" : true,
       "readonlyRootFilesystem" : true,
-      "image" : "${data.aws_ecr_repository.lpa_pdf_app.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_pdf_app.repository_url}@${data.aws_ecr_image.lpa_pdf_app.image_digest}",
       "mountPoints" : [
         {
           "containerPath" : "/tmp/",
