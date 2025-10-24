@@ -4,7 +4,7 @@ namespace Application\View\Helper;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use MakeShared\DataModel\User\User;
 use Laminas\Mvc\Application;
 use Laminas\Mvc\View\Http\ViewManager;
@@ -22,7 +22,7 @@ class AccountInfoFactory implements FactoryInterface
      * @param array|null $options
      * @return AccountInfo
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         /** @var AuthenticationService $authenticationService */
         $authenticationService = $container->get('AuthenticationService');

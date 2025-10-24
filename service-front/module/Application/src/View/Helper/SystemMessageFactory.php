@@ -2,9 +2,8 @@
 
 namespace Application\View\Helper;
 
-use Application\Adapter\DynamoDbKeyValueStore;
-use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 class SystemMessageFactory implements FactoryInterface
 {
@@ -14,7 +13,7 @@ class SystemMessageFactory implements FactoryInterface
      * @param array|null $options
      * @return SystemMessage
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         return new SystemMessage($container->get('DynamoDbSystemMessageCache'));
     }

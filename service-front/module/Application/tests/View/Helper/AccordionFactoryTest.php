@@ -7,7 +7,7 @@ namespace ApplicationTest\View\Helper;
 use Application\Model\Service\Lpa\Application;
 use Application\View\Helper\Accordion;
 use Application\View\Helper\AccordionFactory;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Laminas\Router\RouteMatch;

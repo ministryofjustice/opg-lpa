@@ -9,7 +9,7 @@ use Application\ControllerFactory\ControllerAbstractFactory;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application;
 use Application\Model\Service\Session\SessionManager;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\Router\RouteMatch;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

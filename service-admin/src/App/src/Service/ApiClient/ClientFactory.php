@@ -3,7 +3,7 @@
 namespace App\Service\ApiClient;
 
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class ClientFactory

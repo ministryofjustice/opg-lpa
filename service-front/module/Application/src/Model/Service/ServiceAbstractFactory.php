@@ -11,7 +11,7 @@ use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\System\Status;
 use Application\Model\Service\User\Details;
 use Exception;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -72,7 +72,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      *     creating a service.
      * @throws Exception if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         if (!$this->canCreate($container, $requestedName)) {
             throw new ServiceNotFoundException(sprintf(

@@ -6,7 +6,7 @@ use Application\Controller\Version2\Auth\EmailController;
 use Application\ControllerFactory\AuthControllerAbstractFactory;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Email\Service as EmailService;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;

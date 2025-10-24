@@ -8,7 +8,7 @@ use UnexpectedValueException;
 use Mockery;
 use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Http\Client\HttpClient as HttpClientInterface;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\AddressLookup\OrdnanceSurveyFactory;

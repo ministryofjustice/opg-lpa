@@ -35,10 +35,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * Get an application by lpaId
      *
      * @param $lpaId
-     * @param string|null $token
-     * @return false|Lpa
      */
-    public function getApplication($lpaId, #[\SensitiveParameter] string $token = null): Lpa|false
+    public function getApplication($lpaId, #[\SensitiveParameter] ?string $token = null): Lpa|false
     {
         if ($token) {
             $this->apiClient->updateToken($token);

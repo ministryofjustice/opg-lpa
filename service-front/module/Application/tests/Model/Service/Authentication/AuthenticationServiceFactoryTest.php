@@ -7,7 +7,7 @@ namespace ApplicationTest\Model\Service\Authentication;
 use Application\Model\Service\Authentication\Adapter\AdapterInterface;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\AuthenticationServiceFactory;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 

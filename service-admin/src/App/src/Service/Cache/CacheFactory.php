@@ -2,7 +2,7 @@
 
 namespace App\Service\Cache;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\Cache\Storage\StorageInterface;
 
 /**

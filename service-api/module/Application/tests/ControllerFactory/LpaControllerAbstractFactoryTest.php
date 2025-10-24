@@ -5,7 +5,7 @@ namespace ApplicationTest\ControllerFactory;
 use Application\Controller\Version2\Lpa\ApplicationController;
 use Application\ControllerFactory\LpaControllerAbstractFactory;
 use Application\Model\Service\Applications\Service as ApplicationsService;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;

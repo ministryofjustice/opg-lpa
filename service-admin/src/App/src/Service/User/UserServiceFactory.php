@@ -3,7 +3,7 @@
 namespace App\Service\User;
 
 use App\Service\ApiClient\Client as ApiClient;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class UserServiceFactory
