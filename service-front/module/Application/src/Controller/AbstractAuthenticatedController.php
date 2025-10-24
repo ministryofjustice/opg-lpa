@@ -102,7 +102,9 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             return $authenticated;
         }
 
-        $this->getLogger()->info('Request to ' . get_class($this), $this->identity->toArray());
+        $this->getLogger()->info('Request to ' . get_class($this), [
+            'userId' => $this->identity->id(),
+        ]);
 
         // Check if they've signed in since the T&C's changed...
 
