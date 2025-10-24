@@ -5,7 +5,7 @@ namespace ApplicationTest\ControllerFactory;
 use Application\Controller\StatsController;
 use Application\ControllerFactory\StatsControllerFactory;
 use Application\Model\Service\Stats\Service as StatsService;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;

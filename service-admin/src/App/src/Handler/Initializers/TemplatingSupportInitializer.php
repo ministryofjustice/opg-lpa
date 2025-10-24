@@ -2,7 +2,7 @@
 
 namespace App\Handler\Initializers;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Laminas\ServiceManager\Initializer\InitializerInterface;
 

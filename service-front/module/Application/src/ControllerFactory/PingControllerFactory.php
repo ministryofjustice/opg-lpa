@@ -3,7 +3,7 @@
 namespace Application\ControllerFactory;
 
 use Application\Controller\General\PingController;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class PingControllerFactory implements FactoryInterface
