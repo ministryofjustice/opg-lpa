@@ -118,7 +118,7 @@ final class AbstractLpaControllerTest extends AbstractControllerTestCase
             ->withArgs(['lpa/download', 'lp1'])->andReturn('lpa/download')->once();
         $this->logger->shouldReceive('info')->withArgs([
             'Request to ApplicationTest\Controller\TestableAbstractLpaController',
-            $this->userIdentity->toArray()
+            ['userId' => $this->user->id],
         ])->once();
         $this->userDetailsSession->user = $this->user;
         $routeMatch->shouldReceive('getParam')
