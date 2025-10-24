@@ -2,8 +2,7 @@
 
 The Office of the Public Guardian Lasting Power of Attorney online service: Managed by opg-org-infra &amp; Terraform.
 
-[![repo standards badge](https://img.shields.io/badge/dynamic/json?color%3Dblue&style=for-the-badge&logo=github&label=MoJ+Compliant&query=%24.result&url=https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/api/v1/compliant_public_repositories/opg-lpa
-)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#opg-lpa "Link to report")
+[![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/opg-lpa/badge)](https://github-community.service.justice.gov.uk/repository-standards/opg-lpa)
 
 ## Pre-requisites for Local Development
 
@@ -38,10 +37,6 @@ brew install black
 # javascript code linting
 brew install eslint
 
-# PHP code linting
-brew install php-code-sniffer
-brew install php-cs-fixer
-
 # Go code fortmatting/tidying
 brew install go
 
@@ -52,7 +47,7 @@ pre-commit install
 
 Pre-commit hooks run any time you add a commit. They cover:
 
-* PHP code formatting and fixing
+* PHP code formatting and fixing (via docker)
 * Python code linting
 * JavaScript code linting
 * Terraform
@@ -136,24 +131,6 @@ To run the unit tests for the PHP applications:
 ```bash
 make dc-unit-tests
 ```
-
-Unit tests for the individual components can be run from their individual directories, e.g.
-
-```
-cd service-front
-php ./vendor/bin/phpunit
-```
-
-NB `service-front`, `service-api` and `service-admin` run using PHP 8.2, while
-`service-pdf` uses PHP 8.3. It's important to use the correct PHP version when running
-the unit tests manually, as shown in the example above. Homebrew on mac allows you to install
-different PHP versions in parallel, e.g.
-
-```
-brew install php@8.2
-```
-
-For instructions on how to run the functional tests, please see separate README in tests/functional directory.
 
 ### Load tests
 
@@ -250,34 +227,14 @@ All emails used during test runs, such as the addresses used for new user accoun
 
 Composer installs PHP dependencies when the app containers are built, and on a standard `make dc-up`.
 
-However, if you upgrade a package in composer.json for one or more services, you'll need to update the corresponding lock file(s).
-
-This can be done with:
-
-```bash
-docker run -v `pwd`/service-front/:/app/ composer update --prefer-dist --no-interaction --no-scripts
-```
-
-(replacing `service-front` with the path to the application component you are adding a package to; note that you'll need to do this for the following commands as well)
-
-Packages can be added with:
-
-```bash
-docker run -v `pwd`/service-front/:/app/ composer require author/package --prefer-dist --no-interaction --no-scripts
-```
-
-Packages can be removed with:
-
-```bash
-docker run -v `pwd`/service-front/:/app/ composer remove author/package --prefer-dist --no-interaction --no-scripts
-```
-
-There are additional make shortcuts of:
+There are additional make shortcuts of the form:
 
 ```make front-composer-update PACKAGE=author\/package\:v5.4.43```
+
+```make api-composer-update PACKAGE=author\/package\:v5.4.43```
 
 ```make front-composer-remove PACKAGE=author\/package\:v5.4.43```
 
 ```make front-composer-outdated```
 
-for package updates, removals and outdated checks in front.
+for package updates, removals and outdated checks in front or api.
