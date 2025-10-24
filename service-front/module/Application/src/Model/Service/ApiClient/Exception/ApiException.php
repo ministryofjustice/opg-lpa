@@ -35,8 +35,7 @@ class ApiException extends RuntimeException
 
             //  If there is still no message then compose a standard message
             if (is_null($message)) {
-                $message = 'HTTP:' . $this->statusCode . ' - ' .
-                (is_array($this->body) ? print_r($this->body, true) : 'Unexpected API response');
+                $message = 'HTTP:' . $this->statusCode . ' - Unexpected API response';
             }
         }
 
