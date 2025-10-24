@@ -6,6 +6,7 @@ namespace ApplicationTest\Model\Service\Lock;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Lock\Entity;
+use Application\Model\Service\Lock\Service;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use DateTime;
 use MakeSharedTest\DataModel\FixturesData;
@@ -13,6 +14,16 @@ use RuntimeException;
 
 final class ServiceTest extends AbstractServiceTestCase
 {
+    private Service $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->service = new Service();
+        $this->service->setLogger($this->logger);
+    }
+
     public function testCreateAlreadyLocked()
     {
         $lpa = FixturesData::getPfLpa();
@@ -20,12 +31,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $service->create(strval($lpa->getId()));
+        $apiProblem = $this->service->create(strval($lpa->getId()));
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -37,8 +45,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $apiProblem->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testCreateMalformedData()
@@ -49,18 +55,13 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         //So we expect an exception and for no document to be updated
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->create(strval($lpa->getId()));
-
-        $serviceBuilder->verify();
+        $this->service->create(strval($lpa->getId()));
     }
 
     public function testCreate()
@@ -71,12 +72,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
-        $entity = $service->create(strval($lpa->getId()));
+        $entity = $this->service->create(strval($lpa->getId()));
 
         $lockData = $entity->toArray();
 
@@ -88,7 +86,5 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->assertEquals($comparisonEntity, $entity);
         $this->assertTrue($lpa->isLocked());
-
-        $serviceBuilder->verify();
     }
 }

@@ -8,9 +8,20 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractServiceTestCase extends MockeryTestCase
 {
+    protected MockInterface&LoggerInterface $logger;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->logger = Mockery::mock(LoggerInterface::class);
+        $this->logger->shouldReceive('info')->byDefault();
+    }
+
     /**
      * Convenience function to get a pre-mocked ApiLpaCollection
      *

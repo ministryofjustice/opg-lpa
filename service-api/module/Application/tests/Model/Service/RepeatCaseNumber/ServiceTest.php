@@ -6,23 +6,31 @@ namespace ApplicationTest\Model\Service\RepeatCaseNumber;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\RepeatCaseNumber\Entity;
+use Application\Model\Service\RepeatCaseNumber\Service;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeSharedTest\DataModel\FixturesData;
 
 final class ServiceTest extends AbstractServiceTestCase
 {
+    private Service $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->service = new Service();
+        $this->service->setLogger($this->logger);
+    }
+
     public function testUpdateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $validationError = $service->update(strval($lpa->getId()), ['repeatCaseNumber' => 'Invalid']);
+        $validationError = $this->service->update(strval($lpa->getId()), ['repeatCaseNumber' => 'Invalid']);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -37,8 +45,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $validationError->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdate()
@@ -47,16 +53,11 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
-        $entity = $service->update(strval($lpa->getId()), ['repeatCaseNumber' => '123456789']);
+        $entity = $this->service->update(strval($lpa->getId()), ['repeatCaseNumber' => '123456789']);
 
         $this->assertEquals(new Entity('123456789'), $entity);
-
-        $serviceBuilder->verify();
     }
 
     public function testDeleteValidationFailed()
@@ -67,12 +68,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $validationError = $service->delete(strval($lpa->getId()));
+        $validationError = $this->service->delete(strval($lpa->getId()));
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -87,8 +85,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $validationError->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testDelete()
@@ -97,16 +93,11 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
-        $response = $service->delete(strval($lpa->getId()));
+        $response = $this->service->delete(strval($lpa->getId()));
 
         $this->assertTrue($response);
         $this->assertNull($lpa->getRepeatCaseNumber());
-
-        $serviceBuilder->verify();
     }
 }

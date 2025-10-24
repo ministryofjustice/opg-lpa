@@ -19,6 +19,16 @@ use Mockery;
 
 final class ServiceTest extends AbstractServiceTestCase
 {
+    private Service $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->service = new Service();
+        $this->service->setLogger($this->logger);
+    }
+
     private array $config = [
         'pdf' => [
             'docIdSuffix' => 'MrFoo',
@@ -62,12 +72,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $entity = $service->fetch(strval($lpa->getId()), -1);
+        $entity = $this->service->fetch(strval($lpa->getId()), -1);
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -79,8 +86,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $entity->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testFetchValidationFailed()
@@ -91,12 +96,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $validationError = $service->fetch(strval($lpa->getId()), -1);
+        $validationError = $this->service->fetch(strval($lpa->getId()), -1);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -111,8 +113,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $validationError->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testFetchLpa120NotAvailable()
@@ -121,19 +121,15 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $data = $service->fetch(strval($lpa->getId()), 'lpa120');
+        $data = $this->service->fetch(strval($lpa->getId()), 'lpa120');
 
         $this->assertEquals([
             'type' => 'lpa120',
             'complete' => false,
             'status' => Service::STATUS_NOT_AVAILABLE
         ], $data);
-
-        $serviceBuilder->verify();
     }
 
     public function testFetchLp3NotAvailable()
@@ -142,20 +138,15 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $data = $service->fetch(strval($lpa->getId()), 'lp3');
+        $data = $this->service->fetch(strval($lpa->getId()), 'lp3');
 
         $this->assertEquals([
             'type' => 'lp3',
             'complete' => false,
             'status' => Service::STATUS_NOT_AVAILABLE
         ], $data);
-
-        $serviceBuilder->verify();
     }
 
     public function testFetchLp1InQueue()
@@ -170,23 +161,20 @@ final class ServiceTest extends AbstractServiceTestCase
         $s3Client = Mockery::mock(S3Client::class);
         $s3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withPdfConfig($this->config)
-            ->withSqsClient($sqsClient)
-            ->withS3Client($s3Client)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setPdfConfig($this->config);
+        $this->service->setSqsClient($sqsClient);
+        $this->service->setS3Client($s3Client);
 
-        $data = $service->fetch(strval($lpa->getId()), 'lp1');
+        $this->logger->shouldReceive('error')->once()->with('Exception while attempting to get PDF info from S3');
+
+        $data = $this->service->fetch(strval($lpa->getId()), 'lp1');
 
         $this->assertEquals([
             'type' => 'lp1',
             'complete' => true,
             'status' => Service::STATUS_IN_QUEUE
         ], $data);
-
-        $serviceBuilder->verify();
     }
 
     public function testFetchLp1Ready()
@@ -200,23 +188,18 @@ final class ServiceTest extends AbstractServiceTestCase
         $s3Client = Mockery::mock(S3Client::class);
         $s3Client->shouldReceive('headObject')->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withPdfConfig($this->config)
-            ->withSqsClient($sqsClient)
-            ->withS3Client($s3Client)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setPdfConfig($this->config);
+        $this->service->setSqsClient($sqsClient);
+        $this->service->setS3Client($s3Client);
 
-        $data = $service->fetch(strval($lpa->getId()), 'lp1');
+        $data = $this->service->fetch(strval($lpa->getId()), 'lp1');
 
         $this->assertEquals([
             'type' => 'lp1',
             'complete' => true,
             'status' => Service::STATUS_READY
         ], $data);
-
-        $serviceBuilder->verify();
     }
 
     public function testFetchLp1NotQueued()
@@ -231,23 +214,20 @@ final class ServiceTest extends AbstractServiceTestCase
         $s3Client = Mockery::mock(S3Client::class);
         $s3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withPdfConfig($this->config)
-            ->withSqsClient($sqsClient)
-            ->withS3Client($s3Client)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setPdfConfig($this->config);
+        $this->service->setSqsClient($sqsClient);
+        $this->service->setS3Client($s3Client);
 
-        $data = $service->fetch(strval($lpa->getId()), 'lp1');
+        $this->logger->shouldReceive('error')->once()->with('Exception while attempting to get PDF info from S3');
+
+        $data = $this->service->fetch(strval($lpa->getId()), 'lp1');
 
         $this->assertEquals([
             'type' => 'lp1',
             'complete' => true,
             'status' => Service::STATUS_IN_QUEUE
         ], $data);
-
-        $serviceBuilder->verify();
     }
 
     public function testFetchLpa120PdfNotAvailable()
@@ -259,14 +239,11 @@ final class ServiceTest extends AbstractServiceTestCase
         $s3Client = Mockery::mock(S3Client::class);
         $s3Client->shouldReceive('getObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withPdfConfig($this->config)
-            ->withS3Client($s3Client)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setPdfConfig($this->config);
+        $this->service->setS3Client($s3Client);
 
-        $entity = $service->fetch(strval($lpa->getId()), 'lpa120.pdf');
+        $entity = $this->service->fetch(strval($lpa->getId()), 'lpa120.pdf');
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -278,8 +255,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $entity->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testFetchLp1Pdf()
@@ -305,18 +280,13 @@ final class ServiceTest extends AbstractServiceTestCase
             ->with($expectedClientSettings)
             ->andReturn($s3Result)->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withPdfConfig($this->config)
-            ->withS3Client($s3Client)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setPdfConfig($this->config);
+        $this->service->setS3Client($s3Client);
 
-        $fileResponse = $service->fetch(strval($lpa->getId()), 'lp1.pdf');
+        $fileResponse = $this->service->fetch(strval($lpa->getId()), 'lp1.pdf');
 
         $this->assertTrue($fileResponse instanceof FileResponse);
         $this->assertEquals('<<pdf-file-contents>>', $fileResponse->getContent());
-
-        $serviceBuilder->verify();
     }
 }
