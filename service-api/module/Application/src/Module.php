@@ -226,6 +226,14 @@ class Module
             $e->stopPropagation();
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
+        } elseif ($exception) {
+            $logger = $e->getApplication()->getServiceManager()->get('Logger');
+            $logger->error($exception->getMessage(), [
+                'class' => $exception::class,
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'stackTrace' => $exception->getTraceAsString(),
+            ]);
         }
 
         return $response;
