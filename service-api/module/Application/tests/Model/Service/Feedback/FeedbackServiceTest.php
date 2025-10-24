@@ -5,34 +5,36 @@ namespace ApplicationTest\Model\Service\Feedback;
 use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryInterface;
 use Application\Model\Service\Feedback\FeedbackValidator;
 use Application\Model\Service\Feedback\Service as FeedbackService;
-use ApplicationTest\Model\Service\Feedback\FeedbackServiceBuilder;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use DateTime;
 use Mockery;
+use Mockery\MockInterface;
 
 class FeedbackServiceTest extends AbstractServiceTestCase
 {
     // feedback service under test
     private FeedbackService $sut;
 
-    private FeedbackRepositoryInterface $feedbackRepository;
+    private MockInterface&FeedbackRepositoryInterface $feedbackRepository;
 
-    private FeedbackValidator $feedbackValidator;
+    private MockInterface&FeedbackValidator $feedbackValidator;
 
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->feedbackRepository = Mockery::mock(FeedbackRepositoryInterface::class);
         $this->feedbackValidator = Mockery::mock(FeedbackValidator::class);
 
-        $this->sut = (new FeedbackServiceBuilder())
-            ->withFeedbackRepository($this->feedbackRepository)
-            ->withFeedbackValidator($this->feedbackValidator)
-            ->build();
+        $this->sut = new FeedbackService();
+        $this->sut->setFeedbackRepository($this->feedbackRepository);
+        $this->sut->setFeedbackValidator($this->feedbackValidator);
+        $this->sut->setLogger($this->logger);
     }
 
     public function testAddWithEmptyData()
     {
-        $this->sut->getLogger()->shouldReceive('err');
+        $this->logger->shouldReceive('error')->once()->with('Required fields for saving feedback not present');
 
         $this->assertFalse($this->sut->add([]));
     }
@@ -72,7 +74,7 @@ class FeedbackServiceTest extends AbstractServiceTestCase
 
         $this->feedbackValidator->shouldReceive('isValid')->with($data)->andReturn(false);
 
-        $this->sut->getLogger()->shouldReceive('err');
+        $this->logger->shouldReceive('error')->once()->with('Feedback data failed validation');
 
         $this->assertFalse($this->sut->add($data));
     }

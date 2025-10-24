@@ -4,6 +4,7 @@ namespace ApplicationTest\Model\Service\Stats;
 
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
+use Application\Model\Service\Stats\Service;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use DateTime;
 use Mockery;
@@ -28,11 +29,9 @@ class ServiceTest extends AbstractServiceTestCase
             ->once()->andReturn(2);
         $authUserRepository->shouldReceive('countDeletedAccounts')->once()->andReturn(1);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($authUserRepository)
-            ->withStatsRepository($statsRepository)
-            ->build();
+        $service = new Service();
+        $service->setUserRepository($authUserRepository);
+        $service->setStatsRepository($statsRepository);
 
         $data = $service->fetch('all');
 

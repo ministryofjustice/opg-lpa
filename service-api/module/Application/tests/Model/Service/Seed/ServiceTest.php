@@ -7,8 +7,9 @@ namespace ApplicationTest\Model\Service\Seed;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\Service\Seed\Entity;
+use Application\Model\Service\Seed\Service;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
-use ApplicationTest\Model\Service\Applications\ServiceBuilder as ApplicationsServiceBuilder;
+use ApplicationTest\Model\Service\Applications\TestableService;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
@@ -16,6 +17,16 @@ use RuntimeException;
 
 final class ServiceTest extends AbstractServiceTestCase
 {
+    private Service $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->service = new Service();
+        $this->service->setLogger($this->logger);
+    }
+
     public function testFetchSeedNotFound()
     {
         $seedLpa = FixturesData::getPfLpa();
@@ -29,18 +40,14 @@ final class ServiceTest extends AbstractServiceTestCase
         $apiLpaCollection2->shouldReceive('getById')
             ->andReturnNull();
 
-        $applicationsServiceBuilder = new ApplicationsServiceBuilder();
-        $applicationsService = $applicationsServiceBuilder
-            ->withApplicationRepository($apiLpaCollection2)
-            ->build();
+        $applicationsService = new TestableService();
+        $applicationsService->setApplicationRepository($apiLpaCollection2);
+        $applicationsService->setLogger($this->logger);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withApplicationsService($applicationsService)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setApplicationsService($applicationsService);
 
-        $entity = $service->fetch(strval($lpa->getId()), $user->getId());
+        $entity = $this->service->fetch(strval($lpa->getId()), $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -52,8 +59,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $entity->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testFetchUserDoesNotMatch()
@@ -66,18 +71,14 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsServiceBuilder = new ApplicationsServiceBuilder();
-        $applicationsService = $applicationsServiceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($seedLpa, $user))
-            ->build();
+        $applicationsService = new TestableService();
+        $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
+        $applicationsService->setLogger($this->logger);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withApplicationsService($applicationsService)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setApplicationsService($applicationsService);
 
-        $entity = $service->fetch(strval($lpa->getId()), $user->getId());
+        $entity = $this->service->fetch(strval($lpa->getId()), $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -89,8 +90,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $entity->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testFetch()
@@ -102,22 +101,16 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsServiceBuilder = new ApplicationsServiceBuilder();
-        $applicationsService = $applicationsServiceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($seedLpa, $user))
-            ->build();
+        $applicationsService = new TestableService();
+        $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
+        $applicationsService->setLogger($this->logger);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withApplicationsService($applicationsService)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setApplicationsService($applicationsService);
 
-        $entity = $service->fetch(strval($lpa->getId()), $user->getId());
+        $entity = $this->service->fetch(strval($lpa->getId()), $user->getId());
 
         $this->assertEquals(new Entity($seedLpa), $entity);
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdateValidationFailed()
@@ -126,12 +119,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $entity = $service->update(strval($lpa->getId()), ['seed' => 'Invalid'], $user->getId());
+        $entity = $this->service->update(strval($lpa->getId()), ['seed' => 'Invalid'], $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -143,8 +133,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $entity->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdateSeedNotFound()
@@ -156,18 +144,14 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsServiceBuilder = new ApplicationsServiceBuilder();
-        $applicationsService = $applicationsServiceBuilder
-            ->withApplicationRepository($this->getApplicationRepository(new Lpa(), $user))
-            ->build();
+        $applicationsService = new TestableService();
+        $applicationsService->setApplicationRepository($this->getApplicationRepository(new Lpa(), $user));
+        $applicationsService->setLogger($this->logger);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withApplicationsService($applicationsService)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setApplicationsService($applicationsService);
 
-        $entity = $service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
+        $entity = $this->service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -179,8 +163,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $entity->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdateUserDoesNotMatch()
@@ -193,18 +175,14 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsServiceBuilder = new ApplicationsServiceBuilder();
-        $applicationsService = $applicationsServiceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($seedLpa, $user))
-            ->build();
+        $applicationsService = new TestableService();
+        $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
+        $applicationsService->setLogger($this->logger);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withApplicationsService($applicationsService)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setApplicationsService($applicationsService);
 
-        $entity = $service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
+        $entity = $this->service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -216,8 +194,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $entity->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdateMalformedData()
@@ -228,24 +204,18 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsServiceBuilder = new ApplicationsServiceBuilder();
-        $applicationsService = $applicationsServiceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $applicationsService = new TestableService();
+        $applicationsService->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $applicationsService->setLogger($this->logger);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withApplicationsService($applicationsService)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
+        $this->service->setApplicationsService($applicationsService);
 
         //So we expect an exception and for no document to be updated
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->update(strval($lpa->getId()), ['seed' => $lpa->getId()], $user->getId());
-
-        $serviceBuilder->verify();
+        $this->service->update(strval($lpa->getId()), ['seed' => $lpa->getId()], $user->getId());
     }
 
     public function testUpdate()
@@ -257,21 +227,15 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsServiceBuilder = new ApplicationsServiceBuilder();
-        $applicationsService = $applicationsServiceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($seedLpa, $user))
-            ->build();
+        $applicationsService = new TestableService();
+        $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
+        $applicationsService->setLogger($this->logger);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
-            ->withApplicationsService($applicationsService)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
+        $this->service->setApplicationsService($applicationsService);
 
-        $entity = $service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
+        $entity = $this->service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
 
         $this->assertEquals(new Entity($seedLpa), $entity);
-
-        $serviceBuilder->verify();
     }
 }

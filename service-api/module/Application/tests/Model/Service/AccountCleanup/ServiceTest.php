@@ -69,11 +69,6 @@ class ServiceTest extends AbstractServiceTestCase
      */
     private $usersService;
 
-    /**
-     * @var MockInterface|LoggerInterface
-     */
-    private $logger;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -86,8 +81,6 @@ class ServiceTest extends AbstractServiceTestCase
         $this->notifyClient = Mockery::mock(NotifyClient::class);
 
         $this->usersService = Mockery::mock(UsersService::class);
-
-        $this->logger = Mockery::mock(LoggerInterface::class);
     }
 
     public function testCleanupNone()
@@ -103,15 +96,13 @@ class ServiceTest extends AbstractServiceTestCase
             // Should be called once per admin email address.
             ->times(count($this->config['admin']['account_cleanup_notification_recipients']));
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->applicationRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withConfig($this->config)
-            ->withNotifyClient($this->notifyClient)
-            ->withUsersService($this->usersService)
-            ->withLogger($this->logger)
-            ->build();
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
 
         $result = $service->cleanup();
 
@@ -130,15 +121,13 @@ class ServiceTest extends AbstractServiceTestCase
             return $message === 'Unable to send admin notification message' && array_key_exists('exception', $extra);
         });
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->applicationRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withConfig($this->config)
-            ->withNotifyClient($this->notifyClient)
-            ->withUsersService($this->usersService)
-            ->withLogger($this->logger)
-            ->build();
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
 
         $result = $service->cleanup();
 
@@ -168,15 +157,13 @@ class ServiceTest extends AbstractServiceTestCase
             ->withArgs([1])
             ->andReturnNull();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->applicationRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withConfig($this->config)
-            ->withNotifyClient($this->notifyClient)
-            ->withUsersService($this->usersService)
-            ->withLogger($this->logger)
-            ->build();
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
 
         $result = $service->cleanup();
 
@@ -206,15 +193,13 @@ class ServiceTest extends AbstractServiceTestCase
             ->withArgs([1])
             ->andReturnNull();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->applicationRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withConfig($this->config)
-            ->withNotifyClient($this->notifyClient)
-            ->withUsersService($this->usersService)
-            ->withLogger($this->logger)
-            ->build();
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
 
         $result = $service->cleanup();
 
@@ -251,15 +236,13 @@ class ServiceTest extends AbstractServiceTestCase
             ->withArgs([1, '1-week-notice'])
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->applicationRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withConfig($this->config)
-            ->withNotifyClient($this->notifyClient)
-            ->withUsersService($this->usersService)
-            ->withLogger($this->logger)
-            ->build();
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
 
         $result = $service->cleanup();
 
@@ -293,15 +276,13 @@ class ServiceTest extends AbstractServiceTestCase
             })
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->applicationRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withConfig($this->config)
-            ->withNotifyClient($this->notifyClient)
-            ->withUsersService($this->usersService)
-            ->withLogger($this->logger)
-            ->build();
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
 
         $result = $service->cleanup();
 
@@ -335,15 +316,13 @@ class ServiceTest extends AbstractServiceTestCase
             })
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->applicationRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withConfig($this->config)
-            ->withNotifyClient($this->notifyClient)
-            ->withUsersService($this->usersService)
-            ->withLogger($this->logger)
-            ->build();
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
 
         $result = $service->cleanup();
 
@@ -380,15 +359,13 @@ class ServiceTest extends AbstractServiceTestCase
             ->withArgs([1, '1-month-notice'])
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->applicationRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withConfig($this->config)
-            ->withNotifyClient($this->notifyClient)
-            ->withUsersService($this->usersService)
-            ->withLogger($this->logger)
-            ->build();
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
 
         $result = $service->cleanup();
 
@@ -410,15 +387,13 @@ class ServiceTest extends AbstractServiceTestCase
         $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'unactivated']);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->applicationRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withConfig($this->config)
-            ->withNotifyClient($this->notifyClient)
-            ->withUsersService($this->usersService)
-            ->withLogger($this->logger)
-            ->build();
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
 
         $result = $service->cleanup();
 

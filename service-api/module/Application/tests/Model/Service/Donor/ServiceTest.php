@@ -7,27 +7,35 @@ namespace ApplicationTest\Model\Service\Donor;
 use RuntimeException;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
+use Application\Model\Service\Donor\Service;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use MakeSharedTest\DataModel\FixturesData;
 
 final class ServiceTest extends AbstractServiceTestCase
 {
+    private Service $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->service = new Service();
+        $this->service->setLogger($this->logger);
+    }
+
     public function testUpdateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         //Make sure the donor is invalid
         $donor = new Donor();
 
-        $validationError = $service->update(strval($lpa->getId()), $donor->toArray());
+        $validationError = $this->service->update(strval($lpa->getId()), $donor->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -45,8 +53,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $validationError->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdateMalformedData()
@@ -57,18 +63,13 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         //So we expect an exception and for no document to be updated
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->update(strval($lpa->getId()), $lpa->getDocument()->getDonor()->toArray());
-
-        $serviceBuilder->verify();
+        $this->service->update(strval($lpa->getId()), $lpa->getDocument()->getDonor()->toArray());
     }
 
     public function testUpdate()
@@ -77,18 +78,13 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
         $donor = new Donor($lpa->getDocument()->getDonor()->toArray());
         $donor->getName()->setFirst('Edited');
 
-        $entity = $service->update(strval($lpa->getId()), $donor->toArray());
+        $entity = $this->service->update(strval($lpa->getId()), $donor->toArray());
 
         $this->assertEquals(new DataModelEntity($donor), $entity);
-
-        $serviceBuilder->verify();
     }
 }
