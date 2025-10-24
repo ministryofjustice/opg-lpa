@@ -145,14 +145,32 @@ data "aws_ecr_repository" "lpa_api_web" {
   name     = "online-lpa/api_web"
 }
 
+data "aws_ecr_image" "lpa_api_web" {
+  repository_name = data.aws_ecr_repository.lpa_api_web.name
+  image_tag       = var.container_version
+  provider        = aws.management
+}
+
 data "aws_ecr_repository" "lpa_api_app" {
   provider = aws.management
   name     = "online-lpa/api_app"
 }
 
+data "aws_ecr_image" "lpa_api_app" {
+  repository_name = data.aws_ecr_repository.lpa_api_app.name
+  image_tag       = var.container_version
+  provider        = aws.management
+}
+
 data "aws_ecr_repository" "lpa_pgbouncer" {
   provider = aws.management
   name     = "online-lpa/pgbouncer"
+}
+
+data "aws_ecr_image" "lpa_pgbouncer" {
+  repository_name = data.aws_ecr_repository.lpa_pgbouncer.name
+  image_tag       = var.container_version
+  provider        = aws.management
 }
 
 //-----------------------------------------------
@@ -163,7 +181,7 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      "image" : "${data.aws_ecr_repository.lpa_api_web.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
       "mountPoints" : [],
       "name" : "web",
       "portMappings" : [
@@ -195,7 +213,7 @@ locals {
     {
       "cpu" : 1,
       "essential" : true,
-      "image" : "${data.aws_ecr_repository.lpa_pgbouncer.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_pgbouncer.repository_url}@${data.aws_ecr_image.lpa_pgbouncer.image_digest}",
       "name" : "pgbouncer",
       "mountPoints" : [],
       "healthCheck" : {
@@ -239,7 +257,7 @@ locals {
       "cpu" : 1,
       "essential" : true,
       "readonlyRootFilesystem" : true,
-      "image" : "${data.aws_ecr_repository.lpa_api_app.repository_url}:${var.container_version}",
+      "image" : "${data.aws_ecr_repository.lpa_api_app.repository_url}@${data.aws_ecr_image.lpa_api_app.image_digest}",
       "name" : "app",
       "mountPoints" : [
         {
@@ -294,7 +312,6 @@ locals {
         { "name" : "OPG_LPA_POSTGRES_NAME", "value" : module.api_aurora[0].name },
         { "name" : "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value" : var.account.sirius_api_gateway_endpoint },
         { "name" : "OPG_LPA_API_TRACK_FROM_DATE", "value" : local.track_from_date },
-        { "name" : "OPG_LPA_SEED_DATA", "value" : "true" },
         { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
