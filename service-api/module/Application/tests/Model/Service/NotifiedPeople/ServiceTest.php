@@ -7,25 +7,33 @@ namespace ApplicationTest\Model\Service\NotifiedPeople;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
+use Application\Model\Service\NotifiedPeople\Service;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeSharedTest\DataModel\FixturesData;
 
 final class ServiceTest extends AbstractServiceTestCase
 {
+    private Service $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->service = new Service();
+        $this->service->setLogger($this->logger);
+    }
+
     public function testCreateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         $person = new NotifiedPerson();
-        $validationError = $service->create(strval($lpa->getId()), $person->toArray());
+        $validationError = $this->service->create(strval($lpa->getId()), $person->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -41,8 +49,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $validationError->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testCreate()
@@ -51,21 +57,16 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
         $person->id = null;
-        $entity = $service->create(strval($lpa->getId()), $person->toArray());
+        $entity = $this->service->create(strval($lpa->getId()), $person->toArray());
 
         //  We expect an ID value to have been added
         $person->setId(1);
 
         $this->assertEquals(new DataModelEntity($person), $entity);
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdateNotFound()
@@ -74,12 +75,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $service->update(strval($lpa->getId()), null, -1);
+        $apiProblem = $this->service->update(strval($lpa->getId()), null, -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -91,8 +89,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $apiProblem->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdateValidationFailed()
@@ -101,13 +97,10 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         $person = new NotifiedPerson();
-        $validationError = $service->update(strval($lpa->getId()), $person->toArray(), $lpa->getDocument()->getPeopleToNotify()[0]->id);
+        $validationError = $this->service->update(strval($lpa->getId()), $person->toArray(), $lpa->getDocument()->getPeopleToNotify()[0]->id);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -123,8 +116,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $validationError->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdate()
@@ -133,21 +124,16 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
         $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;
-        $entity = $service->update(strval($lpa->getId()), $person->toArray(), $id);
+        $entity = $this->service->update(strval($lpa->getId()), $person->toArray(), $id);
 
         //Id will have been set to passed in id
         $person->setId($id);
 
         $this->assertEquals(new DataModelEntity($person), $entity);
-
-        $serviceBuilder->verify();
     }
 
     public function testDeleteNotFound()
@@ -156,12 +142,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $service->delete(strval($lpa->getId()), -1);
+        $apiProblem = $this->service->delete(strval($lpa->getId()), -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -173,8 +156,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $apiProblem->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testDelete()
@@ -183,16 +164,11 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
         $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;
-        $result = $service->delete(strval($lpa->getId()), $id);
+        $result = $this->service->delete(strval($lpa->getId()), $id);
 
         $this->assertTrue($result);
-
-        $serviceBuilder->verify();
     }
 }

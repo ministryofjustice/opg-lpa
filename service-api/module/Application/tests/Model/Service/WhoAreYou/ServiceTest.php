@@ -8,6 +8,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\Service\WhoAreYou\Entity;
+use Application\Model\Service\WhoAreYou\Service;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use MakeSharedTest\DataModel\FixturesData;
@@ -16,6 +17,16 @@ use RuntimeException;
 
 final class ServiceTest extends AbstractServiceTestCase
 {
+    private Service $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->service = new Service();
+        $this->service->setLogger($this->logger);
+    }
+
     public function testUpdateAlreadyAnswered()
     {
         $lpa = FixturesData::getPfLpa();
@@ -23,12 +34,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $service->update(strval($lpa->getId()), null);
+        $apiProblem = $this->service->update(strval($lpa->getId()), null);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -40,8 +48,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $apiProblem->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdateValidationFailed()
@@ -51,13 +57,10 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         $whoAreYou = new WhoAreYou();
-        $validationError = $service->update(strval($lpa->getId()), $whoAreYou->toArray());
+        $validationError = $this->service->update(strval($lpa->getId()), $whoAreYou->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -72,8 +75,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $validationError->toArray()
         );
-
-        $serviceBuilder->verify();
     }
 
     public function testUpdateMalformedData()
@@ -85,10 +86,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         //So we expect an exception and for no document to be updated
         $this->expectException(RuntimeException::class);
@@ -96,9 +94,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $whoAreYou = new WhoAreYou();
         $whoAreYou->setWho('donor');
-        $service->update(strval($lpa->getId()), $whoAreYou->toArray());
-
-        $serviceBuilder->verify();
+        $this->service->update(strval($lpa->getId()), $whoAreYou->toArray());
     }
 
     public function testUpdate()
@@ -111,18 +107,13 @@ final class ServiceTest extends AbstractServiceTestCase
         $whoRepository = Mockery::mock(WhoRepositoryInterface::class);
         $whoRepository->shouldReceive('insert')->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
-            ->withWhoRepository($whoRepository)
-            ->build();
+        $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
+        $this->service->setWhoRepository($whoRepository);
 
         $whoAreYou = new WhoAreYou();
         $whoAreYou->setWho('donor');
-        $entity = $service->update(strval($lpa->getId()), $whoAreYou->toArray());
+        $entity = $this->service->update(strval($lpa->getId()), $whoAreYou->toArray());
 
         $this->assertEquals(new Entity(true), $entity);
-
-        $serviceBuilder->verify();
     }
 }
