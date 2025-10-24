@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Session;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\Console\Request as ConsoleRequest;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -30,7 +30,7 @@ class SessionFactory implements FactoryInterface
      *     creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $config = $container->get('Config');
 

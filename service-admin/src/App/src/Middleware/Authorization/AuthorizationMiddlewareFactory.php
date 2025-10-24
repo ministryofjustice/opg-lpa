@@ -4,7 +4,7 @@ namespace App\Middleware\Authorization;
 
 use App\Service\Authentication\AuthenticationService;
 use App\Service\User\UserService;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mezzio\Handler\NotFoundHandler;
 use Mezzio\Helper\UrlHelper;
 use Laminas\Permissions\Rbac\Rbac;

@@ -6,7 +6,7 @@ namespace ApplicationTest\View\Helper;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\View\Helper\SystemMessageFactory;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 

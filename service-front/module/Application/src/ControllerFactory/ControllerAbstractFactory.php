@@ -19,7 +19,7 @@ use Application\Controller\General\PingController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\StatsController;
 use Application\Controller\General\VerifyEmailAddressController;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -114,7 +114,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      *     creating a service.
      * @throws Exception if any other error occurs
      */
-    public function __invoke(ContainerInterface|\Psr\Container\ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         if (!$this->canCreate($container, $requestedName)) {
             throw new ServiceNotFoundException(sprintf(

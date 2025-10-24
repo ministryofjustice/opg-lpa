@@ -3,7 +3,7 @@
 namespace App\Middleware\Session;
 
 use Firebase\JWT\JWT;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tuupola\Middleware\JwtAuthentication;

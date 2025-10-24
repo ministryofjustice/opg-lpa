@@ -7,7 +7,7 @@ use stdClass;
 use Mockery;
 use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Model\DataAccess\Postgres\DataFactory;
 use Application\Model\DataAccess\Postgres\UserData;

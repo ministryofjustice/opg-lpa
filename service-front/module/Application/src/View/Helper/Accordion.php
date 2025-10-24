@@ -46,7 +46,7 @@ class Accordion extends AbstractHelper
         $this->routeMatch = $routeMatch;
     }
 
-    public function __invoke(Lpa $lpa = null)
+    public function __invoke(?Lpa $lpa = null)
     {
         $this->lpa = $lpa;
 
