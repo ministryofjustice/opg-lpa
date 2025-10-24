@@ -9,4 +9,4 @@ COPY scripts/non_live_seeding /app
 
 WORKDIR /app
 
-CMD sh /app/seed_environment.sh
+CMD ["/app/seed_environment.sh"]
