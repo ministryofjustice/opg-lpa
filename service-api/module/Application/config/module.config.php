@@ -5,7 +5,6 @@ use Laminas\Mvc\Middleware\PipeSpec;
 use MakeShared\Factories\ListenerAbstractFactory;
 
 return [
-
     'router' => [
         'routes' => [
             'home' => [
