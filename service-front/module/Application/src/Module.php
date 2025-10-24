@@ -334,6 +334,14 @@ class Module implements FormElementProviderInterface
             $viewModel = new ViewModel();
             $viewModel->setTemplate('error/500');
 
+            $logger = $e->getApplication()->getServiceManager()->get('Logger');
+            $logger->error($exception->getMessage(), [
+                'class' => $exception::class,
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'stackTrace' => $exception->getTraceAsString(),
+            ]);
+
             $e->getViewModel()->addChild($viewModel);
             $e->stopPropagation();
 

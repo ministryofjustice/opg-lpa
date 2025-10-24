@@ -472,10 +472,7 @@ class Client
     protected function createErrorException(ResponseInterface $response)
     {
 
-        $body = json_decode($response->getBody(), true);
-
-        $message = "HTTP:{$response->getStatusCode()} - ";
-        $message .= (is_array($body)) ? print_r($body, true) : 'Unexpected response from server';
+        $message = "HTTP:{$response->getStatusCode()} - Unexpected response from server";
 
         return new Exception\ApiException($message, $response->getStatusCode(), $response);
     }
