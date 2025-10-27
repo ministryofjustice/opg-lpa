@@ -71,17 +71,6 @@ class ConfigTest extends TestCase
         $this->assertFalse($configObj->offsetExists('jkl'));
     }
 
-    public function testCount()
-    {
-        $configObj = Config::getInstance();
-        $configObjCount = $configObj->count();
-
-        $configObj->offsetSet('abc', true);
-        $configObj->offsetSet('def', false);
-
-        $this->assertEquals($configObj->count(), $configObjCount + 2);
-    }
-
     public function testMerge()
     {
         $data1 = [

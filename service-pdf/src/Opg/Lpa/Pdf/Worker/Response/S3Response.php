@@ -5,6 +5,7 @@ namespace Opg\Lpa\Pdf\Worker\Response;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Opg\Lpa\Pdf\Config\Config;
+use Opg\Lpa\Pdf\Traits\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 
 /**
@@ -14,13 +15,10 @@ use Psr\Log\LoggerAwareInterface;
  */
 class S3Response implements LoggerAwareInterface
 {
-    use \Opg\Lpa\Pdf\Traits\LoggerTrait;
+    use LoggerTrait;
 
-    /** @var string */
-    private $docId;
-
-    /** @var Config */
-    private $config;
+    private string $docId;
+    private Config $config;
 
     /**
      * Constructor
@@ -36,10 +34,9 @@ class S3Response implements LoggerAwareInterface
     /**
      * Store the file on the passed path for retrieval by the API service.
      *
-     * @param string $filecontents
      * @throws S3Exception
      */
-    public function save(string $fileContents)
+    public function save(string $fileContents): void
     {
         // Create the S3 client
         $workerConfig = $this->config['worker']['s3Response'];
@@ -49,7 +46,7 @@ class S3Response implements LoggerAwareInterface
         try {
             // Put the file to S3
             $file = $workerSettingsConfig + [
-                'Key' => (string)$this->docId,
+                'Key' => $this->docId,
                 'Body' => $fileContents,
             ];
 

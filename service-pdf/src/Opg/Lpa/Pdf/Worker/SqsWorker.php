@@ -3,6 +3,7 @@
 namespace Opg\Lpa\Pdf\Worker;
 
 use Aws\Sqs\SqsClient;
+use Exception;
 use Laminas\Filter\Decompress;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdfRenderer;
@@ -27,17 +28,17 @@ class SqsWorker implements LoggerAwareInterface
     /**
      * @param string $docId Unique ID representing this job/document.
      * @param string $type The type of PDF to generate.
-     * @param string $lpaData JSON document representing the LPA document.
-     * @throws \Exception
+     * @param string|array $lpaData JSON document representing the LPA document.
+     * @throws Exception
      */
-    private function run($docId, $type, $lpaData)
+    private function run(string $docId, string $type, string|array $lpaData): void
     {
         $pdf = $this->pdfRenderer->render($docId, $type, $lpaData);
         $pdfFilePath = $pdf['filepath'];
 
         if (is_null($pdfFilePath)) {
             $this->getLogger()->error('null path returned for generated PDF');
-            return null;
+            return;
         }
 
         try {
@@ -46,25 +47,23 @@ class SqsWorker implements LoggerAwareInterface
         } finally {
             unlink($pdfFilePath);
         }
-
-        return null;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function start()
+    public function start(): void
     {
         $config = Config::getInstance();
 
         if (!isset($config['queue']['sqs'])) {
-            throw new \Exception('SQS not configured');
+            throw new Exception('SQS not configured');
         }
 
         $client = new SqsClient($config['queue']['sqs']['client']);
 
         if (!isset($config['queue']['sqs']['settings']['url'])) {
-            throw new \Exception('SQS URL not configured');
+            throw new Exception('SQS URL not configured');
         }
 
         $sqsUrl = $config['queue']['sqs']['settings']['url'];
@@ -108,7 +107,7 @@ class SqsWorker implements LoggerAwareInterface
                     $this->getLogger()->info("----------------- DONE - Generation time: " .
                         (microtime(true) - $startTime) .
                         " seconds to make PDF for LPA " . $lpaId);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->getLogger()->error("Error generating PDF", [
                         'jobId' => $lpaMessage['jobId'],
                         'lpaId' => $lpaMessage['lpaId'],
@@ -125,7 +124,7 @@ class SqsWorker implements LoggerAwareInterface
             } else {
                 $this->getLogger()->debug("No message found in queue for this poll, finishing thread.");
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->getLogger()->emergency("Exception in SqsWorker: " . $e->getMessage());
             sleep(5);
         }

@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/service-admin/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/shared/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/shared/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/service-api/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/alphagov/notifications-php-client" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/amp" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/byte-stream" />
@@ -333,6 +334,20 @@
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/laminas/laminas-cli" />
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/netresearch/jsonmapper" />
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/php-http/promise" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/amphp/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/amphp/dns" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/amphp/parallel" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/amphp/parser" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/amphp/pipeline" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/amphp/process" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/amphp/serialization" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/amphp/socket" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/amphp/sync" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/daverandom/libdns" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/kelunik/certificate" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/league/uri" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/league/uri-interfaces" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/revolt/event-loop" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
