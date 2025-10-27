@@ -26,7 +26,7 @@ trait JwtTrait
      * @param string $name
      * @return string|null|object
      */
-    private function getTokenData(string $name = null)
+    private function getTokenData(?string $name = null)
     {
         $this->verifyTokenDataExists();
 

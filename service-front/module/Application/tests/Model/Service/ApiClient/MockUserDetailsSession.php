@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\ApiClient;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RuntimeException;

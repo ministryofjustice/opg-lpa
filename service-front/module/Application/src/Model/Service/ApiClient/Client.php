@@ -23,7 +23,7 @@ class Client implements LoggerAwareInterface
     /** @var array */
     private $defaultHeaders;
 
-    /** @var Tracer */
+    /** @var ?Tracer */
     private $tracer;
 
     /**
@@ -34,13 +34,13 @@ class Client implements LoggerAwareInterface
      * @param array $defaultHeaders Array of name => value pairs; headers which are
      *     set on every request; for authenticated requests, this will
      *     contain 'Token' => <token>
-     * @param Tracer $tracer
+     * @param ?Tracer $tracer
      */
     public function __construct(
         HttpClientInterface $httpClient,
         string $apiBaseUri,
         array $defaultHeaders = [],
-        Tracer $tracer = null,
+        ?Tracer $tracer = null,
     ) {
         $this->httpClient = $httpClient;
         $this->apiBaseUri = $apiBaseUri;

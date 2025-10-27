@@ -7,7 +7,7 @@ namespace ApplicationTest\View\Helper;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\View\Helper\RouteName;
 use Application\View\Helper\RouteNameFactory;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 

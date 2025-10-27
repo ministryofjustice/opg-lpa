@@ -6,7 +6,7 @@ namespace ApplicationTest\Model\Service\Mail\Transport;
 
 use Application\Model\Service\Mail\Transport\NotifyMailTransport;
 use Application\Model\Service\Mail\Transport\MailTransportFactory;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

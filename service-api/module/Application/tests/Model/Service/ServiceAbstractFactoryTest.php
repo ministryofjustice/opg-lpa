@@ -21,7 +21,7 @@ use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use GuzzleHttp\Client as GuzzleHttpClient;

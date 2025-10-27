@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 
 class CalculatorTest extends TestCase
 {
+    private int $fee;
+
     public function setUp(): void
     {
         parent::setUp();

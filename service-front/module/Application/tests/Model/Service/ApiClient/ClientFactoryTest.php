@@ -8,7 +8,7 @@ use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\ClientFactory;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Http\Client\HttpClient;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use MakeShared\Telemetry\Tracer;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
