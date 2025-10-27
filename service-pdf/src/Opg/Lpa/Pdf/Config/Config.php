@@ -3,12 +3,11 @@
 namespace Opg\Lpa\Pdf\Config;
 
 use ArrayAccess;
-use Countable;
 
 /**
  * @template-implements ArrayAccess<string,mixed>
  */
-class Config implements Countable, ArrayAccess
+class Config implements ArrayAccess
 {
     private static $instance = null;
 
@@ -56,11 +55,6 @@ class Config implements Countable, ArrayAccess
     public function offsetGet($offset): mixed
     {
         return (isset($this->container[$offset]) ? $this->container[$offset] : null);
-    }
-
-    public function count(): int
-    {
-        return count($this->container);
     }
 
     /**

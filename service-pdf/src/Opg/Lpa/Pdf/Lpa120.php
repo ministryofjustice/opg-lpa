@@ -20,8 +20,6 @@ class Lpa120 extends AbstractIndividualPdf
 {
     /**
      * PDF template file name (without path) for this PDF object
-     *
-     * @var
      */
     protected $templateFileName = 'LPA120.pdf';
     protected $newTemplateFileName = 'LPA120_2025_fee.pdf';
