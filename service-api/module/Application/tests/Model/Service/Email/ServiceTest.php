@@ -6,12 +6,12 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Email\Service as EmailUpdateService;
-use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use DateTime;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 
-class ServiceTest extends AbstractServiceTestCase
+class ServiceTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|UserRepositoryInterface
@@ -28,10 +28,8 @@ class ServiceTest extends AbstractServiceTestCase
 
     public function testGenerateTokenInvalidEmail()
     {
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
+        $service = new EmailUpdateService();
+        $service->setUserRepository($this->authUserRepository);
 
         $result = $service->generateToken(1, 'invalid');
 
@@ -47,10 +45,8 @@ class ServiceTest extends AbstractServiceTestCase
             'identity' => 'unit@test.com'
         ]));
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
+        $service = new EmailUpdateService();
+        $service->setUserRepository($this->authUserRepository);
 
         $result = $service->generateToken(1, 'unit@test.com');
 
@@ -66,10 +62,8 @@ class ServiceTest extends AbstractServiceTestCase
             'identity' => 'unit@test.com'
         ]));
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
+        $service = new EmailUpdateService();
+        $service->setUserRepository($this->authUserRepository);
 
         $result = $service->generateToken(1, 'unit@test.com');
 
@@ -82,10 +76,8 @@ class ServiceTest extends AbstractServiceTestCase
 
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', null);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
+        $service = new EmailUpdateService();
+        $service->setUserRepository($this->authUserRepository);
 
         $result = $service->generateToken(1, 'unit@test.com');
 
@@ -117,10 +109,8 @@ class ServiceTest extends AbstractServiceTestCase
             })
             ->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
+        $service = new EmailUpdateService();
+        $service->setUserRepository($this->authUserRepository);
 
         $result = $service->generateToken(1, 'unit@test.com');
 
@@ -131,10 +121,8 @@ class ServiceTest extends AbstractServiceTestCase
     {
         $this->authUserRepository->shouldReceive('updateEmailUsingToken')->withArgs(['token'])->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
+        $service = new EmailUpdateService();
+        $service->setUserRepository($this->authUserRepository);
 
         $result = $service->updateEmailUsingToken('token');
 

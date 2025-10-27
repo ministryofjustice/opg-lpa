@@ -39,11 +39,9 @@ class ServiceTest extends AbstractServiceTestCase
     {
         $this->setUserDataSourceGetByIdExpectation(1, null);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->changePassword(1, 'test', 'new');
 
@@ -56,11 +54,9 @@ class ServiceTest extends AbstractServiceTestCase
 
         $this->setUserDataSourceGetByIdExpectation(1, $user);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->changePassword(1, 'test', 'invalid');
 
@@ -75,11 +71,9 @@ class ServiceTest extends AbstractServiceTestCase
 
         $this->setUserDataSourceGetByIdExpectation(1, $user);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->changePassword(1, 'invalid', 'Password123');
 
@@ -105,11 +99,9 @@ class ServiceTest extends AbstractServiceTestCase
             ->withArgs(['test@test.com', 'Password123', true])->once()
             ->andReturn([]);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->changePassword(1, 'valid', 'Password123');
 
@@ -120,11 +112,9 @@ class ServiceTest extends AbstractServiceTestCase
     {
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', null);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->generateToken('unit@test.com');
 
@@ -138,11 +128,9 @@ class ServiceTest extends AbstractServiceTestCase
             'activation_token' => 'unit_test_activation_token'
         ]));
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->generateToken('unit@test.com');
 
@@ -176,11 +164,9 @@ class ServiceTest extends AbstractServiceTestCase
                     && $token['expiresAt'] > $expectedExpires;
             })->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->generateToken('unit@test.com');
 
@@ -189,11 +175,9 @@ class ServiceTest extends AbstractServiceTestCase
 
     public function testUpdatePasswordUsingTokenInvalidPassword()
     {
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->updatePasswordUsingToken('token', 'invalid');
 
@@ -204,11 +188,9 @@ class ServiceTest extends AbstractServiceTestCase
     {
         $this->setUserDataSourceGetByResetTokenExpectation('invalid', null);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->updatePasswordUsingToken('invalid', 'Password123');
 
@@ -226,11 +208,9 @@ class ServiceTest extends AbstractServiceTestCase
             ->once()
             ->andReturn(new UpdatePasswordUsingTokenError("error-type"));
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->updatePasswordUsingToken('token', 'Password123');
 
@@ -249,11 +229,9 @@ class ServiceTest extends AbstractServiceTestCase
         $this->authUserRepository->shouldReceive('resetFailedLoginCounter')
             ->withArgs([1])->once();
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withAuthUserRepository($this->authUserRepository)
-            ->withAuthenticationService($this->authenticationService)
-            ->build();
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
 
         $result = $service->updatePasswordUsingToken('token', 'Password123');
 

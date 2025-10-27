@@ -5,6 +5,7 @@ namespace ApplicationTest\Model\Service\System;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
+use Application\Model\Service\System\Stats;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use Mockery;
 
@@ -66,12 +67,11 @@ class StatsTest extends AbstractServiceTestCase
         $whoRepository = Mockery::mock(WhoRepositoryInterface::class);
         $whoRepository->shouldReceive('getStatsForTimeRange')->andReturn([]);
 
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($apiLpaCollection)
-            ->withStatsRepository($statsRepository)
-            ->withWhoRepository($whoRepository)
-            ->build();
+        $service = new Stats();
+        $service->setApplicationRepository($apiLpaCollection);
+        $service->setStatsRepository($statsRepository);
+        $service->setWhoRepository($whoRepository);
+        $service->setLogger($this->logger);
 
         $result = $service->generate();
 
