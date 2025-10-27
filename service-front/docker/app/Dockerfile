@@ -77,4 +77,4 @@ RUN apk del .build-dependencies
 
 USER appuser
 
-CMD php-fpm
+CMD ["php-fpm"]

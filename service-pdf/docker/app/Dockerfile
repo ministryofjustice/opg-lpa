@@ -54,4 +54,4 @@ RUN apk del .build-dependencies
 
 USER appuser
 
-CMD /app/bin/start.sh
+CMD ["/app/bin/start.sh"]

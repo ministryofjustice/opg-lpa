@@ -1,7 +1,7 @@
 ARG DISTROLESS_VERSION=latest@sha256:87bce11be0af225e4ca761c40babb06d6d559f5767fbf7dc3c47f0f1a466b92c
 ARG GO_VERSION=1.25.3@sha256:8c945d3e25320e771326dafc6fb72ecae5f87b0f29328cbbd87c4dff506c9135
 
-FROM golang:${GO_VERSION} as build
+FROM golang:${GO_VERSION} AS build
 
 WORKDIR /usr/src/app
 
