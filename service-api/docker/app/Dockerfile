@@ -79,4 +79,5 @@ RUN apk del .build-dependencies
 
 USER appuser
 
-CMD  /usr/local/bin/db-migrations.sh && php-fpm
+SHELL ["/bin/sh", "-c"]
+ENTRYPOINT /usr/local/bin/db-migrations.sh && php-fpm
