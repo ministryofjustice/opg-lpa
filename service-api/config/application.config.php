@@ -50,7 +50,4 @@ return [
         // that weren't loaded.
         // 'check_dependencies' => true,
     ],
-    'listeners' => [
-        'MakeShared\Logging\ErrorEventListener',
-    ],
 ];

@@ -320,7 +320,6 @@ class Module implements FormElementProviderInterface
 
     /**
      * Show 500 page on MVC exceptions.
-     * NB logging of errors is handled by MakeShared\Logging\ErrorEventListener,
      * which is attached to these events in config.
      *
      * @param MvcEvent $e
