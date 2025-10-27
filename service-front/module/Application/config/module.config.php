@@ -23,10 +23,6 @@ return [
         ],
     ],
 
-    'listeners' => [
-        'MakeShared\Logging\ErrorEventListener',
-    ],
-
     'service_manager' => [
         'abstract_factories' => [
             'Application\Model\Service\ServiceAbstractFactory',
@@ -45,9 +41,6 @@ return [
             'SiteStatus'                    => 'Application\Model\Service\System\Status',
             'StatsService'                  => 'Application\Model\Service\Stats\Stats',
             'UserService'                   => 'Application\Model\Service\User\Details',
-        ],
-        'factories' => [
-            'MakeShared\Logging\ErrorEventListener' => 'MakeShared\Logging\ErrorEventListener',
         ],
     ],
 
