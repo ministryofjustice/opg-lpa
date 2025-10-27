@@ -2,7 +2,7 @@
 
 namespace App\Middleware\Session;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class SessionMiddlewareFactory

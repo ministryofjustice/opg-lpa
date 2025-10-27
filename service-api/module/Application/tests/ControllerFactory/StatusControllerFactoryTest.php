@@ -6,7 +6,7 @@ use Application\Controller\StatusController;
 use Application\ControllerFactory\StatusControllerFactory;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;

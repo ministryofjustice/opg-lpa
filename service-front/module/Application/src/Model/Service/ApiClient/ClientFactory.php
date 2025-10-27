@@ -4,7 +4,7 @@ namespace Application\Model\Service\ApiClient;
 
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Http\Client\HttpClient as HttpClientInterface;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Session\Container;
 use MakeShared\Telemetry\Tracer;
@@ -17,7 +17,7 @@ class ClientFactory implements FactoryInterface
      * @param array|null $options
      * @return Client
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         /** @var HttpClientInterface $httpClient */
         $httpClient = $container->get('HttpClient');

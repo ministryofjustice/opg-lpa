@@ -292,10 +292,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
 
     /**
      * Set up the identity and the authentication service responses
-     *
-     * @param UserIdentity|null $identity
      */
-    protected function setIdentity(UserIdentity $identity = null)
+    protected function setIdentity(?UserIdentity $identity = null)
     {
         $this->userIdentity = $identity;
 

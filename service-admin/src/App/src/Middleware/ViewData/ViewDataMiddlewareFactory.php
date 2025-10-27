@@ -2,7 +2,7 @@
 
 namespace App\Middleware\ViewData;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mezzio\Template\TemplateRendererInterface;
 
 /**

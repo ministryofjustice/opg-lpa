@@ -9,7 +9,7 @@ use Application\Model\Service\Lpa\Application;
 use Mockery;
 use Application\View\Helper\AccountInfo;
 use Application\View\Helper\AccountInfoFactory;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Laminas\Mvc\View\Http\ViewManager;
 use Laminas\Router\RouteMatch;

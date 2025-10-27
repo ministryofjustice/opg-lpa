@@ -168,11 +168,7 @@ class FormFlowChecker
      */
     private $lpa;
 
-    /**
-     * FormFlowChecker constructor.
-     * @param Lpa|null $lpa
-     */
-    public function __construct(Lpa $lpa = null)
+    public function __construct(?Lpa $lpa = null)
     {
         $this->lpa = $lpa;
     }

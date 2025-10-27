@@ -18,11 +18,8 @@ class AuthenticationService extends LaminasAuthenticationService
 {
     /**
      * AuthenticationService constructor
-     *
-     * @param StorageInterface|null $storage
-     * @param AdapterInterface|null $adapter
      */
-    public function __construct(StorageInterface $storage = null, AdapterInterface $adapter = null)
+    public function __construct(?StorageInterface $storage = null, ?AdapterInterface $adapter = null)
     {
         //  Assert that we are using an LPA authentication adapter specifically
         if (!$adapter instanceof LpaAdapterInterface) {
