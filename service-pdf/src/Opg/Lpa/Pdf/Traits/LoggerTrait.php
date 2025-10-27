@@ -2,6 +2,7 @@
 
 namespace Opg\Lpa\Pdf\Traits;
 
+use MakeShared\Logging\OpgJsonFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
@@ -19,8 +20,12 @@ trait LoggerTrait
     public function getLogger(): LoggerInterface
     {
         if ($this->logger === null) {
-            $this->logger = new Logger('MakeAnLPALogger');
-            $this->logger->pushHandler(new StreamHandler('php://stderr', Level::Debug));
+            $this->logger = new Logger('opg-lpa/pdf');
+
+            $streamHandler = new StreamHandler('php://stderr', Level::Debug);
+            $streamHandler->setFormatter(new OpgJsonFormatter());
+
+            $this->logger->pushHandler($streamHandler);
         }
 
         return $this->logger;
