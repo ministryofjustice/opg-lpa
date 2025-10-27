@@ -27,7 +27,6 @@ final class ServiceTest extends AbstractServiceTestCase
     private MockInterface|LogRepositoryInterface $authLogRepository;
     private MockInterface|UserRepositoryInterface $authUserRepository;
     private UsersService $service;
-    private ServiceBuilder $serviceBuilder;
 
     protected function setUp(): void
     {
@@ -38,19 +37,15 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->authLogRepository = Mockery::mock(LogRepositoryInterface::class);
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
 
-        $this->serviceBuilder = new ServiceBuilder();
-
-        $this->service = $this->serviceBuilder
-            ->withApplicationsService($this->applicationsService)
-            ->withAuthLogRepository($this->authLogRepository)
-            ->withAuthUserRepository($this->authUserRepository)
-            ->build();
+        $this->service = new UsersService();
+        $this->service->setApplicationsService($this->applicationsService);
+        $this->service->setLogRepository($this->authLogRepository);
+        $this->service->setUserRepository($this->authUserRepository);
     }
 
     public function testCreateInvalidEmail()
     {
         $this->assertEquals('invalid-username', $this->service->create('adasadsd', ''));
-        $this->serviceBuilder->verify();
     }
 
     public function testCreateUserAlreadyExists()
@@ -68,8 +63,6 @@ final class ServiceTest extends AbstractServiceTestCase
 
         // assertions
         $this->assertEquals('username-already-exists', $result);
-
-        $this->serviceBuilder->verify();
     }
 
     public function testCreateInvalidPassword()
@@ -87,8 +80,6 @@ final class ServiceTest extends AbstractServiceTestCase
 
         // assertions
         $this->assertEquals('invalid-password', $result);
-
-        $this->serviceBuilder->verify();
     }
 
     public function testCreateSuccess()
@@ -122,8 +113,6 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->assertIsArray($result);
         $this->assertTrue(array_key_exists('userId', $result));
         $this->assertTrue(strlen($result['activation_token']) > 0);
-
-        $this->serviceBuilder->verify();
     }
 
     public function testActivateNoAccount()
@@ -133,8 +122,6 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->authUserRepository->shouldReceive('activate')->andReturn(false);
         $this->assertEquals('account-not-found', $this->service->activate('bar'));
-
-        $this->serviceBuilder->verify();
     }
 
     public function testActivateSuccess()
@@ -148,8 +135,6 @@ final class ServiceTest extends AbstractServiceTestCase
 
         // assertions
         $this->assertTrue($this->service->activate($token));
-
-        $this->serviceBuilder->verify();
     }
 
     public function testFetchDoesNotExist()
@@ -179,8 +164,6 @@ final class ServiceTest extends AbstractServiceTestCase
         $expectedUser->setCreatedAt(new DateTime($entityArray['createdAt']));
         $expectedUser->setUpdatedAt(new DateTime($entityArray['updatedAt']));
         $this->assertEquals(new DataModelEntity($expectedUser), $entity);
-
-        $this->serviceBuilder->verify();
     }
 
     public function testFetch()
@@ -197,8 +180,6 @@ final class ServiceTest extends AbstractServiceTestCase
         $entity = $this->service->fetch($user->getId());
 
         $this->assertEquals(new DataModelEntity($user), $entity);
-
-        $this->serviceBuilder->verify();
     }
 
     public function testUpdateNotFound()
@@ -228,8 +209,6 @@ final class ServiceTest extends AbstractServiceTestCase
         $expectedUser->setCreatedAt(new DateTime($entityArray['createdAt']));
         $expectedUser->setUpdatedAt(new DateTime($entityArray['updatedAt']));
         $this->assertEquals(new DataModelEntity($expectedUser), $entity);
-
-        $this->serviceBuilder->verify();
     }
 
     public function testUpdateValidationFailed()
@@ -266,8 +245,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ],
             $validationError->toArray()
         );
-
-        $this->serviceBuilder->verify();
     }
 
     public function testUpdate()
@@ -294,8 +271,6 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $userUpdate->setUpdatedAt(new DateTime($entityArray['updatedAt']));
         $this->assertEquals(new DataModelEntity($userUpdate), $entity);
-
-        $this->serviceBuilder->verify();
     }
 
     public function testDelete()
@@ -328,8 +303,6 @@ final class ServiceTest extends AbstractServiceTestCase
         $result = $this->service->delete($user->getId(), 'some-reason');
 
         $this->assertTrue($result);
-
-        $this->serviceBuilder->verify();
     }
 
     public function testMatchUsers()
@@ -350,8 +323,6 @@ final class ServiceTest extends AbstractServiceTestCase
         $results = $this->service->matchUsers($query);
 
         $this->assertEquals(count($results), 2);
-
-        $this->serviceBuilder->verify();
     }
 
     public function testSearchByUsernameNotUserOrDeleted()
