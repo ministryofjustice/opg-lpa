@@ -157,7 +157,7 @@ class Module implements FormElementProviderInterface
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
                 'Logger'                => 'MakeShared\Logging\LoggerFactory',
                 SessionManagerSupport::class => function (ServiceLocatorInterface $sm) {
-                    return new SessionManagerSupport($sm->get(SessionManager::class));
+                    return new SessionManagerSupport($sm->get('SessionManager'));
                 },
 
                 'ExporterFactory'       => ReflectionBasedAbstractFactory::class,

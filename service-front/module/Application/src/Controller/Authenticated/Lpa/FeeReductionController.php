@@ -7,7 +7,7 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
-use Application\Model\Service\Session\SessionManager;
+use Laminas\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
 use Application\View\Helper\MoneyFormat;
 use Laminas\Form\Element;

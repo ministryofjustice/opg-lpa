@@ -63,7 +63,7 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
         $sessionManager = Mockery::mock(SessionManager::class);
         $sessionManagerSupport = new SessionManagerSupport($sessionManager);
 
-        $this->container->shouldReceive('get')->withArgs(['SessionManagerSupport'])
+        $this->container->shouldReceive('get')->withArgs([SessionManagerSupport::class])
             ->andReturn($sessionManagerSupport)->once();
 
         $this->container->shouldReceive('get')->withArgs(['FormElementManager'])
