@@ -22,6 +22,12 @@
             they're available publicly, but Psalm can't understand that.
         -->
         <InaccessibleProperty errorLevel="suppress" />
+
+        <!--
+            `final` classes are difficult to mock in tests and all of our code is internal,
+            minimising its usefulness
+        -->
+        <ClassMustBeFinal errorLevel="suppress" />
     </issueHandlers>
 
     <plugins>

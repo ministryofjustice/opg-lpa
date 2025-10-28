@@ -12,7 +12,9 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+
     <issueHandlers>
+        <!-- Controllers and their actions are wired magically, not directly -->
         <UnusedClass>
             <errorLevel type="suppress">
                 <directory name="module/Application/src/Controller" />
@@ -26,5 +28,11 @@
                 <referencedMethod name="*::*Action" />
             </errorLevel>
         </PossiblyUnusedMethod>
+
+        <!--
+            `final` classes are difficult to mock in tests and all of our code is internal,
+            minimising its usefulness
+        -->
+        <ClassMustBeFinal errorLevel="suppress" />
     </issueHandlers>
 </psalm>

@@ -22,6 +22,12 @@
         -->
         <InaccessibleProperty errorLevel="suppress" />
 
+        <!--
+            `final` classes are difficult to mock in tests and all of our code is internal,
+            minimising its usefulness
+        -->
+        <ClassMustBeFinal errorLevel="suppress" />
+
         <!-- We magically assign properties to Laminas\Session\Container and Laminas\View\Model\ViewModel -->
         <UndefinedMagicPropertyAssignment errorLevel="suppress" />
         <UndefinedMagicPropertyFetch errorLevel="suppress" />
