@@ -10,13 +10,10 @@ use Application\Model\Service\Feedback\Service as FeedbackService;
 use DateTime;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use LmcRbacMvc\Service\AuthorizationService;
-use MakeShared\Logging\LoggerTrait;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
-class FeedbackController extends AbstractRestfulController implements LoggerAwareInterface
+class FeedbackController extends AbstractRestfulController
 {
-    use LoggerTrait;
-
     /**
      * @var FeedbackService
      */
@@ -33,7 +30,7 @@ class FeedbackController extends AbstractRestfulController implements LoggerAwar
      * @param FeedbackService $service
      * @param AuthorizationService $authorizationService
      */
-    public function __construct(FeedbackService $service, AuthorizationService $authorizationService)
+    public function __construct(FeedbackService $service, AuthorizationService $authorizationService, private readonly LoggerInterface $logger)
     {
         $this->service = $service;
         $this->authorizationService = $authorizationService;
@@ -90,7 +87,7 @@ class FeedbackController extends AbstractRestfulController implements LoggerAwar
         $result = $this->service->add($data);
 
         if ($result === false) {
-            $this->getLogger()->error('Data required for database insert was missing');
+            $this->logger->error('Data required for database insert was missing');
 
             return new ApiProblemResponse(
                 new ApiProblem(400, 'Unable to save feedback. Ensure at least one valid field is sent.')

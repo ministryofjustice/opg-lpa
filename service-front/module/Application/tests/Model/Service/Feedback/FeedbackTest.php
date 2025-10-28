@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace ApplicationTest\Model\Service\Feedback;
 
 use Application\Model\Service\ApiClient\Client;
+use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Mail\MailParameters;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
+use GuzzleHttp\Psr7\Response;
 use Hamcrest\Matchers;
 use Hamcrest\MatcherAssert;
 use Mockery;
@@ -102,5 +104,16 @@ final class FeedbackTest extends AbstractEmailServiceTest
         ]);
 
         $this->assertFalse($result);
+    }
+
+    public function testAddReturns400ExceptionAsErrorString(): void
+    {
+        $apiException = new ApiException(new Response(400, [], '{"detail":"a validation error occurred"}'));
+
+        $this->apiClient->shouldReceive('httpPost')->andThrow($apiException);
+
+        $result = $this->service->add([]);
+
+        $this->assertEquals($result, 'a validation error occurred');
     }
 }
