@@ -5,7 +5,11 @@ namespace Application;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
+use Application\Model\Service\Session\SessionFactory;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
+use Laminas\Session\ManagerInterface;
+use Laminas\Session\SessionManager;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
@@ -15,7 +19,6 @@ use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Redis\RedisClient;
 use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\PersistentSessionDetails;
-use Application\Model\Service\Session\SessionManager;
 use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
@@ -79,8 +82,10 @@ class Module implements FormElementProviderInterface
      */
     private function bootstrapSession(MvcEvent $e)
     {
+        $sm = $e->getApplication()->getServiceManager();
+
         /** @var SessionManager $session */
-        $session = $e->getApplication()->getServiceManager()->get('SessionManager');
+        $session = $sm->get('SessionManager');
 
         // Always starts the session.
         $session->start();
@@ -88,7 +93,7 @@ class Module implements FormElementProviderInterface
         // Ensures this SessionManager is used for all Session Containers.
         Container::setDefaultManager($session);
 
-        $session->initialise();
+        $sm->get(SessionManagerSupport::class)->initialise();
     }
 
     /**
@@ -151,6 +156,10 @@ class Module implements FormElementProviderInterface
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
                 'Logger'                => 'MakeShared\Logging\LoggerFactory',
+                SessionManagerSupport::class => function (ServiceLocatorInterface $sm) {
+                    return new SessionManagerSupport($sm->get(SessionManager::class));
+                },
+
                 'ExporterFactory'       => ReflectionBasedAbstractFactory::class,
 
                 // Authentication Adapter

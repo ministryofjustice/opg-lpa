@@ -23,7 +23,7 @@ class VerifyEmailAddressController extends AbstractBaseController
         // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
         $session = $this->getSessionManager();
         $session->getStorage()->clear();
-        $session->initialise();
+        $this->sessionManagerSupport->initialise();
 
         //---------------------------
 

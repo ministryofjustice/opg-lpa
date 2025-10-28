@@ -6,7 +6,7 @@ namespace ApplicationTest\Model\Service\Session;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Application\Model\Service\Session\SessionFactory;
-use Application\Model\Service\Session\SessionManager;
+use Laminas\Session\SessionManager;
 use Psr\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
