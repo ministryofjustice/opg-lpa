@@ -9,6 +9,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Session\Exception\RuntimeException;
+use Laminas\Session\SessionManager;
 
 /**
  * Create the SessionManager for use throughout the LPA frontend.
@@ -64,6 +65,6 @@ class SessionFactory implements FactoryInterface
 
         // use our own save handler on the SessionManager
         $saveHandler = $container->get('SaveHandler');
-        return new SessionManager(null, $saveHandler);
+        return new SessionManager(null, null, $saveHandler);
     }
 }

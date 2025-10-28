@@ -7,6 +7,7 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\ForgotPasswordController;
 use Application\Form\User\ConfirmEmail;
 use Application\Form\User\SetPassword;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
@@ -37,6 +38,16 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\User\SetPassword'])->andReturn($this->setPasswordForm);
 
         $this->userDetails = Mockery::mock(Details::class);
+
+        $this->sessionManagerSupport = \Mockery::mock(
+            SessionManagerSupport::class,
+            [$this->sessionManager]
+        )->makePartial();
+
+        $this->sessionManagerSupport
+            ->shouldReceive('getSessionManager')
+            ->andReturn($this->sessionManager)
+            ->byDefault();
     }
 
     protected function getController(string $controllerName)
@@ -160,20 +171,22 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
 
     public function testResetPasswordActionAlreadyLoggedIn(): void
     {
-        $controller = $this->getController(ForgotPasswordController::class);
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])
+            ->andReturn($this->postData['token'])->once();
 
         $response = new Response();
-
-        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])
             ->andReturn($response)->once();
-        $this->sessionManager->shouldReceive('initialise')->once();
+
+        $this->sessionManagerSupport->shouldReceive('initialise')->once();
+
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $result = $controller->resetPasswordAction();
-
-        $this->assertEquals($response, $result);
+        $this->assertSame($response, $result);
     }
+
 
     public function testResetPasswordActionGet(): void
     {

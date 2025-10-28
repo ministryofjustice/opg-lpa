@@ -130,7 +130,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         // Container is just initiated, but this is required to populate twig helper
         // function RouteName within templates.
         $container->get('PersistentSessionDetails');
-        $sessionManager = $container->get('SessionManager');
+        $sessionManagerSupport = $container->get('SessionManagerSupport');
         $authenticationService = $container->get('AuthenticationService');
         $config = $container->get('Config');
 
@@ -152,7 +152,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                 $controller = new $controllerName(
                     $lpaId,
                     $formElementManager,
-                    $sessionManager,
+                    $sessionManagerSupport,
                     $authenticationService,
                     $config,
                     $userDetailsSession,
@@ -164,7 +164,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             } else {
                 $controller = new $controllerName(
                     $formElementManager,
-                    $sessionManager,
+                    $sessionManagerSupport,
                     $authenticationService,
                     $config,
                     $userDetailsSession,
@@ -175,7 +175,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         } else {
             $controller = new $controllerName(
                 $formElementManager,
-                $sessionManager,
+                $sessionManagerSupport,
                 $authenticationService,
                 $config
             );

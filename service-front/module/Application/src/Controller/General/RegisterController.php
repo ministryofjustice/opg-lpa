@@ -176,7 +176,7 @@ class RegisterController extends AbstractBaseController
 
         $session = $this->getSessionManager();
         $session->getStorage()->clear();
-        $session->initialise();
+        $this->sessionManagerSupport->initialise();
 
         //  Returns true if the user account exists and the account was activated
         //  Returns false if the user account does not exist

@@ -7,6 +7,7 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\RegisterController;
 use Application\Form\User\ConfirmEmail;
 use Application\Form\User\Registration;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Header\Referer;
@@ -40,6 +41,16 @@ final class RegisterControllerTest extends AbstractControllerTestCase
         $this->form = Mockery::mock(Registration::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\Registration'])->andReturn($this->form);
+
+        $this->sessionManagerSupport = \Mockery::mock(
+            SessionManagerSupport::class,
+            [$this->sessionManager]
+        )->makePartial();
+
+        $this->sessionManagerSupport
+            ->shouldReceive('getSessionManager')
+            ->andReturn($this->sessionManager)
+            ->byDefault();
     }
 
     private function makeMockReferer(string $url)
@@ -271,7 +282,7 @@ final class RegisterControllerTest extends AbstractControllerTestCase
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
-        $this->sessionManager->shouldReceive('initialise')->once();
+        $this->sessionManagerSupport->shouldReceive('initialise')->once();
         $this->userDetails->shouldReceive('activateAccount')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -287,7 +298,7 @@ final class RegisterControllerTest extends AbstractControllerTestCase
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
-        $this->sessionManager->shouldReceive('initialise')->once();
+        $this->sessionManagerSupport->shouldReceive('initialise')->once();
         $this->userDetails->shouldReceive('activateAccount')->andReturn(true)->once();
 
         /** @var ViewModel $result */
