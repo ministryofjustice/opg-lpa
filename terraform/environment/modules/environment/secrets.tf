@@ -61,8 +61,8 @@ data "aws_secretsmanager_secret" "performance_platform_db_password" {
   name = "${var.account_name}/performance_platform_db_password"
 }
 
-data "aws_secretsmanager_secret" "api_rds_credentials" {
-  name = "${var.account_name}/api_rds_credentials"
+resource "aws_secretsmanager_secret" "api_rds_credentials" {
+  name = "${var.environment_name}/api_rds_credentials"
 }
 
 resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
