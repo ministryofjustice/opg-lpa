@@ -62,8 +62,9 @@ data "aws_secretsmanager_secret" "performance_platform_db_password" {
 }
 
 resource "aws_secretsmanager_secret" "api_rds_credentials" {
-  count = var.account.database.rds_proxy_enabled ? 1 : 0
-  name  = "${var.environment_name}/api_rds_credentials"
+  count                   = var.account.database.rds_proxy_enabled ? 1 : 0
+  name                    = "${var.environment_name}/api_rds_credentials"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
