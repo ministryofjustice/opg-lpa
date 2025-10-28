@@ -31,8 +31,7 @@ class LoggerFactory implements FactoryInterface
         $streamHandler->setFormatter($formatter);
 
         $logger->pushHandler($streamHandler);
-        $logger->pushProcessor($container->get(MvcEventProcessor::class))
-            ->pushProcessor($container->get(HeadersProcessor::class))
+        $logger->pushProcessor($container->get(HeadersProcessor::class))
             ->pushProcessor($container->get(TraceIdProcessor::class));
 
         return $logger;

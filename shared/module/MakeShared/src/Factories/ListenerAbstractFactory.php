@@ -5,7 +5,6 @@ namespace MakeShared\Factories;
 use Application\Library\Authentication\AuthenticationListener;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
-use MakeShared\Logging\ErrorEventListener;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Container\ContainerInterface;
 
@@ -18,7 +17,6 @@ class ListenerAbstractFactory implements AbstractFactoryInterface
      */
     private $createableListeners = [
         AuthenticationListener::class,
-        ErrorEventListener::class,
     ];
 
     public function canCreate(ContainerInterface $container, $requestedName)
