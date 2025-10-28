@@ -99,12 +99,9 @@ module "api_aurora" {
   kms_key_id                      = data.aws_kms_key.rds.arn
   replication_source_identifier   = var.account.always_on ? aws_db_instance.api[0].arn : ""
   skip_final_snapshot             = !var.account.database.deletion_protection
-  vpc_security_group_ids = [
-    aws_security_group.rds-api.id,
-    # aws_security_group.rds_proxy_ingress.id
-  ]
-  tags                  = local.db_component_tag
-  copy_tags_to_snapshot = true
+  vpc_security_group_ids          = [aws_security_group.rds-api.id]
+  tags                            = local.db_component_tag
+  copy_tags_to_snapshot           = true
 }
 
 resource "aws_security_group" "rds-client" {
