@@ -62,6 +62,10 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
 
             return true;
         } catch (ApiException $ex) {
+            if ($ex->getStatusCode() === 400) {
+                return $ex->getMessage();
+            }
+
             $this->getLogger()->error("API exception while adding feedback from Feedback service\n" .
                 $ex->getMessage() . "\n" . $ex->getTraceAsString());
         } catch (InvalidArgumentException $ex) {

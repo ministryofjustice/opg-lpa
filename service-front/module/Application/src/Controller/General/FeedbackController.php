@@ -54,6 +54,11 @@ class FeedbackController extends AbstractBaseController
                     ]);
 
                     return $this->redirect()->toRoute('feedback-thanks', [], $options);
+                } elseif (is_string($result)) {
+                    return new ViewModel([
+                        'form' => $form,
+                        'error' => $result,
+                    ]);
                 } else {
                     throw new \Exception('Error sending feedback email');
                 }

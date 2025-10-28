@@ -83,6 +83,21 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         $controller->indexAction();
     }
 
+    public function testSendFeedbackFailWithMessage(): void
+    {
+        $controller = $this->getController(FeedbackController::class);
+
+        $this->setPostValid($this->form, $this->postData);
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+
+        $this->feedbackService->shouldReceive('add')->andReturn('a validation error occurred')->once();
+
+        $result = $controller->indexAction();
+
+        $this->assertEquals($this->form, $result->getVariables()['form']);
+        $this->assertEquals('a validation error occurred', $result->getVariables()['error']);
+    }
+
     public function testSendFeedbackSuccess(): void
     {
         $controller = $this->getController(FeedbackController::class);
