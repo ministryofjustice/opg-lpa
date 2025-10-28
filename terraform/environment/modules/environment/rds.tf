@@ -21,37 +21,32 @@ data "aws_db_snapshot" "api_snapshot" {
   most_recent            = true
 }
 
-data "aws_availability_zones" "aws_zones" {
-  # Exclude Local Zones
-  filter {
-    name   = "opt-in-status"
-    values = ["opt-in-not-required"]
-  }
-}
-
 resource "aws_db_instance" "api" {
-  count                               = var.account.always_on ? 1 : 0
-  identifier                          = lower("api-${var.environment_name}")
-  db_name                             = "api2"
-  allocated_storage                   = 10
-  max_allocated_storage               = 100
-  storage_type                        = "gp2"
-  storage_encrypted                   = true
-  skip_final_snapshot                 = var.account.skip_final_snapshot
-  engine                              = "postgres"
-  engine_version                      = var.account.psql_engine_version
-  instance_class                      = var.account.rds_instance_type
-  port                                = "5432"
-  kms_key_id                          = local.is_primary_region ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
-  username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
-  password                            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  parameter_group_name                = data.aws_db_parameter_group.postgres_db_params[var.account.psql_parameter_group_family].name
-  vpc_security_group_ids              = [aws_security_group.rds-api.id, aws_security_group.rds_proxy_ingress]
+  count                 = var.account.always_on ? 1 : 0
+  identifier            = lower("api-${var.environment_name}")
+  db_name               = "api2"
+  allocated_storage     = 10
+  max_allocated_storage = 100
+  storage_type          = "gp2"
+  storage_encrypted     = true
+  skip_final_snapshot   = var.account.database.skip_final_snapshot
+  engine                = "postgres"
+  engine_version        = var.account.database.psql_engine_version
+  instance_class        = var.account.database.rds_instance_type
+  port                  = "5432"
+  kms_key_id            = local.is_primary_region ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
+  username              = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
+  password              = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
+  parameter_group_name  = data.aws_db_parameter_group.postgres_db_params[var.account.database.psql_parameter_group_family].name
+  vpc_security_group_ids = [
+    aws_security_group.rds-api.id,
+    # aws_security_group.rds_proxy_ingress
+  ]
   auto_minor_version_upgrade          = false
   maintenance_window                  = "wed:05:00-wed:09:00"
   multi_az                            = true
-  backup_retention_period             = var.account.backup_retention_period
-  deletion_protection                 = var.account.deletion_protection
+  backup_retention_period             = var.account.database.backup_retention_period
+  deletion_protection                 = var.account.database.deletion_protection
   tags                                = local.db_component_tag
   allow_major_version_upgrade         = true
   monitoring_interval                 = 30
@@ -88,28 +83,31 @@ module "aws_rds_api_alarms" {
 module "api_aurora" {
   auto_minor_version_upgrade      = true
   source                          = "./modules/aurora"
-  count                           = var.account.aurora_enabled ? 1 : 0
-  aurora_serverless               = var.account.aurora_serverless
+  count                           = var.account.database.aurora_enabled ? 1 : 0
+  aurora_serverless               = var.account.database.aurora_serverless
   account_id                      = data.aws_caller_identity.current.account_id
   availability_zones              = data.aws_availability_zones.aws_zones.names
-  apply_immediately               = !var.account.deletion_protection
+  apply_immediately               = !var.account.database.deletion_protection
   cluster_identifier              = "api2"
   db_subnet_group_name            = "data-persistence-subnet-default"
-  deletion_protection             = var.account.deletion_protection
+  deletion_protection             = var.account.database.deletion_protection
   database_name                   = "api2"
-  engine_version                  = var.account.psql_engine_version
+  engine_version                  = var.account.database.psql_engine_version
   environment                     = var.environment_name
-  aws_rds_cluster_parameter_group = data.aws_rds_cluster_parameter_group.postgresql_aurora_params[var.account.psql_parameter_group_family].name
+  aws_rds_cluster_parameter_group = data.aws_rds_cluster_parameter_group.postgresql_aurora_params[var.account.database.psql_parameter_group_family].name
   master_username                 = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   master_password                 = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  instance_count                  = var.account.aurora_instance_count
+  instance_count                  = var.account.database.aurora_instance_count
   instance_class                  = "db.t3.medium"
   kms_key_id                      = data.aws_kms_key.rds.arn
   replication_source_identifier   = var.account.always_on ? aws_db_instance.api[0].arn : ""
-  skip_final_snapshot             = !var.account.deletion_protection
-  vpc_security_group_ids          = [aws_security_group.rds-api.id, aws_security_group.rds_proxy_ingress.id]
-  tags                            = local.db_component_tag
-  copy_tags_to_snapshot           = true
+  skip_final_snapshot             = !var.account.database.deletion_protection
+  vpc_security_group_ids = [
+    aws_security_group.rds-api.id,
+    # aws_security_group.rds_proxy_ingress.id
+  ]
+  tags                  = local.db_component_tag
+  copy_tags_to_snapshot = true
 }
 
 resource "aws_security_group" "rds-client" {
@@ -140,21 +138,4 @@ resource "aws_security_group_rule" "rds-api" {
   source_security_group_id = aws_security_group.rds-client.id
   security_group_id        = aws_security_group.rds-api.id
   description              = "RDS client to RDS - Postgres"
-}
-
-resource "aws_security_group" "rds_proxy" {
-  name                   = "rds-proxy-${var.environment_name}"
-  description            = "RDS access from RDS Proxy"
-  vpc_id                 = data.aws_vpc.default.id
-  revoke_rules_on_delete = true
-}
-
-resource "aws_security_group_rule" "rds_proxy_ingress" {
-  type                     = "ingress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.rds_proxy_egress.id
-  security_group_id        = aws_security_group.rds_proxy.id
-  description              = "Ingess from RDS Proxy"
 }

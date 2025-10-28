@@ -79,7 +79,7 @@ locals {
       ],
       "environment" : [
         { "name" : "OPG_LPA_POSTGRES_NAME", "value" : module.api_aurora[0].name },
-        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : var.account_name == "production" ? module.api_aurora[0].endpoint : aws_db_proxy.rds_proxy[0].endpoint },
+        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : var.account.database.rds_proxy_enabled ? module.rds_proxy[0].endpoint : module.api_aurora[0].endpoint },
         { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(module.api_aurora[0].port) },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name }
       ]
