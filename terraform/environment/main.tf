@@ -62,7 +62,7 @@ module "environment_dns" {
 
 
 module "cross_region_backup" {
-  count  = local.account.aurora_cross_region_backup_enabled ? 1 : 0
+  count  = local.account.database.aurora_cross_region_backup_enabled ? 1 : 0
   source = "./modules/rds_cross_region_backup"
   providers = {
     aws             = aws.eu_west_1
