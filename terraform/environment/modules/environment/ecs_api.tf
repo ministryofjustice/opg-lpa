@@ -15,7 +15,7 @@ resource "aws_ecs_service" "api" {
   network_configuration {
     security_groups = [
       aws_security_group.api_ecs_service.id,
-      aws_security_group.rds-client.id
+      aws_security_group.rds-client.id,
     ]
     subnets          = data.aws_subnets.private.ids
     assign_public_ip = false
