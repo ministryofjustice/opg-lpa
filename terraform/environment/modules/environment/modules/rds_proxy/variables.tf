@@ -6,7 +6,7 @@ variable "db_cluster_identifier" {
   type = string
 }
 
-variable "api_rds_credentials_secret_name" {
+variable "api_rds_credentials_secret_arn" {
   type = string
 }
 

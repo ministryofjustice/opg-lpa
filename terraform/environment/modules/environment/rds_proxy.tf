@@ -3,7 +3,7 @@ module "rds_proxy" {
   count                             = var.account.database.rds_proxy_enabled ? 1 : 0
   environment_name                  = var.environment_name
   db_cluster_identifier             = module.api_aurora[0].cluster.id
-  api_rds_credentials_secret_name   = "test-proxy-creds" # pragma: allowlist secret
+  api_rds_credentials_secret_arn    = aws_secretsmanager_secret_version.api_rds_credentials.arn
   vpc_id                            = data.aws_vpc.default.id
   vpc_subnet_ids                    = data.aws_subnets.private.ids
   rds_client_security_group_id      = aws_security_group.rds-client.id

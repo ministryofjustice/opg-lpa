@@ -1,7 +1,3 @@
-data "aws_secretsmanager_secret" "api_rds_credentials" {
-  name = var.api_rds_credentials_secret_name
-}
-
 resource "aws_db_proxy" "rds_proxy" {
   name                = lower("proxy-${var.environment_name}")
   debug_logging       = true # this may uncover sensitive information in the logs - but it shouldn't
@@ -19,7 +15,7 @@ resource "aws_db_proxy" "rds_proxy" {
     description               = "Authentication for RDS Proxy"
     iam_auth                  = "DISABLED"
     client_password_auth_type = "POSTGRES_SCRAM_SHA_256" # pragma: allowlist secret
-    secret_arn                = data.aws_secretsmanager_secret.api_rds_credentials.arn
+    secret_arn                = var.api_rds_credentials_secret_arn
   }
 }
 
@@ -68,7 +64,7 @@ data "aws_iam_policy_document" "rds_proxy_role" {
     ]
 
     resources = [
-      data.aws_secretsmanager_secret.api_rds_credentials.arn,
+      var.api_rds_credentials_secret_arn,
     ]
   }
 
