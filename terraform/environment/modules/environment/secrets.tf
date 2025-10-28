@@ -68,12 +68,11 @@ data "aws_secretsmanager_secret" "api_rds_credentials" {
 resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
   secret_id = data.aws_secretsmanager_secret.api_rds_credentials.id
   secret_string = jsonencode({
-    username = local.db_username,
-    password = local.db_password
+    username            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string,
+    password            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string,
+    engine              = "postgres",
+    host                = module.api_aurora[0].endpoint,
+    port                = var.account.database.rds_proxy_enabled ? "5432" : 6432,
+    dbClusterIdentifier = "api2-${var.environment_name}"
   })
-}
-
-locals {
-  db_username = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
-  db_password = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
 }
