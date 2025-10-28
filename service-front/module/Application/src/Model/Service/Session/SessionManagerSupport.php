@@ -5,9 +5,9 @@ namespace Application\Model\Service\Session;
 use Laminas\Session\Container;
 use Laminas\Session\SessionManager;
 
-class SessionManagerSupport
+final class SessionManagerSupport
 {
-    public function __construct(private SessionManager $sessionManager)
+    public function __construct(readonly private SessionManager $sessionManager)
     {
     }
 
