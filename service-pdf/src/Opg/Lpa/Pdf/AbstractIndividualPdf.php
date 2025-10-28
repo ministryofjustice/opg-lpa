@@ -17,14 +17,13 @@ abstract class AbstractIndividualPdf extends AbstractPdf
 {
     /**
      * PDF template file name (without path) for this PDF object - value to be set in extending class
-     *
-     * @var
      */
     protected $templateFileName;
+
     /**
      * New LPA120 with the 2025 fee change of £92
      *
-     * @var
+     * @psalm-suppress PossiblyUnusedProperty
      */
     protected $newTemplateFileName;
 
@@ -344,37 +343,24 @@ abstract class AbstractIndividualPdf extends AbstractPdf
 
     /**
      * Add a strike through line to the specified page
-     *
-     * @param $areaReference
-     * @param int $pageNumber
-     * @return $this
      */
-    protected function addStrikeThrough($areaReference, $pageNumber = 1)
+    protected function addStrikeThrough(string $areaReference, int $pageNumber = 1): void
     {
-        return $this->addDrawingTarget($this->strikeThroughTargets, $areaReference, $pageNumber);
+        $this->addDrawingTarget($this->strikeThroughTargets, $areaReference, $pageNumber);
     }
 
     /**
      * Draw a blank section on the specified page
-     *
-     * @param $areaReference
-     * @param int $pageNumber
-     * @return $this
      */
-    protected function addBlank($areaReference, $pageNumber = 1)
+    protected function addBlank(string $areaReference, int $pageNumber = 1): void
     {
-        return $this->addDrawingTarget($this->blankTargets, $areaReference, $pageNumber);
+        $this->addDrawingTarget($this->blankTargets, $areaReference, $pageNumber);
     }
 
     /**
      * Add a drawing target (strike through or blank) to the specified page
-     *
-     * @param array $drawingTargets
-     * @param $areaReference
-     * @param int $pageNumber
-     * @return $this
      */
-    private function addDrawingTarget(array &$drawingTargets, $areaReference, $pageNumber)
+    private function addDrawingTarget(array &$drawingTargets, string $areaReference, int $pageNumber): void
     {
         //  Adjust the page number for zero based indexes
         $pageNumber--;
@@ -385,8 +371,6 @@ abstract class AbstractIndividualPdf extends AbstractPdf
         }
 
         $drawingTargets[$pageNumber][] = $areaReference;
-
-        return $this;
     }
 
     /**
