@@ -7,6 +7,7 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\FeedbackController;
 use Application\Form\General\FeedbackForm;
 use Application\Model\Service\Feedback\Feedback;
+use Application\Model\Service\Feedback\FeedbackValidationException;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Exception;
 use Mockery;
@@ -15,6 +16,7 @@ use Laminas\Http\Header\Referer;
 use Laminas\Http\Response;
 use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
+use RuntimeException;
 
 final class FeedbackControllerTest extends AbstractControllerTestCase
 {
@@ -75,22 +77,30 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->feedbackService->shouldReceive('add')->andReturn(false)->once();
+        $this->feedbackService
+            ->shouldReceive('add')
+            ->andThrow(new RuntimeException('something unexpected went wrong'))
+            ->once();
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Error sending feedback email');
+        $controller->getLogger()
+            ->shouldReceive('error')
+            ->with('API exception while adding feedback from Feedback service: something unexpected went wrong', Mockery::any())
+            ->once();
 
-        $controller->indexAction();
+        $result = $controller->indexAction();
+
+        $this->assertEquals($this->form, $result->getVariables()['form']);
+        $this->assertEquals('An error occurred while submitting feedback', $result->getVariables()['error']);
     }
 
-    public function testSendFeedbackFailWithMessage(): void
+    public function testSendFeedbackFailWithValidationException(): void
     {
         $controller = $this->getController(FeedbackController::class);
 
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->feedbackService->shouldReceive('add')->andReturn('a validation error occurred')->once();
+        $this->feedbackService->shouldReceive('add')->andThrow(new FeedbackValidationException('a validation error occurred'))->once();
 
         $result = $controller->indexAction();
 
