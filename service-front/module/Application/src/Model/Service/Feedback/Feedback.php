@@ -20,55 +20,52 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
     /**
      * Send feedback data to the feedback inbox using a template
      *
+     * @throws FeedbackValidationException
+     * @throws InvalidArgumentException
      * @param array $data
-     * @return bool|string
      */
-    public function add(array $data)
+    public function add(array $data): void
     {
         try {
             $this->apiClient->httpPost('/user-feedback', $data);
-
-            $email = 'No email given';
-            if (isset($data['email'])) {
-                $email = $data['email'];
-            }
-
-            $phone = 'No phone number given';
-            if (isset($data['phone'])) {
-                $phone = $data['phone'];
-            }
-
-            $now = new DateTime('now');
-            $now->setTimezone(new DateTimeZone('Europe/London'));
-
-            // Send the feedback via email also
-            $templateData = [
-                'currentDateTime' => $now->format('Y/m/d H:i:s'),
-                'rating' => $data['rating'],
-                'details' => $data['details'],
-                'email' => $email,
-                'phone' => $phone,
-                'fromPage' => $data['fromPage'],
-                'agent' => $data['agent'],
-            ];
-
-            $mailParameters = new MailParameters(
-                $this->getConfig()['sendFeedbackEmailTo'],
-                AbstractEmailService::EMAIL_FEEDBACK,
-                $templateData
-            );
-
-            $this->getMailTransport()->send($mailParameters);
-
-            return true;
         } catch (ApiException $ex) {
-            $this->getLogger()->error("API exception while adding feedback from Feedback service\n" .
-                $ex->getMessage() . "\n" . $ex->getTraceAsString());
-        } catch (InvalidArgumentException $ex) {
-            $this->getLogger()->error("Mail exception while adding feedback from Feedback service\n" .
-                $ex->getMessage() . "\n" . $ex->getTraceAsString());
+            if ($ex->getStatusCode() === 400) {
+                throw new FeedbackValidationException($ex->getMessage());
+            }
+
+            throw $ex;
         }
 
-        return false;
+        $email = 'No email given';
+        if (isset($data['email'])) {
+            $email = $data['email'];
+        }
+
+        $phone = 'No phone number given';
+        if (isset($data['phone'])) {
+            $phone = $data['phone'];
+        }
+
+        $now = new DateTime('now');
+        $now->setTimezone(new DateTimeZone('Europe/London'));
+
+        // Send the feedback via email also
+        $templateData = [
+            'currentDateTime' => $now->format('Y/m/d H:i:s'),
+            'rating' => $data['rating'],
+            'details' => $data['details'],
+            'email' => $email,
+            'phone' => $phone,
+            'fromPage' => $data['fromPage'],
+            'agent' => $data['agent'],
+        ];
+
+        $mailParameters = new MailParameters(
+            $this->getConfig()['sendFeedbackEmailTo'],
+            AbstractEmailService::EMAIL_FEEDBACK,
+            $templateData
+        );
+
+        $this->getMailTransport()->send($mailParameters);
     }
 }

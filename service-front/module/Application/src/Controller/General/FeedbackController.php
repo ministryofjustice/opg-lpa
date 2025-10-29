@@ -4,13 +4,18 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\Feedback\Feedback;
+use Application\Model\Service\Feedback\FeedbackValidationException;
 use Laminas\Http\Header\Referer;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
+use MakeShared\Logging\LoggerTrait;
+use Throwable;
 
 class FeedbackController extends AbstractBaseController
 {
+    use LoggerTrait;
+
     /** @var Feedback */
     private $feedbackService;
 
@@ -43,20 +48,34 @@ class FeedbackController extends AbstractBaseController
                         $container->feedbackLinkClickedFromPage : 'Unknown'
                 );
 
-                $result = $this->feedbackService->add($data);
+                try {
+                    $this->feedbackService->add($data);
+                } catch (FeedbackValidationException $ex) {
+                    return new ViewModel([
+                        'form' => $form,
+                        'error' => $ex->getMessage(),
+                    ]);
+                } catch (Throwable $ex) {
+                    $message = "API exception while adding feedback from Feedback service: " . $ex->getMessage();
 
-                if ($result === true) {
-                    //  Add any return target to the query params and redirect to thank you page
-                    $options = (is_null($container->feedbackLinkClickedFromPage) ? [] : [
-                        'query' => [
-                            'returnTarget' => urlencode($container->feedbackLinkClickedFromPage),
-                        ],
+                    $this->getLogger()->error($message, [
+                        'trace' => $ex->getTrace(),
                     ]);
 
-                    return $this->redirect()->toRoute('feedback-thanks', [], $options);
-                } else {
-                    throw new \Exception('Error sending feedback email');
+                    return new ViewModel([
+                        'form' => $form,
+                        'error' => 'An error occurred while submitting feedback',
+                    ]);
                 }
+
+                //  Add any return target to the query params and redirect to thank you page
+                $options = (is_null($container->feedbackLinkClickedFromPage) ? [] : [
+                    'query' => [
+                        'returnTarget' => urlencode($container->feedbackLinkClickedFromPage),
+                    ],
+                ]);
+
+                return $this->redirect()->toRoute('feedback-thanks', [], $options);
             }
         } else {
             $container->setExpirationHops(1);
