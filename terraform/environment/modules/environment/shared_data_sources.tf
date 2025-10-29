@@ -49,3 +49,11 @@ data "aws_kms_alias" "multi_region_secrets_encryption_alias" {
 data "aws_region" "current" {}
 
 data "aws_caller_identity" "current" {}
+
+data "aws_availability_zones" "aws_zones" {
+  # Exclude Local Zones
+  filter {
+    name   = "opt-in-status"
+    values = ["opt-in-not-required"]
+  }
+}

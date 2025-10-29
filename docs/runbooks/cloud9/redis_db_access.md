@@ -24,7 +24,6 @@ Generally, if you want to access a Postgres or Redis instance, on AWS you will n
     3. select a public facing **Subnet** from the dropdown. **Note** these are usually the shorter named groups.
     4. Failure to do this will mean your instance cannot be accessed and will fail to deploy
 
-
 ### Once Connected
 
 Open a terminal window in your nearly created Cloud9 instance and run the following command to connect to the Redis cluster.
@@ -34,6 +33,7 @@ wget https://raw.githubusercontent.com/ministryofjustice/opg-lpa/main/docs/runbo
 ```
 
 #### Redis
+
 Execute the script inside of your Cloud9 terminal and you should see the URL of each Redis instance in the account and region which you can now connect to using the `redis-cli` tool. You must use TLS to connect to the Redis instance, so you will need to use the `--tls` flag.
 
 ``` bash
@@ -43,6 +43,7 @@ redis-cli --tls -p 6379 -h [endpoint]
 ```
 
 #### Postgres
+
 Execute the script inside of your Cloud9 terminal and you should see the URL of each Postgres instance in the account and region which you can now connect to using the `psql` tool. The login details will be printed out in the terminal. You will need to use the `-d` flag to specify the database you want to connect to which is normally `api2` for the Make an LPA service.
 
 ```bash
