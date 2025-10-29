@@ -12,4 +12,19 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+
+    <issueHandlers>
+        <!--
+            Everything in this module is designed to be used somewhere else, so Psalm cannot
+            detect their usage
+        -->
+        <UnusedClass errorLevel="suppress" />
+        <PossiblyUnusedMethod errorLevel="suppress" />
+
+        <!--
+            `final` classes are difficult to mock in tests and all of our code is internal,
+            minimising its usefulness
+        -->
+        <ClassMustBeFinal errorLevel="suppress" />
+    </issueHandlers>
 </psalm>
