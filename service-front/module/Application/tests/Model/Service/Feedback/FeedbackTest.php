@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace ApplicationTest\Model\Service\Feedback;
 
 use Application\Model\Service\ApiClient\Client;
+use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Feedback\Feedback;
+use Application\Model\Service\Feedback\FeedbackValidationException;
 use Application\Model\Service\Mail\MailParameters;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
+use GuzzleHttp\Psr7\Response;
 use Hamcrest\Matchers;
 use Hamcrest\MatcherAssert;
 use Mockery;
@@ -78,29 +81,18 @@ final class FeedbackTest extends AbstractEmailServiceTest
             }))
             ->once();
 
-        $result = $this->service->add($templateData);
-
-        $this->assertTrue($result);
+        $this->service->add($templateData);
     }
 
-    public function testAddException(): void
+    public function testAddReturns400ExceptionAsValidationException(): void
     {
-        $this->apiClient->shouldReceive('httpPost')->andReturnTrue();
+        $apiException = new ApiException(new Response(400, [], '{"detail":"a validation error occurred"}'));
 
-        $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(MailParameters::class))
-            ->once()
-            ->andThrow(new InvalidArgumentException('Test exception'));
+        $this->apiClient->shouldReceive('httpPost')->andThrow($apiException);
 
-        $result = $this->service->add([
-            'rating' => 'very-satisfied',
-            'details' => 'details',
-            'email' => '',
-            'phone' => '',
-            'fromPage' => '/home',
-            'agent' => 'Mozilla',
-        ]);
+        $this->expectException(FeedbackValidationException::class);
+        $this->expectExceptionMessage('a validation error occurred');
 
-        $this->assertFalse($result);
+        $this->service->add([]);
     }
 }
