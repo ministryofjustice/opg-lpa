@@ -26,7 +26,6 @@
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/doctrine/lexer" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/doctrine/persistence" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/egulias/email-validator" />
-      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/felixfbecker/advanced-json-rpc" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/felixfbecker/language-server-protocol" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/fidry/cpu-core-counter" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/firebase/php-jwt" />
@@ -348,6 +347,7 @@
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/league/uri" />
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/league/uri-interfaces" />
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/revolt/event-loop" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/danog/advanced-json-rpc" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
