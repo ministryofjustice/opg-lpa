@@ -9,11 +9,11 @@
             "laminas/laminas-component-installer": true
         },
         "platform": {
-            "php": "8.2"
+            "php": "8.3.24"
         }
     },
     "require": {
-        "php": ">=8.2 <8.3.0",
+        "php": ">=8.3 <8.5.0",
         "egulias/email-validator": "^4.0",
         "laminas/laminas-diactoros": "^3.0",
         "laminas/laminas-eventmanager": "^3.5",
@@ -25,7 +25,7 @@
         "hamcrest/hamcrest-php": "^2.0",
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^9.5.10",
-        "vimeo/psalm": "^5.0"
+        "vimeo/psalm": "^6.0"
     },
     "autoload": {
         "psr-4": {

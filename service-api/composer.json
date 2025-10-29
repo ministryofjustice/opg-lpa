@@ -64,7 +64,7 @@
             "laminas/laminas-component-installer": true
         },
         "platform": {
-            "php": "8.4",
+            "php": "8.4.13",
             "ext-intl": "1"
         }
     }

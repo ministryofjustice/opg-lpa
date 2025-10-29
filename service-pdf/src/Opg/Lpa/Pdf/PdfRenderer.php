@@ -23,9 +23,6 @@ class PdfRenderer implements LoggerAwareInterface
     /** @var bool */
     private bool $inited = false;
 
-    /** @var Config */
-    private Config $config;
-
     /** @var PdftkFactory */
     private PdftkFactory $pdftkFactory;
 
@@ -52,7 +49,6 @@ class PdfRenderer implements LoggerAwareInterface
      */
     public function __construct(Config $config, ?PdftkFactory $pdftkFactory = null)
     {
-        $this->config = $config;
         $this->init($config['service']['assets']);
 
         if (is_null($pdftkFactory)) {
@@ -69,22 +65,21 @@ class PdfRenderer implements LoggerAwareInterface
      *     template_path_on_ram_disk - Destination path for PDF templates
      * The file names required to render the individual PDFs are stored
      * in the Opg\Lpa\Pdf\Lp*.php classes.
-     * @returns bool True if successfully inited, false otherwise.
      */
-    public function init(array $assetsConfig)
+    public function init(array $assetsConfig): void
     {
         if ($this->inited) {
-            return true;
+            return;
         }
 
         if (!isset($assetsConfig['source_template_path'])) {
             $this->getLogger()->error('source_template_path not set in config');
-            return false;
+            return;
         }
 
         if (!isset($assetsConfig['template_path_on_ram_disk'])) {
             $this->getLogger()->error('template_path_on_ram_disk not set in config');
-            return false;
+            return;
         }
 
         // Copy LPA PDF template files into ram disk if they are not found
@@ -113,8 +108,6 @@ class PdfRenderer implements LoggerAwareInterface
         }
 
         $this->inited = true;
-
-        return true;
     }
 
     /**

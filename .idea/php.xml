@@ -567,6 +567,36 @@
       <path value="$PROJECT_DIR$/service-api/vendor/symfony/polyfill-php81" />
       <path value="$PROJECT_DIR$/service-api/vendor/symfony/polyfill-php73" />
       <path value="$PROJECT_DIR$/service-api/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/revolt/event-loop" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/daverandom/libdns" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/danog/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/kelunik/certificate" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/symfony/polyfill-php84" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/league/uri" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/amphp/dns" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/amphp/socket" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/amphp/parser" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/amphp/parallel" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/amphp/cache" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/amphp/process" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/amphp/serialization" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/amphp/pipeline" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/amphp/sync" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/revolt/event-loop" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/kelunik/certificate" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/daverandom/libdns" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/serialization" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/pipeline" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/cache" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/process" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/parser" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/parallel" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/dns" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/socket" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/sync" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/service-pdf/vendor/league/uri" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
