@@ -43,7 +43,6 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
     {
         //  Get the full content and determine the starting page
         $page = 1;
-        $fullContent = null;
 
         switch ($this->cs2Type) {
             case ContinuationSheet2Pdf::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS:
@@ -77,13 +76,13 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
                     ContinuationSheet2Pdf::CS2_TYPE_INSTRUCTIONS,
                     ])
                 ) {
-                    $content = $this->getInstructionsAndPreferencesContent($fullContent, $page);
+                    $this->getInstructionsAndPreferencesContent($fullContent, $page);
                 } else {
-                    $content = $this->getContinuationSheet2Content($fullContent, $page);
+                    $this->getContinuationSheet2Content($fullContent, $page);
                 }
 
                 $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $fullContent, $page, $this->pdftkFactory));
-            } catch (Exception $ignore) {
+            } catch (Exception) {
                 //  We've requested a page too far so break the loop
                 $contentFullyProcessed = true;
             }
