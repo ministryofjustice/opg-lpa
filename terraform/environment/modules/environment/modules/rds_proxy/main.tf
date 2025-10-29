@@ -14,7 +14,7 @@ resource "aws_db_proxy" "rds_proxy" {
     auth_scheme               = "SECRETS"
     description               = "Authentication for RDS Proxy"
     iam_auth                  = "DISABLED"
-    client_password_auth_type = "POSTGRES_SCRAM_SHA_256" # pragma: allowlist secret
+    client_password_auth_type = "POSTGRES_MD5" # pragma: allowlist secret
     secret_arn                = var.api_rds_credentials_secret_arn
   }
 }
