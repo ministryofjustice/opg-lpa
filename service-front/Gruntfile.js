@@ -77,13 +77,6 @@ module.exports = function (grunt) {
     // sass files to compile
     sass: {
       dev: {
-        options: {
-          loadPath: [
-            'node_modules/govuk_frontend_toolkit/stylesheets',
-            'node_modules/govuk-elements-sass/public/sass'
-          ],
-          sourcemap: false
-        },
         files: {
           'public/assets/v2/css/application.css': 'assets/sass/application.scss',
           'public/assets/v2/css/download-message.css': 'assets/sass/download-message.scss',

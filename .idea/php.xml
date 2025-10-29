@@ -292,7 +292,6 @@
       <path value="$PROJECT_DIR$/service-api/vendor/phpdocumentor/reflection-common" />
       <path value="$PROJECT_DIR$/service-api/vendor/phpdocumentor/type-resolver" />
       <path value="$PROJECT_DIR$/service-api/vendor/felixfbecker/language-server-protocol" />
-      <path value="$PROJECT_DIR$/service-api/vendor/felixfbecker/advanced-json-rpc" />
       <path value="$PROJECT_DIR$/service-api/vendor/composer" />
       <path value="$PROJECT_DIR$/service-api/vendor/psr/clock" />
       <path value="$PROJECT_DIR$/service-api/vendor/psr/http-factory" />
@@ -597,6 +596,38 @@
       <path value="$PROJECT_DIR$/service-pdf/vendor/amphp/sync" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/league/uri-interfaces" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/league/uri" />
+      <path value="$PROJECT_DIR$/service-front/vendor/amphp/pipeline" />
+      <path value="$PROJECT_DIR$/service-front/vendor/amphp/cache" />
+      <path value="$PROJECT_DIR$/service-front/vendor/amphp/serialization" />
+      <path value="$PROJECT_DIR$/service-front/vendor/amphp/socket" />
+      <path value="$PROJECT_DIR$/service-front/vendor/amphp/sync" />
+      <path value="$PROJECT_DIR$/service-front/vendor/amphp/parallel" />
+      <path value="$PROJECT_DIR$/service-front/vendor/amphp/dns" />
+      <path value="$PROJECT_DIR$/service-front/vendor/amphp/process" />
+      <path value="$PROJECT_DIR$/service-front/vendor/amphp/parser" />
+      <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-php84" />
+      <path value="$PROJECT_DIR$/service-front/vendor/kelunik/certificate" />
+      <path value="$PROJECT_DIR$/service-front/vendor/revolt/event-loop" />
+      <path value="$PROJECT_DIR$/service-front/vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/service-front/vendor/league/uri" />
+      <path value="$PROJECT_DIR$/service-front/vendor/danog/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/service-front/vendor/daverandom/libdns" />
+      <path value="$PROJECT_DIR$/service-api/vendor/revolt/event-loop" />
+      <path value="$PROJECT_DIR$/service-api/vendor/daverandom/libdns" />
+      <path value="$PROJECT_DIR$/service-api/vendor/amphp/parallel" />
+      <path value="$PROJECT_DIR$/service-api/vendor/amphp/dns" />
+      <path value="$PROJECT_DIR$/service-api/vendor/amphp/process" />
+      <path value="$PROJECT_DIR$/service-api/vendor/amphp/parser" />
+      <path value="$PROJECT_DIR$/service-api/vendor/amphp/pipeline" />
+      <path value="$PROJECT_DIR$/service-api/vendor/amphp/cache" />
+      <path value="$PROJECT_DIR$/service-api/vendor/amphp/serialization" />
+      <path value="$PROJECT_DIR$/service-api/vendor/amphp/socket" />
+      <path value="$PROJECT_DIR$/service-api/vendor/amphp/sync" />
+      <path value="$PROJECT_DIR$/service-api/vendor/league/uri" />
+      <path value="$PROJECT_DIR$/service-api/vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/service-api/vendor/ministryofjustice/opg-laminas-db" />
+      <path value="$PROJECT_DIR$/service-api/vendor/kelunik/certificate" />
+      <path value="$PROJECT_DIR$/service-api/vendor/danog/advanced-json-rpc" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
