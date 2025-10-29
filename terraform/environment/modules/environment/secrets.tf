@@ -60,3 +60,22 @@ data "aws_secretsmanager_secret" "performance_platform_db_username" {
 data "aws_secretsmanager_secret" "performance_platform_db_password" {
   name = "${var.account_name}/performance_platform_db_password"
 }
+
+resource "aws_secretsmanager_secret" "api_rds_credentials" {
+  count                   = var.account.database.rds_proxy_enabled ? 1 : 0
+  name                    = "${var.environment_name}/api_rds_credentials"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
+  count     = var.account.database.rds_proxy_enabled ? 1 : 0
+  secret_id = aws_secretsmanager_secret.api_rds_credentials[0].id
+  secret_string = jsonencode({
+    username            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string,
+    password            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string,
+    engine              = "postgres",
+    host                = module.api_aurora[0].endpoint,
+    port                = var.account.database.rds_proxy_enabled ? "5432" : 6432,
+    dbClusterIdentifier = "api2-${var.environment_name}"
+  })
+}
