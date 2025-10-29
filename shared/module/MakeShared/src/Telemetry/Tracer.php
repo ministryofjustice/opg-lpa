@@ -186,6 +186,7 @@ class Tracer
      * (see https://opentelemetry.io/docs/concepts/signals/traces/#attributes)
      *
      * @return ?Segment Created segment, or null if it could not be created
+     * @api
      */
     public function startSegment(string $name, array $attributes = []): ?Segment
     {

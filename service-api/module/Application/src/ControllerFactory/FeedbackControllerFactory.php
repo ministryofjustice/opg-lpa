@@ -7,6 +7,7 @@ use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use LmcRbacMvc\Service\AuthorizationService;
 use Application\Model\Service\Feedback\Service as FeedbackService;
+use Psr\Log\LoggerInterface;
 
 class FeedbackControllerFactory implements FactoryInterface
 {
@@ -20,7 +21,8 @@ class FeedbackControllerFactory implements FactoryInterface
     {
         return new FeedbackController(
             $container->get(FeedbackService::class),
-            $container->get(AuthorizationService::class)
+            $container->get(AuthorizationService::class),
+            $container->get(LoggerInterface::class),
         );
     }
 }

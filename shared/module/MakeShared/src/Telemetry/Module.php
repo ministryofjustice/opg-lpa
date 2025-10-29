@@ -121,7 +121,7 @@ class Module
         $this->tracer->startSegment($e->getSegmentName(), $e->getAttributes());
     }
 
-    public function stopSegment(Event $e)
+    public function stopSegment(): void
     {
         $this->tracer->stopSegment();
     }

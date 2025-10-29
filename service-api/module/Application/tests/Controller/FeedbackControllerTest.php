@@ -33,6 +33,8 @@ class FeedbackControllerTest extends MockeryTestCase
      */
     private $authorizationServiceService;
 
+    private LoggerInterface&MockInterface $logger;
+
     /**
      * @var PluginManager|MockInterface
      */
@@ -43,10 +45,9 @@ class FeedbackControllerTest extends MockeryTestCase
     {
         $this->feedbackService = Mockery::mock(FeedbackService::class);
         $this->authorizationServiceService = Mockery::mock(AuthorizationService::class);
+        $this->logger = Mockery::mock(LoggerInterface::class);
 
-        $this->controller = new FeedbackController($this->feedbackService, $this->authorizationServiceService);
-        $logger = Mockery::spy(LoggerInterface::class);
-        $this->controller->setLogger($logger);
+        $this->controller = new FeedbackController($this->feedbackService, $this->authorizationServiceService, $this->logger);
 
         $this->pluginManager = Mockery::mock(PluginManager::class);
         $this->pluginManager->shouldReceive('setController');
@@ -118,6 +119,8 @@ class FeedbackControllerTest extends MockeryTestCase
     public function testCreateWithNoData()
     {
         $this->feedbackService->shouldReceive('add')->andReturn(false);
+
+        $this->logger->shouldReceive('error')->once()->with('Data required for database insert was missing');
 
         $result = $this->controller->create([]);
 
