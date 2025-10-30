@@ -326,7 +326,7 @@ jobs:
       - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
         if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
         with:
-          channel-id: "C9PNCT2KS"
+          channel-id: "C09L117EZ27"
           update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
           payload: |
             {
@@ -364,7 +364,7 @@ jobs:
       - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
         if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
         with:
-          channel-id: "C9PNCT2KS"
+          channel-id: "C09L117EZ27"
           payload: |
             {
               "blocks": [
