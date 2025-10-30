@@ -52,7 +52,7 @@ jobs:
         run: |
           sed -i 's|"uri":"|"uri":"${{ matrix.scan.name }}\/|g' psalm-results.sarif
       - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@d198d2fabf39a7f36b5ce57ce70d4942944f006e # v3.31.0
+        uses: github/codeql-action/upload-sarif@0499de31b99561a6d14a36a5f662c2a54f91beee # v4.31.2
         if: always()
         with:
           sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
