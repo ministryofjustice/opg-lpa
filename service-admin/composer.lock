@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.356.42",
+            "version": "3.357.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c886d60206d2f100c2d132052875f53ce3f999f7"
+                "reference": "7020346835259ad07ce320b04bea912055d4a5bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c886d60206d2f100c2d132052875f53ce3f999f7",
-                "reference": "c886d60206d2f100c2d132052875f53ce3f999f7",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7020346835259ad07ce320b04bea912055d4a5bc",
+                "reference": "7020346835259ad07ce320b04bea912055d4a5bc",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.356.42"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.357.2"
             },
-            "time": "2025-10-17T18:17:41+00:00"
+            "time": "2025-10-24T19:16:19+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -2396,16 +2396,16 @@
         },
         {
             "name": "mezzio/mezzio",
-            "version": "3.23.1",
+            "version": "3.23.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mezzio/mezzio.git",
-                "reference": "cdea1c65153a6c817a3bf548d6e63fc3b8d4f246"
+                "reference": "988d39687683c9ae70d213c68c75c89965caad30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mezzio/mezzio/zipball/cdea1c65153a6c817a3bf548d6e63fc3b8d4f246",
-                "reference": "cdea1c65153a6c817a3bf548d6e63fc3b8d4f246",
+                "url": "https://api.github.com/repos/mezzio/mezzio/zipball/988d39687683c9ae70d213c68c75c89965caad30",
+                "reference": "988d39687683c9ae70d213c68c75c89965caad30",
                 "shasum": ""
             },
             "require": {
@@ -2498,7 +2498,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2025-10-13T13:21:13+00:00"
+            "time": "2025-10-22T10:56:04+00:00"
         },
         {
             "name": "mezzio/mezzio-fastroute",
