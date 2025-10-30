@@ -30,7 +30,7 @@ class Service extends AbstractService
     {
         $lpa = $this->getLpa($lpaId);
 
-        $lpaEntity = $this->applicationsService->fetch($lpa->seed, $userId);
+        $lpaEntity = $this->applicationsService->fetch(strval($lpa->seed), $userId);
 
         if (!($lpaEntity instanceof DataModelEntity)) {
             return new ApiProblem(404, 'Invalid LPA identifier to seed from');

@@ -51,7 +51,7 @@ class Stats extends AbstractService
         try {
             $stats['lpasPerUser'] = [
                 'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
-                'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
+                'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000.0),
                 'all' => $this->getApplicationRepository()->getLpasPerUser(),
             ];
 
@@ -97,7 +97,7 @@ class Stats extends AbstractService
         }
 
         $stats['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
-        $stats['generationTimeInMs'] = round((microtime(true) - $startGeneration) * 1000);
+        $stats['generationTimeInMs'] = round((microtime(true) - $startGeneration) * 1000.0);
 
         //---------------------------------------------------
         // Save the results
@@ -234,7 +234,7 @@ class Stats extends AbstractService
 
         return [
             'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
-            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
+            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000.0),
             'all' => $summary,
             'health-and-welfare' => $hw,
             'property-and-finance' => $pf,
@@ -275,7 +275,7 @@ class Stats extends AbstractService
         ksort($results['by-month']);
 
         $results['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
-        $results['generationTimeInMs'] = round((microtime(true) - $startGeneration) * 1000);
+        $results['generationTimeInMs'] = round((microtime(true) - $startGeneration) * 1000.0);
 
         return $results;
     }
@@ -326,7 +326,7 @@ class Stats extends AbstractService
 
         return [
             'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
-            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
+            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000.0),
             'by-month' => $correspondenceStats
         ];
     }
@@ -368,7 +368,7 @@ class Stats extends AbstractService
 
         return [
             'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
-            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
+            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000.0),
             'by-month' => $preferencesInstructionsStats
         ];
     }
@@ -663,7 +663,7 @@ class Stats extends AbstractService
 
         return [
             'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
-            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
+            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000.0),
             'by-month' => $optionStats
         ];
     }
