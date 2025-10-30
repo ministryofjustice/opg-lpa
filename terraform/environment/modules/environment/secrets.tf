@@ -75,7 +75,7 @@ resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
     password            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string,
     engine              = "postgres",
     host                = module.api_aurora[0].endpoint,
-    port                = var.account.database.rds_proxy_enabled ? "5432" : 6432,
+    port                = "5432",
     dbClusterIdentifier = "api2-${var.environment_name}"
   })
 }
