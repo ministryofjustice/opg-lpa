@@ -19,7 +19,7 @@
         "laminas/laminas-eventmanager": "^3.5",
         "monolog/monolog": "^3.9",
         "laminas/laminas-mvc": "^3.5",
-        "symfony/validator": "^5.4"
+        "symfony/validator": "^7.0"
     },
     "require-dev": {
         "hamcrest/hamcrest-php": "^2.0",
