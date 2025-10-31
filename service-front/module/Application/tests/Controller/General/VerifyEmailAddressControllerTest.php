@@ -5,12 +5,29 @@ declare(strict_types=1);
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\VerifyEmailAddressController;
+use Application\Form\User\Registration;
+use Application\Model\Service\Session\SessionManagerSupport;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
 final class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->sessionManagerSupport = \Mockery::mock(
+            SessionManagerSupport::class,
+            [$this->sessionManager]
+        )->makePartial();
+
+        $this->sessionManagerSupport
+            ->shouldReceive('getSessionManager')
+            ->andReturn($this->sessionManager)
+            ->byDefault();
+    }
+
     protected function getController(string $controllerName)
     {
         /** @var VerifyEmailAddressController $controller */
@@ -41,7 +58,7 @@ final class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
 
         $response = new Response();
 
-        $this->sessionManager->shouldReceive('initialise')->once();
+        $this->sessionManagerSupport->shouldReceive('initialise')->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('InvalidToken')->once();
         $this->userDetails->shouldReceive('updateEmailUsingToken')
             ->withArgs(['InvalidToken'])->andReturn(false)->once();
@@ -61,7 +78,7 @@ final class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
 
         $response = new Response();
 
-        $this->sessionManager->shouldReceive('initialise')->once();
+        $this->sessionManagerSupport->shouldReceive('initialise')->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
         $this->userDetails->shouldReceive('updateEmailUsingToken')
             ->withArgs(['ValidToken'])->andReturn(true)->once();

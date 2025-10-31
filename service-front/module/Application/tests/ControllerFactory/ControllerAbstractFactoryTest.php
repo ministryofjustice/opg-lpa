@@ -8,9 +8,10 @@ use Application\Controller\General\HomeController;
 use Application\ControllerFactory\ControllerAbstractFactory;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application;
-use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Psr\Container\ContainerInterface;
 use Laminas\Router\RouteMatch;
+use Laminas\Session\SessionManager;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -59,8 +60,11 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')->withArgs(['PersistentSessionDetails'])
             ->andReturn(Mockery::mock(ContainerInterface::class))->once();
 
-        $this->container->shouldReceive('get')->withArgs(['SessionManager'])
-            ->andReturn(Mockery::mock(SessionManager::class))->once();
+        $sessionManager = Mockery::mock(SessionManager::class);
+        $sessionManagerSupport = new SessionManagerSupport($sessionManager);
+
+        $this->container->shouldReceive('get')->withArgs([SessionManagerSupport::class])
+            ->andReturn($sessionManagerSupport)->once();
 
         $this->container->shouldReceive('get')->withArgs(['FormElementManager'])
             ->andReturn(Mockery::mock(AbstractPluginManager::class))->once();

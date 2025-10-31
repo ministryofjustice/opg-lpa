@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Controller;
 
+use Application\Model\Service\Session\SessionManagerSupport;
 use Exception;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
@@ -15,7 +16,6 @@ use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
-use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\Authenticated\Lpa\CertificateProviderControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\CorrespondentControllerTest;
@@ -23,6 +23,7 @@ use ApplicationTest\Controller\Authenticated\Lpa\DonorControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PeopleToNotifyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PrimaryAttorneyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTest;
+use Laminas\Session\SessionManager;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -131,6 +132,10 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      */
     protected $sessionManager;
     /**
+     * @var MockInterface|SessionManagerSupport
+     */
+    protected $sessionManagerSupport;
+    /**
      * @var MockInterface|LpaApplicationService
      */
     protected $lpaApplicationService;
@@ -227,8 +232,11 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $this->storage = new ArrayStorage();
 
         $this->sessionManager = Mockery::mock(SessionManager::class);
-        $this->sessionManager->shouldReceive('getStorage')->andReturn($this->storage);
+        $this->sessionManager->shouldReceive('getStorage')->andReturn($this->storage)->byDefault();
+        $this->sessionManager->shouldReceive('start')->andReturnNull()->byDefault();
+        $this->sessionManager->shouldReceive('regenerateId')->with(true)->andReturnNull()->byDefault();
 
+        $this->sessionManagerSupport = new SessionManagerSupport($this->sessionManager);
         $this->user = $this->getUserDetails();
 
         $this->setIdentity(
@@ -335,7 +343,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                 $controller = new $controllerName(
                     $lpaId,
                     $this->formElementManager,
-                    $this->sessionManager,
+                    $this->sessionManagerSupport,
                     $this->authenticationService,
                     $this->config,
                     $this->userDetailsSession,
@@ -347,7 +355,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
             } else {
                 $controller = new $controllerName(
                     $this->formElementManager,
-                    $this->sessionManager,
+                    $this->sessionManagerSupport,
                     $this->authenticationService,
                     $this->config,
                     $this->userDetailsSession,
@@ -358,7 +366,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         } else {
             $controller = new $controllerName(
                 $this->formElementManager,
-                $this->sessionManager,
+                $this->sessionManagerSupport,
                 $this->authenticationService,
                 $this->config
             );

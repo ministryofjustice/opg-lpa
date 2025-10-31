@@ -6,6 +6,7 @@ use Application\Controller\AbstractBaseController;
 use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Session\SessionManagerSupport;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Session\Container;
@@ -61,7 +62,7 @@ class AuthController extends AbstractBaseController
                 $session = $this->getSessionManager();
 
                 $session->getStorage()->clear();
-                $session->initialise();
+                $this->sessionManagerSupport->initialise();
 
                 /** @var array<string,mixed> $formData */
                 $formData = $form->getData();
