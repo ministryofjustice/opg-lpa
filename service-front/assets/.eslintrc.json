@@ -7,6 +7,8 @@
 
   "parser": "@babel/eslint-parser",
 
+  "plugins": ["promise"],
+
   "env": {
     "browser": true
   },
@@ -23,9 +25,13 @@
     "$": "readonly"
   },
 
-  "extends": ["plugin:prettier/recommended", "eslint:recommended"],
+  "extends": [
+    "plugin:prettier/recommended",
+    "eslint:recommended",
+    "plugin:promise/recommended"
+  ],
 
-  "ignorePatterns": ["js/opg/env-vars.template.js", "js/lpa/lpa.templates.js"],
+  "ignorePatterns": ["js/opg/env-vars.template.js", "js/opg/env-vars.js", "js/lpa/lpa.templates.js"],
 
   "rules": {
   }
