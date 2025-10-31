@@ -7,7 +7,7 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
-use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details as UserService;
 use Application\View\Helper\MoneyFormat;
 use Laminas\Form\Element;
@@ -31,7 +31,7 @@ class FeeReductionController extends AbstractLpaController
      *
      * @param string $lpaId
      * @param AbstractPluginManager $formElementManager
-     * @param SessionManager $sessionManager
+     * @param SessionManagerSupport $sessionManagerSupport
      * @param AuthenticationService $authenticationService
      * @param array $config
      * @param Container $userDetailsSession
@@ -44,7 +44,7 @@ class FeeReductionController extends AbstractLpaController
     public function __construct(
         $lpaId,
         $formElementManager,
-        $sessionManager,
+        $sessionManagerSupport,
         $authenticationService,
         $config,
         $userDetailsSession,
@@ -57,7 +57,7 @@ class FeeReductionController extends AbstractLpaController
         parent::__construct(
             $lpaId,
             $formElementManager,
-            $sessionManager,
+            $sessionManagerSupport,
             $authenticationService,
             $config,
             $userDetailsSession,

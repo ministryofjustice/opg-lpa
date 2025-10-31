@@ -149,7 +149,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
         $controller = new StatusController(
             $testLpaId,
             $this->formElementManager,
-            $this->sessionManager,
+            $this->sessionManagerSupport,
             $this->authenticationService,
             $this->config,
             $userDetailsSession,

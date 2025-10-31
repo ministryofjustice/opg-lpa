@@ -3,7 +3,8 @@
 namespace Application\Controller;
 
 use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\Session\SessionManagerSupport;
+use Laminas\Session\SessionManager;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
@@ -22,9 +23,9 @@ abstract class AbstractBaseController extends AbstractActionController implement
     private $formElementManager;
 
     /**
-     * @var SessionManager
+     * @var SessionManagerSupport
      */
-    private $sessionManager;
+    protected $sessionManagerSupport;
 
     /**
      * @var AuthenticationService
@@ -39,18 +40,18 @@ abstract class AbstractBaseController extends AbstractActionController implement
     /**§
      * AbstractBaseController constructor.
      * @param AbstractPluginManager $formElementManager
-     * @param SessionManager $sessionManager
+     * @param SessionManagerSupport $sessionManagerSupport
      * @param AuthenticationService $authenticationService
      * @param array $config
      */
     public function __construct(
         AbstractPluginManager $formElementManager,
-        SessionManager $sessionManager,
+        SessionManagerSupport $sessionManagerSupport,
         AuthenticationService $authenticationService,
         array $config
     ) {
         $this->formElementManager = $formElementManager;
-        $this->sessionManager = $sessionManager;
+        $this->sessionManagerSupport = $sessionManagerSupport;
         $this->authenticationService = $authenticationService;
         $this->config = $config;
     }
@@ -188,7 +189,7 @@ abstract class AbstractBaseController extends AbstractActionController implement
      */
     protected function getSessionManager(): SessionManager
     {
-        return $this->sessionManager;
+        return $this->sessionManagerSupport->getSessionManager();
     }
 
     /**
