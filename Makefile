@@ -8,7 +8,7 @@ GOVPAY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-va
 ORDNANCESURVEY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_os_places_hub_license_key | jq -r .'SecretString')
 
 # Used for emails sent by service-api's account cleanup CLI script.
-NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_api_notify_api_key | jq -r .'SecretString')
+NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id local/opg_lpa_api_notify_api_key | jq -r .'SecretString')
 
 # Used in service-admin to determine which logged-in user has admin rights.
 # This user is in the test data seeded into the system.
