@@ -86,7 +86,6 @@ return [
 
     'view_helpers' => [
         'invokables' => [
-            'formElementErrorsV2'   => 'Application\View\Helper\FormElementErrorsV2',
             'formLinkedErrorListV2' => 'Application\View\Helper\FormLinkedErrorListV2',
             'formErrorTextExchange' => 'Application\View\Helper\FormErrorTextExchange',
             'concatNames'           => 'Application\View\Helper\ConcatNames',
@@ -102,10 +101,11 @@ return [
             'formtext'              => 'Application\Form\View\Helper\FormText',
         ],
         'factories' => [
-            'accordion'     => 'Application\View\Helper\AccordionFactory',
-            'accountInfo'   => 'Application\View\Helper\AccountInfoFactory',
-            'routeName'     => 'Application\View\Helper\RouteNameFactory',
-            'systemMessage' => 'Application\View\Helper\SystemMessageFactory',
+            'accordion'             => 'Application\View\Helper\AccordionFactory',
+            'accountInfo'           => 'Application\View\Helper\AccountInfoFactory',
+            'formElementErrorsV2'   => 'Application\View\Helper\FormElementErrorsFactory',
+            'routeName'             => 'Application\View\Helper\RouteNameFactory',
+            'systemMessage'         => 'Application\View\Helper\SystemMessageFactory',
         ],
     ],
 
