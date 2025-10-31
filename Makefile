@@ -124,7 +124,6 @@ dc-build-clean:
 	docker rmi seeding || true; \
 	docker rmi gateway || true; \
 	docker rmi mocksirius || true; \
-	docker rmi opg-lpa_local-config; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
