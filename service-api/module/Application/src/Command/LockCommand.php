@@ -96,10 +96,10 @@ class LockCommand extends Command
         ]);
 
         // Current time in milliseconds
-        $time = round(microtime(true) * 1000);
+        $time = round(microtime(true) * 1000.0);
 
         // If the existing lock is older than this time, we can take the lock
-        $takeLockIfOlderThan = $time - (intval($input->getOption('ttl')) * 1000);
+        $takeLockIfOlderThan = $time - floatval(intval($input->getOption('ttl')) * 1000);
 
         $updateJson = [
                 'TableName' => $tableName,

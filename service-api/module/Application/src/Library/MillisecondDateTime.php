@@ -18,7 +18,7 @@ class MillisecondDateTime extends \DateTime
     {
         if ($time == 'now' && (is_null($timezone) || $timezone->getName() == 'UTC')) {
             $t = microtime(true);
-            $micro = sprintf("%06d", ($t - floor($t)) * 1000000);
+            $micro = sprintf("%06d", ($t - floor($t)) * 1000000.0);
             $time = date('Y-m-d H:i:s.' . $micro, intval($t));
         }
 

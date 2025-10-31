@@ -18,7 +18,7 @@ certifi==2025.10.5
     # via
     #   geventhttpclient
     #   requests
-charset-normalizer==3.4.3
+charset-normalizer==3.4.4
     # via requests
 click==8.3.0
     # via flask
@@ -26,7 +26,7 @@ configargparse==1.7.1
     # via
     #   locust
     #   locust-cloud
-faker==37.11.0
+faker==37.12.0
     # via -r requirements.in
 flask==3.1.2
     # via
@@ -42,21 +42,21 @@ gevent==25.9.1
     #   geventhttpclient
     #   locust
     #   locust-cloud
-geventhttpclient==2.3.4
+geventhttpclient==2.3.5
     # via locust
 greenlet==3.2.4
     # via gevent
 h11==0.16.0
     # via wsproto
-idna==3.10
+idna==3.11
     # via requests
 itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-locust==2.41.6
+locust==2.42.0
     # via -r requirements.in
-locust-cloud==1.27.5
+locust-cloud==1.27.6
     # via locust
 markupsafe==3.0.3
     # via
@@ -67,7 +67,7 @@ msgpack==1.1.2
     # via locust
 platformdirs==4.5.0
     # via locust-cloud
-psutil==7.1.0
+psutil==7.1.2
     # via locust
 python-dateutil==2.9.0.post0
     # via faker
@@ -75,7 +75,7 @@ python-engineio==4.12.3
     # via
     #   locust-cloud
     #   python-socketio
-python-socketio[client]==5.14.0
+python-socketio[client]==5.14.2
     # via locust-cloud
 pyzmq==27.1.0
     # via locust
