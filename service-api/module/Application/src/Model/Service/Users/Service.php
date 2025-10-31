@@ -59,7 +59,7 @@ class Service extends AbstractService
             // Create a 32 character user id and activation token.
             $userId = bin2hex(random_bytes(16));
 
-            $activationToken = 'mywonderfultoken';
+            $activationToken = make_token();
 
             $created = $this->getUserRepository()->create($userId, [
                 'identity'              => $username,
