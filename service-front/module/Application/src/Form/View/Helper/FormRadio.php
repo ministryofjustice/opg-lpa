@@ -4,11 +4,22 @@ namespace Application\Form\View\Helper;
 
 use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\Element\Radio;
+use Laminas\Form\ElementInterface;
 use Laminas\Form\LabelAwareInterface;
-use Laminas\Form\View\Helper\FormRadio as LaminasFormRadioHelper;
+use Laminas\Form\View\Helper\FormMultiCheckbox;
 
-class FormRadio extends LaminasFormRadioHelper
+class FormRadio extends FormMultiCheckbox
 {
+    protected function getInputType(): string
+    {
+        return 'radio';
+    }
+
+    protected static function getName(ElementInterface $element): string
+    {
+        return (string) $element->getName();
+    }
+
     /**
      * This allows us to output a single Radio option from a Radio Element's available options.
      *
