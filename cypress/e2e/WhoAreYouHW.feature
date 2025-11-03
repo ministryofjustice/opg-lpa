@@ -24,6 +24,7 @@ Feature: Who Are You for a Health and Welfare LPA
         And I can find "who-organisation"
         And I can find "who-other"
         And I can find "who-notSaid"
+        And I can find hidden "other-input"
         When I click "save"
         Then I see "There is a problem" in the page text
         When I check "who"
