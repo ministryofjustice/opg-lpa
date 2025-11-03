@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Session;
 
+use Laminas\Session\SessionManager;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
-use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Laminas\Session\Container;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
@@ -21,14 +22,16 @@ final class SessionManagerTest extends MockeryTestCase
     #[RunInSeparateProcess]
     public function testSessionManager(): void
     {
-        $container = new Container('initialised');
-
-        $sessionManager = new SessionManager($container);
+        $sessionManager = new SessionManager();
         $sessionManager->start();
 
         $origId = $sessionManager->getId();
 
-        $sessionManager->initialise();
+        $supportManagerSupport = new SessionManagerSupport($sessionManager);
+        $supportManagerSupport->initialise();
+
+        $container = new Container('initialised');
+
 
         $this->assertEquals($container->init, true);
         $this->assertNotSame($origId, $sessionManager->getId());

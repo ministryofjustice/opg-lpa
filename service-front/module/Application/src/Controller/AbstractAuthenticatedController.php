@@ -5,7 +5,7 @@ namespace Application\Controller;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details as UserService;
 use MakeShared\DataModel\User\User;
 use Laminas\Mvc\MvcEvent;
@@ -49,7 +49,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      * AbstractAuthenticatedController constructor
      *
      * @param AbstractPluginManager $formElementManager
-     * @param SessionManager $sessionManager
+     * @param SessionManagerSupport $sessionManagerSupport
      * @param AuthenticationService $authenticationService
      * @param array $config
      * @param Container $userDetailsSession
@@ -58,14 +58,14 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      */
     public function __construct(
         AbstractPluginManager $formElementManager,
-        SessionManager $sessionManager,
+        SessionManagerSupport $sessionManagerSupport,
         AuthenticationService $authenticationService,
         array $config,
         Container $userDetailsSession,
         LpaApplicationService $lpaApplicationService,
         UserService $userService
     ) {
-        parent::__construct($formElementManager, $sessionManager, $authenticationService, $config);
+        parent::__construct($formElementManager, $sessionManagerSupport, $authenticationService, $config);
 
         $this->lpaApplicationService = $lpaApplicationService;
         $this->userService = $userService;

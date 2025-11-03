@@ -91,7 +91,7 @@ class ForgotPasswordController extends AbstractBaseController
             /// Log them out...
             $session = $this->getSessionManager();
             $session->getStorage()->clear();
-            $session->initialise();
+            $this->sessionManagerSupport->initialise();
 
             // Then redirect the user to the same page, now signed out, and with a new CSRF token.
             return $this->redirect()->toRoute('forgot-password/callback', ['token' => $token]);
