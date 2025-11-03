@@ -7,7 +7,7 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
-use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details as UserService;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Mvc\MvcEvent;
@@ -39,7 +39,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      * AbstractLpaController constructor.
      * @param string $lpaId
      * @param AbstractPluginManager $formElementManager
-     * @param SessionManager $sessionManager
+     * @param SessionManagerSupport $sessionManagerSupport
      * @param AuthenticationService $authenticationService
      * @param array $config
      * @param Container $userDetailsSession
@@ -51,7 +51,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     public function __construct(
         $lpaId,
         AbstractPluginManager $formElementManager,
-        SessionManager $sessionManager,
+        SessionManagerSupport $sessionManagerSupport,
         AuthenticationService $authenticationService,
         array $config,
         Container $userDetailsSession,
@@ -62,7 +62,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     ) {
         parent::__construct(
             $formElementManager,
-            $sessionManager,
+            $sessionManagerSupport,
             $authenticationService,
             $config,
             $userDetailsSession,

@@ -10,20 +10,24 @@ variable "account" {
     sirius_api_gateway_arn                 = string
     sirius_api_healthcheck_arn             = string
     telemetry_requests_sampled_fraction    = string
-    backup_retention_period                = number
     auth_token_ttl_secs                    = number
-    skip_final_snapshot                    = bool
-    psql_engine_version                    = string
-    psql_parameter_group_family            = string
-    aurora_enabled                         = bool
-    aurora_serverless                      = bool
-    aurora_instance_count                  = number
-    deletion_protection                    = bool
     always_on                              = bool
     log_retention_in_days                  = number
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
-    rds_instance_type                      = string
+    database = object({
+      aurora_cross_region_backup_enabled = bool
+      aurora_enabled                     = bool
+      aurora_instance_count              = number
+      aurora_serverless                  = bool
+      backup_retention_period            = number
+      deletion_protection                = bool
+      psql_engine_version                = string
+      psql_parameter_group_family        = string
+      rds_instance_type                  = string
+      rds_proxy_enabled                  = bool
+      skip_final_snapshot                = bool
+    })
     regions = map(
       object({
         region     = string

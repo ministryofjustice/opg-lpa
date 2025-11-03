@@ -7,6 +7,7 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use Application\Model\Service\Session\SessionManagerSupport;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
@@ -43,7 +44,17 @@ final class AuthControllerTest extends AbstractControllerTestCase
 
         $this->url->shouldReceive('fromRoute')->withArgs(['login'])->andReturn('login');
 
-        $this->sessionManager->shouldReceive('initialise');
+        $this->sessionManagerSupport = \Mockery::mock(
+            SessionManagerSupport::class,
+            [$this->sessionManager]
+        )->makePartial();
+
+        $this->sessionManagerSupport
+            ->shouldReceive('getSessionManager')
+            ->andReturn($this->sessionManager)
+            ->byDefault();
+
+        $this->sessionManagerSupport->shouldReceive('initialise');
 
         $this->setIdentity(null);
     }
@@ -166,7 +177,7 @@ final class AuthControllerTest extends AbstractControllerTestCase
             ->withArgs(['https://localhost/user/about-you'])->andReturn($response)->once();
 
         /** @var ViewModel $result */
-        Container::setDefaultManager($this->sessionManager);
+        Container::setDefaultManager($this->sessionManagerSupport->getSessionManager());
         $result = $controller->indexAction();
         Container::setDefaultManager(null);
 
@@ -208,7 +219,7 @@ final class AuthControllerTest extends AbstractControllerTestCase
             ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id], []])->andReturn($response)->once();
 
         /** @var ViewModel $result */
-        Container::setDefaultManager($this->sessionManager);
+        Container::setDefaultManager($this->sessionManagerSupport->getSessionManager());
         $result = $controller->indexAction();
         Container::setDefaultManager(null);
 

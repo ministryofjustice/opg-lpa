@@ -62,14 +62,14 @@ module "environment_dns" {
 
 
 module "cross_region_backup" {
-  count  = local.account.aurora_cross_region_backup_enabled ? 1 : 0
+  count  = local.account.database.aurora_cross_region_backup_enabled ? 1 : 0
   source = "./modules/rds_cross_region_backup"
   providers = {
     aws             = aws.eu_west_1
     aws.destination = aws.eu_west_2
   }
 
-  retention_period        = local.account.backup_retention_period
+  retention_period        = local.account.database.backup_retention_period
   source_cluster_arn      = module.eu-west-1.aws_aurora_cluster_arn
   environment_name        = local.environment_name
   destination_region_name = "eu-west-2"
