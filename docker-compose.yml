@@ -73,59 +73,41 @@ services:
 
   localstack:
     container_name: lpa-localstack
-    image: localstack/localstack:3.8.1@sha256:b279c01f4cfb8f985a482e4014cabc1e2697b9d7a6c8c8db2e40f4d9f93687c7
+    image: localstack/localstack:4.10.0@sha256:a65ee2a9d45a7a34a1f1faae515d2e577ce11210312c077700ccc82daefec238
+    depends_on:
+      dynamodb:
+        condition: service_started
     privileged: true
-#    ports:
-#      - 4568:4566
+    ports:
+      - "127.0.0.1:4566:4566" # To support app.localstack.cloud
     environment:
-      - SERVICES=sqs,s3,lambda,secretsmanager
-      - DEFAULT_REGION=eu-west-1
-      - HOSTNAME=localstack
-      - LAMBDA_EXECUTOR=docker
-      - DEBUG=1
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
+      DEBUG: 1
+      DYNAMODB_URL: http://dynamodb:8000
+      FRONT_DOMAIN: localhost:7002
+      HOSTNAME: localstack
       # Configure lambdas started within localstack so
       # that they use the external malpadev network.
       # This enables them to resolve names of containers
       # within the docker compose environment, providing
       # they have an alias on this network.
-      - LAMBDA_DOCKER_NETWORK=malpadev
+      LAMBDA_DOCKER_NETWORK: malpadev
+      LAMBDA_EXECUTOR: docker
+      OPG_LPA_COMMON_PDF_QUEUE_NAME: pdf-queue.fifo
+      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
+      OPG_LPA_COMMON_SQS_ENDPOINT: localstack:4566
+      OPG_LPA_COMMON_S3_ENDPOINT: localstack:4566
+      SERVICES: sqs,s3,lambda,secretsmanager
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./localstack/:/etc/localstack/init/ready.d/
     networks:
       default:
         aliases:
           - sqs.eu-west-1.localhost.localstack.cloud
     healthcheck:
       test: ["CMD", "curl", "http://localhost:4566/_localstack/health?reload"]
-
-  local-config:
-    container_name: lpa-local-config
-    image: lpa-local-config
-    build:
-      context: ./local-config/
-      dockerfile: ./Dockerfile
-    depends_on:
-      dynamodb:
-        condition: service_started
-      postgres:
-        condition: service_healthy
-      localstack:
-        condition: service_healthy
-    volumes:
-      - ./local-config/:/app/
-    environment:
-      AWS_ACCESS_KEY_ID: "devkey"
-      AWS_SECRET_ACCESS_KEY: "secretdevkey"
-      AWS_ENDPOINT_DYNAMODB: dynamodb:8000
-
-      OPG_LPA_COMMON_SQS_ENDPOINT: localstack:4566
-      OPG_LPA_COMMON_PDF_QUEUE_NAME: pdf-queue.fifo
-
-      OPG_LPA_COMMON_S3_ENDPOINT: localstack:4566
-      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
-
-      OPG_LPA_COMMON_LAMBDA_ENDPOINT: localstack:4566
-      FRONT_DOMAIN: localhost:7002
 
   # ---------------------------
   # Front
@@ -162,8 +144,6 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
-      local-config:
-        condition: service_started
       node-build-assets:
         condition: service_started
       govpaystub:
@@ -265,8 +245,6 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
-      local-config:
-        condition: service_started
       postgres:
         condition: service_healthy
     environment:
@@ -359,8 +337,6 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
-      local-config:
-        condition: service_started
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -421,8 +397,6 @@ services:
     depends_on:
       localstack:
         condition: service_healthy
-      local-config:
-        condition: service_started
     volumes:
       - ./service-pdf:/app
       - ./shared:/shared
@@ -459,8 +433,6 @@ services:
       context: ./
       dockerfile: service-seeding/docker/app/Dockerfile
     depends_on:
-      local-config:
-          condition: service_started
       postgres:
           condition: service_healthy
       dynamodb:
