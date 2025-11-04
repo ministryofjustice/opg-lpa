@@ -82,7 +82,6 @@ jobs:
   phpunit_tests:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit.yml
-    secrets: inherit #pragma: allowlist secret
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
