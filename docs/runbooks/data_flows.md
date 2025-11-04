@@ -55,7 +55,6 @@ The purpose of each component in the diagram:
 Note that this diagram excludes components which only live in CI (pipelines in CircleCI) and/or dev (your local machine):
 
 * localstack: Mimics the functionality of AWS services (S3, lambda) in dev
-* local-config: Sets up S3 buckets, dynamodb database and SQS queues in dev
 * node-build-assets: Dynamically rebuilds JS and CSS in dev (if you're editing those files, this container refreshes the compiled JS/CSS as the source files change)
 * seeding: Adds test data to the postgres db in dev
 
