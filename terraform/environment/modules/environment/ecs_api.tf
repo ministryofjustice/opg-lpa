@@ -292,10 +292,6 @@ locals {
       },
       "dependsOn" : [
         {
-          "containerName" : "permissions-init",
-          "condition" : "SUCCESS"
-        },
-        {
           "containerName" : "pgbouncer",
           "condition" : "HEALTHY"
         }
