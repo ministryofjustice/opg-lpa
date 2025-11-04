@@ -2,16 +2,16 @@
 // Api ECS Service level config
 
 resource "aws_ecs_service" "api" {
-  name                               = "api"
-  cluster                            = aws_ecs_cluster.online-lpa.id
-  task_definition                    = aws_ecs_task_definition.api.arn
-  desired_count                      = var.account.autoscaling.api.minimum
-  launch_type                        = "FARGATE"
-  platform_version                   = "1.4.0"
-  propagate_tags                     = "TASK_DEFINITION"
-  wait_for_steady_state              = true
-  deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 200
+  name                  = "api"
+  cluster               = aws_ecs_cluster.online-lpa.id
+  task_definition       = aws_ecs_task_definition.api.arn
+  desired_count         = var.account.autoscaling.api.minimum
+  launch_type           = "FARGATE"
+  platform_version      = "1.4.0"
+  propagate_tags        = "TASK_DEFINITION"
+  wait_for_steady_state = true
+  # deployment_minimum_healthy_percent = 50
+  # deployment_maximum_percent         = 200
   network_configuration {
     security_groups = [
       aws_security_group.api_ecs_service.id,
@@ -30,6 +30,10 @@ resource "aws_ecs_service" "api" {
     ignore_changes = [
       desired_count
     ]
+  }
+  timeouts {
+    create = "10m"
+    update = "6m"
   }
 
   tags = local.api_component_tag
@@ -138,6 +142,7 @@ resource "aws_ecs_task_definition" "api" {
   tags               = local.api_component_tag
   volume {
     name = "app_tmp"
+
   }
 }
 
@@ -264,7 +269,6 @@ locals {
         {
           "containerPath" : "/tmp",
           "sourceVolume" : "app_tmp"
-          "readOnly" : false
         }
       ],
       "portMappings" : [
