@@ -77,6 +77,8 @@ RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
 
+RUN chown appuser:appuser /tmp
 USER appuser
+VOLUME [ "/tmp" ]
 
 CMD ["/bin/sh", "-c", "/usr/local/bin/db-migrations.sh && php-fpm"]
