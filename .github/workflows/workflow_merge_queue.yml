@@ -80,7 +80,6 @@ jobs:
   phpunit_tests:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit.yml
-    secrets: inherit #pragma: allowlist secret
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
@@ -90,7 +89,10 @@ jobs:
       - phpunit_tests
     with:
       tag: integration-${{ needs.set_variables.outputs.semver_tag }}
-    secrets: inherit #pragma: allowlist secret
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   terraform_account_preproduction:
     name: TF Preproduction - Account
@@ -160,7 +162,9 @@ jobs:
       - terraform_environment_preproduction
       - terraform_region_preproduction
       - terraform_account_preproduction
-    secrets: inherit #pragma: allowlist secret
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
   preprod_terraform_outputs:
     name: Render terraform outputs
@@ -212,7 +216,9 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@Signup,@StitchedPF"
-    secrets: inherit #pragma: allowlist secret
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
   cypress_tests_Signup_StichedHW:
     name: Run Cypress tests - @Signup,@StitchedHW
@@ -225,7 +231,9 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@Signup,@StitchedHW"
-    secrets: inherit #pragma: allowlist secret
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
   cypress_tests_SignupIncluded:
     name: Run Cypress tests - @SignupIncluded
@@ -238,7 +246,9 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@SignupIncluded"
-    secrets: inherit #pragma: allowlist secret
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
   # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
   # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
@@ -253,7 +263,9 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
-    secrets: inherit #pragma: allowlist secret
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
   locust_tests:
     name: Run locust tests
@@ -264,7 +276,9 @@ jobs:
     with:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
-    secrets: inherit #pragma: allowlist secret
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
   end_of_workflow:
     name: End of Workflow
