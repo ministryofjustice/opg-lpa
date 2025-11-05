@@ -194,13 +194,14 @@ locals {
         {
           "containerPath" : "/etc",
           "sourceVolume" : "web_etc"
+          "readOnly" : false
         }
       ],
       "name" : "web",
       "portMappings" : [
         {
           "containerPort" : 8080,
-          "hostPort" : 80,
+          "hostPort" : 8080,
           "protocol" : "tcp"
         }
       ],
@@ -280,6 +281,7 @@ locals {
         {
           "containerPath" : "/tmp",
           "sourceVolume" : "app_tmp"
+          "readOnly" : false
         }
       ],
       "portMappings" : [
