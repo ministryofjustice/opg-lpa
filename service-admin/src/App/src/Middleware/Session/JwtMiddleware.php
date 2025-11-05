@@ -39,7 +39,6 @@ namespace App\Middleware\Session;
  */
 
 use Closure;
-use DateTimeImmutable;
 use DomainException;
 use InvalidArgumentException;
 use Exception;
@@ -51,12 +50,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
-use Tuupola\Middleware\DoublePassTrait;
-use Tuupola\Http\Factory\ResponseFactory;
+use GuzzleHttp\Psr7\HttpFactory;
 
 final class JwtMiddleware implements MiddlewareInterface
 {
-    use DoublePassTrait;
     use LoggerTrait;
 
     /**
@@ -118,7 +115,7 @@ final class JwtMiddleware implements MiddlewareInterface
             $token = $this->fetchToken($request);
             $decoded = $this->decodeToken($token);
         } catch (RuntimeException | DomainException $exception) {
-            return (new ResponseFactory())->createResponse(401);
+            return (new HttpFactory())->createResponse(401);
         }
 
         $params = [
