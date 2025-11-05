@@ -21,6 +21,10 @@ APP_VERSION := $(shell echo -n `git rev-parse --short HEAD`)
 
 PHPCS_REPORT ?= full
 
+#COLORS
+YELLOW := $(shell tput -Txterm setaf 3)
+RESET  := $(shell tput -Txterm sgr0)
+
 .PHONY: all
 all:
 	@${MAKE} dc-up
@@ -95,13 +99,12 @@ api-composer-why:
 
 .PHONY: dc-up
 dc-up: run-composers
+	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
-	aws-vault exec moj-lpa-dev -- aws ecr get-login-password --region eu-west-1 | docker login \
-		--username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com; \
 	docker compose up -d
 
 .PHONY: dc-build
@@ -164,6 +167,7 @@ soft-reset-front:
 .PHONY: reset-front-web
 reset-front-web:
 	@${MAKE} dc-down
+	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password.${RESET})
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
