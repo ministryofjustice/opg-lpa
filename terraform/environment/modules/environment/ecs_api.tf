@@ -220,8 +220,8 @@ locals {
       logConfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogsgroup          = aws_cloudwatch_log_group.application_logs.name,
-          awslogsregion         = var.region_name,
+          awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
+          awslogs-region        = var.region_name,
           awslogs-stream-prefix = "${var.environment_name}.api-web.online-lpa",
         }
       },
@@ -258,8 +258,8 @@ locals {
       logConfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogsgroup          = aws_cloudwatch_log_group.application_logs.name,
-          awslogsregion         = var.region_name,
+          awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
+          awslogs-region        = var.region_name,
           awslogs-stream-prefix = "${var.environment_name}.pgbouncer.online-lpa",
         }
       },
