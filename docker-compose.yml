@@ -24,8 +24,8 @@ services:
       start_period: 60s
     depends_on:
       - postgres
-#    ports:
-#      - 6432:6432
+    #    ports:
+    #      - 6432:6432
     environment:
       POSTGRESQL_HOST: postgres
       POSTGRESQL_USERNAME: lpauser
@@ -52,14 +52,14 @@ services:
   redis:
     container_name: lpa-redis
     image: library/redis:8.2-alpine@sha256:59b6e694653476de2c992937ebe1c64182af4728e54bb49e9b7a6c26614d8933
-#    ports:
-#      - 6379:6379
+  #    ports:
+  #      - 6379:6379
 
   dynamodb:
     container_name: lpa-dynamodb
     image: amazon/dynamodb-local@sha256:7ef4a2c45b58c2901e70a4f28e0953a422c2c631baaaf5e2c15e0805740c7752
-#    ports:
-#      - 8000:8000
+  #    ports:
+  #      - 8000:8000
 
   govpaystub:
     container_name: lpa-govpaystub
@@ -126,7 +126,6 @@ services:
       APP_HOST: front-app
       APP_PORT: 9000
 
-
   front-app:
     container_name: lpa-front-app
     image: lpa-front-app
@@ -152,7 +151,7 @@ services:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
 
-      OPG_LPA_ENDPOINTS_API: "http://api-web"
+      OPG_LPA_ENDPOINTS_API: "http://api-web:8080"
 
       OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: "Properties"
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
@@ -179,13 +178,9 @@ services:
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
 
-      OPG_LPA_OS_PLACES_HUB_ENDPOINT : "https://api.os.uk/search/places/v1/postcode"
+      OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
     healthcheck:
-      test:
-        [
-          "CMD",
-          "/usr/local/bin/health-check.sh"
-        ]
+      test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
       timeout: 15s
       retries: 3
@@ -222,11 +217,10 @@ services:
       context: ./
       dockerfile: service-api/docker/web/Dockerfile
     ports:
-      - 7001:80
+      - 7001:8080
     environment:
       APP_HOST: api-app
       APP_PORT: 9000
-
 
   api-app:
     container_name: lpa-api-app
@@ -284,18 +278,14 @@ services:
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
 
-      OPG_LPA_TELEMETRY_HOST: ''
-      OPG_LPA_TELEMETRY_PORT: ''
+      OPG_LPA_TELEMETRY_HOST: ""
+      OPG_LPA_TELEMETRY_PORT: ""
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
       XDEBUG_TRIGGER: "true"
     healthcheck:
-      test:
-        [
-          "CMD",
-          "/usr/local/bin/health-check.sh"
-        ]
+      test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
       timeout: 15s
       retries: 3
@@ -317,7 +307,6 @@ services:
     environment:
       APP_HOST: admin-app
       APP_PORT: 9000
-
 
   admin-app:
     container_name: lpa-admin-app
@@ -341,7 +330,7 @@ services:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
 
-      OPG_LPA_ENDPOINTS_API: "http://api-web"
+      OPG_LPA_ENDPOINTS_API: "http://api-web:8080"
 
       OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: "Properties"
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
@@ -359,11 +348,7 @@ services:
       PHP_IDE_CONFIG: serverName=lpa-admin-app
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
     healthcheck:
-      test:
-        [
-          "CMD",
-          "/usr/local/bin/health-check.sh"
-        ]
+      test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
       timeout: 15s
       retries: 3
@@ -434,11 +419,11 @@ services:
       dockerfile: service-seeding/docker/app/Dockerfile
     depends_on:
       postgres:
-          condition: service_healthy
+        condition: service_healthy
       dynamodb:
-          condition: service_started
+        condition: service_started
       api-app:
-          condition: service_started
+        condition: service_started
     volumes:
       - ./scripts/non_live_seeding:/app
     environment:
