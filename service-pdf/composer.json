@@ -23,6 +23,7 @@
         "phpunit/phpunit": "^9.5.10",
         "mockery/mockery": "^1.4.4",
         "ext-json": "*",
+        "ext-imagick": "*",
         "vimeo/psalm": "^6.0.0"
     },
     "autoload": {
@@ -36,7 +37,8 @@
     "include-path": ["config/"],
     "config": {
         "platform": {
-            "php": "8.4"
+            "php": "8.4",
+            "ext-imagick": "1"
         }
     }
 }
