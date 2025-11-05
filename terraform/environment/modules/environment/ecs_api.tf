@@ -135,13 +135,16 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  # container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
-  container_definitions = "[${local.api_web}, ${local.api_app}, ${local.app_init_container}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
-  task_role_arn         = var.ecs_iam_task_roles.api.arn
-  execution_role_arn    = var.ecs_execution_role.arn
-  tags                  = local.api_component_tag
+  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
+  # container_definitions = "[${local.api_web}, ${local.api_app}, ${local.app_init_container}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
+  task_role_arn      = var.ecs_iam_task_roles.api.arn
+  execution_role_arn = var.ecs_execution_role.arn
+  tags               = local.api_component_tag
   volume {
     name = "app_tmp"
+  }
+  volume {
+    name = "web_etc"
   }
 }
 
@@ -187,7 +190,12 @@ locals {
       "cpu" : 1,
       "essential" : true,
       "image" : "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
-      "mountPoints" : [],
+      "mountPoints" : [
+        {
+          "containerPath" : "/etc",
+          "sourceVolume" : "web_etc"
+        }
+      ],
       "name" : "web",
       "portMappings" : [
         {
@@ -297,12 +305,7 @@ locals {
         {
           "containerName" : "pgbouncer",
           "condition" : "HEALTHY"
-        },
-        {
-          "containerName" : "permissions-init",
-          "condition" : "SUCCESS"
-        },
-
+        }
       ],
       "secrets" : [
         { "name" : "OPG_LPA_API_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
