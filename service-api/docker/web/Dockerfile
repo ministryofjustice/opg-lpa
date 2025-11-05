@@ -14,5 +14,5 @@ RUN apk del freetype nginx-module-image-filter curl
 RUN apk upgrade --no-cache
 
 USER nginx
-VOLUME [ "/etc" ]
 COPY --chown=nginx:nginx service-api/docker/web/etc /etc
+VOLUME [ "/etc" ]
