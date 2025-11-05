@@ -142,7 +142,6 @@ resource "aws_ecs_task_definition" "api" {
   tags               = local.api_component_tag
   volume {
     name = "app_tmp"
-
   }
 }
 
