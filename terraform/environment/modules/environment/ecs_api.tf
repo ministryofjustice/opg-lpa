@@ -21,11 +21,6 @@ resource "aws_ecs_service" "api" {
     assign_public_ip = false
   }
 
-  deployment_circuit_breaker {
-    enable   = true
-    rollback = true
-  }
-
   service_registries {
     registry_arn = aws_service_discovery_service.api_canonical.arn
   }
@@ -302,7 +297,12 @@ locals {
         {
           "containerName" : "pgbouncer",
           "condition" : "HEALTHY"
-        }
+        },
+        {
+          "containerName" : "permissions-init",
+          "condition" : "SUCCESS"
+        },
+
       ],
       "secrets" : [
         { "name" : "OPG_LPA_API_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
