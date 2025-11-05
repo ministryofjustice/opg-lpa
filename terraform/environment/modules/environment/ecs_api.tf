@@ -97,8 +97,8 @@ resource "aws_security_group" "api_ecs_service" {
 
 resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
   type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
+  from_port                = 8080
+  to_port                  = 8080
   protocol                 = "tcp"
   security_group_id        = aws_security_group.api_ecs_service.id
   source_security_group_id = aws_security_group.front_ecs_service.id
@@ -107,8 +107,8 @@ resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
 
 resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
   type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
+  from_port                = 8080
+  to_port                  = 8080
   protocol                 = "tcp"
   security_group_id        = aws_security_group.api_ecs_service.id
   source_security_group_id = aws_security_group.admin_ecs_service.id
