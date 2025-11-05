@@ -199,13 +199,13 @@ locals {
       "name" : "web",
       "portMappings" : [
         {
-          "containerPort" : 80,
+          "containerPort" : 8080,
           "hostPort" : 80,
           "protocol" : "tcp"
         }
       ],
       "dependsOn" : [{
-        "containerName" : "api_app",
+        "containerName" : "app",
         "condition" : "HEALTHY"
       }],
       "volumesFrom" : [],
