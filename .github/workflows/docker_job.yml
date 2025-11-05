@@ -21,6 +21,7 @@ on:
 
 jobs:
   docker_build_scan_push:
+    name: "docker build"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
