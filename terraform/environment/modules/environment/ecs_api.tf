@@ -204,6 +204,10 @@ locals {
           "protocol" : "tcp"
         }
       ],
+      "dependsOn" : [{
+        "containerName" : "api_app",
+        "condition" : "HEALTHY"
+      }],
       "volumesFrom" : [],
       "logConfiguration" : {
         "logDriver" : "awslogs",
