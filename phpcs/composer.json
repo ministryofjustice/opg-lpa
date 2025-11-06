@@ -1,0 +1,21 @@
+{
+    "name": "ministryofjustice/opg-lpa-phpcs",
+    "description": "Required config and dependencies to run PHPCS",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "8.4.*"
+    },
+    "require-dev": {
+      "squizlabs/php_codesniffer": "^4.0",
+      "slevomat/coding-standard": "^8.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "8.4.12"
+        },
+        "sort-packages": true
+    }
+}

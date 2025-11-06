@@ -11,6 +11,11 @@
         <exclude name="Generic.Files.LineLength" />
     </rule>
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true"/>
+        </properties>
+    </rule>
 
     <!-- Paths to check -->
     <file>/app</file>
