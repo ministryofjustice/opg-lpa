@@ -13,8 +13,6 @@ use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Flash\Messages;
 use Laminas\Diactoros\Response;
-use Mezzio\Helper\UrlHelper;
-use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**

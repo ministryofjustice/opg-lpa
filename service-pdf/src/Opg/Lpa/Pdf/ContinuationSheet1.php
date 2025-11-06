@@ -4,8 +4,6 @@ namespace Opg\Lpa\Pdf;
 
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\Name;
-use MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
-use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
 
 /**

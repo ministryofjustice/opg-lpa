@@ -133,7 +133,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 0
+        ENABLE_XDEBUG: 1
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
       - ./service-front:/app

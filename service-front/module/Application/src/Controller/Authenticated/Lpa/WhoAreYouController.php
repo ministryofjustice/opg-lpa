@@ -4,7 +4,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
-use Laminas\Http\Response as HttpResponse;
 use Laminas\Form\Element;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;

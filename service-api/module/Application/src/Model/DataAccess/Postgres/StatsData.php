@@ -2,7 +2,6 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
-use Laminas\Db\Sql\Sql;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 
