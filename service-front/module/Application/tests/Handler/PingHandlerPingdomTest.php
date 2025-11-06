@@ -10,7 +10,6 @@ use Application\Model\Service\System\Status;
 use DateTime;
 use Laminas\Diactoros\Response\XmlResponse;
 use Laminas\Diactoros\ServerRequest;
-use Laminas\Diactoros\Response;
 use MakeShared\Constants;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
