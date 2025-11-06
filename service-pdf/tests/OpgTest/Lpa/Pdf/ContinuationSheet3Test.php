@@ -34,7 +34,7 @@ class ContinuationSheet3Test extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet3.pdf');
 
-        $this->visualDiffCheck($pdf,'tests/visualdiffpdfs/ContinuationSheet3.pdf');
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/ContinuationSheet3.pdf');
     }
 
     public function testGenerateHW()
@@ -66,6 +66,6 @@ class ContinuationSheet3Test extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet3.pdf');
 
-        $this->visualDiffCheck($pdf,'tests/visualdiffpdfs/ContinuationSheet3.pdf');
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/ContinuationSheet3.pdf');
     }
 }

@@ -26,7 +26,7 @@ class Lpa120Test extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
 
-        $this->visualDiffCheck($pdf,'tests/visualdiffpdfs/1762449985.0974-A510-7295-5715-Lpa120.pdf');
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/1762449985.0974-A510-7295-5715-Lpa120.pdf');
     }
 
 
