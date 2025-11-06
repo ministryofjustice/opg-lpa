@@ -8,6 +8,7 @@ use Opg\Lpa\Pdf\Aggregator\AbstractAggregator;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdftkFactory;
 use OpgTest\ConfigSetUp;
+use OpgTest\Lpa\Pdf\Helper\PdfCompare;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractPdfTestCase extends TestCase
@@ -218,6 +219,12 @@ abstract class AbstractPdfTestCase extends TestCase
         $regex = '/tmp\/\d{10}.(\d+)?-' . $lpaId . '-' . $templateFileName . '/';
 
         $this->assertMatchesRegularExpression($regex, $fileName);
+    }
+
+    protected function visualDiffCheck($pdf, $testFileName)
+    {
+        $pdfCompare = new PdfCompare();
+        $pdfCompare->compare($pdf->pdfFile, $testFileName, $pdf->numberOfPages);
     }
 
     private function verifyReflectionProperty($propertyName, AbstractIndividualPdf $pdf, $expectedValue)
