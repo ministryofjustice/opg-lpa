@@ -47,7 +47,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerA
     /**
      * @var int
      */
-    protected $numberOfPages;
+    public $numberOfPages;
 
     /**
      * Formatted LPA reference in the format ANNN-NNNN-NNNN
