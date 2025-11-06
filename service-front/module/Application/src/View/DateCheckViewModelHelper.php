@@ -3,7 +3,6 @@
 namespace Application\View;
 
 use Application\Model\Service\Lpa\ContinuationSheets;
-use Laminas\View\Model\ViewModel;
 use MakeShared\DataModel\Lpa\Lpa;
 
 class DateCheckViewModelHelper

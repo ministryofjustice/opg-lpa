@@ -2,7 +2,6 @@
 
 namespace Application\View\Helper;
 
-use NumberFormatter;
 use Laminas\View\Helper\AbstractHelper;
 
 class OrdinalSuffix extends AbstractHelper

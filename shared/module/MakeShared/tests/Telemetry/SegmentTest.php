@@ -3,7 +3,6 @@
 namespace MakeSharedTest\Telemetry;
 
 use MakeShared\Telemetry\Segment;
-use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class SegmentTest extends TestCase

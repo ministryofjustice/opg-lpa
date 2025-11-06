@@ -5,7 +5,6 @@ namespace Opg\Lpa\Pdf;
 use DateTimeImmutable;
 use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\PdftkFactory;
-use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Exception;
 use setasign\Fpdi\Tcpdf\Fpdi;
 

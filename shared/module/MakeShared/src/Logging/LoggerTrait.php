@@ -2,8 +2,6 @@
 
 namespace MakeShared\Logging;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Level;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 

@@ -15,9 +15,6 @@ use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
-use function number_format;
-use function floatval;
-
 /**
  * Note: Alphagov\Pay\Response\Payment uses magic methods to
  * convert the response from gov pay to an array object whose

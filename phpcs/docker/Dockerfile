@@ -5,7 +5,9 @@ FROM php:8.4-cli-alpine3.22@sha256:999f910cc872e4930d2d5c4b91d80ed712e8cf77ba173
 WORKDIR /app
 
 COPY --from=composer /usr/bin/composer /usr/bin/
+COPY phpcs/composer.json /app/composer.json
+COPY phpcs/composer.lock /app/composer.lock
 
-RUN composer require "squizlabs/php_codesniffer:^4.0"
+RUN composer install --no-interaction --no-progress
 
-ENTRYPOINT ["./vendor/bin/phpcs", "--standard=/app/config/phpcs.xml.dist"]
+ENTRYPOINT ["/app/vendor/bin/phpcs", "--standard=/app/config/phpcs.xml.dist"]
