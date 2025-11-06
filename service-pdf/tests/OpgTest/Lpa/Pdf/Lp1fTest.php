@@ -331,6 +331,6 @@ class Lp1fTest extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1f.pdf');
 
-        $this->visualDiffCheck($pdf,'tests/visualdiffpdfs/1762447614.1819-A510-7295-5715-Lp1f.pdf');
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/1762447614.1819-A510-7295-5715-Lp1f.pdf');
     }
 }
