@@ -3,22 +3,7 @@
 namespace MakeSharedTest\Telemetry;
 
 use DateTimeImmutable;
-use Hamcrest\Core\IsInstanceOf;
-use Laminas\EventManager\EventManager;
-use Laminas\Http\Request;
-use Laminas\Http\Response;
-use Laminas\Mvc\Application;
-use Laminas\Mvc\MvcEvent;
-use Laminas\ServiceManager\ServiceManager;
-use MakeShared\Constants;
 use MakeShared\Logging\OpgJsonFormatter;
-use MakeShared\Telemetry\Attribute\Http;
-use MakeShared\Telemetry\Event;
-use MakeShared\Telemetry\Module;
-use MakeShared\Telemetry\Segment;
-use MakeShared\Telemetry\TelemetryEventManager;
-use MakeShared\Telemetry\Tracer;
-use Mockery;
 use Monolog\Level;
 use Monolog\LogRecord;
 use PHPUnit\Framework\TestCase;

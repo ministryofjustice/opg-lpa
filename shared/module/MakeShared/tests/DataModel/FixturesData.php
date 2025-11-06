@@ -10,7 +10,6 @@ use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\DataModel\User\User;
-use MakeSharedTest\DataModel\Lpa\TestableLpa;
 
 /**
  * Class FixturesData returns complex test data

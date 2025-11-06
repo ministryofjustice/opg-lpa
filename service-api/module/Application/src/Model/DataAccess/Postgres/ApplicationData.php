@@ -4,7 +4,6 @@ namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
 use PDOException;
-use EmptyIterator;
 use Traversable;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Db\Sql\Predicate\Operator;

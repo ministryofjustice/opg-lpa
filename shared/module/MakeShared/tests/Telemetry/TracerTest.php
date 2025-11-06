@@ -2,12 +2,10 @@
 
 namespace MakeSharedTest\Telemetry;
 
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use MakeShared\Constants;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Exporter\LogExporter;
 use MakeShared\Telemetry\Exporter\XrayExporter;
-use MakeShared\Telemetry\Segment;
 use MakeShared\Telemetry\Tracer;
 use Mockery;
 use PHPUnit\Framework\TestCase;

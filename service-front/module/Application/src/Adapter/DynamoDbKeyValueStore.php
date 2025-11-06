@@ -3,7 +3,6 @@
 namespace Application\Adapter;
 
 use Exception;
-use RuntimeException;
 use Aws\DynamoDb\DynamoDbClient;
 
 /**
