@@ -7,6 +7,8 @@
 declare(strict_types=1);
 
 use App\Middleware;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Session\SessionMiddleware;
 use Psr\Container\ContainerInterface;
 use Tuupola\Middleware\JwtAuthentication;
 use Mezzio\Application;
@@ -45,6 +47,9 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // - $app->pipe('/docs', $apiDocMiddleware);
     // - $app->pipe('/files', $filesMiddleware);
 
+    $app->pipe(SessionMiddleware::class);
+    $app->pipe(FlashMessageMiddleware::class);
+
     // Register the routing middleware in the middleware pipeline.
     // This middleware registers the Mezzio\Router\RouteResult request attribute.
     $app->pipe(RouteMiddleware::class);
@@ -65,7 +70,6 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(Middleware\Session\JwtMiddleware::class);
     $app->pipe(Middleware\Authorization\AuthorizationMiddleware::class);
     $app->pipe(Middleware\Session\CsrfMiddleware::class);
-    $app->pipe(Middleware\Flash\SlimFlashMiddleware::class);
 
     // Seed the UrlHelper with the routing results:
     $app->pipe(UrlHelperMiddleware::class);
