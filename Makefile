@@ -241,6 +241,7 @@ cypress-open:
 	${MAKE} -j s3-monitor cypress-gui
 
 dc-phpcs-check:
+	@docker compose build phpcs
 	@docker compose run --rm --no-deps -q phpcs --report=${PHPCS_REPORT}
 
 dc-phpcs-fix:

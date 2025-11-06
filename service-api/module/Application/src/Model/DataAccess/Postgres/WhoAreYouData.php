@@ -3,7 +3,6 @@
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
-use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;

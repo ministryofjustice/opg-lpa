@@ -8,7 +8,6 @@ use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeExce
 use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
 use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Sql;
 use MakeShared\Telemetry\TelemetryEventManager;

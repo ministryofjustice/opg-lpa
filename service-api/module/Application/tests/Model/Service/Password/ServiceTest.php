@@ -8,7 +8,6 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Password\Service as PasswordService;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use Application\Model\DataAccess\Postgres\UserModel as User;
-use ApplicationTest\Model\Service\Password\ServiceBuilder;
 use DateTime;
 use Mockery;
 use Mockery\MockInterface;

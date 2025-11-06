@@ -7,8 +7,6 @@ namespace App\Handler;
 use App\Form\Feedback;
 use App\Handler\Traits\JwtTrait;
 use App\Service\Feedback\FeedbackService;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\HtmlResponse;

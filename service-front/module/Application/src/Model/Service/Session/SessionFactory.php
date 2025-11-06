@@ -4,7 +4,6 @@ namespace Application\Model\Service\Session;
 
 use Psr\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
-use Laminas\Console\Request as ConsoleRequest;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;

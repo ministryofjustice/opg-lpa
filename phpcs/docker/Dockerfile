@@ -8,6 +8,6 @@ COPY --from=composer /usr/bin/composer /usr/bin/
 COPY phpcs/composer.json /app/composer.json
 COPY phpcs/composer.lock /app/composer.lock
 
-RUN composer i
+RUN composer install --no-interaction --no-progress
 
-ENTRYPOINT ["./vendor/bin/phpcs", "--standard=/app/config/phpcs.xml.dist"]
+ENTRYPOINT ["/app/vendor/bin/phpcs", "--standard=/app/config/phpcs.xml.dist"]
