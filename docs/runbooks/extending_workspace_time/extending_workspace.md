@@ -9,8 +9,8 @@ steps:
 2. Convert that date and time for expiry into a unix Epoch. A tool to help with this is <https://www.epochconverter.com/>
 3. Open the Development Account console for AWS, assuming the operator role will be fine for this.
 4. Search for `DynamoDB` in the top search bar and hit `<enter>`.
-5. Look for `Tables` on the left hand side and click `Explore Items`. there will be a list of tables to select.
-6. in the `Find tables by name` search box type `WorkspaceCleanup` and click the radio button next to the table name.
+6. In the `Find tables by name` search box type `WorkspaceCleanup`. Click the name `WorkspaceCleanup` and then explore items.
+5. Click `Explore table items`. There will be a list of tables to select.
 7. Look for the workspace name of your environment. to look for this:
 
    - Either: On your PR CI build, check the`post_environment_domains` job; the value is in the last step `print deployment values` next to `Terraform workspace:`

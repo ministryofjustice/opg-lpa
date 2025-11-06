@@ -16,13 +16,13 @@
 
 ## Introduction
 
-Sometimes, when circleci builds docker images,it may produce results that are different or unexpected to what you are seeing on your local machine. Reasons this may happen include:
+Sometimes, when GitHub actions builds docker images,it may produce results that are different or unexpected to what you are seeing on your local machine. Reasons this may happen include:
 
 - Issues with composer.lock, either changed or not present.
 - Docker images e.g. php, python are pulled from the `:latest` tag and a breaking update happens to the image.
 - Issues with `npm, grunt or gulp` for example.
 
-You may want to debug the images generated in more detail, perhaps even go through the approach that circleci uses, but locally. This doc helps you do that.
+You may want to debug the images generated in more detail, perhaps even go through the approach that GitHub actions uses, but locally. This doc helps you do that.
 
 **Note:** this guide is not exhaustive, so please add items for new scenarios.
 
@@ -32,17 +32,17 @@ you will need:
 
 - aws-vault.
 - profile in the `~/.aws/config/` that is a dev operator.
-- AWS CLI (v1) - as this is in use on circle right now.
+- AWS CLI
 - Docker Desktop for Mac
 - PHPStorm
 
-please see [Setting up AWS Credentials](../setting-up-aws-credentials/setting-up-credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
+please see [Setting up AWS Credentials](../setting_up_aws_credentials/setting_up_credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
 
 ## Scenarios
 
 Here's a number of things that will help when debugging a container issue:
 
-- If an issue was spotted in PHPUnit tests in circle CI, you could [Build the dockerfile locally](#build-dockerfile-locally)
+- If an issue was spotted in PHPUnit tests in GitHub actions, you could [Build the dockerfile locally](#build-dockerfile-locally)
 - If an issue was spotted after the container was pushed, and later spun up you can also [Pull the existing ECR image](#pull-an-existing-ecr-image)
 - For a quick dignostic of the unit tests on the container: [Run PHPUnit directly on the container](#run-phpunit-directly-on-the-container)
 - To run the container in PHP Storm: [Set up individual docker run configuration for PHPStorm](#set-up-individual-docker-run-configuration-for-phpstorm)
@@ -53,7 +53,7 @@ Examples below cover api container, but equally apply for front, admin and pdf c
 
 ## Build dockerfile locally
 
-Build the dockerfile for container image you wish to debug - it's best to keep names as per how the circleci produces, if you want to mirror the CI process. e.g
+Build the dockerfile for container image you wish to debug - it's best to keep names as per how GitHub actions produces, if you want to mirror the CI process. e.g
 
  ``` bash
  docker build -f service-api/docker/app/Dockerfile --progress=plain --no-cache -t 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app
@@ -115,7 +115,7 @@ This consists of 3 main steps:
 
 ### Configure the remote interpreter
 
-1. in the `Command Line` section, you will need to set up the docker container to be the interpreter. This is similar to the existing docker-compose setup
+1. in the `Command Line` section, you will need to set up the docker container to be the interpreter. This is similar to the existing docker compose setup
 2. open `...` next to the `Interpreter:` dropdown
 3. in the `CLI Interpreters` dialog, hit the `+` to add `From Docker, Vagrant,VM, WSL, Remote...`
 4. the dialog will pop up and select the `Docker` radio button.
@@ -130,7 +130,7 @@ This consists of 3 main steps:
 
 8. at the `/app #` prompt enter `cd /usr/local/lib/php/extensions/` then enter `ls`.
 9. you will see a folder labelled something similar to: `no-debug-non-zts-<YYYYMMDD>`, `cd` into it.
-10. Take the entire folder path, appending `/xdebug.so` and paste it into the `Debugger extension:` field in the open dialog in PHP Storm, for example `/usr/local/lib/php/extensions/no-debug-non-zts-20180731/xdebug.so` (the path for PHP 7.4)
+10. Take the entire folder path, appending `/xdebug.so` and paste it into the `Debugger extension:` field in the open dialog in PHP Storm, for example `/usr/local/lib/php/extensions/no-debug-non-zts-20180731/xdebug.so` (the path for PHP)
 11. Before hitting Apply in PHP storm, `exit` the shell and stop the container e.g. `docker stop api-tests`
 12. Hit Apply and OK.
 
@@ -150,7 +150,7 @@ This consists of 3 main steps:
 
 If you are having issues with the application, you can check whether the API part of it is responding correctly by manually invoking it with cURL.
 
-When running under docker-compose, the API is on http://localhost:7001/
+When running under docker compose, the API is on http://localhost:7001/
 
 Requests should have the following headers set to mimic requests from the admin app (the main consumer of the API):
 
