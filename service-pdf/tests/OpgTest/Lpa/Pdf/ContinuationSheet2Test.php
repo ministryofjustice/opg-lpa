@@ -76,7 +76,7 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet2.pdf');
 
-        $this->visualDiffCheck($pdf,'tests/visualdiffpdfs/ContinuationSheet2.pdf');
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/ContinuationSheet2.pdf');
     }
 
     public function testGeneratePreferences()
@@ -346,7 +346,7 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet2.pdf');
 
-        $this->visualDiffCheck($pdf,'tests/visualdiffpdfs/ContinuationSheet2.pdf');
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/ContinuationSheet2.pdf');
     }
 
     public function testGenerateSingleRAWhenDepends()
@@ -381,7 +381,7 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet2.pdf');
 
-        $this->visualDiffCheck($pdf,'tests/visualdiffpdfs/ContinuationSheet2.pdf');
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/ContinuationSheet2.pdf');
     }
 
     public function testGenerateMultiRAsPAsHowJointlyHowJointlyAndSeverally()
@@ -454,7 +454,7 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet2.pdf');
 
-        $this->visualDiffCheck($pdf,'tests/visualdiffpdfs/ContinuationSheet2.pdf');
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/ContinuationSheet2.pdf');
     }
 
     public function testGenerateMultiRAsPAsHowJointlyHowJointly()
@@ -490,6 +490,6 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet2.pdf');
 
-        $this->visualDiffCheck($pdf,'tests/visualdiffpdfs/ContinuationSheet2.pdf');
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/ContinuationSheet2.pdf');
     }
 }
