@@ -10,7 +10,6 @@ use App\Middleware;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Session\SessionMiddleware;
 use Psr\Container\ContainerInterface;
-use Tuupola\Middleware\JwtAuthentication;
 use Mezzio\Application;
 use Mezzio\Handler\NotFoundHandler;
 use Mezzio\Helper\ServerUrlMiddleware;
@@ -66,7 +65,6 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
 
     //  Set up the custom middleware to handle sessions and authorization
     $app->pipe(Middleware\Session\SessionMiddleware::class);
-    //$app->pipe(JwtAuthentication::class);
     $app->pipe(Middleware\Session\JwtMiddleware::class);
     $app->pipe(Middleware\Authorization\AuthorizationMiddleware::class);
     $app->pipe(Middleware\Session\CsrfMiddleware::class);

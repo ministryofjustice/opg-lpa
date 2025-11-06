@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App;
 
 use App\Logging\LoggingErrorListenerDelegatorFactory;
-//use Tuupola\Middleware\JwtAuthentication;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Session\Ext\PhpSessionPersistence;
@@ -76,8 +75,6 @@ class ConfigProvider
                     return new SessionMiddleware($c->get(SessionPersistenceInterface::class));
                 },
                 //  Middleware
-                //JwtAuthentication::class =>
-                //    Middleware\Session\JwtAuthenticationFactory::class,
                 Middleware\Session\JwtMiddleware::class =>
                     Middleware\Session\JwtMiddlewareFactory::class,
                 Middleware\Authorization\AuthorizationMiddleware::class =>
