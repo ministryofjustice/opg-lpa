@@ -13,8 +13,6 @@ use DateTime;
 use Exception;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use MakeShared\Constants;
-use MakeShared\Logging\LoggerTrait;
-use Psr\Log\LoggerAwareInterface;
 
 /**
  * Goes through all required services and checks they're operating.

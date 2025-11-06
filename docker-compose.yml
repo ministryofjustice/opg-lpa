@@ -463,4 +463,3 @@ services:
       - ./service-pdf:/app/service-pdf
       - ./shared:/app/shared
       - ./phpcs.xml.dist:/app/config/phpcs.xml.dist
-      - ./phpcs:/app

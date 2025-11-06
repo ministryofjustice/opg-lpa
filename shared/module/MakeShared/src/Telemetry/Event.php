@@ -3,7 +3,6 @@
 namespace MakeShared\Telemetry;
 
 use Laminas\EventManager\Event as LaminasEvent;
-use Laminas\EventManager\EventInterface as LaminasEventInterface;
 
 /** @psalm-suppress MissingTemplateParam */
 class Event extends LaminasEvent
