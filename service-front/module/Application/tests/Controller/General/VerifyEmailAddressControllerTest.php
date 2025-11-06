@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\VerifyEmailAddressController;
-use Application\Form\User\Registration;
 use Application\Model\Service\Session\SessionManagerSupport;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Response;

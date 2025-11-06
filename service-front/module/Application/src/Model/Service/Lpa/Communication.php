@@ -5,7 +5,6 @@ namespace Application\Model\Service\Lpa;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
 use MakeShared\DataModel\Lpa\Lpa;
-use DateTime;
 use DateTimeZone;
 use DateInterval;
 use Exception;

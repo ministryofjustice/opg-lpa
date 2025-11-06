@@ -11,7 +11,6 @@ use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception as HttpException;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client as HttpClient;
 use RuntimeException;
