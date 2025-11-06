@@ -51,7 +51,7 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:8.2-alpine@sha256:28c9c4d7596949a24b183eaaab6455f8e5d55ecbf72d02ff5e2c17fe72671d31
+    image: library/redis:8.2-alpine@sha256:59b6e694653476de2c992937ebe1c64182af4728e54bb49e9b7a6c26614d8933
 #    ports:
 #      - 6379:6379
 
@@ -133,7 +133,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 0
+        ENABLE_XDEBUG: 1
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
       - ./service-front:/app
@@ -463,3 +463,4 @@ services:
       - ./service-pdf:/app/service-pdf
       - ./shared:/app/shared
       - ./phpcs.xml.dist:/app/config/phpcs.xml.dist
+      - ./phpcs:/app
