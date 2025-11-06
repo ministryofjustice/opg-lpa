@@ -10,11 +10,6 @@ use Exception;
 use Opg\Lpa\Pdf\Traits\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 use UnexpectedValueException;
-use copy;
-use file_exists;
-use glob;
-use mkdir;
-use pathinfo;
 
 class PdfRenderer implements LoggerAwareInterface
 {
