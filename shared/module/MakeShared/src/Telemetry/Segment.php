@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakeShared\Telemetry;
 
 use JsonSerializable;
-use Telemetry\Tracer;
 
 // see https://docs.aws.amazon.com/xray/latest/devguide/xray-api-sendingdata.html
 class Segment implements JsonSerializable

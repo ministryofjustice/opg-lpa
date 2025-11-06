@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service\Lpa;
 
-use Application\Model\Service\AbstractService;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Formatter as LpaFormatter;

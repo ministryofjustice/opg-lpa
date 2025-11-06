@@ -7,12 +7,7 @@ namespace MakeShared\Telemetry;
 use MakeShared\Constants;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Exporter\ExporterInterface;
-use MakeShared\Telemetry\Exporter\LogExporter;
-use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
-use mt_rand;
-use mt_getrandmax;
-use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
 /**

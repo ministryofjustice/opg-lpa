@@ -3,10 +3,6 @@
 namespace OpgTest\Lpa\Pdf;
 
 use DateTimeImmutable;
-use MakeShared\DataModel\Common\Address;
-use MakeShared\DataModel\Common\LongName;
-use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Lp1f;
 use Exception;
