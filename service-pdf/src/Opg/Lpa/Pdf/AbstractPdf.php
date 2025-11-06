@@ -42,7 +42,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerA
      *
      * @var
      */
-    protected $pdfFile;
+    public $pdfFile;
 
     /**
      * @var int
