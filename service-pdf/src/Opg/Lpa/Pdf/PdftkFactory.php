@@ -3,11 +3,7 @@
 namespace Opg\Lpa\Pdf;
 
 use mikehaertl\pdftk\Pdf as PdftkPdf;
-use escapeshellarg;
 use RuntimeException;
-use pclose;
-use popen;
-use sprintf;
 
 class PdftkFactory
 {

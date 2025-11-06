@@ -4,7 +4,6 @@ namespace Application\Model\DataAccess\Postgres;
 
 use DateMalformedStringException;
 use DateTime;
-use Laminas\Db\Sql\Sql;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 

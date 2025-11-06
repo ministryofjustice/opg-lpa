@@ -4,7 +4,6 @@ namespace Opg\Lpa\Pdf;
 
 use DateTime;
 use DateTimeImmutable;
-use DateTimeZone;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Common\PhoneNumber;
@@ -22,7 +21,6 @@ use Opg\Lpa\Pdf\Aggregator\ContinuationSheet2 as ContinuationSheet2Aggregator;
 use Opg\Lpa\Pdf\PdftkFactory;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
-use mikehaertl\pdftk\Pdf as Pdftk;
 use Laminas\Barcode\Barcode;
 use TCPDF;
 

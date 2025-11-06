@@ -11,6 +11,13 @@ on:
         description: "Tag for docker image"
         required: true
         type: string
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS:
+        required: true
+      AWS_SECRET_ACCESS_KEY_ACTIONS:
+        required: true
+      SLACK_BOT_TOKEN:
+        required: true
 
 jobs:
   docker_build_scan_push:

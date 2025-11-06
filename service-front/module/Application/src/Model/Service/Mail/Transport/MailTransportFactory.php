@@ -9,7 +9,6 @@ use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Twig\Environment as TwigEnvironment;
 use RuntimeException;
 
 /**
