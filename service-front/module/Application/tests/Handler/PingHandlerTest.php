@@ -6,12 +6,11 @@ namespace ApplicationTest\Handler;
 
 use Application\Handler\PingHandler;
 use Application\Model\Service\System\Status;
-use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\Constants;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use RuntimeException;
 
 final class PingHandlerTest extends MockeryTestCase
 {
@@ -26,24 +25,7 @@ final class PingHandlerTest extends MockeryTestCase
 
         $result = $handler->handle(new ServerRequest());
 
-        $this->assertInstanceOf(HtmlResponse::class, $result);
+        $this->assertInstanceOf(JsonResponse::class, $result);
         $this->assertEquals('{"status":{"status":"pass"}}', $result->getBody()->getContents());
-    }
-
-    public function testHandleJsonMarshalError(): void
-    {
-        $status = Mockery::mock(Status::class);
-        $status->shouldReceive('check')
-            ->andReturn([
-                'data' => "\xB1\x31"
-            ])
-            ->once();
-
-        $handler = new PingHandler($status);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('could not marshal JSON');
-
-        $handler->handle(new ServerRequest());
     }
 }

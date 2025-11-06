@@ -44,3 +44,4 @@ __pycache__
 .coverage
 .php-cs-fixer.cache
 shared/module/MakeShared/tests/autoload.php
+phpcs/config/

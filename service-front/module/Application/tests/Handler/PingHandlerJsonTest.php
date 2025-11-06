@@ -6,7 +6,6 @@ namespace ApplicationTest\Handler;
 
 use Application\Handler\PingHandlerJson;
 use Application\Model\Service\System\Status;
-use GuzzleHttp\Psr7\Request;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\Constants;
