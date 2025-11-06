@@ -9,7 +9,6 @@ use Application\Form\General\FeedbackForm;
 use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Feedback\FeedbackValidationException;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\Http\Header\Referer;

@@ -16,7 +16,6 @@ use DateTime;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
-use Psr\Log\LoggerInterface;
 
 class ServiceTest extends AbstractServiceTestCase
 {

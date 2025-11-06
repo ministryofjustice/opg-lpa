@@ -5,7 +5,6 @@ namespace Application\Model\DataAccess\Postgres;
 use DateTime;
 use MakeShared\Logging\LoggerTrait;
 use Traversable;
-use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
