@@ -15,7 +15,6 @@ use Application\Controller\General\AuthController;
 use Application\Controller\General\FeedbackController;
 use Application\Controller\General\ForgotPasswordController;
 use Application\Controller\General\GuidanceController;
-use Application\Controller\General\PingController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\StatsController;
 use Application\Controller\General\VerifyEmailAddressController;
@@ -63,9 +62,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         HowPrimaryAttorneysMakeDecisionController::class => [
             'setApplicantService' => 'ApplicantService',
-        ],
-        PingController::class => [
-            'setStatusService' => 'SiteStatus'
         ],
         PostcodeController::class => [
             'setAddressLookup' => 'AddressLookup'
