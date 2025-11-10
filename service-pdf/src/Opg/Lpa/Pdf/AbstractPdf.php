@@ -42,12 +42,12 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerA
      *
      * @var
      */
-    public $pdfFile;
+    protected $pdfFile;
 
     /**
      * @var int
      */
-    public $numberOfPages;
+    protected $numberOfPages;
 
     /**
      * Formatted LPA reference in the format ANNN-NNNN-NNNN
@@ -223,5 +223,15 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerA
         return [
             'class' => get_class($this),
         ];
+    }
+
+    public function getNumberOfPages(): int
+    {
+        return $this->numberOfPages;
+    }
+
+    public function getPdfFile(): string
+    {
+        return $this->pdfFile;
     }
 }
