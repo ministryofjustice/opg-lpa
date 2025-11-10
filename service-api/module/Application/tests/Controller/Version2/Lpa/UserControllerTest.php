@@ -8,8 +8,8 @@ use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Users\Service;
-use LmcRbacMvc\Exception\UnauthorizedException;
-use LmcRbacMvc\Service\AuthorizationService;
+use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
+use Lmc\Rbac\Mvc\Service\AuthorizationService;
 use Mockery;
 use Mockery\MockInterface;
 

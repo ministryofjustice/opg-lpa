@@ -2,8 +2,8 @@
 
 namespace Application\Library\Authorization\Assertions;
 
-use LmcRbacMvc\Assertion\AssertionInterface;
-use LmcRbacMvc\Service\AuthorizationService;
+use Lmc\Rbac\Assertion\AssertionInterface;
+use Lmc\Rbac\Identity\IdentityInterface;
 
 /**
  * The authorized user or another service can manage the user data and LPAs
@@ -14,21 +14,19 @@ use LmcRbacMvc\Service\AuthorizationService;
  */
 class IsAuthorizedToManageUser implements AssertionInterface
 {
-    public function assert(AuthorizationService $authorizationService, $routeUserId = null)
+    public function assert(string $permission, ?IdentityInterface $identity = null, mixed $context = null): bool
     {
         // We can only authorize is there's a route user...
-        if (!is_string($routeUserId)) {
+        if (!is_string($context)) {
             return false;
         }
 
-        $tokenUser = $authorizationService->getIdentity();
-
         //  Otherwise we can only authorize if we can get the user's id from the Identity...
-        if (!is_callable([$tokenUser, 'id'])) {
+        if (!is_callable([$identity, 'id'])) {
             return false;
         }
 
         // Return true iff the id's match...
-        return ($tokenUser->id() === $routeUserId);
+        return ($identity->id() === $context);
     }
 }

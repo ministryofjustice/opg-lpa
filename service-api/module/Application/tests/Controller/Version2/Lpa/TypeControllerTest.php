@@ -6,7 +6,7 @@ use Application\Controller\Version2\Lpa\TypeController;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Type\Service;
-use LmcRbacMvc\Exception\UnauthorizedException;
+use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
 
