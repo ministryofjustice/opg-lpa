@@ -4,8 +4,6 @@ namespace Application\Command;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
-use Aws\DynamoDb\Exception\ResourceNotFoundException;
-use Laminas\ServiceManager\ServiceManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

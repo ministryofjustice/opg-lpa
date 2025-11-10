@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Validator;
 use App\Filter\StandardInputFilterChain;
-use Laminas\Filter;
 use Laminas\Form\Element\Text;
 use Laminas\InputFilter\Input;
 

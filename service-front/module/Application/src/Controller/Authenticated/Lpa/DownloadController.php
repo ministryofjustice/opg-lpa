@@ -3,7 +3,6 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Exception;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use MakeShared\DataModel\Lpa\Document\Document;
