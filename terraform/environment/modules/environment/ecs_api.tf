@@ -37,10 +37,6 @@ resource "aws_ecs_service" "api" {
     update = "6m"
   }
 
-  depends_on = [
-    module.api_aurora[0]
-  ]
-
   tags = local.api_component_tag
 }
 
