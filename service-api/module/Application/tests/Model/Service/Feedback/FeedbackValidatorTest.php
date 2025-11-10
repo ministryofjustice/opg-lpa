@@ -4,7 +4,6 @@ namespace ApplicationTest\Model\Service\Feedback;
 
 use Application\Model\Service\Feedback\FeedbackValidator;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use str_repeat;
 
 class FeedbackValidatorTest extends MockeryTestCase
 {

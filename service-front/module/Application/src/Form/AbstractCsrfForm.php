@@ -3,7 +3,6 @@
 namespace Application\Form;
 
 use Application\Form\Element\CsrfBuilder;
-use Application\Form\Validator\Csrf as CsrfValidator;
 use Laminas\Form\Element\Csrf;
 
 /**
