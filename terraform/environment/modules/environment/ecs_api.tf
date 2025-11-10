@@ -33,7 +33,7 @@ resource "aws_ecs_service" "api" {
   }
 
   timeouts {
-    create = "6m"
+    create = "10m"
     update = "6m"
   }
 
