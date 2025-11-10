@@ -8,10 +8,14 @@ RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
 RUN apk update \
-    && apk add --no-cache openjdk8-jre libpng poppler-utils imagemagick imagemagick-dev\
+    && apk add --no-cache openjdk8-jre libpng \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS autoconf gcc make musl-dev pkgconfig zlib-dev libpng-dev linux-headers \
-    && docker-php-ext-install gd \
-    && pecl install imagick && docker-php-ext-enable imagick
+    && docker-php-ext-install gd 
+
+# only install poppler-utils and imagemagick, used by visual diff tests, if VISUAL_TESTS is set to true in the build stage
+ARG VISUAL_TESTS=false
+RUN if [ "$VISUAL_TESTS" = "true" ] ; then apk add --no-cache poppler-utils imagemagick imagemagick-dev \
+    && pecl install imagick && docker-php-ext-enable imagick; fi
 
 # Install composer dependencies
 COPY --chown=root:root service-pdf/composer.json /app/composer.json
