@@ -408,6 +408,7 @@ services:
         # Other containers are built with debug on. Lines could be put here to build pdf with debug,
         # but not doing as default due to pdf being slow already
         ENABLE_XDEBUG: 1
+        VISUAL_TESTS: true
       dockerfile: service-pdf/docker/app/Dockerfile
     environment:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
