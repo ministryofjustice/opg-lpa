@@ -224,7 +224,7 @@ abstract class AbstractPdfTestCase extends TestCase
     protected function visualDiffCheck($pdf, $testFileName)
     {
         $pdfCompare = new PdfCompare();
-        $pdfCompare->compare($pdf->pdfFile, $testFileName, $pdf->numberOfPages);
+        $pdfCompare->compare($pdf->getPdfFile(), $testFileName, $pdf->getNumberOfPages());
     }
 
     private function verifyReflectionProperty($propertyName, AbstractIndividualPdf $pdf, $expectedValue)
