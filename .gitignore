@@ -44,5 +44,3 @@ __pycache__
 .coverage
 .php-cs-fixer.cache
 shared/module/MakeShared/tests/autoload.php
-service-pdf/after.png
-service-pdf/before.png
