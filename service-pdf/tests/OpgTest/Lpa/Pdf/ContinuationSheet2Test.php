@@ -2,6 +2,7 @@
 
 namespace OpgTest\Lpa\Pdf;
 
+use Exception;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\Pdf\ContinuationSheet2;
@@ -133,6 +134,18 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
         $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet2.pdf');
     }
 
+    public function testGeneratePrimaryAttorneyDecisionsWhenWhitespace()
+    {
+        $lpa = $this->getLpa();
+
+        $lpa->document->primaryAttorneyDecisions->howDetails = ' ';
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Page 1 can not be generated for content type decisions');
+
+        new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS, $lpa->document->primaryAttorneyDecisions->howDetails, 1);
+    }
+
     public function testGenerateMultiRAsWhenLastHowDepends()
     {
         $lpa = $this->getLpa();
@@ -214,24 +227,12 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
 
         $content = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
 
-        $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
+        $this->assertEquals('', $content);
 
-        $data = [
-            'cs2-is' => "how-replacement-attorneys-step-in",
-            'cs2-content' => "\r\n",
-            'cs2-donor-full-name' => "Mrs Nancy Garrison",
-            'cs2-continued' => "",
-            'cs2-footer-right' => "LPC Continuation sheet 2 (07.15)",
-        ];
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Page 1 can not be generated for content type how-replacement-attorneys-step-in');
 
-        $pageShift = 0;
-
-        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
-
-        //  Test the generated filename created
-        $pdfFile = $pdf->generate();
-
-        $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet2.pdf');
+        new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
     }
 
     public function testGenerateMultiRAsWhenDepends()
@@ -279,24 +280,12 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
 
         $content = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
 
-        $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
+        $this->assertEquals('', $content);
 
-        $data = [
-            'cs2-is' => "how-replacement-attorneys-step-in",
-            'cs2-content' => "\r\n",
-            'cs2-donor-full-name' => "Mrs Nancy Garrison",
-            'cs2-continued' => "",
-            'cs2-footer-right' => "LPC Continuation sheet 2 (07.15)",
-        ];
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Page 1 can not be generated for content type how-replacement-attorneys-step-in');
 
-        $pageShift = 0;
-
-        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
-
-        //  Test the generated filename created
-        $pdfFile = $pdf->generate();
-
-        $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet2.pdf');
+        new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
     }
 
     public function testGenerateSingleRAWhenLast()
@@ -447,23 +436,11 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
 
         $content = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
 
-        $pdf = new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
+        $this->assertEquals('', $content);
 
-        $data = [
-            'cs2-is' => "how-replacement-attorneys-step-in",
-            'cs2-content' => "\r\n",
-            'cs2-donor-full-name' => "Mrs Nancy Garrison",
-            'cs2-continued' => "",
-            'cs2-footer-right' => "LPC Continuation sheet 2 (07.15)",
-        ];
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Page 1 can not be generated for content type how-replacement-attorneys-step-in');
 
-        $pageShift = 0;
-
-        $this->verifyExpectedPdfData($pdf, $this->templateFileName, $this->strikeThroughTargets, $this->blankTargets, $this->getConstituentPdfs(), $data, $pageShift, $this->formattedLpaRef);
-
-        //  Test the generated filename created
-        $pdfFile = $pdf->generate();
-
-        $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet2.pdf');
+        new ContinuationSheet2($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN, $content, 1);
     }
 }

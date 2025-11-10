@@ -69,6 +69,8 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
             $contentFullyProcessed = false;
 
             try {
+                // Generate the content to see if an error occurs. This avoids unnecessary instantiation of
+                // ContinuationSheet2Pdf, though it would be preferable to only generate the content once.
                 //  TODO - implement a check for this instead of just getting the content...
                 if (
                     in_array($this->cs2Type, [
