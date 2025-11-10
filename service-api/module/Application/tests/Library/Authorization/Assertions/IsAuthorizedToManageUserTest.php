@@ -4,28 +4,17 @@ namespace ApplicationTest\Library\Authorization\Assertions;
 
 use Application\Library\Authentication\Identity\IdentityInterface;
 use Application\Library\Authorization\Assertions\IsAuthorizedToManageUser;
+use Lmc\Rbac\Identity\IdentityInterface as LbacIdentityInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
-use LmcRbacMvc\Service\AuthorizationService;
 
 class IsAuthorizedToManageUserTest extends MockeryTestCase
 {
-    /**
-     * @var IsAuthorizedToManageUser
-     */
-    private $isAuthorisedToManageUser;
-
-    /**
-     * @var AuthorizationService|MockInterface
-     */
-    private $authorisationService;
+    private IsAuthorizedToManageUser $isAuthorisedToManageUser;
 
     public function setUp(): void
     {
         $this->isAuthorisedToManageUser = new IsAuthorizedToManageUser();
-
-        $this->authorisationService = Mockery::mock(AuthorizationService::class);
     }
 
     public function testAssertValid(): void
@@ -33,23 +22,26 @@ class IsAuthorizedToManageUserTest extends MockeryTestCase
         $userIdentity = Mockery::mock(IdentityInterface::class);
         $userIdentity->shouldReceive('id')->andReturn('route user id')->once();
 
-        $this->authorisationService->shouldReceive('getIdentity')->andReturn($userIdentity)->once();
-
-        $result = $this->isAuthorisedToManageUser->assert($this->authorisationService, 'route user id');
+        $result = $this->isAuthorisedToManageUser->assert('', $userIdentity, 'route user id');
         $this->assertTrue($result);
     }
 
     public function testAssertNoRouteUserId(): void
     {
-        $result = $this->isAuthorisedToManageUser->assert($this->authorisationService, null);
+        $result = $this->isAuthorisedToManageUser->assert('', null, null);
         $this->assertFalse($result);
     }
 
     public function testAssertTokenUserHasNoIdMethod(): void
     {
-        $this->authorisationService->shouldReceive('getIdentity')->andReturn([])->once();
+        $userIdentity = new class implements LbacIdentityInterface {
+            public function getRoles(): iterable
+            {
+                return [];
+            }
+        };
 
-        $result = $this->isAuthorisedToManageUser->assert($this->authorisationService, 'route user id');
+        $result = $this->isAuthorisedToManageUser->assert('', $userIdentity, 'route user id');
         $this->assertFalse($result);
     }
 
@@ -58,9 +50,7 @@ class IsAuthorizedToManageUserTest extends MockeryTestCase
         $userIdentity = Mockery::mock(IdentityInterface::class);
         $userIdentity->shouldReceive('id')->andReturn('not route user id')->once();
 
-        $this->authorisationService->shouldReceive('getIdentity')->andReturn($userIdentity)->once();
-
-        $result = $this->isAuthorisedToManageUser->assert($this->authorisationService, 'route user id');
+        $result = $this->isAuthorisedToManageUser->assert('', $userIdentity, 'route user id');
         $this->assertFalse($result);
     }
 }
