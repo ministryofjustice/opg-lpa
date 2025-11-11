@@ -5,9 +5,8 @@
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/shared/module/MakeShared/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/service-admin/test" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/shared/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/shared/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/service-api/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/alphagov/notifications-php-client" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/amp" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/byte-stream" />
@@ -348,6 +347,13 @@
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/league/uri" />
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/league/uri-interfaces" />
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/revolt/event-loop" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/fig/http-message-util" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-diactoros" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-mvc-middleware" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-psr7bridge" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-stratigility" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/psr/http-server-handler" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/psr/http-server-middleware" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
