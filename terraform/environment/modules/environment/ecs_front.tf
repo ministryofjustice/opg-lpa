@@ -7,7 +7,7 @@ resource "aws_ecs_service" "front" {
   task_definition                    = aws_ecs_task_definition.front.arn
   desired_count                      = var.account.autoscaling.front.minimum
   launch_type                        = "FARGATE"
-  platform_version                   = "1.3.0"
+  platform_version                   = "1.4.0"
   propagate_tags                     = "TASK_DEFINITION"
   wait_for_steady_state              = true
   deployment_minimum_healthy_percent = 50
@@ -93,6 +93,9 @@ resource "aws_ecs_task_definition" "front" {
   volume {
     name = "app_tmp"
   }
+  volume {
+    name = "web_etc"
+  }
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
@@ -123,121 +126,128 @@ data "aws_ecr_image" "lpa_front_app" {
 
 locals {
   front_web = jsonencode({
-    "cpu" : 1,
-    "essential" : true,
-    "image" : "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
-    "mountPoints" : [],
-    "name" : "web",
-    "portMappings" : [
+    cpu       = 1,
+    essential = true,
+    image     = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
+    mountPoints = [
       {
-        "containerPort" : 80,
-        "hostPort" : 80,
-        "protocol" : "tcp"
+        containerPath = "/etc",
+        sourceVolume  = "web_etc"
+        readOnly      = false
       }
     ],
-    "dependsOn" : [
+    name = "web",
+    portMappings = [
       {
-        "containerName" : "app",
-        "condition" : "START"
+        containerPort = 80,
+        hostPort      = 80,
+        protocol      = "tcp"
+      }
+    ],
+    dependsOn = [
+      {
+        containerName = "app",
+        condition     = "START"
       }
     ]
-    "volumesFrom" : [],
-    "logConfiguration" : {
-      "logDriver" : "awslogs",
-      "options" : {
-        "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-        "awslogs-region" : "eu-west-1",
-        "awslogs-stream-prefix" : "${var.environment_name}.front-web.online-lpa"
+    volumesFrom = [],
+    logConfiguration = {
+      logDriver = "awslogs",
+      options = {
+        awslogs-group        = aws_cloudwatch_log_group.application_logs.name,
+        awslogs-region       = "eu-west-1",
+        awslogs-streamprefix = "${var.environment_name}.front-web.online-lpa"
       }
     },
-    "environment" : [
-      { "name" : "APP_HOST", "value" : "127.0.0.1" },
-      { "name" : "APP_PORT", "value" : "9000" },
-      { "name" : "TIMEOUT", "value" : "60" },
-      { "name" : "CONTAINER_VERSION", "value" : var.container_version },
-      { "name" : "AWS_ACCOUNT_TYPE", "value" : var.account_name },
+    environment = [
+      { name = "APP_HOST", value = "127.0.0.1" },
+      { name = "APP_PORT", value = "9000" },
+      { name = "TIMEOUT", value = "60" },
+      { name = "CONTAINER_VERSION", value = var.container_version },
+      { name = "AWS_ACCOUNT_TYPE", value = var.account_name },
     ]
     }
   )
 
   front_app = jsonencode(
     {
-      "cpu" : 1,
-      "essential" : true,
-      "readonlyRootFilesystem" : true,
-      "image" : "${data.aws_ecr_repository.lpa_front_app.repository_url}@${data.aws_ecr_image.lpa_front_app.image_digest}",
-      "mountPoints" : [
+      cpu                    = 1,
+      essential              = true,
+      readonlyRootFilesystem = true,
+      image                  = "${data.aws_ecr_repository.lpa_front_app.repository_url}@${data.aws_ecr_image.lpa_front_app.image_digest}",
+      mountPoints = [
         {
-          "containerPath" : "/tmp",
-          "sourceVolume" : "app_tmp"
+          containerPath = "/tmp",
+          sourceVolume  = "app_tmp"
+          readOnly      = false
         }
       ],
-      "name" : "app",
-      "portMappings" : [
+      name = "app",
+      portMappings = [
         {
-          "containerPort" : 9000,
-          "hostPort" : 9000,
-          "protocol" : "tcp"
+          containerPort = 9000,
+          hostPort      = 9000,
+          protocol      = "tcp"
         }
       ],
-      "healthCheck" : {
-        "command" : ["CMD", "/usr/local/bin/health-check.sh"],
-        "startPeriod" : 90,
-        "interval" : 10,
-        "timeout" : 15,
-        "retries" : 3
+      healthCheck = {
+        command     = ["CMD", "/usr/local/bin/health-check.sh"],
+        startPeriod = 90,
+        interval    = 10,
+        timeout     = 15,
+        retries     = 3
       },
-      "volumesFrom" : [],
-      "logConfiguration" : {
-        "logDriver" : "awslogs",
-        "options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : var.region_name,
-          "awslogs-stream-prefix" : "${var.environment_name}.front-app.online-lpa"
+      volumesFrom = [],
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group        = aws_cloudwatch_log_group.application_logs.name,
+          awslogs-region       = var.region_name,
+          awslogs-streamprefix = "${var.environment_name}.front-app.online-lpa"
         }
       },
-      "dependsOn" : [
+      dependsOn = [
         {
-          "containerName" : "permissions-init",
-          "condition" : "SUCCESS"
+          containerName = "permissions-init",
+          condition     = "SUCCESS"
         }
       ],
-      "secrets" : [
-        { "name" : "OPG_LPA_FRONT_CSRF_SALT", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.name}" },
-        { "name" : "OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
-        { "name" : "OPG_LPA_FRONT_GOV_PAY_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.name}" },
-        { "name" : "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
-        { "name" : "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
-        { "name" : "OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key.name}" }
+      secrets = [
+        { name = "OPG_LPA_FRONT_CSRF_SALT", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.name}" },
+        { name = "OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
+        { name = "OPG_LPA_FRONT_GOV_PAY_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.name}" },
+        { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
+        { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
+        { name = "OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key.name}" }
 
       ],
-      "environment" : [
-        { "name" : "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value" : "${local.dns_namespace_env}${local.front_dns}" },
-        { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "${local.dns_namespace_env}${local.front_dns} localhost 127.0.0.1" },
-        { "name" : "OPG_LPA_FRONT_TRACK_FROM_DATE", "value" : local.track_from_date },
-        { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
-        { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
-        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
-        { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
-        { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
-        { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },
-        { "name" : "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-sessions.name },
-        { "name" : "OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-properties.name },
-        { "name" : "OPG_PHP_POOL_CHILDREN_MAX", "value" : "25" },
-        { "name" : "OPG_NGINX_SSL_HSTS_AGE", "value" : "31536000" },
-        { "name" : "OPG_NGINX_SSL_FORCE_REDIRECT", "value" : "TRUE" },
-        { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
-        { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
-        { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : aws_sqs_queue.pdf_fifo_queue.id },
-        { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}:8080" },
-        { "name" : "OPG_LPA_OS_PLACES_HUB_ENDPOINT", "value" : "https://api.os.uk/search/places/v1/postcode" },
-        { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache_region.primary_endpoint_address}" },
-        { "name" : "AWS_ACCOUNT_TYPE", "value" : var.account_name },
-        { "name" : "OPG_LPA_FRONT_EMAIL_TRANSPORT", "value" : "notify" },
-        { "name" : "OPG_LPA_TELEMETRY_HOST", "value" : "127.0.0.1" },
-        { "name" : "OPG_LPA_TELEMETRY_PORT", "value" : "2000" },
-        { "name" : "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", "value" : var.account.telemetry_requests_sampled_fraction },
-        { "name" : "LPA_FEE_EFFECTIVE_DATE", "value" : "2025-11-17T00:00:00" }
+      environment = [
+        { name = "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", value = "${local.dns_namespace_env}${local.front_dns}" },
+        { name = "OPG_NGINX_SERVER_NAMES", value = "${local.dns_namespace_env}${local.front_dns} localhost 127.0.0.1" },
+        { name = "OPG_LPA_FRONT_TRACK_FROM_DATE", value = local.track_from_date },
+        { name = "OPG_LPA_STACK_NAME", value = var.environment_name },
+        { name = "OPG_DOCKER_TAG", value = var.container_version },
+        { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name },
+        { name = "OPG_LPA_COMMON_APPLICATION_LOG_PATH", value = "/var/log/app/application.log" },
+        { name = "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", value = "" },
+        { name = "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", value = aws_dynamodb_table.lpa-locks.name },
+        { name = "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", value = aws_dynamodb_table.lpa-sessions.name },
+        { name = "OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE", value = aws_dynamodb_table.lpa-properties.name },
+        { name = "OPG_PHP_POOL_CHILDREN_MAX", value = "25" },
+        { name = "OPG_NGINX_SSL_HSTS_AGE", value = "31536000" },
+        { name = "OPG_NGINX_SSL_FORCE_REDIRECT", value = "TRUE" },
+        { name = "OPG_LPA_COMMON_RESQUE_REDIS_HOST", value = "redisback" },
+        { name = "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", value = data.aws_s3_bucket.lpa_pdf_cache.bucket },
+        { name = "OPG_LPA_COMMON_PDF_QUEUE_URL", value = aws_sqs_queue.pdf_fifo_queue.id },
+        { name = "OPG_LPA_ENDPOINTS_API", value = "http://${local.api_service_fqdn}:8080" },
+        { name = "OPG_LPA_OS_PLACES_HUB_ENDPOINT", value = "https://api.os.uk/search/places/v1/postcode" },
+        { name = "OPG_LPA_COMMON_REDIS_CACHE_URL", value = "tls://${data.aws_elasticache_replication_group.front_cache_region.primary_endpoint_address}" },
+        { name = "AWS_ACCOUNT_TYPE", value = var.account_name },
+        { name = "OPG_LPA_FRONT_EMAIL_TRANSPORT", value = "notify" },
+        { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
+        { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
+        { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.account.telemetry_requests_sampled_fraction },
+        { name = "LPA_FEE_EFFECTIVE_DATE", value = "2025-11-17T00:00:00" }
       ]
     }
   )
