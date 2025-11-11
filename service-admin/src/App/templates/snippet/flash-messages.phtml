@@ -1,4 +1,9 @@
-<?php foreach ($messages as $messageKey => $messageValues) { ?>
+<?php
+$messages = array_map(
+        fn($v) => is_array($v) ? $v : [$v],
+        ($messages ?? [])
+);
+foreach ($messages as $messageKey => $messageValues) { ?>
     <?php if ($messageKey === 'info') { ?>
 
         <div class="flash" role="alert" aria-labelledby="flash-summary-heading-example-1" tabindex="-1">
