@@ -90,6 +90,6 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
             }
 
             $page++;
-        } while (!$contentFullyProcessed);
+        } while (!$contentFullyProcessed && $page <= 100);
     }
 }
