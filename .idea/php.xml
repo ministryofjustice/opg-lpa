@@ -158,8 +158,6 @@
       <path value="$PROJECT_DIR$/service-admin/vendor/symfony/service-contracts" />
       <path value="$PROJECT_DIR$/service-admin/vendor/symfony/string" />
       <path value="$PROJECT_DIR$/service-admin/vendor/theseer/tokenizer" />
-      <path value="$PROJECT_DIR$/service-admin/vendor/tuupola/callable-handler" />
-      <path value="$PROJECT_DIR$/service-admin/vendor/tuupola/http-factory" />
       <path value="$PROJECT_DIR$/service-admin/vendor/vimeo/psalm" />
       <path value="$PROJECT_DIR$/service-admin/vendor/webimpress/safe-writer" />
       <path value="$PROJECT_DIR$/service-admin/vendor/webmozart/assert" />
@@ -652,6 +650,22 @@
       <path value="$PROJECT_DIR$/shared/vendor/webmozart/assert" />
       <path value="$PROJECT_DIR$/shared/vendor/webmozart/path-util" />
       <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/shared/vendor/felixfbecker/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/felixfbecker/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-db" />
+      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-mvc-i18n" />
+      <path value="$PROJECT_DIR$/service-api/vendor/felixfbecker/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-i18n" />
+      <path value="$PROJECT_DIR$/service-front/vendor/felixfbecker/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-mvc-i18n" />
+      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-translator" />
+      <path value="$PROJECT_DIR$/service-front/vendor/fig/http-message-util" />
+      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-diactoros" />
+      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-mvc-middleware" />
+      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-psr7bridge" />
+      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-stratigility" />
+      <path value="$PROJECT_DIR$/service-front/vendor/psr/http-server-handler" />
+      <path value="$PROJECT_DIR$/service-front/vendor/psr/http-server-middleware" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
