@@ -204,7 +204,7 @@ locals {
         { "name" : "OPG_NGINX_SSL_HSTS_AGE", "value" : "31536000" },
         { "name" : "OPG_NGINX_SSL_FORCE_REDIRECT", "value" : "TRUE" },
         { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
-        { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" }
+        { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}:8080" }
       ]
     }
   )
