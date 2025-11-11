@@ -6,7 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/shared/module/MakeShared/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/service-admin/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/service-api/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/shared/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/shared/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/alphagov/notifications-php-client" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/amp" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/byte-stream" />
@@ -25,7 +26,6 @@
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/doctrine/lexer" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/doctrine/persistence" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/egulias/email-validator" />
-      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/felixfbecker/advanced-json-rpc" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/felixfbecker/language-server-protocol" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/fidry/cpu-core-counter" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/firebase/php-jwt" />
@@ -40,18 +40,15 @@
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-cli" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-config" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-crypt" />
-      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-db" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-escaper" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-eventmanager" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-filter" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-http" />
-      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-i18n" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-json" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-loader" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-math" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-modulemanager" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-mvc" />
-      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-mvc-i18n" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-paginator" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-router" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/laminas/laminas-servicemanager" />
@@ -141,7 +138,6 @@
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/doctrine/deprecations" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/doctrine/lexer" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/egulias/email-validator" />
-      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/felixfbecker/advanced-json-rpc" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/felixfbecker/language-server-protocol" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/fidry/cpu-core-counter" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/firebase/php-jwt" />
@@ -166,7 +162,6 @@
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-loader" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-modulemanager" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-mvc" />
-      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-mvc-i18n" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-mvc-plugin-flashmessenger" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-router" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-servicemanager" />
@@ -347,13 +342,61 @@
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/league/uri" />
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/league/uri-interfaces" />
       <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/revolt/event-loop" />
-      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/fig/http-message-util" />
-      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-diactoros" />
-      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-mvc-middleware" />
-      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-psr7bridge" />
-      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/laminas/laminas-stratigility" />
-      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/psr/http-server-handler" />
-      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/psr/http-server-middleware" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/dns" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/parallel" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/parser" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/pipeline" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/process" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/serialization" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/socket" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/sync" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/danog/advanced-json-rpc" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/daverandom/libdns" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/kelunik/certificate" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/league/uri" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/league/uri-interfaces" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/ministryofjustice/opg-laminas-db" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/revolt/event-loop" />
+      <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/symfony/polyfill-php84" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/dns" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/parallel" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/parser" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/pipeline" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/process" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/serialization" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/socket" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/amphp/sync" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/danog/advanced-json-rpc" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/daverandom/libdns" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/kelunik/certificate" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/league/uri" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/league/uri-interfaces" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/revolt/event-loop" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/symfony/polyfill-php84" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/symfony/polyfill-intl-idn" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/symfony/polyfill-php73" />
+      <excludeFolder url="file://$MODULE_DIR$/service-pdf/vendor/symfony/polyfill-php81" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/amphp/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/amphp/dns" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/amphp/parallel" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/amphp/parser" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/amphp/pipeline" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/amphp/process" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/amphp/serialization" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/amphp/socket" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/amphp/sync" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/danog/advanced-json-rpc" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/daverandom/libdns" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/kelunik/certificate" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/league/uri" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/league/uri-interfaces" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/revolt/event-loop" />
+      <excludeFolder url="file://$MODULE_DIR$/shared/vendor/symfony/polyfill-php84" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/symfony/polyfill-intl-idn" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/symfony/polyfill-php73" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/symfony/polyfill-php81" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
