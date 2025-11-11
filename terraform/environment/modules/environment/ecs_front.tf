@@ -154,9 +154,9 @@ locals {
     logConfiguration = {
       logDriver = "awslogs",
       options = {
-        awslogs-group        = aws_cloudwatch_log_group.application_logs.name,
-        awslogs-region       = "eu-west-1",
-        awslogs-streamprefix = "${var.environment_name}.front-web.online-lpa"
+        awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
+        awslogs-region        = "eu-west-1",
+        awslogs-stream-prefix = "${var.environment_name}.front-web.online-lpa"
       }
     },
     environment = [
@@ -201,9 +201,9 @@ locals {
       logConfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogs-group        = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region       = var.region_name,
-          awslogs-streamprefix = "${var.environment_name}.front-app.online-lpa"
+          awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
+          awslogs-region        = var.region_name,
+          awslogs-stream-prefix = "${var.environment_name}.front-app.online-lpa"
         }
       },
       secrets = [
