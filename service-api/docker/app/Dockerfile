@@ -6,7 +6,7 @@ COPY --from=mlocati/php-extension-installer:2@sha256:f07adf63f4458e6f8d2774b62a3
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
-RUN adduser -D -g '' appuser
+RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
@@ -78,5 +78,7 @@ RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
 RUN apk del .build-dependencies
 
 USER appuser
+
+VOLUME [ "/tmp" ]
 
 CMD ["/bin/sh", "-c", "/usr/local/bin/db-migrations.sh && php-fpm"]
