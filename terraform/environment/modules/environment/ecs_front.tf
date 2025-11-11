@@ -21,7 +21,7 @@ resource "aws_ecs_service" "front" {
   load_balancer {
     target_group_arn = aws_lb_target_group.front.arn
     container_name   = "web"
-    container_port   = 80
+    container_port   = 8080
   }
 
   lifecycle {
@@ -29,6 +29,11 @@ resource "aws_ecs_service" "front" {
     ignore_changes = [
       desired_count
     ]
+  }
+
+  timeouts {
+    create = var.environment_name == "production" ? "20m" : "10m"
+    update = var.environment_name == "production" ? "20m" : "6m"
   }
 
   depends_on = [aws_lb.front]
@@ -48,8 +53,8 @@ resource "aws_security_group" "front_ecs_service" {
 
 resource "aws_security_group_rule" "front_ecs_service_ingress" {
   type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
+  from_port                = 8080
+  to_port                  = 8080
   protocol                 = "tcp"
   security_group_id        = aws_security_group.front_ecs_service.id
   source_security_group_id = aws_security_group.front_loadbalancer.id
@@ -139,8 +144,8 @@ locals {
     name = "web",
     portMappings = [
       {
-        containerPort = 80,
-        hostPort      = 80,
+        containerPort = 8080,
+        hostPort      = 8080,
         protocol      = "tcp"
       }
     ],
