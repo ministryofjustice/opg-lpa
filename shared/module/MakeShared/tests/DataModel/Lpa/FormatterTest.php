@@ -50,7 +50,27 @@ class FormatterTest extends TestCase
                     "five earth years.                                                                   \r\n" .
                     "In the case of my family not being able to take over my affairs, the money and my   \r\n" .
                     "other earthly belongings are to be distributed equally throughout the land to all   \r\n" .
-                    "and sundry.                                                                         \r\n";
+                    "and sundry.                                                                         ";
+
+        $actual = Formatter::flattenInstructionsOrPreferences($text);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testFlattenInstructionsOrPreferencesMultipleBlankLines()
+    {
+        $text = implode("\r\n", [
+            'Line one.',
+            '',
+            'Line two.',
+            '',
+            'Line three.',
+            '',
+        ]);
+
+        $expected = "Line one.                                                                           \r\n" .
+                    "Line two.                                                                           \r\n" .
+                    "Line three.                                                                         ";
 
         $actual = Formatter::flattenInstructionsOrPreferences($text);
 
