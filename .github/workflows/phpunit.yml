@@ -49,6 +49,7 @@ jobs:
         run: |
           sudo apt-get update --allow-releaseinfo-change
           sudo apt-get install pdftk-java
+          sudo apt-get install -y poppler-utils
       - name: Composer install
         run: composer install --prefer-dist --optimize-autoloader --no-interaction --no-scripts
       - name: Run phpunit
