@@ -121,6 +121,8 @@ class Lp3Test extends AbstractPdfTestCase
         $pdfFile = $pdf->generate();
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'Lp3.pdf');
+
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/1762448147.6933-A510-7295-5715-Lp3.pdf');
     }
 
     public function testGeneratePFSecondPersonToNotifySinglePrimaryAttorney()
@@ -219,5 +221,7 @@ class Lp3Test extends AbstractPdfTestCase
         $pdfFile = $pdf->generate();
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'Lp3.pdf');
+
+        $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/1762448636.86-A510-7295-5715-Lp3.pdf');
     }
 }

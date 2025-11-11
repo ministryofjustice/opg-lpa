@@ -224,4 +224,24 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerA
             'class' => get_class($this),
         ];
     }
+
+    // getNumberOfPages and getPdfFile are used only by tests
+
+    /**
+     *
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function getNumberOfPages(): int
+    {
+        return $this->numberOfPages;
+    }
+
+    /**
+     *
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function getPdfFile(): string
+    {
+        return $this->pdfFile;
+    }
 }
