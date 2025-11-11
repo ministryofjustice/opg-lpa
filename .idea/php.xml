@@ -2,11 +2,7 @@
 <project version="4">
   <component name="MessDetector">
     <phpmd_settings>
-<<<<<<< HEAD
-      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="49d29832-bc24-4bae-8a82-2c3eb403a4b1" timeout="30000" />
-=======
       <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="60cd8839-2b04-48ea-b799-db1cc521cac2" timeout="30000" />
->>>>>>> main
     </phpmd_settings>
   </component>
   <component name="MessDetectorOptionsConfiguration">
@@ -19,13 +15,14 @@
     <option name="highlightLevel" value="WARNING" />
     <option name="transferred" value="true" />
   </component>
+  <component name="PhpCSFixer">
+    <phpcsfixer_settings>
+      <phpcs_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="088c6e8f-c48c-4fdd-b2ba-3c2d21a222d7" timeout="30000" />
+    </phpcsfixer_settings>
+  </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
-<<<<<<< HEAD
-      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="49d29832-bc24-4bae-8a82-2c3eb403a4b1" timeout="30000" />
-=======
       <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="60cd8839-2b04-48ea-b799-db1cc521cac2" timeout="30000" />
->>>>>>> main
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
@@ -51,10 +48,7 @@
       <path value="$PROJECT_DIR$/service-admin/vendor/dnoegel/php-xdg-base-dir" />
       <path value="$PROJECT_DIR$/service-admin/vendor/doctrine/deprecations" />
       <path value="$PROJECT_DIR$/service-admin/vendor/doctrine/instantiator" />
-<<<<<<< HEAD
-=======
       <path value="$PROJECT_DIR$/service-admin/vendor/felixfbecker/advanced-json-rpc" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-admin/vendor/felixfbecker/language-server-protocol" />
       <path value="$PROJECT_DIR$/service-admin/vendor/fidry/cpu-core-counter" />
       <path value="$PROJECT_DIR$/service-admin/vendor/fig/http-message-util" />
@@ -170,11 +164,8 @@
       <path value="$PROJECT_DIR$/service-admin/vendor/symfony/service-contracts" />
       <path value="$PROJECT_DIR$/service-admin/vendor/symfony/string" />
       <path value="$PROJECT_DIR$/service-admin/vendor/theseer/tokenizer" />
-<<<<<<< HEAD
-=======
       <path value="$PROJECT_DIR$/service-admin/vendor/tuupola/callable-handler" />
       <path value="$PROJECT_DIR$/service-admin/vendor/tuupola/http-factory" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-admin/vendor/vimeo/psalm" />
       <path value="$PROJECT_DIR$/service-admin/vendor/webimpress/safe-writer" />
       <path value="$PROJECT_DIR$/service-admin/vendor/webmozart/assert" />
@@ -209,10 +200,7 @@
       <path value="$PROJECT_DIR$/service-api/vendor/doctrine/lexer" />
       <path value="$PROJECT_DIR$/service-api/vendor/doctrine/persistence" />
       <path value="$PROJECT_DIR$/service-api/vendor/egulias/email-validator" />
-<<<<<<< HEAD
-=======
       <path value="$PROJECT_DIR$/service-api/vendor/felixfbecker/advanced-json-rpc" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-api/vendor/felixfbecker/language-server-protocol" />
       <path value="$PROJECT_DIR$/service-api/vendor/fidry/cpu-core-counter" />
       <path value="$PROJECT_DIR$/service-api/vendor/fig/http-message-util" />
@@ -228,24 +216,12 @@
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-cache-storage-adapter-memory" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-cli" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-config" />
-<<<<<<< HEAD
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-crypt" />
-=======
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-db" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-diactoros" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-escaper" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-eventmanager" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-filter" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-http" />
-<<<<<<< HEAD
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-json" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-loader" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-log" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-math" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-modulemanager" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-mvc" />
-=======
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-i18n" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-json" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-loader" />
@@ -253,7 +229,6 @@
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-modulemanager" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-mvc" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-mvc-i18n" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-mvc-middleware" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-paginator" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-psr7bridge" />
@@ -261,10 +236,7 @@
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-servicemanager" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-stdlib" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-stratigility" />
-<<<<<<< HEAD
-=======
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-translator" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-uri" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-validator" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-view" />
@@ -372,15 +344,10 @@
       <path value="$PROJECT_DIR$/service-front/vendor/doctrine/deprecations" />
       <path value="$PROJECT_DIR$/service-front/vendor/doctrine/lexer" />
       <path value="$PROJECT_DIR$/service-front/vendor/egulias/email-validator" />
-<<<<<<< HEAD
-      <path value="$PROJECT_DIR$/service-front/vendor/felixfbecker/language-server-protocol" />
-      <path value="$PROJECT_DIR$/service-front/vendor/fidry/cpu-core-counter" />
-=======
       <path value="$PROJECT_DIR$/service-front/vendor/felixfbecker/advanced-json-rpc" />
       <path value="$PROJECT_DIR$/service-front/vendor/felixfbecker/language-server-protocol" />
       <path value="$PROJECT_DIR$/service-front/vendor/fidry/cpu-core-counter" />
       <path value="$PROJECT_DIR$/service-front/vendor/fig/http-message-util" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-front/vendor/firebase/php-jwt" />
       <path value="$PROJECT_DIR$/service-front/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/service-front/vendor/guzzlehttp/promises" />
@@ -392,10 +359,7 @@
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-cache" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-cache-storage-adapter-memory" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-config" />
-<<<<<<< HEAD
-=======
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-diactoros" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-escaper" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-eventmanager" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-filter" />
@@ -408,22 +372,15 @@
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-loader" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-modulemanager" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-mvc" />
-<<<<<<< HEAD
-      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-mvc-plugin-flashmessenger" />
-=======
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-mvc-i18n" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-mvc-middleware" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-mvc-plugin-flashmessenger" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-psr7bridge" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-router" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-servicemanager" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-session" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-stdlib" />
-<<<<<<< HEAD
-=======
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-stratigility" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-test" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-translator" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-uri" />
@@ -460,11 +417,8 @@
       <path value="$PROJECT_DIR$/service-front/vendor/psr/http-client" />
       <path value="$PROJECT_DIR$/service-front/vendor/psr/http-factory" />
       <path value="$PROJECT_DIR$/service-front/vendor/psr/http-message" />
-<<<<<<< HEAD
-=======
       <path value="$PROJECT_DIR$/service-front/vendor/psr/http-server-handler" />
       <path value="$PROJECT_DIR$/service-front/vendor/psr/http-server-middleware" />
->>>>>>> main
       <path value="$PROJECT_DIR$/service-front/vendor/psr/log" />
       <path value="$PROJECT_DIR$/service-front/vendor/psr/simple-cache" />
       <path value="$PROJECT_DIR$/service-front/vendor/ralouphie/getallheaders" />
@@ -629,10 +583,7 @@
       <path value="$PROJECT_DIR$/shared/vendor/doctrine/instantiator" />
       <path value="$PROJECT_DIR$/shared/vendor/doctrine/lexer" />
       <path value="$PROJECT_DIR$/shared/vendor/egulias/email-validator" />
-<<<<<<< HEAD
-=======
       <path value="$PROJECT_DIR$/shared/vendor/felixfbecker/advanced-json-rpc" />
->>>>>>> main
       <path value="$PROJECT_DIR$/shared/vendor/felixfbecker/language-server-protocol" />
       <path value="$PROJECT_DIR$/shared/vendor/fidry/cpu-core-counter" />
       <path value="$PROJECT_DIR$/shared/vendor/hamcrest/hamcrest-php" />
@@ -720,25 +671,6 @@
       <path value="$PROJECT_DIR$/shared/vendor/webmozart/assert" />
       <path value="$PROJECT_DIR$/shared/vendor/webmozart/path-util" />
       <path value="$PROJECT_DIR$/vendor/composer" />
-<<<<<<< HEAD
-      <path value="$PROJECT_DIR$/shared/vendor/felixfbecker/advanced-json-rpc" />
-      <path value="$PROJECT_DIR$/service-admin/vendor/felixfbecker/advanced-json-rpc" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-db" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-mvc-i18n" />
-      <path value="$PROJECT_DIR$/service-api/vendor/felixfbecker/advanced-json-rpc" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-i18n" />
-      <path value="$PROJECT_DIR$/service-front/vendor/felixfbecker/advanced-json-rpc" />
-      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-mvc-i18n" />
-      <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-translator" />
-      <path value="$PROJECT_DIR$/service-front/vendor/fig/http-message-util" />
-      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-diactoros" />
-      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-mvc-middleware" />
-      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-psr7bridge" />
-      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-stratigility" />
-      <path value="$PROJECT_DIR$/service-front/vendor/psr/http-server-handler" />
-      <path value="$PROJECT_DIR$/service-front/vendor/psr/http-server-middleware" />
-=======
->>>>>>> main
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -891,11 +823,7 @@
       </interpreter>
       <interpreter name="pdf-app">
         <phpinfo binary_type="PHP" php_cli="/usr/local/bin/php" path_separator=":" version="8.4.13">
-<<<<<<< HEAD
-          <additional_php_ini>/usr/local/etc/php/conf.d/app-php.ini, /usr/local/etc/php/conf.d/docker-fpm.ini, /usr/local/etc/php/conf.d/docker-php-ext-gd.ini, /usr/local/etc/php/conf.d/docker-php-ext-imagick.ini, /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini, /usr/local/etc/php/conf.d/docker-php-ext-sodium.ini</additional_php_ini>
-=======
           <additional_php_ini>/usr/local/etc/php/conf.d/app-php.ini, /usr/local/etc/php/conf.d/docker-fpm.ini, /usr/local/etc/php/conf.d/docker-php-ext-gd.ini, /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini, /usr/local/etc/php/conf.d/docker-php-ext-sodium.ini</additional_php_ini>
->>>>>>> main
           <configuration_file />
           <configuration_options>
             <configuration_option name="include_path" value=".:/usr/local/lib/php" />
@@ -942,7 +870,7 @@
         </phpinfo>
       </interpreter>
       <interpreter name="admin-app">
-        <phpinfo binary_type="PHP" php_cli="/usr/local/bin/php" path_separator=":" version="8.4.12">
+        <phpinfo binary_type="PHP" php_cli="/usr/local/bin/php" path_separator=":" version="8.4.13">
           <additional_php_ini>/usr/local/etc/php/conf.d/app-php.ini, /usr/local/etc/php/conf.d/docker-fpm.ini, /usr/local/etc/php/conf.d/docker-php-ext-gmp.ini, /usr/local/etc/php/conf.d/docker-php-ext-intl.ini, /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini, /usr/local/etc/php/conf.d/docker-php-ext-sodium.ini</additional_php_ini>
           <configuration_file />
           <configuration_options>
