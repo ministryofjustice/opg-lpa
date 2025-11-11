@@ -15,9 +15,6 @@ return [
     /* ------------------------------------------------------------- */
 
     'controllers' => [
-        'factories' => [
-            'PingController' => 'Application\ControllerFactory\PingControllerFactory',
-        ],
         'abstract_factories' => [
             'Application\ControllerFactory\ControllerAbstractFactory'
         ],
@@ -43,19 +40,6 @@ return [
             'UserService'                   => 'Application\Model\Service\User\Details',
         ],
     ],
-
-    /*
-    'translator' => [
-        'locale' => 'en_US',
-        'translation_file_patterns' => [
-            [
-                'type'     => 'gettext',
-                'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.mo',
-            ],
-        ],
-    ],
-    */
 
     'view_manager' => [
         'display_not_found_reason' => true,

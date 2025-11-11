@@ -1,5 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
+use Application\Handler;
+use Laminas\Mvc\Middleware\PipeSpec;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
+
 return [
 
     'router' => [
@@ -9,7 +16,7 @@ return [
             // ========================== General ==========================
 
             'index-redirect' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
@@ -20,7 +27,7 @@ return [
             ], // index-redirect
 
             'home' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/home',
                     'defaults' => [
@@ -31,7 +38,7 @@ return [
             ], // home
 
             'terms' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/terms',
                     'defaults' => [
@@ -42,7 +49,7 @@ return [
             ], // terms
 
             'accessibility' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/accessibility',
                     'defaults' => [
@@ -53,7 +60,7 @@ return [
             ], // terms
 
             'privacy' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/privacy-notice',
                     'defaults' => [
@@ -64,7 +71,7 @@ return [
             ], // privacy
 
             'contact' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/contact',
                     'defaults' => [
@@ -75,7 +82,7 @@ return [
             ], // contact
 
             'cookies' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/cookies',
                     'defaults' => [
@@ -86,7 +93,7 @@ return [
             ], // contact
 
             'forgot-password' => [
-                'type' => 'Segment',
+                'type' => Segment::class,
                 'options' => [
                     'route'    => '/forgot-password',
                     'defaults' => [
@@ -97,7 +104,7 @@ return [
                 'may_terminate' => true,
                 'child_routes' => [
                     'callback' => [
-                        'type'    => 'Segment',
+                        'type'    => Segment::class,
                         'options' => [
                             'route'    => '/reset/:token',
                             'constraints' => [
@@ -112,7 +119,7 @@ return [
             ], // forgot-password
 
             'send-feedback' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/send-feedback',
                     'defaults' => [
@@ -123,7 +130,7 @@ return [
             ], // send-feedback
 
             'feedback-thanks' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/feedback-thanks',
                     'defaults' => [
@@ -134,7 +141,7 @@ return [
             ], // feedback-thanks
 
             'guidance' => [
-                'type' => 'Laminas\Router\Http\Segment',
+                'type' => Segment::class,
                 'options' => [
                     'route'    => '/guide[/:section]',
                     'defaults' => [
@@ -146,7 +153,7 @@ return [
             ], // guidance
 
             'enable-cookie' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/enable-cookie',
                     'defaults' => [
@@ -157,7 +164,7 @@ return [
             ], // enable-cookie
 
             'login' => [
-                'type' => 'Laminas\Router\Http\Segment',
+                'type' => Segment::class,
                 'options' => [
                     'route'    => '/login[/:state]',
                     'defaults' => [
@@ -168,7 +175,7 @@ return [
             ], // login
 
             'logout' => [
-                'type'    => 'Literal',
+                'type'    => Literal::class,
                 'options' => [
                     'route'    => '/logout',
                     'defaults' => [
@@ -179,7 +186,7 @@ return [
             ], // logout
 
             'session-expiry' => [
-                'type' => 'Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route' => '/session-state',
                     'defaults' => [
@@ -190,7 +197,7 @@ return [
             ], // session state
 
             'session-keep-alive' => [
-                'type' => 'Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/session-keep-alive',
                     'defaults' => [
@@ -201,7 +208,7 @@ return [
             ],
 
             'session-set-expiry' => [
-                'type' => 'Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/session-set-expiry',
                     'defaults' => [
@@ -213,7 +220,7 @@ return [
 
 
             'deleted' => [
-                'type'    => 'Literal',
+                'type'    => Literal::class,
                 'options' => [
                     'route'    => '/deleted',
                     'defaults' => [
@@ -224,7 +231,7 @@ return [
             ], // deleted
 
             'register' => [
-                'type' => 'Segment',
+                'type' => Segment::class,
                 'options' => [
                     'route'    => '/signup',
                     'defaults' => [
@@ -235,7 +242,7 @@ return [
                 'may_terminate' => true,
                 'child_routes' => [
                     'confirm' => [
-                        'type'    => 'Segment',
+                        'type'    => Segment::class,
                         'options' => [
                             'route'    => '/confirm/:token',
                             'constraints' => [
@@ -247,7 +254,7 @@ return [
                         ],
                     ],
                     'email-sent' => [
-                        'type'    => 'Literal',
+                        'type'    => Literal::class,
                         'options' => [
                             'route'    => '/email-sent',
                             'defaults' => [
@@ -256,7 +263,7 @@ return [
                         ],
                     ],
                     'resend-email' => [
-                        'type'    => 'Literal',
+                        'type'    => Literal::class,
                         'options' => [
                             'route'    => '/resend-email',
                             'defaults' => [
@@ -268,7 +275,7 @@ return [
             ], // register
 
             'stats' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/stats',
                     'defaults' => [
@@ -279,40 +286,43 @@ return [
             ], // stats
 
             'ping' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Segment::class,
                 'options' => [
                     'route'    => '/ping',
                     'defaults' => [
-                        'controller' => 'PingController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\PingHandler::class,
                     ],
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
                     'json' => [
-                        'type'    => 'Segment',
+                        'type'    => Segment::class,
                         'options' => [
                             'route'    => '/json',
                             'defaults' => [
-                                'action'     => 'json',
+                                'controller' => PipeSpec::class,
+                                'middleware'     => Handler\PingHandlerJson::class,
                             ],
                         ],
                     ],
                     'elb' => [
-                        'type'    => 'Segment',
+                        'type'    => Segment::class,
                         'options' => [
                             'route'    => '/elb',
                             'defaults' => [
-                                'action'     => 'elb',
+                                'controller' => PipeSpec::class,
+                                'middleware'     => Handler\PingHandlerElb::class,
                             ],
                         ],
                     ],
                     'pingdom' => [
-                        'type'    => 'Segment',
+                        'type'    => Segment::class,
                         'options' => [
                             'route'    => '/pingdom',
                             'defaults' => [
-                                'action'     => 'pingdom',
+                                'controller' => PipeSpec::class,
+                                'middleware'     => Handler\PingHandlerPingdom::class,
                             ],
                         ],
                     ],
@@ -323,7 +333,7 @@ return [
             // Signed in User routes
 
             'postcode' => [
-                'type'    => 'Laminas\Router\Http\Literal',
+                'type'    => Literal::class,
                 'options' => [
                     'route'    => '/address-lookup',
                     'defaults' => [
@@ -334,7 +344,7 @@ return [
             ],
 
             'user' => [
-                'type' => 'Laminas\Router\Http\Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/user',
                     'defaults' => [
@@ -344,7 +354,7 @@ return [
                 'child_routes' => [
 
                     'about-you' => [
-                        'type'    => 'Segment',
+                        'type'    => Segment::class,
                         'options' => [
                             'route'    => '/about-you[/:new]',
                             'defaults' => [
@@ -355,7 +365,7 @@ return [
                     ], // about-you
 
                     'change-email-address' => [
-                        'type'    => 'Literal',
+                        'type'    => Literal::class,
                         'options' => [
                             'route'    => '/change-email-address',
                             'defaults' => [
@@ -366,7 +376,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'verify' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/verify/:token',
                                     'constraints' => [
@@ -382,7 +392,7 @@ return [
                     ], // change-email-address
 
                     'change-password' => [
-                        'type'    => 'Literal',
+                        'type'    => Literal::class,
                         'options' => [
                             'route'    => '/change-password',
                             'defaults' => [
@@ -393,7 +403,7 @@ return [
                     ], // change-password
 
                     'dashboard' => [
-                        'type'    => 'Segment',
+                        'type'    => Segment::class,
                         'options' => [
                             'route'    => '/dashboard',
                             'defaults' => [
@@ -404,7 +414,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'pagination' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/page/:page',
                                     'constraints' => [
@@ -416,7 +426,7 @@ return [
                                 ],
                             ],
                             'create-lpa' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/create[/:lpa-id]',
                                     'constraints' => [
@@ -428,7 +438,7 @@ return [
                                 ],
                             ],
                             'delete-lpa' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/delete-lpa/:lpa-id',
                                     'constraints' => [
@@ -440,7 +450,7 @@ return [
                                 ],
                             ],
                             'statuses' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/statuses/:lpa-ids',
                                     'constraints' => [
@@ -452,7 +462,7 @@ return [
                                 ],
                             ],
                             'terms-changed' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/new-terms',
                                     'defaults' => [
@@ -461,7 +471,7 @@ return [
                                 ],
                             ],
                             'confirm-delete-lpa' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/confirm-delete-lpa/:lpa-id',
                                     'constraints' => [
@@ -476,7 +486,7 @@ return [
                     ], // dashboard
 
                     'delete' => [
-                        'type'    => 'Segment',
+                        'type'    => Segment::class,
                         'options' => [
                             'route'    => '/delete[/:action]',
                             'defaults' => [
@@ -492,7 +502,7 @@ return [
             // Untyped LPA Route (Type form, no LPA ID)
 
             'lpa-type-no-id' => [
-                'type' => 'Laminas\Router\Http\Segment',
+                'type' => Segment::class,
                 'options' => [
                     'route'    => '/lpa/type',
                     'defaults' => [
@@ -506,7 +516,7 @@ return [
             // LPA Routes
 
             'lpa' => [
-                'type' => 'Laminas\Router\Http\Segment',
+                'type' => Segment::class,
                 'options' => [
                     'route'    => '/lpa/:lpa-id',
                     'constraints' => [
@@ -520,7 +530,7 @@ return [
                 'may_terminate' => true,
                 'child_routes' => [
                     'applicant' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/applicant',
                             'defaults' => [
@@ -530,7 +540,7 @@ return [
                         ],
                     ],
                     'certificate-provider' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/certificate-provider',
                             'defaults' => [
@@ -541,7 +551,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'add' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
@@ -550,7 +560,7 @@ return [
                                 ],
                             ],
                             'edit' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/edit',
                                     'defaults' => [
@@ -559,7 +569,7 @@ return [
                                 ],
                             ],
                             'confirm-delete' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/confirm-delete',
                                     'defaults' => [
@@ -568,7 +578,7 @@ return [
                                 ],
                             ],
                             'delete' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/delete',
                                     'defaults' => [
@@ -579,7 +589,7 @@ return [
                         ],
                     ],
                     'complete' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/complete',
                             'defaults' => [
@@ -589,7 +599,7 @@ return [
                         ],
                     ],
                     'more-info-required' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/more-info-required',
                             'defaults' => [
@@ -599,7 +609,7 @@ return [
                         ],
                     ],
                     'correspondent' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/correspondent',
                             'defaults' => [
@@ -610,7 +620,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'edit' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/edit',
                                     'defaults' => [
@@ -621,7 +631,7 @@ return [
                         ],
                     ],
                     'date-check' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/date-check',
                             'defaults' => [
@@ -632,13 +642,13 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'complete' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route' => '/complete',
                                 ],
                             ],
                             'valid' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'  => '/valid',
                                     'defaults' => [
@@ -649,7 +659,7 @@ return [
                         ],
                     ],
                     'summary' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/summary',
                             'defaults' => [
@@ -659,7 +669,7 @@ return [
                         ],
                     ],
                     'donor' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/donor',
                             'defaults' => [
@@ -670,7 +680,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'add' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
@@ -679,7 +689,7 @@ return [
                                 ],
                             ],
                             'edit' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/edit',
                                     'defaults' => [
@@ -690,7 +700,7 @@ return [
                         ],
                     ],
                     'download' => [
-                        'type' => 'Segment',
+                        'type' => Segment::class,
                         'options' => [
                             'route'    => '/download/:pdf-type',
                             'constraints' => [
@@ -704,7 +714,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'draft' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/draft',
                                     'defaults' => [
@@ -713,7 +723,7 @@ return [
                                 ],
                             ],
                             'file' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/:pdf-filename',
                                     'constraints' => [
@@ -725,7 +735,7 @@ return [
                                 ],
                             ],
                             'check' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/check',
                                     'defaults' => [
@@ -736,7 +746,7 @@ return [
                         ],
                     ],
                     'form-type' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/type',
                             'defaults' => [
@@ -746,7 +756,7 @@ return [
                         ],
                     ],
                     'how-primary-attorneys-make-decision' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/how-primary-attorneys-make-decision',
                             'defaults' => [
@@ -756,7 +766,7 @@ return [
                         ],
                     ],
                     'how-replacement-attorneys-make-decision' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/how-replacement-attorneys-make-decision',
                             'defaults' => [
@@ -766,7 +776,7 @@ return [
                         ],
                     ],
                     'instructions' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/instructions',
                             'defaults' => [
@@ -776,7 +786,7 @@ return [
                         ],
                     ],
                     'life-sustaining' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/life-sustaining',
                             'defaults' => [
@@ -786,7 +796,7 @@ return [
                         ],
                     ],
                     'checkout' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/checkout',
                             'defaults' => [
@@ -797,7 +807,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'cheque' => [
-                                'type' => 'Literal',
+                                'type' => Literal::class,
                                 'options' => [
                                     'route'    => '/cheque',
                                     'defaults' => [
@@ -806,7 +816,7 @@ return [
                                 ],
                             ],
                             'pay' => [
-                                'type' => 'Literal',
+                                'type' => Literal::class,
                                 'options' => [
                                     'route'    => '/pay',
                                     'defaults' => [
@@ -816,7 +826,7 @@ return [
                                 'may_terminate' => true,
                                 'child_routes' => [
                                     'response' => [
-                                        'type'    => 'Literal',
+                                        'type'    => Literal::class,
                                         'options' => [
                                             'route'    => '/response',
                                             'defaults' => [
@@ -827,7 +837,7 @@ return [
                                 ],
                             ],
                             'confirm' => [
-                                'type' => 'Literal',
+                                'type' => Literal::class,
                                 'options' => [
                                     'route'    => '/confirm',
                                     'defaults' => [
@@ -838,7 +848,7 @@ return [
                         ],
                     ],
                     'people-to-notify' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/people-to-notify',
                             'defaults' => [
@@ -849,7 +859,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'add' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
@@ -858,7 +868,7 @@ return [
                                 ],
                             ],
                             'edit' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/edit/:idx',
                                     'constraints' => [
@@ -870,7 +880,7 @@ return [
                                 ],
                             ],
                             'confirm-delete' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/confirm-delete/:idx',
                                     'constraints' => [
@@ -882,7 +892,7 @@ return [
                                 ],
                             ],
                             'delete' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/delete/:idx',
                                     'constraints' => [
@@ -896,7 +906,7 @@ return [
                         ],
                     ],
                     'primary-attorney' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/primary-attorney',
                             'defaults' => [
@@ -907,7 +917,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'add' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
@@ -916,7 +926,7 @@ return [
                                 ],
                             ],
                             'edit' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/edit/:idx',
                                     'constraints' => [
@@ -928,7 +938,7 @@ return [
                                 ],
                             ],
                             'confirm-delete' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/confirm-delete/:idx',
                                     'constraints' => [
@@ -940,7 +950,7 @@ return [
                                 ],
                             ],
                             'delete' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/delete/:idx',
                                     'constraints' => [
@@ -952,7 +962,7 @@ return [
                                 ],
                             ],
                             'add-trust' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/add-trust',
                                     'defaults' => [
@@ -963,7 +973,7 @@ return [
                         ],
                     ],
                     'fee-reduction' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/fee-reduction',
                             'defaults' => [
@@ -973,7 +983,7 @@ return [
                         ],
                     ],
                     'repeat-application' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/repeat-application',
                             'defaults' => [
@@ -983,7 +993,7 @@ return [
                         ],
                     ],
                     'replacement-attorney' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/replacement-attorney',
                             'defaults' => [
@@ -994,7 +1004,7 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'add' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
@@ -1003,7 +1013,7 @@ return [
                                 ],
                             ],
                             'edit' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/edit/:idx',
                                     'constraints' => [
@@ -1015,7 +1025,7 @@ return [
                                 ],
                             ],
                             'confirm-delete' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/confirm-delete/:idx',
                                     'constraints' => [
@@ -1027,7 +1037,7 @@ return [
                                 ],
                             ],
                             'delete' => [
-                                'type'    => 'Segment',
+                                'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/delete/:idx',
                                     'constraints' => [
@@ -1039,7 +1049,7 @@ return [
                                 ],
                             ],
                             'add-trust' => [
-                                'type'    => 'Literal',
+                                'type'    => Literal::class,
                                 'options' => [
                                     'route'    => '/add-trust',
                                     'defaults' => [
@@ -1050,7 +1060,7 @@ return [
                         ],
                     ],
                     'view-docs' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/view-docs',
                             'defaults' => [
@@ -1060,7 +1070,7 @@ return [
                         ],
                     ],
                     'who-are-you' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/who-are-you',
                             'defaults' => [
@@ -1070,7 +1080,7 @@ return [
                         ],
                     ],
                     'when-lpa-starts' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/when-lpa-starts',
                             'defaults' => [
@@ -1080,7 +1090,7 @@ return [
                         ],
                     ],
                     'when-replacement-attorney-step-in' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route'    => '/when-replacement-attorney-step-in',
                             'defaults' => [
@@ -1090,7 +1100,7 @@ return [
                         ],
                     ],
                     'reuse-details' => [
-                        'type'    => 'Literal',
+                        'type'    => Literal::class,
                         'options' => [
                             'route'    => '/reuse-details',
                             'defaults' => [
@@ -1100,7 +1110,7 @@ return [
                         ],
                     ],
                     'status' => [
-                        'type'    => 'Literal',
+                        'type'    => Literal::class,
                         'options' => [
                             'route'    => '/status',
                             'defaults' => [
