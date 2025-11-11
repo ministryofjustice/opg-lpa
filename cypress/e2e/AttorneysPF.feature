@@ -184,6 +184,7 @@ Feature: Add attorneys to a Property and Finance LPA
         Then I am taken to the primary attorney page
         When I click "save"
         Then I am taken to the primary attorney decisions page
+        Then I can find hidden "how-depends"
         # test save without selecting anything
         When I click "save"
         Then I see in the page text
@@ -191,6 +192,7 @@ Feature: Add attorneys to a Property and Finance LPA
             | How should the attorneys make decisions |
         And I see "Error" in the title
         When I click "how-depends"
+        Then I can find "how-details" and it is visible
         # test save without typing anything in how-details
         When I click "save"
         Then I see in the page text

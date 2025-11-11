@@ -5,6 +5,12 @@ namespace Application;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
+use Application\Handler\PingHandler;
+use Application\Handler\PingHandlerFactory;
+use Application\Handler\PingHandlerJson;
+use Application\Handler\PingHandlerJsonFactory;
+use Application\Handler\PingHandlerPingdom;
+use Application\Handler\PingHandlerPingdomFactory;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\Session\SessionManager;
@@ -247,6 +253,9 @@ class Module implements FormElementProviderInterface
                     $fees = $sm->get('config')['fees'] ?? [];
                     return new Calculator($fees);
                 },
+                PingHandler::class => PingHandlerFactory::class,
+                PingHandlerJson::class => PingHandlerJsonFactory::class,
+                PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
