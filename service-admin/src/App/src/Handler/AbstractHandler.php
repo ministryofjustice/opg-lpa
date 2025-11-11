@@ -8,10 +8,11 @@ use App\Handler\Initializers\TemplatingSupportInterface;
 use App\Handler\Initializers\TemplatingSupportTrait;
 use App\Handler\Initializers\UrlHelperInterface;
 use App\Handler\Initializers\UrlHelperTrait;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Slim\Flash\Messages;
 use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 
@@ -72,13 +73,12 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
         string $message,
         bool $now = false
     ): void {
-        /** @var Messages $flash */
-        $flash = $request->getAttribute('flash');
-
+        /** @var FlashMessagesInterface $flash */
+        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
         if ($now) {
-            $flash->addMessageNow($key, $message);
+            $flash->flashNow($key, $message);
         } else {
-            $flash->addMessage($key, $message);
+            $flash->flash($key, $message);
         }
     }
 
@@ -88,6 +88,8 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
      */
     protected function getFlashMessages(ServerRequestInterface $request): array
     {
-        return $request->getAttribute('flash')->getMessages();
+        /** @var FlashMessagesInterface $flash */
+        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+        return $flash->getFlashes();
     }
 }
