@@ -229,7 +229,7 @@ locals {
         { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
         { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
         { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : aws_sqs_queue.pdf_fifo_queue.id },
-        { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" },
+        { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}:8080" },
         { "name" : "OPG_LPA_OS_PLACES_HUB_ENDPOINT", "value" : "https://api.os.uk/search/places/v1/postcode" },
         { "name" : "OPG_LPA_COMMON_REDIS_CACHE_URL", "value" : "tls://${data.aws_elasticache_replication_group.front_cache_region.primary_endpoint_address}" },
         { "name" : "AWS_ACCOUNT_TYPE", "value" : var.account_name },

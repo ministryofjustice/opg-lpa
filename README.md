@@ -101,12 +101,12 @@ When prompted, enter the temporary access key you just generated via the AWS con
 Once this is done, check that you have access by running this command:
 
 ```bash
-aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_gov_pay_key
+aws-vault exec moj-lpa-dev -- aws sts get-caller-identity
 ```
 
 You will be prompted for an MFA token, which should be displayed on whichever device you used to set up MFA for your Amazon account.
 
-NB This command is run when starting the application locally, which is why you need to get this set up.
+NB This access is required to configure and run the application locally, as secrets are fetched from AWS Secrets Manager during startup.
 
 ## Running the application locally
 
