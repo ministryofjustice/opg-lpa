@@ -45,7 +45,8 @@ class Formatter
 
         $paragraphs = explode("\r\n", $content);
 
-        for ($i = 0; $i < count($paragraphs); $i++) {
+        $paraCount = count($paragraphs);
+        for ($i = 0; $i < $paraCount; $i++) {
             $paragraphs[$i] = trim($paragraphs[$i]);
 
             if (strlen($paragraphs[$i]) == 0) {
