@@ -31,6 +31,11 @@ resource "aws_ecs_service" "admin" {
     ]
   }
 
+  timeouts {
+    create = var.environment_name == "production" ? "20m" : "10m"
+    update = var.environment_name == "production" ? "20m" : "6m"
+  }
+
   depends_on = [aws_lb.admin]
   tags       = local.admin_component_tag
 }
