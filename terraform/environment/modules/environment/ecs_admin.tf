@@ -7,7 +7,7 @@ resource "aws_ecs_service" "admin" {
   task_definition                    = aws_ecs_task_definition.admin.arn
   desired_count                      = var.account.autoscaling.admin.minimum
   launch_type                        = "FARGATE"
-  platform_version                   = "1.3.0"
+  platform_version                   = "1.4.0"
   propagate_tags                     = "TASK_DEFINITION"
   wait_for_steady_state              = true
   deployment_minimum_healthy_percent = 50
@@ -21,7 +21,7 @@ resource "aws_ecs_service" "admin" {
   load_balancer {
     target_group_arn = aws_lb_target_group.admin.arn
     container_name   = "web"
-    container_port   = 80
+    container_port   = 8080
   }
 
   lifecycle {
@@ -47,8 +47,8 @@ resource "aws_security_group" "admin_ecs_service" {
 
 resource "aws_security_group_rule" "admin_ecs_service_ingress" {
   type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
+  from_port                = 8080
+  to_port                  = 8080
   protocol                 = "tcp"
   security_group_id        = aws_security_group.admin_ecs_service.id
   source_security_group_id = aws_security_group.admin_loadbalancer.id
@@ -82,6 +82,9 @@ resource "aws_ecs_task_definition" "admin" {
   volume {
     name = "app_tmp"
   }
+  volume {
+    name = "web_etc"
+  }
 }
 
 data "aws_ecr_repository" "lpa_admin_web" {
@@ -113,98 +116,104 @@ data "aws_ecr_image" "lpa_admin_app" {
 locals {
   admin_web = jsonencode(
     {
-      "cpu" : 1,
-      "essential" : true,
-      "image" : "${data.aws_ecr_repository.lpa_admin_web.repository_url}@${data.aws_ecr_image.lpa_admin_web.image_digest}",
-      "mountPoints" : [],
-      "name" : "web",
-      "portMappings" : [
+      cpu       = 1,
+      essential = true,
+      image     = "${data.aws_ecr_repository.lpa_admin_web.repository_url}@${data.aws_ecr_image.lpa_admin_web.image_digest}",
+      mountPoints = [
         {
-          "containerPort" : 80,
-          "hostPort" : 80,
-          "protocol" : "tcp"
+          containerPath = "/etc",
+          sourceVolume  = "web_etc"
+          readOnly      = false
         }
       ],
-      "volumesFrom" : [],
-      "logConfiguration" : {
-        "logDriver" : "awslogs",
-        "options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : var.region_name,
-          "awslogs-stream-prefix" : "${var.environment_name}.admin-web.online-lpa"
+      name = "web",
+      portMappings = [
+        {
+          containerPort = 8080,
+          hostPort      = 8080,
+          protocol      = "tcp"
+        }
+      ],
+      volumesFrom = [],
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
+          awslogs-region        = var.region_name,
+          awslogs-stream-prefix = "${var.environment_name}.admin-web.online-lpa"
         }
       },
-      "environment" : [
-        { "name" : "APP_HOST", "value" : "127.0.0.1" },
-        { "name" : "APP_PORT", "value" : "9000" },
-        { "name" : "TIMEOUT", "value" : "60" },
-        { "name" : "CONTAINER_VERSION", "value" : var.container_version }
+      environment = [
+        { name = "APP_HOST", value = "127.0.0.1" },
+        { name = "APP_PORT", value = "9000" },
+        { name = "TIMEOUT", value = "60" },
+        { name = "CONTAINER_VERSION", value = var.container_version }
       ]
     }
   )
 
   admin_app = jsonencode(
     {
-      "cpu" : 1,
-      "essential" : true,
-      "readonlyRootFilesystem" : true,
-      "image" : "${data.aws_ecr_repository.lpa_admin_app.repository_url}@${data.aws_ecr_image.lpa_admin_app.image_digest}",
-      "mountPoints" : [
+      cpu                    = 1,
+      essential              = true,
+      readonlyRootFilesystem = true,
+      image                  = "${data.aws_ecr_repository.lpa_admin_app.repository_url}@${data.aws_ecr_image.lpa_admin_app.image_digest}",
+      mountPoints = [
         {
-          "containerPath" : "/tmp",
-          "sourceVolume" : "app_tmp"
+          containerPath = "/tmp",
+          sourceVolume  = "app_tmp"
         }
       ],
-      "name" : "app",
-      "portMappings" : [
+      name = "app",
+      portMappings = [
         {
-          "containerPort" : 9000,
-          "hostPort" : 9000,
-          "protocol" : "tcp"
+          containerPort = 9000,
+          hostPort      = 9000,
+          protocol      = "tcp"
         }
       ],
-      "healthCheck" : {
-        "command" : ["CMD", "/usr/local/bin/health-check.sh"],
-        "startPeriod" : 90,
-        "interval" : 10,
-        "timeout" : 15,
-        "retries" : 3
+      healthCheck = {
+        command     = ["CMD", "/usr/local/bin/health-check.sh"],
+        startPeriod = 90,
+        interval    = 10,
+        timeout     = 15,
+        retries     = 3
       },
-      "volumesFrom" : [],
-      "logConfiguration" : {
-        "logDriver" : "awslogs",
-        "options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : var.region_name,
-          "awslogs-stream-prefix" : "${var.environment_name}.admin-app.online-lpa"
+      volumesFrom = [],
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
+          awslogs-region        = var.region_name,
+          awslogs-stream-prefix = "${var.environment_name}.admin-app.online-lpa"
         }
       },
-      "dependsOn" : [
+      dependsOn = [
         {
-          "containerName" : "permissions-init",
-          "condition" : "SUCCESS"
+          containerName = "permissions-init",
+          condition     = "SUCCESS"
         }
       ],
-      "secrets" : [
-        { "name" : "OPG_LPA_ADMIN_JWT_SECRET", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.name}" },
-        { "name" : "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
-        { "name" : "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
+      secrets = [
+        { name = "OPG_LPA_ADMIN_JWT_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.name}" },
+        { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
+        { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
       ],
-      "environment" : [
-        { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "${local.dns_namespace_env}${local.admin_dns} localhost 127.0.0.1" },
-        { "name" : "OPG_LPA_STACK_NAME", "value" : var.environment_name },
-        { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
-        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name },
-        { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
-        { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
-        { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },
-        { "name" : "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-sessions.name },
-        { "name" : "OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-properties.name },
-        { "name" : "OPG_PHP_POOL_CHILDREN_MAX", "value" : "25" },
-        { "name" : "OPG_NGINX_SSL_HSTS_AGE", "value" : "31536000" },
-        { "name" : "OPG_NGINX_SSL_FORCE_REDIRECT", "value" : "TRUE" },
-        { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
-        { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}:8080" }
+      environment = [
+        { name = "OPG_NGINX_SERVER_NAMES", value = "${local.dns_namespace_env}${local.admin_dns} localhost 127.0.0.1" },
+        { name = "OPG_LPA_STACK_NAME", value = var.environment_name },
+        { name = "OPG_DOCKER_TAG", value = var.container_version },
+        { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name },
+        { name = "OPG_LPA_COMMON_APPLICATION_LOG_PATH", value = "/var/log/app/application.log" },
+        { name = "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", value = "" },
+        { name = "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", value = aws_dynamodb_table.lpa-locks.name },
+        { name = "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", value = aws_dynamodb_table.lpa-sessions.name },
+        { name = "OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE", value = aws_dynamodb_table.lpa-properties.name },
+        { name = "OPG_PHP_POOL_CHILDREN_MAX", value = "25" },
+        { name = "OPG_NGINX_SSL_HSTS_AGE", value = "31536000" },
+        { name = "OPG_NGINX_SSL_FORCE_REDIRECT", value = "TRUE" },
+        { name = "OPG_LPA_COMMON_RESQUE_REDIS_HOST", value = "redisback" },
+        { name = "OPG_LPA_ENDPOINTS_API", value = "http://${local.api_service_fqdn}:8080" }
       ]
     }
   )
