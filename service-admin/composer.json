@@ -30,6 +30,7 @@
         "laminas/laminas-permissions-rbac": "^3.2.0",
         "laminas/laminas-router": "^3.7",
         "laminas/laminas-servicemanager": "^3.10.0",
+        "laminas/laminas-session": "^2.25",
         "laminas/laminas-stdlib": "^3.6.1",
         "mezzio/mezzio": "^3.6.0",
         "mezzio/mezzio-fastroute": "^3.3.0",
