@@ -6,6 +6,10 @@ namespace App;
 
 use App\Logging\LoggingErrorListenerDelegatorFactory;
 use Laminas\Stratigility\Middleware\ErrorHandler;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Session\Ext\PhpSessionPersistence;
+use Mezzio\Session\SessionMiddleware;
+use Mezzio\Session\SessionPersistenceInterface;
 
 /**
  * The configuration provider for the App module
@@ -55,8 +59,9 @@ class ConfigProvider
                 Handler\SignOutHandler::class => Handler\SignOutHandler::class,
 
                 //  Middleware
-                Middleware\Flash\SlimFlashMiddleware::class => Middleware\Flash\SlimFlashMiddleware::class,
                 Middleware\Session\CsrfMiddleware::class => Middleware\Session\CsrfMiddleware::class,
+                FlashMessageMiddleware::class => FlashMessageMiddleware::class,
+                SessionPersistenceInterface::class => PhpSessionPersistence::class,
             ],
             'factories' => [
                 //  Handlers
@@ -66,6 +71,9 @@ class ConfigProvider
                 Handler\UserSearchHandler::class => Handler\UserSearchHandlerFactory::class,
                 Handler\UserFindHandler::class => Handler\UserFindHandlerFactory::class,
 
+                SessionMiddleware::class => function ($c) {
+                    return new SessionMiddleware($c->get(SessionPersistenceInterface::class));
+                },
                 //  Middleware
                 Middleware\Session\JwtMiddleware::class =>
                     Middleware\Session\JwtMiddlewareFactory::class,

@@ -115,16 +115,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.357.2",
+            "version": "3.359.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "7020346835259ad07ce320b04bea912055d4a5bc"
+                "reference": "a5be7ed5efd25d70a74275daeff896b896d9c286"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7020346835259ad07ce320b04bea912055d4a5bc",
-                "reference": "7020346835259ad07ce320b04bea912055d4a5bc",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a5be7ed5efd25d70a74275daeff896b896d9c286",
+                "reference": "a5be7ed5efd25d70a74275daeff896b896d9c286",
                 "shasum": ""
             },
             "require": {
@@ -206,9 +206,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.357.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.359.8"
             },
-            "time": "2025-10-24T19:16:19+00:00"
+            "time": "2025-11-07T19:48:19+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -2358,16 +2358,16 @@
         },
         {
             "name": "laminas/laminas-paginator",
-            "version": "2.21.0",
+            "version": "2.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-paginator.git",
-                "reference": "ca588058a2da116f37e4990a6495eee63486b832"
+                "reference": "46e62444f467b000a9a0e3959551a29b3223d7e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-paginator/zipball/ca588058a2da116f37e4990a6495eee63486b832",
-                "reference": "ca588058a2da116f37e4990a6495eee63486b832",
+                "url": "https://api.github.com/repos/laminas/laminas-paginator/zipball/46e62444f467b000a9a0e3959551a29b3223d7e8",
+                "reference": "46e62444f467b000a9a0e3959551a29b3223d7e8",
                 "shasum": ""
             },
             "require": {
@@ -2433,7 +2433,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2025-10-16T12:10:40+00:00"
+            "time": "2025-11-06T17:36:56+00:00"
         },
         {
             "name": "laminas/laminas-psr7bridge",
