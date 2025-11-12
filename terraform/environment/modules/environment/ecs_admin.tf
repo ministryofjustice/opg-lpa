@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "admin" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
-  container_definitions    = "[${local.admin_web}, ${local.admin_app}, ${local.app_init_container}, ${local.aws_otel_collector}]"
+  container_definitions    = "[${local.admin_web}, ${local.admin_app}, ${local.aws_otel_collector}]"
   task_role_arn            = var.ecs_iam_task_roles.admin.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.admin_component_tag
@@ -139,6 +139,12 @@ locals {
           protocol      = "tcp"
         }
       ],
+      dependsOn = [
+        {
+          containerName = "app",
+          condition     = "HEALTHY"
+        }
+      ],
       volumesFrom = [],
       logConfiguration = {
         logDriver = "awslogs",
@@ -193,12 +199,6 @@ locals {
           awslogs-stream-prefix = "${var.environment_name}.admin-app.online-lpa"
         }
       },
-      dependsOn = [
-        {
-          containerName = "permissions-init",
-          condition     = "SUCCESS"
-        }
-      ],
       secrets = [
         { name = "OPG_LPA_ADMIN_JWT_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.name}" },
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
