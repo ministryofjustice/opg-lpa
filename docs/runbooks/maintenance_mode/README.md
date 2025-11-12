@@ -7,7 +7,7 @@ This can be run locally or via a cloud9 instance, dependant on needs.
 
 Use this route if you have the required access via aws-vault to make changes to the environment that needs to be put into maintenenance mode.
 
-You will need to set up assumable roles in aws-vault. Follow the instructions at [setting up credentials](../setting-up-aws-credentials/setting-up-credentials.md)
+You will need to set up assumable roles in aws-vault. Follow the instructions at [setting up credentials](../setting_up_aws_credentials/setting_up_credentials.md)
 
 ### Usage
 
