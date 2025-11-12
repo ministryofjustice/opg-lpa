@@ -5,12 +5,10 @@
       <tool tool_name="PHPUnit">
         <cache>
           <versions>
-            <info id="Local/service-api/vendor/autoload.php" version="10.5.58" />
-            <info id="Local/service-front/vendor/autoload.php" version="10.5.54" />
             <info id="interpreter-088c6e8f-c48c-4fdd-b2ba-3c2d21a222d7" version="9.6.19" />
             <info id="interpreter-106a51db-6e04-4281-a577-326e9ba80765" version="9.6.19" />
             <info id="interpreter-34e91671-73b3-40e4-87f0-0d70d49a29ce" version="9.6.12" />
-            <info id="interpreter-49d29832-bc24-4bae-8a82-2c3eb403a4b1" version="9.6.19" />
+            <info id="interpreter-49d29832-bc24-4bae-8a82-2c3eb403a4b1" version="10.5.58" />
           </versions>
         </cache>
       </tool>

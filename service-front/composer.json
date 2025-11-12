@@ -11,23 +11,24 @@
     "homepage": "https://github.com/ministryofjustice/opg-lpa",
     "require": {
         "php": "8.4.*",
-        "guzzlehttp/guzzle": "^7.0",
+        "alphagov/notifications-php-client": "^6.0.0",
         "aws/aws-sdk-php": "^3.204.5",
-        "michelf/php-markdown": "^1.9.1",
-        "php-http/guzzle7-adapter": "^1.0.0",
-        "laminas/laminas-mvc": "^3.2",
+        "egulias/email-validator": "^4",
+        "guzzlehttp/guzzle": "^7.0",
+        "guzzlehttp/psr7": "^2.4",
+        "kokspflanze/zfc-twig": "^4.2.1",
         "laminas/laminas-authentication": "^2.8",
         "laminas/laminas-cache": "3.13.0",
         "laminas/laminas-cache-storage-adapter-memory": "2.4.0",
         "laminas/laminas-form": "^3.0.2",
-        "laminas/laminas-session": "^2.12.0",
         "laminas/laminas-i18n": "^2.31",
-        "kokspflanze/zfc-twig": "^4.2.1",
+        "laminas/laminas-mvc": "^3.2",
+        "laminas/laminas-mvc-middleware": "2.5",
+        "laminas/laminas-session": "^2.12.0",
+        "michelf/php-markdown": "^1.9.1",
         "monolog/monolog": "^3.9",
-        "guzzlehttp/psr7": "^2.4",
-        "alphagov/notifications-php-client": "^6.0.0",
-        "symfony/validator": "^5.4",
-        "egulias/email-validator": "^4"
+        "php-http/guzzle7-adapter": "^1.0.0",
+        "symfony/validator": "^5.4"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
@@ -65,6 +66,7 @@
             "php": "8.4.12",
             "ext-intl": "1",
             "ext-redis": "1"
-        }
+        },
+        "sort-packages": true
     }
 }

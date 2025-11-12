@@ -2,6 +2,8 @@
 
 namespace App\Middleware\ViewData;
 
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -45,6 +47,19 @@ class ViewDataMiddleware implements MiddlewareInterface
 
         $this->renderer->addDefaultParam(PlatesRenderer::TEMPLATE_ALL, 'dockerTag', $this->dockerTag);
         $this->renderer->addDefaultParam(PlatesRenderer::TEMPLATE_ALL, 'user', $user);
+
+        $flashOutput = [];
+        $flashAttr = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+
+        if ($flashAttr instanceof FlashMessagesInterface) {
+            $flash = $flashAttr->getFlashes();
+            foreach ($flash as $type => $messages) {
+                $flashOutput[$type] = is_array($messages) ? array_values($messages) : [$messages];
+            }
+        }
+
+        $this->renderer->addDefaultParam(PlatesRenderer::TEMPLATE_ALL, 'flash', $flashOutput);
+
 
         return $handler->handle($request);
     }
