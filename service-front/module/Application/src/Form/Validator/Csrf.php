@@ -4,7 +4,7 @@ namespace Application\Form\Validator;
 
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Session\Container;
-use Laminas\Validator\Csrf as LaminasCsrfValidator;
+use Laminas\Session\Validator\Csrf as LaminasCsrfValidator;
 use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
