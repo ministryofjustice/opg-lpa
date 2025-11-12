@@ -1,5 +1,7 @@
 FROM composer:2.8.12@sha256:5248900ab8b5f7f880c2d62180e40960cd87f60149ec9a1abfd62ac72a02577c AS composer
 
+FROM pdftk/pdftk:3.3.3@sha256:f4634562abf5a1460d6c0c9a4893a32bfe845a892ad02574545dc145117199a3 AS pdftk
+
 FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
 
 RUN adduser -D -g '' appuser
@@ -28,12 +30,9 @@ RUN composer check-platform-reqs --no-dev -d /app \
     && rm /usr/bin/composer
 
 
-# This is version 3.2.1 of this tool, we will need to check this regularly.
-# PDFTK does have a community based docker container, but the version is not up to date.
-COPY --chown=root:root service-pdf/bin/pdftk /usr/local/bin/pdftk
-
-RUN curl -sS -o /usr/local/bin/pdftk-all.jar https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/build/libs/pdftk-all.jar \
-    && chmod 755 /usr/local/bin/pdftk
+COPY --from=pdftk /usr/bin/pdftk /usr/bin/
+RUN mkdir /usr/share/java
+COPY --from=pdftk /usr/share/java/pdftk.jar /usr/share/java
 
 COPY --chown=root:root shared /shared
 COPY --chown=root:root service-pdf /app

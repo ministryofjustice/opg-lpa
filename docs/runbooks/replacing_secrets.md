@@ -10,7 +10,7 @@ These instructions show how to do that.
 
 ## Requirements
 
-please see [Setting up AWS Credentials](setting-up-aws-credentials/setting-up-credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
+please see [Setting up AWS Credentials](setting_up_aws_credentials/setting_up_credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
 
 ## Replace a secret in AWS Secrets Manager
 

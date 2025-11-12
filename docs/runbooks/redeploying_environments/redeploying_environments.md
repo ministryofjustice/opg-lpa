@@ -11,7 +11,7 @@ Then, there are 2 options:
 
 ## Prerequisites
 
-please see [Setting up AWS Credentials](../setting-up-aws-credentials/setting-up-credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
+please see [Setting up AWS Credentials](../setting_up_aws_credentials/setting_up_credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
 
 You will also need Terraform tools appropriately versioned as set in the .tfswitchrc on the root of the project.
 

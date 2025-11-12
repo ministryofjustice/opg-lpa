@@ -14,3 +14,9 @@ In order for them to have access, you will need to:
 ```
 
  where `<account_name>` is `development`, `preproduction` or `production`
+
+e.g.
+
+```text
+user1@example.com,user2@example.com
+```
