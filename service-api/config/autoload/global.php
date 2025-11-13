@@ -168,6 +168,6 @@ return [
     ],
 
     'auth' => [
-        'use_hash_tokens' => getenv('OPG_LPA_AUTH_TOKEN_GENERATION') === 'hash' && in_array(getenv('OPG_LPA_STACK_ENVIRONMENT'), ['development', 'dev'])
+        'use_hash_tokens' => getenv('OPG_LPA_AUTH_TOKEN_GENERATION') === 'hash' && getenv('OPG_LPA_STACK_ENVIRONMENT') !== 'production',
     ],
 ];
