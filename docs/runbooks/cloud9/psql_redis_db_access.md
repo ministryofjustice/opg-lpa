@@ -17,7 +17,7 @@ Generally, if you want to access a Postgres or Redis instance, on AWS you will n
     2. eg LPA-1234-my-work-cloud9-instance
     3. optionally give a description
 6. Leave all defaults for **environment type, instance type** and **platform**.
-7. Adjust the **Cost-saving setting** to suit your needs, basing this on how long you will need the instance.
+7. Adjust the **Timeout** to suit your needs, basing this on how long you will need the instance.
 8. under the **Network settings (advanced)** drop tab:
     1. Change **Connection** to Secure Shell (SSH)
     2. Leave the **Network (VPC)** dropdown as is.
