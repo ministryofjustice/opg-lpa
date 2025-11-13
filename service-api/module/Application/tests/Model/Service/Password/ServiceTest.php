@@ -172,6 +172,33 @@ class ServiceTest extends AbstractServiceTestCase
         $this->assertEquals($this->tokenDetails, $result);
     }
 
+    public function testGenerateTokenHashed()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('unit-hashed@test.com', new User([
+            'id' => 1,
+            'active' => true
+        ]));
+
+        $this->authUserRepository->shouldReceive('addPasswordResetToken')
+            ->withArgs(function ($id, $token) {
+                $expectedExpires = new DateTime('+' . (PasswordService::TOKEN_TTL - 1) . ' seconds');
+
+                return $id === "1"
+                    && $token['token'] === '22a562741b076687cb4c5efe12d5c18798aa0c46'
+                    && $token['expiresIn'] === PasswordService::TOKEN_TTL
+                    && $token['expiresAt'] > $expectedExpires;
+            })->once();
+
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
+        $service->setUseHashTokens(true);
+
+        $result = $service->generateToken('unit-hashed@test.com');
+
+        $this->assertEquals('22a562741b076687cb4c5efe12d5c18798aa0c46', $result['token']);
+    }
+
     public function testUpdatePasswordUsingTokenInvalidPassword()
     {
         $service = new PasswordService();
