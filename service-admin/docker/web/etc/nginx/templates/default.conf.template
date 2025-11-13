@@ -44,7 +44,7 @@ map $http_x_amzn_trace_id $trace_id {
 }
 
 server {
-    listen       80 default_server;
+    listen       8080 default_server;
     server_name  _;
     server_tokens off;
 
