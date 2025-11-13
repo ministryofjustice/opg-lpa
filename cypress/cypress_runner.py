@@ -3,10 +3,8 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 from subprocess import Popen
-from threading import Thread
 from urllib.parse import urlparse
 
-from s3_monitor import S3Monitor
 from stitch import stitch_feature_files
 from user_number import generate_user_number
 
@@ -107,12 +105,6 @@ def get_settings(args_in):
 
     parser = ArgumentParser(description="Run cypress features")
     parser.add_argument(
-        "-d",
-        "--disable-s3-monitor",
-        action="store_true",
-        help="set to disable the S3 monitor; or set with $CYPRESS_RUNNER_DISABLE_S3_MONITOR=true",
-    )
-    parser.add_argument(
         "-n",
         "--no-stitch",
         action="store_true",
@@ -148,10 +140,6 @@ def get_settings(args_in):
     )
     args = parser.parse_args(args_in)
 
-    # get config from command line, falling back to environment variables (if set there)
-    disable_s3_monitor = env_override_bool(
-        args.disable_s3_monitor, "CYPRESS_RUNNER_DISABLE_S3_MONITOR"
-    )
     should_stitch = not env_override_bool(args.no_stitch, "CYPRESS_RUNNER_NO_STITCH")
     in_ci = env_override_bool(args.in_ci, "CYPRESS_RUNNER_IN_CI")
     verbose = env_override_bool(args.verbose, "CYPRESS_RUNNER_VERBOSE")
@@ -199,7 +187,6 @@ def get_settings(args_in):
         "script": cypress_script,
         "should_stitch": should_stitch,
         "screenshots_path": _parent_dir / "screenshots",
-        "disable_s3_monitor": disable_s3_monitor,
         "in_ci": in_ci,
         "features_dir": _parent_dir / "e2e",
         "s3_monitor": {
@@ -228,18 +215,6 @@ if __name__ == "__main__":
     # This is because Circle needs to try to copy across screenshots dir after
     # a run and will get upset if it's not there.
     settings["screenshots_path"].mkdir(exist_ok=True, parents=True)
-
-    # start S3Monitor if required (in its own thread)
-    if not settings["disable_s3_monitor"]:
-        monitor = S3Monitor(
-            {
-                "c": settings["in_ci"],
-                "v": settings["s3_monitor"]["verbose"],
-            }
-        )
-
-        # daemon threads are killed when the main thread exits
-        Thread(target=monitor.run, daemon=True).start()
 
     # stitch scripts together
     if settings["should_stitch"]:

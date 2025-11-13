@@ -7,12 +7,14 @@ use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\PasswordValidatorTrait;
+use Application\Model\Service\TokenGenerationTrait;
 use DateTime;
 use Random\RandomException;
 
 class Service extends AbstractService
 {
     use PasswordValidatorTrait;
+    use TokenGenerationTrait;
     use UserRepositoryTrait;
 
     public const TOKEN_TTL = 86400; // 24 hours
@@ -74,7 +76,7 @@ class Service extends AbstractService
             ];
         }
 
-        $token = make_token();
+        $token = $this->makeToken($username);
 
         $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
 

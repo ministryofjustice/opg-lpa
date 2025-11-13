@@ -166,4 +166,8 @@ return [
         'baseBefore'    => getenv('LPA_FEE_BEFORE') ?: 82,
         'baseAfter'     => getenv('LPA_FEE_AFTER') ?: 92,
     ],
+
+    'auth' => [
+        'use_hash_tokens' => getenv('OPG_LPA_AUTH_TOKEN_GENERATION') === 'hash' && in_array(getenv('OPG_LPA_STACK_ENVIRONMENT'), ['development', 'dev'])
+    ],
 ];
