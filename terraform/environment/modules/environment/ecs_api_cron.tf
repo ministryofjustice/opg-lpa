@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "api_crons" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  container_definitions    = "[${local.api_app}, ${local.app_init_container}, ${local.pgbouncer}]"
+  container_definitions    = "[${local.api_app}, ${local.pgbouncer}]"
   task_role_arn            = var.ecs_iam_task_roles.api.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.api_component_tag
@@ -47,7 +47,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
     task_count          = 1
     task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type         = "FARGATE"
-    platform_version    = "1.3.0"
+    platform_version    = "1.4.0"
 
     network_configuration {
       security_groups = [
@@ -84,7 +84,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
     task_count          = 1
     task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type         = "FARGATE"
-    platform_version    = "1.3.0"
+    platform_version    = "1.4.0"
 
     network_configuration {
       security_groups = [
