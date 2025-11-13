@@ -397,6 +397,10 @@
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/symfony/polyfill-intl-idn" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/symfony/polyfill-php73" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/symfony/polyfill-php81" />
+      <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/dflydev/fig-cookies" />
+      <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/mezzio/mezzio-flash" />
+      <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/mezzio/mezzio-session" />
+      <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/mezzio/mezzio-session-ext" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
