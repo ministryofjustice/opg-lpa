@@ -11,6 +11,7 @@ use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
+use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\Session\SessionManager;
@@ -37,6 +38,7 @@ use Psr\Log\LoggerAwareInterface;
 use Redis;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
+use Application\Model\Service\Session\WritePolicy;
 
 class Module implements FormElementProviderInterface
 {
@@ -87,6 +89,9 @@ class Module implements FormElementProviderInterface
     private function bootstrapSession(MvcEvent $e)
     {
         $sm = $e->getApplication()->getServiceManager();
+
+        $nativeSession = $sm->get(NativeSessionConfig::class);
+        $nativeSession->configure();
 
         /** @var SessionManager $session */
         $session = $sm->get('SessionManager');
@@ -225,13 +230,25 @@ class Module implements FormElementProviderInterface
 
                 'SaveHandler' => function (ServiceLocatorInterface $sm) {
                     $redisClient = $sm->get('RedisClient');
-                    $request = $sm->get('Request');
+                    $policy = $sm->has(WritePolicy::class) ? $sm->get(WritePolicy::class) : null;
 
-                    $filter = function () use ($request) {
-                        return !$request->getHeaders()->has('X-SessionReadOnly');
+                    $filter = static function () use ($policy) {
+                        return $policy ? $policy->allowsWrite() : empty($_SERVER['HTTP_X_SESSIONREADONLY']);
                     };
 
                     return new FilteringSaveHandler($redisClient, [$filter]);
+                },
+
+
+                WritePolicy::class => function (ServiceLocatorInterface $sm) {
+                    $request = $sm->has('Request') ? $sm->get('Request') : null;
+                    return new WritePolicy($request);
+                },
+
+                NativeSessionConfig::class => function (ServiceLocatorInterface $sm) {
+                    $settings = $sm->get('config')['session']['native_settings'] ?? [];
+                    $handler  = $sm->get('SaveHandler');
+                    return new NativeSessionConfig($settings, $handler);
                 },
 
                 'TwigViewRenderer' => function (ServiceLocatorInterface $sm) {
