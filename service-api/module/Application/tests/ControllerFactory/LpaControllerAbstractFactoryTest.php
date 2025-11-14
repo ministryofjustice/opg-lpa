@@ -10,7 +10,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use LmcRbacMvc\Service\AuthorizationService;
+use Lmc\Rbac\Mvc\Service\AuthorizationService;
 
 class LpaControllerAbstractFactoryTest extends MockeryTestCase
 {

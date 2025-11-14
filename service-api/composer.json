@@ -21,7 +21,7 @@
         "monolog/monolog": "^3.9",
         "laminas/laminas-mvc": "^3.2",
         "laminas/laminas-paginator": "^2.8",
-        "lm-commons/lmc-rbac-mvc":"^3.0.2",
+        "lm-commons/lmc-rbac-mvc":"^4.0.0",
         "php-http/guzzle7-adapter": "^1.0.0",
         "alphagov/notifications-php-client": "^6.0.0",
         "robmorgan/phinx": "^0.14.0",
