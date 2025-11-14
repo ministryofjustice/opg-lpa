@@ -143,7 +143,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
             if (in_array(TokenGenerationTrait::class, $traitsUsed)) {
                 $config = $container->get('config');
-                $useHashTokens = $config['auth']['use_hash_tokens'];
+                $useHashTokens = $config['authentication_tokens']['use_hash_tokens'];
 
                 $service->setUseHashTokens($useHashTokens);
             }
