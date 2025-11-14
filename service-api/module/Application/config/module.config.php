@@ -2,6 +2,7 @@
 
 use Application\Handler;
 use Laminas\Mvc\Middleware\PipeSpec;
+use Lmc\Rbac\Role\InMemoryRoleProvider;
 use MakeShared\Factories\ListenerAbstractFactory;
 
 return [
@@ -430,7 +431,7 @@ return [
             'isAuthorizedToManageUser' => 'Application\Library\Authorization\Assertions\IsAuthorizedToManageUser',
         ],
         'role_provider' => [
-            'LmcRbacMvc\Role\InMemoryRoleProvider' => [
+            InMemoryRoleProvider::class => [
                 'admin' => [
                     // An authenticated request with admin rights.
                     'children' => ['user'],
