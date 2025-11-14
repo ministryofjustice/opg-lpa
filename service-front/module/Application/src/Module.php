@@ -162,9 +162,6 @@ class Module implements FormElementProviderInterface
                 'AddressLookup' => 'OrdnanceSurvey',
                 'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
-                // Mezzio POC services (not yet wired to production routes)
-                AppAuthenticationService::class => 'AuthenticationService',
-                LaminasFormElementManager::class => 'FormElementManager',
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
