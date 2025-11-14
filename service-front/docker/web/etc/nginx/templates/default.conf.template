@@ -79,7 +79,7 @@ map $upstream_http_referrer_policy $rp {
 }
 
 server {
-    listen       80 default_server;
+    listen       8080 default_server;
     server_name  _;
     server_tokens off;
 
