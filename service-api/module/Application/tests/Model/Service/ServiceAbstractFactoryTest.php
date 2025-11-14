@@ -66,7 +66,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                 [
                     UserRepositoryInterface::class => Mockery::mock(UserRepositoryInterface::class),
                     AuthenticationService::class => Mockery::mock(AuthenticationService::class),
-                    'config' => ['auth' => ['use_hash_tokens' => false]],
+                    'config' => ['authentication_tokens' => ['use_hash_tokens' => false]],
                 ]
             ],
             [PdfsService::class,
@@ -90,7 +90,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     LogRepositoryInterface::class => Mockery::mock(LogRepositoryInterface::class),
                     UserRepositoryInterface::class => Mockery::mock(UserRepositoryInterface::class),
                     ApplicationsService::class => Mockery::mock(ApplicationsService::class),
-                    'config' => ['auth' => ['use_hash_tokens' => false]],
+                    'config' => ['authentication_tokens' => ['use_hash_tokens' => false]],
                 ]
             ],
             [ProcessingStatusService::class,
