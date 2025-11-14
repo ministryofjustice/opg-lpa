@@ -66,16 +66,6 @@ jobs:
         run: |
           python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
 
-      - name: Configure AWS Credentials - Cypress / S3Monitor
-        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
-          role-duration-seconds: 3600
-          role-session-name: OPGLPACypressTestsCypressS3Monitor
-
       - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
