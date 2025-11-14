@@ -2,7 +2,7 @@
 <project version="4">
   <component name="MessDetector">
     <phpmd_settings>
-      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="60cd8839-2b04-48ea-b799-db1cc521cac2" timeout="30000" />
+      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="088c6e8f-c48c-4fdd-b2ba-3c2d21a222d7" timeout="30000" />
     </phpmd_settings>
   </component>
   <component name="MessDetectorOptionsConfiguration">
@@ -22,7 +22,7 @@
   </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
-      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="60cd8839-2b04-48ea-b799-db1cc521cac2" timeout="30000" />
+      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="088c6e8f-c48c-4fdd-b2ba-3c2d21a222d7" timeout="30000" />
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
@@ -146,7 +146,6 @@
       <path value="$PROJECT_DIR$/service-admin/vendor/sebastian/resource-operations" />
       <path value="$PROJECT_DIR$/service-admin/vendor/sebastian/type" />
       <path value="$PROJECT_DIR$/service-admin/vendor/sebastian/version" />
-      <path value="$PROJECT_DIR$/service-admin/vendor/slim/flash" />
       <path value="$PROJECT_DIR$/service-admin/vendor/spatie/array-to-xml" />
       <path value="$PROJECT_DIR$/service-admin/vendor/squizlabs/php_codesniffer" />
       <path value="$PROJECT_DIR$/service-admin/vendor/symfony/console" />
@@ -671,6 +670,11 @@
       <path value="$PROJECT_DIR$/shared/vendor/webmozart/assert" />
       <path value="$PROJECT_DIR$/shared/vendor/webmozart/path-util" />
       <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/mezzio/mezzio-session-ext" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/mezzio/mezzio-flash" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/mezzio/mezzio-session" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/dflydev/fig-cookies" />
+      <path value="$PROJECT_DIR$/service-admin/vendor/slim/flash" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -1049,9 +1053,9 @@
   <component name="PhpUnit">
     <phpunit_settings>
       <phpunit_by_interpreter interpreter_id="49d29832-bc24-4bae-8a82-2c3eb403a4b1" custom_loader_path="/shared/vendor/autoload.php" phpunit_phar_path="" />
+      <phpunit_by_interpreter interpreter_id="106a51db-6e04-4281-a577-326e9ba80765" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
       <phpunit_by_interpreter interpreter_id="088c6e8f-c48c-4fdd-b2ba-3c2d21a222d7" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
       <phpunit_by_interpreter interpreter_id="34e91671-73b3-40e4-87f0-0d70d49a29ce" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
-      <phpunit_by_interpreter interpreter_id="106a51db-6e04-4281-a577-326e9ba80765" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
     </phpunit_settings>
   </component>
   <component name="Psalm">

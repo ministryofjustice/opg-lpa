@@ -244,6 +244,11 @@ cypress-gui: npm-install
 cypress-open:
 	${MAKE} -j s3-monitor cypress-gui
 
+cypress-run-spec: npm-install
+	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
+		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress run --spec ${SPEC} \
+		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
+
 dc-phpcs-check:
 	@docker compose build phpcs
 	@docker compose run --rm --no-deps -q phpcs --report=${PHPCS_REPORT}

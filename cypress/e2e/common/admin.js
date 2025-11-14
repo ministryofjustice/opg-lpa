@@ -1,4 +1,3 @@
-const path = require('path');
 import { Then } from '@badeball/cypress-cucumber-preprocessor';
 
 const findActivationDates = () => {
@@ -78,24 +77,22 @@ Then(`I can export feedback and download it as a CSV file`, () => {
       const downloadedFile = contentDisposition.split('filename=')[1];
       const downloadsFolder = Cypress.config('downloadsFolder');
 
-      cy.readFile(path.join(downloadsFolder, downloadedFile)).then(
-        (download) => {
-          const lines = download.split('\n');
+      cy.readFile(`${downloadsFolder}/${downloadedFile}`).then((download) => {
+        const lines = download.split('\n');
 
-          // header line + 3 rows + 1 empty line
-          expect(lines.length).to.eql(5);
-          expect(lines[0]).to.eql(
-            'Received,From,"Phone number",Rating,Details,Page,Browser',
+        // header line + 3 rows + 1 empty line
+        expect(lines.length).to.eql(5);
+        expect(lines[0]).to.eql(
+          'Received,From,"Phone number",Rating,Details,Page,Browser',
+        );
+
+        // check structure of rows after header
+        for (let i = 1; i < 4; i++) {
+          expect(lines[i]).to.match(
+            /"\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}",.+,.+,.+,.+,\/.+,".+"/,
           );
-
-          // check structure of rows after header
-          for (let i = 1; i < 4; i++) {
-            expect(lines[i]).to.match(
-              /"\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}",.+,.+,.+,.+,\/.+,".+"/,
-            );
-          }
-        },
-      );
+        }
+      });
     });
   });
 
