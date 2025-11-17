@@ -14,8 +14,9 @@ use UnexpectedValueException;
  *
  * @psalm-suppress InvalidExtendClass Will be resolved by LPA-3823
  */
-class Csrf extends ZendCsrf
+class Csrf
 {
+    private ZendCsrf $laminasCsrf;
     /**
      * Set to null in order to force the user to manually set it
      *
@@ -34,6 +35,7 @@ class Csrf extends ZendCsrf
     public function __construct($options = [])
     {
         parent::__construct($options);
+        $this->laminasCsrf = new ZendCsrf();
 
         if (!isset($options['secret']) || strlen($options['secret']) < 64) {
             throw new InvalidArgumentException('A (64 character) CSRF secret is required');
@@ -52,7 +54,7 @@ class Csrf extends ZendCsrf
     public function isValid($value, $context = null)
     {
         if ($value !== $this->getHash()) {
-            $this->error(self::NOT_SAME);
+            $this->laminasCsrf->error(self::NOT_SAME);
             return false;
         }
 
@@ -62,12 +64,10 @@ class Csrf extends ZendCsrf
     /**
      * @param bool $regenerate
      * @return string
-     *
-     * @psalm-suppress MethodSignatureMismatch Will be resolved by LPA-3823
      */
-    public function getHash($regenerate = false)
+    public function getHash()
     {
-        $name = $this->getName();
+        $name = $this->laminasCsrf->getName();
 
         if (!is_string($name) || strlen($name) == 0) {
             throw new UnexpectedValueException('CSRF name needs to be set');
