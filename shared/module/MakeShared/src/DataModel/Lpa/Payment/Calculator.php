@@ -44,7 +44,7 @@ class Calculator
 
     public static function getFullFee(bool $isRepeatApplication = false): int
     {
-        return self::STANDARD_FEE;
+        return $isRepeatApplication ? self::repeatApplicationFee() : self::baseFee();
     }
 
     public static function getLowIncomeFee(bool $isRepeatApplication = false): float|int
