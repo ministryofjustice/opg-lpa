@@ -8,7 +8,7 @@ use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Applications\Service;
 use Laminas\Paginator\Paginator;
-use LmcRbacMvc\Exception\UnauthorizedException;
+use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mockery;
 use Mockery\MockInterface;

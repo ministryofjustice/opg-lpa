@@ -60,7 +60,7 @@ Feature: Checkout for a Property and Finance LPA
             | Email address | opglpademo+NancyGarrison@gmail.com | |
             | Address | Bank End Farm House $ Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
             | Repeat application | This is a repeat application with case number 12345678 | repeat-application |
-            | Application fee | Application fee: £20.50 as the donor has an income of less than £12,000 | fee-reduction |
+            | Application fee | Application fee: £23 as the donor has an income of less than £12,000 | fee-reduction |
         And I can find "confirm-and-pay-by-card"
         And I can find "confirm-and-pay-by-cheque"
 

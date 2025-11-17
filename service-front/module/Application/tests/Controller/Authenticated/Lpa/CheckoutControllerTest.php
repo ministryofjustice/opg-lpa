@@ -68,7 +68,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->blankMainFlowForm, $result->getVariable('form'));
-        $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
+        $this->assertEquals(46, $result->getVariable('lowIncomeFee'));
         $this->assertEquals($this->fee, $result->getVariable('fullFee'));
     }
 
