@@ -5,7 +5,7 @@ namespace Application\ControllerFactory;
 use Application\Controller\FeedbackController;
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use LmcRbacMvc\Service\AuthorizationService;
+use Lmc\Rbac\Mvc\Service\AuthorizationService;
 use Application\Model\Service\Feedback\Service as FeedbackService;
 use Psr\Log\LoggerInterface;
 

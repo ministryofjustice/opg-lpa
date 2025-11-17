@@ -115,6 +115,36 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->assertTrue(strlen($result['activation_token']) > 0);
     }
 
+    public function testCreateSuccessTokenHashed()
+    {
+        $email = 'user-hashed@foo.org';
+        $password = 'Pass1234';
+
+        // expectations
+        $this->authUserRepository->shouldReceive('getByUsername')
+            ->with($email)
+            ->andReturn(null);
+
+        $this->authUserRepository->shouldReceive('create')
+            ->withArgs(function ($newUserId, $data) use ($email) {
+                return $data['identity'] === $email &&
+                    $data['active'] === false &&
+                    is_a($data['created'], DateTime::class) &&
+                    is_a($data['last_updated'], DateTime::class) &&
+                    $data['activation_token'] === '932f64c441bf268cf590f4009eab026a097a78e0' &&
+                    strlen($data['password_hash']) > 0 &&
+                    $data['failed_login_attempts'] === 0;
+            })
+            ->andReturn(false, false, true);
+
+        // test
+        $this->service->setUseHashTokens(true);
+        $result = $this->service->create($email, $password);
+
+        // assertions
+        $this->assertTrue($result['activation_token'] === '932f64c441bf268cf590f4009eab026a097a78e0');
+    }
+
     public function testActivateNoAccount()
     {
         $this->authUserRepository->shouldReceive('activate')->andReturn(null);

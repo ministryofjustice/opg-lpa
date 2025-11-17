@@ -3,7 +3,7 @@
 namespace Application\Library\Authorization;
 
 use Exception;
-use LmcRbacMvc\Exception\UnauthorizedException as LmcRbacUnauthorizedException;
+use Lmc\Rbac\Mvc\Exception\UnauthorizedException as LmcRbacUnauthorizedException;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 
 /**
