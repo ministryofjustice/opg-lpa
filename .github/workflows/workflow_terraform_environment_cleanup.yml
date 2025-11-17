@@ -25,7 +25,7 @@ jobs:
       - uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c # 1.0.8
       - name: Get terraform version
         id: set-terraform-version
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@4f345be3f706950d1fdc05bc86383967a149bd99 # v4.3.4
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@e3177e63e9f2951dd3f1f7c7aa093918a5a0794a # v4.3.6
         with:
           terraform_directory: "./terraform/environment"
       - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
