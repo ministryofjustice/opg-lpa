@@ -187,7 +187,7 @@ class Module
                     return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
                 },
 
-                'Calculator' => function ($sm) {
+                'Calculator' => function () {
                     return new Calculator();
                 },
 
