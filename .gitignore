@@ -45,3 +45,5 @@ __pycache__
 .php-cs-fixer.cache
 shared/module/MakeShared/tests/autoload.php
 phpcs/config/
+service-pdf/before.png
+service-pdf/after.png
