@@ -12,7 +12,7 @@ class Lpa120Test extends AbstractPdfTestCase
     private function verifyPdf($lpa, $data, $pageShift)
     {
         $constituentPdfs = [];
-        $templateFileName = 'LPA120_2025_fee.pdf';
+        $templateFileName = 'LPA120.pdf';
 
         $pdf = new Lpa120($lpa);
 
