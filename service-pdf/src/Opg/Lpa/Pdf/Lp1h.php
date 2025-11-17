@@ -22,7 +22,6 @@ class Lp1h extends AbstractLp1
      *
      * @var
      */
-    protected $coversheetFileNameOld = 'LP1H_CoversheetRegistration.pdf';
     protected $coversheetFileName = 'LP1H_CoversheetRegistration2025fee.pdf';
 
     /**
