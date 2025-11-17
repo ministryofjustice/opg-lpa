@@ -3,7 +3,6 @@
 namespace Application\Model\Service\Guidance;
 
 use Application\Model\Service\AbstractService;
-use DateTimeImmutable;
 use Michelf\Markdown;
 
 class Guidance extends AbstractService

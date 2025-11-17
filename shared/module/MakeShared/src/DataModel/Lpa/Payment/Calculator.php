@@ -2,7 +2,6 @@
 
 namespace MakeShared\DataModel\Lpa\Payment;
 
-use DateTimeImmutable;
 use DateTimeZone;
 use MakeShared\DataModel\Lpa\Lpa;
 
@@ -18,8 +17,6 @@ class Calculator
      */
     public static function calculate(Lpa $lpa): ?Payment
     {
-        self::ensureInit();
-
         if (!$lpa->getPayment() instanceof Payment) {
             return null;
         }

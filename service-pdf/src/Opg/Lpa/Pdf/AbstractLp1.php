@@ -3,7 +3,6 @@
 namespace Opg\Lpa\Pdf;
 
 use DateTime;
-use DateTimeImmutable;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Common\PhoneNumber;

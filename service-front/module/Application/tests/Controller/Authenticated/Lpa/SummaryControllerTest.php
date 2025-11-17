@@ -6,7 +6,6 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\SummaryController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use DateTimeImmutable;
 use Laminas\View\Model\ViewModel;
 
 final class SummaryControllerTest extends AbstractControllerTestCase
