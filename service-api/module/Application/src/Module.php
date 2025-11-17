@@ -188,8 +188,7 @@ class Module
                 },
 
                 'Calculator' => function ($sm) {
-                    $fees = $sm->get('config')['fees'] ?? [];
-                    return new Calculator($fees);
+                    return new Calculator();
                 },
 
                 PingHandler::class => PingHandlerFactory::class,
