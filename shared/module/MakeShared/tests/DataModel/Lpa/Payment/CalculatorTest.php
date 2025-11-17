@@ -15,9 +15,7 @@ class CalculatorTest extends TestCase
     {
         parent::setUp();
 
-        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
-        $timeNow = new DateTimeImmutable('now');
-        $this->fee = ($timeNow >= $feeEffectiveDate) ? 92 : 82;
+        $this->fee = 92;
     }
 
     public function testCalculateNullPayment()
