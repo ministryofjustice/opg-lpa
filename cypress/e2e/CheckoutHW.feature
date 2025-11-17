@@ -14,7 +14,7 @@ Feature: Checkout for a Health and Welfare LPA
         Then I am taken to the checkout page
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        And I see "Application fee: £82 as you are not claiming a reduction" in the page text
+        And I see "Application fee: £92 as you are not claiming a reduction" in the page text
         And I see the following summary information
             | Type | Health and welfare | |
             | Donor | | |
