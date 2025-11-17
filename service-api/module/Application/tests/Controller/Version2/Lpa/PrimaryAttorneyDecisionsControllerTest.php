@@ -6,7 +6,7 @@ use Application\Controller\Version2\Lpa\PrimaryAttorneyDecisionsController;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\AttorneyDecisionsPrimary\Service;
-use LmcRbacMvc\Exception\UnauthorizedException;
+use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
 

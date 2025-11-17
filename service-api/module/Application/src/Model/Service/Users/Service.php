@@ -12,6 +12,7 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\PasswordValidatorTrait;
+use Application\Model\Service\TokenGenerationTrait;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Random\RandomException;
@@ -20,6 +21,7 @@ class Service extends AbstractService
 {
     use LogRepositoryTrait;
     use UserRepositoryTrait;
+    use TokenGenerationTrait;
     use PasswordValidatorTrait;
 
     /**
@@ -59,7 +61,7 @@ class Service extends AbstractService
             // Create a 32 character user id and activation token.
             $userId = bin2hex(random_bytes(16));
 
-            $activationToken = make_token();
+            $activationToken = $this->makeToken($username);
 
             $created = $this->getUserRepository()->create($userId, [
                 'identity'              => $username,

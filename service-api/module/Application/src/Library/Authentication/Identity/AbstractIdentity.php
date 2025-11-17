@@ -13,7 +13,7 @@ abstract class AbstractIdentity implements IdentityInterface
         return $this->id;
     }
 
-    public function getRoles()
+    public function getRoles(): iterable
     {
         return $this->roles;
     }

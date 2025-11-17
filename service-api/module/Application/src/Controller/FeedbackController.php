@@ -9,7 +9,7 @@ use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Feedback\Service as FeedbackService;
 use DateTime;
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use LmcRbacMvc\Service\AuthorizationService;
+use Lmc\Rbac\Mvc\Service\AuthorizationService;
 use Psr\Log\LoggerInterface;
 
 class FeedbackController extends AbstractRestfulController

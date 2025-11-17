@@ -1,12 +1,7 @@
 const { defineConfig } = require("cypress");
-const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
-const browserify = require("@cypress/browserify-preprocessor");
-const {
-  addCucumberPreprocessorPlugin,
-} = require("@badeball/cypress-cucumber-preprocessor");
-const {
-  preprendTransformerToOptions,
-} = require("@badeball/cypress-cucumber-preprocessor/browserify");
+const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
+const { createEsbuildPlugin } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
 
 // This is used to store data between test steps; it's effectively a global
 // variable container. The main purpose is to enable more natural expressions
@@ -15,8 +10,14 @@ const {
 const testStore = {}
 
 async function setupNodeEvents(on, config) {
-  await preprocessor.addCucumberPreprocessorPlugin(on, config);
-  on("file:preprocessor", browserify(preprendTransformerToOptions(config, browserify.defaultOptions)),);
+  await addCucumberPreprocessorPlugin(on, config);
+
+  on(
+    "file:preprocessor",
+    createBundler({
+      plugins: [createEsbuildPlugin(config)],
+    })
+  );
 
   on("task", {
     putValue({name, value}) {
@@ -47,8 +48,6 @@ async function setupNodeEvents(on, config) {
       console.table(message);
       return null;
     },
-
-    failed: require('cypress-failed-log/src/failed')(),
   });
 
   return config;

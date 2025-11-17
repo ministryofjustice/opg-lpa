@@ -140,6 +140,13 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             if (in_array(LoggerTrait::class, $traitsUsed)) {
                 $service->setLogger($container->get('Logger'));
             }
+
+            if (in_array(TokenGenerationTrait::class, $traitsUsed)) {
+                $config = $container->get('config');
+                $useHashTokens = $config['authentication_tokens']['use_hash_tokens'];
+
+                $service->setUseHashTokens($useHashTokens);
+            }
         }
 
         //  If required load any additional services into the service

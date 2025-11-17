@@ -13,7 +13,7 @@ use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusServic
 use Exception;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use LmcRbacMvc\Service\AuthorizationService;
+use Lmc\Rbac\Mvc\Service\AuthorizationService;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
