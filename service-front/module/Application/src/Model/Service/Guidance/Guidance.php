@@ -19,9 +19,7 @@ class Guidance extends AbstractService
     public function parseMarkdown()
     {
         $sectionArray = [];
-        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
-        $timeNow = new DateTimeImmutable('now');
-        $orderFileName = ($timeNow >= $feeEffectiveDate) ? '/order.md' : '/orderPreNov25fee.md';
+        $orderFileName = '/order.md' ;
         $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . $orderFileName);
 
         foreach ($lines as $line) {

@@ -25,9 +25,7 @@ final class SummaryControllerTest extends AbstractControllerTestCase
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals('lpa/applicant', $result->getVariable('returnRoute'));
-        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
-        $timeNow = new DateTimeImmutable('now');
-        $fee = ($timeNow >= $feeEffectiveDate) ? 92 : 82;
+        $fee = 92;
         $this->assertEquals($fee, $result->getVariable('fullFee'));
         $this->assertEquals($fee / 2, $result->getVariable('lowIncomeFee'));
     }

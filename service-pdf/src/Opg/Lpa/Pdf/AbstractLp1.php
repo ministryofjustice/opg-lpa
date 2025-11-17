@@ -45,7 +45,6 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      * @var
      */
     protected $coversheetFileName;
-    protected $coversheetFileNameOld;
 
     /**
      * PDF file name for the draft coversheet
@@ -91,11 +90,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     protected function create(Lpa $lpa)
     {
         // Add an appropriate coversheet to the start of the document
-        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
-        $timeNow = new DateTimeImmutable('now');
-        $finalCoversheetFileName = ($timeNow >= $feeEffectiveDate) ? $this->coversheetFileName : $this->coversheetFileNameOld;
         $this->insertStaticPDF(
-            $this->lpaIsComplete ? $finalCoversheetFileName : $this->coversheetFileNameDraft,
+            $this->lpaIsComplete ? $this->coversheetFileName : $this->coversheetFileNameDraft,
             1,
             2,
             'start'
