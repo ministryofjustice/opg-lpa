@@ -10,8 +10,8 @@ use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\AbstractService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use LmcRbacMvc\Exception\UnauthorizedException as LaminasUnauthorizedException;
-use LmcRbacMvc\Service\AuthorizationService;
+use Lmc\Rbac\Mvc\Exception\UnauthorizedException as LaminasUnauthorizedException;
+use Lmc\Rbac\Mvc\Service\AuthorizationService;
 
 abstract class AbstractLpaController extends AbstractRestfulController
 {
