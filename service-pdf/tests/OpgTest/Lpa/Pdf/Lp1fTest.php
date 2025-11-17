@@ -33,7 +33,7 @@ class Lp1fTest extends AbstractPdfTestCase
 
         $blankTargets = [];
 
-        $coversheetFileName = 'LP1F_CoversheetRegistration2025fee.pdf';
+        $coversheetFileName = 'LP1F_CoversheetRegistration.pdf';
 
         $constituentPdfs = [
             'start' => [
