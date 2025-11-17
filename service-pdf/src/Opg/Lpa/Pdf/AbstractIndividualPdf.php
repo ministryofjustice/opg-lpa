@@ -2,7 +2,6 @@
 
 namespace Opg\Lpa\Pdf;
 
-use DateTimeImmutable;
 use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\PdftkFactory;
 use Exception;

@@ -8,7 +8,6 @@ use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Model\Service\Lpa\Communication;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use DateTimeImmutable;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Payment\Calculator;

@@ -2,7 +2,6 @@
 
 namespace MakeSharedTest\DataModel\Lpa\Payment;
 
-use DateTimeImmutable;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeSharedTest\DataModel\FixturesData;
 use PHPUnit\Framework\TestCase;
