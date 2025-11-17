@@ -24,7 +24,7 @@ data "aws_db_snapshot" "api_snapshot" {
 resource "aws_db_instance" "api" {
   count                               = var.account.always_on ? 1 : 0
   identifier                          = lower("api-${var.environment_name}")
-  db_name                             = "api2"
+  db_name                             = var.account.database.database_name
   allocated_storage                   = 10
   max_allocated_storage               = 100
   storage_type                        = "gp2"
@@ -85,10 +85,10 @@ module "api_aurora" {
   account_id                      = data.aws_caller_identity.current.account_id
   availability_zones              = data.aws_availability_zones.aws_zones.names
   apply_immediately               = !var.account.database.deletion_protection
-  cluster_identifier              = "api2"
+  cluster_identifier              = var.account.database.database_name
   db_subnet_group_name            = "data-persistence-subnet-default"
   deletion_protection             = var.account.database.deletion_protection
-  database_name                   = "api2"
+  database_name                   = var.account.database.database_name
   engine_version                  = var.account.database.psql_engine_version
   environment                     = var.environment_name
   aws_rds_cluster_parameter_group = data.aws_rds_cluster_parameter_group.postgresql_aurora_params[var.account.database.psql_parameter_group_family].name
