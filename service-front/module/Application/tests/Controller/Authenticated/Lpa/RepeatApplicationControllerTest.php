@@ -220,7 +220,5 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
 
         $result = $controller->indexAction();
         $this->assertEquals($response, $result);
-
-        Calculator::setNow(new \DateTimeImmutable('now'));
     }
 }

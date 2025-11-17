@@ -2,7 +2,6 @@
 
 namespace MakeShared\DataModel\Lpa\Payment;
 
-use DateTimeZone;
 use MakeShared\DataModel\Lpa\Lpa;
 
 class Calculator
