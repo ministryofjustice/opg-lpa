@@ -47,3 +47,4 @@ shared/module/MakeShared/tests/autoload.php
 phpcs/config/
 service-pdf/before.png
 service-pdf/after.png
+service-pdf/*.pdf
