@@ -21,8 +21,7 @@ class Lpa120 extends AbstractIndividualPdf
     /**
      * PDF template file name (without path) for this PDF object
      */
-    protected $templateFileName = 'LPA120.pdf';
-    protected $newTemplateFileName = 'LPA120_2025_fee.pdf';
+    protected $templateFileName = 'LPA120_2025_fee.pdf';
 
     /**
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
