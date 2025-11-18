@@ -3,6 +3,7 @@
 namespace Application\Handler;
 
 use Application\Model\Service\User\Details;
+use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\User\User;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Session\SessionInterface;
@@ -12,13 +13,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Laminas\ServiceManager\AbstractPluginManager;
 use Mezzio\Flash\FlashMessagesInterface;
 
 final class AboutYouHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private readonly AbstractPluginManager $formElementManager,
+        private readonly FormElementManager $formElementManager,
         private readonly TemplateRendererInterface $renderer,
         private readonly UrlHelper $urlHelper,
         private readonly Details $details,
@@ -66,9 +66,9 @@ final class AboutYouHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $this->details->updateAllDetails($form->getData());
 
-                $userDetailsSession = $session->get('UserDetailsSession', []);
+                $userDetailsSession = $session->get('UserDetails', []);
                 unset($userDetailsSession['user']);
-                $session->set('UserDetailsSession', $userDetailsSession);
+                $session->set('UserDetails', $userDetailsSession);
 
                 if (!$isNew) {
                     $this->flashMessages->flash('success', 'Your details have been updated.');
@@ -99,7 +99,7 @@ final class AboutYouHandler implements RequestHandlerInterface
         $cancelUrl = '/user/dashboard';
 
         $html = $this->renderer->render(
-            'application::user/about-you',
+            'authenticated/about-you/index',
             [
                 'form'                       => $form,
                 'isNew'                      => $isNew,
