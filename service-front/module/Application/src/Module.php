@@ -34,6 +34,8 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Mezzio\Session\Ext\PhpSessionPersistence;
+use Mezzio\Session\SessionMiddleware;
 use Psr\Log\LoggerAwareInterface;
 use Redis;
 use Twig\Loader\FilesystemLoader;
@@ -168,7 +170,9 @@ class Module implements FormElementProviderInterface
                 SessionManagerSupport::class => function (ServiceLocatorInterface $sm) {
                     return new SessionManagerSupport($sm->get('SessionManager'));
                 },
-
+                SessionMiddleware::class => function () {
+                    return new SessionMiddleware(new PhpSessionPersistence());
+                },
                 'ExporterFactory'       => ReflectionBasedAbstractFactory::class,
 
                 // Authentication Adapter

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Application\Handler;
+use Application\Handler\AboutYouHandler;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -170,6 +171,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\AuthController',
                         'action'     => 'index',
+                        'middleware' => Handler\LoginHandler::class
                     ],
                 ],
             ], // login
@@ -360,6 +362,8 @@ return [
                             'defaults' => [
                                 'controller' => 'Authenticated\AboutYouController',
                                 'action'     => 'index',
+                                'middleware' => AboutYouHandler::class,
+
                             ],
                         ],
                     ], // about-you
