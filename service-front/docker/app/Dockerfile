@@ -4,7 +4,7 @@ FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f377
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
-RUN adduser -D -g '' appuser && chown -R appuser:appuser /tmp
+RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
