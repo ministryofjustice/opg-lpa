@@ -126,7 +126,6 @@ module.exports = function (grunt) {
     copy: {
       css: {
         src: [
-          'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
           'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
           'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css',
           'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css'
@@ -176,6 +175,13 @@ module.exports = function (grunt) {
       jsdevinitpolyfill: {
         src: 'assets/js/opg/init-polyfill.js',
         dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
+      },
+
+      cssdevfonts: {
+          expand: true,
+          cwd: 'node_modules/govuk-frontend/dist/govuk/assets/fonts/',
+          src: ['*'],
+          dest: 'public/assets/v2/fonts/'
       },
     },
 
@@ -331,6 +337,6 @@ module.exports = function (grunt) {
     'copy:jsdevsessiontimeout',
     'copy:jsdevinitpolyfill'
   ]);
-  grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'cssmin']);
+  grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'copy:cssdevfonts', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };
