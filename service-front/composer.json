@@ -28,7 +28,7 @@
         "michelf/php-markdown": "^1.9.1",
         "monolog/monolog": "^3.9",
         "php-http/guzzle7-adapter": "^1.0.0",
-        "symfony/validator": "^5.4"
+        "symfony/validator": "^7.0"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",
