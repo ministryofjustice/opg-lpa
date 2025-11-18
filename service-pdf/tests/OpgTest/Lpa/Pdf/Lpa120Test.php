@@ -2,7 +2,6 @@
 
 namespace OpgTest\Lpa\Pdf;
 
-use DateTimeImmutable;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\Pdf\Lpa120;
@@ -13,9 +12,7 @@ class Lpa120Test extends AbstractPdfTestCase
     private function verifyPdf($lpa, $data, $pageShift)
     {
         $constituentPdfs = [];
-        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
-        $timeNow = new DateTimeImmutable('now');
-        $templateFileName = ($timeNow >= $feeEffectiveDate) ? 'LPA120_2025_fee.pdf' : 'LPA120.pdf';
+        $templateFileName = 'LPA120.pdf';
 
         $pdf = new Lpa120($lpa);
 
@@ -26,7 +23,7 @@ class Lpa120Test extends AbstractPdfTestCase
 
         $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
 
-        $visualDiffFileName = ($timeNow >= $feeEffectiveDate) ? '1762866821.587-A510-7295-5715-Lpa120.pdf' : '1762449985.0974-A510-7295-5715-Lpa120.pdf';
+        $visualDiffFileName = '1762866821.587-A510-7295-5715-Lpa120.pdf' ;
 
         $this->visualDiffCheck($pdf, 'tests/visualdiffpdfs/' . $visualDiffFileName);
     }
