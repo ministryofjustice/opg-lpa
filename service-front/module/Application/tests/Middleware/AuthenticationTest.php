@@ -10,6 +10,7 @@ use Application\Model\Service\User\Details as UserService;
 use DateTime;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
 use Laminas\Session\SessionManager;
 use MakeShared\DataModel\User\User;
@@ -250,7 +251,7 @@ class AuthenticationTest extends TestCase
                 ['PreAuthRequest', [], []],
                 ['AuthFailureReason', [], []],
                 ['TermsAndConditionsCheck', [], ['seen' => true]],
-                ['userDetails', [], ['user' => $badUser]],
+                ['UserDetails', [], ['user' => $badUser]],
             ]);
 
         $this->request
@@ -291,6 +292,7 @@ class AuthenticationTest extends TestCase
 
     public function testHappyPathCallsHandlerAndSetsAttributes(): void
     {
+        /** @var SessionInterface&MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $identity = $this->createMock(Identity::class);
@@ -316,22 +318,20 @@ class AuthenticationTest extends TestCase
                 ['PreAuthRequest', [], []],
                 ['AuthFailureReason', [], []],
                 ['TermsAndConditionsCheck', [], ['seen' => true]],
-                ['userDetails', [], ['user' => $user]],
+                ['UserDetails', [], ['user' => $user]],
             ]);
 
-        $this->request
-            ->method('getAttribute')
-            ->with(SessionInterface::class)
-            ->willReturn($session);
+        $request = (new ServerRequest())
+            ->withAttribute(SessionInterface::class, $session);
 
         $this->handler
             ->expects($this->once())
             ->method('handle')
-            ->with($this->callback(function (ServerRequestInterface $request) use ($identity, $user) {
-                $this->assertSame($identity, $request->getAttribute(Identity::class));
-                $this->assertSame($user, $request->getAttribute(User::class));
+            ->with($this->callback(function (ServerRequestInterface $enrichedRequest) use ($identity, $user) {
+                $this->assertSame($identity, $enrichedRequest->getAttribute(Identity::class));
+                $this->assertSame($user, $enrichedRequest->getAttribute(User::class));
 
-                $seconds = $request->getAttribute('secondsUntilSessionExpires');
+                $seconds = $enrichedRequest->getAttribute('secondsUntilSessionExpires');
                 $this->assertIsInt($seconds);
                 $this->assertGreaterThan(0, $seconds);
 
@@ -343,7 +343,7 @@ class AuthenticationTest extends TestCase
             ->expects($this->never())
             ->method('generate');
 
-        $response = $this->sut->process($this->request, $this->handler);
+        $response = $this->sut->process($request, $this->handler);
 
         $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(200, $response->getStatusCode());
