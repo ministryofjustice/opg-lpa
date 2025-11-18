@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
+use Application\Middleware\Authentication;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use Mezzio\Session\SessionMiddleware;
 
 return [
 
@@ -360,10 +362,12 @@ return [
                         'options' => [
                             'route'    => '/about-you[/:new]',
                             'defaults' => [
-                                'controller' => 'Authenticated\AboutYouController',
-                                'action'     => 'index',
-                                'middleware' => AboutYouHandler::class,
-
+                                'controller' => PipeSpec::class,
+                                'middleware' => [
+                                    SessionMiddleware::class,
+                                    Authentication::class,
+                                    AboutYouHandler::class,
+                                ]
                             ],
                         ],
                     ], // about-you
