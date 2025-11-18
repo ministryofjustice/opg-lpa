@@ -8,7 +8,6 @@ use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Model\Service\Lpa\Communication;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use DateTimeImmutable;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -34,9 +33,7 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
 
         $this->blankMainFlowForm = Mockery::mock(BlankMainFlowForm::class);
         $this->submitButton = Mockery::mock(ElementInterface::class);
-        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
-        $timeNow = new DateTimeImmutable('now');
-        $this->fee = ($timeNow >= $feeEffectiveDate) ? 92 : 82;
+        $this->fee = 92;
     }
 
     /**

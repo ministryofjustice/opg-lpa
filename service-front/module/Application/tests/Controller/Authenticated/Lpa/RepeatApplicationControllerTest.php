@@ -189,15 +189,6 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
 
     public function testIndexActionPostNoRepeatSuccessAfterGoLiveUsesBaseAfter()
     {
-        Calculator::bootstrap([
-            'timezone'      => 'Europe/London',
-            'effectiveDate' => '2025-11-17T00:00:00',
-            'baseBefore'    => 82,
-            'baseAfter'     => 92,
-        ]);
-        // Freeze now to AFTER the effective date
-        Calculator::setNow(new \DateTimeImmutable('2025-11-17 12:00:00', new \DateTimeZone('Europe/London')));
-
         $this->lpa->repeatCaseNumber = 12345;
 
         /** @var RepeatApplicationController $controller */
@@ -229,7 +220,5 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
 
         $result = $controller->indexAction();
         $this->assertEquals($response, $result);
-
-        Calculator::setNow(new \DateTimeImmutable('now'));
     }
 }
