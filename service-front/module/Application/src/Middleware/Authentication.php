@@ -112,13 +112,13 @@ final class Authentication implements MiddlewareInterface
 
     private function getOrLoadUser(SessionInterface $session): User
     {
-        $userDetailsContainer = $session->get('UserDetailsSession', []);
+        $userDetailsContainer = $session->get('UserDetails', []);
         $user = $userDetailsContainer['user'] ?? null;
 
         if (!$user instanceof User) {
             $user = $this->userService->getUserDetails();
             $userDetailsContainer['user'] = $user;
-            $session->set('UserDetailsSession', $userDetailsContainer);
+            $session->set('UserDetails', $userDetailsContainer);
         }
 
         return $user;
