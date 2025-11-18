@@ -6,7 +6,6 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\HomeController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use DateTimeImmutable;
 use Laminas\View\Model\ViewModel;
 
 final class HomeControllerTest extends AbstractControllerTestCase
@@ -21,9 +20,7 @@ final class HomeControllerTest extends AbstractControllerTestCase
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
-        $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
-        $timeNow = new DateTimeImmutable('now');
-        $fee = ($timeNow >= $feeEffectiveDate) ? 92 : 82;
+        $fee = 92;
         $this->assertEquals($fee, $result->getVariable('lpaFee'));
         $this->assertEquals('1.2.3.4-test', $result->getVariable('dockerTag'));
     }
