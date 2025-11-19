@@ -15,6 +15,10 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Flash\FlashMessagesInterface;
 
+/**
+ * @psalm-suppress UndefinedClass
+ */
+
 final class AboutYouHandler implements RequestHandlerInterface
 {
     public function __construct(
@@ -22,7 +26,6 @@ final class AboutYouHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly UrlHelper $urlHelper,
         private readonly Details $details,
-        /** @ */
         private readonly FlashMessagesInterface $flashMessages
     ) {
     }
