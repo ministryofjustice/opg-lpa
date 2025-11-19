@@ -9,7 +9,6 @@ use Application\Model\Service\User\Details as UserService;
 use DateTime;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\User\User;
-use Mezzio\Helper\UrlHelper;
 use Mezzio\Session\SessionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,7 +21,6 @@ final class Authentication implements MiddlewareInterface
         private readonly AuthenticationService $authenticationService,
         private readonly UserService $userService,
         private readonly SessionManagerSupport $sessionManagerSupport,
-        private readonly UrlHelper $urlHelper,
         private readonly array $config
     ) {
     }
@@ -79,9 +77,7 @@ final class Authentication implements MiddlewareInterface
 
         $state = $code === null ? 'timeout' : 'internalSystemError';
 
-        $loginUrl = $this->urlHelper->generate('login', [], [
-            'state' => $state,
-        ]);
+        $loginUrl = '/login?state=' . urlencode($state);
 
         return new RedirectResponse($loginUrl);
     }
@@ -105,7 +101,7 @@ final class Authentication implements MiddlewareInterface
         $terms['seen'] = true;
         $session->set('TermsAndConditionsCheck', $terms);
 
-        $termsUrl = $this->urlHelper->generate('user/dashboard/terms-changed');
+        $termsUrl = '/user/dashboard/terms-changed';
 
         return new RedirectResponse($termsUrl);
     }
@@ -136,9 +132,7 @@ final class Authentication implements MiddlewareInterface
                 ->getSessionManager()
                 ->destroy(['clear_storage' => true]);
 
-            $loginUrl = $this->urlHelper->generate('login', [], [
-                'state' => 'timeout',
-            ]);
+            $loginUrl = '/login?state=' . urlencode('timeout');
 
             return new RedirectResponse($loginUrl);
         }

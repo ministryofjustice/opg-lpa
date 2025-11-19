@@ -11,6 +11,8 @@ use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
+use Application\Middleware\Authentication;
+use Application\Middleware\AuthenticationFactory;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
@@ -41,6 +43,11 @@ use Redis;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 use Application\Model\Service\Session\WritePolicy;
+use Application\Model\Service\Authentication\AuthenticationService as AppAuthenticationService;
+use Laminas\Form\FormElementManager as LaminasFormElementManager;
+use Twig\Environment as TwigEnvironment;
+use Application\Handler\AboutYouHandler;
+use Application\Handler\AboutYouHandlerFactory;
 
 class Module implements FormElementProviderInterface
 {
@@ -159,6 +166,9 @@ class Module implements FormElementProviderInterface
                 'AddressLookup' => 'OrdnanceSurvey',
                 'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
+                AppAuthenticationService::class => 'AuthenticationService',
+                TwigEnvironment::class => 'TwigViewRenderer',
+                LaminasFormElementManager::class => 'FormElementManager',
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
@@ -276,6 +286,8 @@ class Module implements FormElementProviderInterface
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
                 PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
+                AboutYouHandler::class => AboutYouHandlerFactory::class,
+                Authentication::class => AuthenticationFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
