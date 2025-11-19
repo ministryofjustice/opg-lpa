@@ -25,13 +25,13 @@ This guide focusses on using the AWS console.
 
 Sign in to the AWS Console, Assume the `breakglass` role in the Production account, and navigate to AWS Backup.
 
-<View of teh AWS Backups landing page>
+<view of the aws backups landing page>
 
 From the menu on the left, expand My account and click on Backup Vaults.
 
 Click on the vault named production_main_backup_vault.
 
-<View of the Backup Vaults table with cursor above development main backup vault>
+<view of the backup vaults table with cursor above development main backup vault>
 
 This will show a list of backups for that cluster that can be used as recovery points.
 
@@ -39,15 +39,15 @@ We will select a single backup using the `Resource ID` and `Creation time` to pi
 
 > You can only restore one backup at a time, so pick only one and repeat the process.
 
-<View of the Backups table, with a Recovery point ID selected>
+<view of the backups table, with a recovery point id selected>
 
 At the top right of this table, click the `Actions` dropdown and choose `Restore`.
 
-<View of the top right of the Backups table Actions dropdown with the cursor over the Restore option>
+<view of the top right of the backups table actions dropdown with the cursor over the restore option>
 
 This will open the Restore backup wizard.
 
-<The Restore backup wizard asking for a new table name to be provided, and showing indexes that will also be restored>
+<the restore backup wizard asking for a new table name to be provided, and showing indexes that will also be restored>
 
 You must choose a new name for the table. Use the original name plus a `-` then the date of restoration in the format `YYYYMMDD`. For example `api-20251128`. This will make is easier to manage restored clusters going forward.
 
@@ -55,11 +55,11 @@ It is not possible to change the name of a Aurora cluster after it is created. T
 
 Select the `Default role` as the `Restore role` and click `Restore backup`.
 
-<View of the Restore backup wizard, showing Default Role is selected for the Restore role, and the restore backup button active.>
+<view of the restore backup wizard, showing default role is selected for the restore role, and the restore backup button active.>
 
 You’ll be taken to the `Jobs` page on the `Restore jobs` tab.
 
-<View of the AWS Backups Restore Jobs table, showing a pending restore job in progress.>
+<view of the aws backups restore jobs table, showing a pending restore job in progress.>
 
 Restore jobs can take a long time (hours) to complete.
 
@@ -88,7 +88,7 @@ TODO: Update this when move the db to a shared resouce.
 
 Edit the terraform/environment/.envrc file to set the TF_VAR_default_role to breakglass.
 
-<View of the .envrc file, setting the TF_VAR_default_role value to breakglass>
+<view of the .envrc file, setting the tf_var_default_role value to breakglass>
 
 update your environment variables from .envrc
 
@@ -175,7 +175,7 @@ aws-vault exec identity -- terraform apply -var container_version=main-v0.324.8
 
 Edit the terraform/environment/.envrc file to set the TF_VAR_default_role back to operator.
 
-<View of the .envrc file, setting the TF_VAR_default_role value to operator>
+<view of the .envrc file, setting the tf_var_default_role value to operator>
 
 update your environment variables from .envrc
 
