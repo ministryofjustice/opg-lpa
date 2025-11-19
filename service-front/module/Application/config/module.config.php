@@ -39,6 +39,11 @@ return [
             'StatsService'                  => 'Application\Model\Service\Stats\Stats',
             'UserService'                   => 'Application\Model\Service\User\Details',
         ],
+        'factories' => [
+            \Mezzio\Session\SessionMiddleware::class => \Mezzio\Session\SessionMiddlewareFactory::class,
+            \Mezzio\Session\SessionPersistenceInterface::class => \Mezzio\Session\Ext\PhpSessionPersistenceFactory::class,
+            \Mezzio\Flash\FlashMessageMiddleware::class => \Application\Flash\FlashMessageMiddlewareFactory::class,
+        ],
     ],
 
     'view_manager' => [
@@ -93,4 +98,14 @@ return [
         ],
     ],
 
+    'middleware_pipeline' => [
+        [
+            'middleware' => \Mezzio\Session\SessionMiddleware::class,
+            'priority' => 100,
+        ],
+        [
+            'middleware' => \Mezzio\Flash\FlashMessageMiddleware::class,
+            'priority' => 99,
+        ],
+    ],
 ];

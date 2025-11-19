@@ -63,8 +63,10 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         array $config,
         Container $userDetailsSession,
         LpaApplicationService $lpaApplicationService,
-        UserService $userService
+        UserService $userService,
     ) {
+
+
         parent::__construct($formElementManager, $sessionManagerSupport, $authenticationService, $config);
 
         $this->lpaApplicationService = $lpaApplicationService;

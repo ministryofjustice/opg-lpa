@@ -17,43 +17,12 @@ abstract class AbstractBaseController extends AbstractActionController implement
 {
     use LoggerTrait;
 
-    /**
-     * @var AbstractPluginManager
-     */
-    private $formElementManager;
-
-    /**
-     * @var SessionManagerSupport
-     */
-    protected $sessionManagerSupport;
-
-    /**
-     * @var AuthenticationService
-     */
-    private $authenticationService;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**§
-     * AbstractBaseController constructor.
-     * @param AbstractPluginManager $formElementManager
-     * @param SessionManagerSupport $sessionManagerSupport
-     * @param AuthenticationService $authenticationService
-     * @param array $config
-     */
     public function __construct(
-        AbstractPluginManager $formElementManager,
-        SessionManagerSupport $sessionManagerSupport,
-        AuthenticationService $authenticationService,
-        array $config
+        private AbstractPluginManager $formElementManager,
+        protected SessionManagerSupport $sessionManagerSupport,
+        private AuthenticationService $authenticationService,
+        private array $config,
     ) {
-        $this->formElementManager = $formElementManager;
-        $this->sessionManagerSupport = $sessionManagerSupport;
-        $this->authenticationService = $authenticationService;
-        $this->config = $config;
     }
 
     /**

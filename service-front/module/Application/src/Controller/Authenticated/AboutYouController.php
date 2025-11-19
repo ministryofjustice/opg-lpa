@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use Application\Flash\Flash;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
@@ -63,7 +64,7 @@ class AboutYouController extends AbstractAuthenticatedController
                      * psalm doesn't understand Laminas MVC plugins
                      * @psalm-suppress UndefinedMagicMethod
                      */
-                    $this->flashMessenger()->addSuccessMessage('Your details have been updated.');
+                    $this->flashMessages()->flash(Flash::NAMESPACE_SUCCESS, 'Your details have been updated.');
                 }
 
                 return $this->redirect()->toRoute('user/dashboard');

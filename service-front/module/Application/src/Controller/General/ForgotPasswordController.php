@@ -3,6 +3,7 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
+use Application\Flash\Flash;
 use Application\Model\Service\User\Details as UserService;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
@@ -121,7 +122,7 @@ class ForgotPasswordController extends AbstractBaseController
                      *
                      * @psalm-suppress UndefinedMagicMethod
                      * */
-                    $this->flashMessenger()->addSuccessMessage('Password successfully reset');
+                    $this->flashMessages()->flash(Flash::NAMESPACE_SUCCESS, 'Password successfully reset');
 
                     // Send them to login...
                     return $this->redirect()->toRoute('login');

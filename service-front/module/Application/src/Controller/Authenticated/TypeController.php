@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use Application\Flash\Flash;
 use Application\Model\FormFlowChecker;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Http\Response as HttpResponse;
@@ -39,7 +40,10 @@ class TypeController extends AbstractAuthenticatedController
                      * psalm doesn't understand Laminas MVC plugins
                      * @psalm-suppress UndefinedMagicMethod
                      */
-                    $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
+                    $this->flashMessages()->flash(
+                        Flash::NAMESPACE_ERROR,
+                        'Error creating a new LPA. Please try again.'
+                    );
 
                     return $this->redirect()->toRoute('user/dashboard');
                 }

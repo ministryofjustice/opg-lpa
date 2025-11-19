@@ -1,3 +1,11 @@
 {% macro render(type, class, iconClass) %}
-    {{ flashMessenger().setMessageOpenFormat('<div %s role="alert"><i class="icon ' ~ iconClass ~ '" role="presentation"></i><div class="alert-message"><p>').setMessageSeparatorString('</p><p>').setMessageCloseString('</p></div></div>').render(type, {0:'alert panel text', 1:class})|raw }}
+    {% set messages = flash.getFlash(type) ?? [] %}
+    {% for message in messages %}
+        <div class="alert panel text {{ class }}" role="alert">
+            <i class="icon {{ iconClass }}" role="presentation"></i>
+            <div class="alert-message">
+                <p>{{ message|raw }}</p>
+            </div>
+        </div>
+    {% endfor %}
 {% endmacro %}
