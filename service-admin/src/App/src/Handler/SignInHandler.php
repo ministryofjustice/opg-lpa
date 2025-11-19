@@ -13,7 +13,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use App\Service\User\UserService;
-use Application\Model\Service\Session\JwtStore;
 
 /**
  * Class SignInHandler
@@ -56,14 +55,14 @@ class SignInHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $jwt = JwtStore::fromRequest($request);
+        $token = $this->getTokenData('token');
 
-        if ($jwt->get('token') !== null) {
+        if (!is_null($token)) {
             return $this->redirectToRoute('home');
         }
 
         $form = new SignIn([
-            'csrf' => $jwt->get('csrf'),
+            'csrf' => $this->getTokenData('csrf'),
         ]);
 
         if ($request->getMethod() == 'POST') {
@@ -92,8 +91,9 @@ class SignInHandler extends AbstractHandler
 
                         $token = $identity->getToken();
 
-                        if ($token !== null) {
-                            $jwt->set('token', $token);
+                        // only save the user token if it isn't null
+                        if (!is_null($token)) {
+                            $this->addTokenData('token', $token);
                         }
 
                         // ensure we have a string for the user ID, even if it's empty
