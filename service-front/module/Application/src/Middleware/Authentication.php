@@ -110,7 +110,7 @@ final class Authentication implements MiddlewareInterface
         return new RedirectResponse($termsUrl);
     }
 
-    private function getOrLoadUser(SessionInterface $session): User
+    private function getOrLoadUser(SessionInterface $session): bool|User
     {
         $userDetailsContainer = $session->get('UserDetails', []);
         $user = $userDetailsContainer['user'] ?? null;

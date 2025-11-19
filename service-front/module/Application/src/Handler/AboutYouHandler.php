@@ -22,6 +22,7 @@ final class AboutYouHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly UrlHelper $urlHelper,
         private readonly Details $details,
+        /** @ */
         private readonly FlashMessagesInterface $flashMessages
     ) {
     }
@@ -93,7 +94,7 @@ final class AboutYouHandler implements RequestHandlerInterface
                 ];
             }
 
-            $form->bind($userDetailsArr);
+            $form->setData($userDetailsArr);
         }
 
         $cancelUrl = '/user/dashboard';
