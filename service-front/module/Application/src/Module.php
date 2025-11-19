@@ -162,6 +162,9 @@ class Module implements FormElementProviderInterface
                 'AddressLookup' => 'OrdnanceSurvey',
                 'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
+                AppAuthenticationService::class => 'AuthenticationService',
+                TwigEnvironment::class => 'TwigViewRenderer',
+                LaminasFormElementManager::class => 'FormElementManager',
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',

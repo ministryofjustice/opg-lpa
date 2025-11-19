@@ -5,28 +5,24 @@ namespace Application\Handler;
 use Application\Model\Service\User\Details;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\User\User;
-use Mezzio\Helper\UrlHelper;
+use Mezzio\Flash\FlashMessages;
 use Mezzio\Session\SessionInterface;
-use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Mezzio\Flash\FlashMessagesInterface;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * @psalm-suppress UndefinedClass
  */
-
 final class AboutYouHandler implements RequestHandlerInterface
 {
     public function __construct(
         private readonly FormElementManager $formElementManager,
-        private readonly TemplateRendererInterface $renderer,
-        private readonly UrlHelper $urlHelper,
+        private readonly TwigEnvironment $renderer,
         private readonly Details $details,
-        private readonly FlashMessagesInterface $flashMessages
     ) {
     }
 
@@ -44,11 +40,7 @@ final class AboutYouHandler implements RequestHandlerInterface
         /** @var \Laminas\Form\FormInterface $form */
         $form = $this->formElementManager->get('Application\Form\User\AboutYou');
 
-        $actionTarget = $this->urlHelper->generate(
-            'user/about-you',
-            $isNew ? ['new' => 'new'] : []
-        );
-
+        $actionTarget = $isNew ? '/user/about-you/new' : '/user/about-you';
         $form->setAttribute('action', $actionTarget);
 
         $userDetailsArr = $userDetails->flatten();
@@ -75,15 +67,16 @@ final class AboutYouHandler implements RequestHandlerInterface
                 $session->set('UserDetails', $userDetailsSession);
 
                 if (!$isNew) {
-                    $this->flashMessages->flash('success', 'Your details have been updated.');
+                    $flash = FlashMessages::createFromSession($session);
+                    $flash->flash('success', 'Your details have been updated.');
                 }
 
-                $dashboardUrl = $this->urlHelper->generate('user/dashboard');
+                $dashboardUrl = '/user/dashboard';
                 return new RedirectResponse($dashboardUrl);
             }
         } else {
             if (!$isNew && is_null($userDetails->name)) {
-                $newUrl = $this->urlHelper->generate('user/about-you', ['new' => 'new']);
+                $newUrl = '/user/about-you/new';
                 return new RedirectResponse($newUrl);
             }
 
@@ -102,6 +95,10 @@ final class AboutYouHandler implements RequestHandlerInterface
 
         $cancelUrl = '/user/dashboard';
 
+        $flashMessages = $session
+            ? FlashMessages::createFromSession($session)->getFlashes()
+            : [];
+
         $html = $this->renderer->render(
             'authenticated/about-you/index',
             [
@@ -110,7 +107,7 @@ final class AboutYouHandler implements RequestHandlerInterface
                 'cancelUrl'                  => $cancelUrl,
                 'signedInUser'               => $userDetails,
                 'secondsUntilSessionExpires' => $request->getAttribute('secondsUntilSessionExpires'),
-                'flash'                      => $this->flashMessages->getFlashes(),
+                'flash'                      => $flashMessages,
             ]
         );
 
