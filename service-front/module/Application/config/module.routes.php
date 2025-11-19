@@ -173,7 +173,6 @@ return [
                     'defaults' => [
                         'controller' => 'General\AuthController',
                         'action'     => 'index',
-                        'middleware' => Handler\LoginHandler::class
                     ],
                 ],
             ], // login
@@ -363,11 +362,11 @@ return [
                             'route'    => '/about-you[/:new]',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => [
+                                'middleware' => new PipeSpec(
                                     SessionMiddleware::class,
                                     Authentication::class,
-                                    AboutYouHandler::class,
-                                ]
+                                    AboutYouHandler::class
+                                ),
                             ],
                         ],
                     ], // about-you
