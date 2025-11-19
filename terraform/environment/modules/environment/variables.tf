@@ -16,7 +16,7 @@ variable "account" {
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
     database = object({
-      database_name                      = string
+      cluster_identifier                 = string
       aurora_cross_region_backup_enabled = bool
       aurora_enabled                     = bool
       aurora_instance_count              = number
