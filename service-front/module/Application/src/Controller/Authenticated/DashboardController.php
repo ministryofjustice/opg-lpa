@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use Application\Flash\Flash;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
@@ -132,7 +133,7 @@ class DashboardController extends AbstractAuthenticatedController
                  * psalm doesn't understand Laminas MVC plugins
                  * @psalm-suppress UndefinedMagicMethod
                  */
-                $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
+                $this->flashMessages()->flash(Flash::NAMESPACE_ERROR, 'Error creating a new LPA. Please try again.');
 
                 return $this->redirect()->toRoute('user/dashboard');
             }
@@ -146,7 +147,7 @@ class DashboardController extends AbstractAuthenticatedController
                  * psalm doesn't understand Laminas MVC plugins
                  * @psalm-suppress UndefinedMagicMethod
                  */
-                $this->flashMessenger()->addWarningMessage('LPA created but could not set seed');
+                $this->flashMessages()->flash(Flash::NAMESPACE_WARNING, 'LPA created but could not set seed');
             }
 
             // Redirect them to the first page...
@@ -165,7 +166,7 @@ class DashboardController extends AbstractAuthenticatedController
 
         if ($this->getLpaApplicationService()->deleteApplication($lpaId) !== true) {
             /** @psalm-suppress UndefinedMagicMethod */
-            $this->flashMessenger()->addErrorMessage('LPA could not be deleted');
+            $this->flashMessages()->flash(Flash::NAMESPACE_ERROR, 'LPA could not be deleted');
         }
 
         $target = 'user/dashboard';

@@ -174,7 +174,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                 $formElementManager,
                 $sessionManagerSupport,
                 $authenticationService,
-                $config
+                $config,
             );
         }
 

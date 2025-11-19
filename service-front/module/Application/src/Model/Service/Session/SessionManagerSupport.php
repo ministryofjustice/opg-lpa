@@ -13,8 +13,6 @@ class SessionManagerSupport
 
     public function initialise(): void
     {
-
-
         $container = new Container('initialised', $this->sessionManager);
 
         if (!isset($container->init)) {

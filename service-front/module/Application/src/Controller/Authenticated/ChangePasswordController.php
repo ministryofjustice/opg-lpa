@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use Application\Flash\Flash;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
@@ -44,7 +45,8 @@ class ChangePasswordController extends AbstractAuthenticatedController
                      * psalm doesn't understand Laminas MVC plugins
                      * @psalm-suppress UndefinedMagicMethod
                      */
-                    $this->flashMessenger()->addSuccessMessage(
+                    $this->flashMessages()->flash(
+                        Flash::NAMESPACE_SUCCESS,
                         'Your new password has been saved. ' .
                         'Please remember to use this new password to sign in from now on.'
                     );

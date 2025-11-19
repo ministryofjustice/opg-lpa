@@ -3,6 +3,7 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
+use Application\Flash\Flash;
 use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
@@ -119,7 +120,8 @@ class AuthController extends AbstractBaseController
                          * psalm doesn't understand Laminas plugins
                          * @psalm-suppress UndefinedMagicMethod
                          */
-                        $this->flashMessenger()->addWarningMessage(
+                        $this->flashMessages()->flash(
+                            Flash::NAMESPACE_WARNING,
                             'Thanks for logging in. Your LPA account will stay open for another 9 months.'
                         );
                     }
