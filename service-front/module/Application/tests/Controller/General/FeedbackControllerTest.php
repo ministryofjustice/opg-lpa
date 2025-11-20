@@ -8,6 +8,7 @@ use Application\Controller\General\FeedbackController;
 use Application\Form\General\FeedbackForm;
 use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Feedback\FeedbackValidationException;
+use Application\Model\Service\Session\SessionUtility;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
@@ -49,11 +50,15 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         /** @var FeedbackController $controller */
         $controller = parent::getController($controllerName);
 
+        // Mock Feedback service
         $this->feedbackService = Mockery::mock(Feedback::class);
         $controller->setFeedbackService($this->feedbackService);
 
+        $controller->setSessionUtility(new SessionUtility());
+
         return $controller;
     }
+
 
     public function testSendFeedbackFormInvalid(): void
     {
