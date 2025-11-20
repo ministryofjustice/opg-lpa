@@ -15,6 +15,7 @@ use Application\Middleware\Authentication;
 use Application\Middleware\AuthenticationFactory;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Model\Service\Session\SessionUtility;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\Session\SessionManager;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -45,7 +46,6 @@ use Twig\Environment;
 use Application\Model\Service\Session\WritePolicy;
 use Application\Model\Service\Authentication\AuthenticationService as AppAuthenticationService;
 use Laminas\Form\FormElementManager as LaminasFormElementManager;
-use Twig\Environment as TwigEnvironment;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\AboutYouHandlerFactory;
 
@@ -166,8 +166,8 @@ class Module implements FormElementProviderInterface
                 'AddressLookup' => 'OrdnanceSurvey',
                 'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
+                // Mezzio POC services (not yet wired to production routes)
                 AppAuthenticationService::class => 'AuthenticationService',
-                TwigEnvironment::class => 'TwigViewRenderer',
                 LaminasFormElementManager::class => 'FormElementManager',
             ],
             'factories' => [
@@ -177,6 +177,9 @@ class Module implements FormElementProviderInterface
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
                 'Logger'                => 'MakeShared\Logging\LoggerFactory',
+                SessionUtility::class => function () {
+                    return new SessionUtility();
+                },
                 SessionManagerSupport::class => function (ServiceLocatorInterface $sm) {
                     return new SessionManagerSupport($sm->get('SessionManager'));
                 },
@@ -286,8 +289,9 @@ class Module implements FormElementProviderInterface
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
                 PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
+                // Mezzio POC services (not yet wired to production routes)
                 AboutYouHandler::class => AboutYouHandlerFactory::class,
-                Authentication::class => AuthenticationFactory::class,
+                Authentication::class => AuthenticationFactory::class
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
