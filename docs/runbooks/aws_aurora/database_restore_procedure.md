@@ -132,9 +132,6 @@ aws-vault exec identity -- terraform state rm 'module.eu-west-1.module.api_auror
 
 ```sh
 aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster.cluster_serverless[0]' api2-20251128-production
-aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[0]' api20251128-production-0
-aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[1]' api20251128-production-1
-aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[2]' api20251128-production-2
 ```
 
 9. Next, update the name of the new table in terraform.tfvars.json for the environment, for example
@@ -154,7 +151,7 @@ aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[
 
 10. From there we can run a plan to check what will happen.
 
-To reduce the diff, provide the container version deployed currently to production. This can most easily be found in the last [Github actions Path to Live run](https://github.com/ministryofjustice/opg-lpa/actions/workflows/workflow_path_to_live.yml).
+To reduce the diff, provide the container version deployed currently to production. This can be found in the last [Github actions Path to Live run](https://github.com/ministryofjustice/opg-lpa/actions/workflows/workflow_path_to_live.yml).
 
 ```sh
 aws-vault exec identity -- terraform plan -var container_version=main-v0.324.8
