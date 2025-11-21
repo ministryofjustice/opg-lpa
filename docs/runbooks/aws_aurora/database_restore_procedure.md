@@ -56,7 +56,7 @@ This guide focusses on using the AWS console.
   <img src="images/db_restore_restore_db_cluster_wizard.png"alt="the restore backup wizard asking for a new table name to be provided, and showing indexes that will also be restored" width="1200">
 </div>
 
-8. You must choose a new name for the table. Use the original name plus a `-` then the date of restoration in the format `YYYYMMDD`. For example `api-20251128-production`. This will make is easier to manage restored clusters going forward.
+8. You must choose a new name for the cluster. Use the original name plus a `-` then the date of restoration in the format `YYYYMMDD`, then a `-` and the `environment name`. For example `api-20251128-production`. This will make is easier to manage restored clusters going forward.
 
 9. It is not possible to change the name of a Aurora cluster after it is created. This new name will be brought into our infrastructure as code.
 
@@ -166,7 +166,7 @@ Policy Documents for API and Admin updating to use new (restored table)
 
 AWS Backup managing the new table
 
-DynamoDB Table tags, point in time restore enabled, server side encryption enabled and TTL activation
+Aurora Cluster updates and instances created
 
 ECS Services and Task Definition updates for API and Admin
 
