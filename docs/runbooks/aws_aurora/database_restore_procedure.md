@@ -29,7 +29,7 @@ This guide focusses on using the AWS console.
 
 2. From the menu on the left, expand My account and click on Backup Vaults.
 
-3. Click on the vault named production_main_backup_vault.
+3. Click on the vault named `production_eu-west-1_aurora_backup_vault`.
 
 <view of the backup vaults table with cursor above development main backup vault>
 
@@ -49,7 +49,7 @@ This guide focusses on using the AWS console.
 
 <the restore backup wizard asking for a new table name to be provided, and showing indexes that will also be restored>
 
-8. You must choose a new name for the table. Use the original name plus a `-` then the date of restoration in the format `YYYYMMDD`. For example `api-20251128`. This will make is easier to manage restored clusters going forward.
+8. You must choose a new name for the table. Use the original name plus a `-` then the date of restoration in the format `YYYYMMDD`. For example `api-20251128-production`. This will make is easier to manage restored clusters going forward.
 
 9. It is not possible to change the name of a Aurora cluster after it is created. This new name will be brought into our infrastructure as code.
 
@@ -120,9 +120,9 @@ aws-vault exec identity -- terraform state rm 'module.eu-west-1.module.api_auror
 8. Next import the restored table using the new name
 
 ```sh
-aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster.cluster_serverless[0]' api-20251128-production
-aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[0]' api20251128-production-2
-aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[1]' api20251128-production-2
+aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster.cluster_serverless[0]' api2-20251128-test
+aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[0]' api20251128-test-0
+aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[1]' api20251128-production-1
 aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[2]' api20251128-production-2
 ```
 
