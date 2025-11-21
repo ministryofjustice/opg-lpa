@@ -120,8 +120,8 @@ aws-vault exec identity -- terraform state rm 'module.eu-west-1.module.api_auror
 8. Next import the restored table using the new name
 
 ```sh
-aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster.cluster_serverless[0]' api2-20251128-test
-aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[0]' api20251128-test-0
+aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster.cluster_serverless[0]' api2-20251128-production
+aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[0]' api20251128-production-0
 aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[1]' api20251128-production-1
 aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[2]' api20251128-production-2
 ```
