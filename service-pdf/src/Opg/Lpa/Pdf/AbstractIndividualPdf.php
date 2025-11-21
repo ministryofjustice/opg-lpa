@@ -2,7 +2,6 @@
 
 namespace Opg\Lpa\Pdf;
 
-use DateTimeImmutable;
 use MakeShared\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\PdftkFactory;
 use Exception;
@@ -18,13 +17,6 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * PDF template file name (without path) for this PDF object - value to be set in extending class
      */
     protected $templateFileName;
-
-    /**
-     * New LPA120 with the 2025 fee change of £92
-     *
-     * @psalm-suppress PossiblyUnusedProperty
-     */
-    protected $newTemplateFileName;
 
     /**
      * @var array
@@ -66,12 +58,6 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      */
     public function __construct(Lpa $lpa = null, array $options = [], ?PdftkFactory $pdftkFactory = null)
     {
-        if ($this instanceof Lpa120) {
-            $feeEffectiveDate = new DateTimeImmutable(getenv('LPA_FEE_EFFECTIVE_DATE') ?: '2025-11-17T00:00:00');
-            $timeNow = new DateTimeImmutable('now');
-            $this->templateFileName = ($timeNow >= $feeEffectiveDate) ? $this->newTemplateFileName : $this->templateFileName;
-        }
-
         //  Ensure that a template file was defined
         if (is_null($this->templateFileName)) {
             throw new Exception('PDF template file name must be defined to create ' . get_class($this));

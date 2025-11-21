@@ -187,9 +187,8 @@ class Module
                     return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
                 },
 
-                'Calculator' => function ($sm) {
-                    $fees = $sm->get('config')['fees'] ?? [];
-                    return new Calculator($fees);
+                'Calculator' => function () {
+                    return new Calculator();
                 },
 
                 PingHandler::class => PingHandlerFactory::class,
