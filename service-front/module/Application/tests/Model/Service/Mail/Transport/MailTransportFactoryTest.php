@@ -33,7 +33,7 @@ final class MailTransportFactoryTest extends MockeryTestCase
         $container->shouldReceive('get')
             ->withArgs(['Config'])
             ->once()
-            ->andReturn(['email' => ['transport' => 'notify', 'notify' => ['key' => $apiKey]]]);
+            ->andReturn(['email' => ['notify' => ['key' => $apiKey]]]);
 
         $result = (new MailTransportFactory())($container, null, null);
 
@@ -46,7 +46,7 @@ final class MailTransportFactoryTest extends MockeryTestCase
         $container->shouldReceive('get')
             ->withArgs(['Config'])
             ->once()
-            ->andReturn(['email' => ['transport' => 'notify']]);
+            ->andReturn(['email' => []]);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Notify API settings not found');

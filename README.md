@@ -212,16 +212,9 @@ The package.json in the root of the repo has all of the required dev dependancie
 npm i <package-name> --saveDev
 ```
 
-### The S3 monitor
+#### Activation tokens in emails
 
-The cypress test suite runs an instance of the S3 monitor. This is a Python application which polls an S3 bucket looking for emails sent during test runs.
-
-All emails used during test runs, such as the addresses used for new user accounts, are in the lpa.opg.service.justice.gov.uk domain. This enables us to do the following:
-
-1. During a test run, we send requests to the real Notify service, which then sends out emails on our behalf. Examples are account activation and password reset emails. These emails pass through standard email infrastructure; however, the email server for the lpa.opg.service.justice.gov.uk domain is rigged so that any emails sent to it end up in an S3 bucket (opg-lpa-casper-mailbox). (NB "casper" crops up for historical reasons, as the tests were previously implemented in casper.)
-2. The S3 monitor polls the S3 bucket, copying any messages it finds into a local directory. The filename includes the ID of the test account.
-3. Automated tests poll the local directory, looking for text files with specific IDs in their names (put there by the S3 monitor). The ID is included as part of the email address used to sign up or login a user, such as caspertests+1680708521545893617@lpa.opg.service.justice.gov.uk.
-4. On finding the correct file (once it's been pulled down from S3), the email it contains is parsed for the appropriate links. For example, while testing sign up, the cypress tests look for a link to activate the newly-created account; once found, the link is followed to mimic a user opening the link from their email client, activating the account.
+Some of our Cypress journeys need to follow activation tokens which we send to users in emails. To make this possible, activation tokens in non-production environments are simply a sha1 hash of the user's email address. This allows Cypress to calculate the activation token at runtime so it won't need to read the email.
 
 ## Updating composer dependencies
 
