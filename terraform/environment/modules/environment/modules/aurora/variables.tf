@@ -32,14 +32,10 @@ variable "cluster_identifier" {
 
 }
 variable "deletion_protection" {
-  default     = false
   description = "Specifies whether the DB cluster is encrypted"
   type        = bool
 }
-variable "database_name" {
-  description = "The name of the database to create when the DB instance is created"
-  type        = string
-}
+
 variable "db_subnet_group_name" {
   description = "The name of the DB subnet group to associate with this DB instance"
   type        = string
