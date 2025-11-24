@@ -141,7 +141,7 @@ aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[
     "production": {
       ...
       "database": {
-        "database_name": "api-20251128",
+        "cluster_identifier": "api-20251128",
         "aurora_cross_region_backup_enabled": false,
         "aurora_enabled": true,
         "aurora_instance_count": 1,
