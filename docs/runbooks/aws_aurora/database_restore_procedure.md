@@ -4,7 +4,7 @@ AWS Backup is used to schedule and manage backups for the `api` Aurora Cluster.
 
 As with other AWS backup processes, restored backups create a new resource which must be named differently from the source resource. If the source were deleted prior to restoration this would not be an issue, but this comes with risk.
 
-This document will walk you through how to restore a backup, and bring it into service, and how to delete the old table.
+This document will walk you through how to restore a backup, and bring it into service, and how to delete the old cluster.
 
 The guide is targetted at Production restoring a backup of the api cluster table, but the screenshots are from Preproduction.
 
@@ -17,11 +17,11 @@ This guide focusses on using the AWS console.
 - Production requires the `data-access` role.
 - This procedure requires pairing. This is to help validate each step is completed correctly and have more of the team comfortable with the procedure.
 - It is strongly recommended that the service is put into maintenance mode to prevent users entering data that will be lost. Customer data entered since the last backup will also be lost.
-- We will need to initiate a Change Freeze when we are ready to bring the restored tables into the service. During this time, any run of the path to live pipeline risks deleting the restored or outgoing tables. The freeze will help to prevent this.
+- We will need to initiate a Change Freeze when we are ready to bring the restored cluster into the service. During this time, any run of the path to live pipeline risks deleting the restored or outgoing cluster. The freeze will help to prevent this.
 - This restore procedure can take hours to perform.
 - You will need the image tag currently deployed to production
 
-## Restore a table from a backup
+## Restore a cluster from a backup
 
 1. Sign in to the AWS Console, Assume the `breakglass` role in the Production account, and navigate to AWS Backup.
 
@@ -74,9 +74,9 @@ This guide focusses on using the AWS console.
 
 12. Restore jobs can take a long time (hours) to complete.
 
-## Bring restored table into service
+## Bring restored cluster into service
 
-1. Here we will update the infrastructure as code to use the new restored table.
+1. Here we will update the infrastructure as code to use the new restored cluster.
 
 2. Ensure you are up to date with the main branch.
 
@@ -128,13 +128,13 @@ aws-vault exec identity -- terraform state rm 'module.eu-west-1.module.api_auror
 aws-vault exec identity -- terraform state rm 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster_instance.serverless_instances[2]'
 ```
 
-8. Next import the restored table using the new name
+8. Next import the restored cluster using the new name
 
 ```sh
 aws-vault exec identity -- terraform import 'module.eu-west-1.module.api_aurora[0].aws_rds_cluster.cluster_serverless[0]' api2-20251128-production
 ```
 
-9. Next, update the name of the new table in terraform.tfvars.json for the environment, for example
+9. Next, update the name of the new cluster in terraform.tfvars.json for the environment, for example
 
 ```json
   "accounts": {
@@ -157,14 +157,14 @@ To reduce the diff, provide the container version deployed currently to producti
 aws-vault exec identity -- terraform plan -var container_version=main-v0.324.8
 ```
 
-We are expecting to see updates to our restored Aurora cluster, and changes to services and resources that reference the table name or ARN.
+We are expecting to see updates to our restored Aurora cluster, and changes to services and resources that reference the cluster name or ARN.
 
 Things to check for
 
 ```text
-Policy Documents for API and Admin updating to use new (restored table)
+Policy Documents for API and Admin updating to use new (restored cluster)
 
-AWS Backup managing the new table
+AWS Backup managing the new cluster
 
 Aurora Cluster updates and instances created
 
@@ -174,6 +174,8 @@ Plans and Applies always produce a Config file.
 
 Once happy with the plan, apply the changes
 ```
+
+Note: Terraform cannot know the master username and password for the restored cluster, so these will be marked as changes. This is expected.
 
 ```sh
 aws-vault exec identity -- terraform apply -var container_version=main-v0.324.8
@@ -203,9 +205,9 @@ source .envrc
 
 Once this PR is merged and has reached production, we can release the change freeze.
 
-## Deleting this old tables
+## Deleting this old cluster
 
-At this point we can delete the old tables. They are no longer managed by Terraform, so we must do this in the AWS console.
+At this point we can delete the old cluster. They are no longer managed by Terraform, so we must do this in the AWS console.
 
 1. In the AWS console, again while assuming the `breakglass` role in the production account, navigate to the Aurora RDS console.
 
