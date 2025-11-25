@@ -169,9 +169,7 @@ class Service extends AbstractService
             return self::STATUS_READY;
         } catch (\Aws\S3\Exception\S3Exception $ignore) {
             $this->getLogger()->error('Exception while attempting to get PDF info from S3', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'PDF_S3_HEAD_FAILED',
-                'status' => $ignore->getStatusCode(),
                 'exception' => $ignore,
             ]);
         }

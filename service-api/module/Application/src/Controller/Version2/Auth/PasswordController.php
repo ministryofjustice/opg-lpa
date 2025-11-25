@@ -114,9 +114,7 @@ class PasswordController extends AbstractAuthController
             return new ApiProblem(400, "Unknown error: {$result}");
         }
 
-        $this->getLogger()->info('User successfully change their password via a reset', [
-            'userId' => $result['userId']
-        ]);
+        $this->getLogger()->info('User successfully change their password via a reset');
 
         //  Return 204 - No Content
         // Suppress psalm errors caused by bug in laminas-mvc;

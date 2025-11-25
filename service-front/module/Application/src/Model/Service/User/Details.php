@@ -34,7 +34,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to get user details from API', [
                 'userId' => $this->getUserId(),
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
         }
@@ -89,7 +88,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to update user details via API', [
                 'userId' => $this->getUserId(),
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
 
@@ -172,7 +170,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to request email update via API', [
                 'userId' => $this->getUserId(),
                 'error_code' => 'EMAIL_UPDATE_REQUEST_FAILED',
-                'status' => $ex1->getStatusCode(),
                 'exception' => $ex3,
             ]);
 
@@ -209,7 +206,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to request email update using token', [
                 'userId' => $this->getUserId(),
                 'error_code' => 'EMAIL_UPDATE_USING_TOKEN_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
         }
@@ -275,7 +271,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getLogger()->error('Password update request failed', [
                 'userId' => $this->getUserId(),
                 'error_code' => 'PASSWORD_UPDATE_REQUEST_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
         }
@@ -339,7 +334,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to delete user', [
                 'userId' => $this->getUserId(),
                 'error_code' => 'USER_DELETION_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
 
@@ -430,7 +424,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to request password reset email via API', [
                 'userId' => $this->getUserId(),
                 'error_code' => 'PASSWORD_RESET_REQUEST_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
         }
@@ -498,7 +491,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to set new password', [
                 'userId' => $this->getUserId(),
                 'error_code' => 'SET_NEW_PASSWORD_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
 
@@ -582,7 +574,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getLogger()->error('Account registration failed', [
                 'userId' => $this->getUserId(),
                 'error_code' => 'ACCOUNT_REGISTRATION_FAILED',
-                'status' => $ex2->getStatusCode(),
                 'exception' => $ex2,
             ]);
 
@@ -614,7 +605,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to resend activation email', [
                 'userId' => $this->getUserId(),
                 'error_code' => 'RESEND_ACTIVATION_EMAIL_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
         }
@@ -644,7 +634,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to activate account', [
                 'userId' => $this->getUserId(),
                 'error_code' => 'ACCOUNT_ACTIVATION_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
         }
