@@ -166,7 +166,18 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setSqsClient($sqsClient);
         $this->service->setS3Client($s3Client);
 
-        $this->logger->shouldReceive('error')->once()->with('Exception while attempting to get PDF info from S3');
+        $this->logger->shouldReceive('error')
+            ->once()
+            ->with(
+                'Exception while attempting to get PDF info from S3',
+                Mockery::on(function (array $context) {
+                    $this->assertSame('PDF_S3_HEAD_FAILED', $context['error_code']);
+                    $this->assertArrayHasKey('exception', $context);
+                    $this->assertInstanceOf(\Aws\S3\Exception\S3Exception::class, $context['exception']);
+
+                    return true;
+                })
+            );
 
         $data = $this->service->fetch(strval($lpa->getId()), 'lp1');
 
@@ -219,7 +230,18 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setSqsClient($sqsClient);
         $this->service->setS3Client($s3Client);
 
-        $this->logger->shouldReceive('error')->once()->with('Exception while attempting to get PDF info from S3');
+        $this->logger->shouldReceive('error')
+            ->once()
+            ->with(
+                'Exception while attempting to get PDF info from S3',
+                Mockery::on(function (array $context) {
+                    $this->assertSame('PDF_S3_HEAD_FAILED', $context['error_code']);
+                    $this->assertArrayHasKey('exception', $context);
+                    $this->assertInstanceOf(\Aws\S3\Exception\S3Exception::class, $context['exception']);
+
+                    return true;
+                })
+            );
 
         $data = $this->service->fetch(strval($lpa->getId()), 'lp1');
 

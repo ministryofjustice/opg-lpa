@@ -42,14 +42,10 @@ class Stats extends AbstractService
 
         try {
             $stats['lpas'] = $this->getLpaStats();
-            $this->getLogger()->debug('Successfully generated lpas stats', [
-               'userId' => $this->getUserId()
-            ]);
+            $this->getLogger()->debug('Successfully generated lpas stats');
         } catch (Exception $ex) {
             $this->getLogger()->error('Failed to get LPA status for PDF', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'LPA_STATS_GENERATION_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
             $stats['lpas'] = ['generated' => false];
@@ -62,14 +58,10 @@ class Stats extends AbstractService
                 'all' => $this->getApplicationRepository()->getLpasPerUser(),
             ];
 
-            $this->getLogger()->debug('Successfully generated lpasPerUser stats', [
-                'userId' => $this->getUserId()
-            ]);
+            $this->getLogger()->debug('Successfully generated lpasPerUser stats');
         } catch (Exception $ex) {
             $this->getLogger()->error('Failed to get LPAs per user for PDF', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'LPAS_PER_USER_STATS_GENERATION_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
 
@@ -81,9 +73,7 @@ class Stats extends AbstractService
             $this->getLogger()->debug('Successfully generated who stats');
         } catch (Exception $ex) {
             $this->getLogger()->error('Failed to get Who Are You Stats for PDF', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'WHO_ARE_YOU_STATS_GENERATION_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
             $stats['who'] = ['generated' => false];
@@ -94,9 +84,7 @@ class Stats extends AbstractService
             $this->getLogger()->debug('Successfully generated correspondence stats for PDF');
         } catch (Exception $ex) {
             $this->getLogger()->error('Failed to get Correspondence Stats for PDF', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'CORRESPONDENCE_STATS_GENERATION_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
 
@@ -108,9 +96,7 @@ class Stats extends AbstractService
             $this->getLogger()->debug('Successfully generated preferencesInstructions stats');
         } catch (Exception $ex) {
             $this->getLogger()->error('Failed to generate preferences instructions stats for PDF', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'PREFERENCES_INSTRUCTIONS_STATS_GENERATION_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
 
@@ -122,9 +108,7 @@ class Stats extends AbstractService
             $this->getLogger()->debug('Successfully generated options stats');
         } catch (Exception $ex) {
             $this->getLogger()->error('Failed to generate options stats', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'OPTIONS_STATS_GENERATION_FAILED',
-                'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
 

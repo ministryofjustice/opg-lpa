@@ -24,6 +24,12 @@ final class FeedbackTest extends AbstractEmailServiceTest
     public function setUp(): void
     {
         parent::setUp();
+        $identity = Mockery::mock();
+        $identity->shouldReceive('id')->andReturn('1234');
+
+        $this->authenticationService
+            ->shouldReceive('getIdentity')
+            ->andReturn($identity);
 
         $this->service = new Feedback(
             $this->authenticationService,

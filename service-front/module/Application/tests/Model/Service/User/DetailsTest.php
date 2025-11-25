@@ -80,7 +80,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testGetUserDetailsError(): void
     {
-        $this->setUpIdentity(1, 1, 0, 0);
+        $this->setUpIdentity(2, 2, 0, 0);
 
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/test-id'])
@@ -94,7 +94,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdateAllDetailsUpdateAll(): void
     {
-        $this->setUpIdentity(3, 2, 1, 0);
+        $this->setUpIdentity(4, 3, 0, 0);
 
         $currentUserJson = FixturesData::getUserJson();
 
@@ -154,7 +154,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdateAllDetailsEmptyAll(): void
     {
-        $this->setUpIdentity(3, 2, 1, 0);
+        $this->setUpIdentity(4, 3, 0, 0);
 
         $currentUserJson = FixturesData::getUserJson();
 
@@ -178,7 +178,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdateAllInvalidData(): void
     {
-        $this->setUpIdentity(2, 1, 1, 0);
+        $this->setUpIdentity(4, 3, 0, 0);
 
         $currentUserJson = FixturesData::getUserJson();
 
@@ -197,7 +197,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdate(): void
     {
-        $this->setUpIdentity(2, 1, 1, 1);
+        $this->setUpIdentity(3, 2, 0, 1);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once()->andReturn();
         $this->apiClient->shouldReceive('httpPost')
@@ -238,7 +238,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateNoToken(): void
     {
-        $this->setUpIdentity(2, 1, 1, 1, 'test-id', [], null);
+        $this->setUpIdentity(3, 2, 0, 1, 'test-id', [], null);
 
         $this->apiClient->shouldReceive('updateToken')->once()->andReturn(null);
         $this->apiClient->shouldReceive('httpPost')->once()->andReturn();
@@ -250,7 +250,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateErrorSendingNewEmailReceived(): void
     {
-        $this->setUpIdentity(2, 1, 1, 1);
+        $this->setUpIdentity(4, 3, 0, 1);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
         $this->apiClient->shouldReceive('httpPost')
@@ -288,7 +288,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateErrorSendingVerifyEmail(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(4, 3, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
         $this->apiClient->shouldReceive('httpPost')
@@ -326,7 +326,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateErrorEmailNotChanged(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(4, 3, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
 
@@ -342,7 +342,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateErrorEmailOfAnotherUser(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(4, 3, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
 
@@ -358,7 +358,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateUnknownApiException(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(4, 3, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
 
@@ -374,6 +374,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdateEmailUsingToken(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/email', ['emailUpdateToken' => 'test-token']])
             ->once();
@@ -385,6 +386,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdateEmailUsingTokenApiError(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/email', ['emailUpdateToken' => 'test-token']])
             ->once()
@@ -397,7 +399,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdatePassword(): void
     {
-        $identity = $this->setUpIdentity(2);
+        $identity = $this->setUpIdentity(3, 2, 0);
         $identity->shouldReceive('setToken')->withArgs(['test-token'])->once();
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
@@ -431,7 +433,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdatePasswordTemplateError(): void
     {
-        $identity = $this->setUpIdentity(2);
+
+        $identity = $this->setUpIdentity(4, 3, 0);
         $identity->shouldReceive('setToken')->withArgs(['test-token'])->once();
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
@@ -460,7 +463,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdatePasswordNoToken(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(3, 2, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
         $this->apiClient->shouldReceive('httpPost')
@@ -481,7 +484,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdatePasswordTemplateApiException(): void
     {
-        $this->setUpIdentity(1, 0);
+        $this->setUpIdentity(3, 2, 0);
 
         $this->apiClient->shouldReceive('updateToken')
             ->with('test-token')
@@ -511,6 +514,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testGetTokenInfoApiException(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/authenticate', ['authToken' => 'test-token']])
             ->once()
@@ -527,7 +532,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testDelete(): void
     {
-        $this->setUpIdentity(2, 1, 1, 0);
+        $this->setUpIdentity(2, 2, 0, 0);
 
         $this->apiClient->shouldReceive('httpDelete')
             ->withArgs(['/v2/user/test-id'])
@@ -540,7 +545,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testDeleteApiException(): void
     {
-        $this->setUpIdentity(2, 1, 1, 0);
+        $this->setUpIdentity(3, 3, 0, 0);
 
         $this->apiClient->shouldReceive('httpDelete')
             ->withArgs(['/v2/user/test-id'])
@@ -554,6 +559,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestPasswordResetEmail(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
@@ -584,6 +591,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestPasswordResetEmailPostReturnsIncorrectType(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
@@ -596,6 +605,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestPasswordResetEmailAccountNotActivated(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
@@ -626,6 +637,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestPasswordResetEmailApiException(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
@@ -638,6 +651,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestPasswordResetEmailNotFoundApiException(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
@@ -661,6 +675,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestPasswordResetEmailApiExceptionCausesException(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
@@ -685,6 +701,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestPasswordResetSendingResetSendApiException(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
@@ -709,6 +727,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testAccountActivateEmailSendApiException(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
@@ -733,6 +753,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testSetNewPassword(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
             ->once();
@@ -744,6 +766,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testSetNewPasswordResponseNotEmpty(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
             ->once()
@@ -756,6 +780,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testSetNewPasswordApiException(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
             ->once()
@@ -768,6 +794,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testSetNewPasswordApiExceptionInvalidToken(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
             ->once()
@@ -780,6 +808,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRegisterAccount(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
@@ -811,6 +841,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRegisterAccountNoActivationToken(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
@@ -823,6 +855,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRegisterAccountFailedSendingEmail(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
@@ -848,6 +882,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRegisterAccountApiException(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
@@ -860,6 +896,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testDuplicateRegisterAccountWarningEmailSend(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
@@ -876,6 +914,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testDuplicateRegisterAccountWarningEmailSendApiException(): void
     {
+        $this->setUpIdentity(2, 2, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
@@ -935,6 +975,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testResendActivationEmailApiException(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
@@ -959,6 +1001,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testActivateAccountApiException(): void
     {
+        $this->setUpIdentity(1, 1, 0, 0);
+
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['activationToken' => 'test-token']])
             ->once()

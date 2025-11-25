@@ -54,10 +54,16 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->with('abcde12345', false)
             ->andReturn($tokenReturnData)
             ->once();
+//
+//        $this->logger->shouldReceive('debug')
+//            ->once()
+//            ->with('Failed authentication attempt with a authToken', [
+//                'authToken' => 'abcde12345',
+//        ]);
 
         $this->logger->shouldReceive('info')
+            ->once()
             ->with('User successfully authenticated with a authToken', $tokenReturnData);
-
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
             'authToken' => 'abcde12345',
@@ -78,7 +84,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->andReturn('Big big failure')
             ->once();
 
-        $this->logger->shouldReceive('notice')
+        $this->logger->shouldReceive('debug')
             ->with('Failed authentication attempt with a authToken', [
                 'authToken' => 'abcde12345',
             ]);
@@ -165,7 +171,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->andReturn('Big big failure')
             ->once();
 
-        $this->logger->shouldReceive('notice')
+        $this->logger->shouldReceive('debug')
             ->with('Failed authentication attempt with a password', [
                 'username' => 'Username',
             ]);
