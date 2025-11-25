@@ -6,7 +6,7 @@ namespace ApplicationTest\Form;
 
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
-use Application\Form\Validator\Csrf;
+use Laminas\Validator\Csrf as LaminasCsrfValidator;
 use Laminas\Form\FormInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Mockery;
@@ -33,7 +33,7 @@ trait FormTestSetupTrait
         $sm->shouldReceive('get')
             ->with('config')
             ->andReturn(['csrf' => ['salt' => 'Rando_Calrissian']]);
-        $sm->shouldReceive('build')->andReturn(new Csrf());
+        $sm->shouldReceive('build')->andReturn(new LaminasCsrfValidator());
 
         $csrfBuilder = new CsrfBuilder($sm);
 
