@@ -24,5 +24,5 @@ data "aws_subnets" "public" {
 
 
 module "allowed_ip_list" {
-  source = "git@github.com:ministryofjustice/opg-terraform-aws-moj-ip-allow-list.git?ref=v3.4.3"
+  source = "git@github.com:ministryofjustice/opg-terraform-aws-moj-ip-allow-list.git?ref=v3.4.5"
 }
