@@ -68,7 +68,7 @@ class EmailController extends AbstractAuthController
             return ($v instanceof \DateTime) ? $v->format('Y-m-d\TH:i:sO') : $v;
         }, $result);
 
-        $this->getLogger()->info("User successfully requested update email token", [
+        $this->getLogger()->info('User successfully requested update email token', [
             'userId' => $userId
         ]);
 
@@ -103,7 +103,7 @@ class EmailController extends AbstractAuthController
         }
 
 
-        $this->getLogger()->info("User successfully update email with token", [
+        $this->getLogger()->info('User successfully update email with token', [
             'userId' => $result->getUser()->id()
         ]);
 

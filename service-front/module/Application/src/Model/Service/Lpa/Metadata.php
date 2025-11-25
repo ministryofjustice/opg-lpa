@@ -4,6 +4,7 @@ namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Laminas\Http\Response;
 use MakeShared\DataModel\Lpa\Lpa;
 use RuntimeException;
 
@@ -59,6 +60,11 @@ class Metadata extends AbstractService
             unset($lpa->metadata[$key]);
 
             if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
+                $this->getLogger()->warning('API client failed to remove metadata', [
+                    'error_code' => 'API_CLIENT_METADATA_REMOVE_FAILED',
+                    'lpaId' => $lpa->id,
+                    'status' => Response::STATUS_CODE_500,
+                ]);
                 throw new RuntimeException(sprintf('API client failed to remove metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
             }
 
@@ -91,6 +97,11 @@ class Metadata extends AbstractService
             $lpa->metadata[$key] = $value;
 
             if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
+                $this->getLogger()->warning('API client failed to remove metadata by key', [
+                    'error_code' => 'API_CLIENT_METADATA_REMOVE_FAILED',
+                    'lpaId' => $lpa->id,
+                    'status' => Response::STATUS_CODE_500,
+                ]);
                 throw new RuntimeException(sprintf('API client failed to set metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
             }
 
