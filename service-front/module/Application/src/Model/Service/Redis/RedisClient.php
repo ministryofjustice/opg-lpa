@@ -74,12 +74,14 @@ class RedisClient implements LoggerAwareInterface
             // domain name cannot be resolved (in this case, an exception is still thrown)
             $result = @$this->redisClient->connect($this->redisHost, $this->redisPort);
         } catch (RedisException $e) {
-            $this->getLogger()->error(sprintf(
-                'Unable to connect to Redis server at %s:%s',
-                $this->redisHost,
-                $this->redisPort
-            ));
-            $this->getLogger()->error($e->getMessage());
+            $this->getLogger()->error('Unable to connect to Redis Server', [
+                'error_code' => 'CONNECTION_TO_REDIS_FAILED',
+                'status' => $e->getStatusCode(),
+                'exception' => $e,
+                'host' => $this->redisHost,
+                'port' => $this->redisPort
+            ]);
+
             $result = false;
         }
 

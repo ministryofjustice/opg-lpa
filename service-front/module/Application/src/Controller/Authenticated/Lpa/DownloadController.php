@@ -22,8 +22,9 @@ class DownloadController extends AbstractLpaController
 
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
 
-        $this->getLogger()->info('PDF type is ' . $pdfType, [
-            'lpaId' => $lpa->getId()
+        $this->getLogger()->debug('PDF type is ' . $pdfType, [
+            'lpaId' => $lpa->getId(),
+            'pdfType' => $pdfType
         ]);
 
         // check PDF availability. return a nice error if unavailable
@@ -32,8 +33,9 @@ class DownloadController extends AbstractLpaController
             || ($pdfType == 'lp3' && !$lpa->canGenerateLP3())
             || ($pdfType == 'lp1' && !$lpa->canGenerateLP1())
         ) {
-            $this->getLogger()->info('PDF not available', [
-                'lpaId' => $lpa->getId()
+            $this->getLogger()->warning('PDF not available', [
+                'lpaId' => $lpa->getId(),
+                'pdfType' => $pdfType
             ]);
 
             return $this->notFoundAction();
@@ -136,8 +138,9 @@ class DownloadController extends AbstractLpaController
         $result = $this->getLpaApplicationService()
                     ->getPdf($lpaId, $pdfType);
 
-        $this->getLogger()->info('PDF status is ' . $result['status'], [
+        $this->getLogger()->debug('PDF status is ' . $result['status'], [
             'lpaId' => $lpaId,
+            'pdfType' => $pdfType
         ]);
 
         if (!is_array($result)) {

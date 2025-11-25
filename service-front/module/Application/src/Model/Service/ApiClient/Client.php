@@ -295,7 +295,12 @@ class Client implements LoggerAwareInterface
     private function handleErrorResponse(ResponseInterface $response)
     {
         $exception = new Exception\ApiException($response);
-        $this->getLogger()->error($exception->getMessage(), ['headers' => $this->defaultHeaders]);
+        $this->getLogger()->debug('API client error response', [
+            'error_code' => 'API_CLIENT_ERROR_RESPONSE',
+            'status' => $response->getStatusCode(),
+            'exception' => $exception,
+        ]);
+
         throw $exception;
     }
 }

@@ -79,10 +79,10 @@ class FeedbackController extends AbstractBaseController
                         'error' => $ex->getMessage(),
                     ]);
                 } catch (Throwable $ex) {
-                    $message = 'API exception while adding feedback from Feedback service: ' . $ex->getMessage();
-
-                    $this->getLogger()->error($message, [
-                        'trace' => $ex->getTrace(),
+                    $this->getLogger()->error('API exception while adding feedback from Feedback service', [
+                        'error_code' => 'ADDING_FEEDBACK_FAILED',
+                        'status' => $ex->getStatusCode(),
+                        'exception' => $ex,
                     ]);
 
                     return new ViewModel([
