@@ -2,6 +2,7 @@
 
 namespace Application\Form\Validator;
 
+use Laminas\Http\Response;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Session\Container;
 use Laminas\Validator\Csrf as LaminasCsrfValidator;
@@ -54,6 +55,10 @@ class Csrf extends LaminasCsrfValidator implements LoggerAwareInterface
                 $this->getHash(),
                 $value,
             ));
+            $this->getLogger()->error('Mismatched CSRF provided;', [
+                'error_code' => 'MISMATCH_CSRF_PROVIDED',
+                'status' => Response::STATUS_CODE_500,
+            ]);
             $this->error(self::NOT_SAME);
             return false;
         }

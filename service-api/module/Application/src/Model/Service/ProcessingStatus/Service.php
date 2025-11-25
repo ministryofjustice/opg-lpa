@@ -129,11 +129,16 @@ class Service extends AbstractService
             ],
             'fulfilled' => function ($response, $id) use (&$results) {
                 // Each successful response
-                $this->getLogger()->debug('We have a result for:' . $id);
+                $this->getLogger()->debug('We have a get status', [
+                    'id' => $id
+                ]);
                 $results[$id] = $response;
             },
             'rejected' => function ($reason, $id) {
-                $this->getLogger()->debug('Failed to get status for LPA application ' . $id . ': ' . $reason);
+                $this->getLogger()->debug('Failed to get status for LPA application', [
+                    'id' => $id ,
+                    'reason' => $reason
+                ]);
             },
         ]);
 
@@ -175,18 +180,22 @@ class Service extends AbstractService
 
                 case 500:
                 case 503:
-                    $this->getLogger()->error(
-                        'Bad ' . $statusCode . ' response from Sirius gateway: ' .
-                        (string)$result->getBody()
-                    );
+                    $this->getLogger()->error('Bad Response from Sirius Gateway', [
+                        'userId' => $this->getUserId(),
+                        'error_code' => 'SIRIUS_BAD_RESPONSE',
+                        'status' => $statusCode,
+                        'exception' => (string)$result->getBody(),
+                    ]);
 
                     throw new ApiProblemException('Bad response from Sirius gateway: ' . $statusCode);
 
                 default:
-                    $this->getLogger()->error(
-                        'Unexpected response from Sirius gateway: ' . $statusCode .
-                        '; ' . (string)$result->getBody()
-                    );
+                    $this->getLogger()->error('Unexpected Response from Sirius Gateway', [
+                        'userId' => $this->getUserId(),
+                        'error_code' => 'SIRIUS_UNEXPECTED_RESPONSE',
+                        'status' => $statusCode,
+                        'exception' => (string)$result->getBody(),
+                    ]);
                     break;
             }
         }

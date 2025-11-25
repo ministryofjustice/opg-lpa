@@ -64,7 +64,7 @@ class AuthenticateController extends AbstractAuthController
         $result = $this->authenticationService->withToken($authToken, $updateToken);
 
         if (is_string($result)) {
-            $this->getLogger()->notice("Failed authentication attempt with a authToken", [
+            $this->getLogger()->debug('Failed authentication attempt with a authToken', [
                 'authToken' => $authToken
             ]);
 
@@ -76,7 +76,7 @@ class AuthenticateController extends AbstractAuthController
             return ($v instanceof \DateTime ? $v->format('Y-m-d\TH:i:sO') : $v);
         }, $result);
 
-        $this->getLogger()->info("User successfully authenticated with a authToken", [
+        $this->getLogger()->info('User successfully authenticated with a authToken', [
             'tokenExtended' => $updateToken,
             'userId'        => $result['userId'],
             'expiresAt'     => $result['expiresAt'],
@@ -98,7 +98,7 @@ class AuthenticateController extends AbstractAuthController
         $result = $this->authenticationService->withPassword($username, $password, $updateToken);
 
         if (is_string($result)) {
-            $this->getLogger()->notice("Failed authentication attempt with a password", [
+            $this->getLogger()->debug('Failed authentication attempt with a password', [
                 'username' => $username
             ]);
 
@@ -110,7 +110,7 @@ class AuthenticateController extends AbstractAuthController
             return ($v instanceof \DateTime ? $v->format('Y-m-d\TH:i:sO') : $v);
         }, $result);
 
-        $this->getLogger()->info("User successfully authenticated with a password", [
+        $this->getLogger()->info('User successfully authenticated with a password', [
             'userId'     => $result['userId'],
             'last_login' => $result['last_login'],
             'expiresAt'  => $result['expiresAt'],
