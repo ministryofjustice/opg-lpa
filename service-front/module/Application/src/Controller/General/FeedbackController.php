@@ -81,7 +81,6 @@ class FeedbackController extends AbstractBaseController
                 } catch (Throwable $ex) {
                     $this->getLogger()->error('API exception while adding feedback from Feedback service', [
                         'error_code' => 'ADDING_FEEDBACK_FAILED',
-                        'status' => $ex->getStatusCode(),
                         'exception' => $ex,
                     ]);
 

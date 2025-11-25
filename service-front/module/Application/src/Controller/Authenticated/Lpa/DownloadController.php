@@ -26,7 +26,6 @@ class DownloadController extends AbstractLpaController
             'lpaId' => $lpa->getId(),
             'pdfType' => $pdfType
         ]);
-
         // check PDF availability. return a nice error if unavailable
         if (
             ($pdfType == 'lpa120' && !$lpa->canGenerateLPA120())

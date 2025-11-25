@@ -34,7 +34,15 @@ class FeedbackServiceTest extends AbstractServiceTestCase
 
     public function testAddWithEmptyData()
     {
-        $this->logger->shouldReceive('error')->once()->with('Required fields for saving feedback not present');
+        $this->logger->shouldReceive('error')
+            ->once()
+            ->withArgs(function (string $message, array $extra) {
+                $this->assertSame('Required fields for saving feedback not present', $message);
+                $this->assertSame('FEEDBACK_MISSING_REQUIRED_FIELDS', $extra['error_code']);
+                $this->assertSame(500, $extra['status']);
+
+                return true;
+            });
 
         $this->assertFalse($this->sut->add([]));
     }
@@ -74,7 +82,14 @@ class FeedbackServiceTest extends AbstractServiceTestCase
 
         $this->feedbackValidator->shouldReceive('isValid')->with($data)->andReturn(false);
 
-        $this->logger->shouldReceive('error')->once()->with('Feedback data failed validation');
+        $this->logger->shouldReceive('error')
+            ->once()
+            ->withArgs(function (string $message, array $extra) {
+                $this->assertSame('Feedback data failed validation', $message);
+                $this->assertSame('FEEDBACK_VALIDATION_FAILED', $extra['error_code']);
+                $this->assertSame(500, $extra['status']);
+                return true;
+            });
 
         $this->assertFalse($this->sut->add($data));
     }

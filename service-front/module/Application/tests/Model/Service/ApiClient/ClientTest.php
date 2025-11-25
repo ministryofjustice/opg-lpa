@@ -157,19 +157,26 @@ final class ClientTest extends MockeryTestCase
     public function testHttpGetNotFound(): void
     {
         $this->setUpRequest(404, '');
-        $this->response->shouldReceive('getStatusCode')->once()->andReturn(404);
+        $this->response->shouldReceive('getStatusCode')
+            ->twice()
+            ->andReturn(404);
 
-        $expectedLoggerArgs = [
-            'HTTP:404 - Unexpected API response',
-            ['headers' => ['Token' => 'test token']]
-        ];
+        $this->logger
+            ->shouldReceive('debug')
+            ->once()
+            ->withArgs(function (string $message, array $context) {
+                $this->assertSame('API client error response', $message);
+                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
+                $this->assertSame(404, $context['status']);
+                $this->assertArrayHasKey('exception', $context);
+                $this->assertInstanceOf(ApiException::class, $context['exception']);
 
-        $this->logger->shouldReceive('error')
-                     ->withArgs($expectedLoggerArgs)
-                     ->once();
+                return true;
+            });
 
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('HTTP:404 - Unexpected API response');
+
 
         $this->client->httpGet('path');
     }
@@ -180,16 +187,22 @@ final class ClientTest extends MockeryTestCase
     public function testHttpError(): void
     {
         $this->setUpRequest(500, 'An error');
-        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')
+            ->twice()
+            ->andReturn(500);
 
-        $expectedLoggerArgs = [
-            'HTTP:500 - Unexpected API response',
-            ['headers' => ['Token' => 'test token']]
-        ];
+        $this->logger
+            ->shouldReceive('debug')
+            ->once()
+            ->withArgs(function (string $message, array $context) {
+                $this->assertSame('API client error response', $message);
+                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
+                $this->assertSame(500, $context['status']);
+                $this->assertArrayHasKey('exception', $context);
+                $this->assertInstanceOf(ApiException::class, $context['exception']);
 
-        $this->logger->shouldReceive('error')
-                     ->withArgs($expectedLoggerArgs)
-                     ->once();
+                return true;
+            });
 
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
@@ -209,17 +222,22 @@ final class ClientTest extends MockeryTestCase
     public function testHttpDeleteError(): void
     {
         $this->setUpRequest(500, 'An error', 'DELETE');
-        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')
+            ->twice()
+            ->andReturn(500);
 
-        $expectedLoggerArgs = [
-            'HTTP:500 - Unexpected API response',
-            ['headers' => ['Token' => 'test token']]
-        ];
+        $this->logger
+            ->shouldReceive('debug')
+            ->once()
+            ->withArgs(function (string $message, array $context) {
+                $this->assertSame('API client error response', $message);
+                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
+                $this->assertSame(500, $context['status']);
+                $this->assertArrayHasKey('exception', $context);
+                $this->assertInstanceOf(ApiException::class, $context['exception']);
 
-        $this->logger->shouldReceive('error')
-                     ->withArgs($expectedLoggerArgs)
-                     ->once();
-
+                return true;
+            });
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
 
@@ -259,16 +277,20 @@ final class ClientTest extends MockeryTestCase
     public function testHttpPatchError(): void
     {
         $this->setUpRequest(500, 'An error', 'PATCH', 'base_url/path', '{"a":1}');
-        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')->twice()->andReturn(500);
 
-        $expectedLoggerArgs = [
-            'HTTP:500 - Unexpected API response',
-            ['headers' => ['Token' => 'test token']]
-        ];
+        $this->logger
+            ->shouldReceive('debug')
+            ->once()
+            ->withArgs(function (string $message, array $context) {
+                $this->assertSame('API client error response', $message);
+                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
+                $this->assertSame(500, $context['status']);
+                $this->assertArrayHasKey('exception', $context);
+                $this->assertInstanceOf(ApiException::class, $context['exception']);
 
-        $this->logger->shouldReceive('error')
-                     ->withArgs($expectedLoggerArgs)
-                     ->once();
+                return true;
+            });
 
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
@@ -297,16 +319,22 @@ final class ClientTest extends MockeryTestCase
     public function testHttpPostError(): void
     {
         $this->setUpRequest(500, 'An error', 'POST', 'base_url/path', '{"a":1}');
-        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')
+            ->twice()
+            ->andReturn(500);
 
-        $expectedLoggerArgs = [
-            'HTTP:500 - Unexpected API response',
-            ['headers' => ['Token' => 'test token']]
-        ];
+        $this->logger
+            ->shouldReceive('debug')
+            ->once()
+            ->withArgs(function (string $message, array $context) {
+                $this->assertSame('API client error response', $message);
+                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
+                $this->assertSame(500, $context['status']);
+                $this->assertArrayHasKey('exception', $context);
+                $this->assertInstanceOf(ApiException::class, $context['exception']);
 
-        $this->logger->shouldReceive('error')
-                     ->withArgs($expectedLoggerArgs)
-                     ->once();
+                return true;
+            });
 
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
@@ -335,11 +363,23 @@ final class ClientTest extends MockeryTestCase
     public function testHttpPutError(): void
     {
         $this->setUpRequest(500, 'An error', 'PUT', 'base_url/path', '{"a":1}');
-        $this->response->shouldReceive('getStatusCode')->once()->andReturn(500);
 
-        $this->logger->shouldReceive('error')
-                     ->withArgs(['HTTP:500 - Unexpected API response', ['headers' => ['Token' => 'test token']]])
-                     ->once();
+        $this->response->shouldReceive('getStatusCode')
+            ->twice()
+            ->andReturn(500);
+
+        $this->logger
+            ->shouldReceive('debug')
+            ->once()
+            ->withArgs(function (string $message, array $context) {
+                $this->assertSame('API client error response', $message);
+                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
+                $this->assertSame(500, $context['status']);
+                $this->assertArrayHasKey('exception', $context);
+                $this->assertInstanceOf(ApiException::class, $context['exception']);
+
+                return true;
+            });
 
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('HTTP:500 - Unexpected API response');

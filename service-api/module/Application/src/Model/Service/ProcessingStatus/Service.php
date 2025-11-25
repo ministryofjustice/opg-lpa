@@ -181,7 +181,6 @@ class Service extends AbstractService
                 case 500:
                 case 503:
                     $this->getLogger()->error('Bad Response from Sirius Gateway', [
-                        'userId' => $this->getUserId(),
                         'error_code' => 'SIRIUS_BAD_RESPONSE',
                         'status' => $statusCode,
                         'exception' => (string)$result->getBody(),
@@ -191,7 +190,6 @@ class Service extends AbstractService
 
                 default:
                     $this->getLogger()->error('Unexpected Response from Sirius Gateway', [
-                        'userId' => $this->getUserId(),
                         'error_code' => 'SIRIUS_UNEXPECTED_RESPONSE',
                         'status' => $statusCode,
                         'exception' => (string)$result->getBody(),

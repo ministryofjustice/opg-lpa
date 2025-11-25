@@ -41,7 +41,6 @@ class Service extends AbstractService
         // Feedback cannot be empty
         if (empty($feedback)) {
             $this->getLogger()->error('Required fields for saving feedback not present', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'FEEDBACK_MISSING_REQUIRED_FIELDS',
                 'status' => Response::STATUS_CODE_500
             ]);
@@ -51,7 +50,6 @@ class Service extends AbstractService
         // validator only checks the validity of fields which can be saved as feedback
         if (!$this->feedbackValidator->isValid($feedback)) {
             $this->getLogger()->error('Feedback data failed validation', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'FEEDBACK_VALIDATION_FAILED',
                 'status' => Response::STATUS_CODE_500
             ]);
