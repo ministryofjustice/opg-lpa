@@ -7,12 +7,17 @@ use Mezzio\Session\SessionInterface as MezzioSession;
 
 final class SessionUtility
 {
+    private function getMvcContainer(string $containerName): LaminasContainer
+    {
+        return new LaminasContainer($containerName);
+    }
+
     public function getFromMvc(
         string $containerName,
         string $key,
         mixed $default = null
     ): mixed {
-        $container = new LaminasContainer($containerName);
+        $container = $this->getMvcContainer($containerName);
         return $container->$key ?? $default;
     }
 
@@ -21,7 +26,7 @@ final class SessionUtility
         string $key,
         mixed $value
     ): void {
-        $container = new LaminasContainer($containerName);
+        $container = $this->getMvcContainer($containerName);
         $container->$key = $value;
     }
 
@@ -29,8 +34,16 @@ final class SessionUtility
         string $containerName,
         string $key
     ): void {
-        $container = new LaminasContainer($containerName);
+        $container = $this->getMvcContainer($containerName);
         unset($container->$key);
+    }
+
+    public function hasInMvc(
+        string $containerName,
+        string $key
+    ): bool {
+        $container = $this->getMvcContainer($containerName);
+        return isset($container->$key);
     }
 
     public function getFromMezzio(
