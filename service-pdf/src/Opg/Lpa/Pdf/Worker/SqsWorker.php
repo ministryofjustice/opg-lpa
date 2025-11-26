@@ -85,24 +85,12 @@ class SqsWorker implements LoggerAwareInterface
                 $lpaMessage = json_decode($sqsMessage['Body'], true);
 
                 $lpaId = $lpaMessage['lpaId'];
-                $this->getLogger()->debug('Retrieved SQS message', [
-                    'sqsMessageId' => $sqsMessage['MessageId'],
-                    'lpaId' => $lpaId,
-                    'jobId' => $lpaMessage['jobId'],
-                    'receivedAt' => microtime(true),
-                    'sqsUrl' => $sqsUrl
-                ]);
 
                 // Decompress the message's body
                 $body = (new Decompress('Gz'))->filter(base64_decode($lpaMessage['data']));
 
                 // Decode the returned JSON into an array
                 $body = json_decode($body, true);
-
-                $this->getLogger()->info('New job found on queue', [
-                    'jobId' => $lpaMessage['jobId'],
-                    'lpaId' => $lpaId,
-                ]);
 
                 try {
                     $startTime = microtime(true);
@@ -130,10 +118,6 @@ class SqsWorker implements LoggerAwareInterface
                 $client->deleteMessage([
                     'QueueUrl' => $sqsUrl,
                     'ReceiptHandle' => $sqsMessage['ReceiptHandle'],
-                ]);
-            } else {
-                $this->getLogger()->debug('No message found in queue for this poll, finished thread.', [
-                    'sqsUrl' => $sqsUrl
                 ]);
             }
         } catch (Exception $e) {
