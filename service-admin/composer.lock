@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7c7429bf7983bc845b53da55fdd265d9",
+    "content-hash": "18a8dfd4136fdc187df4f2392ae2b14a",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2111,6 +2111,91 @@
                 }
             ],
             "time": "2025-10-14T09:03:51+00:00"
+        },
+        {
+            "name": "laminas/laminas-session",
+            "version": "2.26.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-session.git",
+                "reference": "1c4f1a80ccc6403fff85bb13fb928da79dd1636e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-session/zipball/1c4f1a80ccc6403fff85bb13fb928da79dd1636e",
+                "reference": "1c4f1a80ccc6403fff85bb13fb928da79dd1636e",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-eventmanager": "^3.14.0",
+                "laminas/laminas-servicemanager": "^3.23.1",
+                "laminas/laminas-stdlib": "^3.20.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+            },
+            "conflict": {
+                "amphp/amp": "<2.6.4",
+                "zendframework/zend-session": "*"
+            },
+            "require-dev": {
+                "amphp/dns": "^2.4.0",
+                "amphp/socket": "^2.3.1",
+                "ext-xdebug": "*",
+                "laminas/laminas-cache": "^3.13.0",
+                "laminas/laminas-cache-storage-adapter-memory": "^2.4",
+                "laminas/laminas-coding-standard": "~3.1.0",
+                "laminas/laminas-db": "^2.20.0",
+                "laminas/laminas-http": "^2.22",
+                "laminas/laminas-validator": "^2.64.4",
+                "mongodb/mongodb": "~2.1.2",
+                "phpunit/phpunit": "^11.5.42",
+                "psalm/plugin-phpunit": "^0.19.5",
+                "vimeo/psalm": "^6.13.1"
+            },
+            "suggest": {
+                "laminas/laminas-cache": "Laminas\\Cache component",
+                "laminas/laminas-db": "Laminas\\Db component",
+                "laminas/laminas-http": "Laminas\\Http component",
+                "laminas/laminas-servicemanager": "Laminas\\ServiceManager component",
+                "laminas/laminas-validator": "Laminas\\Validator component",
+                "mongodb/mongodb": "If you want to use the MongoDB session save handler"
+            },
+            "type": "library",
+            "extra": {
+                "laminas": {
+                    "component": "Laminas\\Session",
+                    "config-provider": "Laminas\\Session\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Session\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Object-oriented interface to PHP sessions and storage",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "laminas",
+                "session"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-session/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-session/issues",
+                "rss": "https://github.com/laminas/laminas-session/releases.atom",
+                "source": "https://github.com/laminas/laminas-session"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2025-11-14T12:52:38+00:00"
         },
         {
             "name": "laminas/laminas-stdlib",
