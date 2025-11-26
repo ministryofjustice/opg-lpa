@@ -16,17 +16,6 @@ resource "aws_ecs_service" "pdf" {
     assign_public_ip = false
   }
 
-  capacity_provider_strategy {
-    capacity_provider = "FARGATE_SPOT"
-    weight            = 99
-  }
-
-  capacity_provider_strategy {
-    capacity_provider = "FARGATE"
-    weight            = 1
-    base              = 1
-  }
-
   lifecycle {
     create_before_destroy = true
     ignore_changes = [
