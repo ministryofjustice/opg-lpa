@@ -11,8 +11,6 @@ use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
-use Application\Middleware\Authentication;
-use Application\Middleware\AuthenticationFactory;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
@@ -46,8 +44,6 @@ use Twig\Environment;
 use Application\Model\Service\Session\WritePolicy;
 use Application\Model\Service\Authentication\AuthenticationService as AppAuthenticationService;
 use Laminas\Form\FormElementManager as LaminasFormElementManager;
-use Application\Handler\AboutYouHandler;
-use Application\Handler\AboutYouHandlerFactory;
 
 class Module implements FormElementProviderInterface
 {
@@ -288,10 +284,7 @@ class Module implements FormElementProviderInterface
                 },
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
-                PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
-                // Mezzio POC services (not yet wired to production routes)
-                AboutYouHandler::class => AboutYouHandlerFactory::class,
-                Authentication::class => AuthenticationFactory::class
+                PingHandlerPingdom::class => PingHandlerPingdomFactory::class
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
