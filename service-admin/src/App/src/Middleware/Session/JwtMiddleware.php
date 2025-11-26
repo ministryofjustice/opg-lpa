@@ -202,7 +202,6 @@ final class JwtMiddleware implements MiddlewareInterface
             $this->getLogger()->warning($exception->getMessage(), [$token]);
             $this->getLogger()->warning('Failed to decode JWT token', [
                 'error_code' => 'JWT_DECODE_FAILED',
-                'status' => $exception->getStatusCode(),
                 'exception' => $exception,
             ]);
             throw $exception;
