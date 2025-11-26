@@ -34,9 +34,7 @@
     "branchTopic": "{{{datasource}}}-{{{depName}}}-vulnerability",
     "prCreation": "immediate"
   },
-  "prConcurrentLimit": 1,
-  "prHourlyLimit": 1,
-  "branchConcurrentLimit": 5,
+  "prConcurrentLimit": 3,
   "enabledManagers": [
     "dockerfile",
     "docker-compose",
@@ -92,7 +90,8 @@
       "description": [
         "laminas-servicemanager network blockages (major)",
         "None of these packages can be (major) upgraded until everything supports laminas-servicemanager v4",
-        "Some of them do already support servicemanager v4, but Composer doesn't support multiple dependency versions"
+        "Some of them do already support servicemanager v4, but Composer doesn't support multiple dependency versions",
+        "symfony/console is blocked because robmorgan/phinx doesn't support symfony/console v7 until 0.15.5"
       ],
       "matchUpdateTypes": [
         "major"
@@ -104,7 +103,8 @@
         "laminas/laminas-servicemanager",
         "laminas/laminas-cache",
         "laminas/laminas-cache-storage-adapter-memory",
-        "laminas/laminas-filter"
+        "laminas/laminas-filter",
+        "symfony/console"
       ],
       "enabled": false
     },
