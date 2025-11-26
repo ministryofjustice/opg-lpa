@@ -4,7 +4,7 @@ FROM pdftk/pdftk:3.3.3@sha256:80d553d749d2e46904323b15bed7e4dbd08f17573bb8470e51
 
 FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
 
-RUN adduser -D -g '' appuser && mkdir -p /tmp/pdf_cache && chown -R appuser:appuser /tmp
+RUN adduser -D -g '' appuser && chown -R appuser:appuser /tmp
 
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
