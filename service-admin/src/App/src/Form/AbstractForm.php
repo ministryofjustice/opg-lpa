@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Validator;
 use Laminas\Form\Element\Csrf;
+use Laminas\Validator\Csrf as LaminasCsrfValidator;
 use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\Input;
@@ -22,7 +23,7 @@ abstract class AbstractForm extends Form
     {
         $options = $this->getOptions();
 
-        $csrfValidator = new Validator\Csrf([
+        $csrfValidator = new LaminasCsrfValidator([
             'name' => $this->getName(),
             'secret' => $options['csrf']
         ]);
