@@ -53,23 +53,13 @@ final class SessionUtility
         MezzioSession $session,
         string $key
     ): void {
-        if (method_exists($session, 'unset')) {
-            /** @psalm-suppress UndefinedMethod */
-            $session->unset($key);
-        } else {
-            $session->set($key, null);
-        }
+        $session->unset($key);
     }
 
     public function hasInMezzio(
         MezzioSession $session,
         string $key
     ): bool {
-        if (method_exists($session, 'has')) {
-            /** @psalm-suppress UndefinedMethod */
-            return $session->has($key);
-        }
-
-        return $session->get($key, null) !== null;
+        return $session->has($key);
     }
 }
