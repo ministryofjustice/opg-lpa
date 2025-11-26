@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "pdf" {
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
-  container_definitions    = "[${local.pdf_app},  ${local.app_init_container}, ${local.aws_otel_collector}]"
+  container_definitions    = "[${local.pdf_app}, ${local.aws_otel_collector}]"
   task_role_arn            = var.ecs_iam_task_roles.pdf.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.pdf_component_tag
@@ -111,12 +111,6 @@ locals {
           awslogs-stream-prefix = "${var.environment_name}.pdf-app.online-lpa"
         }
       },
-      dependsOn = [
-        {
-          containerName = "permissions-init",
-          condition     = "SUCCESS"
-        }
-      ],
       secrets = [
         { name = "OPG_LPA_PDF_OWNER_PASSWORD", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_owner_password.name}" }
       ],
