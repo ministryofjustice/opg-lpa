@@ -240,9 +240,15 @@ cypress-run-spec: npm-install
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress run --spec ${SPEC} \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
-dc-phpcs-check:
-	@docker compose build phpcs
-	@docker compose run --rm --no-deps -q phpcs --report=${PHPCS_REPORT}
+cypress-run-spec-update-baseline: npm-install
+	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
+		CYPRESS_adminUrl="https://localhost:7003" CYPRESS_updateBaseline="1" ./node_modules/.bin/cypress run --spec ${SPEC} \
+		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
 dc-phpcs-fix:
-	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcbf --standard=/app/config/phpcs.xml.dist" phpcs
+	docker compose build phpcs
+	docker compose run --rm --no-deps -q phpcs
+
+dc-phpcs-check:
+	docker compose build phpcs
+	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --report=${PHPCS_REPORT}

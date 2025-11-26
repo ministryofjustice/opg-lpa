@@ -10,4 +10,4 @@ COPY phpcs/composer.lock /app/composer.lock
 
 RUN composer install --no-interaction --no-progress
 
-ENTRYPOINT ["/app/vendor/bin/phpcs", "--standard=/app/config/phpcs.xml.dist"]
+ENTRYPOINT ["/app/vendor/bin/phpcbf", "--standard=/app/config/phpcs.xml.dist"]

@@ -85,10 +85,9 @@ module "api_aurora" {
   account_id                      = data.aws_caller_identity.current.account_id
   availability_zones              = data.aws_availability_zones.aws_zones.names
   apply_immediately               = !var.account.database.deletion_protection
-  cluster_identifier              = "api2"
+  cluster_identifier              = var.account.database.cluster_identifier
   db_subnet_group_name            = "data-persistence-subnet-default"
   deletion_protection             = var.account.database.deletion_protection
-  database_name                   = "api2"
   engine_version                  = var.account.database.psql_engine_version
   environment                     = var.environment_name
   aws_rds_cluster_parameter_group = data.aws_rds_cluster_parameter_group.postgresql_aurora_params[var.account.database.psql_parameter_group_family].name
