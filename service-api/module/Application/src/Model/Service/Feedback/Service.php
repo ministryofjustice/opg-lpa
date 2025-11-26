@@ -59,7 +59,6 @@ class Service extends AbstractService
         $dbInsertResult = $this->getFeedbackRepository()->insert($feedback);
         if (!$dbInsertResult) {
             $this->getLogger()->error('Error inserting feedback into database', [
-                'userId' => $this->getUserId(),
                 'error_code' => 'FEEDBACK_DATABASE_INSERT_FAILED',
                 'status' => Response::STATUS_CODE_500
             ]);
