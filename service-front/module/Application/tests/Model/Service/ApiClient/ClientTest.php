@@ -158,11 +158,10 @@ final class ClientTest extends MockeryTestCase
     {
         $this->setUpRequest(404, '');
         $this->response->shouldReceive('getStatusCode')
-            ->twice()
             ->andReturn(404);
 
         $this->logger
-            ->shouldReceive('debug')
+            ->shouldReceive('info')
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
@@ -187,11 +186,10 @@ final class ClientTest extends MockeryTestCase
     {
         $this->setUpRequest(500, 'An error');
         $this->response->shouldReceive('getStatusCode')
-            ->twice()
             ->andReturn(500);
 
         $this->logger
-            ->shouldReceive('debug')
+            ->shouldReceive('error')
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
@@ -221,11 +219,10 @@ final class ClientTest extends MockeryTestCase
     {
         $this->setUpRequest(500, 'An error', 'DELETE');
         $this->response->shouldReceive('getStatusCode')
-            ->twice()
             ->andReturn(500);
 
         $this->logger
-            ->shouldReceive('debug')
+            ->shouldReceive('error')
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
@@ -274,10 +271,10 @@ final class ClientTest extends MockeryTestCase
     public function testHttpPatchError(): void
     {
         $this->setUpRequest(500, 'An error', 'PATCH', 'base_url/path', '{"a":1}');
-        $this->response->shouldReceive('getStatusCode')->twice()->andReturn(500);
+        $this->response->shouldReceive('getStatusCode')->andReturn(500);
 
         $this->logger
-            ->shouldReceive('debug')
+            ->shouldReceive('error')
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
@@ -316,11 +313,10 @@ final class ClientTest extends MockeryTestCase
     {
         $this->setUpRequest(500, 'An error', 'POST', 'base_url/path', '{"a":1}');
         $this->response->shouldReceive('getStatusCode')
-            ->twice()
             ->andReturn(500);
 
         $this->logger
-            ->shouldReceive('debug')
+            ->shouldReceive('error')
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
@@ -360,11 +356,10 @@ final class ClientTest extends MockeryTestCase
         $this->setUpRequest(500, 'An error', 'PUT', 'base_url/path', '{"a":1}');
 
         $this->response->shouldReceive('getStatusCode')
-            ->twice()
             ->andReturn(500);
 
         $this->logger
-            ->shouldReceive('debug')
+            ->shouldReceive('error')
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
