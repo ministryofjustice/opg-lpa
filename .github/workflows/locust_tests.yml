@@ -16,17 +16,17 @@ on:
         required: true
         type: string
       locust_user_count:
-        description: "URL of the frontend"
+        description: "Peak number of concurrent Locust users"
         required: false
         default: "5"
         type: string
-      locust_run_count:
-        description: "URL of the frontend"
+      locust_spawn_rate:
+        description: "Rate to spawn users at (users per second)"
         required: false
         default: "1"
         type: string
       locust_run_time:
-        description: "URL of the frontend"
+        description: "Stop after the specified amount of time, e.g. (300s, 20m, 3h, 1h30m, etc.)"
         required: false
         default: "2m"
         type: string
@@ -91,7 +91,7 @@ jobs:
         run: |
           pip install boto3 locust beautifulsoup4 faker
           cd locust # note- for now need to run locust from within locust dir as it looks for activation_emails dir relative to this
-          locust --headless -f ./locustfile.py --host ${{ inputs.front_url }} -u ${{inputs.locust_user_count}} -r ${{inputs.locust_run_count}} --run-time ${{inputs.locust_run_time}}
+          locust --headless -f ./locustfile.py --host ${{ inputs.front_url }} -u ${{inputs.locust_user_count}} -r ${{inputs.locust_spawn_rate}} --run-time ${{inputs.locust_run_time}}
 
       - name: Configure AWS Credentials
         if: always()
