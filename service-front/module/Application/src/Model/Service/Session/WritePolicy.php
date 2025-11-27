@@ -17,7 +17,7 @@ final class WritePolicy
         /*
          * If the Laminas X-SessionReadOnly header is present, do not allow session writes.
          */
-        if ($this->request?->getHeader()?->has('X-SessionReadOnly')) {
+        if ($this->request?->getHeaders()?->has('X-SessionReadOnly')) {
             return false;
         }
 
