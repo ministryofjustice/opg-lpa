@@ -14,6 +14,7 @@ use Application\Handler\PingHandlerPingdomFactory;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
+use Application\Model\Service\Session\WritePolicy;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\Session\SessionManager;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
