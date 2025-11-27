@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Application\Model\Service\Session;
 
 use Laminas\Session\Container as LaminasContainer;

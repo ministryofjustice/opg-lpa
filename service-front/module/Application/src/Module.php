@@ -246,7 +246,7 @@ class Module implements FormElementProviderInterface
                     $policy = $sm->has(WritePolicy::class) ? $sm->get(WritePolicy::class) : null;
 
                     $filter = static function () use ($policy) {
-                        return $policy ? $policy->allowsWrite() : empty($_SERVER['HTTP_X_SESSIONREADONLY']);
+                        return $policy === null ? empty($_SERVER['HTTP_X_SESSIONREADONLY']) : $policy->allowsWrite();
                     };
 
                     return new FilteringSaveHandler($redisClient, [$filter]);
