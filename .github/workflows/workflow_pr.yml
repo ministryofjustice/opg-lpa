@@ -300,7 +300,7 @@ jobs:
     with:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
-      locust_user_count: "20"
+      locust_user_count: "30"
       locust_spawn_rate: "1"
       locust_run_time: "5m"
     secrets:
