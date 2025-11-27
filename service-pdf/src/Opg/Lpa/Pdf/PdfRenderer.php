@@ -76,9 +76,35 @@ class PdfRenderer implements LoggerAwareInterface
             return;
         }
 
+<<<<<<< HEAD
         //create folder for pdf_cache
         if (!is_dir($assetsConfig['intermediate_file_path'])) {
             mkdir($assetsConfig['intermediate_file_path']);
+=======
+        // Copy LPA PDF template files into ram disk if they are not found
+        $templatePathOnDisk = $assetsConfig['template_path_on_ram_disk'];
+
+        if (!file_exists($templatePathOnDisk)) {
+            $this->getLogger()->info('Making template path on RAM disk', [
+                'path' => $templatePathOnDisk,
+            ]);
+
+            mkdir($templatePathOnDisk, 0777, true);
+        }
+
+        foreach (glob($assetsConfig['source_template_path'] . '/*.pdf') as $pdfSource) {
+            $pathInfo = pathinfo($pdfSource);
+
+            if (!file_exists($templatePathOnDisk . '/' . $pathInfo['basename'])) {
+                $dest = $templatePathOnDisk . '/' . $pathInfo['basename'];
+
+                $this->getLogger()->info('Copying PDF source to RAM disk', [
+                    'destination' => $dest,
+                ]);
+
+                copy($pdfSource, $dest);
+            }
+>>>>>>> 1168e234f (remove read-only write)
         }
 
         $this->inited = true;

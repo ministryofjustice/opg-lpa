@@ -85,7 +85,7 @@ locals {
     {
       cpu                    = 1,
       essential              = true,
-      readonlyRootFilesystem = true,
+      readonlyRootFilesystem = false,
       image                  = "${data.aws_ecr_repository.lpa_pdf_app.repository_url}@${data.aws_ecr_image.lpa_pdf_app.image_digest}",
       mountPoints = [
         {
