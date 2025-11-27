@@ -75,7 +75,6 @@ class RedisClient implements LoggerAwareInterface
             $result = @$this->redisClient->connect($this->redisHost, $this->redisPort);
         } catch (RedisException $e) {
             $this->getLogger()->error('Unable to connect to Redis Server', [
-                'error_code' => 'CONNECTION_TO_REDIS_FAILED',
                 'exception' => $e,
                 'host' => $this->redisHost,
                 'port' => $this->redisPort

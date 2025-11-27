@@ -75,7 +75,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         if ($validator->hasErrors()) {
             $this->getLogger()->warning('Unable to validate user details for update', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'USER_DETAILS_VALIDATION_FAILED',
                 'status' => Response::STATUS_CODE_400,
                 'exception' => $validator->getArrayCopy(),
             ]);
@@ -133,7 +132,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 } catch (Exception $ex1) {
                     $this->getLogger()->warning('Failed to send new email address notification to old email address', [
                         'userId' => $this->getUserId(),
-                        'error_code' => 'OLD_EMAIL_NOTIFICATION_FAILED',
                         'exception' => $ex1,
                     ]);
                 }
@@ -157,7 +155,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 } catch (Exception $ex2) {
                     $this->getLogger()->error('Failed to send verify new email address email', [
                         'userId' => $this->getUserId(),
-                        'error_code' => 'NEW_EMAIL_VERIFY_FAILED',
                         'exception' => $ex2,
                     ]);
 
@@ -169,7 +166,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         } catch (ApiException $ex3) {
             $this->getLogger()->error('Failed to request email update via API', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'EMAIL_UPDATE_REQUEST_FAILED',
                 'exception' => $ex3,
             ]);
 
@@ -202,7 +198,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             return true;
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to request email update using token', [
-                'error_code' => 'EMAIL_UPDATE_USING_TOKEN_FAILED',
                 'exception' => $ex,
             ]);
         }
@@ -251,7 +246,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 } catch (Exception $ex) {
                     $this->getLogger()->error('Send password changed email', [
                         'userId' => $this->getUserId(),
-                        'error_code' => 'PASSWORD_CHANGED_EMAIL_FAILED',
                         'exception' => $ex,
                     ]);
                 }
@@ -267,7 +261,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->error('Password update request failed', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'PASSWORD_UPDATE_REQUEST_FAILED',
                 'exception' => $ex,
             ]);
         }
@@ -296,7 +289,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $failureCode = null;
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to get token info', [
-                'error_code' => 'TOKEN_INFO_REQUEST_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -329,7 +321,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to delete user', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'USER_DELETION_FAILED',
                 'exception' => $ex,
             ]);
 
@@ -377,7 +368,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                         $this->getMailTransport()->send($mailParameters);
                     } catch (Exception $ex) {
                         $this->getLogger()->warning('Failed to send password reset email', [
-                            'error_code' => 'PASSWORD_RESET_EMAIL_FAILED',
                             'exception' => $ex,
                         ]);
                         return "failed-sending-email";
@@ -403,7 +393,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                     $this->getMailTransport()->send($mailParameters);
                 } catch (Exception $ex) {
                     $this->getLogger()->error('Failed to send password reset email - no account', [
-                        'error_code' => 'PASSWORD_RESET_EMAIL_FAILED_NO_ACCOUNT',
                         'exception' => $ex,
                     ]);
 
@@ -414,7 +403,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             }
 
             $this->getLogger()->error('Failed to request password reset email via API', [
-                'error_code' => 'PASSWORD_RESET_REQUEST_FAILED',
                 'exception' => $ex,
             ]);
         }
@@ -446,7 +434,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->getMailTransport()->send($mailParameters);
         } catch (Exception $ex) {
             $this->getLogger()->error('Failed to send account activation email', [
-                'error_code' => 'ACCOUNT_ACTIVATION_EMAIL_FAILED',
                 'exception' => $ex,
             ]);
             return 'failed-sending-email';
@@ -477,7 +464,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             }
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to set new password', [
-                'error_code' => 'SET_NEW_PASSWORD_FAILED',
                 'exception' => $ex,
             ]);
 
@@ -526,7 +512,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                     $this->getMailTransport()->send($mailParameters);
                 } catch (Exception $ex1) {
                     $this->getLogger()->error('Failed to send account registration email', [
-                        'error_code' => 'ACCOUNT_REGISTRATION_EMAIL_FAILED',
                         'exception' => $ex1,
                     ]);
 
@@ -546,7 +531,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                     $this->getMailTransport()->send($mailParameters);
                 } catch (Exception $ex3) {
                     $this->getLogger()->warning('Failed sending warning email', [
-                        'error_code' => 'WARNING_EMAIL_SENDING_FAILED',
                         'exception' => $ex3,
                     ]);
 
@@ -555,7 +539,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
                 return 'address-already-registered';
             }
             $this->getLogger()->error('Account registration failed', [
-                'error_code' => 'ACCOUNT_REGISTRATION_FAILED',
                 'exception' => $ex2,
             ]);
 
@@ -585,7 +568,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             }
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to resend activation email', [
-                'error_code' => 'RESEND_ACTIVATION_EMAIL_FAILED',
                 'exception' => $ex,
             ]);
         }
@@ -613,7 +595,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             return true;
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to activate account', [
-                'error_code' => 'ACCOUNT_ACTIVATION_FAILED',
                 'exception' => $ex,
             ]);
         }

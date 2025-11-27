@@ -61,7 +61,6 @@ class Metadata extends AbstractService
 
             if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
                 $this->getLogger()->warning('API client failed to remove metadata', [
-                    'error_code' => 'API_CLIENT_METADATA_REMOVE_FAILED',
                     'lpaId' => $lpa->id,
                     'status' => Response::STATUS_CODE_500,
                 ]);
@@ -98,7 +97,6 @@ class Metadata extends AbstractService
 
             if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
                 $this->getLogger()->warning('API client failed to remove metadata by key', [
-                    'error_code' => 'API_CLIENT_METADATA_REMOVE_FAILED',
                     'lpaId' => $lpa->id,
                     'status' => Response::STATUS_CODE_500,
                 ]);
