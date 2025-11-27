@@ -292,6 +292,18 @@ jobs:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
+  locust_tests:
+    name: Run locust tests
+    uses: ./.github/workflows/locust_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
+      account_id: "050256574573"
+    secrets:
+      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+
   end_of_workflow:
     name: End of Workflow
     runs-on: ubuntu-latest
