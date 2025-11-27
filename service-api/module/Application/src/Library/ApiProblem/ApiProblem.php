@@ -42,12 +42,6 @@ class ApiProblem
     protected string|Exception|Throwable $detail = '';
 
     /**
-     * Whether or not to include a stack trace and previous
-     * exceptions when an exception is provided for the detail.
-     */
-    protected bool $detailIncludesStackTrace = false;
-
-    /**
      * HTTP status for the error.
      */
     protected int $status;
@@ -250,10 +244,6 @@ class ApiProblem
     {
         /** @var Exception|Throwable $e */
         $e = $this->detail;
-
-        if (! $this->detailIncludesStackTrace) {
-            return $e->getMessage();
-        }
 
         $message                          = trim($e->getMessage());
         $this->additionalDetails['trace'] = $e->getTrace();
