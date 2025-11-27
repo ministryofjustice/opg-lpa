@@ -78,7 +78,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->andReturn('Big big failure')
             ->once();
 
-        $this->logger->shouldReceive('debug')
+        $this->logger->shouldReceive('info')
             ->with('Failed authentication attempt with a authToken', [
                 'authToken' => 'abcde12345',
             ]);

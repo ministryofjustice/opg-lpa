@@ -35,10 +35,10 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->with($userId, $currentPassword, $newPassword)
             ->andReturn([])
             ->once();
-
         $this->logger->shouldReceive('info')
-            ->with('User successfully change their password', [
-                'userId' => 'abcdef123456',
+            ->once()
+            ->with('User successfully changed their password', [
+                'userId' => $userId,
             ]);
 
         /** @var PasswordController $controller */
@@ -348,7 +348,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->andReturn($resetReturnData)
             ->once();
 
-        $this->logger->shouldReceive('debug')
+        $this->logger->shouldReceive('info')
             ->with('Password reset token requested', [
                 'token'    => $resetToken,
                 'username' => $username
@@ -380,7 +380,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->andReturn($resetReturnData)
             ->once();
 
-        $this->logger->shouldReceive('debug')
+        $this->logger->shouldReceive('info')
             ->with('Password reset token requested', [
                 'token'    => $resetToken,
                 'username' => $username
