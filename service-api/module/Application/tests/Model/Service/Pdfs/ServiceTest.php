@@ -171,7 +171,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ->with(
                 'Exception while attempting to get PDF info from S3',
                 Mockery::on(function (array $context) {
-                    $this->assertSame('PDF_S3_HEAD_FAILED', $context['error_code']);
                     $this->assertArrayHasKey('exception', $context);
                     $this->assertInstanceOf(\Aws\S3\Exception\S3Exception::class, $context['exception']);
 
@@ -235,7 +234,6 @@ final class ServiceTest extends AbstractServiceTestCase
             ->with(
                 'Exception while attempting to get PDF info from S3',
                 Mockery::on(function (array $context) {
-                    $this->assertSame('PDF_S3_HEAD_FAILED', $context['error_code']);
                     $this->assertArrayHasKey('exception', $context);
                     $this->assertInstanceOf(\Aws\S3\Exception\S3Exception::class, $context['exception']);
 

@@ -78,7 +78,7 @@ class AuthenticationListener implements LoggerAwareInterface
                 $this->getLogger()->info('Authentication success');
             } elseif (AuthenticationResult::FAILURE_CREDENTIAL_INVALID === $resultCode) {
                 $this->getLogger()->warning('Authentication failed', [
-                    'status' => $resultCode,
+                    'status' => 'INVALID_CREDENTIALS',
                 ]);
                 return new ApiProblemResponse(new ApiProblem(401, 'Invalid authentication token'));
             } else {

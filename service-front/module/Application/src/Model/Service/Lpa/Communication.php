@@ -78,6 +78,10 @@ class Communication extends AbstractEmailService
             $mailParameters = new MailParameters($to, $this->emailTemplateRef, $this->data);
             $this->getMailTransport()->send($mailParameters);
         } catch (Exception $ex) {
+            $this->getLogger()->error('Failed to send registration complete email', [
+                'exception' => $ex,
+            ]);
+
             return "failed-sending-email";
         }
 

@@ -30,7 +30,6 @@ class Feedback extends AbstractEmailService implements ApiClientAwareInterface
             $this->apiClient->httpPost('/user-feedback', $data);
         } catch (ApiException $ex) {
             $this->getLogger()->warning('Failed send feedback data to the feedback inbox', [
-                'error_code' => 'FAILED_SEND_FEEDBACK',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);

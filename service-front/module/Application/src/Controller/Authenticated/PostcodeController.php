@@ -37,7 +37,6 @@ class PostcodeController extends AbstractAuthenticatedController
             $addresses = $this->addressLookup->lookupPostcode($postcode);
         } catch (\RuntimeException $e) {
             $this->getLogger()->warning('Exception from postcode lookup', [
-                'error_code' => 'POSTCODE_LOOKUP_EXCEPTION',
                 'exception' => $e,
             ]);
         }
