@@ -179,7 +179,6 @@ final class JwtMiddleware implements MiddlewareInterface
 
         /* If everything fails log and throw. */
         $this->getLogger()->warning('Token not found', [
-            'error_code' => 'TOKEN_NOT_FOUND',
             'status' => Response::STATUS_CODE_500
         ]);
         throw new RuntimeException("Token not found.");
@@ -201,7 +200,6 @@ final class JwtMiddleware implements MiddlewareInterface
         } catch (Exception $exception) {
             $this->getLogger()->warning($exception->getMessage(), [$token]);
             $this->getLogger()->warning('Failed to decode JWT token', [
-                'error_code' => 'JWT_DECODE_FAILED',
                 'exception' => $exception,
             ]);
             throw $exception;

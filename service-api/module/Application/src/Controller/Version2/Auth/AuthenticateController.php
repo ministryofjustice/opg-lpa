@@ -64,7 +64,7 @@ class AuthenticateController extends AbstractAuthController
         $result = $this->authenticationService->withToken($authToken, $updateToken);
 
         if (is_string($result)) {
-            $this->getLogger()->debug('Failed authentication attempt with a authToken', [
+            $this->getLogger()->info('Failed authentication attempt with a authToken', [
                 'authToken' => $authToken
             ]);
 

@@ -272,7 +272,6 @@ class ServiceTest extends AbstractServiceTestCase
             ->once()
             ->withArgs(function (string $message, array $extra) {
                 $this->assertSame('Unable to send account expiry notification', $message);
-                $this->assertSame('NOTIFY_ACCOUNT_EXPIRY_FAILURE', $extra['error_code']);
                 $this->assertInstanceOf(NotifyException::class, $extra['exception']);
                 $this->assertSame('Unit test exception', $extra['exception']->getMessage());
 
@@ -316,7 +315,6 @@ class ServiceTest extends AbstractServiceTestCase
             ->once()
             ->withArgs(function (string $message, array $extra) {
                 $this->assertSame('Unable to send account expiry notification', $message);
-                $this->assertSame('NOTIFY_ACCOUNT_EXPIRY_FAILURE', $extra['error_code']);
                 $this->assertSame('Unit test exception', $extra['exception']->getMessage());
 
                 return true;

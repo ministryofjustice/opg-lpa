@@ -296,7 +296,6 @@ class Client implements LoggerAwareInterface
     {
         $exception = new Exception\ApiException($response);
         $this->getLogger()->debug('API client error response', [
-            'error_code' => 'API_CLIENT_ERROR_RESPONSE',
             'status' => $response->getStatusCode(),
             'exception' => $exception,
         ]);

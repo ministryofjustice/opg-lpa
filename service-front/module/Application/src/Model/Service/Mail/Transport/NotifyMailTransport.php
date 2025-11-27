@@ -109,7 +109,6 @@ class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterfac
                 $this->client->sendEmail($toAddress, $notifyTemplateId, $data);
             } catch (NotifyException $ex) {
                 $this->getLogger()->error('Failed sending email via Notify', [
-                    'error_code' => 'NOTIFY_SEND_FAILURE',
                     'status' => Response::STATUS_CODE_500,
                     'exception' => $ex,
                 ]);
@@ -155,7 +154,6 @@ class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterfac
             );
         } catch (NotifyException $ex) {
             $this->getLogger()->error('Healthcheck on Notify failed', [
-                'error_code' => 'NOTIFY_HEALTHCHECK_FAILURE',
                 'status' => Response::STATUS_CODE_500,
                 'exception' => $ex,
             ]);

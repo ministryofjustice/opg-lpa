@@ -54,12 +54,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->with('abcde12345', false)
             ->andReturn($tokenReturnData)
             ->once();
-//
-//        $this->logger->shouldReceive('debug')
-//            ->once()
-//            ->with('Failed authentication attempt with a authToken', [
-//                'authToken' => 'abcde12345',
-//        ]);
 
         $this->logger->shouldReceive('info')
             ->once()

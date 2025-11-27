@@ -50,7 +50,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to fetch application', [
                 'userId' => $this->getUserId(),
                 'lpaId' => $lpaId,
-                'error_code' => 'API_CLIENT_LPA_FETCH_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -69,7 +68,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to fetch LPA statuses', [
                 'userId' => $this->getUserId(),
                 'ids' => $ids,
-                'error_code' => 'API_CLIENT_LPA_STATUS_FETCH_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -108,7 +106,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to create LPA Application', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'API_CLIENT_LPA_CREATE_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -134,7 +131,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to update application', [
                 'userId' => $this->getUserId(),
                 'lpaId' => $lpaId,
-                'error_code' => 'API_CLIENT_LPA_FETCH_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -197,7 +193,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $this->getLogger()->error('Failed to fetch LPA Application summaries', [
                 'userId' => $this->getUserId(),
                 'queryParams' => $queryParams,
-                'error_code' => 'API_CLIENT_LPA_SUMMARIES_FETCH_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -304,7 +299,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->warning('Failed to fetch ID of seed LPA document', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'API_CLIENT_LPA_SEED_DETAILS_FETCH_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -329,7 +323,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to fetch PDF details', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'API_CLIENT_LPA_PDF_FETCH_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -360,7 +353,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->warning('Failed to fetch PDF contents', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'API_CLIENT_LPA_PDF_CONTENTS_FETCH_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -397,7 +389,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to add a new primary attorney', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'API_CLIENT_LPA_ADD_PRIMARY_ATTORNEY_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -433,7 +424,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to add a new replacement attorney', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'API_CLIENT_LPA_ADD_REPLACEMENT_ATTORNEY_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -465,7 +455,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to add a new notified person', [
                 'userId' => $this->getUserId(),
-                'error_code' => 'API_CLIENT_LPA_ADD_NOTIFIED_PERSON_FAILED',
                 'status' => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);

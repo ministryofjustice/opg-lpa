@@ -166,7 +166,6 @@ final class ClientTest extends MockeryTestCase
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
-                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
                 $this->assertSame(404, $context['status']);
                 $this->assertArrayHasKey('exception', $context);
                 $this->assertInstanceOf(ApiException::class, $context['exception']);
@@ -196,7 +195,6 @@ final class ClientTest extends MockeryTestCase
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
-                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
                 $this->assertSame(500, $context['status']);
                 $this->assertArrayHasKey('exception', $context);
                 $this->assertInstanceOf(ApiException::class, $context['exception']);
@@ -231,7 +229,6 @@ final class ClientTest extends MockeryTestCase
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
-                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
                 $this->assertSame(500, $context['status']);
                 $this->assertArrayHasKey('exception', $context);
                 $this->assertInstanceOf(ApiException::class, $context['exception']);
@@ -284,7 +281,6 @@ final class ClientTest extends MockeryTestCase
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
-                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
                 $this->assertSame(500, $context['status']);
                 $this->assertArrayHasKey('exception', $context);
                 $this->assertInstanceOf(ApiException::class, $context['exception']);
@@ -328,7 +324,6 @@ final class ClientTest extends MockeryTestCase
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
-                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
                 $this->assertSame(500, $context['status']);
                 $this->assertArrayHasKey('exception', $context);
                 $this->assertInstanceOf(ApiException::class, $context['exception']);
@@ -373,7 +368,6 @@ final class ClientTest extends MockeryTestCase
             ->once()
             ->withArgs(function (string $message, array $context) {
                 $this->assertSame('API client error response', $message);
-                $this->assertSame('API_CLIENT_ERROR_RESPONSE', $context['error_code']);
                 $this->assertSame(500, $context['status']);
                 $this->assertArrayHasKey('exception', $context);
                 $this->assertInstanceOf(ApiException::class, $context['exception']);

@@ -56,7 +56,6 @@ class Csrf extends LaminasCsrfValidator implements LoggerAwareInterface
                 $value,
             ));
             $this->getLogger()->error('Mismatched CSRF provided;', [
-                'error_code' => 'MISMATCH_CSRF_PROVIDED',
                 'status' => Response::STATUS_CODE_500,
             ]);
             $this->error(self::NOT_SAME);

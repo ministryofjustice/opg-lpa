@@ -102,7 +102,6 @@ class Service extends AbstractService
                 } catch (NotifyException $e) {
                     // Other types of exception are worse; things still might not work tomorrow.
                     $this->getLogger()->alert('Unable to send admin notification message', [
-                        'error_code' => 'NOTIFY_ADMIN_ACCOUNT_CLEANUP_FAILURE',
                         'exception' => $e,
                     ]);
 
@@ -165,14 +164,12 @@ class Service extends AbstractService
 
                 // Notify exceptions aren't too bad, we will just retry tomorrow.
                 $this->getLogger()->warning('Unable to send account expiry notification', [
-                    'error_code' => 'NOTIFY_ACCOUNT_EXPIRY_FAILURE',
                     'exception' => $e,
                 ]);
             } catch (Exception $e) {
                 echo "Exception: " . $e->getMessage() . "\n";
 
                 $this->getLogger()->alert('Unable to send account expiry notification', [
-                    'error_code' => 'NOTIFY_ACCOUNT_EXPIRY_FAILURE',
                     'exception' => $e,
                 ]);
             }
