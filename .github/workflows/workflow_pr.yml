@@ -295,7 +295,7 @@ jobs:
   locust_tests:
     name: Run locust tests
     uses: ./.github/workflows/locust_tests.yml
-    if: false # comment this line out to run on your PR
+    if: ${{ false }} # comment this line out to run on your PR
     needs:
       - terraform_outputs
     with:
