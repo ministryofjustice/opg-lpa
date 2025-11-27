@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\Session;
 
 use Laminas\Session\SaveHandler\SaveHandlerInterface;

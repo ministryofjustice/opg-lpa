@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Application\Model\Service\Session;
 
 use Laminas\Http\PhpEnvironment\Request;
@@ -15,7 +17,7 @@ final class WritePolicy
         /*
          * If the Laminas X-SessionReadOnly header is present, do not allow session writes.
          */
-        if ($this->request && $this->request->getHeaders()->has('X-SessionReadOnly')) {
+        if ($this->request?->getHeader()?->has('X-SessionReadOnly')) {
             return false;
         }
 
