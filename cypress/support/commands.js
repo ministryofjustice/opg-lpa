@@ -1,5 +1,6 @@
 const { PDFDocument } = require("pdf-lib");
 const axeWrapper = require("./axe_wrapper");
+const { dimensionsMismatchError, pixelsMismatchError } = require('./constants');
 
 Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
     cy.exec('python3 tests/python-api-client/' + pythonCommand, {failOnNonZeroExit: false}).then(result => {
@@ -104,3 +105,75 @@ Cypress.Commands.add("checkPdf", (candidateString) => {
         }
     );
 });
+
+/**
+ * Custom command for visual regression testing
+ * Usage: cy.visualSnapshot('login-page')
+ */
+Cypress.Commands.add('visualSnapshot', (pageName, options = {}) => {
+    const {
+        threshold = 0.1,
+        failOnMismatch = true
+    } = options;
+
+    const {snapshotPath, baselinePath, diffPath} = takeScreenshot(pageName);
+
+    // Wait for screenshot to complete
+    cy.wait(100);
+
+    cy.task('compareScreenshots', {
+        baselinePath,
+        snapshotPath,
+        diffPath,
+        threshold
+    }).then((result) => {
+        if (result.error && failOnMismatch) {
+            const suffix = result.error === pixelsMismatchError ? 'pixels diff' : 'dimensions diff';
+            const source = result.error === pixelsMismatchError ? diffPath : snapshotPath;
+
+            return cy.task('moveFile', {
+                source,
+                destination: `${snapshotPath.split('.png')[0]} (${suffix}).png`
+            }).then(() => {
+                throw new Error(result.message);
+            });
+        }
+
+        if (!result.error) {
+            return cy.task('deleteFile', snapshotPath);
+        }
+    });
+});
+
+
+/**
+ * Update baseline image for a specific test
+ */
+Cypress.Commands.add('updateBaseline', (pageName) => {
+    const {snapshotPath, baselinePath} = takeScreenshot(pageName);
+
+    // Wait for screenshot to complete, then update baseline
+    cy.wait(100).then(() => {
+        return cy.task('updateBaselineScreenshot', { snapshotPath, baselinePath });
+    }).then(() => {
+        cy.log(`Baseline updated for: ${baselinePath}`);
+    });
+});
+
+function takeScreenshot(pageName) {
+    const screenshotsDir = Cypress.config('screenshotsFolder');
+    const regressionsDir = screenshotsDir.split('/screenshots')[0] + '/regressions';
+    const specName = Cypress.spec.name.replace('.cy.js', '');
+    let specNameAndTest = `${pageName} - ${Cypress.currentTest.title}`
+
+    cy.screenshot(specNameAndTest, {
+        overwrite: true,
+        capture: 'fullPage'
+    });
+
+    return {
+        snapshotPath: `${screenshotsDir}/${specName}/${specNameAndTest}.png`,
+        baselinePath: `${regressionsDir}/baseline/${specName}/${specNameAndTest}.png`,
+        diffPath: `${regressionsDir}/diff/${specName}/${specNameAndTest}.png`,
+    }
+}
