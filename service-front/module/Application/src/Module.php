@@ -41,9 +41,6 @@ use Psr\Log\LoggerAwareInterface;
 use Redis;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
-use Application\Model\Service\Session\WritePolicy;
-use Application\Model\Service\Authentication\AuthenticationService as AppAuthenticationService;
-use Laminas\Form\FormElementManager as LaminasFormElementManager;
 
 class Module implements FormElementProviderInterface
 {
@@ -162,9 +159,6 @@ class Module implements FormElementProviderInterface
                 'AddressLookup' => 'OrdnanceSurvey',
                 'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
-                AppAuthenticationService::class => 'AuthenticationService',
-                TwigEnvironment::class => 'TwigViewRenderer',
-                LaminasFormElementManager::class => 'FormElementManager',
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
