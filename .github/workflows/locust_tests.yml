@@ -15,6 +15,21 @@ on:
         description: "URL of the frontend"
         required: true
         type: string
+      locust_user_count:
+        description: "URL of the frontend"
+        required: false
+        default: "5"
+        type: string
+      locust_run_count:
+        description: "URL of the frontend"
+        required: false
+        default: "1"
+        type: string
+      locust_run_time:
+        description: "URL of the frontend"
+        required: false
+        default: "2m"
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS:
         required: true
@@ -41,7 +56,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
-          python-version: '3.14'
+          python-version: "3.14"
 
       - name: Install dependencies
         run: |
@@ -67,7 +82,7 @@ jobs:
 
       - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
 
       - name: Run Locust Tests
         continue-on-error: true
@@ -76,7 +91,7 @@ jobs:
         run: |
           pip install boto3 locust beautifulsoup4 faker
           cd locust # note- for now need to run locust from within locust dir as it looks for activation_emails dir relative to this
-          locust --headless -f ./locustfile.py --host ${{ inputs.front_url }} -u 5 -r 1 --run-time 2m
+          locust --headless -f ./locustfile.py --host ${{ inputs.front_url }} -u ${{inputs.locust_user_count}} -r ${{inputs.locust_run_count}} --run-time ${{inputs.locust_run_time}}
 
       - name: Configure AWS Credentials
         if: always()
