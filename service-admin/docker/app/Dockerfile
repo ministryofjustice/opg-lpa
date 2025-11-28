@@ -8,7 +8,7 @@ ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
 RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 
-RUN apk add --upgrade --no-cache apk-tools
+RUN apk add --upgrade --no-cache apk-tools linux-headers
 RUN apk upgrade --no-cache
 
 RUN apk add --no-cache icu fcgi \
@@ -58,7 +58,7 @@ RUN if [ "$ENABLE_XDEBUG" = 1 ] ; then \
     fi ;
 
 # Clean up build dependencies, but only after everything else we need has been installed
-RUN apk del .build-dependencies
+RUN apk del .build-dependencies linux-headers
 
 USER appuser
 
