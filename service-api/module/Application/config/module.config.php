@@ -65,8 +65,6 @@ return [
                 ],
             ],
 
-
-
             'auth-routes' => [
                 'type'    => 'Segment',
                 'options' => [

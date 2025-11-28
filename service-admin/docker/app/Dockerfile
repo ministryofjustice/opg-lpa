@@ -12,7 +12,7 @@ RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
 RUN apk add --no-cache icu fcgi \
-    && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev \
+    && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \
     && docker-php-ext-install intl \
     && install-php-extensions gmp \
     && rm /usr/bin/install-php-extensions
@@ -46,7 +46,7 @@ WORKDIR /app
 
 # Enable debug if needed. Should only be used locally
 ARG ENABLE_XDEBUG=0
-RUN if [ "$ENABLE_XDEBUG" = 1 ] ; then \
+RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
       pecl install xdebug ; \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
