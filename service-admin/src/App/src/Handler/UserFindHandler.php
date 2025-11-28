@@ -7,6 +7,7 @@ namespace App\Handler;
 use App\Form\UserFind;
 use App\Service\User\UserService;
 use App\Handler\Traits\JwtTrait;
+use Fig\Http\Message\RequestMethodInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -62,7 +63,7 @@ class UserFindHandler extends AbstractHandler
         // should display a "next" link
         $fakeLimit = $limit + 1;
 
-        if ($request->getMethod() == 'GET') {
+        if ($request->getMethod() == RequestMethodInterface::METHOD_GET) {
             $params = $request->getQueryParams();
 
             if (array_key_exists('query', $params)) {

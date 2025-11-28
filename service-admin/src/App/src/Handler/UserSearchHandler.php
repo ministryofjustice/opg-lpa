@@ -7,6 +7,7 @@ namespace App\Handler;
 use App\Form\UserSearch;
 use App\Service\User\UserService;
 use App\Handler\Traits\JwtTrait;
+use Fig\Http\Message\RequestMethodInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -15,24 +16,10 @@ class UserSearchHandler extends AbstractHandler
 {
     use JwtTrait;
 
-    /**
-     * @var UserService
-     */
-    private $userService;
-
-    /**
-     * UserSearchHandler constructor.
-     * @param UserService $userService
-     */
-    public function __construct(UserService $userService)
+    public function __construct(private readonly UserService $userService)
     {
-        $this->userService = $userService;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new UserSearch([
@@ -40,33 +27,45 @@ class UserSearchHandler extends AbstractHandler
         ]);
 
         $user = null;
-        $email = null;
+        $email = '';
 
-        if ($request->getMethod() == 'GET') {
-            $params = $request->getQueryParams();
+        if ($request->getMethod() === RequestMethodInterface::METHOD_GET) {
+            $queryParams = $request->getQueryParams();
 
-            if (isset($params['email'])) {
-                $email = $params['email'];
-                $form->setData($params);
+            if (isset($queryParams['email'])) {
+                $email = (string)$queryParams['email'];
             }
+
+            $form->setData(['email' => $email]);
         }
 
-        if (!is_null($email) && $form->isValid()) {
-            $result = $this->userService->search($email);
+        if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $parsedBody = $request->getParsedBody();
 
-            if ($result === false) {
-                $formMessages = $form->getMessages();
+            if (!is_array($parsedBody)) {
+                $parsedBody = [];
+            }
 
-                // Set error message
-                $messages = array_merge($formMessages, [
-                    'email' => [
-                        'No user found for email address'
-                    ]
-                ]);
+            $form->setData($parsedBody);
+            $email = $form->get('email')->getValue();
 
-                $form->setMessages($messages);
-            } else {
-                $user = $result;
+            if ($email !== null && $form->isValid()) {
+                $result = $this->userService->search($email);
+
+                if ($result === false) {
+                    $formMessages = $form->getMessages();
+
+                    // Set error message
+                    $messages = array_merge($formMessages, [
+                        'email' => [
+                            'No user found for email address'
+                        ]
+                    ]);
+
+                    $form->setMessages($messages);
+                } else {
+                    $user = $result;
+                }
             }
         }
 
