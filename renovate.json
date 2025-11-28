@@ -17,7 +17,7 @@
   "commitMessageAction": "Renovate update",
   "forkProcessing": "enabled",
   "lockFileMaintenance": {
-    "enabled": true
+    "enabled": false
   },
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
