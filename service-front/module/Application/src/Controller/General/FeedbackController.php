@@ -3,10 +3,14 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
+use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Feedback\FeedbackValidationException;
+use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Model\Service\Session\SessionUtility;
 use Laminas\Http\Header\Referer;
 use Laminas\Http\Response as HttpResponse;
+use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
@@ -16,8 +20,27 @@ class FeedbackController extends AbstractBaseController
 {
     use LoggerTrait;
 
-    /** @var Feedback */
-    private $feedbackService;
+    private ?Feedback $feedbackService;
+    private ?SessionUtility $sessionUtility;
+
+    public function __construct(
+        AbstractPluginManager $formElementManager,
+        SessionManagerSupport $sessionManagerSupport,
+        AuthenticationService $authenticationService,
+        array $config,
+        ?Feedback $feedbackService = null,
+        ?SessionUtility $sessionUtility = null,
+    ) {
+        parent::__construct(
+            $formElementManager,
+            $sessionManagerSupport,
+            $authenticationService,
+            $config,
+        );
+
+        $this->feedbackService = $feedbackService;
+        $this->sessionUtility  = $sessionUtility;
+    }
 
     /**
      * Laminas indexAction() is not supposed to return an HttpResponse.
@@ -28,11 +51,10 @@ class FeedbackController extends AbstractBaseController
      */
     public function indexAction()
     {
-        $container = new Container('feedback');
+        $container = new Container('feedback'); // needed for setExpirationHops
 
         $form = $this->getFormElementManager()
-                     ->get('Application\Form\General\FeedbackForm');
-
+            ->get('Application\Form\General\FeedbackForm');
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
@@ -41,37 +63,42 @@ class FeedbackController extends AbstractBaseController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                //  Inject extra details into the data before passing to the feedback service to send in an email
                 $data['agent'] = htmlentities($_SERVER['HTTP_USER_AGENT']);
-                $data['fromPage'] = (
-                    is_string($container->feedbackLinkClickedFromPage) ?
-                        $container->feedbackLinkClickedFromPage : 'Unknown'
+
+                $fromPage = $this->sessionUtility->getFromMvc(
+                    'feedback',
+                    'feedbackLinkClickedFromPage'
                 );
+                $data['fromPage'] = is_string($fromPage) ? $fromPage : 'Unknown';
 
                 try {
                     $this->feedbackService->add($data);
                 } catch (FeedbackValidationException $ex) {
                     return new ViewModel([
-                        'form' => $form,
+                        'form'  => $form,
                         'error' => $ex->getMessage(),
                     ]);
                 } catch (Throwable $ex) {
-                    $message = "API exception while adding feedback from Feedback service: " . $ex->getMessage();
+                    $message = 'API exception while adding feedback from Feedback service: ' . $ex->getMessage();
 
                     $this->getLogger()->error($message, [
                         'trace' => $ex->getTrace(),
                     ]);
 
                     return new ViewModel([
-                        'form' => $form,
+                        'form'  => $form,
                         'error' => 'An error occurred while submitting feedback',
                     ]);
                 }
 
-                //  Add any return target to the query params and redirect to thank you page
-                $options = (is_null($container->feedbackLinkClickedFromPage) ? [] : [
+                $fromPage = $this->sessionUtility->getFromMvc(
+                    'feedback',
+                    'feedbackLinkClickedFromPage'
+                );
+
+                $options = (is_null($fromPage) ? [] : [
                     'query' => [
-                        'returnTarget' => urlencode($container->feedbackLinkClickedFromPage),
+                        'returnTarget' => urlencode($fromPage),
                     ],
                 ]);
 
@@ -80,18 +107,24 @@ class FeedbackController extends AbstractBaseController
         } else {
             $container->setExpirationHops(1);
 
-            /** @var Referer */
+            /** @var Referer $referer */
             $referer = $request->getHeader('Referer');
 
+            $fromPage = null;
+
             if ($referer !== false) {
-                $container->feedbackLinkClickedFromPage = $referer->uri()->getPath();
-            } else {
-                $container->feedbackLinkClickedFromPage = null;
+                $fromPage = $referer->uri()->getPath();
             }
+
+            $this->sessionUtility->setInMvc(
+                'feedback',
+                'feedbackLinkClickedFromPage',
+                $fromPage
+            );
         }
 
         return new ViewModel([
-            'form' => $form
+            'form' => $form,
         ]);
     }
 
@@ -103,7 +136,6 @@ class FeedbackController extends AbstractBaseController
         $returnTarget = urldecode($this->params()->fromQuery('returnTarget'));
 
         if (empty($returnTarget)) {
-            //  Default to home
             $returnTarget = $this->url()->fromRoute('home');
         }
 
@@ -112,8 +144,13 @@ class FeedbackController extends AbstractBaseController
         ]);
     }
 
-    public function setFeedbackService(Feedback $feedbackService)
+    public function setFeedbackService(Feedback $feedbackService): void
     {
         $this->feedbackService = $feedbackService;
+    }
+
+    public function setSessionUtility(SessionUtility $sessionUtility): void
+    {
+        $this->sessionUtility = $sessionUtility;
     }
 }
