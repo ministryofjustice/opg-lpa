@@ -57,6 +57,9 @@ class LpaAuth implements AdapterInterface, LoggerAwareInterface
             $this->getLogger()->error(
                 'Unable to get user with token; possible database issue; message: ' . $ex->getMessage()
             );
+            $this->getLogger()->error('Unable to get user with token; possible database issue', [
+                'exception' => $ex,
+            ]);
             return new Result(Result::FAILURE, null);
         }
 

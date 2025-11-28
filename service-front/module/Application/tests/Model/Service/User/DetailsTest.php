@@ -80,7 +80,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testGetUserDetailsError(): void
     {
-        $this->setUpIdentity(1, 1, 0, 0);
+        $this->setUpIdentity(2, 2, 0, 0);
 
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/test-id'])
@@ -94,7 +94,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdateAllDetailsUpdateAll(): void
     {
-        $this->setUpIdentity(3, 2, 1, 0);
+        $this->setUpIdentity(4, 3, 0, 0);
 
         $currentUserJson = FixturesData::getUserJson();
 
@@ -154,7 +154,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdateAllDetailsEmptyAll(): void
     {
-        $this->setUpIdentity(3, 2, 1, 0);
+        $this->setUpIdentity(4, 3, 0, 0);
 
         $currentUserJson = FixturesData::getUserJson();
 
@@ -178,7 +178,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdateAllInvalidData(): void
     {
-        $this->setUpIdentity(2, 1, 1, 0);
+        $this->setUpIdentity(4, 3, 0, 0);
 
         $currentUserJson = FixturesData::getUserJson();
 
@@ -197,7 +197,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdate(): void
     {
-        $this->setUpIdentity(2, 1, 1, 1);
+        $this->setUpIdentity(3, 2, 0, 1);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once()->andReturn();
         $this->apiClient->shouldReceive('httpPost')
@@ -238,7 +238,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateNoToken(): void
     {
-        $this->setUpIdentity(2, 1, 1, 1, 'test-id', [], null);
+        $this->setUpIdentity(3, 2, 0, 1, 'test-id', [], null);
 
         $this->apiClient->shouldReceive('updateToken')->once()->andReturn(null);
         $this->apiClient->shouldReceive('httpPost')->once()->andReturn();
@@ -250,7 +250,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateErrorSendingNewEmailReceived(): void
     {
-        $this->setUpIdentity(2, 1, 1, 1);
+        $this->setUpIdentity(4, 3, 0, 1);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
         $this->apiClient->shouldReceive('httpPost')
@@ -288,7 +288,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateErrorSendingVerifyEmail(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(4, 3, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
         $this->apiClient->shouldReceive('httpPost')
@@ -326,7 +326,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateErrorEmailNotChanged(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(4, 3, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
 
@@ -342,7 +342,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateErrorEmailOfAnotherUser(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(4, 3, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
 
@@ -358,7 +358,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testRequestEmailUpdateUnknownApiException(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(4, 3, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
 
@@ -397,7 +397,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdatePassword(): void
     {
-        $identity = $this->setUpIdentity(2);
+        $identity = $this->setUpIdentity(3, 2, 0);
         $identity->shouldReceive('setToken')->withArgs(['test-token'])->once();
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
@@ -431,7 +431,8 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdatePasswordTemplateError(): void
     {
-        $identity = $this->setUpIdentity(2);
+
+        $identity = $this->setUpIdentity(4, 3, 0);
         $identity->shouldReceive('setToken')->withArgs(['test-token'])->once();
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
@@ -460,7 +461,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdatePasswordNoToken(): void
     {
-        $this->setUpIdentity(2);
+        $this->setUpIdentity(3, 2, 0);
 
         $this->apiClient->shouldReceive('updateToken')->withArgs(['test-token'])->once();
         $this->apiClient->shouldReceive('httpPost')
@@ -481,7 +482,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testUpdatePasswordTemplateApiException(): void
     {
-        $this->setUpIdentity(1, 0);
+        $this->setUpIdentity(3, 2, 0);
 
         $this->apiClient->shouldReceive('updateToken')
             ->with('test-token')
@@ -527,7 +528,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testDelete(): void
     {
-        $this->setUpIdentity(2, 1, 1, 0);
+        $this->setUpIdentity(2, 2, 0, 0);
 
         $this->apiClient->shouldReceive('httpDelete')
             ->withArgs(['/v2/user/test-id'])
@@ -540,7 +541,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testDeleteApiException(): void
     {
-        $this->setUpIdentity(2, 1, 1, 0);
+        $this->setUpIdentity(3, 3, 0, 0);
 
         $this->apiClient->shouldReceive('httpDelete')
             ->withArgs(['/v2/user/test-id'])

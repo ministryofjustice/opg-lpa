@@ -45,6 +45,7 @@ use Exception;
 use Firebase\JWT\Key;
 use Firebase\JWT\JWT;
 use App\Logging\LoggerTrait;
+use Laminas\Http\Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -160,7 +161,7 @@ final class JwtMiddleware implements MiddlewareInterface
 
         if (false === empty($header)) {
             if (preg_match($this->options["regexp"], $header, $matches)) {
-                $this->getLogger()->debug("Using token from request header");
+                $this->getLogger()->debug('Using token from request header');
                 return $matches[1];
             }
         }
@@ -169,7 +170,7 @@ final class JwtMiddleware implements MiddlewareInterface
         $cookieParams = $request->getCookieParams();
 
         if (isset($cookieParams[$this->options["cookie"]])) {
-            $this->getLogger()->debug("Using token from cookie");
+            $this->getLogger()->debug('Using token from cookie');
             if (preg_match($this->options["regexp"], $cookieParams[$this->options["cookie"]], $matches)) {
                 return $matches[1];
             }
@@ -177,7 +178,9 @@ final class JwtMiddleware implements MiddlewareInterface
         };
 
         /* If everything fails log and throw. */
-        $this->getLogger()->warning("Token not found");
+        $this->getLogger()->warning('Token not found', [
+            'status' => Response::STATUS_CODE_500
+        ]);
         throw new RuntimeException("Token not found.");
     }
 
@@ -196,6 +199,9 @@ final class JwtMiddleware implements MiddlewareInterface
             return (array) $decoded;
         } catch (Exception $exception) {
             $this->getLogger()->warning($exception->getMessage(), [$token]);
+            $this->getLogger()->warning('Failed to decode JWT token', [
+                'exception' => $exception,
+            ]);
             throw $exception;
         }
     }

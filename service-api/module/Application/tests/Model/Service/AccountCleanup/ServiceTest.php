@@ -269,11 +269,14 @@ class ServiceTest extends AbstractServiceTestCase
             ->andThrow(new NotifyException('Unit test exception'));
 
         $this->logger->shouldReceive('warning')
-            ->withArgs(function ($message, $extra) {
-                return $message === 'Unable to send account expiry notification'
-                    && $extra['exception'] === 'Unit test exception';
-            })
-            ->once();
+            ->once()
+            ->withArgs(function (string $message, array $extra) {
+                $this->assertSame('Unable to send account expiry notification', $message);
+                $this->assertInstanceOf(NotifyException::class, $extra['exception']);
+                $this->assertSame('Unit test exception', $extra['exception']->getMessage());
+
+                return true;
+            });
 
         $service = new AccountCleanupService();
         $service->setApplicationRepository($this->applicationRepository);
@@ -309,11 +312,14 @@ class ServiceTest extends AbstractServiceTestCase
             ->andThrow(new Exception('Unit test exception'));
 
         $this->logger->shouldReceive('alert')
-            ->withArgs(function ($message, $extra) {
-                return $message === 'Unable to send account expiry notification'
-                    && $extra['exception'] === 'Unit test exception';
-            })
-            ->once();
+            ->once()
+            ->withArgs(function (string $message, array $extra) {
+                $this->assertSame('Unable to send account expiry notification', $message);
+                $this->assertSame('Unit test exception', $extra['exception']->getMessage());
+
+                return true;
+            });
+
 
         $service = new AccountCleanupService();
         $service->setApplicationRepository($this->applicationRepository);

@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Feedback;
 
 use DateTime;
+use Laminas\Http\Response;
 use MakeShared\Logging\LoggerTrait;
 use Traversable;
 use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryTrait;
@@ -39,19 +40,25 @@ class Service extends AbstractService
 
         // Feedback cannot be empty
         if (empty($feedback)) {
-            $this->getLogger()->error('Required fields for saving feedback not present');
+            $this->getLogger()->error('Required fields for saving feedback not present', [
+                'status' => Response::STATUS_CODE_500
+            ]);
             return false;
         }
 
         // validator only checks the validity of fields which can be saved as feedback
         if (!$this->feedbackValidator->isValid($feedback)) {
-            $this->getLogger()->error('Feedback data failed validation');
+            $this->getLogger()->error('Feedback data failed validation', [
+                'status' => Response::STATUS_CODE_500
+            ]);
             return false;
         }
 
         $dbInsertResult = $this->getFeedbackRepository()->insert($feedback);
         if (!$dbInsertResult) {
-            $this->getLogger()->error('Error inserting feedback into database: invalid query');
+            $this->getLogger()->error('Error inserting feedback into database', [
+                'status' => Response::STATUS_CODE_500
+            ]);
         }
 
         return $dbInsertResult;

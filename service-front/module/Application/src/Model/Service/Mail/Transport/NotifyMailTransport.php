@@ -4,6 +4,7 @@ namespace Application\Model\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
+use Laminas\Http\Response;
 use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
 use Application\Model\Service\AbstractEmailService;
@@ -107,9 +108,10 @@ class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterfac
             try {
                 $this->client->sendEmail($toAddress, $notifyTemplateId, $data);
             } catch (NotifyException $ex) {
-                $this->getLogger()->error(
-                    'Failed sending email via Notify: ' . $ex->getMessage() . '\n' . $ex->getTraceAsString()
-                );
+                $this->getLogger()->error('Failed sending email via Notify', [
+                    'status' => Response::STATUS_CODE_500,
+                    'exception' => $ex,
+                ]);
 
                 throw new InvalidArgumentException($ex->getMessage());
             }
@@ -151,7 +153,10 @@ class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterfac
                 $data,
             );
         } catch (NotifyException $ex) {
-            $this->getLogger()->error('Healthcheck on Notify failed: ' . $ex->getMessage());
+            $this->getLogger()->error('Healthcheck on Notify failed', [
+                'status' => Response::STATUS_CODE_500,
+                'exception' => $ex,
+            ]);
 
             $result['ok'] = false;
             $result['status'] = Constants::STATUS_FAIL;
