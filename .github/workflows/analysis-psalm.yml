@@ -28,7 +28,7 @@ jobs:
             phpVersion: "8.4"
           - name: shared
             path: "./shared"
-            phpVersion: "8.3"
+            phpVersion: "8.4"
           - name: service-pdf
             path: "./service-pdf"
             phpVersion: "8.4"
