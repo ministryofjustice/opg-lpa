@@ -34,7 +34,7 @@ jobs:
       region_terraform_version: ${{ steps.terraform_version_region.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - name: Set safe branch name
         id: safe_branch_name
         uses: ministryofjustice/opg-github-actions/actions/branch-name@e3177e63e9f2951dd3f1f7c7aa093918a5a0794a # v4.3.6
@@ -181,7 +181,7 @@ jobs:
       front_fqdn: ${{ steps.front_fqdn.outputs.value }}
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Download Terraform Task definition
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
