@@ -7,9 +7,11 @@ namespace AppTest\Handler;
 use App\Form\UserFind;
 use App\Handler\UserFindHandler;
 use App\Service\User\UserService;
+use AppTest\Common;
+use Fig\Http\Message\RequestMethodInterface;
+use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\Common\Name;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
 use MakeShared\DataModel\User\User;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,7 +27,7 @@ class UserFindHandlerTest extends TestCase
         $this->mockTemplateRenderer = $this->createMock(TemplateRendererInterface::class);
         $this->mockUserService = $this->createMock(UserService::class);
 
-        $_SESSION['jwt-payload'] =  ['csrf' => 'atokenthatisatleast64characterslong...................thereweare'];
+        $_SESSION['jwt-payload'] =  ['csrf' => Common::TEST_CSRF_TOKEN];
 
         $this->handler = new UserFindHandler($this->mockUserService);
         $this->handler->setTemplateRenderer($this->mockTemplateRenderer);
@@ -33,9 +35,9 @@ class UserFindHandlerTest extends TestCase
 
     public function testRendersForm()
     {
-        $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getMethod')->willReturn('GET');
-        $request->expects($this->once())->method('getQueryParams')->willReturn([]);
+        $request = new ServerRequest()
+            ->withMethod(RequestMethodInterface::METHOD_GET)
+            ->withQueryParams([]);
 
         $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
             'app::user-find',
@@ -48,15 +50,15 @@ class UserFindHandlerTest extends TestCase
     public function testSubmitsSearch()
     {
         $user = new User(['name' => new Name(['first' => 'David'])]);
-        $secret = hash('sha512', 'atokenthatisatleast64characterslong...................thereweare' . UserFind::class);
+        $secret = hash('sha512', Common::TEST_CSRF_TOKEN . UserFind::class);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getMethod')->willReturn('GET');
-        $request->expects($this->once())->method('getQueryParams')->willReturn([
-            'query' => 'test',
-            'offset' => '0',
-            'secret' => $secret,
-        ]);
+        $request = new ServerRequest()
+            ->withMethod(RequestMethodInterface::METHOD_GET)
+            ->withQueryParams([
+                'query' => 'test',
+                'offset' => '0',
+                'secret' => $secret,
+            ]);
 
         $this->mockUserService->expects($this->once())
             ->method('match')
@@ -78,13 +80,13 @@ class UserFindHandlerTest extends TestCase
     {
         $secret = 'not_the_real_hash'; // pragma: allowlist secret
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getMethod')->willReturn('GET');
-        $request->expects($this->once())->method('getQueryParams')->willReturn([
-            'query' => 'test',
-            'offset' => '0',
-            'secret' => $secret,
-        ]);
+        $request = new ServerRequest()
+            ->withMethod(RequestMethodInterface::METHOD_GET)
+            ->withQueryParams([
+                'query' => 'test',
+                'offset' => '0',
+                'secret' => $secret,
+            ]);
 
         $this->mockUserService->expects($this->never())->method('match');
 

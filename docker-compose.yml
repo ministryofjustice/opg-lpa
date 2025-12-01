@@ -317,7 +317,7 @@ services:
       args:
         # enable debug is recommended to default to off for admin app to avoid slowness, as admin is rarely debugged.
         # Turn this on if you wish to debug the admin app
-        ENABLE_XDEBUG: 0
+        ENABLE_XDEBUG: 1
     volumes:
       - ./service-admin:/app
       - ./shared:/shared
