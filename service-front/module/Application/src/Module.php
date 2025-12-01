@@ -11,7 +11,10 @@ use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
+use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Model\Service\Session\SessionUtility;
+use Application\Model\Service\Session\WritePolicy;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\Session\SessionManager;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -33,6 +36,8 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Mezzio\Session\Ext\PhpSessionPersistence;
+use Mezzio\Session\SessionMiddleware;
 use Psr\Log\LoggerAwareInterface;
 use Redis;
 use Twig\Loader\FilesystemLoader;
@@ -87,6 +92,9 @@ class Module implements FormElementProviderInterface
     private function bootstrapSession(MvcEvent $e)
     {
         $sm = $e->getApplication()->getServiceManager();
+
+        $nativeSession = $sm->get(NativeSessionConfig::class);
+        $nativeSession->configure();
 
         /** @var SessionManager $session */
         $session = $sm->get('SessionManager');
@@ -160,10 +168,15 @@ class Module implements FormElementProviderInterface
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
                 'Logger'                => 'MakeShared\Logging\LoggerFactory',
+                SessionUtility::class => function () {
+                    return new SessionUtility();
+                },
                 SessionManagerSupport::class => function (ServiceLocatorInterface $sm) {
                     return new SessionManagerSupport($sm->get('SessionManager'));
                 },
-
+                SessionMiddleware::class => function () {
+                    return new SessionMiddleware(new PhpSessionPersistence());
+                },
                 'ExporterFactory'       => ReflectionBasedAbstractFactory::class,
 
                 // Authentication Adapter
@@ -225,13 +238,25 @@ class Module implements FormElementProviderInterface
 
                 'SaveHandler' => function (ServiceLocatorInterface $sm) {
                     $redisClient = $sm->get('RedisClient');
-                    $request = $sm->get('Request');
+                    $policy = $sm->has(WritePolicy::class) ? $sm->get(WritePolicy::class) : null;
 
-                    $filter = function () use ($request) {
-                        return !$request->getHeaders()->has('X-SessionReadOnly');
+                    $filter = static function () use ($policy) {
+                        return $policy === null ? empty($_SERVER['HTTP_X_SESSIONREADONLY']) : $policy->allowsWrite();
                     };
 
                     return new FilteringSaveHandler($redisClient, [$filter]);
+                },
+
+
+                WritePolicy::class => function (ServiceLocatorInterface $sm) {
+                    $request = $sm->has('Request') ? $sm->get('Request') : null;
+                    return new WritePolicy($request);
+                },
+
+                NativeSessionConfig::class => function (ServiceLocatorInterface $sm) {
+                    $settings = $sm->get('config')['session']['native_settings'] ?? [];
+                    $handler  = $sm->get('SaveHandler');
+                    return new NativeSessionConfig($settings, $handler);
                 },
 
                 'TwigViewRenderer' => function (ServiceLocatorInterface $sm) {
@@ -254,7 +279,7 @@ class Module implements FormElementProviderInterface
                 },
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
-                PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
+                PingHandlerPingdom::class => PingHandlerPingdomFactory::class
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
