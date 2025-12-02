@@ -5,7 +5,8 @@ FROM pdftk/pdftk:3.3.3@sha256:f4634562abf5a1460d6c0c9a4893a32bfe845a892ad0257454
 FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
 
 RUN adduser -D -g '' appuser && \
-  chown -R appuser:appuser /tmp
+  mkdir -P /app/tmp \
+  chown -R appuser:appuser /app/tmp
 
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
@@ -59,6 +60,7 @@ RUN apk del .build-dependencies
 
 USER appuser
 
-VOLUME [ "/tmp" ]
+ENV TMPDIR=/app/tmp
+VOLUME [ "/app/tmp" ]
 
 CMD ["/app/bin/start.sh"]
