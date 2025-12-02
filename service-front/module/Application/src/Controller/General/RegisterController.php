@@ -57,7 +57,9 @@ class RegisterController extends AbstractBaseController
             //  The user is already logged in so log a message and then
             $identity = $this->getAuthenticationService()->getIdentity();
 
-            $this->getLogger()->info('Authenticated user attempted to access registration page', $identity->toArray());
+            $this->getLogger()->info('Authenticated user attempted to access registration page', [
+                'identity' => $identity->toArray()
+            ]);
 
             return $response;
         }

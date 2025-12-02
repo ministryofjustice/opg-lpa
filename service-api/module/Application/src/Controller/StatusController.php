@@ -113,7 +113,10 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
         if ($this->hasDifference($newMeta, $metaData)) {
             $metaData = array_merge($metaData, $newMeta);
             $this->getService()->patch(['metadata' => $metaData], $lpaId, $this->routeUserId);
-            $this->getLogger()->debug('Updated metadata for: ' . $lpaId . var_export($metaData, true));
+            $this->getLogger()->debug('Updated MetaData for LPA', [
+                'lpaId' => $lpaId,
+                'metaData' => $metaData
+            ]);
         }
     }
 

@@ -88,7 +88,7 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
 
         $controller->getLogger()
             ->shouldReceive('error')
-            ->with('API exception while adding feedback from Feedback service: something unexpected went wrong', Mockery::any())
+            ->with('API exception while adding feedback from Feedback service', Mockery::any())
             ->once();
 
         $result = $controller->indexAction();

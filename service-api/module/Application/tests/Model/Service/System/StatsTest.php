@@ -11,6 +11,13 @@ use Mockery;
 
 class StatsTest extends AbstractServiceTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->logger = \Mockery::spy(\Psr\Log\LoggerInterface::class);
+    }
+
     public function testGenerate()
     {
         $apiLpaCollection = Mockery::mock(ApplicationRepositoryInterface::class);

@@ -37,7 +37,10 @@ class SqsWorker implements LoggerAwareInterface
         $pdfFilePath = $pdf['filepath'];
 
         if (is_null($pdfFilePath)) {
-            $this->getLogger()->error('null path returned for generated PDF');
+            $this->getLogger()->error('Empty path returned for generated PDF', [
+                'docId' => $docId,
+                'type' => $type,
+            ]);
             return;
         }
 
@@ -83,20 +86,11 @@ class SqsWorker implements LoggerAwareInterface
 
                 $lpaId = $lpaMessage['lpaId'];
 
-                $this->getLogger()->debug('----------------- RETRIEVED SQS MESSAGE ' .
-                    $sqsMessage['MessageId'] . ' AT ' . microtime(true) .
-                    ' TO GENERATE PDF FOR LPA ' . $lpaId);
-
                 // Decompress the message's body
                 $body = (new Decompress('Gz'))->filter(base64_decode($lpaMessage['data']));
 
                 // Decode the returned JSON into an array
                 $body = json_decode($body, true);
-
-                $this->getLogger()->info("New job found on queue", [
-                    'jobId' => $lpaMessage['jobId'],
-                    'lpaId' => $lpaId,
-                ]);
 
                 try {
                     $startTime = microtime(true);
@@ -104,13 +98,17 @@ class SqsWorker implements LoggerAwareInterface
                     // Generate the PDF
                     $this->run($lpaMessage['jobId'], $body['type'], $body['lpa']);
 
-                    $this->getLogger()->info("----------------- DONE - Generation time: " .
-                        (microtime(true) - $startTime) .
-                        " seconds to make PDF for LPA " . $lpaId);
+                    $this->getLogger()->info('Generated PDF', [
+                        'jobId' => $lpaMessage['jobId'],
+                        'lpaId' => $lpaId,
+                        'generationTimeSeconds' => (microtime(true) - $startTime)
+                    ]);
                 } catch (Exception $e) {
-                    $this->getLogger()->error("Error generating PDF", [
+                    $this->getLogger()->error('Error generating PDF', [
                         'jobId' => $lpaMessage['jobId'],
                         'lpaId' => $lpaMessage['lpaId'],
+                        'exception' => $e,
+                        'status' => $e->getCode()
                     ]);
 
                     throw $e;
@@ -121,11 +119,13 @@ class SqsWorker implements LoggerAwareInterface
                     'QueueUrl' => $sqsUrl,
                     'ReceiptHandle' => $sqsMessage['ReceiptHandle'],
                 ]);
-            } else {
-                $this->getLogger()->debug("No message found in queue for this poll, finishing thread.");
             }
         } catch (Exception $e) {
-            $this->getLogger()->emergency("Exception in SqsWorker: " . $e->getMessage());
+            $this->getLogger()->emergency('Exception in SQS Worker', [
+                'exception' => $e,
+                'status' => $e->getCode(),
+                'error_code' => 'SQS_WORKER_EXCEPTION',
+            ]);
             sleep(5);
         }
     }
