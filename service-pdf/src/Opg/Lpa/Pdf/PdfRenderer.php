@@ -91,7 +91,7 @@ class PdfRenderer implements LoggerAwareInterface
                 'apptempstat' => stat('/app/tmp'),
             ]);
 
-            mkdir($templatePathOnDisk, 0777, true);
+            // mkdir($templatePathOnDisk, 0777, true);
         }
 
         foreach (glob($assetsConfig['source_template_path'] . '/*.pdf') as $pdfSource) {
