@@ -14,7 +14,7 @@
         "laminas/laminas-barcode": "^2.15",
         "tecnickcom/tcpdf": "6.8.0",
         "monolog/monolog": "^3.9",
-        "symfony/validator": "^5.4",
+        "symfony/validator": "^6.0",
         "egulias/email-validator": "^4",
         "setasign/fpdi": "2.6.4"
     },
