@@ -254,3 +254,8 @@ dc-phpcs-fix:
 dc-phpcs-check:
 	docker compose build phpcs
 	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --report=${PHPCS_REPORT}
+
+dc-clear-config-cache:
+	docker compose exec admin-app rm -f /app/tmp/config-cache-opg-lpa-admin.php
+	docker compose exec front-app rm -f /app/tmp/config-cache-opg-lpa-front.php
+	docker compose exec api-app rm -f /app/tmp/config-cache-opg-lpa-api.php

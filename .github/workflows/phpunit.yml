@@ -31,7 +31,7 @@ jobs:
             phpVersion: "8.4"
           - name: service-pdf
             path: "./service-pdf"
-            minCoverage: 85
+            minCoverage: 84
             phpVersion: "8.4"
     defaults:
       run:

@@ -74,7 +74,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $entity = $this->service->fetch(strval($lpa->getId()), -1);
+        $entity = $this->service->fetch(strval($lpa->getId()), -1, '1');
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -98,7 +98,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $validationError = $this->service->fetch(strval($lpa->getId()), -1);
+        $validationError = $this->service->fetch(strval($lpa->getId()), -1, '1');
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -123,7 +123,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $data = $this->service->fetch(strval($lpa->getId()), 'lpa120');
+        $data = $this->service->fetch(strval($lpa->getId()), 'lpa120', '1');
 
         $this->assertEquals([
             'type' => 'lpa120',
@@ -140,7 +140,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $data = $this->service->fetch(strval($lpa->getId()), 'lp3');
+        $data = $this->service->fetch(strval($lpa->getId()), 'lp3', '1');
 
         $this->assertEquals([
             'type' => 'lp3',
@@ -178,7 +178,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 })
             );
 
-        $data = $this->service->fetch(strval($lpa->getId()), 'lp1');
+        $data = $this->service->fetch(strval($lpa->getId()), 'lp1', '1');
 
         $this->assertEquals([
             'type' => 'lp1',
@@ -203,7 +203,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setSqsClient($sqsClient);
         $this->service->setS3Client($s3Client);
 
-        $data = $this->service->fetch(strval($lpa->getId()), 'lp1');
+        $data = $this->service->fetch(strval($lpa->getId()), 'lp1', '1');
 
         $this->assertEquals([
             'type' => 'lp1',
@@ -241,7 +241,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 })
             );
 
-        $data = $this->service->fetch(strval($lpa->getId()), 'lp1');
+        $data = $this->service->fetch(strval($lpa->getId()), 'lp1', '1');
 
         $this->assertEquals([
             'type' => 'lp1',
@@ -263,7 +263,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setPdfConfig($this->config);
         $this->service->setS3Client($s3Client);
 
-        $entity = $this->service->fetch(strval($lpa->getId()), 'lpa120.pdf');
+        $entity = $this->service->fetch(strval($lpa->getId()), 'lpa120.pdf', '1');
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -304,7 +304,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setPdfConfig($this->config);
         $this->service->setS3Client($s3Client);
 
-        $fileResponse = $this->service->fetch(strval($lpa->getId()), 'lp1.pdf');
+        $fileResponse = $this->service->fetch(strval($lpa->getId()), 'lp1.pdf', '1');
 
         $this->assertTrue($fileResponse instanceof FileResponse);
         $this->assertEquals('<<pdf-file-contents>>', $fileResponse->getContent());
