@@ -36,14 +36,6 @@
   "prConcurrentLimit": 3,
   "packageRules": [
     {
-      "groupName": "Other Updates",
-      "groupSlug": "other-updates",
-      "matchPackageNames": ["*"],
-      "separateMajorMinor": true,
-      "separateMultipleMajor": true,
-      "minimumReleaseAge": "3 days"
-    },
-    {
       "description": [
         "We are investigating replacing Grunt with esbuild (LPAL-1501) so ignore these major updates for now",
         "TODO: Review this decision from November 2025"
@@ -243,21 +235,6 @@
       "matchPackageNames": [
         "tecnickcom/tcpdf",
         "mikehaertl/php-pdftk"
-      ],
-      "enabled": false
-    },
-    {
-      "description": [
-        "No major version updates except for dev tools"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "matchPackageNames": [
-        "vimeo/psalm",
-        "phpunit/phpunit",
-        "/cypress/",
-        "/locust/"
       ],
       "enabled": false
     },
