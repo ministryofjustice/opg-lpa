@@ -63,7 +63,7 @@ class Service extends AbstractService
      * @return ApiProblem|ValidationApiProblem|FileResponse|array
      * @throws \Exception
      */
-    public function fetch(string $lpaId, $id)
+    public function fetch(string $lpaId, $id, string $traceId)
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -78,7 +78,7 @@ class Service extends AbstractService
 
             if ($details['status'] == self::STATUS_NOT_QUEUED) {
                 // Then add the LPA to the PDF queue.
-                $this->addLpaToQueue($lpa, $id);
+                $this->addLpaToQueue($lpa, $id, $traceId);
 
                 $details['status'] = self::STATUS_IN_QUEUE;
             }
@@ -191,7 +191,7 @@ class Service extends AbstractService
      *
      * @return void
      */
-    private function addLpaToQueue(Lpa $lpa, $type)
+    private function addLpaToQueue(Lpa $lpa, $type, string $traceId)
     {
         // Setup the message
         $message = json_encode([
@@ -213,6 +213,7 @@ class Service extends AbstractService
             'QueueUrl' => $this->pdfConfig['queue']['sqs']['settings']['url'],
             'MessageBody' => json_encode(
                 [
+                    'traceId' => $traceId,
                     'jobId' => $jobId,
                     'lpaId' => $lpa->getId(),
                     'data'  => base64_encode($message),

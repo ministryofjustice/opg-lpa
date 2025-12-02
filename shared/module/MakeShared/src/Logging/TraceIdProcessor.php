@@ -13,15 +13,10 @@ use Monolog\Processor\ProcessorInterface;
  */
 class TraceIdProcessor implements ProcessorInterface
 {
-    /**
-     * Name of the trace ID field in the $extra array passed to the logger.
-     */
-    public const TRACE_ID_FIELD_NAME = 'trace_id';
-
     public function __invoke(LogRecord $record): LogRecord
     {
         if (array_key_exists(Constants::X_TRACE_ID_HEADER_NAME, $_SERVER)) {
-            $record->extra[TraceIdProcessor::TRACE_ID_FIELD_NAME] =
+            $record->extra[Constants::TRACE_ID_FIELD_NAME] =
                 $_SERVER[Constants::X_TRACE_ID_HEADER_NAME];
         }
 
