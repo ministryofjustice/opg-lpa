@@ -3,8 +3,7 @@
 # levels of the phpunit tests at that time, rounded down. See LPAL-1143 for more details.
 name: phpunit tests
 
-on:
-  workflow_call
+on: workflow_call
 
 jobs:
   phpunit:
@@ -29,7 +28,7 @@ jobs:
           - name: shared
             path: "./shared"
             minCoverage: 90
-            phpVersion: "8.3"
+            phpVersion: "8.4"
           - name: service-pdf
             path: "./service-pdf"
             minCoverage: 85
