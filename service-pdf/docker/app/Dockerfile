@@ -1,11 +1,12 @@
 FROM composer:2.9.2@sha256:8b4d59fde3bd505c5fef70c9f8d5c05e92af811fed037dad12869b373925ed31 AS composer
 
-FROM pdftk/pdftk:3.3.3@sha256:80d553d749d2e46904323b15bed7e4dbd08f17573bb8470e51285ae363cc4e3c AS pdftk
+FROM pdftk/pdftk:3.3.3@sha256:f4634562abf5a1460d6c0c9a4893a32bfe845a892ad02574545dc145117199a3 AS pdftk
 
 FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
 
 RUN adduser -D -g '' appuser && \
-  chown -R appuser:appuser /tmp
+  chown -R appuser:appuser /tmp \
+  chmod 1777 /tmp \
 
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
