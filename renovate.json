@@ -34,21 +34,6 @@
     "prCreation": "immediate"
   },
   "prConcurrentLimit": 3,
-  "enabledManagers": [
-    "dockerfile",
-    "docker-compose",
-    "npm",
-    "composer",
-    "github-actions",
-    "gomod",
-    "terraform",
-    "pip_requirements",
-    "pip-compile",
-    "pipenv",
-    "pyenv",
-    "setup-cfg",
-    "pip_setup"
-  ],
   "packageRules": [
     {
       "description": [
