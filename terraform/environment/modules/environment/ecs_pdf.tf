@@ -116,7 +116,7 @@ locals {
       ],
       environment = [
 
-        { name = "TMPDIR", value = "/app/tmp" },
+        # { name = "TMPDIR", value = "/app/tmp" },
         { name = "OPG_LPA_STACK_NAME", value = var.environment_name },
         { name = "OPG_DOCKER_TAG", value = var.container_version },
         { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name },
