@@ -27,7 +27,6 @@ resource "aws_wafv2_web_acl" "main" {
           priority = 0
           type     = "NONE"
         }
-
       }
     }
 
@@ -92,7 +91,6 @@ resource "aws_wafv2_web_acl" "main" {
     }
 
     statement {
-
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
@@ -103,14 +101,56 @@ resource "aws_wafv2_web_acl" "main" {
             count {}
           }
         }
-
-
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "AWS-AWSManagedRulesCommonRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesAmazonIpReputationList"
+    priority = 40
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAmazonIpReputationList"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWS-AWSManagedRulesAmazonIpReputationList"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesSQLiRuleSet"
+    priority = 50
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesSQLiRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWS-AWSManagedRulesSQLiRuleSet"
       sampled_requests_enabled   = true
     }
   }
