@@ -115,18 +115,24 @@ final class RegisterControllerTest extends AbstractControllerTestCase
             ->once();
 
         $this->logger->shouldReceive('info')
-            ->withArgs(
-                [
+            ->once()
+            ->withArgs(function (string $message, array $context) {
+                $this->assertSame(
                     'Authenticated user attempted to access registration page',
-                    $this->userIdentity->toArray()
-                ]
-            )
-            ->once();
+                    $message
+                );
+
+                $this->assertArrayHasKey('identity', $context);
+                $this->assertSame($this->userIdentity->toArray(), $context['identity']);
+
+                return true;
+            });
 
         $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
+
 
     public function testIndexActionGet(): void
     {
