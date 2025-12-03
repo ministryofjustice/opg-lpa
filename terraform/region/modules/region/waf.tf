@@ -112,6 +112,27 @@ resource "aws_wafv2_web_acl" "main" {
   }
 
   rule {
+    name     = "AWS-AWSManagedRulesLinuxRuleSet"
+    priority = 35
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesLinuxRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWS-AWSManagedRulesLinuxRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+  rule {
     name     = "AWS-AWSManagedRulesAmazonIpReputationList"
     priority = 40
 
