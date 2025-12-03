@@ -79,7 +79,7 @@ class PasswordController extends AbstractAuthController
             return new ApiProblem(401, $result);
         }
 
-        $this->getLogger()->info("User successfully change their password", [
+        $this->getLogger()->info('User successfully changed their password', [
             'userId' => $userId
         ]);
 
@@ -114,9 +114,7 @@ class PasswordController extends AbstractAuthController
             return new ApiProblem(400, "Unknown error: {$result}");
         }
 
-        $this->getLogger()->info("User successfully change their password via a reset", [
-            'passwordToken' => $passwordToken
-        ]);
+        $this->getLogger()->info('User successfully change their password via a reset');
 
         //  Return 204 - No Content
         // Suppress psalm errors caused by bug in laminas-mvc;
@@ -144,7 +142,7 @@ class PasswordController extends AbstractAuthController
         $result = $this->getService()->generateToken($username);
 
         if ($result == 'user-not-found') {
-            $this->getLogger()->notice("Password reset request for unknown user", [
+            $this->getLogger()->warning('Password reset request for unknown user', [
                 'username' => $username
             ]);
 
@@ -159,7 +157,7 @@ class PasswordController extends AbstractAuthController
         //  Determine the token value for the logging message
         $token = (isset($result['activation_token']) ? $result['activation_token'] : $result['token']);
 
-        $this->getLogger()->info("Password reset token requested", [
+        $this->getLogger()->info('Password reset token requested', [
             'token'    => $token,
             'username' => $username
         ]);
