@@ -170,7 +170,7 @@
 
     {% if (item.routeName == 'lpa/applicant') %}
         {{ macros.accordionBar({
-                'text' : 'The LPA will be registered by ' ~ applicantNames( lpa ),
+                'text' : 'The LPA will be registered by ' ~ applicant_names( lpa ),
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
                 'journeyClick': 'navigation: Links to ' ~ item.routeName,
