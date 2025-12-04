@@ -51,7 +51,7 @@ class UsersController extends AbstractAuthController
             return new ApiProblem(400, $result);
         }
 
-        $this->getLogger()->info("New user account created", $result);
+        $this->getLogger()->info('New user account created', $result);
 
         return new JsonModel($result);
     }
@@ -68,7 +68,7 @@ class UsersController extends AbstractAuthController
             return new ApiProblem(400, $result);
         }
 
-        $this->getLogger()->info("New user account activated", [
+        $this->getLogger()->info('New user account activated', [
             'activation_token' => $activationToken
         ]);
 
