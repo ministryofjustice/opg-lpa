@@ -11,6 +11,8 @@ use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
+use Application\Handler\StatsHandler;
+use Application\Handler\StatsHandlerFactory;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
@@ -279,7 +281,8 @@ class Module implements FormElementProviderInterface
                 },
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
-                PingHandlerPingdom::class => PingHandlerPingdomFactory::class
+                PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
+                StatsHandler::class => StatsHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
