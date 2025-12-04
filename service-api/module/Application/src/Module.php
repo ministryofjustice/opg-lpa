@@ -90,7 +90,6 @@ class Module
             ],
             'invokables' => [
                 HttpClient::class => Guzzle7Client::class,
-                //Client::class => Client::class,
             ],
             'factories' => [
                 'Logger' => LoggerFactory::class,
