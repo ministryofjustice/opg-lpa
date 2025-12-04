@@ -1,6 +1,7 @@
 <?php
 
 use Application\Handler;
+use Application\Library\Http\GuzzleClientFactory;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Lmc\Rbac\Role\InMemoryRoleProvider;
 use MakeShared\Factories\ListenerAbstractFactory;
@@ -480,6 +481,7 @@ return [
             'Application\Command\GenerateStatsCommand' => 'Application\Command\GenerateStatsCommand',
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
+            GuzzleHttp\Client::class => GuzzleClientFactory::class,
         ],
     ], // service_manager
 
