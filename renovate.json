@@ -34,21 +34,6 @@
     "prCreation": "immediate"
   },
   "prConcurrentLimit": 3,
-  "enabledManagers": [
-    "dockerfile",
-    "docker-compose",
-    "npm",
-    "composer",
-    "github-actions",
-    "gomod",
-    "terraform",
-    "pip_requirements",
-    "pip-compile",
-    "pipenv",
-    "pyenv",
-    "setup-cfg",
-    "pip_setup"
-  ],
   "packageRules": [
     {
       "description": [
@@ -250,21 +235,6 @@
       "matchPackageNames": [
         "tecnickcom/tcpdf",
         "mikehaertl/php-pdftk"
-      ],
-      "enabled": false
-    },
-    {
-      "description": [
-        "No major version updates except for dev tools"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "matchPackageNames": [
-        "vimeo/psalm",
-        "phpunit/phpunit",
-        "/cypress/",
-        "/locust/"
       ],
       "enabled": false
     },

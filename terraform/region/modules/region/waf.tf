@@ -27,7 +27,6 @@ resource "aws_wafv2_web_acl" "main" {
           priority = 0
           type     = "NONE"
         }
-
       }
     }
 
@@ -92,7 +91,6 @@ resource "aws_wafv2_web_acl" "main" {
     }
 
     statement {
-
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
@@ -103,14 +101,78 @@ resource "aws_wafv2_web_acl" "main" {
             count {}
           }
         }
-
-
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "AWS-AWSManagedRulesCommonRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesLinuxRuleSet"
+    priority = 35
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesLinuxRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWS-AWSManagedRulesLinuxRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesWordPressRuleSet"
+    priority = 40
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesWordPressRuleSet"
+        vendor_name = "AWS"
+        # (1 unchanged attribute hidden)
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWS-AWSManagedRulesWordPressRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+  rule {
+    name     = "AWS-AWSManagedRulesAmazonIpReputationList"
+    priority = 50
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAmazonIpReputationList"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWS-AWSManagedRulesAmazonIpReputationList"
       sampled_requests_enabled   = true
     }
   }
