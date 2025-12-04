@@ -5,12 +5,12 @@ terraform {
       configuration_aliases = [
         aws.destination
       ]
-      version = "6.23.0"
+      version = "6.24.0"
     }
     pagerduty = {
       source  = "PagerDuty/pagerduty"
       version = "~> 3.0"
     }
   }
-  required_version = "1.14.0"
+  required_version = "1.14.1"
 }
