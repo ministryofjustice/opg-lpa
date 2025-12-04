@@ -15,7 +15,6 @@ use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
-use Application\Services\FinalCheck;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
@@ -288,9 +287,6 @@ class Module implements FormElementProviderInterface
                 },
                 AppFunctionsExtension::class => function () {
                     return new AppFunctionsExtension();
-                },
-                FinalCheck::class => function () {
-                    return new FinalCheck();
                 },
             ], // factories
             'initializers' => [
