@@ -27,6 +27,8 @@ final class StatsHandlerTest extends MockeryTestCase
         $result = $handler->handle(new ServerRequest());
 
         $this->assertInstanceOf(HtmlResponse::class, $result);
+
+        // TODO next few lines are from controller test, won;t work anymore, need changing to access HtmlResponse object instead of old laminas object
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->getLpaStats(), $result->getVariable('lpas'));
         $this->assertEquals($this->getWhoAreYouStats(), $result->getVariable('who'));
