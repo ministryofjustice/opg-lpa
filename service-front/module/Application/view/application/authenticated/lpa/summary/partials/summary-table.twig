@@ -45,7 +45,7 @@
             {% set attorneyHeading = 'Attorney' %}
 
             {% if lpa.document.primaryAttorneys|length > 1 %}
-                {% set attorneyHeading = (loop.index | ordinal_suffix) ~ ' attorney' %}
+                {% set attorneyHeading = (loop.index | format_number({style: 'ordinal'}, locale='en')) ~ ' attorney' %}
             {% endif %}
 
             {{ macros.outputActor(
@@ -91,7 +91,7 @@
             {% set attorneyHeading = 'Replacement attorney' %}
 
             {% if lpa.document.replacementAttorneys|length > 1 %}
-                {% set attorneyHeading = (loop.index | ordinal_suffix) ~ ' replacement attorney' %}
+                {% set attorneyHeading = (loop.index | format_number({style: 'ordinal'}, locale='en')) ~ ' replacement attorney' %}
             {% endif %}
 
             {{ macros.outputActor(
@@ -191,8 +191,7 @@
             {% set personToNotifyHeading = 'Person to notify' %}
 
             {% if lpa.document.peopleToNotify|length > 1 %}
-                {% set personToNotifyHeading = (loop.index | ordinal_suffix) ~ ' person to notify' %}
-
+                {% set personToNotifyHeading = (loop.index | format_number({style: 'ordinal'}, locale='en')) ~ ' person to notify' %}
             {% endif %}
 
             {{ macros.outputActor(
