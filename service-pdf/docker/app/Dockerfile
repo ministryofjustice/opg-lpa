@@ -1,10 +1,12 @@
-FROM composer:2.9.2@sha256:8f3b7d97cd7436dae41d6af0dd6a53853779040ecac26e65544fc31746035705 AS composer
+FROM composer:2.8.12@sha256:5248900ab8b5f7f880c2d62180e40960cd87f60149ec9a1abfd62ac72a02577c AS composer
 
-FROM pdftk/pdftk:3.3.3@sha256:80d553d749d2e46904323b15bed7e4dbd08f17573bb8470e51285ae363cc4e3c AS pdftk
+FROM pdftk/pdftk:3.3.3@sha256:f4634562abf5a1460d6c0c9a4893a32bfe845a892ad02574545dc145117199a3 AS pdftk
 
 FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
 
-RUN adduser -D -g '' appuser
+RUN adduser -D -g '' appuser && \
+  mkdir -p /app/tmp/pdf_cache/assets/v2 && \
+  chown -R appuser:appuser /app/tmp
 
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
@@ -12,7 +14,7 @@ RUN apk upgrade --no-cache
 RUN apk update \
     && apk add --no-cache openjdk8-jre libpng \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS autoconf gcc make musl-dev pkgconfig zlib-dev libpng-dev linux-headers \
-    && docker-php-ext-install gd 
+    && docker-php-ext-install gd
 
 # only install poppler-utils and imagemagick, used by visual diff tests, if VISUAL_TESTS is set to true in the build stage
 ARG VISUAL_TESTS=false
@@ -57,5 +59,8 @@ RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
 RUN apk del .build-dependencies
 
 USER appuser
+
+ENV TMPDIR=/app/tmp
+VOLUME [ "/app/tmp" ]
 
 CMD ["/app/bin/start.sh"]

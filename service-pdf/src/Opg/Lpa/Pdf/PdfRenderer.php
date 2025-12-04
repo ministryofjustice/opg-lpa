@@ -83,9 +83,11 @@ class PdfRenderer implements LoggerAwareInterface
         if (!file_exists($templatePathOnDisk)) {
             $this->getLogger()->info('Making template path on RAM disk', [
                 'path' => $templatePathOnDisk,
+                'stat' => stat('/tmp'),
+                'apptempstat' => stat('/app/tmp'),
             ]);
 
-            mkdir($templatePathOnDisk, 0777, true);
+            // mkdir($templatePathOnDisk, 0777, true);
         }
 
         foreach (glob($assetsConfig['source_template_path'] . '/*.pdf') as $pdfSource) {
