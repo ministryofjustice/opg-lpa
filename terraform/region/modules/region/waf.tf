@@ -132,9 +132,33 @@ resource "aws_wafv2_web_acl" "main" {
       sampled_requests_enabled   = true
     }
   }
+
+  rule {
+    name     = "AWS-AWSManagedRulesAdminProtectionRuleSet"
+    priority = 40
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAdminProtectionRuleSet"
+        vendor_name = "AWS"
+        # (1 unchanged attribute hidden)
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWS-AWSManagedRulesAdminProtectionRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
   rule {
     name     = "AWS-AWSManagedRulesAmazonIpReputationList"
-    priority = 40
+    priority = 50
 
     override_action {
       none {}
