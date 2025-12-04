@@ -1,0 +1,117 @@
+{
+    "widgets": [
+        {
+            "type": "metric",
+            "x": 18,
+            "y": 6,
+            "width": 3,
+            "height": 5,
+            "properties": {
+                "metrics": [
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "${app_loadbalancer_name}", { "region": "eu-west-1" } ]
+                ],
+                "view": "singleValue",
+                "stacked": true,
+                "region": "eu-west-1",
+                "period": 300,
+                "stat": "Average"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 0,
+            "width": 5,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [ "AWS/ApplicationELB", "ActiveConnectionCount", "LoadBalancer", "${app_loadbalancer_name}" ],
+                    [ "AWS/ApplicationELB", "HTTPCode_Target_3XX_Count", "LoadBalancer", "${app_loadbalancer_name}" ],
+                    [ "AWS/ApplicationELB", "HTTPCode_Target_4XX_Count", "LoadBalancer", "${app_loadbalancer_name}" ],
+                    [ "AWS/ApplicationELB", "HTTPCode_Target_2XX_Count", "LoadBalancer", "${app_loadbalancer_name}" ],
+                    [ "AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "LoadBalancer", "${app_loadbalancer_name}" ]
+                ],
+                "region": "eu-west-1",
+                "title": "Load Balancer"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 5,
+            "y": 0,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer} MetricName=\"ActiveConnectionCount\" ', 'Sum', 300)" } ]
+                ],
+                "legend": {
+                    "position": "bottom"
+                },
+                "title": "ActiveConnectionCount: Sum",
+                "region": "eu-west-1",
+                "liveData": false,
+                "timezone": "UTC",
+                "view": "bar",
+                "stacked": false
+            }
+        },
+        {
+            "type": "metric",
+            "x": 11,
+            "y": 0,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "region": "eu-west-1",
+                "title": "Top Services per CPU Utilization",
+                "legend": {
+                    "position": "right"
+                },
+                "timezone": "LOCAL",
+                "metrics": [
+                    [ { "expression": "SELECT AVG(CPUUtilization) FROM SCHEMA(\"AWS/ECS\", ClusterName, ServiceName)  GROUP BY ClusterName, ServiceName ORDER BY AVG() DESC LIMIT 10" } ]
+                ],
+                "liveData": false,
+                "period": 60,
+                "annotations": {
+                    "horizontal": [
+                        {
+                            "value": 80,
+                            "label": "High Utilization >="
+                        }
+                    ]
+                },
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "showUnits": false
+                    }
+                }
+            }
+        },
+        {
+            "type": "metric",
+            "x": 17,
+            "y": 0,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer} MetricName=\"RequestCount\" ', 'Sum', 300)" } ]
+                ],
+                "legend": {
+                    "position": "bottom"
+                },
+                "title": "RequestCount: Sum",
+                "region": "eu-west-1",
+                "liveData": false,
+                "timezone": "UTC",
+                "view": "timeSeries",
+                "stacked": true
+            }
+        }
+    ]
+}
