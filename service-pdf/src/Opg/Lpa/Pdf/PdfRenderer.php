@@ -127,16 +127,6 @@ class PdfRenderer implements LoggerAwareInterface
      */
     public function render($docId, $type, $lpaData)
     {
-        // Initialise the log message params
-        $message = 'PDF successfully generated';
-        $isError = false;
-
-        // Define the data that will be used in the logging messages
-        $loggingParams = [
-            'docId' => $docId,
-            'type'  => $type
-        ];
-
         try {
             if (is_array($lpaData) && isset($lpaData['id'])) {
                 $lpaId = $lpaData['id'];
@@ -175,34 +165,25 @@ class PdfRenderer implements LoggerAwareInterface
 
             $pdfFilePath = $pdf->generate(true);
             $pdfContent = file_get_contents($pdfFilePath);
-
-            // Define the data that will be used in the logging messages
-            $loggingParams = array_merge($loggingParams, [
-                'filePath' => $pdfFilePath,
-                'lpaId' => $lpaId,
-            ]);
-
             $pdfSizeK = filesize($pdfFilePath) / 1024;
 
-            $this->getLogger()->debug(
-                '----------------- Generated PDF for LPA ' .
-                $lpaId . ' at path ' . $pdfFilePath .
-                ' (PDF size Kb = ' . $pdfSizeK . ')'
-            );
+            $this->getLogger()->debug('Generated PDF for LPA', [
+                'lpaId' => $lpaId,
+                'docId' => $docId,
+                'type'  => $type,
+                'filePath' => $pdfFilePath,
+                'pdfSize' => $pdfSizeK
+            ]);
         } catch (Exception $e) {
             $pdfFilePath = null;
             $pdfContent = null;
-            $isError = true;
-            $message = 'PDF generation failed with exception: ' . $e->getMessage();
-        }
-
-        // Pre-append the Doc ID to the message and log it
-        $message = $docId . ': ' . $message;
-
-        if ($isError) {
-            $this->getLogger()->error($message, $loggingParams);
-        } else {
-            $this->getLogger()->info($message, $loggingParams);
+            $this->getLogger()->error('PDF generation failed', [
+                'docId' => $docId,
+                'type'  => $type,
+                'error_code' => 'PDF_GENERATION_FAILED',
+                'exception' => $e->getMessage(),
+                'status' => $e->getCode()
+            ]);
         }
 
         return [

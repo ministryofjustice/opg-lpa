@@ -42,9 +42,11 @@ class Stats extends AbstractService
 
         try {
             $stats['lpas'] = $this->getLpaStats();
-            $this->getLogger()->info("Successfully generated lpas stats");
+            $this->getLogger()->info('Successfully generated lpas stats');
         } catch (Exception $ex) {
-            $this->getLogger()->error("Failed to generate lpas stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error('Failed to get LPA status for PDF', [
+                'exception' => $ex,
+            ]);
             $stats['lpas'] = ['generated' => false];
         }
 
@@ -55,44 +57,55 @@ class Stats extends AbstractService
                 'all' => $this->getApplicationRepository()->getLpasPerUser(),
             ];
 
-            $this->getLogger()->info("Successfully generated lpasPerUser stats");
+            $this->getLogger()->info('Successfully generated lpasPerUser stats');
         } catch (Exception $ex) {
-            $this->getLogger()->error("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error('Failed to get LPAs per user for PDF', [
+                'exception' => $ex,
+            ]);
+
             $stats['lpasPerUser'] = ['generated' => false];
         }
 
         try {
             $stats['who'] = $this->getWhoAreYou();
-            $this->getLogger()->info("Successfully generated who stats");
+            $this->getLogger()->info('Successfully generated who stats');
         } catch (Exception $ex) {
-            $this->getLogger()->error("Failed to generate who stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error('Failed to get Who Are You Stats for PDF', [
+                'exception' => $ex,
+            ]);
             $stats['who'] = ['generated' => false];
         }
 
         try {
             $stats['correspondence'] = $this->getCorrespondenceStats();
-            $this->getLogger()->info("Successfully generated correspondence stats");
+            $this->getLogger()->info('Successfully generated correspondence stats for PDF');
         } catch (Exception $ex) {
-            $this->getLogger()->error("Failed to generate correspondence stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error('Failed to get Correspondence Stats for PDF', [
+                'exception' => $ex,
+            ]);
+
             $stats['correspondence'] = ['generated' => false];
         }
 
         try {
             $stats['preferencesInstructions'] = $this->getPreferencesInstructionsStats();
-            $this->getLogger()->info("Successfully generated preferencesInstructions stats");
+            $this->getLogger()->info('Successfully generated preferencesInstructions stats');
         } catch (Exception $ex) {
-            $this->getLogger()->error(
-                "Failed to generate preferencesInstructions stats due to {$ex->getMessage()}",
-                [$ex]
-            );
+            $this->getLogger()->error('Failed to generate preferences instructions stats for PDF', [
+                'exception' => $ex,
+            ]);
+
             $stats['preferencesInstructions'] = ['generated' => false];
         }
 
         try {
             $stats['options'] = $this->getOptionsStats();
-            $this->getLogger()->info("Successfully generated options stats");
+            $this->getLogger()->info('Successfully generated options stats');
         } catch (Exception $ex) {
-            $this->getLogger()->error("Failed to generate options stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->error('Failed to generate options stats', [
+                'exception' => $ex,
+            ]);
+
             $stats['options'] = ['generated' => false];
         }
 
