@@ -2,47 +2,33 @@
 
 declare(strict_types=1);
 
-namespace ApplicationTest\Controller\General;
+namespace ApplicationTest\Handler;
 
-use Application\Controller\General\StatsController;
+use Application\Handler\StatsHandler;
 use Application\Model\Service\Stats\Stats as StatsService;
-use ApplicationTest\Controller\AbstractControllerTestCase;
 use DateTime;
-use Laminas\View\Model\ViewModel;
+use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\ServerRequest;
+use Mezzio\Twig\TwigRenderer;
 use Mockery;
-use Mockery\MockInterface;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-final class StatsControllerTest extends AbstractControllerTestCase
+final class StatsHandlerTest extends MockeryTestCase
 {
-    private MockInterface|StatsService $statsService;
-
-    public function setUp(): void
+    public function testHandle(): void
     {
-        parent::setUp();
+        $statsService = Mockery::mock(StatsService::class);
+        $statsService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
 
-        $this->statsService = Mockery::mock(StatsService::class);
-        $this->statsService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
-    }
+        $renderer = new TwigRenderer();
 
-    protected function getController(string $controllerName)
-    {
-        /** @var StatsController $controller */
-        $controller = parent::getController($controllerName);
+        $handler = new StatsHandler($statsService, $renderer);
 
-        $controller->setStatsService($this->statsService);
+        $result = $handler->handle(new ServerRequest());
 
-        return $controller;
-    }
+        $this->assertInstanceOf(HtmlResponse::class, $result);
 
-    public function testIndexAction(): void
-    {
-        /** @var StatsController $controller */
-        $controller = $this->getController(StatsController::class);
-
-        /** @var ViewModel $result */
-        $result = $controller->indexAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
+        // TODO next few lines are from controller test, won;t work anymore, need changing to access HtmlResponse object instead of old laminas object
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->getLpaStats(), $result->getVariable('lpas'));
         $this->assertEquals($this->getWhoAreYouStats(), $result->getVariable('who'));

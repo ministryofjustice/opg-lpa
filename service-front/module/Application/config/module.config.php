@@ -8,6 +8,14 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+use Mezzio\Template\TemplateRendererInterface;
+use Mezzio\Twig\TwigEnvironmentFactory;
+use Mezzio\Twig\TwigExtension;
+use Mezzio\Twig\TwigExtensionFactory;
+use Mezzio\Twig\TwigRenderer;
+use Mezzio\Twig\TwigRendererFactory;
+use Twig\Environment;
+
 return [
 
     /* ------------------------------------------------------------- */
@@ -38,7 +46,17 @@ return [
             'SiteStatus'                    => 'Application\Model\Service\System\Status',
             'StatsService'                  => 'Application\Model\Service\Stats\Stats',
             'UserService'                   => 'Application\Model\Service\User\Details',
+
+            // copied from service-front/vendor/mezzio/mezzio-twigrenderer/src/ConfigProvider.php
+            TemplateRendererInterface::class => TwigRenderer::class,
+            'Twig_Environment'               => Environment::class,
         ],
+        'factories' => [
+            // copied from service-front/vendor/mezzio/mezzio-twigrenderer/src/ConfigProvider.php
+            Environment::class   => TwigEnvironmentFactory::class,
+            TwigExtension::class => TwigExtensionFactory::class,
+            TwigRenderer::class  => TwigRendererFactory::class,
+        ]
     ],
 
     'view_manager' => [
@@ -92,5 +110,11 @@ return [
             'systemMessage'         => 'Application\View\Helper\SystemMessageFactory',
         ],
     ],
+
+    'templates' => [
+        'paths' => [
+            'application' => [__DIR__ . '/../view/application'],
+        ],
+    ]
 
 ];
