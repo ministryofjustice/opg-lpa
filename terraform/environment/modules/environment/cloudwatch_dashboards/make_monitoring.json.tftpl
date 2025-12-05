@@ -8,11 +8,11 @@
             "height": 5,
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "${app_loadbalancer_name}", { "region": "eu-west-1" } ]
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "${app_loadbalancer_name}", { "region": "${region}" } ]
                 ],
                 "view": "singleValue",
                 "stacked": true,
-                "region": "eu-west-1",
+                "region": "${region}",
                 "period": 300,
                 "stat": "Average"
             }
@@ -33,7 +33,7 @@
                     [ "AWS/ApplicationELB", "HTTPCode_Target_2XX_Count", "LoadBalancer", "${app_loadbalancer_name}" ],
                     [ "AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "LoadBalancer", "${app_loadbalancer_name}" ]
                 ],
-                "region": "eu-west-1",
+                "region": "${region}",
                 "title": "Load Balancer"
             }
         },
@@ -45,13 +45,13 @@
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer} MetricName=\"ActiveConnectionCount\" ', 'Sum', 300)" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, ${app_loadbalancer_name}} MetricName=\"ActiveConnectionCount\" ', 'Sum', 300)" } ]
                 ],
                 "legend": {
                     "position": "bottom"
                 },
                 "title": "ActiveConnectionCount: Sum",
-                "region": "eu-west-1",
+                "region": "${region}",
                 "liveData": false,
                 "timezone": "UTC",
                 "view": "bar",
@@ -65,14 +65,14 @@
             "width": 6,
             "height": 6,
             "properties": {
-                "region": "eu-west-1",
+                "region": "${region}",
                 "title": "Top Services per CPU Utilization",
                 "legend": {
                     "position": "right"
                 },
                 "timezone": "LOCAL",
                 "metrics": [
-                    [ { "expression": "SELECT AVG(CPUUtilization) FROM SCHEMA(\"AWS/ECS\", ClusterName, ServiceName)  GROUP BY ClusterName, ServiceName ORDER BY AVG() DESC LIMIT 10" } ]
+                    [ { "expression": "SELECT AVG(CPUUtilization) FROM SCHEMA(\"AWS/ECS\", ${cluster_name}, ${service_name})  GROUP BY ${cluster_name}, ${service_name} ORDER BY AVG() DESC LIMIT 10" } ]
                 ],
                 "liveData": false,
                 "period": 60,
@@ -100,13 +100,13 @@
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer} MetricName=\"RequestCount\" ', 'Sum', 300)" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, ${app_loadbalancer_name}} MetricName=\"RequestCount\" ', 'Sum', 300)" } ]
                 ],
                 "legend": {
                     "position": "bottom"
                 },
                 "title": "RequestCount: Sum",
-                "region": "eu-west-1",
+                "region": "${region}",
                 "liveData": false,
                 "timezone": "UTC",
                 "view": "timeSeries",

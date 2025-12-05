@@ -57,3 +57,5 @@ data "aws_availability_zones" "aws_zones" {
     values = ["opt-in-not-required"]
   }
 }
+
+data "aws_default_tags" "current" {}

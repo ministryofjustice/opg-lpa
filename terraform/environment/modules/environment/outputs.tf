@@ -42,7 +42,3 @@ output "aws_aurora_cluster_arn" {
 output "aws_ecs_task_definition_api_arn" {
   value = aws_ecs_task_definition.api.arn
 }
-
-output "front_loadbalancer" {
-  value = aws_lb.front
-}
