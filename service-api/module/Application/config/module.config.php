@@ -2,8 +2,12 @@
 
 use Application\Handler;
 use Laminas\Mvc\Middleware\PipeSpec;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use Lmc\Rbac\Role\InMemoryRoleProvider;
 use MakeShared\Factories\ListenerAbstractFactory;
+use MakeShared\Logging\LoggerFactory;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 return [
 
@@ -480,7 +484,15 @@ return [
             'Application\Command\GenerateStatsCommand' => 'Application\Command\GenerateStatsCommand',
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
+            LoggerInterface::class => LoggerFactory::class,
         ],
+        'initializers' => [
+            function (ServiceLocatorInterface $container, $instance) {
+                if ($instance instanceof LoggerAwareInterface) {
+                    $instance->setLogger($container->get(LoggerInterface::class));
+                }
+            },
+        ]
     ], // service_manager
 
     'view_manager' => [

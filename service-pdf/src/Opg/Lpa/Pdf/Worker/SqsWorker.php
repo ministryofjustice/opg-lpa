@@ -5,6 +5,7 @@ namespace Opg\Lpa\Pdf\Worker;
 use Aws\Sqs\SqsClient;
 use Exception;
 use Laminas\Filter\Decompress;
+use MakeShared\Constants;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\PdfRenderer;
 use Opg\Lpa\Pdf\Traits\LoggerTrait;
@@ -101,14 +102,16 @@ class SqsWorker implements LoggerAwareInterface
                     $this->getLogger()->info('Generated PDF', [
                         'jobId' => $lpaMessage['jobId'],
                         'lpaId' => $lpaId,
-                        'generationTimeSeconds' => (microtime(true) - $startTime)
+                        'generationTimeSeconds' => (microtime(true) - $startTime),
+                        Constants::TRACE_ID_FIELD_NAME => $lpaMessage['traceId'] ?? 'NOT_SUPPLIED_BY_CLIENT',
                     ]);
                 } catch (Exception $e) {
                     $this->getLogger()->error('Error generating PDF', [
                         'jobId' => $lpaMessage['jobId'],
                         'lpaId' => $lpaMessage['lpaId'],
                         'exception' => $e,
-                        'status' => $e->getCode()
+                        'status' => $e->getCode(),
+                        Constants::TRACE_ID_FIELD_NAME => $lpaMessage['traceId'] ?? 'NOT_SUPPLIED_BY_CLIENT',
                     ]);
 
                     throw $e;

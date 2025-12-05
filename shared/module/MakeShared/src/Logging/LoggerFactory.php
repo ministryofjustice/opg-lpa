@@ -2,7 +2,6 @@
 
 namespace MakeShared\Logging;
 
-use Laminas\Http\Request as HttpRequest;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
@@ -21,18 +20,13 @@ class LoggerFactory implements FactoryInterface
         $logger = new Logger($loggerChannel);
         $formatter = new OpgJsonFormatter();
 
-        $request = $container->get('Request');
-        if ($request instanceof HttpRequest) {
-            $formatter->requestPath = $request->getUri()->getPath();
-            $formatter->requestMethod = $request->getMethod();
-        }
-
         $streamHandler = new StreamHandler('php://stderr', $loggerMinLevel);
         $streamHandler->setFormatter($formatter);
 
         $logger->pushHandler($streamHandler);
-        $logger->pushProcessor($container->get(HeadersProcessor::class))
-            ->pushProcessor($container->get(TraceIdProcessor::class));
+        $logger
+            ->pushProcessor(new HeadersProcessor())
+            ->pushProcessor(new TraceIdProcessor());
 
         return $logger;
     }
