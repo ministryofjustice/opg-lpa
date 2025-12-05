@@ -1,4 +1,4 @@
-FROM composer:2.9.2@sha256:1997db9e43fde2a5a20f32fcfd50f26f698d951b3787334ebd6493d0562de97f AS composer
+FROM composer:2.9.2@sha256:8b4d59fde3bd505c5fef70c9f8d5c05e92af811fed037dad12869b373925ed31 AS composer
 
 FROM pdftk/pdftk:3.3.3@sha256:80d553d749d2e46904323b15bed7e4dbd08f17573bb8470e51285ae363cc4e3c AS pdftk
 
