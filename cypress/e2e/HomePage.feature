@@ -16,10 +16,8 @@ Feature: Homepage
     And I see "Privacy notice" in the title
     And I should encounter a visually-hidden statement about links on the page opening in new tabs
     And I should not find links in the page which open in new tabs without notifying me
-    # for now we must click back to home because cookies link behaves differently from privacy page
-    When I click back
-    Then I visit link in new tab containing "View cookies"
-    And I am taken to "/cookies"
+    When I visit link in new tab containing "View cookies"
+    Then I am taken to "/cookies"
     And I see "Cookies" in the title
     And I should not find links in the page which open in new tabs without notifying me
     #When I click back
