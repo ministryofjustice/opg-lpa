@@ -155,5 +155,9 @@ return [
 
     'zfctwig' => [
         'environment_options' => ['cache' => getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR') ?: '/tmp/twig_cache'],
+        'extensions' => [
+            Application\View\Twig\AppFiltersExtension::class,
+            Application\View\Twig\AppFunctionsExtension::class,
+        ],
     ],
 ];
