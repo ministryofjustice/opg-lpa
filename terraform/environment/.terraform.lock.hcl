@@ -46,7 +46,7 @@ provider "registry.terraform.io/hashicorp/local" {
 
 provider "registry.terraform.io/pagerduty/pagerduty" {
   version     = "3.30.8"
-  constraints = "~> 3.0"
+  constraints = "~> 3.0, 3.30.8"
   hashes = [
     "h1:FRivmlGa2OWCPXFAaHkmLZ4nSG9r2JWyO4WXey1wMUY=",
     "zh:07dd6303266dde7c8b335abe508b14780c1a93b2a852da8a4d12bd89af68fadb",
