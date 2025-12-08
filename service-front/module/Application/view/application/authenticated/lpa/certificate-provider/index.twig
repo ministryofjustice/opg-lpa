@@ -116,7 +116,7 @@
         </div>
 
         <div class="form-group">
-            <a href="{{ url(nextRoute, {'lpa-id': lpa.id}) }}" class="button" data-cy="save">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
+            <a href="{{ url(nextRoute, {'lpa-id': lpa.id}) }}" class="button" data-cy="save">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
     {% else %}

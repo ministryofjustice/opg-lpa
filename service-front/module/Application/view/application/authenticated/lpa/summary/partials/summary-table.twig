@@ -45,7 +45,7 @@
             {% set attorneyHeading = 'Attorney' %}
 
             {% if lpa.document.primaryAttorneys|length > 1 %}
-                {% set attorneyHeading = ordinalSuffix(loop.index) ~ ' attorney' %}
+                {% set attorneyHeading = (loop.index | ordinal_suffix) ~ ' attorney' %}
             {% endif %}
 
             {{ macros.outputActor(
@@ -91,7 +91,7 @@
             {% set attorneyHeading = 'Replacement attorney' %}
 
             {% if lpa.document.replacementAttorneys|length > 1 %}
-                {% set attorneyHeading = ordinalSuffix(loop.index) ~ ' replacement attorney' %}
+                {% set attorneyHeading = (loop.index | ordinal_suffix) ~ ' replacement attorney' %}
             {% endif %}
 
             {{ macros.outputActor(
@@ -191,7 +191,7 @@
             {% set personToNotifyHeading = 'Person to notify' %}
 
             {% if lpa.document.peopleToNotify|length > 1 %}
-                {% set personToNotifyHeading = ordinalSuffix(loop.index) ~ ' person to notify' %}
+                {% set personToNotifyHeading = (loop.index | ordinal_suffix) ~ ' person to notify' %}
             {% endif %}
 
             {{ macros.outputActor(
@@ -231,7 +231,7 @@
     {% if lpa.document.whoIsRegistering is defined and lpa.document.whoIsRegistering is not empty %}
         {{ macros.outputSection(
             'Who is registering the LPA',
-            (lpa.document.whoIsRegistering == 'donor' ? 'Donor' : applicantNames(lpa)),
+            (lpa.document.whoIsRegistering == 'donor' ? 'Donor' : applicant_names(lpa)),
             url('lpa/applicant', {'lpa-id': lpa.id}),
             'Applicant'
         ) }}
