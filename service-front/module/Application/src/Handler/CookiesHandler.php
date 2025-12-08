@@ -12,6 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Twig\Environment as TwigEnvironment;
+use Laminas\Form\FormInterface;
 
 class CookiesHandler implements RequestHandlerInterface
 {
@@ -26,6 +27,7 @@ class CookiesHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var FormInterface $form */
         $form = $this->formElementManager->get('Application\Form\General\CookieConsentForm');
 
         $form->setAttribute('action', '/cookies');
