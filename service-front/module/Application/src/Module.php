@@ -5,6 +5,8 @@ namespace Application;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
+use Application\Handler\CookiesHandler;
+use Application\Handler\CookiesHandlerFactory;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerFactory;
 use Application\Handler\PingHandlerJson;
@@ -306,6 +308,7 @@ class Module implements FormElementProviderInterface
                     return new AppFunctionsExtension();
                 },
                 LoggerInterface::class => LoggerFactory::class,
+                CookiesHandler::class     => CookiesHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
