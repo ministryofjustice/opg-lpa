@@ -15,6 +15,8 @@ use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
+use Application\View\Twig\AppFiltersExtension;
+use Application\View\Twig\AppFunctionsExtension;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\Session\SessionManager;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -279,7 +281,13 @@ class Module implements FormElementProviderInterface
                 },
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
-                PingHandlerPingdom::class => PingHandlerPingdomFactory::class
+                PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
+                AppFiltersExtension::class => function () {
+                    return new AppFiltersExtension();
+                },
+                AppFunctionsExtension::class => function () {
+                    return new AppFunctionsExtension();
+                },
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
