@@ -11,13 +11,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class StatsHandler extends AbstractHandler implements RequestHandlerInterface
+class StatsHandler implements RequestHandlerInterface
 {
     public function __construct(
         private StatsService $statsService,
-        TemplateRendererInterface $renderer,
+        private TemplateRendererInterface $renderer,
     ) {
-        parent::__construct($renderer);
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
