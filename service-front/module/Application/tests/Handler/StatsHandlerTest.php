@@ -25,14 +25,16 @@ final class StatsHandlerTest extends MockeryTestCase
         $twigRenderer
             ->shouldReceive('render')
             ->once()
-            ->with('application/general/stats',
-                ['generated' => '01/02/2017 14:22:11',
+            ->with(
+                'application/general/stats',
+                    ['generated' => '01/02/2017 14:22:11',
                     'lpas' => $this->getLpaStats(),
                     'who' => $this->getWhoAreYouStats(),
                     'users' => $this->getAuthStats(),
                     'correspondence' => $this->getCorrespondenceStats(),
                     'preferencesInstructions' => $this->getPreferencesInstructionsStats(),
-                ])
+                ]
+            )
             ->andReturn('<html>stats page</html>');
 
         $handler = new StatsHandler($statsService, $twigRenderer);

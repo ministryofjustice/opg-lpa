@@ -16,6 +16,5 @@ class StatsHandlerFactory
             $container->get(StatsService::class),
             $container->get(TwigRenderer::class)
         );
-
     }
 }
