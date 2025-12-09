@@ -13,6 +13,7 @@ class AppFiltersExtension extends AbstractExtension
     {
         return [
             new TwigFilter('ordinal_suffix', [$this, 'ordinalSuffix']),
+            new TwigFilter('asset_path', [$this, 'assetPath']),
         ];
     }
 
@@ -32,5 +33,18 @@ class AppFiltersExtension extends AbstractExtension
         }
 
         return $number . 'th';
+    }
+
+    public function assetPath($path, array $options = []): string
+    {
+        $path = str_replace('/assets/', "/assets/{$this->assetsVersion}/", $path);
+
+        // Should '.min' be include before the file extension.
+        if (isset($options['minify']) && $options['minify'] === true) {
+            $lastDot = strrpos($path, '.');
+            $path = substr($path, 0, $lastDot) . '.min' . substr($path, $lastDot);
+        }
+
+        return $path;
     }
 }
