@@ -20,9 +20,9 @@ class Phone extends AbstractValidator
         $normalizedValue = preg_replace('/\s+/', '', (string) $value);
         $this->setValue($normalizedValue);
 
-        $pattern = '/^\+[1-9]\d{6,14}$/';
+        $pattern = '/^(\+)?(\d|\(|\)| |\-){6,20}$/';
 
-        if (!preg_match($pattern, $value)) {
+        if ($normalizedValue !== null && !preg_match($pattern, $normalizedValue)) {
             $this->error(self::NOT_PHONE);
             return false;
         }
