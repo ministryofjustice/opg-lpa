@@ -9,7 +9,7 @@ use Application\Model\Service\Stats\Stats as StatsService;
 use DateTime;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequest;
-use Mezzio\Twig\TwigRenderer;
+use Mezzio\Template\TemplateRendererInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
@@ -20,21 +20,25 @@ final class StatsHandlerTest extends MockeryTestCase
         $statsService = Mockery::mock(StatsService::class);
         $statsService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
 
-        $renderer = new TwigRenderer();
+        $twigRenderer = Mockery::mock(TemplateRendererInterface::class);
 
-        $handler = new StatsHandler($statsService, $renderer);
+        $twigRenderer
+            ->shouldReceive('render')
+            ->once()
+            ->with('application/general/stats',
+                ['generated' => '01/02/2017 14:22:11',
+                    'lpas' => $this->getLpaStats(),
+                    'who' => $this->getWhoAreYouStats(),
+                    'users' => $this->getAuthStats(),
+                    'correspondence' => $this->getCorrespondenceStats(),
+                    'preferencesInstructions' => $this->getPreferencesInstructionsStats(),
+                ])
+            ->andReturn('<html>stats page</html>');
 
+        $handler = new StatsHandler($statsService, $twigRenderer);
         $result = $handler->handle(new ServerRequest());
 
         $this->assertInstanceOf(HtmlResponse::class, $result);
-
-        // TODO next few lines are from controller test, won;t work anymore, need changing to access HtmlResponse object instead of old laminas object
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->getLpaStats(), $result->getVariable('lpas'));
-        $this->assertEquals($this->getWhoAreYouStats(), $result->getVariable('who'));
-        $this->assertEquals($this->getAuthStats(), $result->getVariable('users'));
-        $this->assertEquals($this->getCorrespondenceStats(), $result->getVariable('correspondence'));
-        $this->assertEquals($this->getPreferencesInstructionsStats(), $result->getVariable('preferencesInstructions'));
     }
 
     private function getApiStats(): array
