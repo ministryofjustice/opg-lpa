@@ -25,7 +25,7 @@
     "require-dev": {
         "hamcrest/hamcrest-php": "^2.0",
         "mockery/mockery": "^1.5",
-        "phpunit/phpunit": "^9.5.10",
+        "phpunit/phpunit": "^12.0.0",
         "vimeo/psalm": "^6.0"
     },
     "autoload": {
