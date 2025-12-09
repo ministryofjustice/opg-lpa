@@ -15,10 +15,8 @@ abstract class AbstractMainFlowForm extends AbstractLpaForm
     public function init()
     {
         $finalCheckAccessible = false;
-
         if ($this->lpa instanceof Lpa) {
-            $flowChecker = new FormFlowChecker($this->lpa);
-            $finalCheckAccessible = $flowChecker->finalCheckAccessible();
+            $finalCheckAccessible = FormFlowChecker::isFinalCheckAccessible($this->lpa);
         }
 
         //  Add the submit button to the form elements
