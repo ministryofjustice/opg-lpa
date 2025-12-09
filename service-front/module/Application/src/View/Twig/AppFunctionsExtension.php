@@ -10,14 +10,13 @@ use Application\View\Helper\Traits\ConcatNamesTrait;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-
 class AppFunctionsExtension extends AbstractExtension
 {
     use ConcatNamesTrait;
+
     public function __construct(
         private readonly array $config,
-    )
-    {
+    ) {
     }
 
     public function getFunctions(): array

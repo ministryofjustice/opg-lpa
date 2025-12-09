@@ -11,8 +11,7 @@ class AppFiltersExtension extends AbstractExtension
 {
     public function __construct(
         private readonly array $config,
-    )
-    {
+    ) {
     }
 
     public function getFilters(): array
