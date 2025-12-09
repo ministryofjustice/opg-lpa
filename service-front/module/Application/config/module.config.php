@@ -47,14 +47,7 @@ return [
             'StatsService'                  => 'Application\Model\Service\Stats\Stats',
             'UserService'                   => 'Application\Model\Service\User\Details',
             TemplateRendererInterface::class => TwigRenderer::class,
-            'Twig_Environment'               => Environment::class,
         ],
-        'factories' => [
-            // copied from service-front/vendor/mezzio/mezzio-twigrenderer/src/ConfigProvider.php
-            Environment::class   => TwigEnvironmentFactory::class,
-            TwigExtension::class => TwigExtensionFactory::class,
-            TwigRenderer::class  => TwigRendererFactory::class,
-        ]
     ],
 
     'view_manager' => [
