@@ -282,8 +282,8 @@ locals {
       ],
       portMappings = [
         {
-          containerPort = 9000,
-          hostPort      = 9000,
+          containerPort = 9001,
+          hostPort      = 9001,
           protocol      = "tcp"
         }
       ],
