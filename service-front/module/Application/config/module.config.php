@@ -8,6 +8,9 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+use Mezzio\Template\TemplateRendererInterface;
+use Mezzio\Twig\TwigRenderer;
+
 return [
 
     /* ------------------------------------------------------------- */
@@ -38,6 +41,7 @@ return [
             'SiteStatus'                    => 'Application\Model\Service\System\Status',
             'StatsService'                  => 'Application\Model\Service\Stats\Stats',
             'UserService'                   => 'Application\Model\Service\User\Details',
+            TemplateRendererInterface::class => TwigRenderer::class,
         ],
     ],
 
@@ -59,6 +63,12 @@ return [
         ],
         'strategies' => [
             'ViewJsonStrategy',
+        ],
+    ],
+
+    'templates' => [
+        'paths' => [
+            'application' => [__DIR__ . '/../view/application'],
         ],
     ],
 

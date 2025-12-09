@@ -11,7 +11,7 @@ use Laminas\Http\Request as HttpRequest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Twig\Environment as TwigEnvironment;
+use Mezzio\Template\TemplateRendererInterface;
 use Laminas\Form\FormInterface;
 
 class CookiesHandler implements RequestHandlerInterface
@@ -19,7 +19,7 @@ class CookiesHandler implements RequestHandlerInterface
     public const COOKIE_POLICY_NAME = 'cookie_policy';
 
     public function __construct(
-        private TwigEnvironment $twig,
+        private TemplateRendererInterface $renderer,
         private FormElementManager $formElementManager,
         private HttpRequest $httpRequest,
     ) {
@@ -40,7 +40,7 @@ class CookiesHandler implements RequestHandlerInterface
             $ucElement->setValue($cookiePolicy['usage'] ? 'yes' : 'no');
         }
 
-        $html = $this->twig->render(
+        $html = $this->renderer->render(
             'application/general/cookies/index.twig',
             ['form' => $form]
         );

@@ -10,15 +10,15 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Laminas\Http\Request as HttpRequest;
+use Mezzio\Template\TemplateRendererInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Twig\Environment as TwigEnvironment;
 
 class CookiesHandlerTest extends MockeryTestCase
 {
     public function testHandleRendersTwigTemplate(): void
     {
-        $twig = Mockery::mock(TwigEnvironment::class);
+        $renderer = Mockery::mock(TemplateRendererInterface::class);
         $formElementManager = Mockery::mock(FormElementManager::class);
         $httpRequest = Mockery::mock(HttpRequest::class);
         $form = Mockery::mock(FormInterface::class);
@@ -39,7 +39,7 @@ class CookiesHandlerTest extends MockeryTestCase
             ->once()
             ->andReturn(false);
 
-        $twig
+        $renderer
             ->shouldReceive('render')
             ->once()
             ->withArgs(function (string $template, array $context) use ($form): bool {
@@ -50,7 +50,7 @@ class CookiesHandlerTest extends MockeryTestCase
             ->andReturn('<html>cookies page</html>');
 
         $handler = new CookiesHandler(
-            $twig,
+            $renderer,
             $formElementManager,
             $httpRequest,
         );
