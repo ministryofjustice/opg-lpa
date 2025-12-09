@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Application\Handler;
 
-use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

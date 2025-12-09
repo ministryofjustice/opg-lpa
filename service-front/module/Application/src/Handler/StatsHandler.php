@@ -27,7 +27,7 @@ class StatsHandler extends AbstractHandler implements RequestHandlerInterface
         return new HtmlResponse($this->renderer->render('application/general/stats', $stats));
     }
 
-    public function setStatsService(StatsService $statsService): void
+    public function setStatsService(StatsService $statsService) : void
     {
         $this->statsService = $statsService;
     }
