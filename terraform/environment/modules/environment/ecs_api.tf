@@ -134,11 +134,10 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  # container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.migrations}, ${local.pgbouncer}]"
-  container_definitions = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
-  task_role_arn         = var.ecs_iam_task_roles.api.arn
-  execution_role_arn    = var.ecs_execution_role.arn
-  tags                  = local.api_component_tag
+  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
+  task_role_arn            = var.ecs_iam_task_roles.api.arn
+  execution_role_arn       = var.ecs_execution_role.arn
+  tags                     = local.api_component_tag
   volume {
     name = "app_tmp"
   }
