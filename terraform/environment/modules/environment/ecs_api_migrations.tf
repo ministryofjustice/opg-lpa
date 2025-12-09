@@ -8,6 +8,7 @@ data "aws_ecs_task_execution" "migrations" {
   launch_type      = "FARGATE"
   platform_version = "1.4.0"
   propagate_tags   = "TASK_DEFINITION"
+  group            = "${terraform.workspace}-migrations"
   network_configuration {
     security_groups = [
       aws_security_group.api_ecs_service.id,
