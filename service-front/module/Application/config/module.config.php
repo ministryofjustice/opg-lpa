@@ -100,4 +100,10 @@ return [
         ],
     ],
 
+    'templates' => [
+        'paths' => [
+            'application' => [__DIR__ . '/../view/application'],
+        ],
+    ]
+
 ];
