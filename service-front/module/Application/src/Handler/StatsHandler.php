@@ -20,14 +20,14 @@ class StatsHandler extends AbstractHandler implements RequestHandlerInterface
         parent::__construct($renderer);
     }
 
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $stats = $this->statsService->getApiStats();
 
         return new HtmlResponse($this->renderer->render('application/general/stats', $stats));
     }
 
-    public function setStatsService(StatsService $statsService) : void
+    public function setStatsService(StatsService $statsService): void
     {
         $this->statsService = $statsService;
     }

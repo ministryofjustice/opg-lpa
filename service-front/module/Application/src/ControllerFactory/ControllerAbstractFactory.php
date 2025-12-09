@@ -77,9 +77,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ReuseDetailsController::class => [
             'setRouter' => 'Router'
         ],
-        StatsController::class => [
-            'setStatsService' => 'StatsService',
-        ],
         VerifyEmailAddressController::class => [
             'setUserService' => 'UserService'
         ],
