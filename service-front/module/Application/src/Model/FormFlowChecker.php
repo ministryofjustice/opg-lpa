@@ -294,6 +294,11 @@ class FormFlowChecker
         return false;
     }
 
+    public static function isFinalCheckAccessible(Lpa $lpa): bool
+    {
+        return (new self($lpa))->finalCheckAccessible();
+    }
+
     public function getRouteOptions(/** @noinspection PhpUnusedParameterInspection */$route)
     {
         return [];
