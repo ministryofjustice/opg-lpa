@@ -2,7 +2,6 @@
 
 namespace App\Middleware\Session;
 
-use App\Middleware\Session\JwtMiddleware;
 use DateTimeImmutable;
 use Firebase\JWT\JWT;
 use Psr\Container\ContainerInterface;
