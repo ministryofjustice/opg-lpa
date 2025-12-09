@@ -86,6 +86,9 @@ class FeedbackForm extends AbstractCsrfForm
 
         $this->addToInputFilter([
             'name'     => 'details',
+            'filters'    => [
+                ['name' => 'StripTags'],
+            ],
             'validators' => [
                 [
                     'name'    => 'NotEmpty',

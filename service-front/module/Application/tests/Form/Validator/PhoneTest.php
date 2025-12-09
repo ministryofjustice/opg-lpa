@@ -21,10 +21,15 @@ class PhoneTest extends TestCase
     public static function validPhoneNumbersProvider(): array
     {
         return [
-            'UK Number' => ['+441234567890'],
-            'US Number' => ['+12125550123'],
-            'Minimum Length (7 digits)' => ['+1234567'],
-            'Maximum Length (15 digits)' => ['+123456789012345'],
+            'International Format Number' => ['+441234567890'],
+            'Local Format Number' => ['01234567890'],
+            'Minimum Length (6 digits)' => ['+123456'],
+            'Maximum Length (20 digits)' => ['+12345678901234567890'],
+            'Brackets' => ['+12(345)67890123456'],
+            'Hyphens' => ['+12-345-67890123456'],
+            'Spaces' => ['+12 345 67890123456'],
+            // To keep regex easier to read the below would be valid along with 6 ) or ( characters
+            'Accepted Characters' => ['------'],
         ];
     }
 
@@ -38,12 +43,10 @@ class PhoneTest extends TestCase
     public static function invalidPhoneNumbersProvider(): array
     {
         return [
-            'No Plus Sign' => ['441234567890'],
-            'Starts with 0 after Plus' => ['+041234567890'],
-            'Too Short' => ['+123456'],
-            'Too Long' => ['+1234567890123456'],
-            'Contains Hyphens' => ['+1-212-555-0123'],
-            'Contains Letters' => ['+44123456789a'],
+            'Too Short' => ['+12345'],
+            'Too Long' => ['+123456789012345678910'],
+            'Contains Letters' => ['+44123a56789'],
+            'Contains Other Characters' => ['+44123!56789'],
             'Empty String' => [''],
         ];
     }
