@@ -279,8 +279,8 @@ return [
                 'options' => [
                     'route'    => '/stats',
                     'defaults' => [
-                        'controller' => 'General\StatsController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\StatsHandler::class,
                     ],
                 ],
             ], // stats
