@@ -24,7 +24,7 @@ class Config implements ArrayAccess
         $this->container = $allConfig;
     }
 
-    public static function getInstance(array $config = null)
+    public static function getInstance(?array $config = null)
     {
         if (self::$instance === null) {
             self::$instance = new self($config);

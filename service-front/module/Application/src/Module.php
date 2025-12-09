@@ -19,9 +19,12 @@ use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
+use Laminas\Http\PhpEnvironment\Request as HttpRequest;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\Session\SessionManager;
+use MakeShared\Constants;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
+use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use Application\Model\Service\ApiClient\Exception\ApiException;
@@ -43,6 +46,7 @@ use Laminas\View\Model\ViewModel;
 use Mezzio\Session\Ext\PhpSessionPersistence;
 use Mezzio\Session\SessionMiddleware;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use Redis;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
@@ -51,7 +55,8 @@ class Module implements FormElementProviderInterface
 {
     public function onBootstrap(MvcEvent $e)
     {
-        $eventManager = $e->getApplication()->getEventManager();
+        $application = $e->getApplication();
+        $eventManager = $application->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
@@ -70,21 +75,33 @@ class Module implements FormElementProviderInterface
             }
         });
 
-        $request = $e->getApplication()->getServiceManager()->get('Request');
+        $serviceManager = $application->getServiceManager();
+        $request = $application->getRequest();
+        $logger = $serviceManager->get(LoggerInterface::class);
 
-        $path = $request->getUri()->getPath();
+        // Add request context to logs as a processor
+        if ($request instanceof HttpRequest) {
+            $logger->pushProcessor(function ($record) use ($request) {
+                $record['extra']['request_path'] = $request->getUri()->getPath();
+                $record['extra']['request_method'] = $request->getMethod();
+                $record['extra'][Constants::TRACE_ID_FIELD_NAME] = $request->getHeader('X-Request-ID')?->getFieldValue() ?? '';
+                return $record;
+            });
 
-        // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
-        if (
-            !strstr($request->getServer('SCRIPT_NAME'), 'phpunit') &&
-            !in_array($path, [
-                // URLs excluded from creating a session
-                '/ping/elb',
-                '/ping/json',
-            ])
-        ) {
-            $this->bootstrapSession($e);
-            $this->bootstrapIdentity($e, $path != '/session-state');
+            $path = $request->getUri()->getPath();
+
+            // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
+            if (
+                !strstr($request->getServer('SCRIPT_NAME'), 'phpunit') &&
+                !in_array($path, [
+                    // URLs excluded from creating a session
+                    '/ping/elb',
+                    '/ping/json',
+                ])
+            ) {
+                $this->bootstrapSession($e);
+                $this->bootstrapIdentity($e, $path != '/session-state');
+            }
         }
     }
 
@@ -291,6 +308,7 @@ class Module implements FormElementProviderInterface
                 AppFunctionsExtension::class => function () {
                     return new AppFunctionsExtension();
                 },
+                LoggerInterface::class => LoggerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

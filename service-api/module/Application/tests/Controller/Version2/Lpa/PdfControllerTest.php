@@ -33,7 +33,10 @@ class PdfControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('fetch')->andReturn(['key' => 'value'])->once();
+        $this->service->shouldReceive('fetch')
+            ->with('98765', 10, 'trace-id-123')
+            ->andReturn(['key' => 'value'])
+            ->once();
 
         $response = $controller->get(10);
 
