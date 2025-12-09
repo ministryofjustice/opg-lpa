@@ -46,8 +46,6 @@ return [
             'SiteStatus'                    => 'Application\Model\Service\System\Status',
             'StatsService'                  => 'Application\Model\Service\Stats\Stats',
             'UserService'                   => 'Application\Model\Service\User\Details',
-
-            // copied from service-front/vendor/mezzio/mezzio-twigrenderer/src/ConfigProvider.php
             TemplateRendererInterface::class => TwigRenderer::class,
             'Twig_Environment'               => Environment::class,
         ],
@@ -77,6 +75,12 @@ return [
         ],
         'strategies' => [
             'ViewJsonStrategy',
+        ],
+    ],
+
+    'templates' => [
+        'paths' => [
+            'application' => [__DIR__ . '/../view/application'],
         ],
     ],
 
