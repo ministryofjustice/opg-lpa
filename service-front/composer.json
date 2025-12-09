@@ -25,6 +25,7 @@
         "laminas/laminas-mvc": "^3.2",
         "laminas/laminas-mvc-middleware": "2.5",
         "laminas/laminas-session": "^2.12.0",
+        "mezzio/mezzio-helpers": "^5.20",
         "mezzio/mezzio-session": "^1.17",
         "mezzio/mezzio-session-ext": "^1.21",
         "mezzio/mezzio-twigrenderer": "^2.18",
