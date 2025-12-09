@@ -6,10 +6,16 @@ namespace App;
 
 use App\Logging\LoggingErrorListenerDelegatorFactory;
 use Laminas\Stratigility\Middleware\ErrorHandler;
+use MakeShared\Logging\LoggerFactory;
+use MakeShared\Logging\LoggerRequestContextMiddleware;
+use MakeShared\Logging\LoggerRequestContextMiddlewareFactory;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Session\Ext\PhpSessionPersistence;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Session\SessionPersistenceInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * The configuration provider for the App module
@@ -74,27 +80,31 @@ class ConfigProvider
                 SessionMiddleware::class => function ($c) {
                     return new SessionMiddleware($c->get(SessionPersistenceInterface::class));
                 },
+
                 //  Middleware
-                Middleware\Session\JwtMiddleware::class =>
-                    Middleware\Session\JwtMiddlewareFactory::class,
-                Middleware\Authorization\AuthorizationMiddleware::class =>
-                    Middleware\Authorization\AuthorizationMiddlewareFactory::class,
-                Middleware\Session\SessionMiddleware::class =>
-                    Middleware\Session\SessionMiddlewareFactory::class,
-                Middleware\ViewData\ViewDataMiddleware::class =>
-                    Middleware\ViewData\ViewDataMiddlewareFactory::class,
+                Middleware\Session\JwtMiddleware::class => Middleware\Session\JwtMiddlewareFactory::class,
+                Middleware\Authorization\AuthorizationMiddleware::class => Middleware\Authorization\AuthorizationMiddlewareFactory::class,
+                Middleware\Session\SessionMiddleware::class => Middleware\Session\SessionMiddlewareFactory::class,
+                Middleware\ViewData\ViewDataMiddleware::class => Middleware\ViewData\ViewDataMiddlewareFactory::class,
+                LoggerInterface::class => LoggerFactory::class,
+                LoggerRequestContextMiddleware::class => LoggerRequestContextMiddlewareFactory::class,
 
                 //  Services
                 Service\Cache\Cache::class  => Service\Cache\CacheFactory::class,
                 Service\ApiClient\Client::class => Service\ApiClient\ClientFactory::class,
-                Service\Authentication\AuthenticationService::class =>
-                    Service\Authentication\AuthenticationServiceFactory::class,
+                Service\Authentication\AuthenticationService::class => Service\Authentication\AuthenticationServiceFactory::class,
                 Service\Feedback\FeedbackService::class => Service\Feedback\FeedbackServiceFactory::class,
                 Service\User\UserService::class => Service\User\UserServiceFactory::class,
+
             ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,
                 Handler\Initializers\UrlHelperInitializer::class,
+                function (ContainerInterface $container, $instance) {
+                    if ($instance instanceof LoggerAwareInterface) {
+                        $instance->setLogger($container->get(LoggerInterface::class));
+                    }
+                }
             ],
             'delegators' => [
                 ErrorHandler::class => [

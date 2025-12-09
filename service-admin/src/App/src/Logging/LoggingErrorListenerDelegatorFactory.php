@@ -4,23 +4,18 @@ namespace App\Logging;
 
 use Psr\Container\ContainerInterface;
 use Laminas\Stratigility\Middleware\ErrorHandler;
+use Psr\Log\LoggerInterface;
 
-/**
- * Class LoggingErrorListenerDelegatorFactory
- * @package App\Logging
- */
 class LoggingErrorListenerDelegatorFactory
 {
-    /**
-     * @param ContainerInterface $_1 (unused)
-     * @param callable $callback
-     * @return ErrorHandler
-     */
-    public function __invoke(ContainerInterface $_1, string $_2, callable $callback): ErrorHandler
+    public function __invoke(ContainerInterface $container, string $_2, callable $callback): ErrorHandler
     {
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $callback();
-        $errorHandler->attachListener(new LoggingErrorListener());
+        $listener     = new LoggingErrorListener();
+        $listener->setLogger($container->get(LoggerInterface::class));
+
+        $errorHandler->attachListener($listener);
 
         return $errorHandler;
     }
