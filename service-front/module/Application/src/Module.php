@@ -299,11 +299,11 @@ class Module implements FormElementProviderInterface
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
                 PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
-                AppFiltersExtension::class => function () {
-                    return new AppFiltersExtension();
+                AppFiltersExtension::class => function ($sm) {
+                    return new AppFiltersExtension($sm->get('config'));
                 },
-                AppFunctionsExtension::class => function () {
-                    return new AppFunctionsExtension();
+                AppFunctionsExtension::class => function ($sm) {
+                    return new AppFunctionsExtension($sm->get('config'));
                 },
                 LoggerInterface::class => LoggerFactory::class,
             ], // factories
