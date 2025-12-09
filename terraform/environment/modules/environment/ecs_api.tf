@@ -272,7 +272,7 @@ locals {
       essential              = true,
       readonlyRootFilesystem = true,
       image                  = "${data.aws_ecr_repository.lpa_api_app.repository_url}@${data.aws_ecr_image.lpa_api_app.image_digest}",
-      name                   = "app",
+      name                   = "migrations",
       mountPoints = [
         {
           containerPath = "/tmp",
@@ -399,7 +399,7 @@ locals {
           condition     = "HEALTHY"
         },
         {
-          containerName = "app_migrations",
+          containerName = "migrations",
           condition     = "STOPPED"
         }
       ],
