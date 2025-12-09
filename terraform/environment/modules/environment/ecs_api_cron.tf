@@ -31,6 +31,8 @@ resource "aws_ecs_task_definition" "api_crons" {
   }
 }
 
+
+
 //------------------------------------------------
 // Account Cleanup Task
 
@@ -61,10 +63,10 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
 
   input = jsonencode(
     {
-      "containerOverrides" : [
+      containerOverrides = [
         {
-          "name" : "app",
-          "command" : ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"]
+          name    = "app",
+          command = ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"]
         }
       ]
   })
@@ -98,10 +100,10 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
 
   input = jsonencode(
     {
-      "containerOverrides" : [
+      containerOverrides = [
         {
-          "name" : "app",
-          "command" : ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"]
+          name    = "app",
+          command = ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"]
         }
       ]
   })

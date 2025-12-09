@@ -131,7 +131,7 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.api_migrations}, ${local.pgbouncer}]"
+  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.migrations}, ${local.pgbouncer}]"
   task_role_arn            = var.ecs_iam_task_roles.api.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.api_component_tag
@@ -266,10 +266,10 @@ locals {
     }
   )
 
-  api_migrations = jsonencode(
+  migrations = jsonencode(
     {
       cpu                    = 1,
-      essential              = true,
+      essential              = false,
       readonlyRootFilesystem = true,
       image                  = "${data.aws_ecr_repository.lpa_api_app.repository_url}@${data.aws_ecr_image.lpa_api_app.image_digest}",
       name                   = "migrations",
@@ -294,12 +294,7 @@ locals {
         timeout     = 15,
         retries     = 3
       },
-      containerOverrides = [
-        {
-          name    = "migrations",
-          command = ["/bin/sh", "-c", "/usr/local/bin/db-migrations.sh"]
-        }
-      ],
+      command     = ["/bin/sh", "-c", "/usr/local/bin/db-migrations.sh"]
       volumesFrom = [],
       logConfiguration = {
         logDriver = "awslogs",
@@ -378,12 +373,7 @@ locals {
         timeout     = 15,
         retries     = 3
       },
-      containerOverrides = [
-        {
-          name    = "migrations",
-          command = ["php-fpm"]
-        }
-      ],
+      command     = ["php-fpm"]
       volumesFrom = [],
       logConfiguration = {
         logDriver = "awslogs",
@@ -400,7 +390,7 @@ locals {
         },
         {
           containerName = "migrations",
-          condition     = "STOPPED"
+          condition     = "SUCCESS"
         }
       ],
       secrets = [
