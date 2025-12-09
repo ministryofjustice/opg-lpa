@@ -6,7 +6,7 @@ The trick to safe schema changes is splitting them into multiple releases, and r
 
 ## Adding a new field or entity
 
-You can generally add a new field or entity in a single release. The migration will be applied whilst the old container is running, but Doctrine won't baulk at the new field. Once the new container is released, it will start using the new field.
+You can generally add a new field or entity in a single release. The migration will be applied whilst the old container is running. Once the new container is released, it will start using the new field.
 
 ## Deleting a field
 
