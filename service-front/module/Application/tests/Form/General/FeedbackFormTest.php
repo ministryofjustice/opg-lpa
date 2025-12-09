@@ -71,6 +71,9 @@ final class FeedbackFormTest extends MockeryTestCase
             'details' => [
                 'stringLengthTooLong' => 'max-2000-chars'
             ],
+            'phone' => [
+                'notPhone' => 'Enter a valid phone number'
+            ],
         ], $this->form->getMessages());
     }
 }
