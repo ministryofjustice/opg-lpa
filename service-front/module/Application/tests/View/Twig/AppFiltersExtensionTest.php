@@ -45,6 +45,6 @@ final class AppFiltersExtensionTest extends TestCase
 
     public function testAssetPath(): void
     {
-        $this->assertSame('assets/v2/testpath', $this->extension->assetPath('testpath'));
+        $this->assertSame('/assets/v2/testpath', $this->extension->assetPath('/assets/testpath'));
     }
 }
