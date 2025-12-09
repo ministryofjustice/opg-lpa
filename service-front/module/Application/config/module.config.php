@@ -9,12 +9,7 @@
  */
 
 use Mezzio\Template\TemplateRendererInterface;
-use Mezzio\Twig\TwigEnvironmentFactory;
-use Mezzio\Twig\TwigExtension;
-use Mezzio\Twig\TwigExtensionFactory;
 use Mezzio\Twig\TwigRenderer;
-use Mezzio\Twig\TwigRendererFactory;
-use Twig\Environment;
 
 return [
 
