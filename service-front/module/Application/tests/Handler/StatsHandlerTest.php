@@ -2,53 +2,45 @@
 
 declare(strict_types=1);
 
-namespace ApplicationTest\Controller\General;
+namespace ApplicationTest\Handler;
 
-use Application\Controller\General\StatsController;
+use Application\Handler\StatsHandler;
 use Application\Model\Service\Stats\Stats as StatsService;
-use ApplicationTest\Controller\AbstractControllerTestCase;
 use DateTime;
-use Laminas\View\Model\ViewModel;
+use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\ServerRequest;
+use Mezzio\Template\TemplateRendererInterface;
 use Mockery;
-use Mockery\MockInterface;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-final class StatsControllerTest extends AbstractControllerTestCase
+final class StatsHandlerTest extends MockeryTestCase
 {
-    private MockInterface|StatsService $statsService;
-
-    public function setUp(): void
+    public function testHandle(): void
     {
-        parent::setUp();
+        $statsService = Mockery::mock(StatsService::class);
+        $statsService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
 
-        $this->statsService = Mockery::mock(StatsService::class);
-        $this->statsService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
-    }
+        $twigRenderer = Mockery::mock(TemplateRendererInterface::class);
 
-    protected function getController(string $controllerName)
-    {
-        /** @var StatsController $controller */
-        $controller = parent::getController($controllerName);
+        $twigRenderer
+            ->shouldReceive('render')
+            ->once()
+            ->with(
+                'application/general/stats',
+                ['generated' => '01/02/2017 14:22:11',
+                'lpas' => $this->getLpaStats(),
+                'who' => $this->getWhoAreYouStats(),
+                'users' => $this->getAuthStats(),
+                'correspondence' => $this->getCorrespondenceStats(),
+                'preferencesInstructions' => $this->getPreferencesInstructionsStats(),
+                ]
+            )
+            ->andReturn('<html>stats page</html>');
 
-        $controller->setStatsService($this->statsService);
+        $handler = new StatsHandler($statsService, $twigRenderer);
+        $result = $handler->handle(new ServerRequest());
 
-        return $controller;
-    }
-
-    public function testIndexAction(): void
-    {
-        /** @var StatsController $controller */
-        $controller = $this->getController(StatsController::class);
-
-        /** @var ViewModel $result */
-        $result = $controller->indexAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->getLpaStats(), $result->getVariable('lpas'));
-        $this->assertEquals($this->getWhoAreYouStats(), $result->getVariable('who'));
-        $this->assertEquals($this->getAuthStats(), $result->getVariable('users'));
-        $this->assertEquals($this->getCorrespondenceStats(), $result->getVariable('correspondence'));
-        $this->assertEquals($this->getPreferencesInstructionsStats(), $result->getVariable('preferencesInstructions'));
+        $this->assertInstanceOf(HtmlResponse::class, $result);
     }
 
     private function getApiStats(): array

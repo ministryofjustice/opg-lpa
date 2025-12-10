@@ -86,8 +86,8 @@ return [
                 'options' => [
                     'route'    => '/cookies',
                     'defaults' => [
-                        'controller' => 'General\CookiesController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\CookiesHandler::class,
                     ],
                 ],
             ], // contact
@@ -279,8 +279,8 @@ return [
                 'options' => [
                     'route'    => '/stats',
                     'defaults' => [
-                        'controller' => 'General\StatsController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\StatsHandler::class,
                     ],
                 ],
             ], // stats

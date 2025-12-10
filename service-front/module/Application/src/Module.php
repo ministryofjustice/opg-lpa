@@ -5,12 +5,16 @@ namespace Application;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
+use Application\Handler\CookiesHandler;
+use Application\Handler\CookiesHandlerFactory;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerFactory;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
+use Application\Handler\StatsHandler;
+use Application\Handler\StatsHandlerFactory;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
@@ -306,6 +310,7 @@ class Module implements FormElementProviderInterface
                     return new AppFunctionsExtension($sm->get('config'));
                 },
                 LoggerInterface::class => LoggerFactory::class,
+                CookiesHandler::class     => CookiesHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
