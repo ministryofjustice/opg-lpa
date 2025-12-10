@@ -80,7 +80,7 @@ abstract class AbstractEmailService extends AbstractService
 
     /**
      * Format an LPA ID using the helper
-     * @param string $lpaId
+     * @param int $lpaId
      * @return string Formatted LPA ID
      */
     public function formatLpaId($lpaId)
