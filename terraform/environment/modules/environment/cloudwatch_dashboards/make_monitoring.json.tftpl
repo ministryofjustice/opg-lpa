@@ -11,7 +11,6 @@
                     [ "AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "${app_loadbalancer_name}", { "region": "${region}" } ]
                 ],
                 "view": "singleValue",
-                "stacked": true,
                 "region": "${region}",
                 "period": 300,
                 "stat": "Average"
@@ -45,7 +44,7 @@
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, ${app_loadbalancer_name}} MetricName=\"ActiveConnectionCount\" ', 'Sum', 300)" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"ActiveConnectionCount\"', 'Sum', 300)" } ]
                 ],
                 "legend": {
                     "position": "bottom"
@@ -58,7 +57,7 @@
                 "stacked": false
             }
         },
-        {
+       {
             "type": "metric",
             "x": 11,
             "y": 0,
@@ -100,7 +99,28 @@
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, ${app_loadbalancer_name}} MetricName=\"RequestCount\" ', 'Sum', 300)" } ]
+                    [ { "expression":"SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"RequestCount\" ', 'Sum', 300)" } ]
+                ],
+                "legend": {
+                    "position": "bottom"
+                },
+                "title": "RequestCount: Sum",
+                "region": "eu-west-1",
+                "liveData": false,
+                "timezone": "UTC",
+                "view": "timeSeries",
+                "stacked": true
+            }
+        },
+        {
+            "type": "metric",
+            "x": 17,
+            "y": 0,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"RequestCount\"', 'Sum', 300)" } ]
                 ],
                 "legend": {
                     "position": "bottom"
