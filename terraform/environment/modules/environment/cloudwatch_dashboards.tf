@@ -12,9 +12,9 @@ locals {
 }
 
 resource "aws_cloudwatch_dashboard" "monitoring" {
-  dashboard_name = "${data.aws_default_tags.current.tags.environment-name}-make_monitoring"
+  dashboard_name = "${data.aws_default_tags.current.tags.environment-name}-monitoring-dashboard"
   dashboard_body = templatefile(
-    "${path.module}/cloudwatch_dashboards/make_monitoring.json.tftpl",
+    "${path.module}/cloudwatch_dashboards/monitoring_dashboard.json.tftpl",
     local.monitoring_template_vars
   )
 }
