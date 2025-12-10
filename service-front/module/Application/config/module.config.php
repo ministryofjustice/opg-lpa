@@ -8,6 +8,9 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+use Mezzio\Template\TemplateRendererInterface;
+use Mezzio\Twig\TwigRenderer;
+
 return [
 
     /* ------------------------------------------------------------- */
@@ -38,6 +41,7 @@ return [
             'SiteStatus'                    => 'Application\Model\Service\System\Status',
             'StatsService'                  => 'Application\Model\Service\Stats\Stats',
             'UserService'                   => 'Application\Model\Service\User\Details',
+            TemplateRendererInterface::class => TwigRenderer::class,
         ],
     ],
 
@@ -62,6 +66,12 @@ return [
         ],
     ],
 
+    'templates' => [
+        'paths' => [
+            'application' => [__DIR__ . '/../view/application'],
+        ],
+    ],
+
     'email_view_manager' => [
         'template_path_stack' => [
             'emails' => __DIR__ . '/../view/email',
@@ -74,12 +84,9 @@ return [
             'formErrorTextExchange' => 'Application\View\Helper\FormErrorTextExchange',
             'concatNames'           => 'Application\View\Helper\ConcatNames',
             'formatLpaId'           => 'Application\View\Helper\FormatLpaId',
-            'ordinalSuffix'         => 'Application\View\Helper\OrdinalSuffix',
-            'applicantNames'        => 'Application\View\Helper\ApplicantNames',
             'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
             'formCheckbox'          => 'Application\Form\View\Helper\FormMultiCheckbox',
-            'finalCheckAccessible'  => 'Application\View\Helper\FinalCheckAccessible',
             // below helper has been raised with laminas-form for an upstream change
             // https://github.com/laminas/laminas-form/issues/78
             'formtext'              => 'Application\Form\View\Helper\FormText',
@@ -92,5 +99,11 @@ return [
             'systemMessage'         => 'Application\View\Helper\SystemMessageFactory',
         ],
     ],
+
+    'templates' => [
+        'paths' => [
+            'application' => [__DIR__ . '/../view/application'],
+        ],
+    ]
 
 ];

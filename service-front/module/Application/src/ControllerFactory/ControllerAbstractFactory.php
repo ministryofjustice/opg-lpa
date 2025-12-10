@@ -16,7 +16,6 @@ use Application\Controller\General\FeedbackController;
 use Application\Controller\General\ForgotPasswordController;
 use Application\Controller\General\GuidanceController;
 use Application\Controller\General\RegisterController;
-use Application\Controller\General\StatsController;
 use Application\Controller\General\VerifyEmailAddressController;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
@@ -76,9 +75,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         ReuseDetailsController::class => [
             'setRouter' => 'Router'
-        ],
-        StatsController::class => [
-            'setStatsService' => 'StatsService',
         ],
         VerifyEmailAddressController::class => [
             'setUserService' => 'UserService'

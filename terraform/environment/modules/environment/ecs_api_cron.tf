@@ -14,24 +14,6 @@ resource "aws_cloudwatch_event_rule" "mid_morning" {
 }
 
 //------------------------------------------------
-// Task definition for Cron
-
-resource "aws_ecs_task_definition" "api_crons" {
-  family                   = "${terraform.workspace}-api-crons"
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  cpu                      = 512
-  memory                   = 1024
-  container_definitions    = "[${local.api_app}, ${local.pgbouncer}]"
-  task_role_arn            = var.ecs_iam_task_roles.api.arn
-  execution_role_arn       = var.ecs_execution_role.arn
-  tags                     = local.api_component_tag
-  volume {
-    name = "app_tmp"
-  }
-}
-
-//------------------------------------------------
 // Account Cleanup Task
 
 resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
@@ -61,10 +43,10 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
 
   input = jsonencode(
     {
-      "containerOverrides" : [
+      containerOverrides = [
         {
-          "name" : "app",
-          "command" : ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"]
+          name    = "app",
+          command = ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"]
         }
       ]
   })
@@ -98,10 +80,10 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
 
   input = jsonencode(
     {
-      "containerOverrides" : [
+      containerOverrides = [
         {
-          "name" : "app",
-          "command" : ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"]
+          name    = "app",
+          command = ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"]
         }
       ]
   })
