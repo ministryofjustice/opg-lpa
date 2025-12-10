@@ -67,10 +67,10 @@ class Formatter
      *
      * For example: 'A000 1234 5678'
      *
-     * @param string $value The LPA's id.
+     * @param int $value The LPA's id.
      * @return string The formatted value.
      */
-    public static function id(string $value)
+    public static function id($value)
     {
         if (!is_int($value)) {
             throw new InvalidArgumentException('The passed value must be an integer.');
