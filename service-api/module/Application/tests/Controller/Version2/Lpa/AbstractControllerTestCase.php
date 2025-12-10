@@ -4,6 +4,7 @@ namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\Version2\Lpa\AbstractLpaController;
 use Application\Model\Service\EntityInterface;
+use Laminas\Http\Header\GenericHeader;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -47,6 +48,11 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      * @var MvcEvent|MockInterface
      */
     protected $mvcEvent;
+
+    /**
+     * @var Request|MockInterface
+     */
+    protected $request;
 
     public function setUp(): void
     {
@@ -136,6 +142,9 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
 
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('getQuery')->andReturn($params);
+        $request->shouldReceive('getHeader')
+            ->with('X-Trace-Id')
+            ->andReturn(new GenericHeader('X-Trace-Id', 'trace-id-123'));
 
         $abstractController->dispatch($request);
     }

@@ -1,0 +1,3 @@
+from lpaapi import *
+
+getStats()

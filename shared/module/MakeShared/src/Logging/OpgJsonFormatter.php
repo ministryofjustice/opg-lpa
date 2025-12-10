@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakeShared\Logging;
 
+use MakeShared\Constants;
 use Monolog\Formatter\NormalizerFormatter;
 use Monolog\LogRecord;
 
@@ -26,9 +27,9 @@ class OpgJsonFormatter extends NormalizerFormatter
             'service_name' => $original['channel'],
         ];
 
-        if (isset($original['extra']['trace_id'])) {
-            $record['trace_id'] = $original['extra']['trace_id'];
-            unset($original['extra']['trace_id']);
+        if (isset($original['extra'][Constants::TRACE_ID_FIELD_NAME])) {
+            $record[Constants::TRACE_ID_FIELD_NAME] = $original['extra'][Constants::TRACE_ID_FIELD_NAME];
+            unset($original['extra'][Constants::TRACE_ID_FIELD_NAME]);
         }
 
         if ($this->requestMethod !== null || $this->requestPath !== null) {

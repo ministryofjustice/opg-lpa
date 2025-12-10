@@ -31,6 +31,9 @@ resource "aws_ecs_service" "api" {
       desired_count
     ]
   }
+  depends_on = [
+    data.aws_ecs_task_execution.migrations,
+  ]
 
   tags = local.api_component_tag
 }
@@ -294,6 +297,7 @@ locals {
         timeout     = 15,
         retries     = 3
       },
+      command     = ["php-fpm"]
       volumesFrom = [],
       logConfiguration = {
         logDriver = "awslogs",

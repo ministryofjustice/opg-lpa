@@ -7,6 +7,7 @@
 declare(strict_types=1);
 
 use App\Middleware;
+use MakeShared\Logging\LoggerRequestContextMiddleware;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Session\SessionMiddleware;
 use Psr\Container\ContainerInterface;
@@ -45,6 +46,9 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // - $app->pipe('/api', $apiMiddleware);
     // - $app->pipe('/docs', $apiDocMiddleware);
     // - $app->pipe('/files', $filesMiddleware);
+
+    // Adds request context to the logger
+    $app->pipe(LoggerRequestContextMiddleware::class);
 
     $app->pipe(SessionMiddleware::class);
     $app->pipe(FlashMessageMiddleware::class);

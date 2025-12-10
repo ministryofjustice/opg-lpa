@@ -44,16 +44,17 @@ use InvalidArgumentException;
 use Exception;
 use Firebase\JWT\Key;
 use Firebase\JWT\JWT;
-use App\Logging\LoggerTrait;
 use Laminas\Http\Response;
+use MakeShared\Logging\LoggerTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 use GuzzleHttp\Psr7\HttpFactory;
 
-final class JwtMiddleware implements MiddlewareInterface
+final class JwtMiddleware implements MiddlewareInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 

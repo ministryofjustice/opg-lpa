@@ -2,15 +2,17 @@
 
 namespace App\Logging;
 
+use MakeShared\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerAwareInterface;
 use Throwable;
 
 /**
  * Class LoggingErrorListener
  * @package App\Logging
  */
-class LoggingErrorListener
+class LoggingErrorListener implements LoggerAwareInterface
 {
     use LoggerTrait;
 
