@@ -16,7 +16,7 @@ final class AppFiltersExtensionTest extends TestCase
     {
         parent::setUp();
         $this->config = [];
-        $this->config['version']['cache'] = 'v2';
+        $this->config['version']['cache'] = '12345678';
         $this->extension = new AppFiltersExtension($this->config);
     }
 
@@ -45,6 +45,6 @@ final class AppFiltersExtensionTest extends TestCase
 
     public function testAssetPath(): void
     {
-        $this->assertSame('/assets/v2/testpath', $this->extension->assetPath('/assets/testpath'));
+        $this->assertSame('/assets/12345678/testpath', $this->extension->assetPath('/assets/testpath'));
     }
 }

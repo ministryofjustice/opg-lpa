@@ -7,12 +7,12 @@
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DY4BCL021L"></script>
 
-    <link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template.css', { 'minify':true } ) }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ '/assets/v2/css/govuk-template.css' | asset_path({ 'minify':true }) }}" rel="stylesheet" type="text/css"/>
 
 
-    <link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template-print.css', { 'minify':true } ) }}" media="print" rel="stylesheet" type="text/css" />
+    <link href="{{ '/assets/v2/css/govuk-template-print.css' | asset_path({ 'minify':true }) }}" media="print" rel="stylesheet" type="text/css" />
 
-    <link href="{{ StaticAssetPath( '/assets/v2/css/govuk-frontend.min.css' ) }}" media="all" rel="stylesheet" type="text/css" />
+    <link href="{{ '/assets/v2/css/govuk-frontend.min.css'  | asset_path({ 'minify':true }) }}" media="all" rel="stylesheet" type="text/css" />
 
     <link rel="shortcut icon" href="/assets/v2/images/favicon.ico" type="image/x-icon" />
     <!-- For third-generation iPad with high-resolution Retina display: -->
@@ -31,10 +31,10 @@
     <meta content="/browse/family" name="x-section-link">
     <meta content="local_transaction" name="x-section-format">
 
-    <link href="{{ StaticAssetPath( '/assets/v2/css/application.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" />
+    <link href="{{ '/assets/v2/css/application.css' | asset_path({ 'minify':true }) }}" media="screen" rel="stylesheet" type="text/css" />
 
     <!-- LPA Print styles -->
-    <link href="{{ StaticAssetPath( '/assets/v2/css/print.css', { 'minify':true } ) }}" media="print" rel="stylesheet" type="text/css" />
+    <link href="{{ '/assets/v2/css/print.css' | asset_path({ 'minify':true }) }}" media="print" rel="stylesheet" type="text/css" />
 </head>
 <body class="govuk-template__body govuk-frontend-supported">
     <div id="skiplink-container">
@@ -265,7 +265,7 @@
 
     <script src="/assets/v2/js/libs/jquery.min.js"></script>
     <script type="module" src='/assets/v2/js/govuk-init.js'></script>
-    <script src="{{ StaticAssetPath( '/assets/v2/js/application.js', { 'minify':true } ) }}"></script>
+    <script src="{{ '/assets/v2/js/application.js' | asset_path({ 'minify':true }) }}"></script>
     {% include 'layout/partials/timeout.twig' %}
 
     {% block scripts %}{% endblock %}
