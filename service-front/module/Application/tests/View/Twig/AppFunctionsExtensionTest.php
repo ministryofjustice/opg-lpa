@@ -16,7 +16,7 @@ final class AppFunctionsExtensionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->extension = new AppFunctionsExtension();
+        $this->extension = new AppFunctionsExtension([]);
     }
 
     public function testRegistersApplicantNamesFunction(): void
@@ -86,7 +86,7 @@ final class AppFunctionsExtensionTest extends TestCase
 
         $expected = FormFlowChecker::isFinalCheckAccessible($lpa);
 
-        $extension = new AppFunctionsExtension();
+        $extension = new AppFunctionsExtension([]);
         $actual = $extension->finalCheckAccessible($lpa);
 
         $this->assertSame($expected, $actual);

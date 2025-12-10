@@ -15,7 +15,9 @@ final class AppFiltersExtensionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->extension = new AppFiltersExtension();
+        $this->config = [];
+        $this->config['version']['cache'] = '12345678';
+        $this->extension = new AppFiltersExtension($this->config);
     }
 
     public function testRegistersOrdinalSuffixFilter(): void
@@ -39,5 +41,10 @@ final class AppFiltersExtensionTest extends TestCase
         $this->assertSame('3rd', $this->extension->ordinalSuffix(3));
         $this->assertSame('4th', $this->extension->ordinalSuffix(4));
         $this->assertSame('121st', $this->extension->ordinalSuffix(121));
+    }
+
+    public function testAssetPath(): void
+    {
+        $this->assertSame('/assets/12345678/testpath', $this->extension->assetPath('/assets/testpath'));
     }
 }
