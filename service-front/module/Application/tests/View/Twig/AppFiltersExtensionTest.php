@@ -47,4 +47,33 @@ final class AppFiltersExtensionTest extends TestCase
     {
         $this->assertSame('/assets/12345678/testpath', $this->extension->assetPath('/assets/testpath'));
     }
+
+    public function testConcatListOfNamesReturnsNullForEmptyList(): void
+    {
+        $result = $this->extension->concatListOfNames([]);
+
+        $this->assertNull($result);
+    }
+
+    public function testConcatListOfNamesReturnsSingleName(): void
+    {
+        $actor = (object) ['name' => 'Alice Smith'];
+
+        $result = $this->extension->concatListOfNames([$actor]);
+
+        $this->assertSame('Alice Smith', $result);
+    }
+
+    public function testConcatListOfNamesReturnsCommaSeparatedListWithAnd(): void
+    {
+        $actors = [
+            (object) ['name' => 'Alice Smith'],
+            (object) ['name' => 'Bob Jones'],
+            (object) ['name' => 'Charlie Brown'],
+        ];
+
+        $result = $this->extension->concatListOfNames($actors);
+
+        $this->assertSame('Alice Smith, Bob Jones and Charlie Brown', $result);
+    }
 }
