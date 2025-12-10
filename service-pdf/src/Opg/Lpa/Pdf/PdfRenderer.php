@@ -71,15 +71,15 @@ class PdfRenderer implements LoggerAwareInterface
             return;
         }
 
-         if (!isset($assetsConfig['intermediate_file_path'])) {
+        if (!isset($assetsConfig['intermediate_file_path'])) {
             $this->getLogger()->error('intermediate_file_path not set in config');
             return;
         }
 
         //create folder for pdf_cache
-        if(!is_dir($assetsConfig['intermediate_file_path'])){
+        if (!is_dir($assetsConfig['intermediate_file_path'])) {
             mkdir($assetsConfig['intermediate_file_path']);
-        }   
+        }
 
         $this->inited = true;
     }
