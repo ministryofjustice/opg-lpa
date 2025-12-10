@@ -8,9 +8,11 @@
             "height": 5,
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "${app_loadbalancer_name}", { "region": "${region}" } ],
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer",  "${app_loadbalancer_name}", "region", "${region}" ],
+                    [ "AWS/HealthLake", "Latency", "Operation", "ListFHIRDatastores" ]
                 ],
                 "view": "singleValue",
+                "stacked": true,
                 "region": "${region}",
                 "period": 300,
                 "stat": "Average"
@@ -44,7 +46,7 @@
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"ActiveConnectionCount\"', 'Sum', 300)" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"ActiveConnectionCount\" ', 'Sum', 300)" } ]
                 ],
                 "legend": {
                     "position": "bottom"
@@ -57,7 +59,7 @@
                 "stacked": false
             }
         },
-       {
+        {
             "type": "metric",
             "x": 11,
             "y": 0,
@@ -65,13 +67,15 @@
             "height": 6,
             "properties": {
                 "region": "${region}",
+                "ClusterName": "${cluster_name}",
+                "ServiceName": "${service_name}",
                 "title": "Top Services per CPU Utilization",
                 "legend": {
                     "position": "right"
                 },
                 "timezone": "LOCAL",
                 "metrics": [
-                    [ { "expression": "SELECT AVG(CPUUtilization) FROM SCHEMA(\"AWS/ECS\", ${cluster_name}, ${service_name})  GROUP BY ${cluster_name}, ${service_name} ORDER BY AVG() DESC LIMIT 10" } ]
+                    [ { "expression": "SELECT AVG(CPUUtilization) FROM SCHEMA(\"AWS/ECS\", ClusterName, ServiceName)  GROUP BY ClusterName, ServiceName ORDER BY AVG() DESC LIMIT 10" } ]
                 ],
                 "liveData": false,
                 "period": 60,
@@ -99,34 +103,13 @@
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ { "expression":"SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"RequestCount\" ', 'Sum', 300)" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"RequestCount\" ', 'Sum', 300)" } ]
                 ],
                 "legend": {
                     "position": "bottom"
                 },
                 "title": "RequestCount: Sum",
                 "region": "eu-west-1",
-                "liveData": false,
-                "timezone": "UTC",
-                "view": "timeSeries",
-                "stacked": true
-            }
-        },
-        {
-            "type": "metric",
-            "x": 17,
-            "y": 0,
-            "width": 6,
-            "height": 6,
-            "properties": {
-                "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"RequestCount\"', 'Sum', 300)" } ]
-                ],
-                "legend": {
-                    "position": "bottom"
-                },
-                "title": "RequestCount: Sum",
-                "region": "${region}",
                 "liveData": false,
                 "timezone": "UTC",
                 "view": "timeSeries",
