@@ -122,6 +122,6 @@
 
 {% block scripts %}
     {% if trackingEnabled %}
-    <script src="{{ StaticAssetPath( '/assets/v2/js/opg/dashboard-statuses.js', { 'minify':true } ) }}"></script>
+    <script src="{{ '/assets/v2/js/opg/dashboard-statuses.js' | asset_path({ 'minify':true }) }}"></script>
     {% endif %}
 {% endblock %}

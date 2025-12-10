@@ -291,6 +291,6 @@
 
 {{ form().closeTag|raw }}
 
-<script src="{{ StaticAssetPath( '/assets/v2/js/opg/init-polyfill.js', { 'minify':true } ) }}"></script>
+<script src="{{ '/assets/v2/js/opg/init-polyfill.js' | asset_path({ 'minify':true }) }}"></script>
 
 {% endblock %}
