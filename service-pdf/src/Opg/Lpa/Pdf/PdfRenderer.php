@@ -29,15 +29,14 @@ class PdfRenderer implements LoggerAwareInterface
      * [
      *     'service' => [
      *         'assets' => [
-     *             'source_template_path' => 'source dir for PDF templates',
-     *             'template_path_on_ram_disk' => 'destination dir for PDF templates',
+     *             'template_path' => 'destination dir for PDF templates',
      *             'intermediate_file_path' => 'destination dir for generated PDFs'
      *         ],
      *     ]
      * ]
      *
-     * Note that source_template_path and template_path_on_ram_disk
-     * are used to set up the templates for PDF generation, while the other
+     * Note that template_path
+     * is used to set up the templates for PDF generation, while the other
      * variables are used by PDF class generate() methods.
      *
      * @param ?PdftkFactory $pdftkFactory
@@ -56,8 +55,8 @@ class PdfRenderer implements LoggerAwareInterface
      * Copy PDF templates from source path to target path.
      *
      * @param array $assetsConfig Array containing two keys:
-     *     source_template_path - Source path of PDF templates
-     *     template_path_on_ram_disk - Destination path for PDF templates
+     *     template_path - Location path for PDF templates
+     *     intermediate_file_path - cache location for generated pdfs
      * The file names required to render the individual PDFs are stored
      * in the Opg\Lpa\Pdf\Lp*.php classes.
      */
@@ -67,40 +66,20 @@ class PdfRenderer implements LoggerAwareInterface
             return;
         }
 
-        if (!isset($assetsConfig['source_template_path'])) {
-            $this->getLogger()->error('source_template_path not set in config');
+        if (!isset($assetsConfig['template_path'])) {
+            $this->getLogger()->error('template_path not set in config');
             return;
         }
 
-        if (!isset($assetsConfig['template_path_on_ram_disk'])) {
-            $this->getLogger()->error('template_path_on_ram_disk not set in config');
+         if (!isset($assetsConfig['intermediate_file_path'])) {
+            $this->getLogger()->error('intermediate_file_path not set in config');
             return;
         }
 
-        // Copy LPA PDF template files into ram disk if they are not found
-        $templatePathOnDisk = $assetsConfig['template_path_on_ram_disk'];
-
-        if (!file_exists($templatePathOnDisk)) {
-            $this->getLogger()->info('Making template path on RAM disk', [
-                'path' => $templatePathOnDisk,
-            ]);
-
-            mkdir($templatePathOnDisk, 0777, true);
-        }
-
-        foreach (glob($assetsConfig['source_template_path'] . '/*.pdf') as $pdfSource) {
-            $pathInfo = pathinfo($pdfSource);
-
-            if (!file_exists($templatePathOnDisk . '/' . $pathInfo['basename'])) {
-                $dest = $templatePathOnDisk . '/' . $pathInfo['basename'];
-
-                $this->getLogger()->info('Copying PDF source to RAM disk', [
-                    'destination' => $dest,
-                ]);
-
-                copy($pdfSource, $dest);
-            }
-        }
+        //create folder for pdf_cache
+        if(!is_dir($assetsConfig['intermediate_file_path'])){
+            mkdir($assetsConfig['intermediate_file_path']);
+        }   
 
         $this->inited = true;
     }
