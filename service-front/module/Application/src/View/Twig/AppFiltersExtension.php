@@ -9,10 +9,16 @@ use Twig\TwigFilter;
 
 class AppFiltersExtension extends AbstractExtension
 {
+    public function __construct(
+        private readonly array $config,
+    ) {
+    }
+
     public function getFilters(): array
     {
         return [
             new TwigFilter('ordinal_suffix', [$this, 'ordinalSuffix']),
+            new TwigFilter('asset_path', [$this, 'assetPath']),
         ];
     }
 
@@ -32,5 +38,18 @@ class AppFiltersExtension extends AbstractExtension
         }
 
         return $number . 'th';
+    }
+
+    public function assetPath(string $path, array $options = []): string
+    {
+        $path = str_replace('/assets/', "/assets/{$this->config['version']['cache']}/", $path);
+
+        // Should '.min' be include before the file extension.
+        if (isset($options['minify']) && $options['minify'] === true) {
+            $lastDot = strrpos($path, '.');
+            $path = substr($path, 0, $lastDot) . '.min' . substr($path, $lastDot);
+        }
+
+        return $path;
     }
 }
