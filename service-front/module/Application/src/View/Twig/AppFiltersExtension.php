@@ -40,7 +40,7 @@ class AppFiltersExtension extends AbstractExtension
         return $number . 'th';
     }
 
-    public function assetPath($path, array $options = []): string
+    public function assetPath(string $path, array $options = []): string
     {
         $path = str_replace('/assets/', "/assets/{$this->config['version']['cache']}/", $path);
 
