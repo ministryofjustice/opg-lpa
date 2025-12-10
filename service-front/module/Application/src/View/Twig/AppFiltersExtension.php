@@ -55,7 +55,7 @@ class AppFiltersExtension extends AbstractExtension
         return $path;
     }
 
-    public function formatLpaId(string $id): string
+    public function formatLpaId(int $id): string
     {
         return Formatter::id($id);
     }

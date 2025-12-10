@@ -83,7 +83,7 @@ abstract class AbstractEmailService extends AbstractService
      * @param string $lpaId
      * @return string Formatted LPA ID
      */
-    public function formatLpaId($lpaId)
+    public function formatLpaId(int $lpaId)
     {
         return Formatter::id($lpaId);
     }
