@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Application\View\Twig;
 
+use Application\View\Helper\Traits\ConcatNamesTrait;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class AppFiltersExtension extends AbstractExtension
 {
+    use ConcatNamesTrait;
+
     public function __construct(
         private readonly array $config,
     ) {
@@ -19,6 +22,7 @@ class AppFiltersExtension extends AbstractExtension
         return [
             new TwigFilter('ordinal_suffix', [$this, 'ordinalSuffix']),
             new TwigFilter('asset_path', [$this, 'assetPath']),
+            new TwigFilter('concat_names', [$this, 'concatListOfNames']),
         ];
     }
 
@@ -51,5 +55,10 @@ class AppFiltersExtension extends AbstractExtension
         }
 
         return $path;
+    }
+
+    public function concatListOfNames(array $nameList): ?string
+    {
+        return $this->concatNames($nameList);
     }
 }
