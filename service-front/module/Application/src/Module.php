@@ -318,18 +318,6 @@ class Module implements FormElementProviderInterface
         ];
     }
 
-    public function getViewHelperConfig()
-    {
-        return [
-            'factories' => [
-                'StaticAssetPath' => function ($sm) {
-                    $config = $sm->get('Config');
-                    return new \Application\View\Helper\StaticAssetPath($config['version']['cache']);
-                },
-            ],
-        ];
-    }
-
     public function getConfig()
     {
         $configFiles = [
