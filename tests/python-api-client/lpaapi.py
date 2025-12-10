@@ -54,6 +54,13 @@ def deleteViaAPI(lpaId, jsonData, pathSuffix=""):
     r = s.delete(fullPath, headers=token)
     print(r, file=sys.stderr)
 
+def getStats():
+    token, userId = authenticate()
+    fullPath = f"{apiRoot}/stats/all"
+    r = s.get(fullPath, headers=token)
+    print(r, file=sys.stderr)
+    print(r.json(), file=sys.stderr)
+
 
 def searchUser(username, password):
     token, userId = authenticate()
