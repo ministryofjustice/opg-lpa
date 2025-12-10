@@ -1,6 +1,7 @@
 <?php
 
 use Application\Handler;
+use Application\Library\Http\GuzzleClientFactory;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Lmc\Rbac\Role\InMemoryRoleProvider;
@@ -485,6 +486,7 @@ return [
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
             LoggerInterface::class => LoggerFactory::class,
+            GuzzleHttp\Client::class => GuzzleClientFactory::class,
         ],
         'initializers' => [
             function (ServiceLocatorInterface $container, $instance) {
