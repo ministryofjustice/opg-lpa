@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\View\Twig;
 
+use MakeShared\DataModel\Lpa\Formatter;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -19,6 +20,7 @@ class AppFiltersExtension extends AbstractExtension
         return [
             new TwigFilter('ordinal_suffix', [$this, 'ordinalSuffix']),
             new TwigFilter('asset_path', [$this, 'assetPath']),
+            new TwigFilter('format_lpa_id', [$this, 'formatLpaId']),
         ];
     }
 
@@ -51,5 +53,10 @@ class AppFiltersExtension extends AbstractExtension
         }
 
         return $path;
+    }
+
+    public function formatLpaId(string $id): string
+    {
+        return Formatter::id($id);
     }
 }

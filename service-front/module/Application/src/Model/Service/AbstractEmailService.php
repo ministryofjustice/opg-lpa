@@ -5,6 +5,7 @@ namespace Application\Model\Service;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use Laminas\View\HelperPluginManager;
+use MakeShared\DataModel\Lpa\Formatter;
 
 abstract class AbstractEmailService extends AbstractService
 {
@@ -84,8 +85,7 @@ abstract class AbstractEmailService extends AbstractService
      */
     public function formatLpaId($lpaId)
     {
-        $formatLpaIdHelper = $this->helperPluginManager->get('formatLpaId');
-        return $formatLpaIdHelper($lpaId);
+        return Formatter::id($lpaId);
     }
 
     /**
