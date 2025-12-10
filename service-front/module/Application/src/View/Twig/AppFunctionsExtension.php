@@ -14,6 +14,11 @@ class AppFunctionsExtension extends AbstractExtension
 {
     use ConcatNamesTrait;
 
+    public function __construct(
+        private readonly array $config,
+    ) {
+    }
+
     public function getFunctions(): array
     {
         return [
