@@ -3,8 +3,7 @@
 return [
     'service' => [
         'assets' => [
-            'source_template_path' => '/tmp',
-            'template_path_on_ram_disk' => '/tmp',
+            'template_path' => '/tmp',
             'intermediate_file_path' => '/tmp'
         ]
     ]

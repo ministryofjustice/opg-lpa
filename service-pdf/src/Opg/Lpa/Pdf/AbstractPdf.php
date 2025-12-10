@@ -145,7 +145,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerA
      */
     protected function getTemplatePdfFilePath($templatePdfFileName)
     {
-        return $this->config['service']['assets']['template_path_on_ram_disk'] . '/' . $templatePdfFileName;
+        return $this->config['service']['assets']['template_path'] . '/' . $templatePdfFileName;
     }
 
     /**
