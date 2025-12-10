@@ -124,7 +124,7 @@ return [
                     'route'    => '/send-feedback',
                     'defaults' => [
                         'controller' => PipeSpec::class,
-                        'action'     => Handler\FeedbackHandler::class,
+                        'middleware'     => Handler\FeedbackHandler::class,
                     ],
                 ],
             ], // send-feedback
@@ -135,7 +135,7 @@ return [
                     'route'    => '/feedback-thanks',
                     'defaults' => [
                         'controller' => PipeSpec::class,
-                        'action'     => Handler\FeedbackThanksHandler::class,
+                        'middleware'     => Handler\FeedbackThanksHandler::class,
                     ],
                 ],
             ], // feedback-thanks

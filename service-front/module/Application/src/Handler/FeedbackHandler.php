@@ -12,29 +12,29 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Laminas\Session\Container;
+use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
-use Twig\Environment as TwigEnvironment;
 
 class FeedbackHandler implements RequestHandlerInterface
 {
-    private TwigEnvironment $twig;
+    private TemplateRendererInterface $renderer;
     private FormElementManager $formElementManager;
     private Feedback $feedbackService;
     private SessionUtility $sessionUtility;
     private LoggerInterface $logger;
 
     public function __construct(
-        TwigEnvironment $twig,
+        TemplateRendererInterface $renderer,
         FormElementManager $formElementManager,
         Feedback $feedbackService,
         SessionUtility $sessionUtility,
         LoggerInterface $logger
     ) {
-        $this->twig               = $twig;
+        $this->renderer           = $renderer;
         $this->formElementManager = $formElementManager;
         $this->feedbackService    = $feedbackService;
         $this->sessionUtility     = $sessionUtility;
@@ -71,8 +71,7 @@ class FeedbackHandler implements RequestHandlerInterface
                 try {
                     $this->feedbackService->add($data);
                 } catch (FeedbackValidationException $ex) {
-                    // Render same view with validation error
-                    $html = $this->twig->render(
+                    $html = $this->renderer->render(
                         'application/general/feedback/index.twig',
                         [
                             'form'  => $form,
@@ -82,13 +81,12 @@ class FeedbackHandler implements RequestHandlerInterface
 
                     return new HtmlResponse($html);
                 } catch (Throwable $ex) {
-                    // Log and show generic error (same behaviour, but using PSR logger)
                     $this->logger->error(
                         'API exception while adding feedback from Feedback service',
                         ['exception' => $ex]
                     );
 
-                    $html = $this->twig->render(
+                    $html = $this->renderer->render(
                         'application/general/feedback/index.twig',
                         [
                             'form'  => $form,
@@ -110,7 +108,7 @@ class FeedbackHandler implements RequestHandlerInterface
                     $query['returnTarget'] = urlencode($fromPage);
                 }
 
-                $location = '/feedback/thanks';
+                $location = '/feedback-thanks';
                 if (!empty($query)) {
                     $location .= '?' . http_build_query($query);
                 }
@@ -137,7 +135,7 @@ class FeedbackHandler implements RequestHandlerInterface
             );
         }
 
-        $html = $this->twig->render(
+        $html = $this->renderer->render(
             'application/general/feedback/index.twig',
             [
                 'form' => $form,
