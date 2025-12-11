@@ -10,7 +10,7 @@ use function number_format;
 
 trait MoneyFormatterTrait
 {
-    protected function formatMoney(mixed $amount): string
+    public function formatMoney(mixed $amount): string
     {
         if (!is_numeric($amount)) {
             return (string) $amount;
