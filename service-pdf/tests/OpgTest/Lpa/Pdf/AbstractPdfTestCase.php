@@ -120,7 +120,7 @@ abstract class AbstractPdfTestCase extends TestCase
     protected function getFullTemplatePath($templateName)
     {
         $config = Config::getInstance();
-        return $config['service']['assets']['template_path_on_ram_disk'] . '/' . $templateName;
+        return $config['service']['assets']['template_path'] . '/' . $templateName;
     }
 
     protected function verifyExpectedPdfData(AbstractIndividualPdf $pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef = null)
