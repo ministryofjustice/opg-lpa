@@ -43,7 +43,7 @@
 {% else %}
 
 	{% if lpa.document.primaryAttorneys|length > 1 %}
-		{% set concatNames = concatNames(lpa.document.primaryAttorneys) %}
+		{% set concatNames = lpa.document.primaryAttorneys|concat_names %}
 	  	{% set whoIsRegisteringValueOptions = {
 			'donor' : whoIsRegisteringValueOptions['donor'],
 			'attorney' : {
