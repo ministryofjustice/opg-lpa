@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ApplicationTest\Model\Service;
 
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
-use Application\View\Helper\FormatLpaId;
 use Application\View\Helper\MoneyFormat;
 use Hamcrest\MatcherAssert;
 use Hamcrest\Matchers;
@@ -82,14 +81,8 @@ class AbstractEmailServiceTest extends AbstractServiceTest
         $result = $service->url('/a/route', ['token' => 'foo'], ['force_canonical' => true]);
         $this->assertEquals('https://some.url/', $result);
 
-        // For the formatLpaId and moneyFormat helpers, we own the code, so
-        // return instances of those
-        $this->helperPluginManager->shouldReceive('get')
-            ->with('formatLpaId')
-            ->andReturn(new FormatLpaId());
-
-        $result = $service->formatLpaId(12345678);
-        $this->assertEquals('A000 1234 5678', $result);
+        // For the moneyFormat helper, we own the code, so
+        // return instance of that
 
         $this->helperPluginManager->shouldReceive('get')
             ->with('moneyFormat')

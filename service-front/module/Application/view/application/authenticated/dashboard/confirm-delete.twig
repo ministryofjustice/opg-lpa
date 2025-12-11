@@ -17,7 +17,7 @@
             No donor added
         {% endif %}
     </h2>
-    <p>{{ formatLpaId(lpa.id) }}</p>
+    <p>{{ lpa.id | format_lpa_id }}</p>
     <p>This will only delete the information on this website. It will not delete any LPA application you've sent to OPG already, or any registered LPA.</p>
     <a href="/user/dashboard/delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" data-cy="delete" class="button button-warning flush--left js-single-use">Delete</a>
     <a href="/user/dashboard" data-cy="cancel" class="button button-secondary js-cancel">Cancel</a>
