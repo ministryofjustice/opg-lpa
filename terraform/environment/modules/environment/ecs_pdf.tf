@@ -10,6 +10,7 @@ resource "aws_ecs_service" "pdf" {
   platform_version      = "1.4.0"
   propagate_tags        = "TASK_DEFINITION"
   wait_for_steady_state = true
+  force_new_deployment  = true
   network_configuration {
     security_groups  = [aws_security_group.pdf_ecs_service.id]
     subnets          = data.aws_subnets.private.ids
