@@ -4,8 +4,7 @@ return [
 
     'service' => [
         'assets' => [
-            'source_template_path' => __DIR__ . '/../assets/v2',
-            'template_path_on_ram_disk' => '/tmp/pdf_cache/assets/v2',
+            'template_path' => __DIR__ . '/../assets/v2',
             'intermediate_file_path' => '/tmp/pdf_cache'
         ],
     ],
