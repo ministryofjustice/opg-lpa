@@ -48,7 +48,8 @@
                     "position": "bottom"
                 },
                 "metrics": [
-                    [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "${app_loadbalancer_name}", { "id": "m1", "label": "Make Request Count" } ]
+                    [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "${app_loadbalancer_name}", { "id": "m1", "label": "Make Request Count" } ],
+                    [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "${app_loadbalancer_name}", { "id": "m2", "label": "Make Request Count" } ]
                 ],
                 "period": 60,
                 "region": "${region}",
@@ -107,9 +108,11 @@
                     "position": "bottom"
                 },
                 "metrics": [
-                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "${service_name}", "ClusterName", "${cluster_name}" ],
+                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "${service_name}", "ClusterName", "${cluster_name}", { "label": "${environment_name}" } ],
                     [ ".", ".", ".", "admin-service", ".", ".", { "label": "Admin" } ],
-                    [ ".", ".", ".", "api-service", ".", ".", { "label": "API" } ]
+                    [ ".", ".", ".", "api-service", ".", ".", { "label": "API" } ],
+                    [ ".", ".", ".", "viewer-service", ".", ".", { "label": "Viewer" } ],
+                    [ ".", ".", ".", "pdf-service", ".", ".", { "label": "PDF" } ]
                 ],
                 "period": 60,
                 "region": "${region}",
