@@ -168,9 +168,10 @@ class Module implements FormElementProviderInterface
 
                     // Record that identity was cleared because of a 500 error (normally db-related)
                     if ($info['failureCode'] >= 500) {
-                        $authFailureReason = new Container('AuthFailureReason');
-                        $authFailureReason->reason = 'Internal system error';
-                        $authFailureReason->code = $info['failureCode'];
+                        /** @var SessionUtility $sessionUtility */
+                        $sessionUtility = $sm->get(SessionUtility::class);
+                        $sessionUtility->setInMvc('AuthFailureReason', 'reason', 'Internal system error');
+                        $sessionUtility->setInMvc('AuthFailureReason', 'code', $info['failureCode']);
                     }
                 }
             } catch (ApiException $ex) {
@@ -202,7 +203,7 @@ class Module implements FormElementProviderInterface
                     return new SessionUtility();
                 },
                 SessionManagerSupport::class => function (ServiceLocatorInterface $sm) {
-                    return new SessionManagerSupport($sm->get('SessionManager'));
+                    return new SessionManagerSupport($sm->get('SessionManager'), $sm->get(SessionUtility::class));
                 },
                 SessionMiddleware::class => function () {
                     return new SessionMiddleware(new PhpSessionPersistence());
@@ -223,7 +224,7 @@ class Module implements FormElementProviderInterface
                 'PersistentSessionDetails' => function (ServiceLocatorInterface $sm) {
                     $route = $sm->get('Application')->getMvcEvent()->getRouteMatch();
 
-                    return new PersistentSessionDetails($route);
+                    return new PersistentSessionDetails($route, $sm->get(SessionUtility::class));
                 },
 
                 // PSR-7 HTTP Client
