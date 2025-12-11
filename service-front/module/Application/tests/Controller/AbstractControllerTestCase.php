@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Controller;
 
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Model\Service\Session\SessionUtility;
 use Exception;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
@@ -183,6 +184,9 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     /** @var MockInterface|RouteMatch */
     protected $routeMatch;
 
+    /** @var MockInterface|SessionUtility */
+    protected $sessionUtility;
+
     /**
      * Set up the services in default configuration - these can be adapted
      * in the subclasses before getting the controller to test
@@ -236,7 +240,9 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $this->sessionManager->shouldReceive('start')->andReturnNull()->byDefault();
         $this->sessionManager->shouldReceive('regenerateId')->with(true)->andReturnNull()->byDefault();
 
-        $this->sessionManagerSupport = new SessionManagerSupport($this->sessionManager);
+        $this->sessionUtility = Mockery::mock(SessionUtility::class);
+
+        $this->sessionManagerSupport = new SessionManagerSupport($this->sessionManager, $this->sessionUtility);
         $this->user = $this->getUserDetails();
 
         $this->setIdentity(
@@ -350,7 +356,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                     $this->lpaApplicationService,
                     $this->userDetails,
                     $this->replacementAttorneyCleanup,
-                    $this->metadata
+                    $this->metadata,
+                    $this->sessionUtility,
                 );
             } else {
                 $controller = new $controllerName(
@@ -360,7 +367,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                     $this->config,
                     $this->userDetailsSession,
                     $this->lpaApplicationService,
-                    $this->userDetails
+                    $this->userDetails,
+                    $this->sessionUtility,
                 );
             }
         } else {
@@ -368,7 +376,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                 $this->formElementManager,
                 $this->sessionManagerSupport,
                 $this->authenticationService,
-                $this->config
+                $this->config,
+                $this->sessionUtility,
             );
         }
 
@@ -434,13 +443,24 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     public function setSeedLpa($lpa, $seedLpa): void
     {
         $lpa->seed = $seedLpa->id;
-        $this->lpaApplicationService->shouldReceive('getSeedDetails')
-            ->withArgs([$lpa->id])->andReturn($this->getSeedData($seedLpa))->once();
+
+        $seedData = $this->getSeedData($seedLpa);
+
+        $this->lpaApplicationService
+            ->shouldReceive('getSeedDetails')
+            ->withArgs([$lpa->id])
+            ->andReturn($seedData);
 
         //Make sure the container hasn't cached the seed lpa
         $seedId = $lpa->seed;
-        $cloneContainer = new Container('clone');
-        $cloneContainer->$seedId = null;
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('clone', $seedId)
+            ->andReturn(null);
+
+        $this->sessionUtility
+            ->shouldReceive('setInMvc')
+            ->with('clone', $seedId, $seedData);
     }
 
     /**

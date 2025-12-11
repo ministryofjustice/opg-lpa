@@ -8,6 +8,7 @@ use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\User\Details as UserService;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Mvc\MvcEvent;
@@ -23,42 +24,23 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
 
-    /** @var LPA The LPA currently referenced in to the URL */
-    private $lpa;
+    /** The LPA currently referenced in to the URL */
+    private ?Lpa $lpa = null;
 
-    /** @var \Application\Model\FormFlowChecker */
-    private $flowChecker;
+    private ?FormFlowChecker $flowChecker = null;
 
-    /** @var ReplacementAttorneyCleanup */
-    private $replacementAttorneyCleanup;
-
-    /** @var Metadata */
-    private $metadata;
-
-    /**
-     * AbstractLpaController constructor.
-     * @param string $lpaId
-     * @param AbstractPluginManager $formElementManager
-     * @param SessionManagerSupport $sessionManagerSupport
-     * @param AuthenticationService $authenticationService
-     * @param array $config
-     * @param Container $userDetailsSession
-     * @param LpaApplicationService $lpaApplicationService
-     * @param UserService $userService
-     * @param ReplacementAttorneyCleanup $replacementAttorneyCleanup
-     * @param Metadata $metadata
-     */
     public function __construct(
-        $lpaId,
-        AbstractPluginManager $formElementManager,
-        SessionManagerSupport $sessionManagerSupport,
-        AuthenticationService $authenticationService,
-        array $config,
-        Container $userDetailsSession,
-        LpaApplicationService $lpaApplicationService,
-        UserService $userService,
-        ReplacementAttorneyCleanup $replacementAttorneyCleanup,
-        Metadata $metadata
+        protected $lpaId,
+        protected AbstractPluginManager $formElementManager,
+        protected SessionManagerSupport $sessionManagerSupport,
+        protected AuthenticationService $authenticationService,
+        protected array $config,
+        protected Container $userDetailsSession,
+        protected LpaApplicationService $lpaApplicationService,
+        protected UserService $userService,
+        protected ReplacementAttorneyCleanup $replacementAttorneyCleanup,
+        protected Metadata $metadata,
+        protected SessionUtility $sessionUtility,
     ) {
         parent::__construct(
             $formElementManager,
@@ -67,14 +49,18 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             $config,
             $userDetailsSession,
             $lpaApplicationService,
-            $userService
+            $userService,
+            $sessionUtility,
         );
 
         // If there is no user identity the request will be bounced in the onDispatch function
         if ($authenticationService->hasIdentity()) {
             $lpa = $lpaApplicationService->getApplication((int) $lpaId);
 
-            $this->lpa = $lpa;
+            if ($lpa) {
+                $this->lpa = $lpa;
+            }
+
             $this->replacementAttorneyCleanup = $replacementAttorneyCleanup;
             $this->metadata = $metadata;
         }
@@ -87,7 +73,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             return $authenticated;
         }
 
-        if (!$this->lpa instanceof Lpa) {
+        if ($this->lpa === null) {
             //404 error returned as either the LPA does not exist in the database, or is not associated with the user
             return $this->notFoundAction();
         }
@@ -97,7 +83,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             throw new RuntimeException('Invalid LPA - current user can not access it');
         }
 
-        /** @var ViewModel */
+        /** @var ViewModel $layout */
         $layout = $this->layout();
 
         // inject lpa into layout
@@ -191,8 +177,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
     /**
      * Returns the LPA currently referenced in to the URL
-     *
-     * @return Lpa
      */
     public function getLpa()
     {

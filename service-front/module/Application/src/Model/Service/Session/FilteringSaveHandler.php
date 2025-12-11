@@ -6,6 +6,7 @@ use Application\Model\Service\Redis\RedisClient;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
+use Redis;
 
 /**
  * Custom save handler to which write filters can be applied.
@@ -85,7 +86,9 @@ class FilteringSaveHandler implements SaveHandlerInterface, LoggerAwareInterface
     public function read(string $id): string|false
     {
         $key = $this->getKey($id);
-        return $this->redisClient->read($key);
+        $value = $this->redisClient->read($key);
+
+        return $value instanceof Redis ? false : $value;
     }
 
     /**
