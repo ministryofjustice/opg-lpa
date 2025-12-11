@@ -42,7 +42,7 @@ gevent==25.9.1
     #   geventhttpclient
     #   locust
     #   locust-cloud
-geventhttpclient==2.3.5
+geventhttpclient==2.3.7
     # via locust
 greenlet==3.3.0
     # via gevent
