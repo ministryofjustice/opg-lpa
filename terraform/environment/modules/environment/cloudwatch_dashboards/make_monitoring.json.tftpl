@@ -7,6 +7,7 @@
             "width": 3,
             "height": 5,
             "properties": {
+                "LoadBalancer": "${app_loadbalancer_name}",
                 "metrics": [
                     [ "AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer",  "${app_loadbalancer_name}", "region", "${region}" ],
                     [ "AWS/HealthLake", "Latency", "Operation", "ListFHIRDatastores" ]
@@ -45,8 +46,9 @@
             "width": 6,
             "height": 6,
             "properties": {
+                "LoadBalancer": "${app_loadbalancer_name}",
                 "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"ActiveConnectionCount\" ', 'Sum', 300)" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"} MetricName=\"ActiveConnectionCount\" ', 'Sum', 300)" } ]
                 ],
                 "legend": {
                     "position": "bottom"
@@ -103,7 +105,7 @@
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"${app_loadbalancer_name}\"} MetricName=\"RequestCount\" ', 'Sum', 300)" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB,LoadBalancer=\"} MetricName=\"RequestCount\" ', 'Sum', 300)" } ]
                 ],
                 "legend": {
                     "position": "bottom"
