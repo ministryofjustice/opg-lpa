@@ -134,6 +134,7 @@ services:
       args:
         ENABLE_XDEBUG: 1
       dockerfile: service-front/docker/app/Dockerfile
+      target: development
     volumes:
       - ./service-front:/app
       - ./tests:/app/tests

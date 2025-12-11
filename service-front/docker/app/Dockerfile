@@ -1,6 +1,6 @@
 FROM composer:2.9.2@sha256:8b4d59fde3bd505c5fef70c9f8d5c05e92af811fed037dad12869b373925ed31 AS composer
 
-FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
+FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165 as build
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -76,6 +76,12 @@ RUN rm /usr/bin/composer /app/composer.json /app/composer.lock && \
 RUN apk del .build-dependencies
 
 USER appuser
+
+FROM build AS development
+
+CMD ["php-fpm"]
+
+FROM build AS production
 
 VOLUME [ "/tmp" ]
 
