@@ -8,7 +8,7 @@
     <span class="heading-secondary">
         {{ lpa.document.type == 'property-and-financial' ? 'Property and finance' :
         (( lpa.document.type == 'health-and-welfare') ? 'Health and welfare' : 'Not selected') }}:
-        {{ formatLpaId(lpa.id) }}
+        {{ lpa.id | format_lpa_id }}
     </span>
 
 {% endblock %}

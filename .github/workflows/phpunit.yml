@@ -20,7 +20,7 @@ jobs:
           - name: service-front
             path: "./service-front"
             minCoverage: 85
-            phpVersion: "8.4"
+            phpVersion: "8.4.13"
           - name: service-api
             path: "./service-api"
             minCoverage: 74

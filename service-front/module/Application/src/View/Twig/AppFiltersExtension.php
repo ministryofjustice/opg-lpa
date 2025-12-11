@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\View\Twig;
 
+use MakeShared\DataModel\Lpa\Formatter;
 use Application\View\Helper\Traits\ConcatNamesTrait;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -22,6 +23,7 @@ class AppFiltersExtension extends AbstractExtension
         return [
             new TwigFilter('ordinal_suffix', [$this, 'ordinalSuffix']),
             new TwigFilter('asset_path', [$this, 'assetPath']),
+            new TwigFilter('format_lpa_id', [$this, 'formatLpaId']),
             new TwigFilter('concat_names', [$this, 'concatListOfNames']),
         ];
     }
@@ -55,6 +57,11 @@ class AppFiltersExtension extends AbstractExtension
         }
 
         return $path;
+    }
+
+    public function formatLpaId(int $id): string
+    {
+        return Formatter::id($id);
     }
 
     public function concatListOfNames(array $nameList): ?string

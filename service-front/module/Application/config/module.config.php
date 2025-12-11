@@ -82,7 +82,6 @@ return [
         'invokables' => [
             'formLinkedErrorListV2' => 'Application\View\Helper\FormLinkedErrorListV2',
             'formErrorTextExchange' => 'Application\View\Helper\FormErrorTextExchange',
-            'formatLpaId'           => 'Application\View\Helper\FormatLpaId',
             'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
             'formCheckbox'          => 'Application\Form\View\Helper\FormMultiCheckbox',
