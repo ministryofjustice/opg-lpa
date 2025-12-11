@@ -45,27 +45,6 @@ locals {
     component = "seeding"
   }
 
-  app_init_container = jsonencode(
-    {
-      "name" : "permissions-init",
-      "image" : "public.ecr.aws/docker/library/busybox:stable",
-      "entryPoint" : [
-        "sh",
-        "-c"
-      ],
-      "command" : [
-        "chmod 766 /tmp/"
-      ],
-      "mountPoints" : [
-        {
-          "containerPath" : "/tmp",
-          "sourceVolume" : "app_tmp"
-        }
-      ],
-      "essential" : false
-    }
-  )
-
   aws_otel_collector = jsonencode(
     {
       cpu         = 0,
