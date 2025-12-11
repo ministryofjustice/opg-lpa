@@ -18,10 +18,8 @@ class PostcodeController extends AbstractAuthenticatedController
 
     /**
      * Flag to indicate if complete user details are required when accessing this controller
-     *
-     * @var bool
      */
-    protected $requireCompleteUserDetails = false;
+    protected bool $requireCompleteUserDetails = false;
 
     public function indexAction()
     {

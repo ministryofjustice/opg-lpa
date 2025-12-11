@@ -13,7 +13,6 @@ use Application\Model\Service\Session\SessionUtility;
 use Laminas\Http\Header\Referer;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\ServiceManager\AbstractPluginManager;
-use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 use Throwable;
@@ -25,7 +24,7 @@ class FeedbackController extends AbstractBaseController
     private const int MIN_SUBMISSION_TIME_SECONDS = 3;
 
     private ?Feedback $feedbackService;
-    private ?SessionUtility $sessionUtility;
+    protected SessionUtility $sessionUtility;
     private ?IDateService $dateService;
 
     public function __construct(
@@ -33,15 +32,16 @@ class FeedbackController extends AbstractBaseController
         SessionManagerSupport $sessionManagerSupport,
         AuthenticationService $authenticationService,
         array $config,
+        SessionUtility $sessionUtility,
         ?IDateService $dateService = null,
         ?Feedback $feedbackService = null,
-        ?SessionUtility $sessionUtility = null,
     ) {
         parent::__construct(
             $formElementManager,
             $sessionManagerSupport,
             $authenticationService,
             $config,
+            $sessionUtility,
         );
 
         $this->feedbackService = $feedbackService;
@@ -58,15 +58,16 @@ class FeedbackController extends AbstractBaseController
      */
     public function indexAction()
     {
-        $container = new Container('feedback'); // needed for setExpirationHops
-
-        $form = $this->getFormElementManager()
-            ->get('Application\Form\General\FeedbackForm');
+        $form = $this->getFormElementManager()->get('Application\Form\General\FeedbackForm');
         $request = $this->convertRequest();
 
         if ($request->isPost()) {
-            $formGeneratedTime = $container->form_generated_time ?? 0;
-            unset($container->form_generated_time);
+            $formGeneratedTime = $this->sessionUtility->getFromMvc(
+                'feedback',
+                'formGeneratedTime',
+            ) ?? 0;
+
+            $this->sessionUtility->unsetInMvc('feedback', 'formGeneratedTime');
 
             if ($this->dateService->getNow()->getTimestamp() - $formGeneratedTime < self::MIN_SUBMISSION_TIME_SECONDS) {
                 $this->getLogger()->error('Feedback form submitted too quickly, possible bot submission');
@@ -108,11 +109,6 @@ class FeedbackController extends AbstractBaseController
                     ]);
                 }
 
-                $fromPage = $this->sessionUtility->getFromMvc(
-                    'feedback',
-                    'feedbackLinkClickedFromPage'
-                );
-
                 $options = (is_null($fromPage) ? [] : [
                     'query' => [
                         'returnTarget' => urlencode($fromPage),
@@ -122,9 +118,13 @@ class FeedbackController extends AbstractBaseController
                 return $this->redirect()->toRoute('feedback-thanks', [], $options);
             }
         } else {
-            $container->setExpirationHops(1);
+            $this->sessionUtility->setExpirationHopsInMvc('feedback', 1);
 
-            $container->form_generated_time = $this->dateService->getNow()->getTimestamp();
+            $this->sessionUtility->setInMvc(
+                'feedback',
+                'formGeneratedTime',
+                $this->dateService->getNow()->getTimestamp()
+            );
 
             /** @var Referer $referer */
             $referer = $request->getHeader('Referer');

@@ -7,15 +7,12 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
-use Application\Model\Service\Session\SessionManagerSupport;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Authentication\Result;
 use Laminas\Http\Response;
-use Laminas\Session\Container;
-use Laminas\Stdlib\ArrayObject;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
@@ -43,18 +40,6 @@ final class AuthControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\User\Login'])->andReturn($this->form);
 
         $this->url->shouldReceive('fromRoute')->withArgs(['login'])->andReturn('login');
-
-        $this->sessionManagerSupport = \Mockery::mock(
-            SessionManagerSupport::class,
-            [$this->sessionManager]
-        )->makePartial();
-
-        $this->sessionManagerSupport
-            ->shouldReceive('getSessionManager')
-            ->andReturn($this->sessionManager)
-            ->byDefault();
-
-        $this->sessionManagerSupport->shouldReceive('initialise');
 
         $this->setIdentity(null);
     }
@@ -91,8 +76,14 @@ final class AuthControllerTest extends AbstractControllerTestCase
 
         $authenticationResult = new Result(0, null, ['Authentication Failed']);
 
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+        $this->form
+            ->shouldReceive('isValid')
+            ->andReturn(true)
+            ->once();
+        $this->form
+            ->shouldReceive('getData')
+            ->andReturn($this->postData)
+            ->once();
 
         $this->authenticationService->shouldReceive('setEmail')
             ->withArgs([$this->postData['email']])
@@ -104,6 +95,18 @@ final class AuthControllerTest extends AbstractControllerTestCase
             ->once();
         $this->authenticationService->shouldReceive('authenticate')
             ->andReturn($authenticationResult)
+            ->once();
+
+        $this->sessionUtility
+            ->shouldReceive('hasInMvc')
+            ->with('initialised', 'init')
+            ->andReturn(true)
+            ->once();
+
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('PreAuthRequest', 'url')
+            ->andReturn(null)
             ->once();
 
         $this->form->shouldReceive('setData')->withArgs([['email' => $this->postData['email']]])->once();
@@ -125,23 +128,51 @@ final class AuthControllerTest extends AbstractControllerTestCase
         $authenticationResult = new Result(1, null);
         $response = new Response();
 
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+        $this->form
+            ->shouldReceive('isValid')
+            ->andReturn(true)
+            ->once();
+        $this->form
+            ->shouldReceive('getData')
+            ->andReturn($this->postData)
+            ->once();
 
-        $this->authenticationService->shouldReceive('setEmail')
+        $this->authenticationService
+            ->shouldReceive('setEmail')
             ->withArgs([$this->postData['email']])
             ->andReturn($this->authenticationService)
             ->once();
-        $this->authenticationService->shouldReceive('setPassword')
+        $this->authenticationService
+            ->shouldReceive('setPassword')
             ->withArgs([$this->postData['password']])
             ->andReturn($this->authenticationService)
             ->once();
-        $this->authenticationService->shouldReceive('authenticate')
-            ->andReturn($authenticationResult)->once();
+        $this->authenticationService
+            ->shouldReceive('authenticate')
+            ->andReturn($authenticationResult)
+            ->once();
 
-        $this->sessionManager->shouldReceive('regenerateId')->withArgs([true])->once();
+        $this->sessionUtility
+            ->shouldReceive('hasInMvc')
+            ->with('initialised', 'init')
+            ->andReturn(true)
+            ->once();
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('PreAuthRequest', 'url')
+            ->andReturn(null)
+            ->once();
 
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
+        $this->sessionManager
+            ->shouldReceive('regenerateId')
+            ->withArgs([true])
+            ->once();
+
+        $this->redirect
+            ->shouldReceive('toRoute')
+            ->withArgs(['user/dashboard'])
+            ->andReturn($response)
+            ->once();
 
         $result = $controller->indexAction();
 
@@ -157,8 +188,14 @@ final class AuthControllerTest extends AbstractControllerTestCase
 
         $this->setPreAuthRequestUrl('https://localhost/user/about-you');
 
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+        $this->form
+            ->shouldReceive('isValid')
+            ->andReturn(true)
+            ->once();
+        $this->form
+            ->shouldReceive('getData')
+            ->andReturn($this->postData)
+            ->once();
 
         $this->authenticationService->shouldReceive('setEmail')
             ->withArgs([$this->postData['email']])
@@ -171,15 +208,24 @@ final class AuthControllerTest extends AbstractControllerTestCase
         $this->authenticationService->shouldReceive('authenticate')
             ->andReturn($authenticationResult)->once();
 
-        $this->sessionManager->shouldReceive('regenerateId')->withArgs([true])->once();
+        $this->sessionUtility
+            ->shouldReceive('hasInMvc')
+            ->with('initialised', 'init')
+            ->andReturn(true)
+            ->once();
 
-        $this->redirect->shouldReceive('toUrl')
-            ->withArgs(['https://localhost/user/about-you'])->andReturn($response)->once();
+        $this->sessionManager
+            ->shouldReceive('regenerateId')
+            ->withArgs([true])
+            ->once();
 
-        /** @var ViewModel $result */
-        Container::setDefaultManager($this->sessionManagerSupport->getSessionManager());
+        $this->redirect
+            ->shouldReceive('toUrl')
+            ->withArgs(['https://localhost/user/about-you'])
+            ->andReturn($response)
+            ->once();
+
         $result = $controller->indexAction();
-        Container::setDefaultManager(null);
 
         $this->assertEquals($response, $result);
     }
@@ -195,21 +241,40 @@ final class AuthControllerTest extends AbstractControllerTestCase
 
         $this->setPreAuthRequestUrl('https://localhost/lpa/3503563157/when-lpa-starts');
 
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+        $this->form
+            ->shouldReceive('isValid')
+            ->andReturn(true)
+            ->once();
+        $this->form
+            ->shouldReceive('getData')
+            ->andReturn($this->postData)
+            ->once();
 
-        $this->authenticationService->shouldReceive('setEmail')
+        $this->authenticationService
+            ->shouldReceive('setEmail')
             ->withArgs([$this->postData['email']])
             ->andReturn($this->authenticationService)
             ->once();
-        $this->authenticationService->shouldReceive('setPassword')
+        $this->authenticationService
+            ->shouldReceive('setPassword')
             ->withArgs([$this->postData['password']])
             ->andReturn($this->authenticationService)
             ->once();
-        $this->authenticationService->shouldReceive('authenticate')
-            ->andReturn($authenticationResult)->once();
+        $this->authenticationService
+            ->shouldReceive('authenticate')
+            ->andReturn($authenticationResult)
+            ->once();
 
-        $this->sessionManager->shouldReceive('regenerateId')->withArgs([true])->once();
+        $this->sessionUtility
+            ->shouldReceive('hasInMvc')
+            ->with('initialised', 'init')
+            ->andReturn(true)
+            ->once();
+
+        $this->sessionManager
+            ->shouldReceive('regenerateId')
+            ->withArgs([true])
+            ->once();
 
         $lpa = new Lpa();
         $lpa->id = 3503563157;
@@ -218,10 +283,7 @@ final class AuthControllerTest extends AbstractControllerTestCase
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id], []])->andReturn($response)->once();
 
-        /** @var ViewModel $result */
-        Container::setDefaultManager($this->sessionManagerSupport->getSessionManager());
         $result = $controller->indexAction();
-        Container::setDefaultManager(null);
 
         $this->assertEquals($response, $result);
     }
@@ -291,7 +353,13 @@ final class AuthControllerTest extends AbstractControllerTestCase
 
     private function setPreAuthRequestUrl(string $url): void
     {
-        $this->sessionManager->shouldReceive('start')->once();
-        $this->storage->offsetSet('PreAuthRequest', new ArrayObject(['url' => $url]));
+//        $this->sessionManager->shouldReceive('start')->once();
+//        $this->storage->offsetSet('PreAuthRequest', new ArrayObject(['url' => $url]));
+
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('PreAuthRequest', 'url')
+            ->andReturn($url)
+            ->once();
     }
 }

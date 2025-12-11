@@ -7,7 +7,6 @@ namespace ApplicationTest\Controller\Authenticated;
 use Application\Controller\Authenticated\DeleteController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Response;
-use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 
 final class DeleteControllerTest extends AbstractControllerTestCase
@@ -54,21 +53,28 @@ final class DeleteControllerTest extends AbstractControllerTestCase
 
     public function testCheckAuthenticated(): void
     {
-        /** @var DeleteController $controller */
         $this->setIdentity(null);
         $controller = $this->getController(TestableDeleteController::class);
 
         $response = new Response();
 
-        $this->sessionManager->shouldReceive('start')->once();
-        $this->request->shouldReceive('getUri')->never();
+        $this->request
+            ->shouldReceive('getUri')
+            ->never();
 
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', [ 'state' => 'timeout' ]])->andReturn($response)->once();
+        $this->redirect
+            ->shouldReceive('toRoute')
+            ->withArgs(['login', [ 'state' => 'timeout' ]])
+            ->andReturn($response)
+            ->once();
 
-        Container::setDefaultManager($this->sessionManager);
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('AuthFailureReason', 'code')
+            ->andReturn(null)
+            ->once();
+
         $result = $controller->testCheckAuthenticated(true);
-        Container::setDefaultManager(null);
 
         $this->assertEquals($response, $result);
     }

@@ -161,9 +161,10 @@ class Module implements FormElementProviderInterface
 
                     // Record that identity was cleared because of a 500 error (normally db-related)
                     if ($info['failureCode'] >= 500) {
-                        $authFailureReason = new Container('AuthFailureReason');
-                        $authFailureReason->reason = 'Internal system error';
-                        $authFailureReason->code = $info['failureCode'];
+                        /** @var SessionUtility $sessionUtility */
+                        $sessionUtility = $sm->get(SessionUtility::class);
+                        $sessionUtility->setInMvc('AuthFailureReason', 'reason', 'Internal system error');
+                        $sessionUtility->setInMvc('AuthFailureReason', 'code', $info['failureCode']);
                     }
                 }
             } catch (ApiException $ex) {
