@@ -259,3 +259,10 @@ dc-clear-config-cache:
 	docker compose exec admin-app rm -f /app/tmp/config-cache-opg-lpa-admin.php
 	docker compose exec front-app rm -f /app/tmp/config-cache-opg-lpa-front.php
 	docker compose exec api-app rm -f /app/tmp/config-cache-opg-lpa-api.php
+
+dc-clear-cache:
+	docker compose exec admin-app rm -f /app/tmp/config-cache-opg-lpa-admin.php
+	docker compose exec front-app rm -f /app/tmp/config-cache-opg-lpa-front.php
+	docker compose exec front-app rm -rf /tmp/twig_cache
+	docker compose exec api-app rm -f /app/tmp/config-cache-opg-lpa-api.php
+	rm -fr service-front/twig-cache/*
