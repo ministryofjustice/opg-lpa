@@ -1,3 +1,4 @@
+# If exapnding this test, consider if we should make rate limit configurable to reduce wait times (currently 3 seconds)
 Feature: Feedback
 
     I want to be able to provide feedback
@@ -13,6 +14,7 @@ Feature: Feedback
         Then I am taken to "/send-feedback"
         And I see "Send us feedback" in the title
         And I can find feedback buttons
+        And I wait for 3 seconds
         When I submit the feedback
         Then I see in the page text
             | There is a problem |
@@ -40,6 +42,7 @@ Feature: Feedback
         Then I can see that rating "very-satisfied" is selected
         When I select rating "neither-satisfied-or-dissatisfied"
         Then I can see that rating "neither-satisfied-or-dissatisfied" is selected
+        And I wait for 3 seconds
         And I submit the feedback
         Then I see in the page text
             | There is a problem |
@@ -51,6 +54,7 @@ Feature: Feedback
         And I set feedback email as "cypress@opg-lpa-test.net"
         And I set feedback content as "Cypress feedback form test"
         Then I expect submitted feedback form to contain a rating of "neither-satisfied-or-dissatisfied"
+        And I wait for 3 seconds
         And I submit the feedback
         Then I see "Thank you" in the title
         And I can find link pointing to "/home"
@@ -58,6 +62,7 @@ Feature: Feedback
     @focus
     Scenario: Fail to select a rating for feedback, error links to first radio (LPAL-248)
         Given I visit "/send-feedback"
+        And I wait for 3 seconds
         And I submit the feedback
         And I see "Select a rating for this service" in the page text
         # this is the link in the error summary
