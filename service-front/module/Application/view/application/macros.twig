@@ -36,8 +36,11 @@
             </div>
         {% else %}
             <ul class="error-summary-list">
-                {# Form errors #}
-                {{ formLinkedErrorListV2(form) ? '' }}
+                {% for e in form_linked_errors(form) %}
+                    <li>
+                        <a href="#{{ e.field|e('html_attr') }}">{{ e.message|e }}</a>
+                    </li>
+                {% endfor %}
             </ul>
         {% endif %}
     </div>

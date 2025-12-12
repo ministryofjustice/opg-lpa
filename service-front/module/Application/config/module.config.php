@@ -80,7 +80,6 @@ return [
 
     'view_helpers' => [
         'invokables' => [
-            'formLinkedErrorListV2' => 'Application\View\Helper\FormLinkedErrorListV2',
             'formErrorTextExchange' => 'Application\View\Helper\FormErrorTextExchange',
             'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
