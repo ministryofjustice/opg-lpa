@@ -8,6 +8,10 @@ use Application\Form\Element\CsrfBuilder;
 use Application\Form\Error\FormLinkedErrors;
 use Application\Handler\CookiesHandler;
 use Application\Handler\CookiesHandlerFactory;
+use Application\Handler\Factory\FeedbackHandlerFactory;
+use Application\Handler\Factory\FeedbackThanksHandlerFactory;
+use Application\Handler\FeedbackHandler;
+use Application\Handler\FeedbackThanksHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerFactory;
 use Application\Handler\PingHandlerJson;
@@ -314,6 +318,9 @@ class Module implements FormElementProviderInterface
                 },
                 LoggerInterface::class => LoggerFactory::class,
                 CookiesHandler::class     => CookiesHandlerFactory::class,
+                FeedbackHandler::class       => FeedbackHandlerFactory::class,
+                FeedbackThanksHandler::class => FeedbackThanksHandlerFactory::class,
+
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
