@@ -10,7 +10,6 @@ locals {
     # nat_gateway_c         = data.aws_nat_gateway.main[2].id
   }
 }
-
 resource "aws_cloudwatch_dashboard" "monitoring" {
   dashboard_name = "${data.aws_default_tags.current.tags.environment-name}-make_monitoring"
   dashboard_body = templatefile(
