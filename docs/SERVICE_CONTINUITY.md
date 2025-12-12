@@ -69,7 +69,7 @@ Digital team users (mostly product managers) have access to the admin tool, this
 
 C4 model diagram containers and network overview:
 
-<DIAGRAM>
+<img src="https://raw.githubusercontent.com/ministryofjustice/opg-lpa/refs/heads/main/docs/images/c4-container-level.svg">
 
 **Note**: AWS Network firewall is currently being rolled out.
 
