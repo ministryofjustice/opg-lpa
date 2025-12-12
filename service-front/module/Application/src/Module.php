@@ -5,6 +5,7 @@ namespace Application;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
+use Application\Form\Error\FormLinkedErrors;
 use Application\Handler\CookiesHandler;
 use Application\Handler\CookiesHandlerFactory;
 use Application\Handler\PingHandler;
@@ -301,11 +302,15 @@ class Module implements FormElementProviderInterface
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
                 PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
+                FormLinkedErrors::class => fn () => new FormLinkedErrors(),
                 AppFiltersExtension::class => function (ServiceLocatorInterface $sm) {
                     return new AppFiltersExtension($sm->get('config'));
                 },
                 AppFunctionsExtension::class => function (ServiceLocatorInterface $sm) {
-                    return new AppFunctionsExtension($sm->get('config'));
+                    return new AppFunctionsExtension(
+                        $sm->get('config'),
+                        $sm->get(FormLinkedErrors::class),
+                    );
                 },
                 LoggerInterface::class => LoggerFactory::class,
                 CookiesHandler::class     => CookiesHandlerFactory::class,
