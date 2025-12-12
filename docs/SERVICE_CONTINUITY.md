@@ -54,7 +54,7 @@ Make an LPA has a dependency on OPG Digital's internal Sirius service (via an AP
 
 - [Code dependency list (SBOM)](https://github.com/ministryofjustice/opg-lpa/network/dependencies)
 - Application code built with `PHP >= 8.3`
-- Docker containers based on Alpine Linux
+- Docker containers based on `Alpine Linux >= 3.21`.
     - [Admin area](https://github.com/ministryofjustice/opg-lpa/blob/main/service-admin/docker/)
     - [API](https://github.com/ministryofjustice/opg-lpa/blob/main/service-api/docker/)
     - [Front](https://github.com/ministryofjustice/opg-lpa/tree/main/service-front/docker)
