@@ -8,6 +8,7 @@ Feature: Errors
 
     Scenario: Error message heading level and text / server-rendered (LPAL-247)
         Given I visit "/send-feedback"
+        And I wait for 3 seconds
         When I submit the feedback
         Then I see "There is a problem" in the page text
         And I see "Error" in the title
