@@ -24,7 +24,7 @@ final class ContinuationNotesTwigMacroTest extends MockeryTestCase
 
         // stub out twig functions we don't care about
         $this->renderer->addFunction('url');
-        $this->renderer->addFunction('formLinkedErrorListV2');
+        $this->renderer->addFunction('form_linked_errors');
         $this->renderer->addFunction('formElementErrorsV2');
         $this->renderer->addFunction('formElement');
         $this->renderer->addFunction('serverUrl');
