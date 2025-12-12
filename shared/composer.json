@@ -20,7 +20,7 @@
         "laminas/laminas-mvc": "^3.5",
         "monolog/monolog": "^3.9",
         "psr/http-server-middleware": "^1.0",
-        "symfony/validator": "^5.4"
+        "symfony/validator": "^8.0"
     },
     "require-dev": {
         "hamcrest/hamcrest-php": "^2.0",
