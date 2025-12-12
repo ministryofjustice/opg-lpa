@@ -2,9 +2,9 @@
 
 namespace Application\Form\Validator;
 
+use Application\Model\Service\Session\SessionUtility;
 use Laminas\Http\Response;
 use MakeShared\Logging\LoggerTrait;
-use Laminas\Session\Container;
 use Laminas\Validator\Csrf as LaminasCsrfValidator;
 use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
@@ -29,6 +29,11 @@ use RuntimeException;
 class Csrf extends LaminasCsrfValidator implements LoggerAwareInterface
 {
     use LoggerTrait;
+
+    public function __construct(private SessionUtility $sessionUtility, protected $options = [])
+    {
+        parent::__construct($options);
+    }
 
     /**
      * Error messages
@@ -95,12 +100,13 @@ class Csrf extends LaminasCsrfValidator implements LoggerAwareInterface
             throw new RuntimeException('CSRF salt cannot be null or empty');
         }
 
-        $session = new Container('CsrfValidator');
+        $token = $this->sessionUtility->getFromMvc('CsrfValidator', 'token');
 
-        if (!isset($session->token)) {
-            $session->token = hash('sha512', openssl_random_pseudo_bytes(128));
+        if (!isset($token)) {
+            $token = hash('sha512', openssl_random_pseudo_bytes(128));
+            $this->sessionUtility->setInMvc('CsrfValidator', 'token', $token);
         }
 
-        $this->hash = hash('sha512', $this->getName() . $session->token . $salt);
+        $this->hash = hash('sha512', $this->getName() . $token . $salt);
     }
 }

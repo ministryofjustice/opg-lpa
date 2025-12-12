@@ -33,6 +33,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
 
         $seedLpa = FixturesData::getHwLpa();
         $seedLpa->document->correspondent->who = Correspondence::WHO_OTHER;
+
         $this->setSeedLpa($this->lpa, $seedLpa);
         $this->userDetailsSession->user = $this->user;
 

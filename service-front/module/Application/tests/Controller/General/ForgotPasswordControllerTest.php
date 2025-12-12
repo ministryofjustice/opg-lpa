@@ -7,7 +7,6 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\ForgotPasswordController;
 use Application\Form\User\ConfirmEmail;
 use Application\Form\User\SetPassword;
-use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
@@ -38,16 +37,6 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
             ->withArgs(['Application\Form\User\SetPassword'])->andReturn($this->setPasswordForm);
 
         $this->userDetails = Mockery::mock(Details::class);
-
-        $this->sessionManagerSupport = \Mockery::mock(
-            SessionManagerSupport::class,
-            [$this->sessionManager]
-        )->makePartial();
-
-        $this->sessionManagerSupport
-            ->shouldReceive('getSessionManager')
-            ->andReturn($this->sessionManager)
-            ->byDefault();
     }
 
     protected function getController(string $controllerName)
@@ -171,15 +160,24 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
 
     public function testResetPasswordActionAlreadyLoggedIn(): void
     {
-        $this->params->shouldReceive('fromRoute')->withArgs(['token'])
-            ->andReturn($this->postData['token'])->once();
+        $this->params
+            ->shouldReceive('fromRoute')
+            ->withArgs(['token'])
+            ->andReturn($this->postData['token'])
+            ->once();
 
         $response = new Response();
-        $this->redirect->shouldReceive('toRoute')
+        $this->redirect
+            ->shouldReceive('toRoute')
             ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])
-            ->andReturn($response)->once();
+            ->andReturn($response)
+            ->once();
 
-        $this->sessionManagerSupport->shouldReceive('initialise')->once();
+        $this->sessionUtility
+            ->shouldReceive('hasInMvc')
+            ->with('initialised', 'init')
+            ->andReturn(true)
+            ->once();
 
         $controller = $this->getController(ForgotPasswordController::class);
 

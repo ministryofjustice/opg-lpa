@@ -7,7 +7,6 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\RegisterController;
 use Application\Form\User\ConfirmEmail;
 use Application\Form\User\Registration;
-use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Header\Referer;
@@ -39,18 +38,10 @@ final class RegisterControllerTest extends AbstractControllerTestCase
         parent::setUp();
 
         $this->form = Mockery::mock(Registration::class);
-        $this->formElementManager->shouldReceive('get')
-            ->withArgs(['Application\Form\User\Registration'])->andReturn($this->form);
-
-        $this->sessionManagerSupport = \Mockery::mock(
-            SessionManagerSupport::class,
-            [$this->sessionManager]
-        )->makePartial();
-
-        $this->sessionManagerSupport
-            ->shouldReceive('getSessionManager')
-            ->andReturn($this->sessionManager)
-            ->byDefault();
+        $this->formElementManager
+            ->shouldReceive('get')
+            ->withArgs(['Application\Form\User\Registration'])
+            ->andReturn($this->form);
     }
 
     private function makeMockReferer(string $url)
@@ -286,10 +277,25 @@ final class RegisterControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(RegisterController::class);
 
-        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
-        $this->authenticationService->shouldReceive('clearIdentity');
-        $this->sessionManagerSupport->shouldReceive('initialise')->once();
-        $this->userDetails->shouldReceive('activateAccount')->andReturn(false)->once();
+        $this->params
+            ->shouldReceive('fromRoute')
+            ->withArgs(['token'])
+            ->andReturn('unitTest')
+            ->once();
+
+        $this->authenticationService
+            ->shouldReceive('clearIdentity');
+
+        $this->userDetails
+            ->shouldReceive('activateAccount')
+            ->andReturn(false)
+            ->once();
+
+        $this->sessionUtility
+            ->shouldReceive('hasInMvc')
+            ->with('initialised', 'init')
+            ->andReturn(true)
+            ->once();
 
         /** @var ViewModel $result */
         $result = $controller->confirmAction();
@@ -302,10 +308,25 @@ final class RegisterControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(RegisterController::class);
 
-        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
-        $this->authenticationService->shouldReceive('clearIdentity');
-        $this->sessionManagerSupport->shouldReceive('initialise')->once();
-        $this->userDetails->shouldReceive('activateAccount')->andReturn(true)->once();
+        $this->params
+            ->shouldReceive('fromRoute')
+            ->withArgs(['token'])
+            ->andReturn('unitTest')
+            ->once();
+
+        $this->authenticationService
+            ->shouldReceive('clearIdentity');
+
+        $this->userDetails
+            ->shouldReceive('activateAccount')
+            ->andReturn(true)
+            ->once();
+
+        $this->sessionUtility
+            ->shouldReceive('hasInMvc')
+            ->with('initialised', 'init')
+            ->andReturn(true)
+            ->once();
 
         /** @var ViewModel $result */
         $result = $controller->confirmAction();
