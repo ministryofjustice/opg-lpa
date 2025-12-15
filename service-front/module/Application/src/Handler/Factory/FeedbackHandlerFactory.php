@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Application\Handler\Factory;
 
 use Application\Handler\FeedbackHandler;
+use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Session\SessionUtility;
 use Laminas\Form\FormElementManager;
@@ -22,6 +23,7 @@ class FeedbackHandlerFactory
             $container->get(Feedback::class),
             $container->get(SessionUtility::class),
             $container->get(LoggerInterface::class),
+            $container->get(IDateService::class),
         );
     }
 }

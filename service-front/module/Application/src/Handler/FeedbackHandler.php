@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Handler;
 
+use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Feedback\FeedbackValidationException;
 use Application\Model\Service\Session\SessionUtility;
@@ -12,6 +13,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Laminas\Session\Container;
+use MakeShared\Logging\LoggerTrait;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,25 +23,21 @@ use Throwable;
 
 class FeedbackHandler implements RequestHandlerInterface
 {
-    private TemplateRendererInterface $renderer;
-    private FormElementManager $formElementManager;
-    private Feedback $feedbackService;
-    private SessionUtility $sessionUtility;
-    private LoggerInterface $logger;
+    use LoggerTrait;
+
+    private const int MIN_SUBMISSION_TIME_SECONDS = 3;
 
     public function __construct(
-        TemplateRendererInterface $renderer,
-        FormElementManager $formElementManager,
-        Feedback $feedbackService,
-        SessionUtility $sessionUtility,
-        LoggerInterface $logger
+        private readonly TemplateRendererInterface $renderer,
+        private readonly FormElementManager $formElementManager,
+        private readonly Feedback $feedbackService,
+        private readonly SessionUtility $sessionUtility,
+        LoggerInterface $logger,
+        private readonly ?IDateService $dateService = null,
     ) {
-        $this->renderer           = $renderer;
-        $this->formElementManager = $formElementManager;
-        $this->feedbackService    = $feedbackService;
-        $this->sessionUtility     = $sessionUtility;
-        $this->logger             = $logger;
+        $this->setLogger($logger);
     }
+
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -56,6 +54,23 @@ class FeedbackHandler implements RequestHandlerInterface
             }
 
             $form->setData($data);
+
+            $formGeneratedTime = $container->form_generated_time ?? 0;
+            unset($container->form_generated_time);
+
+            if ($this->dateService->getNow()->getTimestamp() - $formGeneratedTime < self::MIN_SUBMISSION_TIME_SECONDS) {
+                $this->getLogger()->error('Feedback form submitted too quickly, possible bot submission');
+
+                $html = $this->renderer->render(
+                    'application/general/feedback/index.twig',
+                    [
+                        'form'  => $form,
+                        'error' => 'An error occurred while submitting feedback. Please try again.',
+                    ]
+                );
+
+                return new HtmlResponse($html);
+            }
 
             if ($form->isValid()) {
                 $data = $form->getData();
@@ -117,6 +132,8 @@ class FeedbackHandler implements RequestHandlerInterface
             }
         } else {
             $container->setExpirationHops(1);
+
+            $container->form_generated_time = $this->dateService->getNow()->getTimestamp();
 
             $referer = $request->getHeaderLine('Referer');
             $fromPage = null;
