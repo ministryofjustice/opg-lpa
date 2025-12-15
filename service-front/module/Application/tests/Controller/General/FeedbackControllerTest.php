@@ -6,10 +6,13 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\FeedbackController;
 use Application\Form\General\FeedbackForm;
+use Application\Model\Service\Date\DateService;
+use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Feedback\FeedbackValidationException;
 use Application\Model\Service\Session\SessionUtility;
 use ApplicationTest\Controller\AbstractControllerTestCase;
+use Laminas\Session\Container;
 use Mockery;
 use Mockery\MockInterface;
 use Laminas\Http\Header\Referer;
@@ -21,6 +24,11 @@ use RuntimeException;
 final class FeedbackControllerTest extends AbstractControllerTestCase
 {
     private MockInterface|FeedbackForm $form;
+    private MockInterface|Feedback $feedbackService;
+    private MockInterface|DateService $dateService;
+
+    protected $sessionManager;
+    private Container $container;
 
     private array $postData = [
         'rating' => '5',
@@ -29,18 +37,21 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         'phone' => '0123456789',
     ];
 
-    /**
-     * @var MockInterface|Feedback
-     */
-    private $feedbackService;
 
     public function setUp(): void
     {
         parent::setUp();
 
+        Container::setDefaultManager($this->sessionManager);
+
         $this->form = Mockery::mock(Feedback::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\General\FeedbackForm'])->andReturn($this->form);
+
+        $this->container = new Container('feedback');
+        $this->container->form_generated_time = time() - 5;
+
+        $this->dateService = Mockery::mock(IDateService::class);
 
         $_SERVER['HTTP_USER_AGENT'] = 'UnitTester';
     }
@@ -55,6 +66,7 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         $controller->setFeedbackService($this->feedbackService);
 
         $controller->setSessionUtility(new SessionUtility());
+        $controller->setDateService(new DateService());
 
         return $controller;
     }
@@ -162,5 +174,28 @@ final class FeedbackControllerTest extends AbstractControllerTestCase
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
+    }
+
+    public function testSendFeedbackFormSubmittedTooQuickly(): void
+    {
+        $controller = $this->getController(FeedbackController::class);
+
+        $this->container->form_generated_time = time();
+
+        $this->request
+            ->shouldReceive('isPost')
+            ->andReturn(true)
+            ->once();
+
+        $this->logger
+            ->shouldReceive('error')
+            ->with('Feedback form submitted too quickly, possible bot submission')
+            ->once();
+
+        /** @var ViewModel $result */
+        $result = $controller->indexAction();
+
+        $this->assertEquals($this->form, $result->getVariables()['form']);
+        $this->assertEquals('An error occurred while submitting feedback. Please try again.', $result->getVariables()['error']);
     }
 }

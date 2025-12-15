@@ -98,7 +98,7 @@
             {% if lpa.payment.amount is null %}
                 <h3 class="heading-medium">We'll contact you about the fee</h3>
             {% else %}
-                <h3 class="heading-medium">Application fee: £{{ moneyFormat(lpa.payment.amount) }}</h3>
+                <h3 class="heading-medium">Application fee: £{{ lpa.payment.amount | money_format }}</h3>
             {% endif %}
         </div>
 

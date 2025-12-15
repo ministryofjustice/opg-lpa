@@ -4,10 +4,14 @@ namespace Application\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
+use Application\View\Helper\Traits\MoneyFormatterTrait;
 use Laminas\View\HelperPluginManager;
+use MakeShared\DataModel\Lpa\Formatter;
 
 abstract class AbstractEmailService extends AbstractService
 {
+    use MoneyFormatterTrait;
+
     /**
      * @var MailTransportInterface
      */
@@ -79,13 +83,12 @@ abstract class AbstractEmailService extends AbstractService
 
     /**
      * Format an LPA ID using the helper
-     * @param string $lpaId
+     * @param int $lpaId
      * @return string Formatted LPA ID
      */
     public function formatLpaId($lpaId)
     {
-        $formatLpaIdHelper = $this->helperPluginManager->get('formatLpaId');
-        return $formatLpaIdHelper($lpaId);
+        return Formatter::id($lpaId);
     }
 
     /**
@@ -95,7 +98,6 @@ abstract class AbstractEmailService extends AbstractService
      */
     public function moneyFormat($money)
     {
-        $moneyFormatHelper = $this->helperPluginManager->get('moneyFormat');
-        return $moneyFormatHelper($money);
+        return $this->formatMoney($money);
     }
 }
