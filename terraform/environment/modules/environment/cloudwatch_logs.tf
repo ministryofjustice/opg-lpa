@@ -10,7 +10,30 @@ resource "aws_cloudwatch_log_group" "application_logs" {
     },
   )
 }
+resource "aws_cloudwatch_query_definition" "error_insight_query" {
+  name            = "Application Logs/${var.environment_name} error_insight_query"
+  log_group_names = [aws_cloudwatch_log_group.application_logs.name]
 
+  query_string = <<-EOF
+  fields @timestamp, service_name, cluster_name, level, msg, trace_id, http_status
+    |filter level =  'ERROR' OR level = 'CRITICAL'
+    |filter ispresent (trace_id)
+    |stats count() as error_count by bin(5m), service_name, cluster_name
+    |sort error_count desc
+    |limit 50
+  EOF
+}
+
+#  fields @timestamp, service_name, level, msg, trace_id, http_status
+#     |filter level =  'ERROR' OR level = 'CRITICAL'
+#     |filter ispresent (trace_id)
+#     |stats count() as error_count,
+#       latest (msg) as latest_error_message,
+#       latest(trace_id) as last_trace_id,
+#       latest(@timestamp) as last_seen
+#       by service_name
+#     |sort error_count desc
+#     |limit 500
 resource "aws_cloudwatch_log_metric_filter" "application_5xx_errors" {
   name           = "${var.environment_name}-5xx-errors"
   pattern        = "{ $.status = 5* }"
