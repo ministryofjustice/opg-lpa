@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <h2 class="heading-medium flush--top">Amount due: &pound;{{ moneyFormat(lpa.payment.amount) }}</h2>
+    <h2 class="heading-medium flush--top">Amount due: &pound;{{ lpa.payment.amount | money_format }}</h2>
 
     <div class="text">
 
