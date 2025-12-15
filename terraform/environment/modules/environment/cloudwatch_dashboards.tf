@@ -5,9 +5,6 @@ locals {
     app_loadbalancer_name = aws_lb.front.name
     cluster_name          = aws_ecs_cluster.online-lpa.name
     service_name          = aws_ecs_service.front.name
-    # nat_gateway_a         = data.aws_nat_gateway.main[0].id
-    # nat_gateway_b         = data.aws_nat_gateway.main[1].id
-    # nat_gateway_c         = data.aws_nat_gateway.main[2].id
   }
 }
 resource "aws_cloudwatch_dashboard" "monitoring" {
