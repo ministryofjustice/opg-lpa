@@ -7,6 +7,7 @@ use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
 use Application\Controller\Authenticated\AboutYouController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
+use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
 use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
@@ -73,6 +74,9 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         VerifyEmailAddressController::class => [
             'setUserService' => 'UserService'
         ],
+        DateCheckController::class => [
+            'setDateCheckViewModelHelper' => 'DateCheckViewModelHelper'
+        ]
     ];
 
     /**

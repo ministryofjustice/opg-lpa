@@ -19,11 +19,14 @@ use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
 use Application\Model\Service\Date\DateService;
+use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Session\WritePolicy;
+use Application\Service\DateCheckViewModelHelper;
+use Application\Service\Factory\DateCheckViewModelHelperFactory;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
 use Laminas\Http\PhpEnvironment\Request as HttpRequest;
@@ -325,6 +328,8 @@ class Module implements FormElementProviderInterface
                 DateService::class           => InvokableFactory::class,
                 FeedbackHandler::class       => FeedbackHandlerFactory::class,
                 FeedbackThanksHandler::class => FeedbackThanksHandlerFactory::class,
+                ContinuationSheets::class => InvokableFactory::class,
+                DateCheckViewModelHelper::class => DateCheckViewModelHelperFactory::class,
 
             ], // factories
             'initializers' => [
