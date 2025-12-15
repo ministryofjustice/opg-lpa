@@ -6,6 +6,8 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Form\Lpa\DateCheckForm;
+use Application\Model\Service\Lpa\ContinuationSheets;
+use Application\Service\DateCheckViewModelHelper;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Laminas\Http\Response;
@@ -38,6 +40,9 @@ final class DateCheckControllerTest extends AbstractControllerTestCase
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
+        $controller->setDateCheckViewModelHelper(
+            new DateCheckViewModelHelper(new ContinuationSheets())
+        );
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
@@ -58,6 +63,9 @@ final class DateCheckControllerTest extends AbstractControllerTestCase
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
+        $controller->setDateCheckViewModelHelper(
+            new DateCheckViewModelHelper(new ContinuationSheets())
+        );
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
@@ -78,6 +86,9 @@ final class DateCheckControllerTest extends AbstractControllerTestCase
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
+        $controller->setDateCheckViewModelHelper(
+            new DateCheckViewModelHelper(new ContinuationSheets())
+        );
 
         //Donor must be the first to sign
         $postData = $this->postData;
@@ -105,6 +116,9 @@ final class DateCheckControllerTest extends AbstractControllerTestCase
     {
         /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
+        $controller->setDateCheckViewModelHelper(
+            new DateCheckViewModelHelper(new ContinuationSheets())
+        );
 
         $response = new Response();
         $postData = $this->postData;
