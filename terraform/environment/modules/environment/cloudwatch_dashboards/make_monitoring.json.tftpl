@@ -8,8 +8,9 @@
             "height": 5,
             "properties": {
                 "LoadBalancer": "${app_loadbalancer_name}",
+                "label": "${environment_name}",
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer",  "${app_loadbalancer_name}", "label", "${environment_name}", "region", "${region}" ]
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer",  "${app_loadbalancer_name}", "region", "${region}" ]
                 ],
                 "view": "singleValue",
                 "stacked": true,
