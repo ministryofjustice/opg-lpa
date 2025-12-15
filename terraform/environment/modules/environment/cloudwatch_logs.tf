@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "application_logs" {
   )
 }
 resource "aws_cloudwatch_query_definition" "error_insight_query" {
-  name            = "Application Logs/${var.environment_name} error_insight_query"
+  name            = "${var.environment_name}/error insight query"
   log_group_names = [aws_cloudwatch_log_group.application_logs.name]
 
   query_string = <<-EOF
