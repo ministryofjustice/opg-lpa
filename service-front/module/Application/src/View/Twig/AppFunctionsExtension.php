@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Application\View\Twig;
 
+use Application\Form\Error\FormLinkedErrors;
 use Application\Model\FormFlowChecker;
+use Laminas\Form\Form;
 use MakeShared\DataModel\Lpa\Lpa;
 use Application\View\Helper\Traits\ConcatNamesTrait;
 use Twig\Extension\AbstractExtension;
@@ -16,6 +18,7 @@ class AppFunctionsExtension extends AbstractExtension
 
     public function __construct(
         private readonly array $config,
+        private readonly FormLinkedErrors $formLinkedErrors,
     ) {
     }
 
@@ -24,6 +27,7 @@ class AppFunctionsExtension extends AbstractExtension
         return [
             new TwigFunction('applicant_names', [$this, 'applicantNames']),
             new TwigFunction('final_check_accessible', [$this, 'finalCheckAccessible']),
+            new TwigFunction('form_linked_errors', fn (Form $form): array => $this->formLinkedErrors->fromForm($form)),
         ];
     }
 

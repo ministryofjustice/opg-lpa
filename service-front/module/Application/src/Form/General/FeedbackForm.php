@@ -3,6 +3,8 @@
 namespace Application\Form\General;
 
 use Application\Form\AbstractCsrfForm;
+use Application\Form\Validator\Phone;
+use Application\Form\Validator\EmailAddress;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\StringLength;
 
@@ -84,6 +86,9 @@ class FeedbackForm extends AbstractCsrfForm
 
         $this->addToInputFilter([
             'name'     => 'details',
+            'filters'    => [
+                ['name' => 'StripTags'],
+            ],
             'validators' => [
                 [
                     'name'    => 'NotEmpty',
@@ -111,7 +116,7 @@ class FeedbackForm extends AbstractCsrfForm
             'required' => false,
             'validators' => [
                 [
-                    'name' => 'Application\Form\Validator\EmailAddress'
+                    'name' => EmailAddress::class
                 ],
             ],
         ]);
@@ -119,6 +124,11 @@ class FeedbackForm extends AbstractCsrfForm
         $this->addToInputFilter([
             'name'     => 'phone',
             'required' => false,
+            'validators' => [
+                [
+                    'name' => Phone::class
+                ],
+            ]
         ]);
 
         parent::init();

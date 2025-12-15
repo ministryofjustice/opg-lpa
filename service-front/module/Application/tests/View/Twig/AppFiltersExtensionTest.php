@@ -15,9 +15,12 @@ final class AppFiltersExtensionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->config = [];
-        $this->config['version']['cache'] = '12345678';
-        $this->extension = new AppFiltersExtension($this->config);
+        $config = [
+            'version' => [
+                'cache' => '12345678',
+            ],
+        ];
+        $this->extension = new AppFiltersExtension($config);
     }
 
     public function testRegistersOrdinalSuffixFilter(): void

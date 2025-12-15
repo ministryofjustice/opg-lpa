@@ -257,14 +257,14 @@
 
     {# Fee #}
     {% if lpa.payment is defined %}
-        {% set applicationFeeText = 'Application fee: £' ~ moneyFormat(fullFee) ~ ' as you are not claiming a reduction' %}
+        {% set applicationFeeText = 'Application fee: £' ~ fullFee | money_format ~ ' as you are not claiming a reduction' %}
 
         {% if lpa.payment.reducedFeeReceivesBenefits %}
             {% set applicationFeeText = 'Application fee: £0 as the donor is claiming an eligible benefit' %}
         {% elseif lpa.payment.reducedFeeUniversalCredit %}
             {% set applicationFeeText = 'Fee assessed on application as the donor receives Universal Credit' %}
         {% elseif lpa.payment.reducedFeeLowIncome %}
-            {% set applicationFeeText = 'Application fee: £' ~ moneyFormat(lowIncomeFee) ~ ' as the donor has an income of less than £12,000' %}
+            {% set applicationFeeText = 'Application fee: £' ~ lowIncomeFee | money_format ~ ' as the donor has an income of less than £12,000' %}
         {% endif %}
 
         {{ macros.outputSection(
