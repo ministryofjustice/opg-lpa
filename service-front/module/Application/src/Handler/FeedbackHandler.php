@@ -18,10 +18,11 @@ use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-class FeedbackHandler implements RequestHandlerInterface
+class FeedbackHandler implements RequestHandlerInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 
