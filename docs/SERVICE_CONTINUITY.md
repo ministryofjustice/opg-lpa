@@ -132,7 +132,7 @@ Application data in the Aurora Postgres cluster is backed up nightly. Backups ar
 
 The team can manually restore from a backup database if the active database is deleted or becomes corrupted.
 
-Restore process has not been tested recently and documentation needs revisiting. Tickets currently in flight to retest and update documentation ref LPAL-1352.
+Restore process was last fully tested on 25/11/2025.
 
 The Infrastructure as Code model allows us to stand up a new version of the service easily (this is the process we use for ephemeral development environments).
 
