@@ -311,12 +311,7 @@ locals {
           awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa"
         }
       },
-      dependsOn = [
-        {
-          containerName = "pgbouncer",
-          condition     = "HEALTHY"
-        }
-      ],
+      # dependsOn = var.account.database.rds_proxy_routing_enabled ? [{ containerName = "pgbouncer", condition = "HEALTHY" }] : [],
       secrets = [
         { name = "OPG_LPA_API_NOTIFY_API_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
         { name = "OPG_LPA_POSTGRES_USERNAME", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
