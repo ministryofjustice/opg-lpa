@@ -91,7 +91,7 @@ resource "aws_security_group" "rds_proxy" {
   revoke_rules_on_delete = true
 }
 
-resource "aws_security_group_rule" "rds_proxy_ingress" {
+resource "aws_security_group_rule" "client_to_proxy_ingress" {
   type                     = "ingress"
   from_port                = 5432
   to_port                  = 5432
@@ -101,7 +101,7 @@ resource "aws_security_group_rule" "rds_proxy_ingress" {
   description              = "Ingress from rds client"
 }
 
-resource "aws_security_group_rule" "rds_proxy_rds_egress" {
+resource "aws_security_group_rule" "proxy_to_cluster_egress" {
   type                     = "egress"
   from_port                = 5432
   to_port                  = 5432
@@ -111,7 +111,7 @@ resource "aws_security_group_rule" "rds_proxy_rds_egress" {
   description              = "Egress To RDS"
 }
 
-resource "aws_security_group_rule" "rds_proxy_rds_ingress" {
+resource "aws_security_group_rule" "cluster_from_proxy_ingress" {
   type                     = "ingress"
   from_port                = 5432
   to_port                  = 5432
@@ -121,6 +121,7 @@ resource "aws_security_group_rule" "rds_proxy_rds_ingress" {
   description              = "Egress To RDS"
 }
 
+# temporary rule to allow RDS Proxy to access Secrets Manager, should be restricted later to vpc endpoint
 resource "aws_security_group_rule" "rds_proxy_secrets_manager" {
   type              = "egress"
   from_port         = 0
