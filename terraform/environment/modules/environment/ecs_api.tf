@@ -127,6 +127,10 @@ resource "aws_security_group_rule" "api_ecs_service_egress" {
 
 //--------------------------------------
 // Api ECS Service Task level config
+locals {
+  container_definitions_with_pg_bouncer = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
+  container_definitions                 = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}]"
+}
 
 resource "aws_ecs_task_definition" "api" {
   family                   = "${terraform.workspace}-api"
@@ -134,7 +138,7 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
+  container_definitions    = var.account.database.rds_proxy_routing_enabled ? local.container_definitions : local.container_definitions_with_pg_bouncer
   task_role_arn            = var.ecs_iam_task_roles.api.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.api_component_tag
@@ -322,8 +326,8 @@ locals {
       ],
       environment = [
         { name = "OPG_NGINX_SERVER_NAMES", value = "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
-        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = var.account.database.rds_proxy_enabled ? module.rds_proxy.endpoint : "127.0.0.1" },
-        { name = "OPG_LPA_POSTGRES_PORT", value = var.account.database.rds_proxy_enabled ? "5432" : "6432" },
+        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = var.account.database.rds_proxy_routing_enabled ? module.rds_proxy.endpoint : "127.0.0.1" },
+        { name = "OPG_LPA_POSTGRES_PORT", value = var.account.database.rds_proxy_routing_enabled ? "5432" : "6432" },
         { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].name },
         { name = "OPG_LPA_PROCESSING_STATUS_ENDPOINT", value = var.account.sirius_api_gateway_endpoint },
         { name = "OPG_LPA_API_TRACK_FROM_DATE", value = local.track_from_date },
