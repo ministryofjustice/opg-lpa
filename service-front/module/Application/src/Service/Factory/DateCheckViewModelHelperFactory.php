@@ -8,7 +8,7 @@ use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Service\DateCheckViewModelHelper;
 use Psr\Container\ContainerInterface;
 
-final class DateCheckViewModelHelperFactory
+class DateCheckViewModelHelperFactory
 {
     public function __invoke(ContainerInterface $container): DateCheckViewModelHelper
     {

@@ -7,7 +7,7 @@ namespace Application\Service;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use MakeShared\DataModel\Lpa\Lpa;
 
-final class DateCheckViewModelHelper
+class DateCheckViewModelHelper
 {
     public function __construct(
         private readonly ContinuationSheets $continuationSheets
