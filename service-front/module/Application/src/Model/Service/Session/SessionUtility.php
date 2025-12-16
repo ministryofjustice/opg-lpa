@@ -7,7 +7,7 @@ namespace Application\Model\Service\Session;
 use Laminas\Session\Container as LaminasContainer;
 use Mezzio\Session\SessionInterface as MezzioSession;
 
-final class SessionUtility
+class SessionUtility
 {
     private function getMvcContainer(string $containerName): LaminasContainer
     {
