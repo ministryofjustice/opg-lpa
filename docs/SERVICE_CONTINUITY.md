@@ -140,7 +140,6 @@ The Infrastructure as Code model allows us to stand up a new version of the serv
 
 Make An LPA has a comprehensive automated end to end test suite covering the user journeys within the service. These use [cypress and are within the code base](https://github.com/ministryofjustice/opg-lpa/tree/main/cypress/e2e) and are run on every change as part of the continuous integration workflows for new changes. Merging of new change is only possible if the existing test suite continues to pass against the change and if reviewed by another team member.
 
-Risks are tracked in a [local team risk tracker](https://justiceuk-my.sharepoint.com/:x:/r/personal/paul_mcqueen_publicguardian_gov_uk/Documents/Use%20and%20Make%20Live%20Service%20Risks.xlsx?d=w0a6d46ab5aa8411c801e7d6917d445f4&csf=1&web=1&e=lc4IXx) and by the [OPG Digital Tech Leadership team](https://justiceuk-my.sharepoint.com/:x:/r/personal/matt_machell_publicguardian_gov_uk/Documents/GW/OPG%20Digital%20Tech%20Risks%20-%20March%202025%20Update.xlsx?d=w0f0f95673972543bf631c74c6ed251a9&csf=1&web=1&e=NXNPPU) at an OPG Digital Level. Risks are fed back via delivery and service owner to portfolio.
 
 ## Releases
 
