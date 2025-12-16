@@ -33,7 +33,7 @@ flask==3.1.2
     #   flask-cors
     #   flask-login
     #   locust
-flask-cors==6.0.1
+flask-cors==6.0.2
     # via locust
 flask-login==0.6.3
     # via locust
@@ -42,7 +42,7 @@ gevent==25.9.1
     #   geventhttpclient
     #   locust
     #   locust-cloud
-geventhttpclient==2.3.5
+geventhttpclient==2.3.7
     # via locust
 greenlet==3.3.0
     # via gevent
@@ -91,7 +91,7 @@ soupsieve==2.8
     # via beautifulsoup4
 typing-extensions==4.15.0
     # via beautifulsoup4
-urllib3==2.6.0
+urllib3==2.6.2
     # via
     #   geventhttpclient
     #   requests

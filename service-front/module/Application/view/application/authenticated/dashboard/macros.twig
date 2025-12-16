@@ -22,7 +22,7 @@
                                 No donor added
                             {%- endif -%}
                         </h3>
-                        <span class="lpa-number">{{ formatLpaId(lpa.id) }}</span>
+                        <span class="lpa-number">{{ lpa.id | format_lpa_id }}</span>
                     </div>
 
                     <div class="list-item_status">

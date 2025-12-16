@@ -8,6 +8,7 @@ use Laminas\View\Model\ViewModel;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 use Twig\TemplateWrapper;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 /**
@@ -80,6 +81,24 @@ class ViewModelRenderer
         }
 
         $this->renderer->addFunction(new TwigFunction($name, $callable));
+    }
+
+    /**
+     * Add a TwigFunction to the renderer.
+     *
+     * @param string $name Name of the Twig function
+     * @param mixed $callable Callable object or function; if not supplied,
+     *     a no-op function is used by default
+     */
+    public function addFilter(string $name, mixed $callable = null): void
+    {
+        if (is_null($callable)) {
+            $callable = function (): string {
+                return 'noop';
+            };
+        }
+
+        $this->renderer->addFilter(new TwigFilter($name, $callable));
     }
 
     /**

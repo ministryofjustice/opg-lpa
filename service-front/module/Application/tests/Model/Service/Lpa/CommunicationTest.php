@@ -53,6 +53,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithoutPaymentButWithPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
@@ -124,6 +125,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithoutPaymentNoPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
@@ -186,6 +188,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithoutPaymentReceivesBenefitsButWithPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
@@ -257,6 +260,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithoutPaymentReceivesBenefitsNoPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
@@ -319,6 +323,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithoutPaymentAwardedDamagesButWithPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
@@ -390,6 +395,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithoutPaymentAwardedDamagesNoPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
@@ -453,6 +459,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithoutPaymentUniversalCreditButWithPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
@@ -524,6 +531,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithoutPaymentUniversalCreditNoPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_PF,
                 'donor' => [
@@ -586,6 +594,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithOnlinePaymentAndPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
@@ -657,6 +666,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithOnlinePaymentNoPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
@@ -718,6 +728,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithReducedOnlinePaymentAndPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
@@ -789,6 +800,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithReducedOnlinePaymentNoPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
@@ -851,6 +863,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithChequePaymentAndPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
@@ -915,6 +928,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithChequePaymentNoPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
@@ -969,6 +983,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithReducedChequePaymentAndPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
@@ -1033,6 +1048,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailWithReducedChequePaymentNoPersonToNotify(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW,
                 'donor' => [
@@ -1088,6 +1104,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
     public function testSendRegistrationCompleteEmailSendFails(): void
     {
         $lpa = new Lpa([
+            'id' => 123,
             'document' => new Document([
                 'type' => Document::LPA_TYPE_HW
             ]),
