@@ -28,7 +28,7 @@
 
         <h2 class="heading-large">Payment received</h2>
 
-        <p>Thank you for your payment of <strong class="bold-small">&pound;{{ moneyFormat(paymentAmount) }}</strong></p>
+        <p>Thank you for your payment of <strong class="bold-small">&pound;{{ paymentAmount | money_format }}</strong></p>
 
         <p>Your payment reference number is <strong class="bold-small">{{ paymentReferenceNo }}</strong></p>
 
@@ -37,7 +37,7 @@
 
     {% endif %}
 
-    <p>Your online LPA ID is <strong class="bold-small">{{ formatLpaId(lpa.id) }}</strong></p>
+    <p>Your online LPA ID is <strong class="bold-small">{{ lpa.id | format_lpa_id }}</strong></p>
 
     <p>You're now ready to print and sign the {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian.</p>
 
@@ -65,7 +65,7 @@
 
         {# fee option 4 (no reductions) and cheque #}
         {% if feeFull and paymentMethod == 'cheque' %}
-            <li>Post the LPA to OPG, along with a £{{ moneyFormat(paymentAmount) }} cheque for the application fee</li>
+            <li>Post the LPA to OPG, along with a £{{ paymentAmount | money_format }} cheque for the application fee</li>
         {% endif %}
 
         {# fee option 4 (no reductions) and paid online #}
@@ -75,7 +75,7 @@
 
         {# fee option 3 (low income) and cheque #}
         {% if feeLowIncome and paymentMethod == 'cheque' %}
-            <li>Post the LPA to OPG, along with the fee remission form, proof of the donor’s low income, and a £{{ moneyFormat(paymentAmount) }} cheque for the application fee</li>
+            <li>Post the LPA to OPG, along with the fee remission form, proof of the donor’s low income, and a £{{ paymentAmount | money_format }} cheque for the application fee</li>
         {% endif %}
 
         {# fee option 3 (low income) and paid online #}
@@ -191,7 +191,7 @@
 
         {# cheque #}
         {% if paymentMethod == 'cheque' %}
-            <li>a cheque for the £{{ moneyFormat(paymentAmount) }} application fee, payable to ‘Office of the Public Guardian'</li>
+            <li>a cheque for the £{{ paymentAmount | money_format }} application fee, payable to ‘Office of the Public Guardian'</li>
         {% endif %}
 
     </ul>

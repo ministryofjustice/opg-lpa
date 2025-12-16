@@ -15,7 +15,12 @@ final class AppFiltersExtensionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->extension = new AppFiltersExtension();
+        $config = [
+            'version' => [
+                'cache' => '12345678',
+            ],
+        ];
+        $this->extension = new AppFiltersExtension($config);
     }
 
     public function testRegistersOrdinalSuffixFilter(): void
@@ -39,5 +44,39 @@ final class AppFiltersExtensionTest extends TestCase
         $this->assertSame('3rd', $this->extension->ordinalSuffix(3));
         $this->assertSame('4th', $this->extension->ordinalSuffix(4));
         $this->assertSame('121st', $this->extension->ordinalSuffix(121));
+    }
+
+    public function testAssetPath(): void
+    {
+        $this->assertSame('/assets/12345678/testpath', $this->extension->assetPath('/assets/testpath'));
+    }
+
+    public function testConcatListOfNamesReturnsNullForEmptyList(): void
+    {
+        $result = $this->extension->concatListOfNames([]);
+
+        $this->assertNull($result);
+    }
+
+    public function testConcatListOfNamesReturnsSingleName(): void
+    {
+        $actor = (object) ['name' => 'Alice Smith'];
+
+        $result = $this->extension->concatListOfNames([$actor]);
+
+        $this->assertSame('Alice Smith', $result);
+    }
+
+    public function testConcatListOfNamesReturnsCommaSeparatedListWithAnd(): void
+    {
+        $actors = [
+            (object) ['name' => 'Alice Smith'],
+            (object) ['name' => 'Bob Jones'],
+            (object) ['name' => 'Charlie Brown'],
+        ];
+
+        $result = $this->extension->concatListOfNames($actors);
+
+        $this->assertSame('Alice Smith, Bob Jones and Charlie Brown', $result);
     }
 }

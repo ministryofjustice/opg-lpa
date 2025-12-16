@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\View\Twig;
 
+use Application\Form\Error\FormLinkedErrors;
 use Application\Model\FormFlowChecker;
 use Application\View\Twig\AppFunctionsExtension;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -16,7 +17,8 @@ final class AppFunctionsExtensionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->extension = new AppFunctionsExtension();
+        $formLinkedErrors = $this->createMock(FormLinkedErrors::class);
+        $this->extension = new AppFunctionsExtension([], $formLinkedErrors);
     }
 
     public function testRegistersApplicantNamesFunction(): void
@@ -86,8 +88,7 @@ final class AppFunctionsExtensionTest extends TestCase
 
         $expected = FormFlowChecker::isFinalCheckAccessible($lpa);
 
-        $extension = new AppFunctionsExtension();
-        $actual = $extension->finalCheckAccessible($lpa);
+        $actual = $this->extension->finalCheckAccessible($lpa);
 
         $this->assertSame($expected, $actual);
     }

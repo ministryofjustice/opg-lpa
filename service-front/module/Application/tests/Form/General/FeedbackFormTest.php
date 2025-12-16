@@ -50,14 +50,9 @@ final class FeedbackFormTest extends MockeryTestCase
 
     public function testValidateByModelInvalid(): void
     {
-        $message = '';
-        for ($i = 0; $i < 100; $i++) {
-            $message .= 'Feedback message too long. ';
-        }
-
         $this->form->setData(array_merge([
             'rating' => 'indifferent',
-            'details' => $message,
+            'details' => str_repeat('a', 2001),
             'email' => 'notanemail',
             'phone' => 'jisofjisd',
         ], $this->getCsrfData()));
@@ -71,6 +66,22 @@ final class FeedbackFormTest extends MockeryTestCase
             'details' => [
                 'stringLengthTooLong' => 'max-2000-chars'
             ],
+            'phone' => [
+                'notPhone' => 'Enter a valid phone number'
+            ],
         ], $this->form->getMessages());
+    }
+
+    public function testDetailsFieldStripsTags(): void
+    {
+        $this->form->setData(array_merge([
+            'rating' => 'very-satisfied',
+            'email' => 'a@b.com',
+            'details' => '<p>This is some feedback with <b>HTML</b> tags.  </p> ',
+        ], $this->getCsrfData()));
+        $this->assertTrue($this->form->isValid());
+
+        $filteredData = $this->form->getData();
+        $this->assertEquals('This is some feedback with HTML tags.', $filteredData['details']);
     }
 }

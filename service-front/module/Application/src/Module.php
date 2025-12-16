@@ -5,22 +5,30 @@ namespace Application;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
+use Application\Form\Error\FormLinkedErrors;
 use Application\Handler\CookiesHandler;
 use Application\Handler\CookiesHandlerFactory;
+use Application\Handler\Factory\FeedbackHandlerFactory;
+use Application\Handler\Factory\FeedbackThanksHandlerFactory;
+use Application\Handler\FeedbackHandler;
+use Application\Handler\FeedbackThanksHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerFactory;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
+use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
+use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Session\WritePolicy;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
 use Laminas\Http\PhpEnvironment\Request as HttpRequest;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Session\SessionManager;
 use MakeShared\Constants;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -181,6 +189,7 @@ class Module implements FormElementProviderInterface
                 'AddressLookup' => 'OrdnanceSurvey',
                 'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
+                IDateService::class => DateService::class,
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
@@ -301,14 +310,22 @@ class Module implements FormElementProviderInterface
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
                 PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
-                AppFiltersExtension::class => function () {
-                    return new AppFiltersExtension();
+                FormLinkedErrors::class => fn () => new FormLinkedErrors(),
+                AppFiltersExtension::class => function (ServiceLocatorInterface $sm) {
+                    return new AppFiltersExtension($sm->get('config'));
                 },
-                AppFunctionsExtension::class => function () {
-                    return new AppFunctionsExtension();
+                AppFunctionsExtension::class => function (ServiceLocatorInterface $sm) {
+                    return new AppFunctionsExtension(
+                        $sm->get('config'),
+                        $sm->get(FormLinkedErrors::class),
+                    );
                 },
                 LoggerInterface::class => LoggerFactory::class,
                 CookiesHandler::class     => CookiesHandlerFactory::class,
+                DateService::class           => InvokableFactory::class,
+                FeedbackHandler::class       => FeedbackHandlerFactory::class,
+                FeedbackThanksHandler::class => FeedbackThanksHandlerFactory::class,
+
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
@@ -318,18 +335,6 @@ class Module implements FormElementProviderInterface
                     $instance->setLogger($container->get('Logger'));
                 }
             ]
-        ];
-    }
-
-    public function getViewHelperConfig()
-    {
-        return [
-            'factories' => [
-                'StaticAssetPath' => function ($sm) {
-                    $config = $sm->get('Config');
-                    return new \Application\View\Helper\StaticAssetPath($config['version']['cache']);
-                },
-            ],
         ];
     }
 

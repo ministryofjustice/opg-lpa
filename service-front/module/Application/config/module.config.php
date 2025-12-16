@@ -80,11 +80,7 @@ return [
 
     'view_helpers' => [
         'invokables' => [
-            'formLinkedErrorListV2' => 'Application\View\Helper\FormLinkedErrorListV2',
             'formErrorTextExchange' => 'Application\View\Helper\FormErrorTextExchange',
-            'concatNames'           => 'Application\View\Helper\ConcatNames',
-            'formatLpaId'           => 'Application\View\Helper\FormatLpaId',
-            'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
             'formCheckbox'          => 'Application\Form\View\Helper\FormMultiCheckbox',
             // below helper has been raised with laminas-form for an upstream change
@@ -99,5 +95,11 @@ return [
             'systemMessage'         => 'Application\View\Helper\SystemMessageFactory',
         ],
     ],
+
+    'templates' => [
+        'paths' => [
+            'application' => [__DIR__ . '/../view/application'],
+        ],
+    ]
 
 ];
