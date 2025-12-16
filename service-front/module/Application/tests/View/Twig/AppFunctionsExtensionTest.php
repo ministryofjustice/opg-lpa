@@ -8,6 +8,8 @@ use Application\Form\Error\FormLinkedErrors;
 use Application\Model\FormFlowChecker;
 use Application\View\Twig\AppFunctionsExtension;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Template\TemplateRendererInterface;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 final class AppFunctionsExtensionTest extends TestCase
@@ -91,5 +93,38 @@ final class AppFunctionsExtensionTest extends TestCase
         $actual = $this->extension->finalCheckAccessible($lpa);
 
         $this->assertSame($expected, $actual);
+    }
+
+    public function testSystemMessageReturnsEmptyStringWhenNoMessage(): void
+    {
+        $renderer = Mockery::mock(TemplateRendererInterface::class);
+
+        $service = Mockery::mock(SystemMessage::class);
+        $service->shouldReceive('fetchSanitised')->once()->andReturnNull();
+
+        $ext = new SystemMessageExtension($renderer, $service);
+
+        $this->assertSame('', $ext->renderSystemMessage());
+    }
+
+    public function testSystemMessageRendersPartialWhenMessageExists(): void
+    {
+        $renderer = Mockery::mock(TemplateRendererInterface::class);
+        $renderer->shouldReceive('render')
+            ->with(
+                'application/partials/system-message.twig',
+                ['message' => 'cleaned']
+            )
+            ->once()
+            ->andReturn('<div class="notice"><i class="icon icon-important"></i></div>');
+
+        $service = Mockery::mock(SystemMessageService::class);
+        $service->shouldReceive('fetchSanitised')->once()->andReturn('cleaned');
+
+        $ext = new SystemMessageExtension($renderer, $service);
+
+        $html = $ext->renderSystemMessage();
+
+        $this->assertStringContainsString('icon-important', $html);
     }
 }

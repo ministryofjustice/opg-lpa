@@ -92,7 +92,6 @@ return [
             'accountInfo'           => 'Application\View\Helper\AccountInfoFactory',
             'formElementErrorsV2'   => 'Application\View\Helper\FormElementErrorsFactory',
             'routeName'             => 'Application\View\Helper\RouteNameFactory',
-            'systemMessage'         => 'Application\View\Helper\SystemMessageFactory',
         ],
     ],
 
