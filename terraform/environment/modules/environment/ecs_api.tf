@@ -264,8 +264,8 @@ locals {
         { name = "POSTGRESQL_PASSWORD", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
       ],
       environment = [
-        { name = "POSTGRESQL_DATABASE", value = module.api_aurora[0].name },
-        { name = "PGBOUNCER_DATABASE", value = module.api_aurora[0].name },
+        { name = "POSTGRESQL_DATABASE", value = module.api_aurora[0].database_name },
+        { name = "PGBOUNCER_DATABASE", value = module.api_aurora[0].database_name },
         { name = "POSTGRESQL_HOST", value = module.api_aurora[0].endpoint },
         { name = "PGBOUNCER_SERVER_TLS_SSLMODE", value = "verify-full" },
         { name = "PGBOUNCER_AUTH_TYPE", value = "md5" },
