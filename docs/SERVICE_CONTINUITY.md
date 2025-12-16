@@ -100,12 +100,49 @@ After an incident a Root Cause Analysis is run so that lessons learned can be pi
 
 ## IT Continuity Plans (Resilience)
 
+Make An LPA is hosted in AWS. It has `development`, `pre-production` and `production` environments, each ring-fenced in its own AWS account to reduce blast radius of any incidents. Only production contains real user data, non prod environment access is limited to MOJ networks. Deployment is via automated promotion of releases through the `development` > `pre-production` > `production` pipeline. New work is tested on isolated ephemeral environments in `development` before merge to main.
+
+The application tiers run on [AWS Elastic Container Service](https://aws.amazon.com/ecs/). This is designed to handle traffic spikes and containers will scale up or down based on system usage (between 2 and 20 containers for primary system elements). Containers are balanced across multiple availability zones within the `eu-west-1` region to provide resilience.
+
+All application data is hosted in highly available services provided by AWS. The main data store is an [AWS Aurora](https://aws.amazon.com/rds/aurora/) Postgres cluster. [AWS Elasticache](https://aws.amazon.com/elasticache/) is used for session storage. System status messages are stored in [DynamoDB](https://aws.amazon.com/dynamodb/)  to be unaffected by Aurora issues.
+
+[AWS Web Application Firewall](https://aws.amazon.com/waf/) is configured on the service to block known PHP issues, known bad inputs and common attacks (ie. CSRF, XSS and SQL injection attempts).
+
+The service uses AWS application load balancers that only accept HTTPS/TLS connections, with their standard DDOS prevention. AWS Advanced Shield is also configured for additional DDOS protection and out of hours remediation.
+
+Make An LPA has common massive traffic spikes triggered by being mentioned on popular consumer-related television programmes. This has tested its resilience on multiple occasions.
+
+Make an LPA also runs an automated load test as part of its delivery pipeline.
+
+All infrastructure is managed and provisioned by Terraform Infrastructure as Code (IAC) for reproducibility, environments differ only in service scaling and data content.
+
 ## Disaster Recovery Plans (Procedures / Runbooks)
+
+In the unlikely event that the main AWS region becomes unavailable, the Make An LPA application can be stood up in the `eu-west-2` region.
+
+IAC model allows us to stand up a new version of the service in another AWS account with relative ease as long as backups as preserved.
+
+### Recovery Time and Recovery Point Objectives
+
+Currently TBC.
 
 ## Backup & Restore Plans (configuration and Testing)
 
+Application data in the Aurora Postgres cluster is backed up nightly. Backups are stored for 14 days and are synced to the second region. Backups are also stored as immutable objects via the AWS Backup service.
+
+The team can manually restore from a backup database if the active database is deleted or becomes corrupted.
+
+Restore process has not been tested recently and documentation needs revisiting. Tickets currently in flight to retest and update documentation ref LPAL-1352.
+
+The Infrastructure as Code model allows us to stand up a new version of the service easily (this is the process we use for ephemeral development environments).
+
 ## Supporting Information (Risk & Test Tracker Links)
 
+Make An LPA has a comprehensive automated end to end test suite covering the user journeys within the service. These use [cypress and are within the code base](https://github.com/ministryofjustice/opg-lpa/tree/main/cypress/e2e) and are run on every change as part of the continuous integration workflows for new changes. Merging of new change is only possible if the existing test suite continues to pass against the change and if reviewed by another team member.
 
 
 
+
+## Releases
+
+Releases are handled via GitHub Actions and use semantic versioning. [All releases and note are available within GitHub](https://github.com/ministryofjustice/opg-lpa/releases).
