@@ -12,14 +12,11 @@ use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Controller\General\AuthController;
-use Application\Controller\General\FeedbackController;
 use Application\Controller\General\ForgotPasswordController;
 use Application\Controller\General\GuidanceController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\VerifyEmailAddressController;
-use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Session\SessionManagerSupport;
-use Application\Model\Service\Session\SessionUtility;
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
@@ -51,11 +48,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         CheckoutController::class => [
             'setCommunicationService' => 'Communication',
             'setPaymentClient'        => 'GovPayClient'
-        ],
-        FeedbackController::class => [
-            'setFeedbackService' => 'Feedback',
-            'setSessionUtility'  => SessionUtility::class,
-            'setDateService'  => DateService::class,
         ],
         ForgotPasswordController::class => [
             'setUserService' => 'UserService'

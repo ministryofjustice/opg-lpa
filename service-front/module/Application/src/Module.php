@@ -8,20 +8,27 @@ use Application\Form\Element\CsrfBuilder;
 use Application\Form\Error\FormLinkedErrors;
 use Application\Handler\CookiesHandler;
 use Application\Handler\CookiesHandlerFactory;
+use Application\Handler\Factory\FeedbackHandlerFactory;
+use Application\Handler\Factory\FeedbackThanksHandlerFactory;
+use Application\Handler\FeedbackHandler;
+use Application\Handler\FeedbackThanksHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerFactory;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
+use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
+use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Session\WritePolicy;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
 use Laminas\Http\PhpEnvironment\Request as HttpRequest;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Session\SessionManager;
 use MakeShared\Constants;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -182,6 +189,7 @@ class Module implements FormElementProviderInterface
                 'AddressLookup' => 'OrdnanceSurvey',
                 'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
+                IDateService::class => DateService::class,
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
@@ -314,6 +322,10 @@ class Module implements FormElementProviderInterface
                 },
                 LoggerInterface::class => LoggerFactory::class,
                 CookiesHandler::class     => CookiesHandlerFactory::class,
+                DateService::class           => InvokableFactory::class,
+                FeedbackHandler::class       => FeedbackHandlerFactory::class,
+                FeedbackThanksHandler::class => FeedbackThanksHandlerFactory::class,
+
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
