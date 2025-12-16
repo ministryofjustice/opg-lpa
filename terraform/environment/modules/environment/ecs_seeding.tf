@@ -78,9 +78,9 @@ locals {
         { "name" : "OPG_LPA_POSTGRES_PASSWORD", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" }
       ],
       "environment" : [
-        { "name" : "OPG_LPA_POSTGRES_NAME", "value" : module.api_aurora[0].database_name },
-        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : module.api_aurora[0].endpoint },
-        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(module.api_aurora[0].port) },
+        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = var.account.database.rds_proxy_routing_enabled ? module.rds_proxy[0].endpoint : "127.0.0.1" },
+        { name = "OPG_LPA_POSTGRES_PORT", value = var.account.database.rds_proxy_routing_enabled ? "5432" : "6432" },
+        { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].database_name },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name }
       ]
   })
