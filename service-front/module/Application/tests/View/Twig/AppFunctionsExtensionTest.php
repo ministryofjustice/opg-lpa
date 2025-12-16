@@ -6,10 +6,10 @@ namespace ApplicationTest\View\Twig;
 
 use Application\Form\Error\FormLinkedErrors;
 use Application\Model\FormFlowChecker;
+use Application\Service\SystemMessage;
 use Application\View\Twig\AppFunctionsExtension;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Template\TemplateRendererInterface;
-use Mockery;
 use PHPUnit\Framework\TestCase;
 
 final class AppFunctionsExtensionTest extends TestCase
@@ -19,9 +19,19 @@ final class AppFunctionsExtensionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $formLinkedErrors = $this->createMock(FormLinkedErrors::class);
-        $this->extension = new AppFunctionsExtension([], $formLinkedErrors);
+        $systemMessage    = $this->createMock(SystemMessage::class);
+        $renderer         = $this->createMock(TemplateRendererInterface::class);
+
+        $this->extension = new AppFunctionsExtension(
+            [],
+            $formLinkedErrors,
+            $renderer,
+            $systemMessage,
+        );
     }
+
 
     public function testRegistersApplicantNamesFunction(): void
     {
@@ -97,34 +107,49 @@ final class AppFunctionsExtensionTest extends TestCase
 
     public function testSystemMessageReturnsEmptyStringWhenNoMessage(): void
     {
-        $renderer = Mockery::mock(TemplateRendererInterface::class);
+        $systemMessage = $this->createMock(\Application\Service\SystemMessage::class);
+        $systemMessage->expects($this->once())
+            ->method('fetchSanitised')
+            ->willReturn(null);
 
-        $service = Mockery::mock(SystemMessage::class);
-        $service->shouldReceive('fetchSanitised')->once()->andReturnNull();
+        $renderer = $this->createMock(TemplateRendererInterface::class);
 
-        $ext = new SystemMessageExtension($renderer, $service);
+        $extension = new AppFunctionsExtension(
+            [],
+            $this->createMock(FormLinkedErrors::class),
+            $renderer,
+            $systemMessage,
+        );
 
-        $this->assertSame('', $ext->renderSystemMessage());
+        $this->assertSame('', $extension->systemMessage());
     }
 
     public function testSystemMessageRendersPartialWhenMessageExists(): void
     {
-        $renderer = Mockery::mock(TemplateRendererInterface::class);
-        $renderer->shouldReceive('render')
+        $systemMessage = $this->createMock(\Application\Service\SystemMessage::class);
+        $systemMessage->expects($this->once())
+            ->method('fetchSanitised')
+            ->willReturn('cleaned');
+
+        $renderer = $this->createMock(TemplateRendererInterface::class);
+        $renderer->expects($this->once())
+            ->method('render')
             ->with(
                 'application/partials/system-message.twig',
                 ['message' => 'cleaned']
             )
-            ->once()
-            ->andReturn('<div class="notice"><i class="icon icon-important"></i></div>');
+            ->willReturn('<div class="notice"></div>');
 
-        $service = Mockery::mock(SystemMessageService::class);
-        $service->shouldReceive('fetchSanitised')->once()->andReturn('cleaned');
+        $extension = new AppFunctionsExtension(
+            [],
+            $this->createMock(FormLinkedErrors::class),
+            $renderer,
+            $systemMessage,
+        );
 
-        $ext = new SystemMessageExtension($renderer, $service);
-
-        $html = $ext->renderSystemMessage();
-
-        $this->assertStringContainsString('icon-important', $html);
+        $this->assertSame(
+            '<div class="notice"></div>',
+            $extension->systemMessage()
+        );
     }
 }

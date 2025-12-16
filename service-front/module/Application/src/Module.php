@@ -24,8 +24,8 @@ use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Session\WritePolicy;
+use Application\Service\Factory\SystemMessageFactory;
 use Application\Service\SystemMessage;
-use Application\Service\SystemMessageFactory;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
 use Laminas\Http\PhpEnvironment\Request as HttpRequest;
@@ -55,6 +55,7 @@ use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
 use Mezzio\Session\Ext\PhpSessionPersistence;
 use Mezzio\Session\SessionMiddleware;
+use Mezzio\Template\TemplateRendererInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Redis;
@@ -320,6 +321,8 @@ class Module implements FormElementProviderInterface
                     return new AppFunctionsExtension(
                         $sm->get('config'),
                         $sm->get(FormLinkedErrors::class),
+                        $sm->get(TemplateRendererInterface::class),
+                        $sm->get(SystemMessage::class),
                     );
                 },
                 LoggerInterface::class => LoggerFactory::class,
