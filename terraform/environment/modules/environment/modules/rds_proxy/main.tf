@@ -14,7 +14,7 @@ resource "aws_db_proxy" "rds_proxy" {
     auth_scheme               = "SECRETS"
     description               = "Authentication for RDS Proxy"
     iam_auth                  = "DISABLED"
-    client_password_auth_type = "POSTGRES_SCRAM_SHA_256" # pragma: allowlist secret
+    client_password_auth_type = "POSTGRES_MD5" # pragma: allowlist secret
     secret_arn                = var.api_rds_credentials_secret_arn
   }
 }
@@ -101,13 +101,23 @@ resource "aws_security_group_rule" "rds_proxy_ingress" {
   description              = "Ingress from rds client"
 }
 
-resource "aws_security_group_rule" "rds_proxy_egress" {
+resource "aws_security_group_rule" "rds_proxy_rds_egress" {
   type                     = "egress"
   from_port                = 5432
   to_port                  = 5432
   protocol                 = "tcp"
   source_security_group_id = var.rds_api_security_group_id
   security_group_id        = aws_security_group.rds_proxy.id
+  description              = "Egress To RDS"
+}
+
+resource "aws_security_group_rule" "rds_proxy_rds_ingress" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.rds_proxy.id
+  security_group_id        = var.rds_api_security_group_id
   description              = "Egress To RDS"
 }
 
