@@ -10,7 +10,7 @@ use function htmlspecialchars;
 use function is_string;
 use function trim;
 
-final class SystemMessage
+class SystemMessage
 {
     public function __construct(
         private readonly DynamoDbKeyValueStore $cache,
