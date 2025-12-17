@@ -69,6 +69,7 @@ resource "aws_vpc_endpoint_policy" "private" {
 
 resource "aws_vpc_endpoint" "s3" {
   provider          = aws.region
+  count             = var.s3_endpoint_enabled ? 1 : 0
   vpc_id            = var.vpc_id
   service_name      = "com.amazonaws.${data.aws_region.current.region}.s3"
   route_table_ids   = tolist(var.application_route_tables.ids)
@@ -79,6 +80,7 @@ resource "aws_vpc_endpoint" "s3" {
 
 resource "aws_vpc_endpoint" "dynamodb" {
   provider          = aws.region
+  count             = var.dynamodb_endpoint_enabled ? 1 : 0
   vpc_id            = var.vpc_id
   service_name      = "com.amazonaws.${data.aws_region.current.region}.dynamodb"
   route_table_ids   = tolist(var.application_route_tables.ids)
