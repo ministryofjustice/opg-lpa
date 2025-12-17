@@ -587,7 +587,7 @@ final class DateCheckViewModelHelperTest extends MockeryTestCase
         ]);
 
         // call helper under test
-        $helperResult = ($this->dateCheckViewModelHelper)($lpa);
+        $helperResult = DateCheckViewModelHelper::build($lpa);
 
         // set vars on ViewModel as it is done in controller
         $viewModel->setVariables([

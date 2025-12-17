@@ -40,7 +40,7 @@ class DateCheckController extends AbstractLpaController
             'lpa-id' => $lpa->id
         ]));
 
-        $helperResult = ($this->dateCheckViewModelHelper)($lpa);
+        $helperResult = DateCheckViewModelHelper::build($lpa);
 
         $request = $this->convertRequest();
 
