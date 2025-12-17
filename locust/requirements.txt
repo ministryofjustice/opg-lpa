@@ -33,7 +33,7 @@ flask==3.1.2
     #   flask-cors
     #   flask-login
     #   locust
-flask-cors==6.0.1
+flask-cors==6.0.2
     # via locust
 flask-login==0.6.3
     # via locust
@@ -91,7 +91,7 @@ soupsieve==2.8
     # via beautifulsoup4
 typing-extensions==4.15.0
     # via beautifulsoup4
-urllib3==2.6.0
+urllib3==2.6.2
     # via
     #   geventhttpclient
     #   requests

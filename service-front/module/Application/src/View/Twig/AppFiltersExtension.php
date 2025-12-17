@@ -6,12 +6,14 @@ namespace Application\View\Twig;
 
 use MakeShared\DataModel\Lpa\Formatter;
 use Application\View\Helper\Traits\ConcatNamesTrait;
+use Application\View\Helper\Traits\MoneyFormatterTrait;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class AppFiltersExtension extends AbstractExtension
 {
     use ConcatNamesTrait;
+    use MoneyFormatterTrait;
 
     public function __construct(
         private readonly array $config,
@@ -25,6 +27,7 @@ class AppFiltersExtension extends AbstractExtension
             new TwigFilter('asset_path', [$this, 'assetPath']),
             new TwigFilter('format_lpa_id', [$this, 'formatLpaId']),
             new TwigFilter('concat_names', [$this, 'concatListOfNames']),
+            new TwigFilter('money_format', [$this, 'moneyFormat']),
         ];
     }
 
@@ -67,5 +70,10 @@ class AppFiltersExtension extends AbstractExtension
     public function concatListOfNames(array $nameList): ?string
     {
         return $this->concatNames($nameList);
+    }
+
+    public function moneyFormat(mixed $amount): string
+    {
+        return $this->formatMoney($amount);
     }
 }
