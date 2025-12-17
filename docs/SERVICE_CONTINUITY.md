@@ -113,9 +113,9 @@ The service uses AWS application load balancers that only accept HTTPS/TLS conne
 
 Make An LPA has common massive traffic spikes triggered by being mentioned on popular consumer-related television programmes. This has tested its resilience on multiple occasions. Auto-scaling is configured to mitigate this.
 
-Make an LPA also runs an automated load test as part of its delivery pipeline.
-
 All infrastructure is managed and provisioned by Terraform Infrastructure as Code (IAC) for reproducibility, environments differ only in service scaling and data content.
+
+The service runs an integration and minimal load test during its deployment process.
 
 The service has a [maintenance mode](https://github.com/ministryofjustice/opg-lpa/tree/main/docs/runbooks/maintenance_mode) to disable publich facing elements during prolonged issues.
 
