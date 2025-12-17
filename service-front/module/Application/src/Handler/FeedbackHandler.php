@@ -12,7 +12,6 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
-use Laminas\Session\Container;
 use MakeShared\Logging\LoggerTrait;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -42,9 +41,6 @@ class FeedbackHandler implements RequestHandlerInterface, LoggerAwareInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // needed for setExpirationHops
-        $container = new Container('feedback');
-
         /** @var FormInterface $form */
         $form = $this->formElementManager->get('Application\Form\General\FeedbackForm');
 
@@ -56,8 +52,12 @@ class FeedbackHandler implements RequestHandlerInterface, LoggerAwareInterface
 
             $form->setData($data);
 
-            $formGeneratedTime = $container->form_generated_time ?? 0;
-            unset($container->form_generated_time);
+            $formGeneratedTime = $this->sessionUtility->getFromMvc(
+                'feedback',
+                'formGeneratedTime',
+            ) ?? 0;
+
+            $this->sessionUtility->unsetInMvc('feedback', 'formGeneratedTime');
 
             if ($this->dateService->getNow()->getTimestamp() - $formGeneratedTime < self::MIN_SUBMISSION_TIME_SECONDS) {
                 $this->getLogger()->error('Feedback form submitted too quickly, possible bot submission');
@@ -132,9 +132,13 @@ class FeedbackHandler implements RequestHandlerInterface, LoggerAwareInterface
                 return new RedirectResponse($location);
             }
         } else {
-            $container->setExpirationHops(1);
+            $this->sessionUtility->setExpirationHopsInMvc('feedback', 1);
 
-            $container->form_generated_time = $this->dateService->getNow()->getTimestamp();
+            $this->sessionUtility->setInMvc(
+                'feedback',
+                'formGeneratedTime',
+                $this->dateService->getNow()->getTimestamp()
+            );
 
             $referer = $request->getHeaderLine('Referer');
             $fromPage = null;

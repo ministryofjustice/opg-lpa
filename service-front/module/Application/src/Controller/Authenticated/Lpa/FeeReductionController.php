@@ -8,6 +8,7 @@ use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\User\Details as UserService;
 use Application\View\Helper\Traits\MoneyFormatterTrait;
 use Laminas\Form\Element;
@@ -25,29 +26,19 @@ class FeeReductionController extends AbstractLpaController
 
     /**
      * instance.
-     *
-     * @param string $lpaId
-     * @param AbstractPluginManager $formElementManager
-     * @param SessionManagerSupport $sessionManagerSupport
-     * @param AuthenticationService $authenticationService
-     * @param array $config
-     * @param Container $userDetailsSession
-     * @param LpaApplicationService $lpaApplicationService
-     * @param UserService $userService
-     * @param ReplacementAttorneyCleanup $replacementAttorneyCleanup
-     * @param Metadata $metadata
      */
     public function __construct(
-        $lpaId,
-        $formElementManager,
-        $sessionManagerSupport,
-        $authenticationService,
-        $config,
-        $userDetailsSession,
-        $lpaApplicationService,
-        $userService,
-        $replacementAttorneyCleanup,
-        $metadata
+        protected $lpaId,
+        protected AbstractPluginManager $formElementManager,
+        protected SessionManagerSupport $sessionManagerSupport,
+        protected AuthenticationService $authenticationService,
+        protected array $config,
+        protected Container $userDetailsSession,
+        protected LpaApplicationService $lpaApplicationService,
+        protected UserService $userService,
+        protected ReplacementAttorneyCleanup $replacementAttorneyCleanup,
+        protected Metadata $metadata,
+        protected SessionUtility $sessionUtility,
     ) {
         parent::__construct(
             $lpaId,
@@ -59,7 +50,8 @@ class FeeReductionController extends AbstractLpaController
             $lpaApplicationService,
             $userService,
             $replacementAttorneyCleanup,
-            $metadata
+            $metadata,
+            $sessionUtility,
         );
     }
 
