@@ -42,7 +42,7 @@ jobs:
         id: set_workspace_name
         run: |
           echo "workspace_name=${{ github.event.number }}${{ steps.safe_branch_name.outputs.safe }}" >> $GITHUB_OUTPUT
-
+          echo "##workspace name: ${{ github.event.number }}${{ steps.safe_branch_name.outputs.safe }}" >> $GITHUB_STEP_SUMMARY
       - name: Set output to short SHA
         id: short_sha
         env:
