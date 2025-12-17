@@ -93,10 +93,10 @@ class Dob extends AbstractData
         $metadata->addPropertyConstraints('date', [
             new Assert\NotBlank(),
             new Assert\Custom\DateTimeUTC(),
-            new Assert\LessThanOrEqual([
-                'value' => new \DateTime('today'),
-                'message' => 'must-be-less-than-or-equal-to-today'
-            ]),
+            new Assert\LessThanOrEqual(
+                value: new \DateTime('today'),
+                message: 'must-be-less-than-or-equal-to-today'
+            ),
         ]);
     }
 

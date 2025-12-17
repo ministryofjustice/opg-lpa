@@ -35,27 +35,21 @@ class NotifiedPerson extends AbstractData
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('id', [
-            new Assert\NotBlank([
-                'groups' => ['required-at-api']
-            ]),
-            new Assert\Type([
-                'type' => 'int'
-            ]),
+            new Assert\NotBlank(
+                groups: ['required-at-api']
+            ),
+            new Assert\Type('int'),
         ]);
 
         $metadata->addPropertyConstraints('name', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Name'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\Name'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Address'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\Address'),
             new ValidConstraintSymfony(),
         ]);
     }

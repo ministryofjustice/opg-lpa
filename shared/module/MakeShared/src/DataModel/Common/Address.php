@@ -19,7 +19,7 @@ class Address extends AbstractData
     /**
      * Field length constants
      */
-    private const ADDRESS_LINE_MAX_LENGTH = 50;//40;
+    private const ADDRESS_LINE_MAX_LENGTH = 50; //40;
     private const POSTCODE_MIN_LENGTH = 1;
     private const POSTCODE_MAX_LENGTH = 8;
 
@@ -47,40 +47,24 @@ class Address extends AbstractData
     {
         $metadata->addPropertyConstraints('address1', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::ADDRESS_LINE_MAX_LENGTH
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(max: self::ADDRESS_LINE_MAX_LENGTH),
         ]);
 
         $metadata->addPropertyConstraints('address2', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::ADDRESS_LINE_MAX_LENGTH
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(max: self::ADDRESS_LINE_MAX_LENGTH),
         ]);
 
         $metadata->addPropertyConstraints('address3', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::ADDRESS_LINE_MAX_LENGTH
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(max: self::ADDRESS_LINE_MAX_LENGTH),
         ]);
 
         // This could be improved, but we'd need to be very careful not to block valid postcodes.
         $metadata->addPropertyConstraints('postcode', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::POSTCODE_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(max: self::POSTCODE_MAX_LENGTH),
         ]);
 
         // We required either address2 OR postcode to be set for an address to be considered valid.
