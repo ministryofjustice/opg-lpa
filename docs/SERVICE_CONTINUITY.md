@@ -121,7 +121,7 @@ The service has a [maintenance mode](https://github.com/ministryofjustice/opg-lp
 
 ## Disaster Recovery Plans (Procedures / Runbooks)
 
-In the unlikely event that the main AWS region becomes unavailable, the Make An LPA application can be stood up in the `eu-west-2` region after some manual reconfiguration.
+In the unlikely event that the main AWS region becomes unavailable, the Make An LPA application can be stood up in the `eu-west-2` region after some IAC configuration changes.
 
 IAC model allows us to stand up a new version of the service in another AWS account with relative ease as long as backups as preserved.
 
