@@ -16,11 +16,9 @@ trait ValidatorPathTrait
      *
      * This has been changed to point back to the original Symfony Validators.
      *
-     * @return string
-     *
      * @api
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         $pathParts = explode('\\', get_class($this));
         return 'Symfony\\Component\\Validator\\Constraints\\' . end($pathParts) . 'Validator';

@@ -8,7 +8,7 @@ class Length extends SymfonyConstraints\Length
 {
     use ValidatorPathTrait;
 
-    public $minMessage = 'must-be-greater-than-or-equal:{{ limit }}';
-    public $maxMessage = 'must-be-less-than-or-equal:{{ limit }}';
-    public $exactMessage = 'length-must-equal:{{ limit }}';
+    public string $minMessage = 'must-be-greater-than-or-equal:{{ limit }}';
+    public string $maxMessage = 'must-be-less-than-or-equal:{{ limit }}';
+    public string $exactMessage = 'length-must-equal:{{ limit }}';
 }
