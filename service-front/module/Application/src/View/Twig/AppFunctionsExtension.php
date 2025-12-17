@@ -6,9 +6,11 @@ namespace Application\View\Twig;
 
 use Application\Form\Error\FormLinkedErrors;
 use Application\Model\FormFlowChecker;
+use Application\Service\SystemMessage;
 use Laminas\Form\Form;
 use MakeShared\DataModel\Lpa\Lpa;
 use Application\View\Helper\Traits\ConcatNamesTrait;
+use Mezzio\Template\TemplateRendererInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -19,6 +21,8 @@ class AppFunctionsExtension extends AbstractExtension
     public function __construct(
         private readonly array $config,
         private readonly FormLinkedErrors $formLinkedErrors,
+        private readonly TemplateRendererInterface $renderer,
+        private readonly SystemMessage $systemMessage,
     ) {
     }
 
@@ -28,6 +32,7 @@ class AppFunctionsExtension extends AbstractExtension
             new TwigFunction('applicant_names', [$this, 'applicantNames']),
             new TwigFunction('final_check_accessible', [$this, 'finalCheckAccessible']),
             new TwigFunction('form_linked_errors', fn (Form $form): array => $this->formLinkedErrors->fromForm($form)),
+            new TwigFunction('systemMessage', [$this, 'systemMessage'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -59,5 +64,18 @@ class AppFunctionsExtension extends AbstractExtension
     public function finalCheckAccessible(Lpa $lpa): bool
     {
         return FormFlowChecker::isFinalCheckAccessible($lpa);
+    }
+
+    public function systemMessage(): string
+    {
+        $message = $this->systemMessage->fetchSanitised();
+
+        if ($message === null) {
+            return '';
+        }
+
+        return $this->renderer->render('application/partials/system-message.twig', [
+            'message' => $message,
+        ]);
     }
 }
