@@ -30,9 +30,10 @@ Then(
       );
       var csp =
         "font-src 'self' data:; script-src 'self' *.googletagmanager.com *.google-analytics.com; " +
-        "default-src 'self'; connect-src 'self' *.google-analytics.com; " +
-        "img-src 'self' *.googletagmanager.com;";
+        "default-src 'self'; img-src 'self' *.googletagmanager.com; " +
+        "connect-src 'self' *.google-analytics.com;";
       expect(response.headers).to.have.property('content-security-policy', csp);
+
       var xcsp = "default-src 'self'";
       expect(response.headers).to.have.property(
         'x-content-security-policy',

@@ -209,29 +209,4 @@ abstract class AbstractBaseController extends AbstractActionController implement
     {
         return $this->config;
     }
-
-    /**
-     * Set custom headers
-     * @return mixed
-     */
-    public function onDispatch(\Laminas\Mvc\MvcEvent $e)
-    {
-        /** @var HttpResponse */
-        $response = $this->getResponse();
-
-        $securityPolicy = "font-src 'self' data:; " .
-            "script-src 'self' *.googletagmanager.com *.google-analytics.com; default-src 'self'; " .
-            "connect-src 'self' *.google-analytics.com; " .
-            "img-src 'self' *.googletagmanager.com;";
-        $xsecurityPolicy = "default-src 'self'";
-
-        $response->getHeaders()->addHeaders([
-            'X-Content-Type-Options' => 'nosniff',
-            'Referrer-Policy' => 'strict-origin-when-cross-origin',
-            'Content-Security-Policy' => $securityPolicy,
-            'X-Content-Security-Policy' => $xsecurityPolicy,
-        ]);
-
-        return parent::onDispatch($e);
-    }
 }
