@@ -18,7 +18,6 @@ use Application\Controller\General\GuidanceController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\VerifyEmailAddressController;
 use Application\Model\Service\Session\SessionManagerSupport;
-use Application\Model\Service\Session\SessionUtility;
 use Application\Service\DateCheckViewModelHelper;
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
