@@ -33,27 +33,23 @@ abstract class AbstractDecisions extends AbstractData
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('how', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Choice([
-                'choices' => [
+            new Assert\Type('string'),
+            new Assert\Choice(
+                choices: [
                     self::LPA_DECISION_HOW_DEPENDS,
                     self::LPA_DECISION_HOW_JOINTLY,
                     self::LPA_DECISION_HOW_SINGLE_ATTORNEY,
                     self::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
                 ]
-            ]),
+            ),
         ]);
 
         $metadata->addPropertyConstraints('howDetails', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'min' => 1,
-                'max' => (1000 * 1024)
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                min: 1,
+                max: (1000 * 1024)
+            ),
         ]);
     }
 

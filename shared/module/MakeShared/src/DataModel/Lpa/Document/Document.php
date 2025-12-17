@@ -103,21 +103,17 @@ class Document extends AbstractData
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('type', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Choice([
-                'choices' => [
+            new Assert\Type('string'),
+            new Assert\Choice(
+                choices: [
                     self::LPA_TYPE_PF,
                     self::LPA_TYPE_HW
                 ]
-            ]),
+            ),
         ]);
 
         $metadata->addPropertyConstraints('donor', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Lpa\Document\Donor'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Lpa\Document\Donor'),
             new ValidConstraintSymfony(),
         ]);
 
@@ -142,8 +138,8 @@ class Document extends AbstractData
                     foreach ($value as $attorneyId) {
                         if (!in_array($attorneyId, $validAttorneyIds)) {
                             $context->buildViolation('allowed-values:' . implode(',', $validAttorneyIds))
-                                    ->setInvalidValue(implode(',', $value))
-                                    ->addViolation();
+                                ->setInvalidValue(implode(',', $value))
+                                ->addViolation();
 
                             return;
                         }
@@ -157,23 +153,17 @@ class Document extends AbstractData
         );
 
         $metadata->addPropertyConstraints('primaryAttorneyDecisions', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('replacementAttorneyDecisions', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('correspondent', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Lpa\Document\Correspondence'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Lpa\Document\Correspondence'),
             new ValidConstraintSymfony(),
         ]);
 
@@ -210,38 +200,24 @@ class Document extends AbstractData
         );
 
         $metadata->addPropertyConstraints('certificateProvider', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Lpa\Document\CertificateProvider'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Lpa\Document\CertificateProvider'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('primaryAttorneys', [
             new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'array'
-            ]),
+            new Assert\Type('array'),
             new AllConstraintSymfony([
-                'constraints' => [
-                    new Assert\Type([
-                        'type' => '\MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney'
-                    ]),
-                ]
+                new Assert\Type('\MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney'),
             ]),
             new Assert\Custom\UniqueIdInArray(),
         ]);
 
         $metadata->addPropertyConstraints('replacementAttorneys', [
             new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'array'
-            ]),
+            new Assert\Type('array'),
             new AllConstraintSymfony([
-                'constraints' => [
-                    new Assert\Type([
-                        'type' => '\MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney'
-                    ]),
-                ]
+                new Assert\Type('\MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney'),
             ]),
             new Assert\Custom\UniqueIdInArray(),
         ]);
@@ -257,26 +233,18 @@ class Document extends AbstractData
 
             if (count($attorneys) > $max) {
                 $context->buildViolation("must-be-less-than-or-equal:{$max}")
-                        ->setInvalidValue(count($attorneys) . " found")
-                        ->atPath('primaryAttorneys/replacementAttorneys')
-                        ->addViolation();
+                    ->setInvalidValue(count($attorneys) . " found")
+                    ->atPath('primaryAttorneys/replacementAttorneys')
+                    ->addViolation();
             }
         }));
 
         $metadata->addPropertyConstraints('peopleToNotify', [
             new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'array'
-            ]),
-            new Assert\Count([
-                'max' => 5
-            ]),
+            new Assert\Type('array'),
+            new Assert\Count(max: 5),
             new AllConstraintSymfony([
-                'constraints' => [
-                    new Assert\Type([
-                        'type' => '\MakeShared\DataModel\Lpa\Document\NotifiedPerson'
-                    ]),
-                ]
+                new Assert\Type('\MakeShared\DataModel\Lpa\Document\NotifiedPerson'),
             ]),
             new Assert\Custom\UniqueIdInArray(),
         ]);

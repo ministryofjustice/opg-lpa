@@ -85,34 +85,28 @@ class Correspondence extends AbstractData
     {
         $metadata->addPropertyConstraints('who', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Choice([
-                'choices' => [
+            new Assert\Type('string'),
+            new Assert\Choice(
+                choices: [
                     self::WHO_DONOR,
                     self::WHO_ATTORNEY,
                     self::WHO_CERTIFICATE_PROVIDER,
                     self::WHO_OTHER
                 ]
-            ]),
+            ),
         ]);
 
         $metadata->addPropertyConstraints('name', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\LongName'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\LongName'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('company', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'min' => self::COMPANY_MIN_LENGTH,
-                'max' => self::COMPANY_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                min: self::COMPANY_MIN_LENGTH,
+                max: self::COMPANY_MAX_LENGTH,
+            ),
         ]);
 
         // We required either a name OR company to be set for a Correspondent to be considered valid.
@@ -124,36 +118,26 @@ class Correspondence extends AbstractData
 
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Address'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\Address'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\EmailAddress'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\EmailAddress'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('phone', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\PhoneNumber'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\PhoneNumber'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('contactByPost', [
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
 
         $metadata->addPropertyConstraints('contactInWelsh', [
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
     }
 
