@@ -20,13 +20,13 @@ class DonorTest extends TestCase
 
         Donor::loadValidatorMetadata($metadata);
 
-        $this->assertEquals(6, count($metadata->properties));
-        $this->assertNotNull($metadata->properties['name']);
-        $this->assertNotNull($metadata->properties['otherNames']);
-        $this->assertNotNull($metadata->properties['address']);
-        $this->assertNotNull($metadata->properties['dob']);
-        $this->assertNotNull($metadata->properties['email']);
-        $this->assertNotNull($metadata->properties['canSign']);
+        $this->assertEquals(6, count($metadata->getConstrainedProperties()));
+        $this->assertContains('name', $metadata->getConstrainedProperties());
+        $this->assertContains('otherNames', $metadata->getConstrainedProperties());
+        $this->assertContains('address', $metadata->getConstrainedProperties());
+        $this->assertContains('dob', $metadata->getConstrainedProperties());
+        $this->assertContains('email', $metadata->getConstrainedProperties());
+        $this->assertContains('canSign', $metadata->getConstrainedProperties());
     }
 
     public function testMap()
