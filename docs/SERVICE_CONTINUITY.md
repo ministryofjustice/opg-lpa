@@ -67,7 +67,7 @@ Make an LPA has a dependency on OPG Digital's internal Sirius service (via an AP
 
 Make is a multi-tier app split across several containers. Requests are handled from the Internet via an AWS Application load balancer. End user requests are then passed to `Front` which renders the UI and talks to the `API` layer for data access as well as external services. The `API` layer talks to the Aurora database via a connection pooling tool for increased stability. `PDF` generation, which can be slow, is handled via a queuing system with outputs temporarily stored in S3.
 
-Digital team users (mostly product managers) have access to the admin tool, this is IP restricted to MOJ networks.
+Digital team users (mostly product managers) have access to the admin tool, which is limited to known authenticated users and IP restricted to MOJ networks.
 
 C4 model diagram containers and network overview:
 
@@ -112,15 +112,17 @@ All application data is hosted in highly available services provided by AWS. The
 
 The service uses AWS application load balancers that only accept HTTPS/TLS connections, with their standard DDOS prevention. AWS Advanced Shield is also configured for additional DDOS protection and out of hours remediation.
 
-Make An LPA has common massive traffic spikes triggered by being mentioned on popular consumer-related television programmes. This has tested its resilience on multiple occasions.
+Make An LPA has common massive traffic spikes triggered by being mentioned on popular consumer-related television programmes. This has tested its resilience on multiple occasions. Auto-scaling is configured to mitigate this.
 
 Make an LPA also runs an automated load test as part of its delivery pipeline.
 
 All infrastructure is managed and provisioned by Terraform Infrastructure as Code (IAC) for reproducibility, environments differ only in service scaling and data content.
 
+The service has a [maintenance mode](https://github.com/ministryofjustice/opg-lpa/tree/main/docs/runbooks/maintenance_mode) to disable publich facing elements during prolonged issues.
+
 ## Disaster Recovery Plans (Procedures / Runbooks)
 
-In the unlikely event that the main AWS region becomes unavailable, the Make An LPA application can be stood up in the `eu-west-2` region.
+In the unlikely event that the main AWS region becomes unavailable, the Make An LPA application can be stood up in the `eu-west-2` region after some manual reconfiguration.
 
 IAC model allows us to stand up a new version of the service in another AWS account with relative ease as long as backups as preserved.
 
@@ -130,13 +132,13 @@ Currently TBC.
 
 ## Backup & Restore Plans (configuration and Testing)
 
-Application data in the Aurora Postgres cluster is backed up nightly. Backups are stored for 14 days and are synced to the second region. Backups are also stored as immutable objects via the AWS Backup service.
+Application data in the Aurora Postgres cluster is backed up nightly. Backups are stored and synced to the second region (`eu-west-2`). Backups are also stored as immutable objects via the AWS Backup service.
 
 The team can manually restore from a backup database if the active database is deleted or becomes corrupted.
 
-Restore process was last fully tested on 25/11/2025.
-
 The Infrastructure as Code model allows us to stand up a new version of the service easily (this is the process we use for ephemeral development environments).
+
+**Restore process was last tested fully on 25/11/2025.**
 
 ## Supporting Information (Risk & Test Tracker Links)
 
