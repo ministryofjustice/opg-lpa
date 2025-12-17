@@ -7,14 +7,9 @@ namespace Application\Service;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use MakeShared\DataModel\Lpa\Lpa;
 
-class DateCheckViewModelHelper
+final class DateCheckViewModelHelper
 {
-    public function __construct(
-        private readonly ContinuationSheets $continuationSheets
-    ) {
-    }
-
-    public function __invoke(Lpa $lpa): array
+    public static function build(Lpa $lpa): array
     {
         $applicants = [];
 
@@ -41,7 +36,8 @@ class DateCheckViewModelHelper
             }
         }
 
-        $continuationNoteKeys = $this->continuationSheets->getContinuationNoteKeys($lpa);
+        $continuationNoteKeys = (new ContinuationSheets())
+            ->getContinuationNoteKeys($lpa);
 
         $continuationSheets = [];
 
@@ -68,10 +64,5 @@ class DateCheckViewModelHelper
             'applicants'         => $applicants,
             'continuationSheets' => $continuationSheets,
         ];
-    }
-
-    public function build(Lpa $lpa): array
-    {
-        return ($this)($lpa);
     }
 }
