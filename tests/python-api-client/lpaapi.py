@@ -1,10 +1,15 @@
 import requests
 import sys
+import os
 
 DEFAULT_USER = "seeded_test_user@digital.justice.gov.uk"
 DEFAULT_PASSWORD = "Pass1234"
 
-apiRoot = "http://localhost:7001"
+if "SERVICE_API_ROOT" in os.environ:
+    apiRoot = os.getenv("SERVICE_API_ROOT")
+else:
+    apiRoot = "http://localhost:7001"
+
 s = requests.Session()
 
 
