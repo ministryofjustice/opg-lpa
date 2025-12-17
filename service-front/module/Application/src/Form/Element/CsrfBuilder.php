@@ -18,9 +18,13 @@ class CsrfBuilder
         $csrfName = 'secret_' . md5($name);
         $csrf = new Csrf($csrfName);
 
-        $sessionUtility = $this->serviceManager->get(SessionUtility::class);
         $csrfSalt = $this->serviceManager->get('config')['csrf']['salt'];
-        $csrfValidator = new CsrfValidator(['name' => $csrf->getName(), 'salt' => $csrfSalt], $sessionUtility);
+
+        $csrfValidator = new CsrfValidator(
+            ['name' => $csrf->getName(), 'salt' => $csrfSalt],
+            $this->serviceManager->get(SessionUtility::class),
+            $this->serviceManager->get('Logger'),
+        );
 
         $csrf->setCsrfValidator($csrfValidator);
         return $csrf;
