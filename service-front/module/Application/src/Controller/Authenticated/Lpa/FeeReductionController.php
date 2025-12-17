@@ -9,7 +9,7 @@ use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details as UserService;
-use Application\View\Helper\MoneyFormat;
+use Application\View\Helper\Traits\MoneyFormatterTrait;
 use Laminas\Form\Element;
 use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\Session\Container;
@@ -21,12 +21,9 @@ use MakeShared\Logging\LoggerTrait;
 class FeeReductionController extends AbstractLpaController
 {
     use LoggerTrait;
-
-    /** @var MoneyFormat */
-    private $moneyFormat;
+    use MoneyFormatterTrait;
 
     /**
-     * Override AbstractLpaController constructor to add in MoneyFormat
      * instance.
      *
      * @param string $lpaId
@@ -39,7 +36,6 @@ class FeeReductionController extends AbstractLpaController
      * @param UserService $userService
      * @param ReplacementAttorneyCleanup $replacementAttorneyCleanup
      * @param Metadata $metadata
-     * @param MoneyFormat $moneyFormat
      */
     public function __construct(
         $lpaId,
@@ -51,8 +47,7 @@ class FeeReductionController extends AbstractLpaController
         $lpaApplicationService,
         $userService,
         $replacementAttorneyCleanup,
-        $metadata,
-        $moneyFormat = null
+        $metadata
     ) {
         parent::__construct(
             $lpaId,
@@ -66,12 +61,6 @@ class FeeReductionController extends AbstractLpaController
             $replacementAttorneyCleanup,
             $metadata
         );
-
-        if (is_null($moneyFormat)) {
-            $moneyFormat = new MoneyFormat();
-        }
-
-        $this->moneyFormat = $moneyFormat;
     }
 
     public function indexAction()
@@ -111,7 +100,7 @@ class FeeReductionController extends AbstractLpaController
         $reductionOptions = [];
 
         $amount = Calculator::getBenefitsFee();
-        $amount = call_user_func($this->moneyFormat, $amount);
+        $amount = $this->formatMoney($amount);
         $reductionOptions['reducedFeeReceivesBenefits'] = new Element('reductionOptions', [
             'label' => "The donor currently claims one of <a class=\"js-guidance\" " .
                        "href=\"/guide#topic-fees-reductions-and-exemptions\" " .
@@ -140,7 +129,7 @@ class FeeReductionController extends AbstractLpaController
         ]);
 
         $amount = Calculator::getLowIncomeFee($isRepeatApplication);
-        $amount = call_user_func($this->moneyFormat, $amount);
+        $amount = $this->formatMoney($amount);
         $reductionOptions['reducedFeeLowIncome'] = new Element('reductionOptions', [
             'label' => "The donor currently has an income of less than £12,000 a year before tax" .
                        "<br><strong class='bold-small'>Fee: £" . $amount . "</strong>",
@@ -154,7 +143,7 @@ class FeeReductionController extends AbstractLpaController
         ]);
 
         $amount = Calculator::getFullFee($isRepeatApplication);
-        $amount = call_user_func($this->moneyFormat, $amount);
+        $amount = $this->formatMoney($amount);
         $reductionOptions['notApply'] = new Element('reductionOptions', [
             'label' => "The donor is not applying for a reduced fee<br>" .
                        "<strong class='bold-small'>Fee: £" . $amount . "</strong>",
