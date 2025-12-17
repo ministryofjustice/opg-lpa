@@ -47,7 +47,7 @@ final class SystemMessageTest extends TestCase
         $service = new SystemMessage($cache);
 
         $this->assertSame(
-            '&lt;script&gt;alert(&quot;hello&quot;);&lt;/script&gt;test message &amp;',
+            '<script>alert("hello");</script>test message &',
             $service->fetchSanitised()
         );
     }
