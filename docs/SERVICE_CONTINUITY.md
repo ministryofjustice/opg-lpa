@@ -24,7 +24,6 @@ OPG Digital uses an embedded WebOps, which means infrastructure engineers are em
 
 The product covers the web application available at [https://www.lastingpowerofattorney.service.gov.uk/](https://www.lastingpowerofattorney.service.gov.uk/)<sup>1</sup> for making an LPA document.
 
-
 Make an LPA provides a convenient digital way to make the paper form that is printed and sent to OPG. In failure scenarios users can fall back to the paper forms or downloaded fillable PDF forms from gov.uk.
 
 The products source code is available as open source via GitHub [https://github.com/ministryofjustice/opg-lpa](https://github.com/ministryofjustice/opg-lpa)
