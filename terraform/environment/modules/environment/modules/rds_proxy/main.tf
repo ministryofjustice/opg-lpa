@@ -122,12 +122,12 @@ resource "aws_security_group_rule" "cluster_from_proxy_ingress" {
 }
 
 # temporary rule to allow RDS Proxy to access Secrets Manager, should be restricted later to vpc endpoint
-resource "aws_security_group_rule" "rds_proxy_secrets_manager" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.rds_proxy.id
-  description       = "Egress For Secrets Manager"
-}
+# resource "aws_security_group_rule" "rds_proxy_secrets_manager" {
+#   type              = "egress"
+#   from_port         = 0
+#   to_port           = 0
+#   protocol          = "tcp"
+#   cidr_blocks       = ["0.0.0.0/0"]
+#   security_group_id = aws_security_group.rds_proxy.id
+#   description       = "Egress For Secrets Manager"
+# }
