@@ -6,6 +6,7 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\User\Details as UserService;
 use MakeShared\DataModel\User\User;
 use Laminas\Mvc\MvcEvent;
@@ -23,52 +24,30 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     /**
      * Identity of the logged in user
      */
-    /** @var Identity */
-    private $identity;
+    private ?Identity $identity = null;
 
     /**
      * User details of the logged in user
      */
-    /** @var User */
-    private $user;
+    private ?User $user = null;
 
     /**
      * Flag to indicate if complete user details are required when accessing this controller
      * Override in descendant if required
      */
-    /** @var bool */
-    protected $requireCompleteUserDetails = true;
+    protected bool $requireCompleteUserDetails = true;
 
-    /** @var LpaApplicationService */
-    private $lpaApplicationService;
-
-    /** @var UserService */
-    private $userService;
-
-    /**
-     * AbstractAuthenticatedController constructor
-     *
-     * @param AbstractPluginManager $formElementManager
-     * @param SessionManagerSupport $sessionManagerSupport
-     * @param AuthenticationService $authenticationService
-     * @param array $config
-     * @param Container $userDetailsSession
-     * @param LpaApplicationService $lpaApplicationService
-     * @param UserService $userService
-     */
     public function __construct(
-        AbstractPluginManager $formElementManager,
-        SessionManagerSupport $sessionManagerSupport,
-        AuthenticationService $authenticationService,
-        array $config,
-        Container $userDetailsSession,
-        LpaApplicationService $lpaApplicationService,
-        UserService $userService
+        protected AbstractPluginManager $formElementManager,
+        protected SessionManagerSupport $sessionManagerSupport,
+        protected AuthenticationService $authenticationService,
+        protected array $config,
+        protected Container $userDetailsSession,
+        protected LpaApplicationService $lpaApplicationService,
+        protected UserService $userService,
+        protected SessionUtility $sessionUtility,
     ) {
-        parent::__construct($formElementManager, $sessionManagerSupport, $authenticationService, $config);
-
-        $this->lpaApplicationService = $lpaApplicationService;
-        $this->userService = $userService;
+        parent::__construct($formElementManager, $sessionManagerSupport, $authenticationService, $config, $sessionUtility);
 
         //  If there is a user identity set up the user - if this is missing the request
         // will be bounced in the onDispatch function
@@ -106,8 +85,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             'userId' => $this->identity->id(),
         ]);
 
-        // Check if they've signed in since the T&C's changed...
-
         /*
          * We check here if the terms have changed since the user last logged in.
          * We also use a session to record whether the user has seen the 'Terms have changed' page since logging in.
@@ -118,11 +95,11 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         $termsUpdated = new DateTime($this->config()['terms']['lastUpdated']);
 
         if ($this->identity->lastLogin() < $termsUpdated) {
-            $termsSession = new Container('TermsAndConditionsCheck');
+            $termsSeen = $this->sessionUtility->getFromMvc('TermsAndConditionsCheck', 'seen');
 
-            if (!isset($termsSession->seen)) {
+            if (!isset($termsSeen)) {
                 // Flag that the 'Terms have changed' page will now have been seen...
-                $termsSession->seen = true;
+                $this->sessionUtility->setInMvc('TermsAndConditionsCheck', 'seen', true);
 
                 return $this->redirect()->toRoute('user/dashboard/terms-changed');
             }
@@ -158,7 +135,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             $view->setVariable('signedInUser', $this->user);
             $view->setVariable(
                 'secondsUntilSessionExpires',
-                $this->identity->tokenExpiresAt()->getTimestamp() - (new DateTime())->getTimestamp()
+                $this->identity->tokenExpiresAt()->getTimestamp() - new DateTime()->getTimestamp()
             );
         }
 
@@ -167,20 +144,16 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
 
     /**
      * Return the Identity of the current authenticated user
-     *
-     * @return Identity
      */
-    public function getIdentity()
+    public function getIdentity(): ?Identity
     {
         return $this->identity;
     }
 
     /**
      * Return the User data of the current authenticated user
-     *
-     * @return User
      */
-    public function getUser()
+    public function getUser(): ?User
     {
         return $this->user;
     }
@@ -194,15 +167,18 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     {
         if (!$this->identity instanceof Identity) {
             if ($allowRedirect) {
-                $preAuthRequest = new Container('PreAuthRequest');
-                $preAuthRequest->url = (string)$this->convertRequest()->getUri();
+                $this->sessionUtility->setInMvc(
+                    'PreAuthRequest',
+                    'url',
+                    (string) $this->convertRequest()->getUri()
+                );
             }
 
             // If the user's identity was cleared because of a genuine timeout,
             // redirect to the login page with session timeout; otherwise,
             // redirect to the login page and show the "service unavailable" message.
-            $authFailureReason = new Container('AuthFailureReason');
-            if (is_null($authFailureReason->code)) {
+            $authFailureCode = $this->sessionUtility->getFromMvc('AuthFailureReason', 'code');
+            if (is_null($authFailureCode)) {
                 return $this->redirect()->toRoute('login', [
                     'state' => 'timeout'
                 ]);
@@ -219,28 +195,17 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     /**
      * delete cloned data for this seed id from session container if it exists.
      * to make sure clone data will be loaded freshly when actor form is rendered.
-     *
-     * @param int $seedId
      */
-    protected function resetSessionCloneData($seedId)
+    protected function resetSessionCloneData(string $seedId): void
     {
-        $cloneContainer = new Container('clone');
-        unset($cloneContainer->$seedId);
+        $this->sessionUtility->unsetInMvc('clone', $seedId);
     }
 
-    /**
-     * Returns an instance of the LPA Application Service.
-     *
-     * @return LpaApplicationService
-     */
     protected function getLpaApplicationService(): LpaApplicationService
     {
         return $this->lpaApplicationService;
     }
 
-    /**
-     * @return UserService
-     */
     protected function getUserService(): UserService
     {
         return $this->userService;

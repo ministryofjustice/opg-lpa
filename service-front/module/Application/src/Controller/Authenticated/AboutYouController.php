@@ -11,14 +11,12 @@ class AboutYouController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
 
-    /** @var Container */
-    private $userDetailsSession;
+    protected Container $userDetailsSession;
 
     /**
      * Flag to indicate if complete user details are required when accessing this controller
      */
-    /** @var bool */
-    protected $requireCompleteUserDetails = false;
+    protected bool $requireCompleteUserDetails = false;
 
     /**
      * @psalm-suppress ImplementedReturnTypeMismatch

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Validator\Csrf;
+use Application\Model\Service\Session\SessionUtility;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Laminas\Session\Container;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 
@@ -16,13 +16,15 @@ final class CsrfTest extends MockeryTestCase
     #[DataProvider('dataProvider')]
     public function testIsValid(string $data, array $errors): void
     {
-        $validator = new Csrf();
-        $validator->setLogger(Mockery::spy(LoggerInterface::class));
-
         //  Set the session seed to skip the randomisation step, required to normalise the session
         // container specified due to how session info is managed
-        $session = new Container('CsrfValidator');
-        $session->token = 12345;
+        $sessionUtility = Mockery::mock(SessionUtility::class);
+        $sessionUtility->shouldReceive('getFromMvc')
+            ->with('CsrfValidator', 'token')
+            ->andReturn(12345);
+
+        $validator = new Csrf([], $sessionUtility);
+        $validator->setLogger(Mockery::spy(LoggerInterface::class));
 
         $result = $validator->isValid($data);
 
