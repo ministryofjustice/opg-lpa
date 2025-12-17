@@ -6,7 +6,6 @@ namespace Application\Service;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 
-use function htmlspecialchars;
 use function is_string;
 use function trim;
 
@@ -31,6 +30,6 @@ class SystemMessage
             return null;
         }
 
-        return htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        return $message;
     }
 }
