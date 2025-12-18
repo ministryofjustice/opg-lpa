@@ -27,7 +27,16 @@ resource "aws_cloudwatch_query_definition" "error_insight_query" {
     |limit 10000
   EOF
 }
+resource "aws_cloudwatch_query_definition" "all_error_logs_query" {
+  name            = "${var.environment_name}/all error logs query"
+  log_group_names = [aws_cloudwatch_log_group.application_logs.name]
 
+  query_string = <<-EOF
+  fields @timestamp, service_name, level, msg, trace_id, user_id, http_method
+    |filter level in ['ERROR', 'CRITICAL']
+    |limit 10000
+  EOF
+}
 resource "aws_cloudwatch_log_metric_filter" "application_5xx_errors" {
   name           = "${var.environment_name}-5xx-errors"
   pattern        = "{ $.status = 5* }"
