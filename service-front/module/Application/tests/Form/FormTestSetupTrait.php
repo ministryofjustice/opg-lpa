@@ -6,10 +6,11 @@ namespace ApplicationTest\Form;
 
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
-use Application\Form\Validator\Csrf;
+use Application\Model\Service\Session\SessionUtility;
 use Laminas\Form\FormInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Mockery;
+use Psr\Log\LoggerInterface;
 
 trait FormTestSetupTrait
 {
@@ -30,10 +31,27 @@ trait FormTestSetupTrait
         $form->init();
 
         $sm = Mockery::mock(ServiceManager::class);
-        $sm->shouldReceive('get')
+        $sm
+            ->shouldReceive('get')
             ->with('config')
             ->andReturn(['csrf' => ['salt' => 'Rando_Calrissian']]);
-        $sm->shouldReceive('build')->andReturn(new Csrf());
+
+        $sessionUtility = Mockery::mock(SessionUtility::class);
+        $sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('CsrfValidator', 'token')
+            ->andReturn(12345);
+
+        $logger = Mockery::mock(LoggerInterface::class);
+
+        $sm
+            ->shouldReceive('get')
+            ->with(SessionUtility::class)
+            ->andReturn($sessionUtility);
+        $sm
+            ->shouldReceive('get')
+            ->with('Logger')
+            ->andReturn($logger);
 
         $csrfBuilder = new CsrfBuilder($sm);
 

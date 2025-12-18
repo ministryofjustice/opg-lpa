@@ -48,6 +48,14 @@ class SessionUtility
         return isset($container->$key);
     }
 
+    public function setExpirationHopsInMvc(
+        string $containerName,
+        int $hops
+    ): void {
+        $container = $this->getMvcContainer($containerName);
+        $container->setExpirationHops($hops);
+    }
+
     public function getFromMezzio(
         MezzioSession $session,
         string $key,

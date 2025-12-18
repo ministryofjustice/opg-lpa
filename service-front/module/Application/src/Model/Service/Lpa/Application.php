@@ -861,12 +861,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
     /**
      * Sets the id of the seed LPA
-     *
-     * @param Lpa $lpa
-     * @param $seedId
-     * @return bool
      */
-    public function setSeed(Lpa $lpa, $seedId)
+    public function setSeed(Lpa $lpa, string $seedId): bool
     {
         $result = $this->executePut(sprintf('/v2/user/%s/applications/%s/seed', $this->getUserId(), $lpa->id), [
             'seed' => $seedId,

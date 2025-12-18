@@ -4,63 +4,105 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Session;
 
+use Application\Model\Service\Session\SessionUtility;
+use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\Attributes\Test;
 use Application\Model\Service\Session\PersistentSessionDetails;
 use Laminas\Router\RouteMatch;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
-final class PersistentSessionDetailsTest extends TestCase
+class PersistentSessionDetailsTest extends TestCase
 {
-    #[Test]
-    public function testSuccessfullyCreateClass(): void
+    private MockInterface|RouteMatch $routeMatch;
+    private MockInterface|SessionUtility $sessionUtility;
+
+    public function setUp(): void
     {
+        $this->routeMatch = Mockery::mock(RouteMatch::class);
 
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/applicant');
-
-        $persistentSession = new PersistentSessionDetails($routeMatch);
-
-        $this->assertInstanceOf(PersistentSessionDetails::class, $persistentSession);
+        $this->sessionUtility = Mockery::mock(SessionUtility::class);
     }
 
+    #[DoesNotPerformAssertions]
     #[Test]
     public function testExpectedValuesFromCurrentAndPreviousRoutes(): void
     {
         $currentRoute = 'lpa/applicant';
 
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($currentRoute);
+        $this->routeMatch
+            ->shouldReceive('getMatchedRouteName')
+            ->andReturn($currentRoute);
 
-        $persistentSession = new PersistentSessionDetails($routeMatch);
+        $this->sessionUtility
+            ->shouldReceive('setInMvc')
+            ->with('SessionDetails', 'currentRoute', 'lpa/applicant');
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('SessionDetails', 'routeStore')
+            ->andReturn('/example');
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('SessionDetails', 'previousRoute')
+            ->andReturn('/example');
+        $this->sessionUtility
+            ->shouldReceive('setInMvc')
+            ->with('SessionDetails', 'routeStore', 'lpa/applicant');
 
-        $this->assertEquals($currentRoute, $persistentSession->getCurrentRoute());
-        $this->assertEquals($currentRoute, $persistentSession->getPreviousRoute());
+        new PersistentSessionDetails($this->routeMatch, $this->sessionUtility);
     }
 
+    #[DoesNotPerformAssertions]
     #[Test]
-    public function testExpectedValuesFromCurrentAndPreviousRoutesPersists(): void
+    public function testPreviousRouteSetToRouteStoreWhenDoesNotMatch(): void
     {
-        $currentRoute = 'lpa/primary-attorney/add';
-        $previousRoute = 'lpa/applicant';
+        $currentRoute = 'lpa/applicant';
 
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($previousRoute)->once();
+        $this->routeMatch
+            ->shouldReceive('getMatchedRouteName')
+            ->andReturn($currentRoute);
 
-        $persistentSession = new PersistentSessionDetails($routeMatch);
+        $this->sessionUtility
+            ->shouldReceive('setInMvc')
+            ->with('SessionDetails', 'currentRoute', 'lpa/applicant');
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('SessionDetails', 'routeStore')
+            ->andReturn('/example/1');
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('SessionDetails', 'previousRoute')
+            ->andReturn('/example/2');
+        $this->sessionUtility
+            ->shouldReceive('setInMvc')
+            ->with('SessionDetails', 'previousRoute', '/example/1');
+        $this->sessionUtility
+            ->shouldReceive('setInMvc')
+            ->with('SessionDetails', 'routeStore', 'lpa/applicant');
 
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($currentRoute)->once();
-        $persistentSession = new PersistentSessionDetails($routeMatch);
-
-        $this->assertEquals($currentRoute, $persistentSession->getCurrentRoute());
-        $this->assertEquals($previousRoute, $persistentSession->getPreviousRoute());
+        new PersistentSessionDetails($this->routeMatch, $this->sessionUtility);
     }
 
+    #[DoesNotPerformAssertions]
     #[Test]
     public function testEmptyValuesFromCurrentRoute(): void
     {
-        $persistentSession = new PersistentSessionDetails(null);
+        $this->sessionUtility
+            ->shouldReceive('setInMvc')
+            ->with('SessionDetails', 'currentRoute', '');
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('SessionDetails', 'routeStore')
+            ->andReturn('/example');
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('SessionDetails', 'previousRoute')
+            ->andReturn('/example');
+        $this->sessionUtility
+            ->shouldReceive('setInMvc')
+            ->with('SessionDetails', 'routeStore', '');
 
-        $this->assertEquals('', $persistentSession->getCurrentRoute());
+        $persistentSession = new PersistentSessionDetails(null, $this->sessionUtility);
     }
 }
