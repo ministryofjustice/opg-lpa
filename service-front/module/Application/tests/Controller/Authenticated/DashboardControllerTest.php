@@ -9,7 +9,6 @@ use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
-use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use MakeSharedTest\DataModel\FixturesData;
@@ -187,14 +186,39 @@ final class DashboardControllerTest extends AbstractControllerTestCase
 
         $response = new Response();
 
-        $this->params->shouldReceive('fromRoute')->withArgs(['lpa-id'])->andReturn(1)->once();
+        $this->params
+            ->shouldReceive('fromRoute')
+            ->withArgs(['lpa-id'])
+            ->andReturn(1)
+            ->once();
+
         $lpa = FixturesData::getPfLpa();
-        $this->lpaApplicationService->shouldReceive('createApplication')->andReturn($lpa)->once();
-        $this->flashMessenger->shouldReceive('addWarningMessage')
-            ->withArgs(['LPA created but could not set seed'])->once();
-        $this->lpaApplicationService->shouldReceive('setSeed')->withArgs([$lpa, 1])->andReturn(false)->once();
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id]])->andReturn($response)->once();
+
+        $this->lpaApplicationService
+            ->shouldReceive('createApplication')
+            ->andReturn($lpa)
+            ->once();
+
+        $this->flashMessenger
+            ->shouldReceive('addWarningMessage')
+            ->withArgs(['LPA created but could not set seed'])
+            ->once();
+
+        $this->lpaApplicationService
+            ->shouldReceive('setSeed')
+            ->withArgs([$lpa, 1])
+            ->andReturn(false)
+            ->once();
+
+        $this->redirect
+            ->shouldReceive('toRoute')
+            ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id]])
+            ->andReturn($response)
+            ->once();
+
+        $this->sessionUtility
+            ->shouldReceive('unsetInMvc')
+            ->with('clone', '1');
 
         $result = $controller->createAction();
 
@@ -312,18 +336,23 @@ final class DashboardControllerTest extends AbstractControllerTestCase
 
         $response = new Response();
 
-        $this->request->shouldReceive('getUri')->never();
+        $this->request
+            ->shouldReceive('getUri')
+            ->never();
 
-        // Session should start as we check the content of the AuthFailureReason container in the session
-        // to decide where to redirect to
-        $this->sessionManager->shouldReceive('start')->once();
+        $this->redirect
+            ->shouldReceive('toRoute')
+            ->withArgs(['login', ['state' => 'timeout']])
+            ->andReturn($response)
+            ->once();
 
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', ['state' => 'timeout']])->andReturn($response)->once();
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('AuthFailureReason', 'code')
+            ->andReturn(null)
+            ->once();
 
-        Container::setDefaultManager($this->sessionManager);
         $result = $controller->testCheckAuthenticated(true);
-        Container::setDefaultManager(null);
 
         $this->assertEquals($response, $result);
     }

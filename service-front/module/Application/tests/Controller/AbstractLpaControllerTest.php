@@ -23,9 +23,26 @@ final class AbstractLpaControllerTest extends AbstractControllerTestCase
         $response = new Response();
         $event = new MvcEvent();
 
-        $this->request->shouldReceive('getUri')->andReturn('http://localhost/home');
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', ['state' => 'timeout']])->andReturn($response)->once();
+        $this->request
+            ->shouldReceive('getUri')
+            ->andReturn('http://localhost/home');
+
+        $this->redirect
+            ->shouldReceive('toRoute')
+            ->withArgs(['login', ['state' => 'timeout']])
+            ->andReturn($response)
+            ->once();
+
+        $this->sessionUtility
+            ->shouldReceive('setInMvc')
+            ->with('PreAuthRequest', 'url', 'http://localhost/home')
+            ->once();
+
+        $this->sessionUtility
+            ->shouldReceive('getFromMvc')
+            ->with('AuthFailureReason', 'code')
+            ->andReturn(null)
+            ->once();
 
         $result = $controller->onDispatch($event);
 
@@ -68,8 +85,12 @@ final class AbstractLpaControllerTest extends AbstractControllerTestCase
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(null)->once();
         $flowChecker = Mockery::mock(FormFlowChecker::class);
         $controller->injectedFlowChecker = $flowChecker;
-        $flowChecker->shouldReceive('getNearestAccessibleRoute')
-            ->withArgs(['lpa/unknown', null])->andReturn(false)->once();
+
+        $flowChecker
+            ->shouldReceive('getNearestAccessibleRoute')
+            ->withArgs(['lpa/unknown', null])
+            ->andReturn(false)
+            ->once();
 
         $result = $controller->onDispatch($event);
 

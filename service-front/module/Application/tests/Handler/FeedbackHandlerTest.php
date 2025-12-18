@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Handler;
 
 use Application\Handler\FeedbackHandler;
+use DateTimeImmutable;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -14,17 +15,18 @@ use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Date\IDateService;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
 
 class FeedbackHandlerTest extends TestCase
 {
-    private FormElementManager $formElementManager;
-    private TemplateRendererInterface $renderer;
-    private Feedback $feedbackService;
-    private SessionUtility $sessionUtility;
-    private IDateService $dateService;
-    private LoggerInterface $logger;
+    private FormElementManager|MockObject $formElementManager;
+    private TemplateRendererInterface|MockObject $renderer;
+    private Feedback|MockObject $feedbackService;
+    private SessionUtility|MockObject $sessionUtility;
+    private IDateService|MockObject $dateService;
+    private LoggerInterface|MockObject $logger;
 
     protected function setUp(): void
     {
@@ -34,9 +36,6 @@ class FeedbackHandlerTest extends TestCase
         $this->sessionUtility = $this->createMock(SessionUtility::class);
         $this->dateService = $this->createMock(IDateService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->dateService
-            ->method('getNow')
-            ->willReturn(new \DateTimeImmutable());
     }
 
     public function testInvalidFormRendersHtmlResponse(): void
@@ -59,6 +58,19 @@ class FeedbackHandlerTest extends TestCase
             )
             ->willReturn('<html>invalid</html>');
 
+        $now = new DateTimeImmutable();
+        $this->dateService
+            ->method('getNow')
+            ->willReturn($now);
+
+        $this->sessionUtility
+            ->method('getFromMvc')
+            ->with('feedback', 'formGeneratedTime')
+            ->willReturn($now->getTimestamp() - 5);
+        $this->sessionUtility
+            ->method('unsetInMvc')
+            ->with('feedback', 'formGeneratedTime');
+
         $handler = new FeedbackHandler(
             $this->renderer,
             $this->formElementManager,
@@ -78,14 +90,18 @@ class FeedbackHandlerTest extends TestCase
     public function testTooQuickSubmissionLogsAndRendersError(): void
     {
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('setData');
+        $form
+            ->expects($this->once())
+            ->method('setData');
 
         $this->formElementManager
             ->method('get')
             ->willReturn($form);
 
-        $now = new \DateTimeImmutable();
-        $this->dateService->method('getNow')->willReturn($now);
+        $now = new DateTimeImmutable();
+        $this->dateService
+            ->method('getNow')
+            ->willReturn($now);
 
         $this->logger
             ->expects($this->once())
@@ -103,6 +119,15 @@ class FeedbackHandlerTest extends TestCase
             )
             ->willReturn('<html>too quick</html>');
 
+        $this->sessionUtility
+            ->method('getFromMvc')
+            ->with('feedback', 'formGeneratedTime')
+            ->willReturn($now->getTimestamp());
+        $this->sessionUtility
+            ->expects($this->once())
+            ->method('unsetInMvc')
+            ->with('feedback', 'formGeneratedTime');
+
         $handler = new FeedbackHandler(
             $this->renderer,
             $this->formElementManager,
@@ -111,9 +136,6 @@ class FeedbackHandlerTest extends TestCase
             $this->logger,
             $this->dateService,
         );
-
-        $session = new \Laminas\Session\Container('feedback');
-        $session->form_generated_time = $now->getTimestamp();
 
         $response = $handler->handle(
             (new ServerRequest())->withMethod('POST')->withParsedBody([])
@@ -125,11 +147,19 @@ class FeedbackHandlerTest extends TestCase
     public function testValidationExceptionRendersError(): void
     {
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('setData');
-        $form->method('isValid')->willReturn(true);
-        $form->method('getData')->willReturn([]);
+        $form
+            ->expects($this->once())
+            ->method('setData');
+        $form
+            ->method('isValid')
+            ->willReturn(true);
+        $form
+            ->method('getData')
+            ->willReturn([]);
 
-        $this->formElementManager->method('get')->willReturn($form);
+        $this->formElementManager
+            ->method('get')
+            ->willReturn($form);
 
         $this->feedbackService
             ->method('add')
@@ -144,6 +174,11 @@ class FeedbackHandlerTest extends TestCase
             )
             ->willReturn('<html>validation error</html>');
 
+        $now = new DateTimeImmutable();
+        $this->dateService
+            ->method('getNow')
+            ->willReturn($now);
+
         $handler = new FeedbackHandler(
             $this->renderer,
             $this->formElementManager,
@@ -154,7 +189,7 @@ class FeedbackHandlerTest extends TestCase
         );
 
         $response = $handler->handle(
-            (new ServerRequest())->withMethod('POST')->withParsedBody([])
+            new ServerRequest()->withMethod('POST')->withParsedBody([])
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
@@ -163,9 +198,15 @@ class FeedbackHandlerTest extends TestCase
     public function testServiceExceptionRendersFallbackError(): void
     {
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('setData');
-        $form->method('isValid')->willReturn(true);
-        $form->method('getData')->willReturn([]);
+        $form
+            ->expects($this->once())
+            ->method('setData');
+        $form
+            ->method('isValid')
+            ->willReturn(true);
+        $form
+            ->method('getData')
+            ->willReturn([]);
 
         $this->formElementManager->method('get')->willReturn($form);
 
@@ -186,6 +227,11 @@ class FeedbackHandlerTest extends TestCase
             )
             ->willReturn('<html>service error</html>');
 
+        $now = new DateTimeImmutable();
+        $this->dateService
+            ->method('getNow')
+            ->willReturn($now);
+
         $handler = new FeedbackHandler(
             $this->renderer,
             $this->formElementManager,
@@ -205,19 +251,44 @@ class FeedbackHandlerTest extends TestCase
     public function testSuccessfulSubmissionRedirects(): void
     {
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('setData');
-        $form->method('isValid')->willReturn(true);
-        $form->method('getData')->willReturn([]);
+        $form
+            ->expects($this->once())
+            ->method('setData');
+        $form
+            ->method('isValid')
+            ->willReturn(true);
+        $form
+            ->method('getData')
+            ->willReturn([]);
 
-        $this->formElementManager->method('get')->willReturn($form);
+        $this->formElementManager
+            ->method('get')
+            ->willReturn($form);
 
         $this->feedbackService
             ->expects($this->once())
             ->method('add');
 
+        $now = new DateTimeImmutable();
+        $this->dateService
+            ->method('getNow')
+            ->willReturn($now);
+
         $this->sessionUtility
             ->method('getFromMvc')
-            ->willReturn('/somewhere');
+            ->willReturnCallback(function ($namespace, $key) use ($now) {
+                if ($namespace === 'feedback' && $key === 'formGeneratedTime') {
+                    return $now->getTimestamp() - 5;
+                }
+                if ($namespace === 'feedback' && $key === 'feedbackLinkClickedFromPage') {
+                    return '/somewhere';
+                }
+                return null;
+            });
+        $this->sessionUtility
+            ->expects($this->exactly(1))
+            ->method('unsetInMvc')
+            ->with('feedback', 'formGeneratedTime');
 
         $handler = new FeedbackHandler(
             $this->renderer,
