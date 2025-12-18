@@ -4,13 +4,16 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Signatures\DateCheck;
-use Application\View\DateCheckViewModelHelper;
+use Application\Service\DateCheckViewModelHelper;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
 class DateCheckController extends AbstractLpaController
 {
     use LoggerTrait;
+
+    private DateCheckViewModelHelper $dateCheckViewModelHelper;
+
 
     public function indexAction()
     {
@@ -145,5 +148,10 @@ class DateCheckController extends AbstractLpaController
         $month = $dateArray['month'];
         $year = $dateArray['year'];
         return strtotime("$day-$month-$year");
+    }
+
+    public function setDateCheckViewModelHelper(DateCheckViewModelHelper $helper): void
+    {
+        $this->dateCheckViewModelHelper = $helper;
     }
 }

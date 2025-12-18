@@ -19,6 +19,7 @@ use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
 use Application\Model\Service\Date\DateService;
+use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
@@ -326,7 +327,7 @@ class Module implements FormElementProviderInterface
                 DateService::class           => InvokableFactory::class,
                 FeedbackHandler::class       => FeedbackHandlerFactory::class,
                 FeedbackThanksHandler::class => FeedbackThanksHandlerFactory::class,
-
+                ContinuationSheets::class => InvokableFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
