@@ -17,6 +17,7 @@ variable "account" {
       domains_allowed = list(string)
       domains_blocked = list(string)
     })
+    old_network_vpc_endpoints_enabled = bool
   })
 }
 
