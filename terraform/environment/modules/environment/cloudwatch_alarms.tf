@@ -21,6 +21,41 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   treat_missing_data        = "notBreaching"
 }
 
+#metric anomaly alarms
+
+resource "aws_cloudwatch_metric_alarm" "front_5xx_anomaly" {
+  alarm_name                = "${var.environment_name} public front 5XX anomaly"
+  comparison_operator       = "GreaterThanUpperThreshold"
+  evaluation_periods        = 2
+  threshold_metric_id       = "ad1"
+  alarm_description         = "Anomaly detection in 5XX Errors for ${var.environment_name}"
+  datapoints_to_alarm       = 2
+  insufficient_data_actions = []
+
+  alarm_actions = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions    = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  metric_query {
+    id = "m1"
+    metric {
+      metric_name = "HTTPCode_Target_5XX_Count"
+      namespace   = "AWS/ApplicationELB"
+      period      = 60
+      stat        = "Average"
+      dimensions = {
+        LoadBalancer = trimprefix(split(":", aws_lb.front.arn)[5], "loadbalancer/")
+        InstanceId   = "i-abc123"
+      }
+    }
+  }
+  metric_query {
+    id          = "ad1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    label       = "5XX anomaly detection band"
+    return_data = true
+  }
+  treat_missing_data = "notBreaching"
+}
+
 
 resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   actions_enabled     = true
