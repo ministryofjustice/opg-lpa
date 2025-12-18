@@ -5,20 +5,11 @@ declare(strict_types=1);
 namespace Application\Model\Service\Session;
 
 use Laminas\Router\RouteMatch;
-use Laminas\Session\Container;
 
 class PersistentSessionDetails
 {
-    /** @var Container */
-    private $sessionDetails;
-
-    /** @var RouteMatch|null */
-    private $route;
-
-    public function __construct(?RouteMatch $route)
+    public function __construct(private ?RouteMatch $route, private SessionUtility $sessionUtility)
     {
-        $this->route = $route;
-        $this->sessionDetails = new Container('SessionDetails');
         $this->setRouteDetails();
     }
 
@@ -27,24 +18,26 @@ class PersistentSessionDetails
         // breadcrumb so we can determine user's last visited route.
         // Also account for any null values, eg activation links or status checks.
         // Unable to assign to RouteInterface, as RouteMatch does not implement RouteInterface
-        $this->sessionDetails->currentRoute = (!is_null($this->route)) ?
-            $this->route->getMatchedRouteName() :
-            '';
+        $currentRoute = !is_null($this->route) ? $this->route->getMatchedRouteName() : '';
+        $this->sessionUtility->setInMvc('SessionDetails', 'currentRoute', $currentRoute);
 
-        if ($this->sessionDetails->routeStore !== $this->sessionDetails->previousRoute) {
-            $this->sessionDetails->previousRoute = $this->sessionDetails->routeStore;
+        $routeStore = $this->sessionUtility->getFromMvc('SessionDetails', 'routeStore');
+        $previousRoute = $this->sessionUtility->getFromMvc('SessionDetails', 'previousRoute');
+
+        if ($routeStore !== $previousRoute) {
+            $this->sessionUtility->setInMvc('SessionDetails', 'previousRoute', $routeStore);
         }
 
-        $this->sessionDetails->routeStore = $this->sessionDetails->currentRoute;
+        $this->sessionUtility->setInMvc('SessionDetails', 'routeStore', $currentRoute);
     }
 
     public function getCurrentRoute(): string
     {
-        return $this->sessionDetails->currentRoute ?? '';
+        return $this->sessionUtility->getFromMvc('SessionDetails', 'currentRoute') ?? '';
     }
 
     public function getPreviousRoute(): string
     {
-        return $this->sessionDetails->previousRoute ?? 'home';
+        return $this->sessionUtility->getFromMvc('SessionDetails', 'previousRoute') ?? 'home';
     }
 }

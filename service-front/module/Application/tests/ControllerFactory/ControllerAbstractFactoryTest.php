@@ -9,6 +9,7 @@ use Application\ControllerFactory\ControllerAbstractFactory;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Model\Service\Session\SessionUtility;
 use Psr\Container\ContainerInterface;
 use Laminas\Router\RouteMatch;
 use Laminas\Session\SessionManager;
@@ -61,7 +62,8 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
             ->andReturn(Mockery::mock(ContainerInterface::class))->once();
 
         $sessionManager = Mockery::mock(SessionManager::class);
-        $sessionManagerSupport = new SessionManagerSupport($sessionManager);
+        $sessionUtility = Mockery::mock(SessionUtility::class);
+        $sessionManagerSupport = new SessionManagerSupport($sessionManager, $sessionUtility);
 
         $this->container->shouldReceive('get')->withArgs([SessionManagerSupport::class])
             ->andReturn($sessionManagerSupport)->once();
@@ -73,6 +75,9 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
             ->andReturn(Mockery::mock(AuthenticationService::class))->once();
 
         $this->container->shouldReceive('get')->withArgs(['Config'])->andReturn([])->once();
+
+        $this->container->shouldReceive('get')->withArgs([SessionUtility::class])
+            ->andReturn($sessionUtility)->once();
 
         $controller = $this->factory->__invoke($this->container, 'General\HomeController');
 

@@ -19,6 +19,7 @@ use Application\Controller\General\RegisterController;
 use Application\Controller\General\VerifyEmailAddressController;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Service\DateCheckViewModelHelper;
+use Application\Model\Service\Session\SessionUtility;
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
@@ -127,6 +128,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $sessionManagerSupport = $container->get(SessionManagerSupport::class);
         $authenticationService = $container->get('AuthenticationService');
         $config = $container->get('Config');
+        $sessionUtility = $container->get(SessionUtility::class);
 
         $route = $container->get('Application')->getMvcEvent()->getRouteMatch();
 
@@ -153,7 +155,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $lpaApplicationService,
                     $userService,
                     $container->get('ReplacementAttorneyCleanup'),
-                    $container->get('Metadata')
+                    $container->get('Metadata'),
+                    $sessionUtility,
                 );
             } else {
                 $controller = new $controllerName(
@@ -163,7 +166,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $config,
                     $userDetailsSession,
                     $lpaApplicationService,
-                    $userService
+                    $userService,
+                    $sessionUtility
                 );
             }
         } else {
@@ -171,7 +175,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                 $formElementManager,
                 $sessionManagerSupport,
                 $authenticationService,
-                $config
+                $config,
+                $sessionUtility
             );
         }
 
