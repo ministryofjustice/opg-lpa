@@ -4,6 +4,9 @@ resource "aws_security_group" "vpc_endpoints_private" {
   description = "VPC Interface Endpoints Security Group"
   vpc_id      = var.vpc_id
   tags        = { Name = "vpc-endpoint-access-private-subnets-${var.vpc_id}" }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "vpc_endpoints_private_subnet_ingress" {
