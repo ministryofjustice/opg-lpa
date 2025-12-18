@@ -25,13 +25,18 @@ final class SessionFactoryTest extends MockeryTestCase
     public function testSessionFactory(): void
     {
         $uri = Mockery::Mock(Uri::class);
-        $uri->shouldReceive('getHost')->andReturn('foo');
+        $uri
+            ->shouldReceive('getHost')
+            ->andReturn('foo');
 
         $request = Mockery::Mock(Request::class);
-        $request->shouldReceive('getUri')->andReturn($uri);
+        $request
+            ->shouldReceive('getUri')
+            ->andReturn($uri);
 
         $container = Mockery::Mock(ContainerInterface::class);
-        $container->shouldReceive('get')
+        $container
+            ->shouldReceive('get')
             ->withArgs(['Config'])
             ->once()
             ->andReturn([
@@ -42,11 +47,13 @@ final class SessionFactoryTest extends MockeryTestCase
                 ]
             ]);
 
-        $container->shouldReceive('get')
+        $container
+            ->shouldReceive('get')
             ->withArgs(['Request'])
             ->andReturn($request);
 
-        $container->shouldReceive('get')
+        $container
+            ->shouldReceive('get')
             ->with('SaveHandler');
 
         $factory = new SessionFactory();

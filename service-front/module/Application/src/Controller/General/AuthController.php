@@ -8,7 +8,6 @@ use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Http\Response as HttpResponse;
-use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
@@ -51,11 +50,7 @@ class AuthController extends AbstractBaseController
 
             if ($form->isValid()) {
                 // Check if we're going to redirect to a deep(er) link (before we kill the session)
-                $preAuthRequest = new Container('PreAuthRequest');
-
-                if ($preAuthRequest->url) {
-                    $nextUrl = $preAuthRequest->url;
-                }
+                $nextUrl = $this->sessionUtility->getFromMvc('PreAuthRequest', 'url');
 
                 // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
                 $session = $this->getSessionManager();

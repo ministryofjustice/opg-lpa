@@ -40,8 +40,14 @@ final class IndexControllerTest extends AbstractControllerTestCase
         $seedLpa = FixturesData::getHwLpa();
         $this->lpa->seed = $seedLpa->id;
 
-        $this->metadata->shouldReceive('setAnalyticsReturnCount')
-            ->withArgs([$this->lpa, 5])->once();
+        $this->metadata
+            ->shouldReceive('setAnalyticsReturnCount')
+            ->withArgs([$this->lpa, 5])
+            ->once();
+
+        $this->sessionUtility
+            ->shouldReceive('unsetInMvc')
+            ->with('clone', $seedLpa->id);
 
         $this->setRedirectToRoute('lpa/view-docs', $this->lpa, $response);
 

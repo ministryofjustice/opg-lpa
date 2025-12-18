@@ -180,9 +180,8 @@ class FormFlowChecker
      * @param string $currentRouteName - a route name
      * @param mixed $param - person-idx or pdf-type
      * @throws RuntimeException
-     * @return string - a route name
      */
-    public function getNearestAccessibleRoute($currentRouteName, $param = null)
+    public function getNearestAccessibleRoute($currentRouteName, $param = null): string|bool
     {
         //  If there is no LPA then just return to the dashboard
         if (!$this->lpa instanceof Lpa) {
