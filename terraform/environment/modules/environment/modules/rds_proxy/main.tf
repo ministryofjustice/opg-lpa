@@ -122,12 +122,12 @@ resource "aws_security_group_rule" "cluster_from_proxy_ingress" {
 }
 
 resource "aws_security_group_rule" "rds_proxy_secrets_manager" {
-  count                    = length(data.aws_vpc_endpoint.secrets_manager.security_group_ids)
+  count                    = length(tolist(data.aws_vpc_endpoint.secrets_manager.security_group_ids))
   type                     = "egress"
   from_port                = 443
   to_port                  = 443
   protocol                 = "tcp"
-  source_security_group_id = data.aws_vpc_endpoint.secrets_manager.security_group_ids[count.index]
+  source_security_group_id = tolist(data.aws_vpc_endpoint.secrets_manager.security_group_ids)[count.index]
   security_group_id        = aws_security_group.rds_proxy.id
   description              = "Egress For Secrets Manager"
 }
