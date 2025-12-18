@@ -19,7 +19,7 @@ data "aws_ecs_task_execution" "migrations" {
   }
   tags = local.api_component_tag
   depends_on = [
-    module.api_aurora
+    module.api_aurora[0],
   ]
 }
 
