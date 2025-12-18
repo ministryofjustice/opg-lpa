@@ -7,6 +7,7 @@ use Laminas\Http\Response;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Validator\Csrf as LaminasCsrfValidator;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -30,8 +31,9 @@ class Csrf extends LaminasCsrfValidator implements LoggerAwareInterface
 {
     use LoggerTrait;
 
-    public function __construct(protected $options = [], private ?SessionUtility $sessionUtility = null)
+    public function __construct(protected $options = [], private ?SessionUtility $sessionUtility = null, LoggerInterface $logger)
     {
+        $this->setLogger($logger);
         parent::__construct($options);
     }
 

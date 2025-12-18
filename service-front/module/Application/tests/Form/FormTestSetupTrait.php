@@ -10,6 +10,7 @@ use Application\Model\Service\Session\SessionUtility;
 use Laminas\Form\FormInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Mockery;
+use Psr\Log\LoggerInterface;
 
 trait FormTestSetupTrait
 {
@@ -41,10 +42,16 @@ trait FormTestSetupTrait
             ->with('CsrfValidator', 'token')
             ->andReturn(12345);
 
+        $logger = Mockery::mock(LoggerInterface::class);
+
         $sm
             ->shouldReceive('get')
             ->with(SessionUtility::class)
             ->andReturn($sessionUtility);
+        $sm
+            ->shouldReceive('get')
+            ->with('Logger')
+            ->andReturn($logger);
 
         $csrfBuilder = new CsrfBuilder($sm);
 
