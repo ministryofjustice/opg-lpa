@@ -32,7 +32,6 @@ final class AppFunctionsExtensionTest extends TestCase
         );
     }
 
-
     public function testRegistersApplicantNamesFunction(): void
     {
         $functions = $this->extension->getFunctions();

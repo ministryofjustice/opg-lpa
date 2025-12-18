@@ -33,6 +33,7 @@ class AppFunctionsExtension extends AbstractExtension
             new TwigFunction('final_check_accessible', [$this, 'finalCheckAccessible']),
             new TwigFunction('form_linked_errors', fn (Form $form): array => $this->formLinkedErrors->fromForm($form)),
             new TwigFunction('systemMessage', [$this, 'systemMessage'], ['is_safe' => ['html']]),
+            new TwigFunction('formElementErrorsV2', [$this, 'formElementErrorsV2'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -77,5 +78,53 @@ class AppFunctionsExtension extends AbstractExtension
         return $this->renderer->render('application/partials/system-message.twig', [
             'message' => $message,
         ]);
+    }
+
+    public function formElementErrorsV2($errors): string
+    {
+        if ($errors === null) {
+            return '';
+        }
+
+        if (is_object($errors) && method_exists($errors, 'getMessages')) {
+            $errors = $errors->getMessages();
+        }
+
+        if (!is_array($errors) || $errors === []) {
+            return '';
+        }
+
+        $messages = $this->flattenMessages($errors);
+
+        if ($messages === []) {
+            return '';
+        }
+
+        return $this->renderer->render(
+            'layout/partials/form-element-errors.twig',
+            [
+                'messages' => $messages,
+            ]
+        );
+    }
+
+    private function flattenMessages(array $errors): array
+    {
+        $messages = [];
+        $stack = [$errors];
+
+        while ($stack !== []) {
+            $current = array_pop($stack);
+
+            foreach ($current as $error) {
+                if (is_array($error)) {
+                    $stack[] = $error;
+                } else {
+                    $messages[] = (string) $error;
+                }
+            }
+        }
+
+        return $messages;
     }
 }
