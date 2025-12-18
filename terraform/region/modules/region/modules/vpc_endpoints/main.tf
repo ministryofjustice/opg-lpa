@@ -1,6 +1,6 @@
 resource "aws_security_group" "vpc_endpoints_private" {
   provider    = aws.region
-  name        = "vpc-endpoint-access-private-subnets-${var.vpc_id}"
+  name_prefix = "vpc-endpoint-access-private-subnets-${var.vpc_id}"
   description = "VPC Interface Endpoints Security Group"
   vpc_id      = var.vpc_id
   tags        = { Name = "vpc-endpoint-access-private-subnets-${var.vpc_id}" }
